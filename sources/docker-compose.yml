@@ -1,0 +1,42 @@
+version: "3"
+
+# Services
+services:
+  # API
+  api: 
+    image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile.dev
+    environment:
+      - PORT=${API_PORT}
+    ports:
+      - ${API_PORT}:${API_PORT}
+    volumes:
+      - ./packages/api/src:/app/src
+    networks:
+      - local-network
+    restart: always
+  # - API
+  # App
+  web: 
+    image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile.dev
+    environment:
+      - PORT=${APP_PORT}
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - ./packages/web/src:/app/src
+    networks:
+      - local-network
+    restart: always
+  # - App
+# - services
+networks:
+ local-network:
+  driver: bridge

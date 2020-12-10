@@ -1,0 +1,31 @@
+# Base Image
+FROM node:12.18.3-slim
+
+LABEL maintainer="BC GOV"
+
+# Updating container path variable with node bin
+ENV PATH $PATH:/app/node_modules/.bin
+
+# Application Port
+ENV PORT 3000
+
+# Setting app as work dir
+WORKDIR /app
+
+# Copying package.json and package-lock.json
+COPY ./package*.json ./
+
+# Installing dependencies
+RUN npm ci
+
+# Copying sources
+COPY . .
+
+# Building app
+RUN npm run build
+
+# Exposing application port
+EXPOSE ${PORT}
+
+# Entry point
+CMD [ "npm", "run", "start:dev" ]

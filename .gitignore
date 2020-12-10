@@ -1,0 +1,9 @@
+node_modules/
+**/node_modules/
+.env
+**/.env
+dist/
+**/dist/
+.DS_Store
+**/.DS_Store
+.vscode/
