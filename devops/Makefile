@@ -1,7 +1,5 @@
--include .env
-
--include .env
-export $(shell sed 's/=.*//' .env)
+-include ../.env
+export $(shell sed 's/=.*//' ../.env)
 
 .DEFAULT_GOAL := default
 export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
@@ -21,9 +19,14 @@ define BUILD_TEMPLATE_PATH
 "openshift/docker-build.yml"
 endef
 
+define API
+"api-$(APP_NAME)"
+endef
+
 init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
+oc-build-api: | print-status build-api
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -48,6 +51,13 @@ init-project:
 build-patroni:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH)  -p NAME=patroni -p TAG="12-latest" -p BASE_IMAGE_NAME=postgres -p BASE_IMAGE_TAG="12" -p SOURCE_REPOSITORY_URL="https://github.com/BCDevOps/platform-services.git" -p SOURCE_REPOSITORY_REF="master" -p SOURCE_CONTEXT_DIR="apps/pgsql/patroni/docker" | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/patroni --wait
+
+build-api:
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_NAMESPACE)"
+	@echo "+\n++ BUILDING API with tag: $(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-12" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="registry.access.redhat.com/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/api -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
 
 
 init-patroni:

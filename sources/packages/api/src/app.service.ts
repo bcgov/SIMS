@@ -9,7 +9,7 @@ export class AppService {
 
       return `Hello World! The database connection is ${connection.isConnected}`;
     } catch(excp) {
-      return `Hello world! Fail with error: ${excp}`;
+      return `Hello world! Fail with error: ${excp}`
     }
   }
 }
