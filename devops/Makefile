@@ -9,6 +9,9 @@ export BUILD_ID := $(or $(BUILD_ID), 1)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(GIT_LOCAL_BRANCH), dev)
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
+export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
+export KC_AUTH_URL := $(or $(KC_AUTH_URL), default)
+export HOST_PREFIX := $(or $(HOST_PREFIX), dev-)
 
 
 define BUILD_TAG
@@ -23,10 +26,29 @@ define API
 "api-$(APP_NAME)"
 endef
 
+define HOST
+"$(HOST_PREFIX)aest-sims.$(DOMAIN)"
+endef
+
+define DB_SERVICE_NAME
+"patroni-master"
+endef
+
+define DB_NAME
+"SIMSDB"
+endef
+
+define rollout_and_wait
+@oc -n $(NAMESPACE) rollout status $1
+endef
+
+
 init-oc: | print-status init-project
 oc-build-patroni: | print-status build-patroni
 oc-deploy-patroni: | print-status deploy-patroni
 oc-build-api: | print-status build-api
+oc-deploy-api: | print-status deploy-api
+oc-create-db: | print-status create-db
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -39,6 +61,7 @@ print-status:
 	@echo " +---------------------------------------------------------+ "
 	@echo " | BUILD_ID: 	$(BUILD_ID) "
 	@echo " | BUILD_TAG: 	$(BUILD_TAG) "
+	@echo " | HOST NAME: 	$(HOST) "
 	@echo " +---------------------------------------------------------+ "
 
 
@@ -67,3 +90,17 @@ init-patroni:
 
 deploy-patroni:
 	@oc -n $(NAMESPACE) process -f openshift/patroni-deploy.yml -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG=patroni:12-latest | oc -n $(NAMESPACE) apply -f -
+
+create-db:
+	test -n $(DB_NAME)
+	test -n $(NAMESPACE)
+	@echo "+\n++ Creating DB ($(DB_NAME)) in $(NAMESPACE) patroni db cluster"
+	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) | oc -n $(NAMESPACE) apply -f -
+
+deploy-api:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_URL=$(KC_AUTH_URL) | oc -n $(NAMESPACE) apply -f -
+	#$(call rollout_and_wait,dc/$(API))
