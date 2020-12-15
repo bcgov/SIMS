@@ -1,0 +1,207 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}
+  annotations:
+    description: >-
+      Patroni Postgresql database cluster, with persistent storage.
+labels:
+  project: ${PROJECT}
+  service: ${NAME}
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${NAME}-master
+    labels:
+      cluster-name: ${NAME}
+  spec:
+    ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      role: master
+      cluster-name: ${NAME}
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: ${NAME}
+    labels:
+      cluster-name: ${NAME}
+  spec:
+    replicas: ${{REPLICAS}}
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        statefulset: ${NAME}
+        cluster-name: ${NAME}
+    serviceName: ${NAME}
+    template:
+      metadata:
+        labels:
+          statefulset: ${NAME}
+          cluster-name: ${NAME}
+      spec:
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: statefulset
+                  operator: In
+                  values: 
+                  - ${NAME}
+              topologyKey: "kubernetes.io/hostname"
+        containers:
+        - env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: PATRONI_KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: PATRONI_KUBERNETES_LABELS
+            value: '{"cluster-name": "${NAME}"}'
+          - name: PATRONI_SUPERUSER_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: superuser-username
+                name: ${NAME}-creds
+          - name: PATRONI_SUPERUSER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: superuser-password
+                name: ${NAME}-creds
+          - name: PATRONI_REPLICATION_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: replication-username
+                name: ${NAME}-creds
+          - name: PATRONI_REPLICATION_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: replication-password
+                name: ${NAME}-creds
+          - name: APP_USER
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: ${NAME}-creds
+          - name: APP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: ${NAME}-creds
+          - name: APP_DATABASE
+            valueFrom:
+              secretKeyRef:
+                key: database-name
+                name: ${NAME}-creds
+          - name: PATRONI_SCOPE
+            value: ${NAME}
+          - name: PATRONI_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: PATRONI_LOG_LEVEL
+            value: DEBUG
+          - name: PATRONI_POSTGRESQL_DATA_DIR
+            value: /home/postgres/pgdata/pgroot/data
+          - name: PATRONI_POSTGRESQL_PGPASS
+            value: /tmp/pgpass
+          - name: PATRONI_POSTGRESQL_LISTEN
+            value: 0.0.0.0:5432
+          - name: PATRONI_RESTAPI_LISTEN
+            value: 0.0.0.0:8008
+          image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+          imagePullPolicy: Always
+          name: ${NAME}
+          ports:
+          - containerPort: 8008
+            protocol: TCP
+          - containerPort: 5432
+            protocol: TCP
+          resources:
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
+          readinessProbe:
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 4
+            exec:
+              command:
+                - /usr/share/scripts/patroni/health_check.sh
+          volumeMounts:
+          - mountPath: /home/postgres/pgdata
+            name: ${NAME}
+        serviceAccountName: ${NAME}
+    updateStrategy:
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - metadata:
+        name: ${NAME}
+      spec:
+        storageClassName: ${STORAGE_CLASS}
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: ${PVC_SIZE}
+parameters:
+- name: NAME
+  value: patroni
+- name: PROJECT 
+  value: court-interpreter-scheduling
+- name: REPLICAS
+  description: |
+    The number of StatefulSet replicas to use.
+  displayName: REPLICAS
+  value: '3'
+- name: CPU_REQUEST
+  description: |
+    Starting amount of CPU the container can use.
+  displayName: CPU REQUEST
+  value: '250m'
+- name: CPU_LIMIT
+  description: 
+    Maximum amount of CPU the container can use.
+  displayName: CPU Limit
+  value: '1'
+- name: MEMORY_REQUEST
+  description: 
+    Starting amount of memory the container can use.
+  displayName: Memory Request
+  value: 512Mi
+- name: MEMORY_LIMIT
+  description: Maximum amount of memory the container can use.
+  displayName: Memory Limit
+  value: 512Mi
+- name: BUILD_NAMESPACE
+  description: |
+    The OpenShift Namespace where the patroni and postgresql
+    ImageStream resides.
+  displayName: ImageStream Namespace
+  required: true
+- name: IMAGE_STREAM_TAG
+  description: |
+    Patroni ImageTag
+  value: patroni:12-latest
+- name: PVC_SIZE
+  description: 
+    The size of the persistent volume to create.
+  displayName: Persistent Volume Size
+  value: 2Gi
+- name: STORAGE_CLASS
+  value: netapp-file-standard
+- name: IMAGE_REGISTRY
+  value: image-registry.openshift-image-registry.svc:5000

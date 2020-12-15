@@ -1,0 +1,55 @@
+# Adapted from https://github.com/bcgov/platform-services-registry/blob/5b860080a11cde0d56277955a1b481c2c226d96e/openshift/templates/nsp-tools.yaml
+# TODO Add equivalent of this command to enable namespace to pull images from tools: oc -n 1a7b16-tools policy add-role-to-group system:image-puller system:serviceaccounts:1a7b16-prod
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  annotations:
+    description: |
+      The Network Security Policies (NSP) for the associated
+      Platform Services image builds mechanics.
+  name: security-init
+objects:
+  - apiVersion: security.devops.gov.bc.ca/v1alpha1
+    kind: ExternalNetwork
+    metadata:
+      # This metadata field will be what you see with the command `oc get en` 
+      name: all-things-external
+    spec:
+      # This name will be used internally by Aporeto; it should match
+      # the `name` field in metadata above.
+      description: |
+        specify a custom external network that can be
+        referenced by name.
+      entries:
+        - 0.0.0.0/0
+      servicePorts:
+        - "tcp/80"
+        - "tcp/443"
+        - "tcp/22"
+  - apiVersion: security.devops.gov.bc.ca/v1alpha1
+    kind: NetworkSecurityPolicy
+    metadata:
+      name: all-to-internet
+    spec:
+      description: All pods can access the internet
+      source:
+        - - '$namespace=${NAMESPACE}'
+      destination:
+        - - 'ext:name=all-things-external'
+  - apiVersion: security.devops.gov.bc.ca/v1alpha1
+    kind: NetworkSecurityPolicy
+    metadata:
+      name: internal-to-internal
+    spec:
+      description: All pods can access other pods in the same namespace
+      source:
+        - - '$namespace=${NAMESPACE}'
+      destination:
+        - - '$namespace=${NAMESPACE}'
+parameters:
+  - name: NAMESPACE
+    description: |
+      The the name of the namespace the policy is being
+      deployed to.
+    required: true

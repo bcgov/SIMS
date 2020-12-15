@@ -1,0 +1,112 @@
+# Generalised template for building from Dockerfile in a git repo.
+# Includes importing the base image as an imagestream.
+apiVersion: v1
+kind: Template
+metadata:
+  name: ${NAME}
+objects:
+  - apiVersion: image.openshift.io/v1
+    kind: ImageStream
+    metadata:
+      name: ${BASE_IMAGE_NAME}
+    spec:
+      lookupPolicy:
+        local: false
+  - apiVersion: v1
+    kind: ImageStreamTag
+    lookupPolicy:
+      local: false
+    metadata:
+      name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+    tag:
+      annotations: null
+      from:
+        kind: DockerImage
+        name: ${BASE_IMAGE_REPO}${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+      importPolicy:
+        scheduled: true
+      referencePolicy:
+        type: Source
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+    spec:
+      lookupPolicy:
+        local: false
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: ${NAME}
+    spec:
+      resources:
+        limits:
+          cpu: ${CPU_LIMIT}
+          memory: ${MEMORY_LIMIT}
+        requests:
+          cpu: ${CPU_REQUEST}
+          memory: ${MEMORY_REQUEST}
+      output:
+        to:
+          kind: ImageStreamTag
+          name: "${NAME}:${TAG}"
+      runPolicy: SerialLatestOnly
+      source:
+        contextDir: "${SOURCE_CONTEXT_DIR}"
+        git:
+          uri: "${SOURCE_REPOSITORY_URL}"
+          ref: "${SOURCE_REPOSITORY_REF}"
+        type: Git
+      strategy:
+        dockerStrategy: 
+          from:
+            kind: ImageStreamTag
+            name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+          buildArgs: 
+            - name: ${ARG_KEY_1}
+              value: ${ARG_VAL_1}
+            - name: ${ARG_KEY_2}
+              value: ${ARG_VAL_2}
+            - name: ${ARG_KEY_3}
+              value: ${ARG_VAL_3}
+            - name: ${ARG_KEY_4}
+              value: ${ARG_VAL_4}
+        type: Docker
+parameters:
+  - name: NAME
+    required: true
+  - name: SUFFIX
+  - name: SOURCE_CONTEXT_DIR
+    required: true
+  - name: SOURCE_REPOSITORY_URL
+    required: true
+    value: https://github.com/bcgov/SIMS.git
+  - name: SOURCE_REPOSITORY_REF
+    required: true
+  - name: TAG
+    value: "latest"
+  - name: BASE_IMAGE_REPO
+  - name: BASE_IMAGE_NAME
+    required: true
+  - name: BASE_IMAGE_TAG
+    required: true
+  - name: CPU_LIMIT
+    value: "2"
+  - name: MEMORY_LIMIT
+    value: "4Gi"
+  - name: CPU_REQUEST
+    value: "1"
+  - name: MEMORY_REQUEST
+    value: "2Gi"
+  - name: ARG_KEY_1
+    value: __DUMMY_1
+  - name: ARG_KEY_2
+    value: __DUMMY_2
+  - name: ARG_KEY_3
+    value: __DUMMY_3
+  - name: ARG_KEY_4
+    value: __DUMMY_4
+  - name: ARG_VAL_1
+  - name: ARG_VAL_2
+  - name: ARG_VAL_3
+  - name: ARG_VAL_4
