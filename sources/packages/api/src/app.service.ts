@@ -7,7 +7,7 @@ export class AppService {
     try {
       const connection = getConnection();
 
-      return `Hello World! The database connection is ${connection.isConnected}`;
+      return `Hello World! The database connection is ${connection.isConnected} and version: ${process.env.VERSION ?? '-1'}`;
     } catch(excp) {
       return `Hello world! Fail with error: ${excp}`
     }

@@ -24,6 +24,8 @@ objects:
         spec:
           containers:
             - env:
+                - name: VERSION
+                  value: ${BUILD_TAG}
                 - name: JWT_SECRET
                   value: ${JWT_SECRET}
                 - name: KEYCLOAK_REALM
@@ -155,3 +157,5 @@ parameters:
     required: true
   - name: DATABASE_NAME_KEY
     value: database-name
+  - name: BUILD_TAG
+    value: '0'
