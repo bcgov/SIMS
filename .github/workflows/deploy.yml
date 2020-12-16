@@ -1,0 +1,98 @@
+name: Build and Deploy in OpenShift
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    branches:
+      - main
+
+
+jobs:
+  # Print variables for logging and debugging purposes
+  checkEnv:
+    name: Check Env variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Env Vars
+        run: |
+          echo Git Base Ref: ${{ github.base_ref }}
+          echo Git Build ID: ${{ github.event.number }}
+          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
+          echo OC CLI Version: $(oc version)
+
+  # Build the API
+  build:
+    name: Build API and APP
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true}}
+    env:
+      BUILD_ID: ${{ github.event.number }}
+      BUILD_NAMESPACE: 0c27fb-tools
+      BUILD_REF: ${{ github.base_ref }}
+    steps:
+      # Checkout the PR branch
+      - name: Print env
+        run: |
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: $BUILD_REF
+      - name: Checkout Target Branch
+        uses: actions/checkout@v1
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Build the api images
+      - name: Build API Images
+        working-directory: "./devops"
+        run: |
+          make oc-build-api
+      - name: Build APP/Front-end Images
+        working-directory: "./devops"
+        run: |
+          make oc-build-web
+
+  # Deploy API/App images in Dev
+  deployDev:
+    name: Deploy App, API, and DB to DEV environment
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true && github.base_ref != 'prod' && github.base_ref != 'test'}}
+    env:
+      BUILD_ID: ${{ github.event.number }}
+      NAMESPACE: 0c27fb-dev
+      BUILD_NAMESPACE: 0c27fb-tools
+      BUILD_REF: ${{ github.base_ref }}
+      HOST_PREFIX: dev-
+      KC_AUTH_URL: https://dev.oidc.gov.bc.ca/auth/
+    needs:
+      - build
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo NAMESPACE: $NAMESPACE
+          echo BRANCH: $BUILD_REF
+          echo HOST_PREFIX: $HOST_PREFIX
+      # Checkout the PR branch
+      - name: Checkout Target Branch
+        uses: actions/checkout@v1
+
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Deploy the api
+      - name: Deploy API
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-api
+      - name: Deploy APP
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-web
+     
