@@ -26,6 +26,10 @@ define API
 "api-$(APP_NAME)"
 endef
 
+define Web
+"web-$(APP_NAME)"
+endef
+
 define HOST
 "$(HOST_PREFIX)aest-sims.$(DOMAIN)"
 endef
@@ -49,6 +53,8 @@ oc-deploy-patroni: | print-status deploy-patroni
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-create-db: | print-status create-db
+oc-build-web: | print-status build-web
+oc-deploy-web: | print-status deploy-web
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -82,6 +88,13 @@ build-api:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-12" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="registry.access.redhat.com/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/api -p NAME=$(API) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(API) --wait
 
+build-web:
+	test -n "$(BUILD_REF)"
+	test -n "$(BUILD_NAMESPACE)"
+	@echo "+\n++ BUILDING Web with tag: $(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_TAG) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p BASE_IMAGE_NAME="nodejs-12" -p BASE_IMAGE_TAG="1" -p BASE_IMAGE_REPO="registry.access.redhat.com/ubi8/" -p SOURCE_CONTEXT_DIR=sources/packages/web -p NAME=$(Web) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(Web) --wait
+
 
 init-patroni:
 	@echo "++\n Init Patroni in $(NAMESPACE) \n++"
@@ -104,3 +117,11 @@ deploy-api:
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_URL=$(KC_AUTH_URL) | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
+
+deploy-web:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	@echo "+\n++ Deploying Web with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(Web) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(Web):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(Web))
