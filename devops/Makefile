@@ -103,4 +103,4 @@ deploy-api:
 	test -n "$(BUILD_REF)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_URL=$(KC_AUTH_URL) | oc -n $(NAMESPACE) apply -f -
-	#$(call rollout_and_wait,dc/$(API))
+	$(call rollout_and_wait,dc/$(API))
