@@ -161,7 +161,7 @@ parameters:
 - name: NAME
   value: patroni
 - name: PROJECT 
-  value: court-interpreter-scheduling
+  value: sims
 - name: REPLICAS
   description: |
     The number of StatefulSet replicas to use.
