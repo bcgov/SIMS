@@ -8,6 +8,7 @@ export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
 export APP_PORT := $(or $(APP_PORT), 8080)
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
+export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
 
@@ -28,7 +29,8 @@ print-status:
 	@echo " | APP_PORT: $(APP_PORT) "
 	@echo " | POSTGRES_PORT: $(POSTGRES_PORT) "
 	@echo " | POSTGRES_DB: $(POSTGRES_DB) "
-	@echo " | POSTGRES_PWD: $(POSTGRES_PASSWORD) "
+	@echo " | POSTGRES_USER: $(POSTGRES_USER) "
+	@echo " | POSTGRES_PASSWORD: $(POSTGRES_PASSWORD) "
 	@echo " +---------------------------------------------------------+ "
 
 #################################################################
