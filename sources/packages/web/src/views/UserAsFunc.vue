@@ -19,19 +19,14 @@
 </template>
 
 <script lang="ts">
-import { State } from "vuex-class";
-import { Options, Vue } from "vue-class-component";
-import { AuthState } from "../store/states";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
-@Options({
-  components: {}
-})
-export default class User extends Vue {
-  @State(state => state.auth)
-  user!: AuthState;
-
-  created() {
-    console.log(this.user);
+export default {
+  setup() {
+    const store = useStore();
+    const user = computed(() => store.state.auth);
+    return { user };
   }
-}
+};
 </script>

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Login from "../views/Login.vue";
 import User from "../views/User.vue";
+import UserAsFunc from "../views/UserAsFunc.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/User",
     name: "User",
     component: User
+  },
+  {
+    path: "/UserAsFunc",
+    name: "UserAsFunc",
+    component: UserAsFunc
   },
 ];
 

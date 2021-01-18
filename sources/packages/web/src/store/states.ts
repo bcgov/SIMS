@@ -1,6 +1,6 @@
 export interface RootState { }
 
-export interface AuthState {
+export class AuthState {
     isAuthenticated: boolean,
     token?: string,
     name?: string,
