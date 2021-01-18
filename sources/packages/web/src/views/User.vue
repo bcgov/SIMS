@@ -19,18 +19,16 @@
 </template>
 
 <script lang="ts">
-import { KeycloakProfile, KeycloakTokenParsed } from "keycloak-js";
-import { State, Action, Getter } from "vuex-class";
-import { Options, Vue, setup } from "vue-class-component";
+import { State } from "vuex-class";
+import { Options, Vue } from "vue-class-component";
 import AuthService from "../services/AuthService";
-import { mapGetters } from "vuex";
 import { AuthState } from "../store/states";
 
 @Options({
-  components: {},
+  components: {}
 })
 export default class User extends Vue {
-  @State((state) => state.auth)
+  @State(state => state.auth)
   user!: AuthState;
 
   login() {

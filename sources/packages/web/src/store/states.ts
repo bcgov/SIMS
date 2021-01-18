@@ -14,13 +14,3 @@ export interface AuthState {
     givenName?: string,
     identityAssuranceLevel?: string,   
 }
-
-export interface Notification {
-    id: number,
-    title: string,
-    description: string
-};
-
-export interface NotificationState{
-    notifications: Notification[];
-}

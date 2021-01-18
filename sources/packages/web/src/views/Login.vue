@@ -13,7 +13,11 @@
       </div>
     </template>
     <template #footer>
-      <Button label="Login using BCSC" icon="pi pi-user" @click="login"></Button>
+      <Button
+        label="Login using BCSC"
+        icon="pi pi-user"
+        @click="login"
+      ></Button>
     </template>
   </Card>
 </template>
@@ -23,13 +27,13 @@ import { Options, Vue } from "vue-class-component";
 import AuthService from "../services/AuthService";
 
 @Options({
-  components: {},
+  components: {}
 })
 export default class Login extends Vue {
   login() {
     AuthService.login({
       idpHint: "bcsc",
-      redirectUri: `${location.origin}/user`,
+      redirectUri: `${location.origin}/user`
     });
   }
 }

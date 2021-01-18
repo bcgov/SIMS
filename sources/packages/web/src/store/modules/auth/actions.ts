@@ -1,4 +1,3 @@
-import { KeycloakProfile } from "keycloak-js";
 import { ActionTree } from "vuex";
 import { AuthState, RootState } from "../../states";
 
