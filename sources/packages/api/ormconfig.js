@@ -1,5 +1,5 @@
 
-const entities = process.env.ENVIRONMENT === 'local' ? ['./src/database/entities/*.model.ts'] : ['./dist/database/entities/*.model.{.ts,.js}'];
+const entities = process.env.ENVIRONMENT === 'local' ? ['/src/database/entities/*.model.{.ts,.js}'] : ['/dist/database/entities/*.model.{.ts,.js}'];
 
 module.exports = {
   type: 'postgres',
@@ -14,6 +14,6 @@ module.exports = {
     migrationsDir: 'src/database/migrations',
     entitiesDir: 'src/database/entities'
   },
-  // entities,
+  entities,
   schema: process.env.DB_SCHEMA || 'sims',
 };
