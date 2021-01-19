@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { DatabaseService } from './database.service';
+const config = require('../../ormconfig');
 
+const finalConfig: any = {...config, schema: process.env.DB_SCHEMA || 'sims'};
 @Module({
   imports: [ TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: process.env.POSTGRES_HOST ?? 'localhost',
-    port: parseInt(process.env.POSTGRES_PORT, 10) ?? 5432,
-    database: process.env.POSTGRES_DB ?? 'aest',
-    username: process.env.POSTGRES_USER ?? 'admin',
-    password: process.env.POSTGRES_PASSWORD,
-  })]
+    ...finalConfig,
+    logging: ['error', 'warn', 'info'],
+  })],
+  providers: [DatabaseService]
 })
 export class DatabaseModule {}
