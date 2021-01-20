@@ -1,0 +1,55 @@
+name: Deploy to TEST in OpenShift
+
+on: 
+  workflow_dispatch:
+    inputs:
+      BUILD_REF:
+        description: 'Buildref'     
+        required: true
+        default: 'main'
+      BUILD_ID:
+        description: 'buildid'     
+        required: true
+        default: 'NULL'
+
+
+jobs:
+  # Deploy API/App images in Test
+  deployTest:
+    name: Deploy App, API, and DB to TEST environment
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ID: ${{ github.event.inputs.BUILD_ID }}
+      NAMESPACE: 0c27fb-test
+      BUILD_NAMESPACE: 0c27fb-tools
+      BUILD_REF: ${{ github.event.inputs.BUILD_REF }}
+      HOST_PREFIX: test-
+      KC_AUTH_URL: https://dev.oidc.gov.bc.ca/auth/
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo NAMESPACE: $NAMESPACE
+          echo BRANCH: $BUILD_REF
+          echo HOST_PREFIX: $HOST_PREFIX
+      # # Checkout the PR branch
+      # - name: Checkout Target Branch
+      #   uses: actions/checkout@v1
+
+      # # Log in to OpenShift.
+      # # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      # - name: Log in to OpenShift
+      #   run: |
+      #     oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # # Deploy the api
+      # - name: Deploy API
+      #   working-directory: "./devops/"
+      #   run: |
+      #     make oc-deploy-api
+      # - name: Deploy APP
+      #   working-directory: "./devops/"
+      #   run: |
+      #     make oc-deploy-web
+     
