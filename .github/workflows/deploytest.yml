@@ -33,6 +33,10 @@ jobs:
           echo NAMESPACE: $NAMESPACE
           echo BRANCH: $BUILD_REF
           echo HOST_PREFIX: $HOST_PREFIX
+          
+      # Checkout the PR branch
+      - name: Checkout Target Branch
+        uses: actions/checkout@v1
 
       # Log in to OpenShift.
       # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
