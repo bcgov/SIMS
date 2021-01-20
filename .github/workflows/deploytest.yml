@@ -33,23 +33,20 @@ jobs:
           echo NAMESPACE: $NAMESPACE
           echo BRANCH: $BUILD_REF
           echo HOST_PREFIX: $HOST_PREFIX
-      # # Checkout the PR branch
-      # - name: Checkout Target Branch
-      #   uses: actions/checkout@v1
 
-      # # Log in to OpenShift.
-      # # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
-      # # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
-      # - name: Log in to OpenShift
-      #   run: |
-      #     oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
-      # # Deploy the api
-      # - name: Deploy API
-      #   working-directory: "./devops/"
-      #   run: |
-      #     make oc-deploy-api
-      # - name: Deploy APP
-      #   working-directory: "./devops/"
-      #   run: |
-      #     make oc-deploy-web
+      # Log in to OpenShift.
+      # Note: The secrets needed to log in are NOT available if the PR comes from a FORK.
+      # PR's must originate from a branch off the original repo or else all openshift `oc` commands will fail.
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=https://api.silver.devops.gov.bc.ca:6443
+      # Deploy the api
+      - name: Deploy API
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-api
+      - name: Deploy APP
+        working-directory: "./devops/"
+        run: |
+          make oc-deploy-web
      
