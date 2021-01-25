@@ -2,7 +2,7 @@
   <div>HOME</div>
 </template>
 <script lang="ts">
-import { useRouter, onBeforeRouteUpdate,  } from "vue-router";
+import { useRouter } from "vue-router";
 import { AppConfigService } from "../services/AppConfigService";
 export default {
   setup() {

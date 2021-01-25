@@ -26,7 +26,7 @@ export class AppConfigService {
 
   private isValidConfig(config: AppConfig) {
     // Validating config from its update time with _config expiry time
-    if (Date.now() - config.updateTime.getMilliseconds() > 1000 * 60 * 60) {
+    if (Date.now() - config.updateTime.getMilliseconds() > this._configExpiry) {
       return false;
     }
     return true;
@@ -63,7 +63,7 @@ export class AppConfigService {
     }
   }
 
-  async fetchConfig(): Promise<any> {
+  async fetchConfig(): Promise<AppConfig> {
     // Go to api and fetch config
     // Store in local storage
     // TODO: Remove placeholder
