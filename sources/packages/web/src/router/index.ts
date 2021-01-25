@@ -36,7 +36,6 @@ const router = createRouter({
 router.beforeEach(async () => {
   // Check Config
   if (!AppConfigService.shared.isConfigReady()) {
-    console.log("Router: Setting up config and auth");
     await AppConfigService.shared.init();
   }
   return true;

@@ -84,7 +84,6 @@ export class AppConfigService {
 
   async init() {
     const config = (await this.config()) as AppConfig;
-    console.dir(config);
     this.authService = await AuthService(config);
   }
 }
