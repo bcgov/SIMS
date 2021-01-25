@@ -4,11 +4,11 @@ import { auth } from "./modules/auth/auth";
 
 const storeOptions: StoreOptions<RootState> = {
   state: {
-      version: "1.0.0",
+    version: "1.0.0"
   },
   modules: {
-      auth,
-  },
+    auth
+  }
 };
 
 export default createStore(storeOptions);
