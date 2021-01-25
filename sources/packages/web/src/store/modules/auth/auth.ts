@@ -5,15 +5,15 @@ import { mutations } from "./mutations";
 import { AuthState, RootState } from "../../states";
 
 export const state: AuthState = {
-    isAuthenticated: false,
+  isAuthenticated: false
 };
 
 const namespaced = true;
 
 export const auth: Module<AuthState, RootState> = {
-    namespaced,
-    state,
-    getters,
-    actions,
-    mutations,
+  namespaced,
+  state,
+  getters,
+  actions,
+  mutations
 };

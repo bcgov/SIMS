@@ -24,16 +24,16 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import AuthService from "../services/AuthService";
+import { AppConfigService } from "../services/AppConfigService";
 
 @Options({
   components: {}
 })
 export default class Login extends Vue {
   login() {
-    AuthService.login({
+    AppConfigService.shared.authService?.login({
       idpHint: "bcsc",
-      redirectUri: `${location.origin}/user`
+      redirectUri: `${location.origin}/`
     });
   }
 }
