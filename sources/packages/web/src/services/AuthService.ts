@@ -17,7 +17,7 @@ export default async function(
   });
 
   try {
-    keycloak.init({
+    await keycloak.init({
       onLoad: "check-sso",
       responseMode: "query",
       checkLoginIframe: false
@@ -27,6 +27,7 @@ export default async function(
     } else {
       store.dispatch("auth/logout");
     }
+    
   } catch (excp) {
     console.log(`KC - init excp : ${excp}`);
   }

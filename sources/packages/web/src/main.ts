@@ -14,8 +14,10 @@ import "primevue/resources/themes/md-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
+import { AppConfigService } from "./services/AppConfigService";
 
-createApp(App)
+AppConfigService.shared.init().then(() => {
+  createApp(App)
   .use(store)
   .use(router)
   .use(PrimeVue)
@@ -26,3 +28,6 @@ createApp(App)
   .component("Column", Column)
   .component("InputText", InputText)
   .mount("#app");
+});
+
+

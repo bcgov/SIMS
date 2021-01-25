@@ -33,12 +33,4 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach(async () => {
-  // Check Config
-  if (!AppConfigService.shared.isConfigReady()) {
-    await AppConfigService.shared.init();
-  }
-  return true;
-});
-
 export default router;
