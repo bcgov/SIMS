@@ -7,10 +7,15 @@ export BUILD_REF :=  $(or $(GIT_LOCAL_BRANCH), dev)
 export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
 export APP_PORT := $(or $(APP_PORT), 8080)
+# Database
 export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
+# Key Cloak
+export KEYCLOAK_URL := $(or $(KEYCLOAK_URL), https://dev.oidc.gov.bc.ca/auth/)
+export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
+export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), student)
 
 local:	| print-status local-build-run
 db: | print-status postgres
@@ -27,10 +32,15 @@ print-status:
 	@echo " | PROJECT: $(PROJECT_NAME) "
 	@echo " | API_PORT: $(API_PORT) "
 	@echo " | APP_PORT: $(APP_PORT) "
+	@echo " | Database Configs"
 	@echo " | POSTGRES_PORT: $(POSTGRES_PORT) "
 	@echo " | POSTGRES_DB: $(POSTGRES_DB) "
 	@echo " | POSTGRES_USER: $(POSTGRES_USER) "
 	@echo " | POSTGRES_PASSWORD: $(POSTGRES_PASSWORD) "
+	@echo " | Key Cloak Configs"
+	@echo " | KEYCLOAK_URL: $(KEYCLOAK_URL) "
+	@echo " | KEYCLOAK_REALM: $(KEYCLOAK_REALM) "
+	@echo " | KEYCLOAK_CLIENT: $(KEYCLOAK_CLIENT) "
 	@echo " +---------------------------------------------------------+ "
 
 #################################################################

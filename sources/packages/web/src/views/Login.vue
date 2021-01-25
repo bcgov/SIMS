@@ -14,8 +14,14 @@
     </template>
     <template #footer>
       <Button
-        label="Login using BCSC"
+        label="Login"
+        icon="pi pi-check"
+        @click="login"
+      ></Button>
+      <Button
+        label="Register"
         icon="pi pi-user"
+        class="p-button-info"
         @click="login"
       ></Button>
     </template>
