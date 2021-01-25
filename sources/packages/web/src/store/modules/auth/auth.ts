@@ -4,6 +4,7 @@ import { actions } from "./actions";
 import { mutations } from "./mutations";
 import { AuthState, RootState } from "../../states";
 
+
 export const state: AuthState = {
     isAuthenticated: false,
 };

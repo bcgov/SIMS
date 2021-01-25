@@ -33,7 +33,7 @@ export default class Login extends Vue {
   login() {
     AuthService.login({
       idpHint: "bcsc",
-      redirectUri: `${location.origin}/user`
+      redirectUri: `${location.origin}/student`
     });
   }
 }

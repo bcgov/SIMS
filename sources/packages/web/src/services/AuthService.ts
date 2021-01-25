@@ -11,6 +11,8 @@ keycloak.init({ onLoad: "check-sso", responseMode: "query", checkLoginIframe: fa
     .then(() => {
         if(keycloak.authenticated){
             store.dispatch("auth/login", keycloak);
+            store.dispatch("student/setStudentProfileData",keycloak);
+            console.dir(keycloak)
         }
         else {
             store.dispatch("auth/logout");

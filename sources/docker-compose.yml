@@ -2,31 +2,31 @@ version: "3"
 
 # Services
 services:
-  # API
-  api: 
-    image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-    container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    build:
-      context: ./packages/api
-      dockerfile: Dockerfile.dev
-    environment:
-      - PORT=${API_PORT}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - ${API_PORT}:${API_PORT}
-    volumes:
-      - ./packages/api/src:/app/src
-    networks:
-      - local-network
-    restart: always
-    depends_on:
-      - postgres
-  # - API
-  # App
+  ## API
+  # api: 
+  #   image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+  #   container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+  #   build:
+  #     context: ./packages/api
+  #     dockerfile: Dockerfile.dev
+  #   environment:
+  #     - PORT=${API_PORT}
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=${POSTGRES_PORT}
+  #     - POSTGRES_DB=${POSTGRES_DB}
+  #     - POSTGRES_USER=${POSTGRES_USER}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #   ports:
+  #     - ${API_PORT}:${API_PORT}
+  #   volumes:
+  #     - ./packages/api/src:/app/src
+  #   networks:
+  #     - local-network
+  #   restart: always
+  #   depends_on:
+  #     - postgres
+  ## - API
+  ## App
   web: 
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
@@ -39,36 +39,36 @@ services:
       - ${APP_PORT}:${APP_PORT}
     volumes:
       - ./packages/web/src:/app/src
-    networks:
-      - local-network
-    restart: always
-    depends_on:
-      - api
-  # - App
-  # Postgres
-  postgres:
-    image: postgres:10-alpine
-    container_name: db-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    environment: 
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - PORT=${POSTGRES_PORT}
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
-    volumes:
-      - postgres:/var/lib/postgresql/data
-    networks:
-      - local-network
-  # - Postgres
-# - services
-# Networks
-networks:
- local-network:
-  driver: bridge
-# - Networks
-# Volumes
-volumes:
-  postgres:
-    name: postgres-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-# - Volumes
+    # networks:
+    #   - local-network
+    # restart: always
+    # depends_on:
+    #   - api
+#   # - App
+#   # Postgres
+#   postgres:
+#     image: postgres:10-alpine
+#     container_name: db-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+#     environment: 
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - PORT=${POSTGRES_PORT}
+#     ports:
+#       - ${POSTGRES_PORT}:${POSTGRES_PORT}
+#     volumes:
+#       - postgres:/var/lib/postgresql/data
+#     networks:
+#       - local-network
+#   # - Postgres
+# # - services
+# # Networks
+# networks:
+#  local-network:
+#   driver: bridge
+# # - Networks
+# # Volumes
+# volumes:
+#   postgres:
+#     name: postgres-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+# # - Volumes
