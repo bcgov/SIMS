@@ -2,8 +2,8 @@ import { AppConfigService } from "@/services/AppConfigService";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
-import User from "../views/User.vue";
-import UserAsFunc from "../views/UserAsFunc.vue";
+import Student from "../views/Student.vue";
+
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,15 +17,11 @@ const routes: Array<RouteRecordRaw> = [
     component: Login
   },
   {
-    path: "/User",
-    name: "User",
-    component: User
+    path: "/student",
+    name: "Student",
+    component: Student
   },
-  {
-    path: "/UserAsFunc",
-    name: "UserAsFunc",
-    component: UserAsFunc
-  }
+  
 ];
 
 const router = createRouter({

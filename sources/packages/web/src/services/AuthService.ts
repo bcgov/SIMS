@@ -24,6 +24,7 @@ export default async function(
     });
     if (keycloak.authenticated) {
       store.dispatch("auth/login", keycloak);
+      store.dispatch("student/setStudentProfileData",keycloak);
     } else {
       store.dispatch("auth/logout");
     }

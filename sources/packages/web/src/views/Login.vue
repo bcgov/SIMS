@@ -32,8 +32,7 @@ import { AppConfigService } from "../services/AppConfigService";
 export default class Login extends Vue {
   login() {
     AppConfigService.shared.authService?.login({
-      idpHint: "bcsc",
-      redirectUri: `${location.origin}/`
+      idpHint: "bcsc"      
     });
   }
 }

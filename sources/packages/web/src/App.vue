@@ -25,7 +25,7 @@ export default class App extends Vue {
       });
     } else {
       // TODO: Call API and check user exists or not
-      router.push("UserAsFunc");
+      router.push("Student");
     }
   }
 }
