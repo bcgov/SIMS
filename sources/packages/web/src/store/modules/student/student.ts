@@ -1,4 +1,3 @@
-
 export class StudentState {
 
      profile!: StudentProfile;
@@ -27,7 +26,7 @@ export const student = {
    
     mutations: {
         SET_STUDENT_PROFILE_DATA(state:StudentState, parsedToken:any){
-            //console.log(`mutation p${parsedToken.age}`)                        
+                                 
             state.profile.name = parsedToken.name;
             state.profile.age = parsedToken.age;
             state.profile.birthdate = parsedToken.birthdate;
@@ -45,7 +44,7 @@ export const student = {
 
     actions:{
         setStudentProfileData({commit}: { commit: Function }, token:any){
-            //console.dir(token.tokenParsed)
+            console.dir(token.tokenParsed)
             commit('SET_STUDENT_PROFILE_DATA', token.tokenParsed) 
         }
     }
