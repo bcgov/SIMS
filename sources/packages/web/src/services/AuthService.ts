@@ -32,7 +32,6 @@ export default async function(
     console.log(`KC - init excp : ${excp}`);
   }
   keycloak.onTokenExpired = () => {
-    console.log("onTokenExpired");
     store.dispatch("auth/logout");
   };
   return keycloak;
