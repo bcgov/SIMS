@@ -48,8 +48,7 @@ import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
-    const studentProfile = computed(() => store.state.student.profile);
-    // console.log(`Printing studentProfile  ${studentProfile.value}`);    
+    const studentProfile = computed(() => store.state.student.profile);    
     return { studentProfile };
   }
 };
