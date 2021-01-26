@@ -4,39 +4,47 @@
       Student Information
     </template>
     <template #content>
-    <!--The information from Services Card includes First Name, Last Name, Middle Name, Date of Birth, 
+      <!--The information from Services Card includes First Name, Last Name, Middle Name, Date of Birth, 
      verified email, and Gender as read-only-->
-      
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col">
-          <label for="firstName">First Name</label>
-          <InputText id="firstName" v-model="studentProfile.displayName" readonly />
-      </div>
-      <div class="p-field p-col">
+
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col">
+          <label for="firstName">Given Names</label>
+          <InputText
+            id="firstName"
+            v-model="studentProfile.givenNames"
+            readonly
+          />
+        </div>
+        <div class="p-field p-col">
           <label for="lastName">Last Name</label>
-          <InputText id="lastName" v-model="studentProfile.familyName" readonly />
+          <InputText id="lastName" v-model="studentProfile.lastName" readonly />
+        </div>
       </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col">
-          <label for="middleName">Middle Name</label>
-          <InputText id="middleName" v-model="studentProfile.middleName" readonly />
-      </div>
-      <div class="p-field p-col">
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col">
           <label for="dateOfBirth">Date of Birth</label>
-          <InputText id="dateOfBirth" v-model="studentProfile.dateOfBirth" readonly />
-      </div>
-    </div> 
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col">
+          <InputText
+            id="dateOfBirth"
+            v-model="studentProfile.birthdate"
+            readonly
+          />
+        </div>
+        <div class="p-field p-col">
           <label for="verifiedEmail">Verified Email</label>
-          <InputText id="verifiedEmail" v-model="studentProfile.emailVerified" readonly />
+          <InputText
+            id="verifiedEmail"
+            v-model="studentProfile.email"
+            readonly
+          />
+        </div>
       </div>
-      <div class="p-field p-col">
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-6">
           <label for="gender">Gender</label>
           <InputText id="gender" v-model="studentProfile.gender" readonly />
+        </div>
       </div>
-    </div>  
     </template>
   </Card>
 </template>
@@ -48,7 +56,7 @@ import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
-    const studentProfile = computed(() => store.state.student.profile);    
+    const studentProfile = computed(() => store.state.student.profile);
     return { studentProfile };
   }
 };

@@ -13,7 +13,7 @@ import { AppConfigService } from "./services/AppConfigService";
 @Options({
   components: {
     NavBar
-  },
+  }
 })
 export default class App extends Vue {
   async created() {
