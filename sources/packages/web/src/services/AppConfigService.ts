@@ -1,5 +1,6 @@
 import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
+import { ConfigApi } from "./http/ConfigApi"
 
 export interface AppConfig {
   authConfig: {
@@ -65,17 +66,13 @@ export class AppConfigService {
 
   async fetchConfig(): Promise<AppConfig> {
     // Go to api and fetch config
-    // Store in local storage
-    // TODO: Remove placeholder
-    const config: AppConfig = {
-      authConfig: {
-        url: "https://dev.oidc.gov.bc.ca/auth/",
-        realm: "jxoe2o46",
-        clientId: "student"
-      },
+    const configApi = new ConfigApi();
+    const config = await configApi.getConfig();
+    const appConfig: AppConfig = {
+      authConfig: config.auth,
       updateTime: new Date()
     };
-    return config;
+    return appConfig;
   }
 
   isConfigReady(): boolean {

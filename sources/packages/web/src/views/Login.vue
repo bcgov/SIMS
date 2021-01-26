@@ -7,15 +7,22 @@
       <div>
         <h1>Welcome to Student Aid Portal</h1>
         <h4>
-          We are using BCSC for authentication. Please click on login button
-          below to start your sign up/sign in.
+          We are using BCSC for authentication. Please click on Login/Register buttons
+          below to start your sign in/sign up.
         </h4>
       </div>
     </template>
     <template #footer>
       <Button
-        label="Login using BCSC"
+        label="Login"
+        icon="pi pi-check"
+        class="p-mr-2"
+        @click="login"
+      ></Button>
+      <Button
+        label="Register"
         icon="pi pi-user"
+        class="p-button-info"
         @click="login"
       ></Button>
     </template>
