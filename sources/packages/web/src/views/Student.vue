@@ -13,8 +13,8 @@
           <InputText id="firstName" v-model="studentProfile.displayName" readonly />
       </div>
       <div class="p-field p-col">
-          <label for="familyName">Family Name</label>
-          <InputText id="familyName" v-model="studentProfile.familyName" readonly />
+          <label for="lastName">Last Name</label>
+          <InputText id="lastName" v-model="studentProfile.familyName" readonly />
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
