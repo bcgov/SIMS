@@ -19,7 +19,7 @@ export class StudentProfile {
 
 const initialState: StudentState = {
     profile: new StudentProfile()
-  }
+}
 
 export const student = {
     namespaced: true,
