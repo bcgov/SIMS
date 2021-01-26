@@ -18,16 +18,14 @@ import { AppConfigService } from "./services/AppConfigService";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
-  .use(store)
-  .use(router)
-  .use(PrimeVue)
-  .component("Menubar", Menubar)
-  .component("Card", Card)
-  .component("Button", Button)
-  .component("DataTable", DataTable)
-  .component("Column", Column)
-  .component("InputText", InputText)
-  .mount("#app");
+    .use(store)
+    .use(router)
+    .use(PrimeVue)
+    .component("Menubar", Menubar)
+    .component("Card", Card)
+    .component("Button", Button)
+    .component("DataTable", DataTable)
+    .component("Column", Column)
+    .component("InputText", InputText)
+    .mount("#app");
 });
-
-
