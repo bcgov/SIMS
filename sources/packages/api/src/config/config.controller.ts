@@ -6,10 +6,10 @@ export class ConfigController {
   @Get()
   getConfig(): GetConfig {
     return {
-      keyCloak: {
+      auth: {
         url: process.env.KEYCLOAK_URL,
         realm: process.env.KEYCLOAK_REALM,
-        client: process.env.KEYCLOAK_CLIENT
+        clientId: process.env.KEYCLOAK_CLIENT
       },
     };
   }

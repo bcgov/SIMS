@@ -33,6 +33,7 @@ export default async function(
   }
   keycloak.onTokenExpired = () => {
     console.log("onTokenExpired");
+    store.dispatch("auth/logout");
   };
   return keycloak;
 }

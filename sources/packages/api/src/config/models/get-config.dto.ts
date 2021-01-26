@@ -1,9 +1,9 @@
 export interface GetConfig {
-  keyCloak: KeyCloakConfig
+  auth: AuthConfig
 }
 
-export interface KeyCloakConfig {
+export interface AuthConfig {
   url: string,
   realm: string,
-  client: string
+  clientId: string
 }
