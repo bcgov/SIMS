@@ -13,7 +13,7 @@ export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
 # Key Cloak
-export KEYCLOAK_URL := $(or $(KEYCLOAK_URL), https://dev.oidc.gov.bc.ca/auth/)
+export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
 export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), student)
 
@@ -38,7 +38,7 @@ print-status:
 	@echo " | POSTGRES_USER: $(POSTGRES_USER) "
 	@echo " | POSTGRES_PASSWORD: $(POSTGRES_PASSWORD) "
 	@echo " | Key Cloak Configs"
-	@echo " | KEYCLOAK_URL: $(KEYCLOAK_URL) "
+	@echo " | KEYCLOAK_AUTH_URL: $(KEYCLOAK_AUTH_URL) "
 	@echo " | KEYCLOAK_REALM: $(KEYCLOAK_REALM) "
 	@echo " | KEYCLOAK_CLIENT: $(KEYCLOAK_CLIENT) "
 	@echo " +---------------------------------------------------------+ "
