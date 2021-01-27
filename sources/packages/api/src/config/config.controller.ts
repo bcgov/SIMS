@@ -7,7 +7,7 @@ export class ConfigController {
   getConfig(): GetConfig {
     return {
       auth: {
-        url: process.env.KEYCLOAK_URL,
+        url: process.env.KEYCLOAK_AUTH_URL,
         realm: process.env.KEYCLOAK_REALM,
         clientId: process.env.KEYCLOAK_CLIENT
       },

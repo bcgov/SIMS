@@ -33,7 +33,7 @@ objects:
                 - name: KEYCLOAK_CLIENT
                   value: ${KEYCLOAK_CLIENT}
                 - name: KEYCLOAK_AUTH_URL
-                  value: ${KEYCLOAK_URL}
+                  value: ${KEYCLOAK_AUTH_URL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: PORT
@@ -153,7 +153,7 @@ parameters:
     value: simsrealm
   - name: KEYCLOAK_CLIENT
     value: sims-api
-  - name: KEYCLOAK_URL
+  - name: KEYCLOAK_AUTH_URL
     required: true
   - name: DATABASE_NAME_KEY
     value: database-name
