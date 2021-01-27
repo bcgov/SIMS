@@ -150,9 +150,9 @@ parameters:
     from: "[a-zA-Z0-9]{36}"
     generate: expression
   - name: KEYCLOAK_REALM
-    value: simsrealm
+    required: true
   - name: KEYCLOAK_CLIENT
-    value: sims-api
+    required: true
   - name: KEYCLOAK_AUTH_URL
     required: true
   - name: DATABASE_NAME_KEY
