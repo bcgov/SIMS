@@ -7,16 +7,24 @@ export class User extends BaseModel {
   id: number;
 
   @Column({
-    name: 'user_name'
+    name: 'user_name',
+    nullable: false,
   })
   userName: string;
 
   @Column({
-    name: 'email'
+    name: 'email',
+    nullable: false
   })
   email: string;
 
-  @Column()
-  guid: string
+  @Column({
+    name: 'first_name'
+  })
+  firstName: string;
 
+  @Column({
+    name: 'last_name'
+  })
+  lastName: string;
 }
