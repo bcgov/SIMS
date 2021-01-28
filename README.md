@@ -10,21 +10,18 @@ Student Information Management System. Post-Secondary Student Financial Aid Syst
 4. Make cmd (For local development only - windows users)
 
 # OpenShift
-1. From a clean openshift enrionment run the below
-
-a. oc login <Token>
-b. make init-patroni NAMESPACE=namespace-env
-c. make deploy-patroni NAMESPACE=namespace-env
-d. make create-db NAMESPACE=namespace-env
+From a clean openshift enrionment run the below
+1. "oc login Token"
+2. "make init-patroni NAMESPACE=namespace-env"
+3. "make deploy-patroni NAMESPACE=namespace-env"
+4. "make create-db NAMESPACE=namespace-env""
   
-2. at this point the pipeline will build and deploy the remainder
+At this point the pipeline will build and deploy the remainder
 
   # Local Development
 1. Clone Repo to local
-2. To build the images Run:
-        "Make local"
-3. To reset to a clean envrionment Run:
-        "Make local-clean
+2. To build the images Run: "Make local"
+3. To reset to a clean envrionment Run: "Make local-clean"
         
 # Pipeline
 We currently use 2 workflows
