@@ -15,11 +15,13 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import { AppConfigService } from "./services/AppConfigService";
+import { VuelidatePlugin } from "@vuelidate/core";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
     .use(store)
     .use(router)
+    .use(VuelidatePlugin)
     .use(PrimeVue)
     .component("Menubar", Menubar)
     .component("Card", Card)
