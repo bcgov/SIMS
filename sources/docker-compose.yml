@@ -32,23 +32,23 @@ services:
       - postgres
   # - API
   # App
-  # web: 
-  #  image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-  #  container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-  #  build:
-  #    context: ./packages/web
-  #    dockerfile: Dockerfile.dev
-  #  environment:
-  #    - PORT=${APP_PORT}
-  #  ports:
-  #    - ${APP_PORT}:${APP_PORT}
-  #  volumes:
-  #    - ./packages/web/src:/app/src
-  #  networks:
-  #    - local-network
-  #  restart: always
-  #  depends_on:
-  #    - api
+  web: 
+    image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile.dev
+    environment:
+      - PORT=${APP_PORT}
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - ./packages/web/src:/app/src
+    networks:
+      - local-network
+    restart: always
+    depends_on:
+      - api
   # - App
   # Postgres
   postgres:

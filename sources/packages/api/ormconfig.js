@@ -1,5 +1,5 @@
 
-const entities = process.env.ENVIRONMENT === 'local' ? ['src/database/entities/*.model{.ts,.js}'] : ['/dist/database/entities/*.model{.ts,.js}'];
+const entities = ['/dist/database/entities/*.model{.ts,.js}'];
 
 module.exports = {
   type: 'postgres',
