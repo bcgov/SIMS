@@ -12,10 +12,10 @@ Student Information Management System. Post-Secondary Student Financial Aid Syst
 # OpenShift
 1. From a clean openshift enrionment run the below
 
-oc login <Token>
-make init-patroni NAMESPACE=<namespace>-<env>
-make deploy-patroni NAMESPACE=<namespace>-<env>
-make create-db NAMESPACE=<namespace>-<env>
+a. oc login <Token>
+b. make init-patroni NAMESPACE=namespace-env
+c. make deploy-patroni NAMESPACE=namespace-env
+d. make create-db NAMESPACE=namespace-env
   
 2. at this point the pipeline will build and deploy the remainder
 
