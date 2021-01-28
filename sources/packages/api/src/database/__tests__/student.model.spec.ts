@@ -2,7 +2,8 @@ import { closeDB, setupDB } from "../../testHelpers";
 import { Connection, getConnection, Repository } from "typeorm";
 import * as faker from "faker";
 import { Student, User } from '../entities';
-import { RecordDataModelController } from '../data.model.controller';
+import { DataModelService } from '../data.model.service';
+import { StudentService } from "../../services/student.service";
 
 
 describe('Test student model', () => {
@@ -17,7 +18,7 @@ describe('Test student model', () => {
 
   it('should save student model object with user relationship and address jsonb', async () => {
     // Create
-    const controller = new RecordDataModelController<Student>(Student, connection);
+    const controller = new StudentService(DataModelService.getRepo(connection, Student));
     const sub = new Student();
     sub.sin = '9999999999';
     sub.contactInfo = {
@@ -38,10 +39,10 @@ describe('Test student model', () => {
     sub.user = user;
 
     // Save
-    await controller.repo.save(sub);
+    await controller.save(sub);
 
     // Fetch and test
-    const results = await controller.repo.findByIds([sub.id]);
+    const results = await controller.findById(sub.id);
     expect(results.length).toEqual(1);
     const result = results[0];
     expect(result.id).toEqual(sub.id);
@@ -50,5 +51,8 @@ describe('Test student model', () => {
     expect(result.contactInfo).toBeDefined();
     expect(result.contactInfo.addresses.length).toEqual(1);
     expect(result.contactInfo.addresses[0].country).toEqual('can');
+
+    // Remove
+    controller.remove(sub);
   });
 });
