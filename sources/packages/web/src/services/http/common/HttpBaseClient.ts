@@ -1,9 +1,8 @@
-import HttpClient from './HttpClient';
+import HttpClient from "./HttpClient";
 
-export default abstract class HttpBaseClient
-{
+export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
-  handleRequestError(e:any){
+  handleRequestError(e: any) {
     console.log(e);
   }
 }

@@ -7,8 +7,8 @@
       <div>
         <h1>Welcome to Student Aid Portal</h1>
         <h4>
-          We are using BCSC for authentication. Please click on Login/Register buttons
-          below to start your sign in/sign up.
+          We are using BCSC for authentication. Please click on Login/Register
+          buttons below to start your sign in/sign up.
         </h4>
       </div>
     </template>
