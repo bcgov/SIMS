@@ -1,2 +1,2 @@
 -- DROP Table
-DROP TABLE IF EXISTS "student";
+DROP TABLE IF EXISTS "students";
