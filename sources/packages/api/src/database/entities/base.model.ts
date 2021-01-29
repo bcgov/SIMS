@@ -9,13 +9,11 @@ export abstract class BaseModel {
    * Time Columns
   */
   @CreateDateColumn({
-    name: ColumnNames.CreateTimestamp,
-    nullable: true,
+    name: ColumnNames.CreateTimestamp
   })
   createdAt: Date;
   @UpdateDateColumn({
-    name: ColumnNames.UpdateTimestamp,
-    nullable: true
+    name: ColumnNames.UpdateTimestamp
   })
   updatedAt: Date;
 }

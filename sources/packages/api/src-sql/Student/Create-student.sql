@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS students(
   sin VARCHAR(10) NOT NULL,
 
   -- Reference Columns
-  user_id INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
   
   -- Audit columns
   created_at timestamp without time zone NOT NULL DEFAULT now(),
