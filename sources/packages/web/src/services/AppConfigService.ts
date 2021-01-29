@@ -1,6 +1,6 @@
 import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
-import { ConfigApi } from "./http/ConfigApi"
+import { ConfigApi } from "./http/ConfigApi";
 
 export interface AppConfig {
   authConfig: {
