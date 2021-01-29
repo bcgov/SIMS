@@ -1,4 +1,3 @@
-// import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../database/data.model.service";
 import { Student } from "../database/entities";
 
