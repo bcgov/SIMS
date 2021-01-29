@@ -77,3 +77,8 @@ postgres:
 	@echo "+\n++ Make: Run local db.\n+"
 	@docker-compose -f docker-compose.yml up postgres
 
+# Local App
+api: ## <Helper> :: Executes into the workspace container.
+	@echo "Shelling into local workspace ..."
+	@docker-compose exec api bash
+
