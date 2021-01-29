@@ -1,6 +1,6 @@
 import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
-import { ConfigApi } from "./http/ConfigApi"
+import ApiClient from "../services/http/ApiClient";
 
 export interface AppConfig {
   authConfig: {
@@ -66,8 +66,7 @@ export class AppConfigService {
 
   async fetchConfig(): Promise<AppConfig> {
     // Go to api and fetch config
-    const configApi = new ConfigApi();
-    const config = await configApi.getConfig();
+    const config = await ApiClient.Configs.getConfig();
     const appConfig: AppConfig = {
       authConfig: config.auth,
       updateTime: new Date()

@@ -147,6 +147,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import { useForm, Field } from "vee-validate";
+import { StudentService } from "../services/StudentService";
 import ValidatedInput from "../components/ValidatedInput.vue";
 
 interface ProfileState {
@@ -172,9 +173,10 @@ export default {
 
     const { handleSubmit, isSubmitting } = useForm<ProfileState>();
 
-    const onSubmit = handleSubmit(val => {
-      // TODO: Replace below alert with the API call.
-      alert(JSON.stringify(val, null, 2));
+    const onSubmit = handleSubmit(async formValues => {
+      alert(JSON.stringify(formValues, null, 2));
+      // TODO: Remove to enable API Call.
+      // await StudentService.shared.createStudent({ ...formValues });
     });
 
     return {
