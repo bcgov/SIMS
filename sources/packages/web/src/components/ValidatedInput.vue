@@ -1,35 +1,37 @@
 <template>
   <div>
-    <div :class="{ 'validation-error': property.$invalid }">
+    <div :class="{ 'validation-error': !!isValid }">
       <slot></slot>
     </div>
-    <span v-if="property.$invalid">
-      <ul class="validation-error-list">
-        <li v-for="e in property.$errors" :key="e.$message">
-          {{ e.$message }}
-        </li>
-      </ul>
-    </span>
+    <ErrorMessage :name="propertyName" class="validation-error-message" />
   </div>
 </template>
 
 <script lang="ts">
+import { useFieldError, ErrorMessage } from "vee-validate";
+
 export default {
   props: {
-    property: {
-      type: Object,
+    propertyName: {
+      type: String,
       required: true
     }
+  },
+  components: {
+    ErrorMessage
+  },
+  setup(props: any) {
+    const isValid = useFieldError(props.propertyName);
+    return {
+      isValid
+    };
   }
 };
 </script>
 
 <style lang="scss">
-.validation-error-list {
-  list-style-type: none;
+.validation-error-message {
   color: red;
-  padding-inline-start: 0px;
-  margin-top: 5px !important;
 }
 
 .validation-error input {
