@@ -11,11 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Indices
 -- # id index
-CREATE INDEX IF NOT EXISTS idx_user_id_20210115_5_00 ON users (id);
+CREATE INDEX IF NOT EXISTS idx_users_id_20210115_5_00 ON users (id);
 -- # user name
-CREATE INDEX IF NOT EXISTS idx_user_name_20210115_5_01 ON users (user_name);
+CREATE INDEX IF NOT EXISTS idx_users_name_20210115_5_01 ON users (user_name);
 -- # first name
-CREATE INDEX IF NOT EXISTS idx_user_display_name_20210127_14_02 ON users (first_name,last_name);
+CREATE INDEX IF NOT EXISTS idx_users_display_name_20210127_14_02 ON users (first_name,last_name);
 
 -- ## Comments
 COMMENT ON TABLE users IS 'User of the application is a person with valid authrorization via BCSC (student) / IDIR (SABC employee) / BCeID (educational institution)';
