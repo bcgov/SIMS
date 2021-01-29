@@ -19,6 +19,8 @@ services:
       - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT=${KEYCLOAK_CLIENT}
+      - DB_SCHEMA=${DB_SCHEMA}
+      - ENVIRONMENT=local
     ports:
       - ${API_PORT}:${API_PORT}
     volumes:
