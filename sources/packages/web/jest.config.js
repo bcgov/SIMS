@@ -4,7 +4,7 @@ module.exports = {
     "^.+\\.vue$": "vue-jest"
   },
   globals: {
-    'ts-jest': {
+    "ts-jest": {
       diagnostics: {
         warnOnly: true
       }
