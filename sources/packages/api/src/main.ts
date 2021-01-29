@@ -3,6 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  console.dir(process.env);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix('api')
   const port = process.env.PORT || 3000;
