@@ -4,7 +4,7 @@
       Student Information
     </template>
     <template #content>
-      <form @submit.prevent="onSubmit" novalidate>
+      <form @submit="onSubmit" novalidate>
         <!--The information from Services Card includes First Name, Last Name, Middle Name, Date of Birth, 
         verified email, and Gender as read-only-->
         <div class="p-fluid p-formgrid p-grid">
@@ -50,8 +50,15 @@
           </div>
           <div class="p-field p-col-6">
             <label for="sinNumber">Social Insurance number</label>
-            <ValidatedInput :property="model.sinNumber">
-              <InputText id="sinNumber" v-model="model.sinNumber.$model" />
+            <ValidatedInput property-name="sinNumber">
+              <Field
+                name="sinNumber"
+                label="Social Insurance number"
+                rules="required|sin-number"
+                type="number"
+                maxlength="9"
+                as="InputText"
+              />
             </ValidatedInput>
           </div>
         </div>
@@ -60,63 +67,87 @@
           <div class="p-grid p-col-12">
             <div class="p-field p-col-6">
               <label for="phone">Phone Number</label>
-              <ValidatedInput :property="model.phone">
-                <InputText id="phone" v-model="model.phone.$model" />
+              <ValidatedInput property-name="phone">
+                <Field
+                  name="phone"
+                  label="Phone Number"
+                  rules="required"
+                  as="InputText"
+                />
               </ValidatedInput>
             </div>
           </div>
           <div class="p-field p-col-6">
             <label for="addressLine1">Address Line 1</label>
-            <ValidatedInput :property="model.addressLine1">
-              <InputText
-                id="addressLine1"
-                v-model="model.addressLine1.$model"
+            <ValidatedInput property-name="addressLine1">
+              <Field
+                name="addressLine1"
+                label="Address Line 1"
+                rules="required"
+                as="InputText"
               />
             </ValidatedInput>
           </div>
           <div class="p-field p-col-6">
             <label for="addressLine2">Address Line 2</label>
-            <InputText id="addressLine2" v-model="model.addressLine2.$model" />
+            <Field name="addressLine2" as="InputText" />
           </div>
           <div class="p-field p-col-6">
             <label for="city">City</label>
-            <ValidatedInput :property="model.city">
-              <InputText id="city" v-model="model.city.$model" />
+            <ValidatedInput property-name="city">
+              <Field name="city" label="City" rules="required" as="InputText" />
             </ValidatedInput>
           </div>
           <div class="p-field p-col-6">
             <label for="provinceState">Province/State</label>
-            <ValidatedInput :property="model.provinceState">
-              <InputText
-                id="provinceState"
-                v-model="model.provinceState.$model"
+            <ValidatedInput property-name="provinceState">
+              <Field
+                name="provinceState"
+                label="Province/State"
+                rules="required"
+                as="InputText"
               />
             </ValidatedInput>
           </div>
           <div class="p-field p-col-6">
             <label for="country">Country</label>
-            <ValidatedInput :property="model.country">
-              <InputText id="country" v-model="model.country.$model" />
+            <ValidatedInput property-name="country">
+              <Field
+                name="country"
+                label="Country"
+                rules="required"
+                as="InputText"
+              />
             </ValidatedInput>
           </div>
           <div class="p-field p-col-6">
             <label for="postalCode">Postal/Zip Code</label>
-            <ValidatedInput :property="model.postalCode">
-              <InputText id="postalCode" v-model="model.postalCode.$model" />
+            <ValidatedInput property-name="postalCode">
+              <Field
+                name="postalCode"
+                label="Postal/Zip Code"
+                rules="required"
+                as="InputText"
+              />
             </ValidatedInput>
           </div>
         </div>
-        <Button type="submit" label="Save Profile" icon="pi pi-save"></Button>
+        <Button
+          type="submit"
+          label="Save Profile"
+          icon="pi pi-save"
+          :disabled="isSubmitting"
+        ></Button>
       </form>
     </template>
   </Card>
 </template>
 
 <script lang="ts">
-import { computed, reactive } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
-import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { useForm, Field } from "vee-validate";
+import { StudentService } from "../services/StudentService";
 import ValidatedInput from "../components/ValidatedInput.vue";
 
 interface ProfileState {
@@ -132,37 +163,27 @@ interface ProfileState {
 
 export default {
   components: {
+    Field,
     ValidatedInput
   },
   setup() {
     // Readonly student data from state.
     const store = useStore();
     const readonlyProfile = computed(() => store.state.student.profile);
-    // State data that could be edited by the user.
-    const profileState = reactive({} as ProfileState);
-    const validationRules = {
-      phone: { required },
-      sinNumber: { required },
-      addressLine1: { required },
-      addressLine2: {},
-      city: { required },
-      provinceState: { required },
-      country: { required },
-      postalCode: { required }
+
+    const { handleSubmit, isSubmitting } = useForm<ProfileState>();
+
+    const onSubmit = handleSubmit(async formValues => {
+      alert(JSON.stringify(formValues, null, 2));
+      // TODO: Remove to enable API Call.
+      // await StudentService.shared.createStudent({ ...formValues });
+    });
+
+    return {
+      readonlyProfile,
+      onSubmit,
+      isSubmitting
     };
-
-    const model = useVuelidate(validationRules, profileState);
-
-    const onSubmit = () => {
-      model.value.$touch();
-      if (model.value.$invalid) {
-        return;
-      }
-      // TODO: Replace below alert with the API/Service call.
-      alert(JSON.stringify(profileState, null, 2));
-    };
-
-    return { readonlyProfile, model, onSubmit };
   }
 };
 </script>
