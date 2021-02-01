@@ -23,7 +23,6 @@ export default async function(
       checkLoginIframe: false
     });
     if (keycloak.authenticated) {
-      console.log(`${keycloak.token}`);
       store.dispatch("student/setStudentProfileData", keycloak);
     }
   } catch (excp) {
