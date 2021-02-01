@@ -7,6 +7,12 @@
       <form @submit="onSubmit" novalidate>
         <!--The information from Services Card includes First Name, Last Name, Middle Name, Date of Birth, 
         verified email, and Gender as read-only-->
+        <Message severity="info">
+          Please notice that the read-only information below is retrieved from
+          your BC Service Card and it is not possible to change it here. If any
+          read-only information needs to be changed please visit
+          <a href="http://id.gov.bc.ca" target="_blank">id.gov.bc.ca</a>.
+        </Message>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col">
             <label for="firstName">Given Names</label>

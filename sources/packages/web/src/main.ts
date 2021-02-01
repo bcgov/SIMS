@@ -14,6 +14,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Card from "primevue/card";
 import Button from "primevue/button";
+import Message from "primevue/message";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 
@@ -31,5 +32,6 @@ AppConfigService.shared.init().then(() => {
     .component("DataTable", DataTable)
     .component("Column", Column)
     .component("InputText", InputText)
+    .component("Message", Message)
     .mount("#app");
 });
