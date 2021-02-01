@@ -10,9 +10,7 @@ export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
-export KC_AUTH_URL := $(or $(KC_AUTH_URL), default)
 export HOST_PREFIX := $(or $(HOST_PREFIX), dev-)
-
 
 define BUILD_TAG
 "$(BUILD_REF)-${BUILD_ID}"
