@@ -3,14 +3,23 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { ConfigController } from './config/config.controller';
-import { AuthModule } from './auth/auth.module';
+import { AuthService, StudentService, UserService } from './services';
+import { UserController, StudentController } from './route-controllers';
 
 @Module({
   imports: [
     DatabaseModule,
-    AuthModule
   ],
-  controllers: [AppController, ConfigController],
-  providers: [AppService],
+  controllers: [AppController,
+    ConfigController,
+    UserController,
+    StudentController
+  ],
+  providers: [
+    AppService,
+    AuthService,
+    UserService,
+    StudentService
+  ],
 })
 export class AppModule {}

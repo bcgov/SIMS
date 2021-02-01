@@ -12,7 +12,6 @@ export class AppController {
   }
 
   @Get('/user-info')
-  @AllowAnyRole()
   keycloak(@Req() req: any): object {
     console.dir(req.headers);
     return req.user;

@@ -2,8 +2,7 @@ import { closeDB, setupDB } from "../../testHelpers";
 import { Connection, getConnection, Repository } from "typeorm";
 import * as faker from "faker";
 import { Student, User } from '../entities';
-import { DataModelService } from '../data.model.service';
-import { StudentService } from "../../services/student.service";
+import { StudentService } from "../../services";
 
 
 describe('Test student model', () => {
@@ -18,7 +17,7 @@ describe('Test student model', () => {
 
   it('should save student model object with user relationship and address jsonb', async () => {
     // Create
-    const controller = new StudentService(DataModelService.getRepo(connection, Student));
+    const controller = new StudentService(connection);
     const sub = new Student();
     sub.sin = '9999999999';
     sub.contactInfo = {
