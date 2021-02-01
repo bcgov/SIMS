@@ -112,6 +112,9 @@ deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
+	test -n "$(KEYCLOAK_REALM)"
+	test -n "$(KEYCLOAK_CLIENT)"
+	test -n "$(KEYCLOAK_AUTH_URL)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_REALM=$(KEYCLOAK_REALM) -p KEYCLOAK_CLIENT=$(KEYCLOAK_CLIENT) -p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) -p BUILD_TAG=$(BUILD_TAG) | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
