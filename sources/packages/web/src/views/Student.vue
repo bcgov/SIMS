@@ -182,7 +182,7 @@ export default {
     const onSubmit = handleSubmit(async formValues => {
       alert(JSON.stringify(formValues, null, 2));
       // TODO: Remove to enable API Call.
-      // await StudentService.shared.createStudent({ ...formValues });
+      await StudentService.shared.createStudent({ ...formValues });
     });
 
     return {
