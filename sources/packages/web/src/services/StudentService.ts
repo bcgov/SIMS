@@ -22,8 +22,15 @@ export class StudentService {
     return this.instance || (this.instance = new this());
   }
 
-  async createStudent(student: CreateStudent): Promise<void> {
-    await ApiClient.Students.createStudent({ ...student });
+  async createStudent(student: CreateStudent): Promise<boolean> {
+    try {
+      await ApiClient.Students.createStudent({ ...student });
+      return true;
+    } catch (excp) {
+      console.error(`Unable to create student: ${excp}`);
+    }
+    return false;
+    
   }
 
   async updateStudent(student: Student): Promise<void> {
