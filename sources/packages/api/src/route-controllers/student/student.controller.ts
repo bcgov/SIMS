@@ -15,7 +15,7 @@ export class StudentController {
     ) {}
 
   @Post()
-  create(@Body() payload: CreateStudentDto, @Req() request: Request) {
+  async create(@Body() payload: CreateStudentDto, @Req() request: Request) {
     // TODOD: FIX with APP guard
     if (!request.headers.authorization) {
       throw new HttpException({
@@ -32,7 +32,7 @@ export class StudentController {
     }
 
     // Check user exists or not
-    const existing = this.userService.getUser(userInfo.userName);
+    const existing = await this.userService.getUser(userInfo.userName);
     if (existing) {
       throw new HttpException({
         status: HttpStatus.UNPROCESSABLE_ENTITY,
