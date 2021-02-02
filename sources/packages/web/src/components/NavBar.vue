@@ -7,16 +7,28 @@
       </div>
     </template>
     <template #end>
-      <Button label="Student Profile" icon="pi pi-fw pi-user" class="p-button-text" style="color: white" @click="$router.push('/student/edit')" />
+      <Button
+        v-if="isAuthenticated"
+        label="Student Profile"
+        icon="pi pi-fw pi-user"
+        class="p-button-text"
+        style="color: white"
+        @click="$router.push('/student/edit')"
+      />
     </template>
   </Menubar>
 </template>
 
 <script lang="ts">
+import { computed } from "vue";
+import { AppConfigService } from "../services/AppConfigService";
 export default {
   setup() {
-    const menuItems:any = [];
-    return { menuItems };
+    const menuItems: any = [];
+    const isAuthenticated = computed(
+      () => AppConfigService.shared.authService?.authenticated === true
+    );
+    return { menuItems, isAuthenticated };
   }
 };
 </script>
