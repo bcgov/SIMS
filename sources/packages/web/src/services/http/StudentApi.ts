@@ -35,6 +35,19 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
+  public async updateStudentContact(studentContact: StudentContact): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        "students/contact",
+        studentContact,
+        this.addAuthHeader()
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
   public async getContact(): Promise<StudentContact> {
     try {
       const studentContact = await this.apiClient.get(

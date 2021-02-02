@@ -74,7 +74,7 @@ export class StudentController {
     };
   }
 
-  @Patch()
+  @Patch("contact")
   async update(@Body() payload: UpdateStudentContactDto, @Req() request: Request): Promise<void> {
     // TODOD: FIX with APP guard
     if (!request.headers.authorization) {

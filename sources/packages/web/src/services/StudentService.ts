@@ -46,12 +46,10 @@ export class StudentService {
         return "Unable to create user";
       }
     }
-    
   }
 
-  async updateStudent(student: Student): Promise<void> {
-    // TODO: Sample for updating the studant.
-    console.log(student);
+  async updateStudent(contact: StudentContact): Promise<void> {
+      await ApiClient.Students.updateStudentContact({ ...contact });
   }
 
   public async getContact(): Promise<StudentContact> {

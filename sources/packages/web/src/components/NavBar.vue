@@ -7,31 +7,16 @@
       </div>
     </template>
     <template #end>
-      <Button label="Logout" icon="pi pi-power-off" @click="logout" />
+      <Button label="Student Profile" icon="pi pi-fw pi-user" class="p-button-text" style="color: white" @click="$router.push('/student/edit')" />
     </template>
   </Menubar>
 </template>
 
 <script lang="ts">
-import { AppConfigService } from "../services/AppConfigService";
-
 export default {
   setup() {
-    const menuItems = [
-      {
-        label: "My Profile",
-        icon: "pi pi-fw pi-user",
-        to: "/student/edit",
-        style: { color: "white" },
-        class: "menu-item"
-      }
-    ];
-
-    const logout = () => {
-      AppConfigService.shared.authService?.logout({ redirectUri: location.origin });
-    };
-
-    return { menuItems, logout };
+    const menuItems:any = [];
+    return { menuItems };
   }
 };
 </script>
