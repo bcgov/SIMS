@@ -201,7 +201,7 @@ export default {
           router.push({
             name: "Home"
           });
-        }, 3000);
+        }, 1000);
       } else {
         alert(`${result}`);
       }
