@@ -54,7 +54,7 @@
             <label for="gender">Gender</label>
             <InputText id="gender" v-model="readonlyProfile.gender" readonly />
           </div>
-          <div class="p-field p-col-6">
+          <div class="p-field p-col-6" v-if="!edit">
             <label for="sinNumber">Social Insurance number</label>
             <ValidatedInput property-name="sinNumber">
               <Field
@@ -150,7 +150,7 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useForm, Field } from "vee-validate";
 import { StudentService } from "../services/StudentService";
@@ -170,19 +170,34 @@ interface ProfileState {
 export default {
   components: {
     Field,
-    ValidatedInput
+    ValidatedInput,
   },
-  setup() {
+  props: {
+    edit: {
+      type: Boolean,
+      required: true
+    }
+  },
+  setup(props: any) {
     // Readonly student data from state.
     const store = useStore();
     const readonlyProfile = computed(() => store.state.student.profile);
 
-    const { handleSubmit, isSubmitting } = useForm<ProfileState>();
+    const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
     const onSubmit = handleSubmit(async formValues => {
-      alert(JSON.stringify(formValues, null, 2));
-      // TODO: Remove to enable API Call.
-      await StudentService.shared.createStudent({ ...formValues });
+      if (props.edit) {
+        alert("Save");
+      } else {
+        await StudentService.shared.createStudent({ ...formValues });
+      }
+    });
+
+    onMounted(async () => {
+      if (props.edit) {
+        const contact = await StudentService.shared.getContact();
+        setValues({ ...contact });
+      }
     });
 
     return {

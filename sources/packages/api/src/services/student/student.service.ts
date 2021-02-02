@@ -4,6 +4,7 @@ import { Student, User } from '../../database/entities';
 import { Connection } from 'typeorm';
 import { UserInfo } from '../../types';
 import { CreateStudentDto } from '../../route-controllers/student/models/student.dto';
+import { StudentContact } from 'src/types/studentContact';
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -32,5 +33,19 @@ export class StudentService extends RecordDataModelService<Student> {
     };
     student.user = user;
     return await this.save(student);
+  }
+
+  async getStudentByUserName(userName: string): Promise<Student> {
+    const student = await this.repo.createQueryBuilder("student")
+      .leftJoinAndSelect("student.user", "user")
+      .where("user.userName = :userNameParam", { userNameParam: userName })
+      .getOneOrFail();
+    return student;
+  }
+
+  async updateStudentContact(userName: string, contact: StudentContact): Promise<Student> {
+    const student = await this.getStudentByUserName(userName);
+    // TODO: Update the student contact.
+    return student;
   }
 }

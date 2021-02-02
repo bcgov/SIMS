@@ -1,23 +1,39 @@
 <template>
-  <Menubar :model="items" class="gov-header">
+  <Menubar :model="menuItems" class="gov-header">
     <template #start>
       <div class="p-menubar-start">
         <img alt="logo" src="../assets/images/bc_logo.svg" height="40" />
         <span class="title">Student Aid</span>
       </div>
     </template>
+    <template #end>
+      <Button label="Logout" icon="pi pi-power-off" @click="logout" />
+    </template>
   </Menubar>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { AppConfigService } from "../services/AppConfigService";
 
-@Options({
-  components: {}
-})
-export default class NavBar extends Vue {
-  items = [];
-}
+export default {
+  setup() {
+    const menuItems = [
+      {
+        label: "My Profile",
+        icon: "pi pi-fw pi-user",
+        to: "/student/edit",
+        style: { color: "white" },
+        class: "menu-item"
+      }
+    ];
+
+    const logout = () => {
+      AppConfigService.shared.authService?.logout({ redirectUri: location.origin });
+    };
+
+    return { menuItems, logout };
+  }
+};
 </script>
 
 <style lang="scss" scoped>
