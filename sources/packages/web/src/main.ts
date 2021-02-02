@@ -15,6 +15,7 @@ import Column from "primevue/column";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import Message from "primevue/message";
+import ToastService from "primevue/toastservice";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 
@@ -26,6 +27,7 @@ AppConfigService.shared.init().then(() => {
     .use(store)
     .use(router)
     .use(PrimeVue)
+    .use(ToastService)
     .component("Menubar", Menubar)
     .component("Card", Card)
     .component("Button", Button)

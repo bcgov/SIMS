@@ -24,7 +24,9 @@ jobs:
       BUILD_NAMESPACE: 0c27fb-tools
       BUILD_REF: ${{ github.event.inputs.BUILD_REF }}
       HOST_PREFIX: test-
-      KC_AUTH_URL: https://dev.oidc.gov.bc.ca/auth/
+      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_CLIENT: "student"
+      KEYCLOAK_AUTH_URL: "https://test.oidc.gov.bc.ca/auth/"
     steps:
       - name: Print env
         run: |
