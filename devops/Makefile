@@ -10,9 +10,7 @@ export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
-export KC_AUTH_URL := $(or $(KC_AUTH_URL), default)
 export HOST_PREFIX := $(or $(HOST_PREFIX), dev-)
-
 
 define BUILD_TAG
 "$(BUILD_REF)-${BUILD_ID}"
@@ -114,6 +112,9 @@ deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
+	test -n "$(KEYCLOAK_REALM)"
+	test -n "$(KEYCLOAK_CLIENT)"
+	test -n "$(KEYCLOAK_AUTH_URL)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_REALM=$(KEYCLOAK_REALM) -p KEYCLOAK_CLIENT=$(KEYCLOAK_CLIENT) -p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) -p BUILD_TAG=$(BUILD_TAG) | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))

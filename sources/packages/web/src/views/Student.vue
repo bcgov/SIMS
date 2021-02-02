@@ -1,8 +1,6 @@
 <template>
   <Card class="p-m-4">
-    <template #title>
-      Student Information
-    </template>
+    <template #title> Student Information </template>
     <template #content>
       <form @submit="onSubmit" novalidate>
         <!--The information from Services Card includes First Name, Last Name, Middle Name, Date of Birth, 
@@ -151,6 +149,7 @@
 
 <script lang="ts">
 import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useForm, Field } from "vee-validate";
 import { StudentService } from "../services/StudentService";
@@ -170,7 +169,7 @@ interface ProfileState {
 export default {
   components: {
     Field,
-    ValidatedInput,
+    ValidatedInput
   },
   props: {
     edit: {
@@ -181,22 +180,30 @@ export default {
   setup(props: any) {
     // Readonly student data from state.
     const store = useStore();
+
+    const router = useRouter();
     const readonlyProfile = computed(() => store.state.student.profile);
-
     const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
-
-    const onSubmit = handleSubmit(async formValues => {
-      if (props.edit) {
-        alert("Save");
-      } else {
-        await StudentService.shared.createStudent({ ...formValues });
-      }
-    });
-
     onMounted(async () => {
       if (props.edit) {
         const contact = await StudentService.shared.getContact();
         setValues({ ...contact });
+      }
+    });
+
+    const onSubmit = handleSubmit(async formValues => {
+      const result = await StudentService.shared.createStudent({
+        ...formValues
+      });
+      if (typeof result === "boolean" && result) {
+        alert("Account created");
+        setTimeout(() => {
+          router.push({
+            name: "Home"
+          });
+        }, 3000);
+      } else {
+        alert(`${result}`);
       }
     });
 
