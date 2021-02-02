@@ -185,7 +185,7 @@ export default {
         ...formValues,
       });
 
-      if (result) {
+      if (typeof result === 'boolean' && result) {
         
         alert("Account created");
         setTimeout(() => {
@@ -194,7 +194,7 @@ export default {
           });
         }, 3000);
       } else {
-        alert("Unable to create account");
+        alert(`${result}`);
       }
     });
 
