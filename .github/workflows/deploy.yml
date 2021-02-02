@@ -65,7 +65,6 @@ jobs:
       BUILD_NAMESPACE: 0c27fb-tools
       BUILD_REF: ${{ github.base_ref }}
       HOST_PREFIX: dev-
-      KC_AUTH_URL: https://dev.oidc.gov.bc.ca/auth/
       KEYCLOAK_REALM: "jxoe2o46"
       KEYCLOAK_CLIENT: "student"
       KEYCLOAK_AUTH_URL: "https://dev.oidc.gov.bc.ca/auth/"
