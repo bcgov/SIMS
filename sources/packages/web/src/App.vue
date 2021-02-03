@@ -27,11 +27,15 @@ export default class App extends Vue {
       });
     } else if(await UserService.shared.checkUser()){
       //User exists and so redirect to Home page (Student's Dashboard)
-       router.push("Home") 
+      router.push({
+        name: "Home"
+      });
     } else {
       // User doesnt exist in SABC Database and so redirect the user to Student Profile page
       // where they can provide information and create SABC account
-      router.push("Student-Profile");
+      router.push({
+        name: "Student-Profile"
+      });
     }
   }
 }
