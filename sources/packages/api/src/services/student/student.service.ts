@@ -4,11 +4,20 @@ import { Student, User } from '../../database/entities';
 import { Connection } from 'typeorm';
 import { UserInfo } from '../../types';
 import { CreateStudentDto } from '../../route-controllers/student/models/student.dto';
+import { StudentContact } from 'src/types/studentContact';
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(@Inject('Connection') connection: Connection) {
     super(connection.getRepository(Student));
+  }
+
+  async getStudentByUserName(userName: string): Promise<Student> {
+    const student = await this.repo.createQueryBuilder('student')
+      .leftJoinAndSelect('student.user', 'user')
+      .where('user.userName = :userNameParam', { userNameParam: userName })
+      .getOneOrFail();
+    return student;
   }
 
   async createStudent(userInfo: UserInfo, otherInfo: CreateStudentDto): Promise<Student> {
@@ -32,5 +41,26 @@ export class StudentService extends RecordDataModelService<Student> {
     };
     student.user = user;
     return await this.save(student);
+  }
+  
+  async updateStudentContactByUserName(userName: string, contact: StudentContact): Promise<Student> {
+    const student = await this.getStudentByUserName(userName);
+    if(!student) {
+      throw new Error(`Not able to find a student using the user name ${userName}`);
+    }
+
+    student.contactInfo = {
+      addresses: [{
+        addressLine1: contact.addressLine1,
+        addressLine2: contact.addressLine2,
+        city: contact.city,
+        province: contact.provinceState,
+        country: contact.country,
+        postalCode: contact.postalCode
+      }],
+      phone: contact.phone
+    };
+    
+    return this.save(student);
   }
 }

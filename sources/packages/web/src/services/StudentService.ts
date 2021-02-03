@@ -10,6 +10,16 @@ export interface Student {
   postalCode: string;
 }
 
+export interface StudentContact {
+  phone: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceState: string;
+  country: string;
+  postalCode: string;
+}
+
 export interface CreateStudent extends Student {
   sinNumber: string;
 }
@@ -36,11 +46,14 @@ export class StudentService {
         return "Unable to create user";
       }
     }
-    
   }
 
-  async updateStudent(student: Student): Promise<void> {
-    // TODO: Sample for updating the studant.
-    console.log(student);
+  async updateStudent(contact: StudentContact): Promise<void> {
+      await ApiClient.Students.updateStudentContact({ ...contact });
+  }
+
+  public async getContact(): Promise<StudentContact> {
+    const studentContact = await ApiClient.Students.getContact();
+    return studentContact;
   }
 }

@@ -52,7 +52,7 @@
             <label for="gender">Gender</label>
             <InputText id="gender" v-model="readonlyProfile.gender" readonly />
           </div>
-          <div class="p-field p-col-6">
+          <div class="p-field p-col-6" v-if="!edit">
             <label for="sinNumber">Social Insurance number</label>
             <ValidatedInput property-name="sinNumber">
               <Field
@@ -148,11 +148,12 @@
 </template>
 
 <script lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useForm, Field } from "vee-validate";
 import { StudentService } from "../services/StudentService";
+import { useToast } from "primevue/usetoast";
 import ValidatedInput from "../components/ValidatedInput.vue";
 
 interface ProfileState {
@@ -169,41 +170,74 @@ interface ProfileState {
 export default {
   components: {
     Field,
-    ValidatedInput,
+    ValidatedInput
   },
-  setup() {
-    // Read-only student data from state.
+  props: {
+    edit: {
+      type: Boolean,
+      required: true
+    }
+  },
+  setup(props: any) {
+    // Readonly student data from state.
     const store = useStore();
-    
     const router = useRouter();
+    const toast = useToast();
+
     const readonlyProfile = computed(() => store.state.student.profile);
+    const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
-    const { handleSubmit, isSubmitting } = useForm<ProfileState>();
+    onMounted(async () => {
+      if (props.edit) {
+        const contact = await StudentService.shared.getContact();
+        console.log(contact);
+        setValues({ ...contact });
+      }
+    });
 
-    const onSubmit = handleSubmit(async (formValues) => {
-      const result = await StudentService.shared.createStudent({
-        ...formValues,
-      });
-
-      if (typeof result === 'boolean' && result) {
-        
-        alert("Account created");
-        setTimeout(() => {
-          router.push({
-            name: "Home"
-          });
-        }, 1000);
+    const onSubmit = handleSubmit(async formValues => {
+      let redirectHome = true;
+      if (props.edit) {
+        await StudentService.shared.updateStudent({ ...formValues });
+        toast.add({
+          severity: "success",
+          summary: "Student Updated",
+          detail: "Student contact information updated!",
+          life: 3000
+        });
       } else {
-        alert(`${result}`);
+        const result = await StudentService.shared.createStudent({
+          ...formValues
+        });
+        if (result === true) {
+          toast.add({
+            severity: "success",
+            summary: "Student created",
+            detail: "Student was successfully created!",
+            life: 3000
+          });
+        } else {
+          redirectHome = false;
+          toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: `Error while creating student: ${result}`,
+            life: 3000
+          });
+        }
+      }
+
+      if(redirectHome){
+        router.push({ name: "Home" });
       }
     });
 
     return {
       readonlyProfile,
       onSubmit,
-      isSubmitting,
+      isSubmitting
     };
-  },
+  }
 };
 </script>
 
