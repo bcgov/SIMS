@@ -19,7 +19,7 @@ import { UserService } from "./services/UserService"
 export default class App extends Vue {
   async created() {
     const router = this.$router;
-    console.dir(router.currentRoute.value)
+    
     // TODO: Check API for auth
     if (!AppConfigService.shared.authService?.authenticated) {
       router.push({
