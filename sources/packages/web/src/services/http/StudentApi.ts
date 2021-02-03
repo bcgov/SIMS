@@ -35,7 +35,9 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async updateStudentContact(studentContact: StudentContact): Promise<void> {
+  public async updateStudentContact(
+    studentContact: StudentContact
+  ): Promise<void> {
     try {
       await this.apiClient.patch(
         "students/contact",

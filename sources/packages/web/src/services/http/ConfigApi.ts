@@ -25,7 +25,7 @@ export class ConfigApi extends HttpBaseClient {
   public async getUserInfo(): Promise<any> {
     try {
       console.dir(AppConfigService.shared.authService?.tokenParsed);
-      const response = await this.apiClient.get('/user-info', {
+      const response = await this.apiClient.get("/user-info", {
         headers: {
           Authorization: `Bearer ${AppConfigService.shared.authService?.token}`
         }

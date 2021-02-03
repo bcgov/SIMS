@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/student-profile/edit",
     name: "Student-Profile-Edit",
-    component: Student,
+    component: Student
   }
 ];
 

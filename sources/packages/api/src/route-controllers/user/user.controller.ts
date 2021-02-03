@@ -12,6 +12,7 @@ export class UserController {
   @Get('/check-user')
   checkUser(@Req() request: Request) {
     const userInfo = this.authService.parseAuthorizationHeader(request.headers.authorization);
+    
     return this.service.getUser(userInfo.userName);
   }
 }
