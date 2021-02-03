@@ -52,7 +52,7 @@
             <label for="gender">Gender</label>
             <InputText id="gender" v-model="readonlyProfile.gender" readonly />
           </div>
-          <div class="p-field p-col-6" v-if="!edit">
+          <div class="p-field p-col-6" v-if="!editMode">
             <label for="sinNumber">Social Insurance number</label>
             <ValidatedInput property-name="sinNumber">
               <Field
@@ -173,9 +173,10 @@ export default {
     ValidatedInput
   },
   props: {
-    edit: {
+    editMode: {
       type: Boolean,
-      required: true
+      required: true,
+      default: true
     }
   },
   setup(props: any) {
@@ -188,16 +189,15 @@ export default {
     const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
     onMounted(async () => {
-      if (props.edit) {
+      if (props.editMode) {
         const contact = await StudentService.shared.getContact();
-        console.log(contact);
         setValues({ ...contact });
       }
     });
 
     const onSubmit = handleSubmit(async formValues => {
       let redirectHome = true;
-      if (props.edit) {
+      if (props.editMode) {
         await StudentService.shared.updateStudent({ ...formValues });
         toast.add({
           severity: "success",
@@ -227,7 +227,7 @@ export default {
         }
       }
 
-      if(redirectHome){
+      if (redirectHome) {
         router.push({ name: "Home" });
       }
     });

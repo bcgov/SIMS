@@ -39,7 +39,7 @@ export class StudentService {
     } catch (excp) {
       console.dir(excp);
       console.error(`Unable to create student: ${JSON.stringify(excp)}`);
-      const message: string = excp.message || '';
+      const message: string = excp.message || "";
       if (message.includes("422")) {
         return "User already exists";
       } else {
@@ -49,7 +49,7 @@ export class StudentService {
   }
 
   async updateStudent(contact: StudentContact): Promise<void> {
-      await ApiClient.Students.updateStudentContact({ ...contact });
+    await ApiClient.Students.updateStudentContact({ ...contact });
   }
 
   public async getContact(): Promise<StudentContact> {

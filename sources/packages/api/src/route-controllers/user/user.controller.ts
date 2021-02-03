@@ -14,6 +14,7 @@ export class UserController {
     const userInfo = this.authService.parseAuthorizationHeader(
       request.headers.authorization,
     );
+
     return this.service.getUser(userInfo.userName);
   }
 }

@@ -8,8 +8,8 @@ export default abstract class HttpBaseClient {
   protected addAuthHeader(): AxiosRequestConfig {
     const token = AppConfigService.shared.authService?.token;
     if (token) {
-      const Authorization = `Bearer ${token}`;
-      return { headers: { Authorization } };
+      const authorization = `Bearer ${token}`;
+      return { headers: { Authorization: authorization } };
     }
 
     throw new Error("User is not authenticated!");

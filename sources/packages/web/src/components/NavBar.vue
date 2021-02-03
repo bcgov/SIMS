@@ -13,7 +13,7 @@
         icon="pi pi-fw pi-user"
         class="p-button-text"
         style="color: white"
-        @click="$router.push('/student/edit')"
+        @click="$router.push('/student-profile/edit')"
       />
     </template>
   </Menubar>
