@@ -1,6 +1,4 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-//import User from "./common/User"
-
 
 export default interface User {
   email: string;
