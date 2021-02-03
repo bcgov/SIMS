@@ -15,16 +15,15 @@ const routes: Array<RouteRecordRaw> = [
     component: Login
   },
   {
-    path: "/student",
-    name: "Student",
+    path: "/student-profile",
+    name: "Student-Profile",
     component: Student,
-    props: { edit: false }
+    props: { editMode: false }
   },
   {
-    path: "/student/edit",
-    name: "StudentEdit",
+    path: "/student-profile/edit",
+    name: "Student-Profile-Edit",
     component: Student,
-    props: { edit: true }
   }
 ];
 
