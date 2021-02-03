@@ -1,23 +1,27 @@
 import ApiClient from "./http/ApiClient";
-import User from "./http/common/User"
+// import User from "./http/common/User"
 
 export class UserService {
   // Share Instance
-  private static instance?: UserService;
+  private static instance: UserService;
 
   /**
     * The Singleton’s constructor should always be private to prevent direct
     * construction calls with the new operator.
     */
-  private UserService(){}
+   //TODO : this throws a compile error
+  //private UserService(){}
 
   public static get shared(): UserService {
     return this.instance || (this.instance = new this());
   }
 
-  async checkUser(): Promise<User> {
+  async checkUser(): Promise<boolean> {
    const user =  await ApiClient.User.checkUser();
-   return user;
+    if(user.id){
+      return true
+    }
+    return false;
   }
 
   
