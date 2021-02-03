@@ -227,7 +227,7 @@ export default {
         }
       }
 
-      if(redirectHome){
+      if (redirectHome) {
         router.push({ name: "Home" });
       }
     });

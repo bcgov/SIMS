@@ -6,9 +6,9 @@ export class UserService {
   private static instance: UserService;
 
   /**
-    * The Singleton’s constructor should always be private to prevent direct
-    * construction calls with the new operator.
-    */
+   * The Singleton’s constructor should always be private to prevent direct
+   * construction calls with the new operator.
+   */
   //TODO : this throws a compile error
   //private UserService(){}
 
@@ -17,12 +17,10 @@ export class UserService {
   }
 
   async checkUser(): Promise<boolean> {
-   const user =  await ApiClient.User.checkUser();
-   if(user.id){
-      return true
+    const user = await ApiClient.User.checkUser();
+    if (user.id) {
+      return true;
     }
     return false;
   }
-
-  
 }
