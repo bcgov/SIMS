@@ -1,23 +1,36 @@
 <template>
-  <Menubar :model="items" class="gov-header">
+  <Menubar :model="menuItems" class="gov-header">
     <template #start>
       <div class="p-menubar-start">
         <img alt="logo" src="../assets/images/bc_logo.svg" height="40" />
         <span class="title">Student Aid</span>
       </div>
     </template>
+    <template #end>
+      <Button
+        v-if="isAuthenticated"
+        label="Student Profile"
+        icon="pi pi-fw pi-user"
+        class="p-button-text"
+        style="color: white"
+        @click="$router.push('/student-profile/edit')"
+      />
+    </template>
   </Menubar>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-
-@Options({
-  components: {}
-})
-export default class NavBar extends Vue {
-  items = [];
-}
+import { computed } from "vue";
+import { AppConfigService } from "../services/AppConfigService";
+export default {
+  setup() {
+    const menuItems: any = [];
+    const isAuthenticated = computed(
+      () => AppConfigService.shared.authService?.authenticated === true
+    );
+    return { menuItems, isAuthenticated };
+  }
+};
 </script>
 
 <style lang="scss" scoped>

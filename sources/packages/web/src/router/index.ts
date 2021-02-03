@@ -17,7 +17,13 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/student-profile",
     name: "Student-Profile",
-    component: Student
+    component: Student,
+    props: { editMode: false }
+  },
+  {
+    path: "/student-profile/edit",
+    name: "Student-Profile-Edit",
+    component: Student,
   }
 ];
 
