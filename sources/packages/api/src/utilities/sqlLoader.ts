@@ -1,17 +1,18 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from "fs";
+import * as path from "path";
 
-const sqlDirPath = 'src-sql';
+const sqlDirPath = "src-sql";
 
 /**
  * @description Get SQL dir path
  * @returns The SQL files container dir from resources folder
  */
-export const getSQLDirPath = () => path.resolve(__dirname, `../../${sqlDirPath}`);
+export const getSQLDirPath = () =>
+  path.resolve(__dirname, `../../${sqlDirPath}`);
 
 /**
  * @description Get SQL file content
- * @param fileName 
+ * @param fileName
  * @param subDirPath The optional sub dir paths
  * @returns Raw string content of file
  */
@@ -23,7 +24,7 @@ export const getSQLFileData = (fileName: string, subDirPath?: string) => {
     path = `${path}/${fileName}`;
   }
   if (fs.existsSync(path)) {
-    return fs.readFileSync(path, {encoding: 'utf8'});
+    return fs.readFileSync(path, { encoding: "utf8" });
   } else {
     throw new Error(`getSQLFileData: No file exists in path: ${path}`);
   }

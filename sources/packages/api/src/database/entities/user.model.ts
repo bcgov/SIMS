@@ -1,30 +1,30 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
-import { BaseModel } from './base.model';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseModel } from "./base.model";
 
-@Entity({ name: 'users'})
+@Entity({ name: "users" })
 export class User extends BaseModel {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    name: 'user_name',
+    name: "user_name",
     nullable: false,
   })
   userName: string;
 
   @Column({
-    name: 'email',
-    nullable: false
+    name: "email",
+    nullable: false,
   })
   email: string;
 
   @Column({
-    name: 'first_name'
+    name: "first_name",
   })
   firstName: string;
 
   @Column({
-    name: 'last_name'
+    name: "last_name",
   })
   lastName: string;
 }

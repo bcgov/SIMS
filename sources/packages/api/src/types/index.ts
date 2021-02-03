@@ -1,2 +1,2 @@
-export * from './userInfo';
-export * from './contactInfo';
+export * from "./userInfo";
+export * from "./contactInfo";

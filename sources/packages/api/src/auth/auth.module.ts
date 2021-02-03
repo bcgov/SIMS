@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { Module } from "@nestjs/common";
+import { APP_GUARD } from "@nestjs/core";
 import {
   KeycloakConnectModule,
   ResourceGuard,
   RoleGuard,
   AuthGuard,
-} from 'nest-keycloak-connect';
+} from "nest-keycloak-connect";
 
-import { AuthService } from './auth.service';
+import { AuthService } from "./auth.service";
 
 @Module({
   imports: [
