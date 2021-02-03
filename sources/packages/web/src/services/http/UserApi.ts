@@ -14,6 +14,8 @@ export class UserApi  extends HttpBaseClient{
     public async checkUser(): Promise<User> {
         try {
           const response = await this.apiClient.get("users/check-user", this.addAuthHeader());
+          console.log('after call');
+          console.dir(response);
           return response.data as User;
         } catch (error) {
           this.handleRequestError(error);
