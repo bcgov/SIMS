@@ -18,9 +18,7 @@ export class UserService {
 
   async checkUser(): Promise<boolean> {
    const user =  await ApiClient.User.checkUser();
-   console.log('In UserService')
-   console.dir(user);
-    if(user.id){
+   if(user.id){
       return true
     }
     return false;

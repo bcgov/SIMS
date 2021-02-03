@@ -9,8 +9,7 @@ export default abstract class HttpBaseClient {
     const token = AppConfigService.shared.authService?.token;
     if (token) {
       const authorization = `Bearer ${token}`;
-      console.log(`authorization is ${authorization}`)
-      return { headers: { Authroization: authorization } };
+      return { headers: { Authorization: authorization } };
     }
 
     throw new Error("User is not authenticated!");
