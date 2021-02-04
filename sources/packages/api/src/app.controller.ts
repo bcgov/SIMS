@@ -1,6 +1,6 @@
-import { Controller, Get, Req } from '@nestjs/common';
-import { AllowAnyRole, Public } from 'nest-keycloak-connect';
-import { AppService } from './app.service';
+import { Controller, Get, Req } from "@nestjs/common";
+import { AllowAnyRole, Public } from "nest-keycloak-connect";
+import { AppService } from "./app.service";
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -11,7 +11,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('/user-info')
+  @Get("/user-info")
   keycloak(@Req() req: any): object {
     console.dir(req.headers);
     return req.user;

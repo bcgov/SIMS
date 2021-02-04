@@ -1,34 +1,34 @@
 import { closeDB, setupDB } from "../../testHelpers";
-import { Connection, getConnection, Repository } from "typeorm";
+import { Connection } from "typeorm";
 import * as faker from "faker";
-import { Student, User } from '../entities';
+import { Student, User } from "../entities";
 import { StudentService } from "../../services";
 
-
-describe('Test student model', () => {
+describe("Test student model", () => {
   let connection: Connection;
   beforeAll(async () => {
     connection = await setupDB();
   });
   afterAll(async () => {
     await closeDB();
-  
-  })
+  });
 
-  it('should save student model object with user relationship and address jsonb', async () => {
+  it("should save student model object with user relationship and address jsonb", async () => {
     // Create
     const controller = new StudentService(connection);
     const sub = new Student();
-    sub.sin = '9999999999';
+    sub.sin = "9999999999";
     sub.contactInfo = {
-      addresses: [ {
-        addressLine1: faker.address.streetAddress(),
-        city: faker.address.city(),
-        country: 'can',
-        province: 'bc',
-        postalCode: faker.address.zipCode()
-      }],
-      phone: faker.phone.phoneNumber()
+      addresses: [
+        {
+          addressLine1: faker.address.streetAddress(),
+          city: faker.address.city(),
+          country: "can",
+          province: "bc",
+          postalCode: faker.address.zipCode(),
+        },
+      ],
+      phone: faker.phone.phoneNumber(),
     };
     const user = new User();
     user.userName = faker.random.uuid();
@@ -49,7 +49,7 @@ describe('Test student model', () => {
     expect(result.user.id).toEqual(sub.user.id);
     expect(result.contactInfo).toBeDefined();
     expect(result.contactInfo.addresses.length).toEqual(1);
-    expect(result.contactInfo.addresses[0].country).toEqual('can');
+    expect(result.contactInfo.addresses[0].country).toEqual("can");
 
     // Remove
     controller.remove(sub);

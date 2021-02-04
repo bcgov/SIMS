@@ -5,7 +5,7 @@ import { UserApi } from "./UserApi";
 const ApiClient = {
   Configs: new ConfigApi(),
   Students: new StudentApi(),
-  User: new UserApi()
+  User: new UserApi(),
 };
 
 export default ApiClient;

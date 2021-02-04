@@ -4,16 +4,16 @@ import * as faker from "faker";
 
 import { User } from "../entities/user.model";
 
-describe.skip('Test User model', () => {
+describe.skip("Test User model", () => {
   let connection: Connection;
   beforeAll(async () => {
     connection = await setupDB();
   });
   afterAll(async () => {
     await closeDB();
-  })
+  });
 
-  it('should save user model object', async () => {
+  it("should save user model object", async () => {
     // Save
     const repo: Repository<User> = connection.getRepository(User);
     const sub = new User();

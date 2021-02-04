@@ -27,7 +27,7 @@ export class StudentApi extends HttpBaseClient {
       await this.apiClient.post(
         "students",
         studentProfile,
-        this.addAuthHeader()
+        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);
@@ -36,13 +36,13 @@ export class StudentApi extends HttpBaseClient {
   }
 
   public async updateStudentContact(
-    studentContact: StudentContact
+    studentContact: StudentContact,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
         "students/contact",
         studentContact,
-        this.addAuthHeader()
+        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);
@@ -54,7 +54,7 @@ export class StudentApi extends HttpBaseClient {
     try {
       const studentContact = await this.apiClient.get(
         "students/contact",
-        this.addAuthHeader()
+        this.addAuthHeader(),
       );
       return studentContact.data as StudentContact;
     } catch (error) {

@@ -1,15 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getConnection } from 'typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { closeDB, setupDB } from './testHelpers';
+import { Test, TestingModule } from "@nestjs/testing";
+import { getConnection } from "typeorm";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { closeDB, setupDB } from "./testHelpers";
 
-describe('AppController', () => {
+describe("AppController", () => {
   let appController: AppController;
 
   beforeAll(async () => {
     await setupDB();
-  })
+  });
 
   afterAll(async () => {
     await closeDB();
@@ -24,9 +24,11 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return Hello world string with db connection status and version', () => {
-      const expected = `Hello World! The database connection is ${getConnection().isConnected} and version: ${process.env.VERSION ?? '-1'}`
+  describe("root", () => {
+    it("should return Hello world string with db connection status and version", () => {
+      const expected = `Hello World! The database connection is ${
+        getConnection().isConnected
+      } and version: ${process.env.VERSION ?? "-1"}`;
       expect(appController.getHello()).toBe(expected);
     });
   });

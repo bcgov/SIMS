@@ -6,7 +6,7 @@ describe("HelloWorld.vue", () => {
   it("renders props.msg when passed", () => {
     const msg = "new message";
     const wrapper = shallowMount(HelloWorld, {
-      props: { msg }
+      props: { msg },
     });
     expect(wrapper.text()).toMatch(msg);
   });
@@ -26,8 +26,8 @@ describe("InputTextComponent Test", () => {
       props: {
         id: "firstName",
         label: "Given Names",
-        value: "Test User"
-      }
+        value: "Test User",
+      },
     });
 
     console.log(wrapper.find("#firstName").exists());

@@ -1,3 +1,3 @@
-import { from } from 'rxjs';
+import { from } from "rxjs";
 
-export * from './testDBSetup';
+export * from "./testDBSetup";

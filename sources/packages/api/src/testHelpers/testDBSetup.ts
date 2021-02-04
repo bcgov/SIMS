@@ -4,10 +4,10 @@ const config = require("../../ormconfig");
 export async function setupDB() {
   const connection = await createConnection({
     ...config,
-    logging: ['error', 'warn', 'info'],
+    logging: ["error", "warn", "info"],
   });
   return connection;
-} 
+}
 
 export async function closeDB() {
   const connection = getConnection();
