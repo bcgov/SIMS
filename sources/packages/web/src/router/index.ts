@@ -7,29 +7,29 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: Home,
   },
   {
     path: "/login",
     name: "Login",
-    component: Login
+    component: Login,
   },
   {
     path: "/student-profile",
     name: "Student-Profile",
     component: Student,
-    props: { editMode: false }
+    props: { editMode: false },
   },
   {
     path: "/student-profile/edit",
     name: "Student-Profile-Edit",
-    component: Student
-  }
+    component: Student,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 });
 
 export default router;

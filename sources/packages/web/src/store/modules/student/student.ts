@@ -17,7 +17,7 @@ export class StudentProfile {
 }
 
 const initialState: StudentState = {
-  profile: new StudentProfile()
+  profile: new StudentProfile(),
 };
 
 export const student = {
@@ -36,12 +36,12 @@ export const student = {
       state.profile.familyName = parsedToken.family_name;
       state.profile.gender = parsedToken.gender;
       state.profile.middleName = parsedToken.middle_name;
-    }
+    },
   },
 
   actions: {
     setStudentProfileData({ commit }: { commit: Function }, token: any) {
       commit("SET_STUDENT_PROFILE_DATA", token.tokenParsed);
-    }
-  }
+    },
+  },
 };

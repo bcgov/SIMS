@@ -24,7 +24,7 @@ import { Options, Vue } from "vue-class-component";
 import { AuthState } from "../store/states";
 
 @Options({
-  components: {}
+  components: {},
 })
 export default class User extends Vue {
   @State(state => state.auth)

@@ -5,7 +5,7 @@ import { AppConfig } from "./AppConfigService";
 let keycloak: Keycloak.KeycloakInstance;
 
 export default async function(
-  config: AppConfig
+  config: AppConfig,
 ): Promise<Keycloak.KeycloakInstance> {
   if (keycloak) {
     return keycloak;
@@ -13,14 +13,14 @@ export default async function(
   keycloak = Keycloak({
     url: config.authConfig.url,
     realm: config.authConfig.realm,
-    clientId: config.authConfig.clientId
+    clientId: config.authConfig.clientId,
   });
 
   try {
     await keycloak.init({
       onLoad: "check-sso",
       responseMode: "query",
-      checkLoginIframe: false
+      checkLoginIframe: false,
     });
     if (keycloak.authenticated) {
       store.dispatch("student/setStudentProfileData", keycloak);

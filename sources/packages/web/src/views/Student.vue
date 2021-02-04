@@ -170,14 +170,14 @@ interface ProfileState {
 export default {
   components: {
     Field,
-    ValidatedInput
+    ValidatedInput,
   },
   props: {
     editMode: {
       type: Boolean,
       required: true,
-      default: true
-    }
+      default: true,
+    },
   },
   setup(props: any) {
     // Readonly student data from state.
@@ -203,18 +203,18 @@ export default {
           severity: "success",
           summary: "Student Updated",
           detail: "Student contact information updated!",
-          life: 3000
+          life: 3000,
         });
       } else {
         const result = await StudentService.shared.createStudent({
-          ...formValues
+          ...formValues,
         });
         if (result === true) {
           toast.add({
             severity: "success",
             summary: "Student created",
             detail: "Student was successfully created!",
-            life: 3000
+            life: 3000,
           });
         } else {
           redirectHome = false;
@@ -222,7 +222,7 @@ export default {
             severity: "error",
             summary: "Error",
             detail: `Error while creating student: ${result}`,
-            life: 3000
+            life: 3000,
           });
         }
       }
@@ -235,9 +235,9 @@ export default {
     return {
       readonlyProfile,
       onSubmit,
-      isSubmitting
+      isSubmitting,
     };
-  }
+  },
 };
 </script>
 

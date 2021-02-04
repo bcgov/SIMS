@@ -7,11 +7,11 @@ export interface RootState {
 
 const storeOptions: StoreOptions<RootState> = {
   state: {
-    version: "1.0.0"
+    version: "1.0.0",
   },
   modules: {
-    student
-  }
+    student,
+  },
 };
 
 export default createStore(storeOptions);

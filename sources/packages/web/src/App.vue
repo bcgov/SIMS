@@ -14,8 +14,8 @@ import { UserService } from "./services/UserService";
 
 @Options({
   components: {
-    NavBar
-  }
+    NavBar,
+  },
 })
 export default class App extends Vue {
   async created() {
@@ -24,18 +24,18 @@ export default class App extends Vue {
     // TODO: Check API for auth
     if (!AppConfigService.shared.authService?.authenticated) {
       router.push({
-        name: "Login"
+        name: "Login",
       });
     } else if (await UserService.shared.checkUser()) {
       //User exists and so redirect to Home page (Student's Dashboard)
       router.push({
-        name: "Home"
+        name: "Home",
       });
     } else {
       // User doesnt exist in SABC Database and so redirect the user to Student Profile page
       // where they can provide information and create SABC account
       router.push({
-        name: "Student-Profile"
+        name: "Student-Profile",
       });
     }
   }

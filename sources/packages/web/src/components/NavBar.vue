@@ -26,10 +26,10 @@ export default {
   setup() {
     const menuItems: any = [];
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true
+      () => AppConfigService.shared.authService?.authenticated === true,
     );
     return { menuItems, isAuthenticated };
-  }
+  },
 };
 </script>
 

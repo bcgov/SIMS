@@ -14,18 +14,18 @@ export default {
   props: {
     propertyName: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
-    ErrorMessage
+    ErrorMessage,
   },
   setup(props: any) {
     const isValid = useFieldError(props.propertyName);
     return {
-      isValid
+      isValid,
     };
-  }
+  },
 };
 </script>
 

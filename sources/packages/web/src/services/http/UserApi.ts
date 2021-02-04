@@ -13,7 +13,7 @@ export class UserApi extends HttpBaseClient {
     try {
       const response = await this.apiClient.get(
         "users/check-user",
-        this.addAuthHeader()
+        this.addAuthHeader(),
       );
       return response.data as User;
     } catch (error) {

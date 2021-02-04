@@ -69,7 +69,7 @@ export class AppConfigService {
     const config = await ApiClient.Configs.getConfig();
     const appConfig: AppConfig = {
       authConfig: config.auth,
-      updateTime: new Date()
+      updateTime: new Date(),
     };
     return appConfig;
   }

@@ -16,20 +16,20 @@
 export default {
   props: {
     id: {
-      type: String
+      type: String,
     },
     label: {
-      type: String
+      type: String,
     },
     value: {
-      type: String
-    }
+      type: String,
+    },
   },
 
   methods: {
     updateValue: function(value) {
       this.$emit("input", value);
-    }
-  }
+    },
+  },
 };
 </script>

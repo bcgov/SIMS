@@ -34,12 +34,12 @@ import { Options, Vue } from "vue-class-component";
 import { AppConfigService } from "../services/AppConfigService";
 
 @Options({
-  components: {}
+  components: {},
 })
 export default class Login extends Vue {
   login() {
     AppConfigService.shared.authService?.login({
-      idpHint: "bcsc"
+      idpHint: "bcsc",
     });
   }
 }
