@@ -20,20 +20,22 @@ import { UserService } from "./services/UserService";
 export default class App extends Vue {
   async created() {
     const router = this.$router;
-
-    // TODO: Check API for auth
     if (!AppConfigService.shared.authService?.authenticated) {
       router.push({
         name: "Login",
       });
-    } else if (await UserService.shared.checkUser()) {
-      //User exists and so redirect to Home page (Student's Dashboard)
+    } else if (
+      (await UserService.shared.checkUser()) &&
+      (await UserService.shared.synchronizeUserInfo())
+    ) {
+      /*After checking the user exists, information differences between BC Service card and SABC is synced
+      And Redirect to Home page (Student's Dashboard)*/
       router.push({
         name: "Home",
       });
     } else {
-      // User doesnt exist in SABC Database and so redirect the user to Student Profile page
-      // where they can provide information and create SABC account
+      /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
+       where they can provide information and create SABC account */
       router.push({
         name: "Student-Profile",
       });

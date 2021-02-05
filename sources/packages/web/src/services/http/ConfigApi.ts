@@ -1,4 +1,3 @@
-import { AppConfigService } from "../AppConfigService";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export interface GetConfig {
@@ -23,13 +22,8 @@ export class ConfigApi extends HttpBaseClient {
   }
 
   public async getUserInfo(): Promise<any> {
-    try {
-      console.dir(AppConfigService.shared.authService?.tokenParsed);
-      const response = await this.apiClient.get("/user-info", {
-        headers: {
-          Authorization: `Bearer ${AppConfigService.shared.authService?.token}`,
-        },
-      });
+    try {            
+      const response = await this.apiClient.get("/user-info",this.addAuthHeader());
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
