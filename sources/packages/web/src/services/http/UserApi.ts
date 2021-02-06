@@ -17,11 +17,9 @@ export class UserApi extends HttpBaseClient {
         this.addAuthHeader()
       );
       if(response.status===200) {        
-        let user = response.data as User;
-        if(user.id){ userExists = true}  
-         
-      } else if (response.status===404) {
-        userExists = false;
+        const user = response.data as User;
+        //TODO: This should not ideally rely on id.      
+        if(user.id){ userExists = true}         
       }
       return userExists;
 
@@ -32,16 +30,15 @@ export class UserApi extends HttpBaseClient {
   }
 
 
-  public async synchronizeUserInfo(): Promise<void>{
+  public async synchronizeUserInfo(): Promise<void>{    
     try {
-      console.log('About to call Sync User Info Web API')
-      const response = await this.apiClient.patch(
-        "users/sync-user",
+      /**
+       * TODO Dont quite agree with sending a null in a patch/put request but going with it for now
+       */
+      await this.apiClient.patch(
+        "users/sync-user",null,
         this.addAuthHeader()
-      );
-      console.log(`After call Sync User Info Web API..`)
-      console.dir(response.data) ; 
-            
+      );     
     } catch (error) {
       this.handleRequestError(error);
       throw error;

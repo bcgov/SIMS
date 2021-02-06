@@ -18,9 +18,18 @@ export class UserService extends DataModelService<User> {
   }
 
   async synchronizeUserInfo(userInfoBCServiceCard: UserInfo): Promise<User> {
-    const userToSync = await this.getUser(userInfoBCServiceCard.userName)
-    if(userInfoBCServiceCard.email!=userToSync.email){
+    
+    let userToSync = await this.getUser(userInfoBCServiceCard.userName)
+
+    //Initializing a new user if one is not found
+    if (!userToSync) {
+      userToSync = new User();
+    }
+    
+    if(userInfoBCServiceCard.email!=userToSync.email||userInfoBCServiceCard.lastName!=userToSync.lastName||userInfoBCServiceCard.givenNames!=userToSync.firstName){
       userToSync.email = userInfoBCServiceCard.email;
+      userToSync.lastName = userInfoBCServiceCard.lastName;
+      userToSync.firstName = userInfoBCServiceCard.givenNames;      
     }
     return this.save(userToSync);
   }

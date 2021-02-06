@@ -23,6 +23,7 @@ export interface StudentContact {
 
 export class StudentApi extends HttpBaseClient {
   public async createStudent(studentProfile: StudentProfile): Promise<void> {
+
     try {
       await this.apiClient.post(
         "students",

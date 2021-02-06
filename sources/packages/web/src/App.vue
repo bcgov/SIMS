@@ -24,12 +24,10 @@ export default class App extends Vue {
       router.push({
         name: "Login",
       });
-    } else if (
-      (await UserService.shared.checkUser()) &&
-      (await UserService.shared.synchronizeUserInfo())
-    ) {
+    } else if (await UserService.shared.checkUser()) {
       /*After checking the user exists, information differences between BC Service card and SABC is synced
       And Redirect to Home page (Student's Dashboard)*/
+      await UserService.shared.synchronizeUserInfo();
       router.push({
         name: "Home",
       });
