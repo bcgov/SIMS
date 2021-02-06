@@ -28,9 +28,9 @@ export class UserService {
   }
 
   /**
-   * Client method to call inorder to update the user information. 
+   * Client method to call inorder to update the user information.
    */
-  async synchronizeUserInfo():Promise<void>{
-    return await ApiClient.User.synchronizeUserInfo();    
+  async synchronizeUserInfo(): Promise<void> {
+    return await ApiClient.User.synchronizeUserInfo();
   }
 }

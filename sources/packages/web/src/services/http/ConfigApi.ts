@@ -22,8 +22,11 @@ export class ConfigApi extends HttpBaseClient {
   }
 
   public async getUserInfo(): Promise<any> {
-    try {            
-      const response = await this.apiClient.get("/user-info",this.addAuthHeader());
+    try {
+      const response = await this.apiClient.get(
+        "/user-info",
+        this.addAuthHeader(),
+      );
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
