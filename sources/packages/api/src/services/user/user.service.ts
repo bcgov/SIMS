@@ -29,8 +29,10 @@ export class UserService extends DataModelService<User> {
     if(userInfoBCServiceCard.email!=userToSync.email||userInfoBCServiceCard.lastName!=userToSync.lastName||userInfoBCServiceCard.givenNames!=userToSync.firstName){
       userToSync.email = userInfoBCServiceCard.email;
       userToSync.lastName = userInfoBCServiceCard.lastName;
-      userToSync.firstName = userInfoBCServiceCard.givenNames;      
+      userToSync.firstName = userInfoBCServiceCard.givenNames;  
+      return this.save(userToSync);    
     }
-    return this.save(userToSync);
+    //If information between token and SABC db is same, then just returning without the database call
+    return userToSync;
   }
 }
