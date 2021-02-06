@@ -32,8 +32,7 @@ export class StudentService {
     return this.instance || (this.instance = new this());
   }
 
-  async createStudent(student: CreateStudent): Promise<boolean | string> {
-    
+  async createStudent(student: CreateStudent): Promise<boolean | string> {    
     try {
       await ApiClient.Students.createStudent({ ...student });
       return true;
