@@ -6,7 +6,6 @@ import { UserInfo } from "../../types";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
-
   constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(User));
   }
@@ -18,19 +17,22 @@ export class UserService extends DataModelService<User> {
   }
 
   async synchronizeUserInfo(userInfoBCServiceCard: UserInfo): Promise<User> {
-    
-    let userToSync = await this.getUser(userInfoBCServiceCard.userName)
+    let userToSync = await this.getUser(userInfoBCServiceCard.userName);
 
     //Initializing a new user if one is not found
     if (!userToSync) {
       userToSync = new User();
     }
-    
-    if(userInfoBCServiceCard.email!=userToSync.email||userInfoBCServiceCard.lastName!=userToSync.lastName||userInfoBCServiceCard.givenNames!=userToSync.firstName){
+
+    if (
+      userInfoBCServiceCard.email != userToSync.email ||
+      userInfoBCServiceCard.lastName != userToSync.lastName ||
+      userInfoBCServiceCard.givenNames != userToSync.firstName
+    ) {
       userToSync.email = userInfoBCServiceCard.email;
       userToSync.lastName = userInfoBCServiceCard.lastName;
-      userToSync.firstName = userInfoBCServiceCard.givenNames;  
-      return this.save(userToSync);    
+      userToSync.firstName = userInfoBCServiceCard.givenNames;
+      return this.save(userToSync);
     }
     //If information between token and SABC db is same, then just returning without the database call
     return userToSync;
