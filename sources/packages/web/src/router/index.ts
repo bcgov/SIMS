@@ -2,6 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Student from "../views/Student.vue";
+import FAApplication from "../views/FAApplication.vue";
+import PageNotFound from "../views/PageNotFound.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,6 +26,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/student-profile/edit",
     name: "Student-Profile-Edit",
     component: Student,
+  },
+  {
+    path: "/application",
+    name: "application",
+    component: FAApplication,
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    component: PageNotFound
   },
 ];
 
