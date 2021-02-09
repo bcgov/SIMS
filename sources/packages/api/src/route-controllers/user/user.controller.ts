@@ -1,29 +1,24 @@
-import { Controller, Get, Patch, Req} from "@nestjs/common";
-import { Request } from "express";
-import { AuthService, UserService } from "../../services";
+import { Controller, Get, Patch } from "@nestjs/common";
+import { UserService } from "../../services";
 import BaseController from "../BaseController";
-import UserSyncInfoDto from "./model/user.dto"
+import UserSyncInfoDto from "./model/user.dto";
+import { UserToken } from "src/auth/decorators/userToken.decorator";
+import { IUserToken } from "src/auth/userToken.interface";
 
 @Controller("users")
 export class UserController extends BaseController {
-  constructor(
-    private readonly service: UserService,
-    private readonly authService: AuthService,
-  ) {
+  constructor(private readonly service: UserService) {
     super();
   }
 
   @Get("/check-user")
-  async checkUser(@Req() request: Request): Promise<boolean> {
+  async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
     try {
-      const userInfo = this.authService.parseAuthorizationHeader(
-        request.headers.authorization,
-      );
-      const userInSABC = await this.service.getUser(userInfo.userName);                
-      if(!userInSABC){
-        return false
-      }  else {
-        return true
+      const userInSABC = await this.service.getUser(userToken.userName);
+      if (!userInSABC) {
+        return false;
+      } else {
+        return true;
       }
     } catch (error) {
       this.handleRequestError(error);
@@ -32,14 +27,11 @@ export class UserController extends BaseController {
   }
 
   @Patch("/sync-user")
-  async synchronizeUserInfo(@Req() request: Request):Promise<UserSyncInfoDto> {
+  async synchronizeUserInfo(
+    @UserToken() userToken: IUserToken,
+  ): Promise<UserSyncInfoDto> {
     try {
-      const userInfoBCServiceCard = this.authService.parseAuthorizationHeader(
-        request.headers.authorization,
-      );
-      const syncedUser = await this.service.synchronizeUserInfo(
-        userInfoBCServiceCard,
-      );
+      const syncedUser = await this.service.synchronizeUserInfo(userToken);
       const userSyncInfo = new UserSyncInfoDto();
       userSyncInfo.firstName = syncedUser.firstName;
       userSyncInfo.lastName = syncedUser.lastName;

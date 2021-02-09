@@ -16,7 +16,6 @@ export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
 export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), student)
-export KEYCLOAK_CLIENT_API := $(or $(KEYCLOAK_CLIENT_API), sims-api)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
