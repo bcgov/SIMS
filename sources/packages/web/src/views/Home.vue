@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-left: 10px">
+  <div class="p-m-4">
     <h1>Home - Student Dashboard</h1>
   </div>
   <Card class="p-m-4">
