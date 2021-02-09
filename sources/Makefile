@@ -82,8 +82,7 @@ postgres:
 # Local API only
 api-only:
 	@echo "+\n++ Make: Building and running API only"
-	@docker-compose -f docker-compose.yml up -d postgres 
-	sleep 5
+	@docker-compose -f docker-compose.yml up -d postgres
 	@docker-compose -f docker-compose.yml up api
 
 # Local App
