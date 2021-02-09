@@ -1,14 +1,45 @@
-import { Controller, Get, Req } from "@nestjs/common";
+import { Controller, Get, Patch } from "@nestjs/common";
+import { UserService } from "../../services";
+import BaseController from "../BaseController";
+import UserSyncInfoDto from "./model/user.dto";
 import { UserToken } from "src/auth/decorators/userToken.decorator";
 import { IUserToken } from "src/auth/userToken.interface";
-import { UserService } from "../../services";
 
 @Controller("users")
-export class UserController {
-  constructor(private readonly service: UserService) {}
+export class UserController extends BaseController {
+  constructor(private readonly service: UserService) {
+    super();
+  }
 
   @Get("/check-user")
-  checkUser(@UserToken() user: IUserToken) {
-    return this.service.getUser(user.userName);
+  async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
+    try {
+      const userInSABC = await this.service.getUser(userToken.userName);
+      if (!userInSABC) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  @Patch("/sync-user")
+  async synchronizeUserInfo(
+    @UserToken() userToken: IUserToken,
+  ): Promise<UserSyncInfoDto> {
+    try {
+      const syncedUser = await this.service.synchronizeUserInfo(userToken);
+      const userSyncInfo = new UserSyncInfoDto();
+      userSyncInfo.firstName = syncedUser.firstName;
+      userSyncInfo.lastName = syncedUser.lastName;
+      userSyncInfo.email = syncedUser.email;
+      return userSyncInfo;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }
