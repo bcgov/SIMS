@@ -7,5 +7,4 @@ export default class UserSyncInfoDto {
   lastName: string;
   @IsNotEmpty()
   email: string;
-
 }

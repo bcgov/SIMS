@@ -19,10 +19,10 @@ export class UserService extends DataModelService<User> {
   async synchronizeUserInfo(userInfoBCServiceCard: UserInfo): Promise<User> {
     let userToSync = await this.getUser(userInfoBCServiceCard.userName);
 
-    //Initializing a new user if one is not found
+    //Error out if user is not found
     if (!userToSync) {
         throw new Error(
-          `Not able to find a user using the username (bcsc name)`
+          "Not able to find a user using the username (bcsc name)"          
         );
     }
     

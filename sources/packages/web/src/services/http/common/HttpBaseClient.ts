@@ -8,7 +8,7 @@ export default abstract class HttpBaseClient {
   protected addAuthHeader(): AxiosRequestConfig {
     const token = AppConfigService.shared.authService?.token;
     if (token) {
-      const authorization = `Bearer ${token}`;      
+      const authorization = `Bearer ${token}`;
       return { headers: { Authorization: authorization } };
     }
 
