@@ -1,6 +1,6 @@
 import { Controller, Get } from "@nestjs/common";
-import { Public } from "src/auth/decorators/public.decorator";
-import { ConfigService } from "src/services/config/config.service";
+import { Public } from "../../auth/decorators/public.decorator";
+import { ConfigService } from "../../services/config/config.service";
 import { IConfig } from "./models/get-config.dto";
 
 @Controller("config")

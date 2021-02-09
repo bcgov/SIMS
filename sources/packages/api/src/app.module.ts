@@ -2,12 +2,7 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "./database/database.module";
-import {
-  AuthService,
-  StudentService,
-  UserService,
-  ConfigService,
-} from "./services";
+import { StudentService, UserService, ConfigService } from "./services";
 import {
   UserController,
   StudentController,
@@ -23,12 +18,6 @@ import { AuthModule } from "./auth/auth.module";
     StudentController,
     ConfigController,
   ],
-  providers: [
-    AppService,
-    AuthService,
-    UserService,
-    StudentService,
-    ConfigService,
-  ],
+  providers: [AppService, UserService, StudentService, ConfigService],
 })
 export class AppModule {}

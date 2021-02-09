@@ -6,61 +6,33 @@ import {
   Get,
   Post,
   Patch,
-  Req,
 } from "@nestjs/common";
-import { Request } from "express";
-import { StudentService, AuthService, UserService } from "../../services";
+import { StudentService, UserService } from "../../services";
 import {
   CreateStudentDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
 } from "./models/student.dto";
-import { UserInfo } from "../../types";
+import { UserToken } from "../../auth/decorators/userToken.decorator";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @Controller("students")
 export class StudentController {
   constructor(
     private readonly service: StudentService,
-    private readonly authService: AuthService,
     private readonly userService: UserService,
   ) {}
 
   @Get("contact")
-  async getContactInfo(@Req() request: Request): Promise<GetStudentContactDto> {
-    // TODOD: FIX with APP guard
-    if (!request.headers.authorization) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          message: "Unauthorize user",
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-    const userInfo: UserInfo = this.authService.parseAuthorizationHeader(
-      request.headers.authorization,
-    );
-    if (
-      !userInfo.userName ||
-      !userInfo.email ||
-      !userInfo.givenNames ||
-      !userInfo.lastName
-    ) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          message: "Wrong token",
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const student = await this.service.getStudentByUserName(userInfo.userName);
+  async getContactInfo(
+    @UserToken() userToken: IUserToken,
+  ): Promise<GetStudentContactDto> {
+    const student = await this.service.getStudentByUserName(userToken.userName);
     if (!student) {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          message: `No student was found with the user name ${userInfo.userName}`,
+          message: `No student was found with the user name ${userToken.userName}`,
         },
         HttpStatus.NOT_FOUND,
       );
@@ -72,7 +44,7 @@ export class StudentController {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: `The requested student is missing required data. User name ${userInfo.userName}`,
+          message: `The requested student is missing required data. User name ${userToken.userName}`,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -94,71 +66,18 @@ export class StudentController {
   @Patch("contact")
   async update(
     @Body() payload: UpdateStudentContactDto,
-    @Req() request: Request,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // TODOD: FIX with APP guard
-    if (!request.headers.authorization) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          message: "Unauthorize user",
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-    const userInfo: UserInfo = this.authService.parseAuthorizationHeader(
-      request.headers.authorization,
-    );
-    if (
-      !userInfo.userName ||
-      !userInfo.email ||
-      !userInfo.givenNames ||
-      !userInfo.lastName
-    ) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          message: "Wrong token",
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    this.service.updateStudentContactByUserName(userInfo.userName, payload);
+    this.service.updateStudentContactByUserName(userToken.userName, payload);
   }
 
   @Post()
-  async create(@Body() payload: CreateStudentDto, @Req() request: Request) {
-    // TODOD: FIX with APP guard
-    if (!request.headers.authorization) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          message: "Unauthorize user",
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-    const userInfo: UserInfo = this.authService.parseAuthorizationHeader(
-      request.headers.authorization,
-    );
-    if (
-      !userInfo.userName ||
-      !userInfo.email ||
-      !userInfo.givenNames ||
-      !userInfo.lastName
-    ) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          message: "Wrong token",
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
+  async create(
+    @Body() payload: CreateStudentDto,
+    @UserToken() userToken: IUserToken,
+  ) {
     // Check user exists or not
-    const existing = await this.userService.getUser(userInfo.userName);
+    const existing = await this.userService.getUser(userToken.userName);
     if (existing) {
       throw new HttpException(
         {
@@ -170,6 +89,6 @@ export class StudentController {
     }
 
     // Save student
-    return this.service.createStudent(userInfo, payload);
+    return this.service.createStudent(userToken, payload);
   }
 }
