@@ -23,8 +23,7 @@ export class UserController extends BaseController {
       );
       const userInSABC = await this.service.getUser(userInfo.userName);
       console.log('checkuser response in controller')
-      console.dir(userInSABC)  
-        // if (!userInSABC) throw new NotFoundException('User Not Found')
+      console.dir(userInSABC)          
       if(!userInSABC){
         return false
       }  else {
