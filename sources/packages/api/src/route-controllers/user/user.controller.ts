@@ -1,7 +1,10 @@
-import { Controller, Get, Patch, Req } from "@nestjs/common";
+import { Controller, Get, Patch, Req
+  //, NotFoundException 
+} from "@nestjs/common";
 import { Request } from "express";
 import { AuthService, UserService } from "../../services";
 import BaseController from "../BaseController";
+import UserSyncInfoDto from "./model/user.dto"
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -13,18 +16,21 @@ export class UserController extends BaseController {
   }
 
   @Get("/check-user")
-  async checkUser(@Req() request: Request) {
+  async checkUser(@Req() request: Request): Promise<boolean> {
     try {
       const userInfo = this.authService.parseAuthorizationHeader(
         request.headers.authorization,
       );
       const userInSABC = await this.service.getUser(userInfo.userName);
-      if (!userInSABC) {
-        //TODO: Set a 404 in response when no user is found.
-        //response.status(404);
-      } else {
-        return userInSABC;
+      console.log('checkuser response in controller')
+      console.dir(userInSABC)  
+        // if (!userInSABC) throw new NotFoundException('User Not Found')
+      if(!userInSABC){
+        return false
+      }  else {
+        return true
       }
+
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -32,7 +38,7 @@ export class UserController extends BaseController {
   }
 
   @Patch("/sync-user")
-  async synchronizeUserInfo(@Req() request: Request) {
+  async synchronizeUserInfo(@Req() request: Request):Promise<UserSyncInfoDto> {
     try {
       const userInfoBCServiceCard = this.authService.parseAuthorizationHeader(
         request.headers.authorization,
@@ -40,7 +46,15 @@ export class UserController extends BaseController {
       const syncedUser = await this.service.synchronizeUserInfo(
         userInfoBCServiceCard,
       );
-      return syncedUser;
+      const userSyncInfo = new UserSyncInfoDto();
+      userSyncInfo.firstName = syncedUser.firstName;
+      userSyncInfo.lastName = syncedUser.lastName;
+      userSyncInfo.email = syncedUser.email;
+
+      console.log('User Sync Info DTO ');
+      console.dir(userSyncInfo);
+
+      return userSyncInfo;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

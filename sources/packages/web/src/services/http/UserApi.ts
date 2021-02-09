@@ -10,20 +10,13 @@ export default interface User {
 
 export class UserApi extends HttpBaseClient {
   public async checkUser(): Promise<boolean> {
-    let userExists = false;
+   
     try {
-      const response = await this.apiClient.get(
+      return await this.apiClient.get(
         "users/check-user",
         this.addAuthHeader(),
       );
-      if (response.status === 200) {
-        const user = response.data as User;
-        //TODO: This should not ideally rely on id.
-        if (user.id) {
-          userExists = true;
-        }
-      }
-      return userExists;
+      
     } catch (error) {
       this.handleRequestError(error);
       throw error;

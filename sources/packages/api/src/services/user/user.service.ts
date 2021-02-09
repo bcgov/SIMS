@@ -21,9 +21,11 @@ export class UserService extends DataModelService<User> {
 
     //Initializing a new user if one is not found
     if (!userToSync) {
-      userToSync = new User();
+        throw new Error(
+          `Not able to find a user using the username (bcsc name)`
+        );
     }
-
+    
     if (
       userInfoBCServiceCard.email != userToSync.email ||
       userInfoBCServiceCard.lastName != userToSync.lastName ||
