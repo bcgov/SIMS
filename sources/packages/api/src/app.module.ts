@@ -2,10 +2,11 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "./database/database.module";
-import { ConfigController } from "./config/config.controller";
+import { ConfigController } from "./route-controllers/config/config.controller";
 import { AuthService, StudentService, UserService } from "./services";
 import { UserController, StudentController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
+import { ConfigService } from "./services/config/config.service";
 
 @Module({
   imports: [DatabaseModule, AuthModule],
@@ -15,6 +16,12 @@ import { AuthModule } from "./auth/auth.module";
     UserController,
     StudentController,
   ],
-  providers: [AppService, AuthService, UserService, StudentService],
+  providers: [
+    AppService,
+    AuthService,
+    ConfigService,
+    UserService,
+    StudentService,
+  ],
 })
 export class AppModule {}

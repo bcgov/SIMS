@@ -3,6 +3,11 @@ import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
 import { IS_PUBLIC_KEY } from "./decorators/public.decorator";
 
+/**
+ * Enable global validation for authenticated users and
+ * also allow the use of the "Public" decorator to skip
+ * the authentication validation when needed.
+ */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard("jwt") {
   constructor(private reflector: Reflector) {

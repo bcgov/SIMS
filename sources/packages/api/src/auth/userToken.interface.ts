@@ -1,3 +1,7 @@
+/**
+ * User information extraced from the token during the
+ * authentication process on JwtStrategy validate method.
+ */
 export interface IUserToken {
   userName: string;
   email: string;

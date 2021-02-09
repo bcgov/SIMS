@@ -3,7 +3,7 @@ version: "3"
 # Services
 services:
   # API
-  api: 
+  api:
     image: api-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
@@ -19,8 +19,6 @@ services:
       - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT=${KEYCLOAK_CLIENT}
-      - KEYCLOAK_CLIENT_API=${KEYCLOAK_CLIENT_API}
-      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - DB_SCHEMA=${DB_SCHEMA}
       - ENVIRONMENT=local
     ports:
@@ -34,7 +32,7 @@ services:
       - postgres
   # - API
   # App
-  web: 
+  web:
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
@@ -56,7 +54,7 @@ services:
   postgres:
     image: postgres:10-alpine
     container_name: db-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    environment: 
+    environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -71,8 +69,8 @@ services:
 # - services
 # Networks
 networks:
- local-network:
-  driver: bridge
+  local-network:
+    driver: bridge
 # - Networks
 # Volumes
 volumes:

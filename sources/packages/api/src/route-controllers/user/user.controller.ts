@@ -12,11 +12,8 @@ export class UserController {
     private readonly authService: AuthService,
   ) {}
 
-  @Roles(Role.Student)
   @Get("/check-user")
   checkUser(@UserToken() user: IUserToken) {
-    console.log("check-user");
-    console.log(user);
     return this.service.getUser(user.userName);
   }
 }

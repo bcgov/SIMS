@@ -1,6 +1,6 @@
 import { Controller, Get, Req } from "@nestjs/common";
-import { AllowAnyRole, Public } from "nest-keycloak-connect";
 import { AppService } from "./app.service";
+import { Public } from "./auth/decorators/public.decorator";
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
