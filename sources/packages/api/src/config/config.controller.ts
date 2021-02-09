@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { Public } from "nest-keycloak-connect";
+import { Public } from "src/auth/decorators/public.decorator";
 import { GetConfig } from "./models/get-config.dto";
 
 @Controller("config")

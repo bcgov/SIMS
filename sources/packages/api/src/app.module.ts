@@ -5,9 +5,10 @@ import { DatabaseModule } from "./database/database.module";
 import { ConfigController } from "./config/config.controller";
 import { AuthService, StudentService, UserService } from "./services";
 import { UserController, StudentController } from "./route-controllers";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [
     AppController,
     ConfigController,
