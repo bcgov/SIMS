@@ -3,7 +3,9 @@
     <h1>Home - Student Dashboard</h1>
   </div>
   <Card class="p-m-4">
-    <template #title> Welcome {{ user.name }}, let's get started </template>
+    <template #title>
+      Welcome {{ user.givenNames }}, let's get started
+    </template>
     <template #content> Please start your Financial Aid application </template>
     <template #footer>
       <Button
