@@ -1,5 +1,12 @@
 import ApiClient from "./http/ApiClient";
-// import User from "./http/common/User"
+
+export default interface User {
+  email: string;
+  firstName: string;
+  id: number;
+  lastName: string;
+  userName: string;
+}
 
 export class UserService {
   // Share Instance
@@ -17,10 +24,13 @@ export class UserService {
   }
 
   async checkUser(): Promise<boolean> {
-    const user = await ApiClient.User.checkUser();
-    if (user.id) {
-      return true;
-    }
-    return false;
+    return await ApiClient.User.checkUser();
+  }
+
+  /**
+   * Client method to call inorder to update the user information.
+   */
+  async synchronizeUserInfo(): Promise<void> {
+    return await ApiClient.User.synchronizeUserInfo();
   }
 }

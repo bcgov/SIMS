@@ -1,9 +1,9 @@
 export interface GetConfig {
-  auth: AuthConfig
+  auth: AuthConfig;
 }
 
 export interface AuthConfig {
-  url: string,
-  realm: string,
-  clientId: string
+  url: string;
+  realm: string;
+  clientId: string;
 }
