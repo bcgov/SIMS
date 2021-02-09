@@ -1,13 +1,31 @@
 <template>
-  <div>Home - Student Dashboard</div>
-  <div>
-    You are here because Account information for this user exists within SABC
+  <div class="p-m-4">
+    <h1>Home - Student Dashboard</h1>
   </div>
+  <Card class="p-m-4">
+    <template #title>
+      Welcome {{ user.givenNames }}, let's get started
+    </template>
+    <template #content> Please start your Financial Aid application </template>
+    <template #footer>
+      <Button
+        label="Start Application"
+        class="p-button-raised"
+        @click="$router.push('/application')"
+      />
+    </template>
+  </Card>
 </template>
 <script lang="ts">
+import { computed } from "vue";
+import { useStore } from "vuex";
 export default {
   setup() {
-    return {};
+    const store = useStore();
+    const user = computed(() => store.state.student.profile);
+    return {
+      user,
+    };
   },
 };
 </script>
