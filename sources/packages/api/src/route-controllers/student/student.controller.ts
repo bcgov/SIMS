@@ -15,12 +15,12 @@ import {
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
-
 @Controller("students")
 export class StudentController {
   constructor(
     private readonly service: StudentService,
     private readonly userService: UserService,
+    private readonly studentService: StudentService,
   ) {}
 
   @Get("contact")
@@ -90,5 +90,12 @@ export class StudentController {
 
     // Save student
     return this.service.createStudent(userToken, payload);
+  }
+
+  @Patch("/sync")
+  async synchronizeFromUserInfo(
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    await this.studentService.synchronizeFromUserInfo(userToken);
   }
 }

@@ -27,6 +27,5 @@ describe('Test Home.vue', () => {
       shallow: true
     });
     expect(wrapper.html()).toContain("Home - Student Dashboard");
-    expect(wrapper.s)
   });
 });

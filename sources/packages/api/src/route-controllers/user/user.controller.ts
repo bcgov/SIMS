@@ -1,7 +1,6 @@
-import { Controller, Get, Patch } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import { UserService } from "../../services";
 import BaseController from "../BaseController";
-import UserSyncInfoDto from "./model/user.dto";
 import { UserToken } from "src/auth/decorators/userToken.decorator";
 import { IUserToken } from "src/auth/userToken.interface";
 
@@ -20,23 +19,6 @@ export class UserController extends BaseController {
       } else {
         return true;
       }
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  @Patch("/sync-user")
-  async synchronizeUserInfo(
-    @UserToken() userToken: IUserToken,
-  ): Promise<UserSyncInfoDto> {
-    try {
-      const syncedUser = await this.service.synchronizeUserInfo(userToken);
-      const userSyncInfo = new UserSyncInfoDto();
-      userSyncInfo.firstName = syncedUser.firstName;
-      userSyncInfo.lastName = syncedUser.lastName;
-      userSyncInfo.email = syncedUser.email;
-      return userSyncInfo;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
