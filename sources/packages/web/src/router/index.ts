@@ -4,6 +4,7 @@ import Login from "../views/Login.vue";
 import Student from "../views/Student.vue";
 import FAApplication from "../views/FAApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
+import ConfirmStudentAidBCProfileInfo from "../views/ConfirmStudentAidBCProfileInfo.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,8 +34,14 @@ const routes: Array<RouteRecordRaw> = [
     component: FAApplication,
   },
   {
+    path: "/confirm-student-profile-info",
+    name: "Confirm-Student-Profile-Info",
+    component: ConfirmStudentAidBCProfileInfo,
+  },
+
+  {
     path: "/:pathMatch(.*)*",
-    component: PageNotFound
+    component: PageNotFound,
   },
 ];
 
