@@ -31,6 +31,8 @@ export class StudentService extends RecordDataModelService<Student> {
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
+    student.birthdate = new Date(userInfo.birthdate);
+    student.gender = userInfo.gender;
     student.sin = otherInfo.sinNumber;
     student.contactInfo = {
       addresses: [
@@ -75,5 +77,45 @@ export class StudentService extends RecordDataModelService<Student> {
     };
 
     return this.save(student);
+  }
+
+  async synchronizeUserInfo(userInfo: UserInfo): Promise<any> {
+    const studentToSync = await this.getStudentByUserName(userInfo.userName);
+    //Error out if user is not found
+    if (!studentToSync) {
+      throw new Error(
+        "Not able to find a student using the username (bcsc name)",
+      );
+    }
+
+    let mustSave = false;
+
+    if (
+      userInfo.email !== studentToSync.user.email ||
+      userInfo.lastName !== studentToSync.user.lastName ||
+      userInfo.givenNames !== studentToSync.user.firstName
+    ) {
+      studentToSync.user.email = userInfo.email;
+      studentToSync.user.lastName = userInfo.lastName;
+      studentToSync.user.firstName = userInfo.givenNames;
+      mustSave = true;
+    }
+
+    let birthDate = new Date(userInfo.birthdate);
+    if (
+      birthDate !== studentToSync.birthdate ||
+      userInfo.gender !== studentToSync.gender
+    ) {
+      studentToSync.birthdate = birthDate;
+      studentToSync.gender = userInfo.gender;
+      mustSave = true;
+    }
+
+    if (mustSave) {
+      return await this.save(studentToSync);
+    }
+
+    //If information between token and SABC db is same, then just returning without the database call
+    return studentToSync;
   }
 }
