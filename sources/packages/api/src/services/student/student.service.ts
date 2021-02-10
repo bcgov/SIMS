@@ -4,7 +4,8 @@ import { Student, User } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
-import { StudentContact } from "src/types/studentContact";
+import { StudentContact } from "../../types/studentContact";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -31,6 +32,8 @@ export class StudentService extends RecordDataModelService<Student> {
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
+    student.birthdate = new Date(userInfo.birthdate);
+    student.gender = userInfo.gender;
     student.sin = otherInfo.sinNumber;
     student.contactInfo = {
       addresses: [
@@ -75,5 +78,44 @@ export class StudentService extends RecordDataModelService<Student> {
     };
 
     return this.save(student);
+  }
+
+  async synchronizeFromUserInfo(userToken: IUserToken): Promise<Student> {
+    const studentToSync = await this.getStudentByUserName(userToken.userName);
+    if (!studentToSync) {
+      throw new Error(
+        "Not able to find a student using the username (bcsc name)",
+      );
+    }
+
+    let mustSave = false;
+
+    if (
+      userToken.email !== studentToSync.user.email ||
+      userToken.lastName !== studentToSync.user.lastName ||
+      userToken.givenNames !== studentToSync.user.firstName
+    ) {
+      studentToSync.user.email = userToken.email;
+      studentToSync.user.lastName = userToken.lastName;
+      studentToSync.user.firstName = userToken.givenNames;
+      mustSave = true;
+    }
+
+    const birthDate = new Date(userToken.birthdate);
+    if (
+      birthDate !== studentToSync.birthdate ||
+      userToken.gender !== studentToSync.gender
+    ) {
+      studentToSync.birthdate = birthDate;
+      studentToSync.gender = userToken.gender;
+      mustSave = true;
+    }
+
+    if (mustSave) {
+      return await this.save(studentToSync);
+    }
+
+    // If information between token and SABC db is same, then just returning without the database call
+    return studentToSync;
   }
 }

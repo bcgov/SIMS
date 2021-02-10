@@ -56,4 +56,12 @@ export class StudentService {
     const studentContact = await ApiClient.Students.getContact();
     return studentContact;
   }
+
+  /**
+   * Client method to call inorder to update the student
+   * information using the user information.
+   */
+  async synchronizeFromUserInfo(): Promise<void> {
+    return await ApiClient.Students.synchronizeFromUserInfo();
+  }
 }

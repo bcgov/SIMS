@@ -27,6 +27,16 @@ export class Student extends RecordDataModel {
   })
   sin: string;
 
+  @Column({
+    name: "birth_date",
+  })
+  birthdate: Date;
+
+  @Column({
+    name: "gender",
+  })
+  gender: string;
+
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({
     name: "user_id",

@@ -26,11 +26,4 @@ export class UserService {
   async checkUser(): Promise<boolean> {
     return await ApiClient.User.checkUser();
   }
-
-  /**
-   * Client method to call inorder to update the user information.
-   */
-  async synchronizeUserInfo(): Promise<void> {
-    return await ApiClient.User.synchronizeUserInfo();
-  }
 }

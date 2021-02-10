@@ -11,6 +11,7 @@ import { Options, Vue } from "vue-class-component";
 import NavBar from "./components/NavBar.vue";
 import { AppConfigService } from "./services/AppConfigService";
 import { UserService } from "./services/UserService";
+import { StudentService } from "./services/StudentService";
 
 @Options({
   components: {
@@ -27,7 +28,7 @@ export default class App extends Vue {
     } else if (await UserService.shared.checkUser()) {
       /*After checking the user exists, information differences between BC Service card and SABC is synced
       And Redirect to Home page (Student's Dashboard)*/
-      await UserService.shared.synchronizeUserInfo();
+      await StudentService.shared.synchronizeFromUserInfo();
       router.push({
         name: "Home",
       });
