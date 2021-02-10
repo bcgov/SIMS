@@ -4,7 +4,8 @@ import { Student, User } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
-import { StudentContact } from "src/types/studentContact";
+import { StudentContact } from "../../types/studentContact";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -79,9 +80,8 @@ export class StudentService extends RecordDataModelService<Student> {
     return this.save(student);
   }
 
-  async synchronizeUserInfo(userInfo: UserInfo): Promise<any> {
-    const studentToSync = await this.getStudentByUserName(userInfo.userName);
-    //Error out if user is not found
+  async synchronizeFromUserInfo(userToken: IUserToken): Promise<Student> {
+    const studentToSync = await this.getStudentByUserName(userToken.userName);
     if (!studentToSync) {
       throw new Error(
         "Not able to find a student using the username (bcsc name)",
@@ -91,23 +91,23 @@ export class StudentService extends RecordDataModelService<Student> {
     let mustSave = false;
 
     if (
-      userInfo.email !== studentToSync.user.email ||
-      userInfo.lastName !== studentToSync.user.lastName ||
-      userInfo.givenNames !== studentToSync.user.firstName
+      userToken.email !== studentToSync.user.email ||
+      userToken.lastName !== studentToSync.user.lastName ||
+      userToken.givenNames !== studentToSync.user.firstName
     ) {
-      studentToSync.user.email = userInfo.email;
-      studentToSync.user.lastName = userInfo.lastName;
-      studentToSync.user.firstName = userInfo.givenNames;
+      studentToSync.user.email = userToken.email;
+      studentToSync.user.lastName = userToken.lastName;
+      studentToSync.user.firstName = userToken.givenNames;
       mustSave = true;
     }
 
-    let birthDate = new Date(userInfo.birthdate);
+    const birthDate = new Date(userToken.birthdate);
     if (
       birthDate !== studentToSync.birthdate ||
-      userInfo.gender !== studentToSync.gender
+      userToken.gender !== studentToSync.gender
     ) {
       studentToSync.birthdate = birthDate;
-      studentToSync.gender = userInfo.gender;
+      studentToSync.gender = userToken.gender;
       mustSave = true;
     }
 
@@ -115,7 +115,7 @@ export class StudentService extends RecordDataModelService<Student> {
       return await this.save(studentToSync);
     }
 
-    //If information between token and SABC db is same, then just returning without the database call
+    // If information between token and SABC db is same, then just returning without the database call
     return studentToSync;
   }
 }

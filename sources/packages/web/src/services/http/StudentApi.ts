@@ -62,4 +62,13 @@ export class StudentApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async synchronizeFromUserInfo(): Promise<void> {
+    try {
+      await this.apiClient.patch("students/sync", null, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }
