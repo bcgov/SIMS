@@ -1,14 +1,27 @@
 <template>
-  <div class="p-component">Start Your Application</div>
+  <WelcomePage v-if="!isReady" @user-ready="userReady" />
+  <!-- Application Main View-->
+  <div v-else>USER IS READY FOR APPLICATION</div>
 </template>
 
-<script>
+<script lang="ts">
+import { ref } from "vue";
+import WelcomePage from "../components/fa-application/WelcomePage.vue";
 export default {
+  components: {
+    WelcomePage,
+  },
   setup() {
-    return {};
+    const isReady = ref(false);
+    const userReady = () => {
+      isReady.value = true;
+    };
+    return {
+      isReady,
+      userReady,
+    };
   },
 };
 </script>
 
-<style>
-</style>
+<style></style>
