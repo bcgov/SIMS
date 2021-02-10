@@ -1,8 +1,8 @@
-<template>
+<template>  
+  <h2>Confirm StudentAid BC Profile Information</h2>
   <Card class="p-m-4">
-    <template #title> Confirm StudentAid BC Profile Information </template>
-    <div>YOUR STUDENTAID BC PROFILE INFORMATION></div>
-    <template #content>
+     <template #title><h4> Your StudentAid BC Profile Information</h4></template>    
+     <template #content>             
       This information was provided by you when you first signed in to your account as well as shared by your BC Services Card login.
 
       <div class="p-fluid ">
