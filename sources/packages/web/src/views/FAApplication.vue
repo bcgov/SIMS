@@ -1,7 +1,7 @@
 <template>
   <WelcomePage v-if="!isReady" @user-ready="userReady" />
   <!-- Application Main View-->
-  <div v-if="isReady">USER IS READY FOR APPLICATION</div>
+  <div v-else>USER IS READY FOR APPLICATION</div>
 </template>
 
 <script lang="ts">
