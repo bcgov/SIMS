@@ -15,8 +15,6 @@ import {
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
-import UserSyncInfoDto from "./model/student-sync-info.dto";
-
 @Controller("students")
 export class StudentController {
   constructor(
@@ -97,17 +95,7 @@ export class StudentController {
   @Patch("/sync")
   async synchronizeFromUserInfo(
     @UserToken() userToken: IUserToken,
-  ): Promise<UserSyncInfoDto> {
-    const syncedUser = await this.studentService.synchronizeFromUserInfo(
-      userToken,
-    );
-
-    return {
-      firstName: syncedUser.user.firstName,
-      lastName: syncedUser.user.lastName,
-      email: syncedUser.user.email,
-      birthdate: syncedUser.birthdate,
-      gender: syncedUser.gender,
-    };
+  ): Promise<void> {
+    await this.studentService.synchronizeFromUserInfo(userToken);
   }
 }

@@ -1,5 +1,5 @@
-import { Controller, Get, Patch } from "@nestjs/common";
-import { StudentService, UserService } from "../../services";
+import { Controller, Get } from "@nestjs/common";
+import { UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "src/auth/decorators/userToken.decorator";
 import { IUserToken } from "src/auth/userToken.interface";
