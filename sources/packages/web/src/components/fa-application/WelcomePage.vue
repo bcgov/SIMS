@@ -48,10 +48,11 @@
 </template>
 
 <script lang="ts">
+import { SetupContext } from "vue";
 export default {
-  setup(_, { emit }) {
+  setup(props: any, context: SetupContext) {
     const handleClick = () => {
-      emit("user-ready");
+      context.emit("user-ready");
     };
     return {
       handleClick,
