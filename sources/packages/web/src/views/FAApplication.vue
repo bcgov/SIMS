@@ -1,26 +1,63 @@
 <template>
   <WelcomePage v-if="!isReady" @user-ready="userReady" />
   <!-- Application Main View-->
-  <PersonalInfoQuestionnaire v-else></PersonalInfoQuestionnaire>
+  <div v-else>
+    <div class="card">
+      <Steps :model="applicationSteps" :readonly="false"></Steps>
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import Steps from "primevue/steps";
 import WelcomePage from "../components/fa-application/WelcomePage.vue";
-import PersonalInfoQuestionnaire from "./PersonalInfoQuestionnaire.vue";
+
+const applicationSteps = [
+  {
+    label: "Personal Information",
+    to: "/application/personal-info",
+  },
+  {
+    label: "Select Program",
+    to: "/application/select-program",
+  },
+  {
+    label: "Financial Information",
+    to: "/application/financial-information",
+  },
+  {
+    label: "Confirm Submission",
+    to: "/application/confirm-submission",
+  },
+];
+
 export default {
   components: {
+    Steps,
     WelcomePage,
-    PersonalInfoQuestionnaire,
   },
   setup() {
     const isReady = ref(false);
+    const router = useRouter();
+    const route = useRoute();
     const userReady = () => {
-      isReady.value = true;
+      // TODO: Call router push from welcome page
+      router.push("/application/personal-info");
     };
+    if (route.path !== "/application") {
+      isReady.value = true;
+    }
     return {
       isReady,
       userReady,
+      applicationSteps,
     };
   },
 };

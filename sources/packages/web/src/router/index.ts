@@ -5,6 +5,8 @@ import Student from "../views/Student.vue";
 import FAApplication from "../views/FAApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 
+import PersonalInfoQuestionnaire from "../views/PersonalInfoQuestionnaire.vue";
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -31,6 +33,12 @@ const routes: Array<RouteRecordRaw> = [
     path: "/application",
     name: "application",
     component: FAApplication,
+    children: [
+      {
+        path: "personal-info",
+        component: PersonalInfoQuestionnaire
+      }
+    ]
   },
   {
     path: "/:pathMatch(.*)*",

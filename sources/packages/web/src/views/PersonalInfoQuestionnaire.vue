@@ -2,18 +2,14 @@
   <div class="p-component">
     <div class="p-grid">
       <Section
-        v-bind:title="questionnaire.sections.residency.title"
-        v-bind:sub-title="questionnaire.sections.residency.subTitle"
+        :title="questionnaire.sections.residency.title"
+        :sub-title="questionnaire.sections.residency.subTitle"
       >
         <Question
-          v-bind:text="
-            questionnaire.sections.residency.questions.residencyQuestion
-          "
+          :text="questionnaire.sections.residency.questions.residencyQuestion"
         ></Question>
         <Question
-          v-bind:text="
-            questionnaire.sections.residency.questions.bcResidencyQuestion
-          "
+          :text="questionnaire.sections.residency.questions.bcResidencyQuestion"
         ></Question>
       </Section>
     </div>
@@ -21,8 +17,8 @@
 </template>
 
 <script lang="ts">
-import Section from "../components/fa-application/Section";
-import Question from "../components/fa-application/Question";
+import Section from "../components/fa-application/Section.vue";
+import Question from "../components/fa-application/Question.vue";
 
 const questionnaire = {
   sections: {
