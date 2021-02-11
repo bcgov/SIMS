@@ -17,7 +17,7 @@ describe("Test ConfirmStudentAidBCProfileInfo.vue", () => {
     });
 
     expect(wrapper.html()).toContain(
-      "Confirm StudentAid BC Profile Information",
+      "Full Name",
     );
   });
 });
