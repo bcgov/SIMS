@@ -15,6 +15,7 @@ import Column from "primevue/column";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import Message from "primevue/message";
+import RadioButton from "primevue/radiobutton";
 import Toast from "primevue/toast";
 import Checkbox from "primevue/checkbox";
 import ToastService from "primevue/toastservice";
@@ -39,5 +40,6 @@ AppConfigService.shared.init().then(() => {
     .component("InputText", InputText)
     .component("Message", Message)
     .component("Checkbox", Checkbox)
+    .component("RadioButton", RadioButton)
     .mount("#app");
 });

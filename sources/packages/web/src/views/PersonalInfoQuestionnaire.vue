@@ -7,10 +7,28 @@
       >
         <Question
           :text="questionnaire.sections.residency.questions.residencyQuestion"
-        ></Question>
+        >
+          <RadioButtonList
+            name="residencyQuestion"
+            :options="
+              questionnaire.sections.residency.questions
+                .residencyQuestionOptions
+            "
+          >
+          </RadioButtonList>
+        </Question>
         <Question
           :text="questionnaire.sections.residency.questions.bcResidencyQuestion"
-        ></Question>
+        >
+          <RadioButtonList
+            name="bcResidencyQuestion"
+            :options="
+              questionnaire.sections.residency.questions
+                .bcResidencyQuestionOptions
+            "
+          >
+          </RadioButtonList>
+        </Question>
       </Section>
     </div>
   </div>
@@ -19,6 +37,12 @@
 <script lang="ts">
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
+import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
+
+const yesNoOptions = [
+  { text: "Yes", value: "yes" },
+  { text: "No", value: "no" },
+];
 
 const questionnaire = {
   sections: {
@@ -28,8 +52,14 @@ const questionnaire = {
         "You must meet B.C. residency requirements to receive funding through StudentAid BC",
       questions: {
         residencyQuestion: "On my first day of class, I'll be a:",
+        residencyQuestionOptions: [
+          { text: "Canadian citizen", value: "canadian" },
+          { text: "Protected person", value: "protected" },
+          { text: "Permanent resident", value: "pr" },
+        ],
         bcResidencyQuestion:
           "I have lived in B.C. for at least 12 consecutive months without being a full-time post-secondary student",
+        bcResidencyQuestionOptions: yesNoOptions,
       },
     },
   },
@@ -39,6 +69,7 @@ export default {
   components: {
     Section,
     Question,
+    RadioButtonList,
   },
   setup() {
     return {
@@ -48,5 +79,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
