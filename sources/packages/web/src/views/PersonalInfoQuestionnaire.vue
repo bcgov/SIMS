@@ -10,6 +10,7 @@
         >
           <RadioButtonList
             name="residencyQuestion"
+            v-model="personalInfoState.residencySelectedValue"
             :options="
               questionnaire.sections.residency.questions
                 .residencyQuestionOptions
@@ -22,6 +23,7 @@
         >
           <RadioButtonList
             name="bcResidencyQuestion"
+            v-model="personalInfoState.bcResidencySelectedValue"
             :options="
               questionnaire.sections.residency.questions
                 .bcResidencyQuestionOptions
@@ -35,9 +37,15 @@
 </template>
 
 <script lang="ts">
+import { reactive } from "vue";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
+
+interface PersonalInfoState {
+  residencySelectedValue: string;
+  bcResidencySelectedValue: string;
+}
 
 const yesNoOptions = [
   { text: "Yes", value: "yes" },
@@ -72,8 +80,10 @@ export default {
     RadioButtonList,
   },
   setup() {
+    const personalInfoState = reactive({} as PersonalInfoState);
     return {
       questionnaire,
+      personalInfoState,
     };
   },
 };
