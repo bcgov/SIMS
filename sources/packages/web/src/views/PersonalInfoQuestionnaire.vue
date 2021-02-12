@@ -40,16 +40,11 @@
         :title="questionnaire.sections.bankruptcy.title"
         :sub-title="questionnaire.sections.bankruptcy.subTitle"
       >
-        <Question
-          :text="questionnaire.sections.bankruptcy.questions.bankruptcyQuestion"
-        >
+        <Question :text="questionnaire.sections.bankruptcy.question">
           <RadioButtonList
             name="residencyQuestion"
             v-model="personalInfoState.bankruptcySelectedValue"
-            :options="
-              questionnaire.sections.bankruptcy.questions
-                .residencyQuestionOptions
-            "
+            :options="questionnaire.sections.bankruptcy.options"
           >
           </RadioButtonList>
         </Question>
@@ -59,21 +54,72 @@
         :title="questionnaire.sections.relationship.title"
         :sub-title="questionnaire.sections.relationship.subTitle"
       >
-        <Question
-          :text="
-            questionnaire.sections.relationship.questions.relationshipQuestion
-          "
-        >
+        <Question :text="questionnaire.sections.relationship.question">
           <RadioButtonList
             name="relationshipQuestion"
             v-model="personalInfoState.relationshipSelectedValue"
-            :options="
-              questionnaire.sections.relationship.questions.relationshipOptions
-            "
+            :options="questionnaire.sections.relationship.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
+      <HorizontalSeparator />
+      <Section
+        :title="questionnaire.sections.aboriginalStatus.title"
+        :sub-title="questionnaire.sections.aboriginalStatus.subTitle"
+      >
+        <Question :text="questionnaire.sections.aboriginalStatus.question">
+          <RadioButtonList
+            name="aboriginalStatusQuestion"
+            v-model="personalInfoState.aboriginalStatusSelectedValue"
+            :options="questionnaire.sections.aboriginalStatus.options"
+          >
+          </RadioButtonList>
+        </Question>
+      </Section>
+      <HorizontalSeparator />
+      <Section
+        :title="questionnaire.sections.youthInCare.title"
+        :sub-title="questionnaire.sections.youthInCare.subTitle"
+      >
+        <Question :text="questionnaire.sections.youthInCare.question">
+          <RadioButtonList
+            name="youthInCareQuestion"
+            v-model="personalInfoState.youthInCareSelectedValue"
+            :options="questionnaire.sections.youthInCare.options"
+          >
+          </RadioButtonList>
+        </Question>
+      </Section>
+      <HorizontalSeparator />
+      <Section
+        :title="questionnaire.sections.permanentDisability.title"
+        :sub-title="questionnaire.sections.permanentDisability.subTitle"
+      >
+        <Question :text="questionnaire.sections.permanentDisability.question">
+          <RadioButtonList
+            name="permanentDisabilityQuestion"
+            v-model="personalInfoState.permanentDisabilitySelectedValue"
+            :options="questionnaire.sections.permanentDisability.options"
+          >
+          </RadioButtonList>
+        </Question>
+      </Section>
+      <HorizontalSeparator />
+      <Section
+        :title="questionnaire.sections.dependentStatus.title"
+        :sub-title="questionnaire.sections.dependentStatus.subTitle"
+      >
+        <Question :text="questionnaire.sections.dependentStatus.question">
+          <RadioButtonList
+            name="dependentStatusQuestion"
+            v-model="personalInfoState.dependentStatusSelectedValue"
+            :options="questionnaire.sections.dependentStatus.options"
+          >
+          </RadioButtonList>
+        </Question>
+      </Section>
+      <HorizontalSeparator />
     </div>
     <Button @click="onNext" class="p-m-6">Next</Button>
   </div>
@@ -93,6 +139,10 @@ interface PersonalInfoState {
   bcResidencySelectedValue: string;
   bankruptcySelectedValue: string;
   relationshipSelectedValue: string;
+  aboriginalStatusSelectedValue: string;
+  youthInCareSelectedValue: string;
+  permanentDisabilitySelectedValue: string;
+  dependentStatusSelectedValue: string;
 }
 
 const yesNoOptions = [
@@ -124,24 +174,48 @@ const questionnaire = {
       title: "Bankruptcy",
       subTitle:
         "StudentAid BC requires that applicants have not previously declared bankruptcy.",
-      questions: {
-        bankruptcyQuestion:
-          "Have you ever declared bankruptcy that included financial assistance?",
-        residencyQuestionOptions: yesNoOptions,
-      },
+      question:
+        "Have you ever declared bankruptcy that included financial assistance?",
+      options: yesNoOptions,
     },
     relationship: {
       title: "Relationship Status",
       subTitle: "We use your relationship status to ensure you will receive.",
-      questions: {
-        relationshipQuestion: "On my first day of class, I'll be:",
-        relationshipOptions: [
-          { text: "Single", value: "single" },
-          { text: "Single parent", value: "singleparent" },
-          { text: "Common law", value: "commonlaw" },
-          { text: "Separated/divorced/widowed", value: "separated" },
-        ],
-      },
+      question: "On my first day of class, I'll be:",
+      options: [
+        { text: "Single", value: "single" },
+        { text: "Single parent", value: "singleparent" },
+        { text: "Common law", value: "commonlaw" },
+        { text: "Separated/divorced/widowed", value: "separated" },
+      ],
+    },
+    aboriginalStatus: {
+      title: "Aboriginal Status",
+      subTitle: "Description of Indigenous heritage...",
+      question: "Do you identify as an Aboriginal person?",
+      options: yesNoOptions,
+    },
+    youthInCare: {
+      title: "Youth In Care",
+      subTitle:
+        "If may be eligible to the following programs as a current/former youth in care (part of a foster family).",
+      question:
+        "I am a current/former youth in care and I want to apply for the Provincial Tuition Waiver Program and the Youth Educational Assistance Fund grants",
+      options: yesNoOptions,
+    },
+    permanentDisability: {
+      title: "Permanent Disability",
+      subTitle:
+        "Do you have a permanent disability that affects your studies on a daily basis?",
+      question:
+        "I have a permanent disability and want to apply for permanent disability grants:",
+      options: yesNoOptions,
+    },
+    dependentStatus: {
+      title: "Dependent",
+      subTitle: "Please specify your dependent status",
+      question: "Do you have any dependents?",
+      options: yesNoOptions,
     },
   },
 };
@@ -158,6 +232,7 @@ export default {
     const personalInfoState = reactive({} as PersonalInfoState);
     const router = useRouter();
     const onNext = () => {
+      console.log(`result: ${JSON.stringify(personalInfoState, null, 2)}`);
       router.push("/application/select-program");
     };
     return {
