@@ -19,12 +19,15 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import Helper from "../../helpers/utilfunctions";
+
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly studentService: StudentService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Get("studentConfirmInfo")
   async getStudentConfirmInfo(
@@ -49,20 +52,16 @@ export class StudentController extends BaseController {
 
     const studentConfirmInfo = new StudentConfirmInfo();
     studentConfirmInfo.phoneNumber = existingStudent.contactInfo.phone;
-    const address = existingStudent.contactInfo.addresses[0];
-    studentConfirmInfo.homeAddress = [
-      address.addressLine1,
-      address.addressLine2,
-      address.city,
-      address.province,
-      address.country,
-      address.postalCode,
-    ].join(" ");
+    Helper.mapAddressAttributes(
+      existingStudent.contactInfo.addresses[0],
+      studentConfirmInfo,
+    );
     studentConfirmInfo.gender = existingStudent.gender;
     studentConfirmInfo.fullName = [
       existingUser.firstName,
       existingUser.lastName,
     ].join(" ");
+
     studentConfirmInfo.dateOfBirth = Helper.formatDate(
       existingStudent.birthdate,
     );
