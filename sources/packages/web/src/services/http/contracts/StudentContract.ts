@@ -1,8 +1,10 @@
 export interface StudentConfirmInfo {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   gender: string;
   phoneNumber: string;
-  dateOfBirth: string;
+  birthDateFormatted: string;
+  dateOfBirth: Date;
   addressLine1: string;
   addressLine2: string;
   city1: string;

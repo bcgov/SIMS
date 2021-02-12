@@ -51,19 +51,14 @@ export class StudentController extends BaseController {
     }
 
     const studentConfirmInfo = new StudentConfirmInfo();
+    studentConfirmInfo.firstName = existingUser.firstName;
+    studentConfirmInfo.lastName = existingUser.lastName;
+    studentConfirmInfo.dateOfBirth = existingStudent.birthdate;
+    studentConfirmInfo.gender = existingStudent.gender;
     studentConfirmInfo.phoneNumber = existingStudent.contactInfo.phone;
     Helper.mapAddressAttributes(
       existingStudent.contactInfo.addresses[0],
       studentConfirmInfo,
-    );
-    studentConfirmInfo.gender = existingStudent.gender;
-    studentConfirmInfo.fullName = [
-      existingUser.firstName,
-      existingUser.lastName,
-    ].join(" ");
-
-    studentConfirmInfo.dateOfBirth = Helper.formatDate(
-      existingStudent.birthdate,
     );
 
     return studentConfirmInfo;
