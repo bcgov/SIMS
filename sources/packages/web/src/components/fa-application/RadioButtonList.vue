@@ -1,5 +1,5 @@
 <template>
-  <div class="p-mt-4 p-mb-4">
+  <div class="p-my-4">
     <div
       v-for="option in options"
       :key="option.value"

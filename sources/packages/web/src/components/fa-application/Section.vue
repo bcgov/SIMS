@@ -1,5 +1,5 @@
 <template>
-  <div class="p-component p-m-4">
+  <div class="p-component p-mx-4">
     <div class="p-grid">
       <div class="p-col fa-section-header">{{ title }}</div>
     </div>
