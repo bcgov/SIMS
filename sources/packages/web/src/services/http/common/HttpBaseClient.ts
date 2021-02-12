@@ -18,4 +18,14 @@ export default abstract class HttpBaseClient {
   protected handleRequestError(e: any) {
     console.log(e);
   }
+
+  protected async getCall(url: string) {
+    try {
+      const response = await this.apiClient.get(url, this.addAuthHeader());
+      return response;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

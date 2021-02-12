@@ -8,35 +8,36 @@
     <div class="p-fluid">
       <div class="p-field p-col">
         <label for="fullName">Full Name</label>
-        <div class="p-field p-col">Matt Estevas</div>
+        <div class="p-field p-col">{{ studentConfirmInfo.fullName }}</div>
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-4">
         <label for="dateOfBirth">Date of Birth</label>
-        <div class="p-field p-col">Feb 11th 1995</div>
+        <div class="p-field p-col">{{ studentConfirmInfo.dateOfBirth }}</div>
       </div>
       <div class="p-field p-col-4">
         <label for="gender">Gender</label>
-        <div class="p-field p-col">Male</div>
+        <div class="p-field p-col">{{ studentConfirmInfo.gender }}</div>
       </div>
     </div>
     <h4 class="p-mb-5">If the Information is incorrect, please click here</h4>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-4">
         <label for="homeAddress">Home Address</label>
-        <div class="p-field p-col">
+        <!-- <div class="p-field p-col">
           #112 1042 Jervis Street,
           <br />
           Victoria BC V3C0J5
           <br />
           Canada
-        </div>
+        </div> -->
+        <div class="p-field p-col">{{ studentConfirmInfo.addressLine1 }}<br/>{{ studentConfirmInfo.addressLine2 }},<br/>{{ studentConfirmInfo.city }} {{ studentConfirmInfo.provinceState }} {{ studentConfirmInfo.postalCode }}<br/>{{ studentConfirmInfo.country }}<br/></div>
       </div>
       <div class="p-grid p-col-6">
         <div class="p-field p-col-6">
           <label for="phone">Phone Number</label>
-          <div class="p-field p-col">250 588-1101</div>
+          <div class="p-field p-col">{{ studentConfirmInfo.phoneNumber }}</div>
         </div>
       </div>
     </div>
@@ -50,16 +51,22 @@
   </div>
 </template> 
 <script>
-import { computed } from "vue";
-import { useStore } from "vuex";
-export default {
+import { onMounted,ref } from "vue";
+import { StudentService } from "../../services/StudentService";
+import { student } from '@/store/modules/student/student';
+
+export default {   
   setup() {
-    //Start Here
-    const store = useStore();
-    const user = computed(() => store.state.student.profile);
-    return {
-      user,
-    };
+    
+    //Creating a reactive array
+    const studentConfirmInfo = ref([]);      
+    onMounted(async () => {
+        //Get the student info from api call
+        const studentConfirmInfoFrmService = await StudentService.shared.getStudentConfirmInfo(); 
+        studentConfirmInfo.value = studentConfirmInfoFrmService;
+     });  
+     
+     return { studentConfirmInfo }
   },
 };
 </script>  

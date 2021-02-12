@@ -1,4 +1,6 @@
+import { student } from "@/store/modules/student/student";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { StudentConfirmInfo } from "./contracts/StudentContract";
 
 export interface StudentProfile {
   phone: string;
@@ -61,6 +63,13 @@ export class StudentApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  //Api call to get Student Confirmation Data
+  public async getStudentConfirmInfo() {
+    const response = await this.getCall("students/studentConfirmInfo");
+    const studentConfirmInfo = response.data as StudentConfirmInfo;
+    return studentConfirmInfo;
   }
 
   public async synchronizeFromUserInfo(): Promise<void> {

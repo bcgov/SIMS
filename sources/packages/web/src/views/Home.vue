@@ -11,7 +11,7 @@
       <Button
         label="Start Application"
         class="p-button-raised"
-        @click="$router.push('/confirm-student-profile-info')"
+        @click="$router.push('/application')"
       />
     </template>
   </Card>

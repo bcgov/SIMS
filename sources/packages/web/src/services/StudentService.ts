@@ -1,4 +1,5 @@
-import ApiClient from "../services/http/ApiClient";
+import ApiClient from "./http/ApiClient";
+import StudentConfirmInfo from "./http/interfaces/StudentInterfaces";
 
 export interface Student {
   phone: string;
@@ -55,6 +56,11 @@ export class StudentService {
   public async getContact(): Promise<StudentContact> {
     const studentContact = await ApiClient.Students.getContact();
     return studentContact;
+  }
+
+  async getStudentConfirmInfo(): Promise<StudentConfirmInfo> {
+    const studentConfirmInfo = await ApiClient.Students.getStudentConfirmInfo();
+    return studentConfirmInfo;
   }
 
   /**
