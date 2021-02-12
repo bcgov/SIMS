@@ -1,5 +1,5 @@
 import ApiClient from "./http/ApiClient";
-import StudentConfirmInfo from "./http/interfaces/StudentInterfaces";
+import { StudentConfirmInfo } from "./http/contracts/StudentContract";
 
 export interface Student {
   phone: string;
