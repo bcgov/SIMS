@@ -11,6 +11,7 @@ export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
 export HOST_PREFIX := $(or $(HOST_PREFIX), dev-)
+export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 
 define BUILD_TAG
 "$(BUILD_REF)-${BUILD_ID}"
@@ -106,8 +107,14 @@ create-db:
 	test -n $(DB_NAME)
 	test -n $(NAMESPACE)
 	@echo "+\n++ Creating DB ($(DB_NAME)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=main | oc -n $(NAMESPACE) apply -f -
 
+create-new-db:
+	test -n $(NEW_DB)
+	test -n $(NAMESPACE)
+	test -n $$JN
+	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
+	@oc -n $(NAMESPACE) process -f openshift/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$$JN | oc -n $(NAMESPACE) apply -f -
 deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
