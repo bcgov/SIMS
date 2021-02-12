@@ -16,6 +16,7 @@ import Card from "primevue/card";
 import Button from "primevue/button";
 import Message from "primevue/message";
 import Toast from "primevue/toast";
+import Checkbox from "primevue/checkbox";
 import ToastService from "primevue/toastservice";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
@@ -37,5 +38,6 @@ AppConfigService.shared.init().then(() => {
     .component("Column", Column)
     .component("InputText", InputText)
     .component("Message", Message)
+    .component("Checkbox", Checkbox)
     .mount("#app");
 });

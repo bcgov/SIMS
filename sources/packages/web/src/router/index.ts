@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/:pathMatch(.*)*",
-    component: PageNotFound
+    component: PageNotFound,
   },
 ];
 

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpException,
+  NotFoundException,
   HttpStatus,
   Get,
   Post,
@@ -12,22 +13,69 @@ import {
   CreateStudentDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
+  StudentConfirmInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
+import BaseController from "../BaseController";
+import Helper from "../../helpers/utilfunctions";
+
 @Controller("students")
-export class StudentController {
+export class StudentController extends BaseController {
   constructor(
-    private readonly service: StudentService,
     private readonly userService: UserService,
     private readonly studentService: StudentService,
-  ) {}
+  ) {
+    super();
+  }
+
+  @Get("studentConfirmInfo")
+  async getStudentConfirmInfo(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentConfirmInfo> {
+    const existingStudent = await this.studentService.getStudentByUserName(
+      userToken.userName,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException(
+        `No student was found with the student name ${userToken.userName}`,
+      );
+    }
+
+    // Check user exists or not
+    const existingUser = await this.userService.getUser(userToken.userName);
+    if (!existingUser) {
+      throw new NotFoundException(
+        `No student was found with the student name ${userToken.userName}`,
+      );
+    }
+
+    const studentConfirmInfo = new StudentConfirmInfo();
+    studentConfirmInfo.phoneNumber = existingStudent.contactInfo.phone;
+    Helper.mapAddressAttributes(
+      existingStudent.contactInfo.addresses[0],
+      studentConfirmInfo,
+    );
+    studentConfirmInfo.gender = existingStudent.gender;
+    studentConfirmInfo.fullName = [
+      existingUser.firstName,
+      existingUser.lastName,
+    ].join(" ");
+
+    studentConfirmInfo.dateOfBirth = Helper.formatDate(
+      existingStudent.birthdate,
+    );
+
+    return studentConfirmInfo;
+  }
 
   @Get("contact")
   async getContactInfo(
     @UserToken() userToken: IUserToken,
   ): Promise<GetStudentContactDto> {
-    const student = await this.service.getStudentByUserName(userToken.userName);
+    const student = await this.studentService.getStudentByUserName(
+      userToken.userName,
+    );
     if (!student) {
       throw new HttpException(
         {
@@ -68,7 +116,10 @@ export class StudentController {
     @Body() payload: UpdateStudentContactDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    this.service.updateStudentContactByUserName(userToken.userName, payload);
+    this.studentService.updateStudentContactByUserName(
+      userToken.userName,
+      payload,
+    );
   }
 
   @Post()
@@ -77,8 +128,8 @@ export class StudentController {
     @UserToken() userToken: IUserToken,
   ) {
     // Check user exists or not
-    const existing = await this.userService.getUser(userToken.userName);
-    if (existing) {
+    const existingUser = await this.userService.getUser(userToken.userName);
+    if (existingUser) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -89,7 +140,7 @@ export class StudentController {
     }
 
     // Save student
-    return this.service.createStudent(userToken, payload);
+    return this.studentService.createStudent(userToken, payload);
   }
 
   @Patch("/sync")
