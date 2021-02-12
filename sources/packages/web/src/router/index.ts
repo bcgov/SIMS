@@ -4,8 +4,8 @@ import Login from "../views/Login.vue";
 import Student from "../views/Student.vue";
 import FAApplication from "../views/FAApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
-
 import PersonalInfoQuestionnaire from "../views/PersonalInfoQuestionnaire.vue";
+import SelectProgram from "../views/SelectProgram.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -37,7 +37,11 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "personal-info",
         component: PersonalInfoQuestionnaire
-      }
+      },
+      {
+        path: "select-program",
+        component: SelectProgram,
+      },
     ]
   },
   {

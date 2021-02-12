@@ -1,6 +1,9 @@
 <template>
   <div class="p-component">
     <div class="p-grid">
+      <ConfirmStudentAidBCProfileInfo />
+    </div>
+    <div class="p-grid">
       <Section
         :title="questionnaire.sections.residency.title"
         :sub-title="questionnaire.sections.residency.subTitle"
@@ -72,17 +75,18 @@
         </Question>
       </Section>
     </div>
-    <!-- Only to test the v-model binding, please remove -->
-    <Button @click="printState" class="p-mx-5">Print</Button>
+    <Button @click="onNext" class="p-m-6">Next</Button>
   </div>
 </template>
 
 <script lang="ts">
 import { reactive } from "vue";
+import { useRouter } from "vue-router";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
+import ConfirmStudentAidBCProfileInfo from "../components/fa-application/ConfirmStudentAidBCProfileInfo.vue";
 
 interface PersonalInfoState {
   residencySelectedValue: string;
@@ -96,6 +100,8 @@ const yesNoOptions = [
   { text: "No", value: "no" },
 ];
 
+// TODO: Refactor This into a simple static model
+// TODO: Refactor import static texts from constant file
 const questionnaire = {
   sections: {
     residency: {
@@ -146,19 +152,18 @@ export default {
     Question,
     RadioButtonList,
     HorizontalSeparator,
+    ConfirmStudentAidBCProfileInfo,
   },
   setup() {
     const personalInfoState = reactive({} as PersonalInfoState);
-    const printState = () => {
-      console.log(personalInfoState.residencySelectedValue);
-      console.log(personalInfoState.bcResidencySelectedValue);
-      console.log(personalInfoState.bankruptcySelectedValue);
-      console.log(personalInfoState.relationshipSelectedValue);
+    const router = useRouter();
+    const onNext = () => {
+      router.push("/application/select-program");
     };
     return {
       questionnaire,
       personalInfoState,
-      printState,
+      onNext,
     };
   },
 };

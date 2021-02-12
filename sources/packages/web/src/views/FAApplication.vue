@@ -1,5 +1,5 @@
 <template>
-  <WelcomePage v-if="!isReady" @user-ready="userReady" />
+  <WelcomePage v-if="!isReady" />
   <!-- Application Main View-->
   <div v-else>
     <div class="card">
@@ -45,18 +45,12 @@ export default {
   },
   setup() {
     const isReady = ref(false);
-    const router = useRouter();
     const route = useRoute();
-    const userReady = () => {
-      // TODO: Call router push from welcome page
-      router.push("/application/personal-info");
-    };
     if (route.path !== "/application") {
       isReady.value = true;
     }
     return {
       isReady,
-      userReady,
       applicationSteps,
     };
   },
