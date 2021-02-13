@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
 export class StudentConfirmInfo {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -9,7 +10,7 @@ export class StudentConfirmInfo {
   postalCode: string;
   gender: string;
   phoneNumber: string;
-  dateOfBirth: string;
+  dateOfBirth: Date;
 }
 
 export class GetStudentContactDto {
