@@ -61,12 +61,6 @@ export default {
      return { studentConfirmInfo, confirmState }
 
   },
-  // data() {
-  //       return {
-  //           checked: false,
-            
-  //       }
-  //   },
 };
 </script>  
 <style>
