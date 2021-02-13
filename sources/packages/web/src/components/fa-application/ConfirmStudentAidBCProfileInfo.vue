@@ -34,7 +34,7 @@
     </div>
 
     <div class="p-field-checkbox p-checkbox-icon">
-      <Checkbox id="infoConfirmation" />
+      <Checkbox id="infoConfirmation" v-model="confirmState.checked" :binary="true" />
       <label for="infoConfirmation"
         >I confirm my StudentAid BC Profile information shown is correct</label
       >
@@ -42,23 +42,31 @@
   </div>
 </template> 
 <script>
-import { onMounted,ref } from "vue";
+import { onMounted,ref, reactive } from "vue";
 import { StudentService } from "../../services/StudentService";
-import { student } from '@/store/modules/student/student';
 
 export default {   
   setup() {
-    
+   
     //Creating a reactive array
-    const studentConfirmInfo = ref([]);      
+    const studentConfirmInfo = ref([]); 
+    const confirmState =  reactive({checked:false})
+    
     onMounted(async () => {
         //Get the student info from api call
         const studentConfirmInfoFrmService = await StudentService.shared.getStudentConfirmInfo(); 
         studentConfirmInfo.value = studentConfirmInfoFrmService;
      });  
      
-     return { studentConfirmInfo }
+     return { studentConfirmInfo, confirmState }
+
   },
+  // data() {
+  //       return {
+  //           checked: false,
+            
+  //       }
+  //   },
 };
 </script>  
 <style>
