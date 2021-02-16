@@ -15,7 +15,7 @@ High, new features released weekly
 
 Build and deliver the a modernized system to assist students receive the funding they need
 
-## Architecture
+## Draft-Architecture
 
 ![Draft Architecture](DraftArchitecture.jpg)
 
