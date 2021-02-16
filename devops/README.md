@@ -3,13 +3,16 @@
 2. Keycloak namespace
 3. Docker (For local development only)
 4. Make cmd (For local development only - windows users)
+5. Test cmd (You can comment out when using as well - windows users)
 
 # OpenShift
 From a clean openshift enrionment run the below
 1. "oc login Token"
 2. "make init-patroni NAMESPACE=namespace-env"
-3. "make deploy-patroni NAMESPACE=namespace-env"
-4. "make create-db NAMESPACE=namespace-env""
+3. "make build-patroni BUILD_NAMESPACE=toolsnamespace-env"
+4. "make deploy-patroni NAMESPACE=namespace-env"
+5. "make create-db NAMESPACE=namespace-env"
+6. "make create-new-db NEW_DB=newdbname JOB_NAME=openshift-jobname BUILD_NAMESPACE=toolsnamespace-env NAMESPACE=namespace-env"
   
 At this point the pipeline will build and deploy the remainder
 
