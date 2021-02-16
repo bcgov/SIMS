@@ -51,6 +51,20 @@
       </Section>
       <HorizontalSeparator />
       <Section
+        :title="questionnaire.sections.highschoolAttendance.title"
+        :sub-title="questionnaire.sections.highschoolAttendance.subTitle"
+      >
+        <Question :text="questionnaire.sections.highschoolAttendance.question">
+          <Calendar
+            v-model="personalInfoState.highschoolAttendanceSelectedDate"
+            view="month"
+            dateFormat="mm/yy"
+            class="p-mt-4"
+          />
+        </Question>
+      </Section>
+      <HorizontalSeparator />
+      <Section
         :title="questionnaire.sections.relationship.title"
         :sub-title="questionnaire.sections.relationship.subTitle"
       >
@@ -143,6 +157,7 @@ interface PersonalInfoState {
   youthInCareSelectedValue: string;
   permanentDisabilitySelectedValue: string;
   dependentStatusSelectedValue: string;
+  highschoolAttendanceSelectedDate: Date;
 }
 
 const yesNoOptions = [
@@ -177,6 +192,12 @@ const questionnaire = {
       question:
         "Have you ever declared bankruptcy that included financial assistance?",
       options: yesNoOptions,
+    },
+    highschoolAttendance: {
+      title: "Date of Highschool Attendance",
+      subTitle:
+        "Please enter the date when you graduated or when you orginally left highschool before coming back to graduate.",
+      question: " I graduated or left highschool on:",
     },
     relationship: {
       title: "Relationship Status",
