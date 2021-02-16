@@ -20,8 +20,8 @@
         <label for="gender" class="label-extra">Gender</label>
         <div class=" p-col text-extra">{{ studentConfirmInfo.gender }}</div>
       </div>
-    </div>
-    <h4 class="p-mb-5">If the Information is incorrect, please <a href=#>click here</a></h4>
+    </div>    
+    <h4 class="p-mb-5">If the Information is incorrect, please <router-link :to="{ name: 'Student-Profile-Edit'}">click here</router-link></h4> 
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-4">
         <label for="homeAddress" class="label-extra">Home Address</label>
