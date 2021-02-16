@@ -79,6 +79,20 @@
       </Section>
       <HorizontalSeparator />
       <Section
+        :title="questionnaire.sections.employment.title"
+        :sub-title="questionnaire.sections.employment.subTitle"
+      >
+        <Question :text="questionnaire.sections.employment.question">
+          <RadioButtonList
+            name="aboriginalStatusQuestion"
+            v-model="personalInfoState.employmentStatusValue"
+            :options="questionnaire.sections.employment.options"
+          >
+          </RadioButtonList>
+        </Question>
+      </Section>
+      <HorizontalSeparator />
+      <Section
         :title="questionnaire.sections.aboriginalStatus.title"
         :sub-title="questionnaire.sections.aboriginalStatus.subTitle"
       >
@@ -153,6 +167,7 @@ interface PersonalInfoState {
   bcResidencySelectedValue: string;
   bankruptcySelectedValue: string;
   relationshipSelectedValue: string;
+  employmentStatusValue: string;
   aboriginalStatusSelectedValue: string;
   youthInCareSelectedValue: string;
   permanentDisabilitySelectedValue: string;
@@ -205,10 +220,18 @@ const questionnaire = {
       question: "On my first day of class, I'll be:",
       options: [
         { text: "Single", value: "single" },
-        { text: "Single parent", value: "singleparent" },
+        { text: "Married", value: "married" },
         { text: "Common law", value: "commonlaw" },
         { text: "Separated/divorced/widowed", value: "separated" },
       ],
+    },
+    employment: {
+      title: "Employment Information",
+      subTitle:
+        "StudentAid BC requires applicants not work a full-time of more than 32 hours per week for at least half of their study period.",
+      question:
+        "Will you be working a full-time job of 32 hours per week for more than half of your study period?",
+      options: yesNoOptions,
     },
     aboriginalStatus: {
       title: "Aboriginal Status",
