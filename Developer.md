@@ -2,12 +2,14 @@
 This in intended to be a reference point for technical decisions and reference
 
 ## Vue.JS
-Version: 3
-Use:
+Version=3
+Use=
 
 ### Libraries
 
 ### Additional Notes
+
+
 
 ## Node.JS
 Version:
@@ -17,6 +19,8 @@ Use:
 
 ### Additional Notes
 
+
+
 ## Postgres
 Version:
 Use:
@@ -24,6 +28,8 @@ Use:
 ### Libraries
 
 ### Additional Notes
+
+
 
 ## Patroni
 Version:
