@@ -9,8 +9,6 @@ Use=
 
 ### Additional Notes
 
-\
-
 ## Node.JS
 Version=\
 Use=
@@ -19,8 +17,6 @@ Use=
 
 ### Additional Notes
 
-\
-
 ## Postgres
 Version=\
 Use=
@@ -28,8 +24,6 @@ Use=
 ### Libraries
 
 ### Additional Notes
-
-\
 
 ## Patroni
 Version=\
