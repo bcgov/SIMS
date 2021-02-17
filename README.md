@@ -2,6 +2,10 @@
 
 Student Information Management System. Post-Secondary Student Financial Aid System. 
 
+## Problem Statement
+
+Align Student Aid BC Technology, Policies and Processes to the Student Experience by streamlining:  (Our Problem statement)
+
 ## Project Status
 
 In Development
@@ -9,10 +13,6 @@ In Development
 ## Development Activity
 
 High, new features released weekly
-
-## Objectives
-
-Build and deliver the a modernized system to assist students receive the funding they need
 
 ## Draft-Architecture
 
