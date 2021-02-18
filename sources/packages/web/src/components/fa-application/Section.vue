@@ -20,7 +20,7 @@ export default {
     title: String,
     subTitle: String,
   },
-  setup(props: any) {
+  setup() {
     return {};
   },
 };

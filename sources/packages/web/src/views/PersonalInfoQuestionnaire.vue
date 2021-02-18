@@ -1,5 +1,5 @@
 <template>
-  <div class="p-component">
+  <div class="p-component p-m-8">
     <div class="p-grid">
       <ConfirmStudentAidBCProfileInfo />
     </div>
@@ -149,7 +149,7 @@
       </Section>
       <HorizontalSeparator />
     </div>
-    <Button @click="onNext" class="p-m-6">Next</Button>
+    <Button @click="onNext" class="p-m-6">Next Section</Button>
   </div>
 </template>
 

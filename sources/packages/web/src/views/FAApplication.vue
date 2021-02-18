@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import Steps from "primevue/steps";
 import WelcomePage from "../components/fa-application/WelcomePage.vue";
 
