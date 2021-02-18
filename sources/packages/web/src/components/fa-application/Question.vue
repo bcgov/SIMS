@@ -10,12 +10,12 @@
 </template>
 
 <script lang="ts">
+interface QuestionProp {
+  text: string;
+}
 export default {
   props: {
     text: String,
-  },
-  setup(prop: any) {
-    return {};
   },
 };
 </script>

@@ -16,8 +16,6 @@ describe("Test ConfirmStudentAidBCProfileInfo.vue", () => {
       shallow: true,
     });
 
-    expect(wrapper.html()).toContain(
-      "Full Name",
-    );
+    expect(wrapper.html()).toContain("Full Name");
   });
 });
