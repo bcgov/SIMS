@@ -9,7 +9,7 @@ describe("Test InstituteList.vue", () => {
     const wrapper = mount(InstituteList, {
       global: {
         plugins: [store],
-        stubs: ['globally-registered-component'],
+        stubs: ["globally-registered-component"],
       },
       shallow: true,
     });

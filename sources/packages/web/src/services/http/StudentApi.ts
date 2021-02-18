@@ -1,4 +1,3 @@
-import { student } from "@/store/modules/student/student";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { StudentConfirmInfo } from "./contracts/StudentContract";
 
