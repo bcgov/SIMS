@@ -16,13 +16,9 @@
 <script lang="ts">
 import { SetupContext, onMounted, ref } from "vue";
 import { InstituteService, Institute } from "../../services/InstituteService";
-// import Dropdown from "primevue/dropdown";
 
 export default {
   emits: ["update:modelValue", "change"],
-  /*components: {
-    Dropdown,
-  },*/
   props: {
     modelValue: Object,
   },
