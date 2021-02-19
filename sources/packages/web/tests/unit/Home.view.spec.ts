@@ -12,7 +12,6 @@ describe("Test Home.vue", () => {
       },
     });
   });
-  afterAll(() => {});
   it("should load home component", () => {
     const wrapper = mount(Home, {
       global: {
