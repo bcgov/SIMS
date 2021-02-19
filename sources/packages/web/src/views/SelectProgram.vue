@@ -84,7 +84,6 @@ export default {
     const enableEducationProgram = ref(false);
     const selectedInstitute = ref(null);
     const onInstituteSelect = (event: any) => {
-      console.dir(event.value);
       enableEducationProgram.value = true;
       selectedInstitute.value = event.value;
     };
