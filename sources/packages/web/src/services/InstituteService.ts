@@ -3,6 +3,11 @@ export interface Institute {
   code?: string;
 }
 
+export interface EducationProgram {
+  name: string;
+  code?: string;
+}
+
 export class InstituteService {
   // Share Instance
   private static instance: InstituteService;
@@ -20,5 +25,20 @@ export class InstituteService {
       },
     ];
     return institutes;
+  }
+
+  public async getProgramsFor(
+    institute?: Institute,
+  ): Promise<EducationProgram[]> {
+    if (institute?.code === "ssc") {
+      const programs: EducationProgram[] = [
+        {
+          name: "Nursing Program",
+          code: "np",
+        },
+      ];
+      return programs;
+    }
+    return [];
   }
 }

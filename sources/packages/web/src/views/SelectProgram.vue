@@ -12,38 +12,64 @@
       <HorizontalSeparator />
       <!-- Header -->
       <!-- Body -->
+      <!-- Institute -->
       <Section
-        :title="questions.sectionInstitute.title"
-        :subTitle="questions.sectionInstitute.subTitle"
+        :title="questions.institute.title"
+        :subTitle="questions.institute.subTitle"
       >
-        <Question :text="questions.sectionInstitute.question">
-          <InstituteList v-model="response.instituteSelectValue" />
+        <Question :text="questions.institute.question">
+          <InstituteList
+            v-model="response.instituteSelectValue"
+            @change="onInstituteSelect"
+          />
         </Question>
       </Section>
       <HorizontalSeparator />
+      <!-- Institute -->
+      <!-- Education Program-->
+      <Section
+        :title="questions.educationProgram.title"
+        :subTitle="questions.educationProgram.subTitle"
+      >
+        <Question :text="questions.educationProgram.question">
+          <EducationProgramList
+            v-model="response.educationProgramSelectValue"
+            :enable="enableEducationProgram"
+            :institute="selectedInstitute"
+          />
+        </Question>
+      </Section>
+      <HorizontalSeparator />
+      <!-- Education Program-->
       <!-- Body-->
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import InstituteList from "../components/fa-application/InstituteList.vue";
+import EducationProgramList from "../components/fa-application/EducationProgramList.vue";
 
 const questions = {
-  sectionInstitute: {
+  institute: {
     title: "Search for the institution you want to attend",
     subTitle: "Search for the institution you would like to attend",
     question: "The school I will be attending:",
+  },
+  educationProgram: {
+    title: "Program Selection",
+    subTitle: "Select the program that you will be attending",
+    question: "The program I will be attending::",
   },
 };
 
 interface SelectProgramResponse {
   instituteSelectValue: any;
-  programSelectValue: any;
+  educationProgramSelectValue: any;
 }
 export default {
   components: {
@@ -51,12 +77,23 @@ export default {
     Section,
     Question,
     InstituteList,
+    EducationProgramList,
   },
   setup() {
     const response = reactive({} as SelectProgramResponse);
+    const enableEducationProgram = ref(false);
+    const selectedInstitute = ref(null);
+    const onInstituteSelect = (event: any) => {
+      console.dir(event.value);
+      enableEducationProgram.value = true;
+      selectedInstitute.value = event.value;
+    };
     return {
       questions,
       response,
+      enableEducationProgram,
+      onInstituteSelect,
+      selectedInstitute,
     };
   },
 };
