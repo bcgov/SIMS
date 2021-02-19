@@ -3,4 +3,5 @@
  */
 export enum Role {
   Student = "StudentRole",
+  DummyRole = "DummyRole",
 }
