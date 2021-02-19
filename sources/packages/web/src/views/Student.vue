@@ -16,7 +16,7 @@
             <label for="firstName">Given Names</label>
             <InputText
               id="firstName"
-              v-model="readonlyProfile.givenNames"
+              v-model="readonlyProfile.firstName"
               readonly
             />
           </div>
@@ -34,7 +34,7 @@
             <label for="dateOfBirth">Date of Birth</label>
             <InputText
               id="dateOfBirth"
-              v-model="readonlyProfile.birthdate"
+              v-model="readonlyProfile.birthDateFormatted2"
               readonly
             />
           </div>
@@ -148,9 +148,8 @@
 </template>
 
 <script lang="ts">
-import { computed, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { useForm, Field } from "vee-validate";
 import { StudentService } from "../services/StudentService";
 import { useToast } from "primevue/usetoast";
@@ -180,18 +179,17 @@ export default {
     },
   },
   setup(props: any) {
-    // Readonly student data from state.
-    const store = useStore();
     const router = useRouter();
     const toast = useToast();
-
-    const readonlyProfile = computed(() => store.state.student.profile);
+    const readonlyProfile = ref({});
     const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
     onMounted(async () => {
       if (props.editMode) {
-        const contact = await StudentService.shared.getContact();
+        const studentAllInfo = await StudentService.shared.getStudentInfo();
+        const contact = studentAllInfo.contact;
         setValues({ ...contact });
+        readonlyProfile.value = studentAllInfo;
       }
     });
 

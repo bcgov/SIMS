@@ -1,14 +1,16 @@
-export interface StudentConfirmInfo {
+export interface StudentInfo {
   firstName: string;
   lastName: string;
   gender: string;
-  phoneNumber: string;
-  birthDateFormatted: string;
+  email: string;
   dateOfBirth: Date;
-  addressLine1: string;
-  addressLine2: string;
-  city1: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
+  contact: {
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    provinceState: string;
+    country: string;
+    postalCode: string;
+    phone: string;
+  };
 }

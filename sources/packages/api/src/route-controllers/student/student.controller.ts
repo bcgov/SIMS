@@ -13,7 +13,7 @@ import {
   CreateStudentDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
-  StudentConfirmInfo,
+  StudentInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -29,10 +29,10 @@ export class StudentController extends BaseController {
     super();
   }
 
-  @Get("studentConfirmInfo")
-  async getStudentConfirmInfo(
+  @Get("studentInfo")
+  async getStudentInfo(
     @UserToken() userToken: IUserToken,
-  ): Promise<StudentConfirmInfo> {
+  ): Promise<StudentInfo> {
     const existingStudent = await this.studentService.getStudentByUserName(
       userToken.userName,
     );
@@ -50,18 +50,19 @@ export class StudentController extends BaseController {
       );
     }
 
-    const studentConfirmInfo = new StudentConfirmInfo();
-    studentConfirmInfo.firstName = existingUser.firstName;
-    studentConfirmInfo.lastName = existingUser.lastName;
-    studentConfirmInfo.dateOfBirth = existingStudent.birthdate;
-    studentConfirmInfo.gender = existingStudent.gender;
-    studentConfirmInfo.phoneNumber = existingStudent.contactInfo.phone;
+    const studentInfo = new StudentInfo();
+    studentInfo.firstName = existingUser.firstName;
+    studentInfo.lastName = existingUser.lastName;
+    studentInfo.email = existingUser.email;
+    studentInfo.dateOfBirth = existingStudent.birthdate;
+    studentInfo.gender = existingStudent.gender;
+    studentInfo.contact.phone = existingStudent.contactInfo.phone;
     Helper.mapAddressAttributes(
       existingStudent.contactInfo.addresses[0],
-      studentConfirmInfo,
+      studentInfo,
     );
 
-    return studentConfirmInfo;
+    return studentInfo;
   }
 
   @Get("contact")
