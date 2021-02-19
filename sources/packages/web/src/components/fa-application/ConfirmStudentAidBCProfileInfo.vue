@@ -9,7 +9,11 @@
       <div class="p-field p-col-4">
         <label for="fullName" class="label-extra">Full Name</label>
         <div class="p-col text-extra">
+<<<<<<< HEAD
           {{ studentInfo.firstName }} {{ studentInfo.lastName }}
+=======
+          {{ studentConfirmInfo.firstName }} {{ studentConfirmInfo.lastName }}
+>>>>>>> main
         </div>
       </div>
     </div>
@@ -17,7 +21,11 @@
       <div class="p-field p-col-4">
         <label for="dateOfBirth" class="label-extra">Date of Birth</label>
         <div class="p-col text-extra">
+<<<<<<< HEAD
           {{ studentInfo.birthDateFormatted }}
+=======
+          {{ studentConfirmInfo.birthDateFormatted }}
+>>>>>>> main
         </div>
       </div>
       <div class="p-field p-col-4">
@@ -35,18 +43,32 @@
       <div class="p-field p-col-4">
         <label for="homeAddress" class="label-extra">Home Address</label>
         <div class="p-field p-col text-extra">
+<<<<<<< HEAD
           {{ studentContact.addressLine1 }},<br />
           {{ studentContact.addressLine2 }}<br />
           {{ studentContact.city }}
           {{ studentContact.provinceState }}
           {{ studentContact.postalCode }}<br />
           {{ studentContact.country }}<br />
+=======
+          {{ studentConfirmInfo.addressLine1 }},<br />{{
+            studentConfirmInfo.addressLine2
+          }}<br />{{ studentConfirmInfo.city }}
+          {{ studentConfirmInfo.provinceState }}
+          {{ studentConfirmInfo.postalCode }}<br />{{
+            studentConfirmInfo.country
+          }}<br />
+>>>>>>> main
         </div>
       </div>
       <div class="p-field p-col-6">
         <label for="phone" class="label-extra">Phone Number</label>
         <div class="p-field p-col text-extra">
+<<<<<<< HEAD
           {{ studentContact.phone }}
+=======
+          {{ studentConfirmInfo.phoneNumber }}
+>>>>>>> main
         </div>
       </div>
     </div>
@@ -70,6 +92,7 @@ import { StudentService } from "../../services/StudentService";
 export default {
   setup() {
     //Creating a reactive array
+<<<<<<< HEAD
     const studentInfo = ref([]);
     const studentContact = ref([]);
     const confirmState = reactive({ checked: false });
@@ -81,6 +104,18 @@ export default {
       studentContact.value = studentInfoFrmService.contact;
     });
     return { studentInfo, studentContact, confirmState };
+=======
+    const studentConfirmInfo = ref([]);
+    const confirmState = reactive({ checked: false });
+
+    onMounted(async () => {
+      //Get the student info from api call
+      const studentConfirmInfoFrmService = await StudentService.shared.getStudentConfirmInfo();
+      studentConfirmInfo.value = studentConfirmInfoFrmService;
+    });
+
+    return { studentConfirmInfo, confirmState };
+>>>>>>> main
   },
 };
 </script>
