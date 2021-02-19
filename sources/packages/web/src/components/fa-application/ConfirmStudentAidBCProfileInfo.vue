@@ -35,8 +35,10 @@
       <div class="p-field p-col-4">
         <label for="homeAddress" class="label-extra">Home Address</label>
         <div class="p-field p-col text-extra">
-          {{ studentContact.addressLine1 }},<br />
-          {{ studentContact.addressLine2 }}<br />
+          {{ studentContact.addressLine1 }}<br />
+          <div v-show="studentContact.addressLine2">
+            {{ studentContact.addressLine2 }}<br />
+          </div>
           {{ studentContact.city }}
           {{ studentContact.provinceState }}
           {{ studentContact.postalCode }}<br />
