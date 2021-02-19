@@ -11,6 +11,6 @@ const finalConfig: any = { ...config, schema: process.env.DB_SCHEMA || "sims" };
       logging: ["error", "warn", "info"],
     }),
   ],
-  providers: [DatabaseService],
+  //providers: [DatabaseService],
 })
 export class DatabaseModule {}

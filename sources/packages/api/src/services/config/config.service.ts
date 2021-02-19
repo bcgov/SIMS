@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { IConfig } from "src/types/config";
 
 @Injectable()
@@ -9,14 +9,14 @@ export class ConfigService {
         url: process.env.KEYCLOAK_AUTH_URL,
         realm: process.env.KEYCLOAK_REALM,
         clientId: process.env.KEYCLOAK_CLIENT,
-        issuerUrl: this.getIssuerEndpoint(),
+        OpenIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
       },
     };
   }
 
-  private getIssuerEndpoint(): string {
+  private getOpenIdConfigurationUrl(): string {
     return new URL(
-      `realms/${process.env.KEYCLOAK_REALM}`,
+      `realms/${process.env.KEYCLOAK_REALM}/.well-known/openid-configuration`,
       process.env.KEYCLOAK_AUTH_URL,
     ).href;
   }
