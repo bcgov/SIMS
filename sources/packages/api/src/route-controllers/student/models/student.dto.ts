@@ -1,21 +1,4 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
-export class StudentInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: string;
-  dateOfBirth: Date;
-  contact = new (class contact {
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    provinceState: string;
-    country: string;
-    postalCode: string;
-    phone: string;
-  })();
-}
-
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;

@@ -13,12 +13,11 @@ import {
   CreateStudentDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
-  StudentInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import Helper from "../../helpers/utilfunctions";
+import { StudentInfo } from "src/types/studentInfo";
 
 @Controller("students")
 export class StudentController extends BaseController {
@@ -50,18 +49,18 @@ export class StudentController extends BaseController {
       );
     }
 
-    const studentInfo = new StudentInfo();
-    studentInfo.firstName = existingUser.firstName;
-    studentInfo.lastName = existingUser.lastName;
-    studentInfo.email = existingUser.email;
-    studentInfo.dateOfBirth = existingStudent.birthdate;
-    studentInfo.gender = existingStudent.gender;
-    studentInfo.contact.phone = existingStudent.contactInfo.phone;
-    Helper.mapAddressAttributes(
-      existingStudent.contactInfo.addresses[0],
-      studentInfo,
-    );
-
+    const studentInfo: StudentInfo = {
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      email: existingUser.email,
+      gender: existingStudent.gender,
+      dateOfBirth: existingStudent.birthdate,
+      contact: {
+        ...existingStudent.contactInfo.addresses[0],
+        provinceState: existingStudent.contactInfo.addresses[0].province,
+        phone: existingStudent.contactInfo.phone,
+      },
+    };
     return studentInfo;
   }
 
