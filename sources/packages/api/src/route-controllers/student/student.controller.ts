@@ -17,7 +17,7 @@ import {
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { StudentInfo } from "src/types/studentInfo";
+import { StudentInfo } from "../../types/studentInfo";
 
 @Controller("students")
 export class StudentController extends BaseController {
