@@ -2,29 +2,41 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import { AuthConfig } from "../src/auth/auth-config";
 import {
-  AuthHelper,
   PEM_BEGIN_HEADER,
   PEM_END_HEADER,
-} from "../src/auth/auth-helper";
+} from "../src/utilities/certificate-utils";
 import { AuthTestController } from "../src/route-controllers/auth-test/auth-test.controller";
+import { ConfigService } from "../src/services";
+import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 
 describe("Authentication (e2e)", () => {
+  // Use the student client to retrieve the token from
+  // Keycloak since it is the only one that we have currently.
+  const clientId = "student";
+  const config = new ConfigService().getConfig();
+  // Nest application to be shared for all e2e tests
+  // that need execute a HTTP request.
   let app: INestApplication;
-  let token: string;
+  // Token to be used for all e2e tests that need test
+  // the authentication endpoints.
+  // This token is retrieved from Keyclock.
+  let accesstoken: string;
 
   beforeAll(async () => {
-    await AuthHelper.load();
-    token = await AuthHelper.getAccessToken(
-      "to be defined",
-      "to be defined",
-      "student",
+    await AuthConfig.load();
+    const token = await KeycloakService.shared.getToken(
+      config.e2eTest.studentUser.username,
+      config.e2eTest.studentUser.password,
+      clientId,
     );
-
-    console.log(AuthHelper.realmConfig.public_key);
+    accesstoken = token.access_token;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      // AuthTestController is used only for e2e tests and could be
+      // changed as needed to implement more test scenarios.
       controllers: [AuthTestController],
     }).compile();
     app = moduleFixture.createNestApplication();
@@ -37,12 +49,15 @@ describe("Authentication (e2e)", () => {
       PEM_BEGIN_HEADER.length + PEM_END_HEADER.length;
 
     // Act
-    await AuthHelper.load();
+    await AuthConfig.load();
 
     // Assert
-    expect(AuthHelper.realmConfig.public_key).toContain(PEM_BEGIN_HEADER);
-    expect(AuthHelper.realmConfig.public_key).toContain(PEM_END_HEADER);
-    expect(AuthHelper.realmConfig.public_key.length).toBeGreaterThan(
+    expect(AuthConfig.PEM_PublicKey).toContain(PEM_BEGIN_HEADER);
+    expect(AuthConfig.PEM_PublicKey).toContain(PEM_END_HEADER);
+    // Besides that header and footer, the public_key need have some additional
+    // content that would be the public key retrieve fromKeycloak,
+    // that does not contains the PEM_BEGIN_HEADER and PEM_END_HEADER.
+    expect(AuthConfig.PEM_PublicKey.length).toBeGreaterThan(
       headerAndFooterLength,
     );
   });
@@ -63,7 +78,7 @@ describe("Authentication (e2e)", () => {
     it("Should return a HttpStatus OK(200) when bearer token is present", () => {
       return request(app.getHttpServer())
         .get("/auth-test/global-authenticated-route")
-        .auth(token, { type: "bearer" })
+        .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     });
 
@@ -74,24 +89,24 @@ describe("Authentication (e2e)", () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it("Should return a HttpStatus OK(200) when the Role decorator is present and the role is present", () => {
+    it("Should return a HttpStatus OK(200) when the Role decorator is present and the role is present and it is the expected one", () => {
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-route-by-role")
-        .auth(token, { type: "bearer" })
+        .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
     });
 
-    it("Should return a HttpStatus FORBIDDEN(403) when the Role decorator is present but it is not the expected one", () => {
+    it("Should return a HttpStatus FORBIDDEN(403) when the Role decorator is present but the role it is not the expected one", () => {
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-route-by-non-existing-role")
-        .auth(token, { type: "bearer" })
+        .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.FORBIDDEN);
     });
 
     it("Can parse the UserToken", () => {
       return request(app.getHttpServer())
         .get("/auth-test/global-authenticated-route")
-        .auth(token, { type: "bearer" })
+        .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK)
         .then((resp) => {
           // Only the basic properties that are present in a basic

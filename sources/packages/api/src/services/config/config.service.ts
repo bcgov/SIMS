@@ -11,6 +11,12 @@ export class ConfigService {
         clientId: process.env.KEYCLOAK_CLIENT,
         OpenIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
       },
+      e2eTest: {
+        studentUser: {
+          username: process.env.E2E_TEST_STUDENT_USERNAME,
+          password: process.env.E2E_TEST_STUDENT_PASSWORD,
+        },
+      },
     };
   }
 

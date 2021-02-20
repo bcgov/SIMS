@@ -29,3 +29,7 @@ EXPOSE ${PORT}
 
 # Entry point
 CMD [ "npm", "run", "start:prod" ]
+
+# Sample line to run the E2E tests for now.
+# E2E tests will be enabled on CI/CD on upcoming tasks.
+# CMD [ "npm", "run", "test:e2e" ]

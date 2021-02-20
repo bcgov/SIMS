@@ -1,32 +1,48 @@
 import axios from "axios";
-import { ConfigService } from "../config/config.service";
-import { stringify } from "qs";
 import { Injectable } from "@nestjs/common";
-import { IAuthConfig } from "../../types/config";
-import { GetTokenResponse } from "./get-token.model";
+import { stringify } from "qs";
+import { ConfigService } from "../../config/config.service";
+import { IAuthConfig } from "../../../types/config";
+import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
-import { AuthHelper } from "../../auth/auth-helper";
-
-// Used by the method convertStringToPEM to generate the
-// PEM string format required by the jwt validation frameworks.
-export const PEM_BEGIN_HEADER = "-----BEGIN PUBLIC KEY-----";
-export const PEM_END_HEADER = "-----END PUBLIC KEY-----";
+import { AuthConfig } from "../../../auth/auth-config";
 
 /**
- * Manage the http requests that need be exeuted to Keycloak.
+ * Manage the HTTP requests that need to be exeuted to Keycloak.
+ * This service allows a singleton access to the KeycloakService
+ * with the intention to be used on areas of the application that
+ * are not part of the dependency injection framework.
+ * All others areas should prefer to have it inject to make it easier
+ * to create mockups for unit tests.
  */
 @Injectable()
 export class KeycloakService {
   private readonly authConfig: IAuthConfig;
 
+  static initialize() {
+    KeycloakService._shared = new KeycloakService(new ConfigService());
+  }
+
   constructor(configService: ConfigService) {
     this.authConfig = configService.getConfig().auth;
   }
 
+  private static _shared: KeycloakService;
   /**
+   * Allow a singleton access to the KeycloakService for areas
+   * of the application that are not part of the dependency
+   * injection framework.
+   */
+  public static get shared(): KeycloakService {
+    return KeycloakService._shared;
+  }
+
+  /**
+   * Get the Open Id Configuration.
    * Keycloack exposes Open Id Configuration in a public URL
    * (e.g. https://dev.oidc.gov.bc.ca/auth/realms/jxoe2o46/.well-known/openid-configuration).
+   * This endpoint provides a way to discover other useful endpoints and more.
    * @returns Open Id Configuration.
    */
   public async getOpenIdConfig(): Promise<OpenIdConfig> {
@@ -36,18 +52,19 @@ export class KeycloakService {
     } catch (ex) {
       // TODO: Add a logger.
       console.log(ex);
-      throw new Error("Error while loading issuer config.");
+      throw new Error("Error while loading Open Id Configuration.");
     }
   }
 
   /**
-   * Keycloack exposes the public key in the public_key property that could be retrieve
-   * accessing the issuerUrl (e.g. https://dev.oidc.gov.bc.ca/auth/realms/jxoe2o46).
-   * @returns public_key retrieved from the issuer URL.
+   * Keycloack exposes realm configuration that are public available and could be retrieve
+   * using the issuerUrl (e.g. https://dev.oidc.gov.bc.ca/auth/realms/jxoe2o46).
+   * The issuerUrl is one of the endpoints present on Open Id Configuration.
+   * @returns Realm Config.
    */
   public async getRealmConfig(): Promise<RealmConfig> {
     try {
-      const response = await axios.get(AuthHelper.openIdConfig.issuer);
+      const response = await axios.get(AuthConfig.openIdConfig.issuer);
       return {
         public_key: response.data.public_key,
         token_service: response.data["token-service"],
@@ -56,7 +73,7 @@ export class KeycloakService {
     } catch (ex) {
       // TODO: Add a logger.
       console.log(ex);
-      throw new Error("Error while loading issuer config.");
+      throw new Error("Error while loading Realm Config.");
     }
   }
 
@@ -71,7 +88,7 @@ export class KeycloakService {
     username: string,
     password: string,
     clientId: string,
-  ): Promise<GetTokenResponse> {
+  ): Promise<TokenResponse> {
     try {
       const data = stringify({
         grant_type: "password",
@@ -80,17 +97,18 @@ export class KeycloakService {
         password,
       });
       const response = await axios.post(
-        AuthHelper.openIdConfig.token_endpoint,
+        AuthConfig.openIdConfig.token_endpoint,
         data,
         {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
         },
       );
-      return response.data as GetTokenResponse;
+      return response.data as TokenResponse;
     } catch (ex) {
       // TODO: Add a logger.
       console.log(ex);
-      throw new Error("Error while request token.");
+      throw new Error("Error while requesting user token.");
     }
   }
 }
+KeycloakService.initialize();
