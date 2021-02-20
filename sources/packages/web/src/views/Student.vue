@@ -16,7 +16,7 @@
             <label for="firstName">Given Names</label>
             <InputText
               id="firstName"
-              v-model="readonlyProfile.firstName"
+              v-model="givenNamesOrFirstName"
               readonly
             />
           </div>
@@ -32,11 +32,7 @@
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col">
             <label for="dateOfBirth">Date of Birth</label>
-            <InputText
-              id="dateOfBirth"
-              v-model="readonlyProfile.birthDateFormatted2"
-              readonly
-            />
+            <InputText id="dateOfBirth" v-model="birthDate" readonly />
           </div>
           <div class="p-field p-col">
             <label for="verifiedEmail">Verified Email</label>
@@ -149,6 +145,7 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { useForm, Field } from "vee-validate";
 import { StudentService } from "../services/StudentService";
@@ -179,9 +176,13 @@ export default {
     },
   },
   setup(props: any) {
+    // Readonly student data from state.
+    const store = useStore();
     const router = useRouter();
     const toast = useToast();
     const readonlyProfile = ref({});
+    const birthDate = ref();
+    const givenNamesOrFirstName = ref();
     const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
     onMounted(async () => {
@@ -189,7 +190,16 @@ export default {
         const studentAllInfo = await StudentService.shared.getStudentInfo();
         const contact = studentAllInfo.contact;
         setValues({ ...contact });
+        //When information exist in the SIMS DB, we get it from SIMS DB
         readonlyProfile.value = studentAllInfo;
+        birthDate.value = studentAllInfo.birthDateFormatted;
+        givenNamesOrFirstName.value = studentAllInfo.firstName;
+      } else {
+        //When information doesnt exist in the SIMS DB, we get it from token
+        readonlyProfile.value = store.state.student.profile;
+        //Date as stored in token
+        birthDate.value = store.state.student.profile.birthdate;
+        givenNamesOrFirstName.value = store.state.student.profile.givenNames;
       }
     });
 
@@ -234,6 +244,8 @@ export default {
       readonlyProfile,
       onSubmit,
       isSubmitting,
+      birthDate,
+      givenNamesOrFirstName,
     };
   },
 };
