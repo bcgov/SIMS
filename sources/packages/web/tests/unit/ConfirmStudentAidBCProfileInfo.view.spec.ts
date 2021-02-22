@@ -5,8 +5,6 @@ import store from "../../src/store";
 import ConfirmStudentAidBCProfileInfo from "../../src/views/ConfirmStudentAidBCProfileInfo.vue";
 
 describe("Test ConfirmStudentAidBCProfileInfo.vue", () => {
-  beforeAll(() => {});
-  afterAll(() => {});
   it("Should load ConfirmStudentAidBCProfileInfo Page", () => {
     const wrapper = mount(ConfirmStudentAidBCProfileInfo, {
       global: {
@@ -16,8 +14,6 @@ describe("Test ConfirmStudentAidBCProfileInfo.vue", () => {
       shallow: true,
     });
 
-    expect(wrapper.html()).toContain(
-      "Full Name",
-    );
+    expect(wrapper.html()).toContain("Full Name");
   });
 });

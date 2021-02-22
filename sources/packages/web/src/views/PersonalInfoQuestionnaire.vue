@@ -1,5 +1,5 @@
 <template>
-  <div class="p-component">
+  <div class="p-component p-m-8">
     <div class="p-grid">
       <ConfirmStudentAidBCProfileInfo />
     </div>
@@ -149,7 +149,16 @@
       </Section>
       <HorizontalSeparator />
     </div>
-    <Button @click="onNext" class="p-m-6">Next</Button>
+    <div class="p-grid">
+      <Button
+        @click="onPrevious"
+        class="p-col-2 p-m-6 p-button-outlined"
+        style="text-color: "
+      >
+        Previous Section
+      </Button>
+      <Button @click="onNext" class="p-col-2 p-m-6">Next Section</Button>
+    </div>
   </div>
 </template>
 
@@ -276,13 +285,16 @@ export default {
     const personalInfoState = reactive({} as PersonalInfoState);
     const router = useRouter();
     const onNext = () => {
-      console.log(`result: ${JSON.stringify(personalInfoState, null, 2)}`);
       router.push("/application/select-program");
+    };
+    const onPrevious = () => {
+      router.push("/application");
     };
     return {
       questionnaire,
       personalInfoState,
       onNext,
+      onPrevious,
     };
   },
 };

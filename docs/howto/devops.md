@@ -6,10 +6,16 @@ N.B: ROOT means repository root directory
 
 ## Table of Content
 
-1. [Prerequisites](#prerequisites)
-2. [Local Development](#local-development)
-3. [OpenShift](#openshift)
-4. [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-action)
+- [DevOps](#devops)
+  - [Table of Content](#table-of-content)
+  - [Prerequisites](#prerequisites)
+  - [Local Development](#local-development)
+  - [OpenShift](#openshift)
+    - [OpenShift Login](#openshift-login)
+    - [OpenShift Infrastructure](#openshift-infrastructure)
+    - [OpenShift Template files](#openshift-template-files)
+    - [OpenShift Setup](#openshift-setup)
+  - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
 ## Prerequisites
 

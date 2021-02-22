@@ -36,13 +36,13 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "personal-info",
-        component: PersonalInfoQuestionnaire
+        component: PersonalInfoQuestionnaire,
       },
       {
         path: "select-program",
         component: SelectProgram,
       },
-    ]
+    ],
   },
   {
     path: "/:pathMatch(.*)*",
