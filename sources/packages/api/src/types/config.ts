@@ -6,5 +6,5 @@ export interface IAuthConfig {
   url: string;
   realm: string;
   clientId: string;
-  OpenIdConfigurationUrl: string;
+  openIdConfigurationUrl: string;
 }

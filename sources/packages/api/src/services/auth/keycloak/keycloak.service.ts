@@ -45,7 +45,7 @@ export class KeycloakService {
    */
   public async getOpenIdConfig(): Promise<OpenIdConfig> {
     try {
-      const response = await axios.get(this.authConfig.OpenIdConfigurationUrl);
+      const response = await axios.get(this.authConfig.openIdConfigurationUrl);
       return response.data as OpenIdConfig;
     } catch (ex) {
       // TODO: Add a logger.

@@ -9,7 +9,7 @@ export class ConfigService {
         url: process.env.KEYCLOAK_AUTH_URL,
         realm: process.env.KEYCLOAK_REALM,
         clientId: process.env.KEYCLOAK_CLIENT,
-        OpenIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
+        openIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
       },
     };
   }
