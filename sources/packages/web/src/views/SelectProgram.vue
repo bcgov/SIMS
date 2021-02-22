@@ -47,8 +47,8 @@
                 <br />
                 <Calendar
                   v-model="response.programStartDate"
-                  view="month"
-                  dateFormat="mm/yy"
+                  view="date"
+                  dateFormat="dd/mm/yy"
                   class="p-mt-4"
                 />
               </div>
@@ -57,8 +57,8 @@
                 <br />
                 <Calendar
                   v-model="response.programEndDate"
-                  view="month"
-                  dateFormat="mm/yy"
+                  view="date"
+                  dateFormat="dd/mm/yy"
                   class="p-mt-4"
                 />
               </div>
@@ -99,7 +99,7 @@ const questions = {
   educationProgram: {
     title: "Program Selection",
     subTitle: "Select the program that you will be attending",
-    question: "The program I will be attending::",
+    question: "The program I will be attending:",
   },
 };
 
