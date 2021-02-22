@@ -7,7 +7,7 @@ import {
   PEM_BEGIN_HEADER,
   PEM_END_HEADER,
 } from "../src/utilities/certificate-utils";
-import { AuthTestController } from "../src/route-controllers/auth-test/auth-test.controller";
+import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
 import { ConfigService } from "../src/services";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 

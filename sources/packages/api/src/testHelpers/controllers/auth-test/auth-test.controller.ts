@@ -1,9 +1,9 @@
 import { Controller, Get } from "@nestjs/common";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IUserToken } from "../../auth/userToken.interface";
-import { Public } from "../../auth/decorators/public.decorator";
-import { Roles } from "../../auth/decorators/roles.decorator";
-import { Role } from "../../auth/roles.enum";
+import { UserToken } from "../../../auth/decorators/userToken.decorator";
+import { IUserToken } from "../../../auth/userToken.interface";
+import { Public } from "../../../auth/decorators/public.decorator";
+import { Roles } from "../../../auth/decorators/roles.decorator";
+import { Role } from "../../../auth/roles.enum";
 
 /**
  * Controller dedicated to test the functionalities around the authentication layer.
@@ -46,11 +46,10 @@ export class AuthTestController {
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
-   * In this case a rule that doen't exists will be used to proved test the case that
-   * the user has an role that will not give him access to the endpoint.
+   * In this case, no rule will be provided and therefore no rule will be a valid one.
    * @param userToken
    */
-  @Roles(Role.DummyRole)
+  @Roles()
   @Get("/authenticated-route-by-non-existing-role")
   async authenticatedRouteByNonExistingRole(): Promise<void> {}
 }
