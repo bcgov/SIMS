@@ -18,6 +18,8 @@ describe("Test student model", () => {
     const controller = new StudentService(connection);
     const sub = new Student();
     sub.sin = "9999999999";
+    sub.birthdate = faker.date.past(18);
+    sub.gender = "X";
     sub.contactInfo = {
       addresses: [
         {
