@@ -1,7 +1,7 @@
-export class StudentContact {
+export interface StudentContact {
   phone: string;
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   provinceState: string;
   country: string;

@@ -148,9 +148,9 @@
 </template>
 
 <script lang="ts">
-import { computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { useForm, Field } from "vee-validate";
 import { StudentService } from "../services/StudentService";
 import { useToast } from "primevue/usetoast";
@@ -184,14 +184,23 @@ export default {
     const store = useStore();
     const router = useRouter();
     const toast = useToast();
-
-    const readonlyProfile = computed(() => store.state.student.profile);
+    const readonlyProfile = ref({});
     const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
     onMounted(async () => {
       if (props.editMode) {
-        const contact = await StudentService.shared.getContact();
+        const studentAllInfo = await StudentService.shared.getStudentInfo();
+        const contact = studentAllInfo.contact;
         setValues({ ...contact });
+        //When information exist in the SIMS DB, we get it from SIMS DB
+        readonlyProfile.value = {
+          ...studentAllInfo,
+          givenNames: studentAllInfo.firstName,
+          birthdate: studentAllInfo.birthDateFormatted2,
+        };
+      } else {
+        //When information doesnt exist in the SIMS DB, we get it from token
+        readonlyProfile.value = store.state.student.profile;
       }
     });
 
