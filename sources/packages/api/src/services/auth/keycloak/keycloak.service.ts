@@ -20,10 +20,6 @@ import { AuthConfig } from "../../../auth/auth-config";
 export class KeycloakService {
   private readonly authConfig: IAuthConfig;
 
-  static initialize() {
-    KeycloakService._shared = new KeycloakService(new ConfigService());
-  }
-
   constructor(configService: ConfigService) {
     this.authConfig = configService.getConfig().auth;
   }
@@ -35,7 +31,9 @@ export class KeycloakService {
    * injection framework.
    */
   public static get shared(): KeycloakService {
-    return KeycloakService._shared;
+    return (
+      KeycloakService._shared || (this._shared = new this(new ConfigService()))
+    );
   }
 
   /**
@@ -111,4 +109,3 @@ export class KeycloakService {
     }
   }
 }
-KeycloakService.initialize();
