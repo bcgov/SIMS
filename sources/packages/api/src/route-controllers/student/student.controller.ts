@@ -13,12 +13,11 @@ import {
   CreateStudentDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
-  StudentConfirmInfo,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import Helper from "../../helpers/utilfunctions";
+import { StudentInfo } from "../../types/studentInfo";
 
 @Controller("students")
 export class StudentController extends BaseController {
@@ -29,10 +28,10 @@ export class StudentController extends BaseController {
     super();
   }
 
-  @Get("studentConfirmInfo")
-  async getStudentConfirmInfo(
+  @Get("studentInfo")
+  async getStudentInfo(
     @UserToken() userToken: IUserToken,
-  ): Promise<StudentConfirmInfo> {
+  ): Promise<StudentInfo> {
     const existingStudent = await this.studentService.getStudentByUserName(
       userToken.userName,
     );
@@ -50,18 +49,19 @@ export class StudentController extends BaseController {
       );
     }
 
-    const studentConfirmInfo = new StudentConfirmInfo();
-    studentConfirmInfo.firstName = existingUser.firstName;
-    studentConfirmInfo.lastName = existingUser.lastName;
-    studentConfirmInfo.dateOfBirth = existingStudent.birthdate;
-    studentConfirmInfo.gender = existingStudent.gender;
-    studentConfirmInfo.phoneNumber = existingStudent.contactInfo.phone;
-    Helper.mapAddressAttributes(
-      existingStudent.contactInfo.addresses[0],
-      studentConfirmInfo,
-    );
-
-    return studentConfirmInfo;
+    const studentInfo: StudentInfo = {
+      firstName: existingUser.firstName,
+      lastName: existingUser.lastName,
+      email: existingUser.email,
+      gender: existingStudent.gender,
+      dateOfBirth: existingStudent.birthdate,
+      contact: {
+        ...existingStudent.contactInfo.addresses[0],
+        provinceState: existingStudent.contactInfo.addresses[0].province,
+        phone: existingStudent.contactInfo.phone,
+      },
+    };
+    return studentInfo;
   }
 
   @Get("contact")

@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { StudentConfirmInfo } from "./contracts/StudentContract";
+import { StudentInfo } from "./contracts/StudentContract";
 
 export interface StudentProfile {
   phone: string;
@@ -64,11 +64,11 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  //Api call to get Student Confirmation Data
-  public async getStudentConfirmInfo() {
-    const response = await this.getCall("students/studentConfirmInfo");
-    const studentConfirmInfo = response.data as StudentConfirmInfo;
-    return studentConfirmInfo;
+  //Api call to get Student Data
+  public async getStudentInfo(): Promise<StudentInfo> {
+    const response = await this.getCall("students/studentInfo");
+    const studentInfo = response.data as StudentInfo;
+    return studentInfo;
   }
 
   public async synchronizeFromUserInfo(): Promise<void> {

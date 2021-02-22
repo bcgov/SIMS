@@ -1,5 +1,4 @@
 import ApiClient from "./http/ApiClient";
-import { StudentConfirmInfo } from "./http/contracts/StudentContract";
 import Helper from "../helpers/utilfunctions";
 export interface Student {
   phone: string;
@@ -58,14 +57,16 @@ export class StudentService {
     return studentContact;
   }
 
-  async getStudentConfirmInfo(): Promise<StudentConfirmInfo> {
-    const studentConfirmInfo = await ApiClient.Students.getStudentConfirmInfo();
-    //Formatting date received from api from 1998-03-24T00:00:00.000Z
-    //to March 24, 1998
-    studentConfirmInfo.birthDateFormatted = Helper.formatDate(
-      studentConfirmInfo.dateOfBirth,
-    );
-    return studentConfirmInfo;
+  async getStudentInfo() {
+    const studentInfo = await ApiClient.Students.getStudentInfo();
+    const studentInfoAll = {
+      ...studentInfo,
+      //Formatting date received from api from 1998-03-24T00:00:00.000Z to March 24, 1998
+      birthDateFormatted: Helper.formatDate(studentInfo.dateOfBirth),
+      //Formatting date received from api from 1998-03-24T00:00:00.000Z to "1998-03-24"
+      birthDateFormatted2: Helper.formatDate2(studentInfo.dateOfBirth),
+    };
+    return studentInfoAll;
   }
 
   /**
