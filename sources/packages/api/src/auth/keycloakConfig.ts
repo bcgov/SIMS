@@ -7,15 +7,15 @@ import { convertStringToPEM } from "../utilities/certificate-utils";
  * Manage the loading of Keycloak specific configs that are required to
  * be retrieve in the earliest stage of application start.
  */
-export class AuthConfig {
+export class KeycloakConfig {
   private static _openIdConfig: OpenIdConfig;
   public static get openIdConfig(): OpenIdConfig {
-    return AuthConfig._openIdConfig;
+    return KeycloakConfig._openIdConfig;
   }
 
   private static _realmConfig: RealmConfig;
   public static get realmConfig(): RealmConfig {
-    return AuthConfig._realmConfig;
+    return KeycloakConfig._realmConfig;
   }
 
   private static _PEM_PublicKey: string;
@@ -24,7 +24,7 @@ export class AuthConfig {
    * ("-----BEGIN CERTIFICATE-----" and "-----END CERTIFICATE-----").
    */
   public static get PEM_PublicKey(): string {
-    return AuthConfig._PEM_PublicKey;
+    return KeycloakConfig._PEM_PublicKey;
   }
 
   /**
@@ -32,14 +32,14 @@ export class AuthConfig {
    * that needs to be available even before the application is created.
    */
   public static async load(): Promise<void> {
-    AuthConfig._openIdConfig = await KeycloakService.shared.getOpenIdConfig();
-    AuthConfig._realmConfig = await KeycloakService.shared.getRealmConfig();
-    if (!AuthConfig._realmConfig?.public_key) {
+    KeycloakConfig._openIdConfig = await KeycloakService.shared.getOpenIdConfig();
+    KeycloakConfig._realmConfig = await KeycloakService.shared.getRealmConfig();
+    if (!KeycloakConfig._realmConfig?.public_key) {
       throw new Error("Not able to retrieve the public key.");
     }
 
-    AuthConfig._PEM_PublicKey = convertStringToPEM(
-      AuthConfig._realmConfig.public_key,
+    KeycloakConfig._PEM_PublicKey = convertStringToPEM(
+      KeycloakConfig._realmConfig.public_key,
     );
   }
 }

@@ -6,7 +6,7 @@ import { IAuthConfig } from "../../../types/config";
 import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
-import { AuthConfig } from "../../../auth/auth-config";
+import { KeycloakConfig } from "../../../auth/keycloakConfig";
 
 /**
  * Manage the HTTP requests that need to be exeuted to Keycloak.
@@ -62,7 +62,7 @@ export class KeycloakService {
    */
   public async getRealmConfig(): Promise<RealmConfig> {
     try {
-      const response = await axios.get(AuthConfig.openIdConfig.issuer);
+      const response = await axios.get(KeycloakConfig.openIdConfig.issuer);
       return {
         public_key: response.data.public_key,
         token_service: response.data["token-service"],
@@ -95,7 +95,7 @@ export class KeycloakService {
         password,
       });
       const response = await axios.post(
-        AuthConfig.openIdConfig.token_endpoint,
+        KeycloakConfig.openIdConfig.token_endpoint,
         data,
         {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },

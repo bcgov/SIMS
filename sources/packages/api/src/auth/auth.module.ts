@@ -4,14 +4,14 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
-import { AuthConfig } from "./auth-config";
+import { KeycloakConfig } from "./keycloakConfig";
 import { RolesGuard } from "./roles.guard";
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      publicKey: AuthConfig.PEM_PublicKey,
+      publicKey: KeycloakConfig.PEM_PublicKey,
     }),
   ],
   providers: [

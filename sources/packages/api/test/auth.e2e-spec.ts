@@ -2,20 +2,18 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { AuthConfig } from "../src/auth/auth-config";
+import { KeycloakConfig } from "../src/auth/keycloakConfig";
 import {
   PEM_BEGIN_HEADER,
   PEM_END_HEADER,
 } from "../src/utilities/certificate-utils";
 import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
-import { ConfigService } from "../src/services";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 
 describe("Authentication (e2e)", () => {
   // Use the student client to retrieve the token from
   // Keycloak since it is the only one that we have currently.
   const clientId = "student";
-  const config = new ConfigService().getConfig();
   // Nest application to be shared for all e2e tests
   // that need execute a HTTP request.
   let app: INestApplication;
@@ -25,10 +23,10 @@ describe("Authentication (e2e)", () => {
   let accesstoken: string;
 
   beforeAll(async () => {
-    await AuthConfig.load();
+    await KeycloakConfig.load();
     const token = await KeycloakService.shared.getToken(
-      config.e2eTest.studentUser.username,
-      config.e2eTest.studentUser.password,
+      process.env.E2E_TEST_STUDENT_USERNAME,
+      process.env.E2E_TEST_STUDENT_PASSWORD,
       clientId,
     );
     accesstoken = token.access_token;
@@ -49,15 +47,15 @@ describe("Authentication (e2e)", () => {
       PEM_BEGIN_HEADER.length + PEM_END_HEADER.length;
 
     // Act
-    await AuthConfig.load();
+    await KeycloakConfig.load();
 
     // Assert
-    expect(AuthConfig.PEM_PublicKey).toContain(PEM_BEGIN_HEADER);
-    expect(AuthConfig.PEM_PublicKey).toContain(PEM_END_HEADER);
+    expect(KeycloakConfig.PEM_PublicKey).toContain(PEM_BEGIN_HEADER);
+    expect(KeycloakConfig.PEM_PublicKey).toContain(PEM_END_HEADER);
     // Besides that header and footer, the public_key need have some additional
     // content that would be the public key retrieve fromKeycloak,
     // that does not contains the PEM_BEGIN_HEADER and PEM_END_HEADER.
-    expect(AuthConfig.PEM_PublicKey.length).toBeGreaterThan(
+    expect(KeycloakConfig.PEM_PublicKey.length).toBeGreaterThan(
       headerAndFooterLength,
     );
   });
