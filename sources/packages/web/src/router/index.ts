@@ -6,6 +6,7 @@ import FAApplication from "../views/FAApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import PersonalInfoQuestionnaire from "../views/PersonalInfoQuestionnaire.vue";
 import SelectProgram from "../views/SelectProgram.vue";
+import FinancialInfo from "../views/FinancialInfo.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -41,6 +42,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "select-program",
         component: SelectProgram,
+      },
+      {
+        path: "financial-info",
+        component: FinancialInfo,
       },
     ],
   },

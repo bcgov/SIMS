@@ -30,7 +30,7 @@ const applicationSteps = [
   },
   {
     label: "Financial Information",
-    to: "/application/financial-information",
+    to: "/application/financial-info",
   },
   {
     label: "Confirm Submission",
