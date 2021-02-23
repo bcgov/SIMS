@@ -11,7 +11,7 @@ import { RolesGuard } from "./roles.guard";
   imports: [
     PassportModule,
     JwtModule.register({
-      publicKey: KeycloakConfig.publicKey,
+      publicKey: KeycloakConfig.PEM_PublicKey,
     }),
   ],
   providers: [

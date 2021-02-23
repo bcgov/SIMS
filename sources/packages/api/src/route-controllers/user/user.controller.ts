@@ -1,8 +1,8 @@
 import { Controller, Get } from "@nestjs/common";
 import { UserService } from "../../services";
 import BaseController from "../BaseController";
-import { UserToken } from "src/auth/decorators/userToken.decorator";
-import { IUserToken } from "src/auth/userToken.interface";
+import { UserToken } from "../../auth/decorators/userToken.decorator";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @Controller("users")
 export class UserController extends BaseController {
