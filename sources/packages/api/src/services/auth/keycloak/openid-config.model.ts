@@ -1,4 +1,4 @@
-export class OpenIdConfig {
+export interface OpenIdConfig {
   issuer: string;
   authorization_endpoint: string;
   token_endpoint: string;
