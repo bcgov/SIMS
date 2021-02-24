@@ -13,11 +13,17 @@
    `queryRunner.query()` method inside up method.
    See e.g. in `SIMS\sources\packages\api\src\database\migrations\1614107103138-StudentPDVerified.ts\1614107103138-StudentPDVerified.ts`
 
-5. If applicable Add the sql that is intended to be run using
-   queryRunner.query() method inside down method. This will be run when database is being wiped out.
+5. Add the sql that is intended to be run using
+   queryRunner.query() method inside down method. This will be run when database is going to be rolled back and/or database cleanup.
    See e.g. in `SIMS\sources\packages\api\src\database\migrations\1614107103138-StudentPDVerified.ts\1614107103138-StudentPDVerified.ts`
 
-6. Run the command to clean out all the volumes(database)
+6. Test the migrations by running
+
+   ```bash
+   $ make local
+   ```
+
+   Migrations can be tested by recreating the database
 
    ```bash
    $ make local-clean
