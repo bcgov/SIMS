@@ -29,7 +29,7 @@
 import { reactive } from "vue";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
-import ContentGroup from "../components/fa-application/ContentGroup.vue";
+import ContentGroup from "../components/ContentGroup.vue";
 import StringToHtmlParagraphs from "../components/fa-application/StringToHtmlParagraphs.vue";
 
 const questions = {
