@@ -1,7 +1,7 @@
 import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
 import ApiClient from "../services/http/ApiClient";
-import { AppConfig } from "../contracts/ConfigContract";
+import { AppConfig } from "../types/contracts/ConfigContract";
 
 export class AppConfigService {
   // Share Instance

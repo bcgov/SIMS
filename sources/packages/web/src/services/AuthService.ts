@@ -1,6 +1,6 @@
 import Keycloak from "keycloak-js";
 import store from "../store/index";
-import { AppConfig } from "../contracts/ConfigContract";
+import { AppConfig } from "../types/contracts/ConfigContract";
 
 let keycloak: Keycloak.KeycloakInstance;
 

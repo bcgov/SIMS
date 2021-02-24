@@ -3,7 +3,7 @@ import {
   StudentInfo,
   StudentContact,
   StudentProfile,
-} from "../../contracts/StudentContract";
+} from "../../types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
   public async createStudent(studentProfile: StudentProfile): Promise<void> {

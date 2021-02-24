@@ -1,6 +1,9 @@
 import ApiClient from "./http/ApiClient";
 import Helper from "../helpers/utilfunctions";
-import { StudentContact, CreateStudent } from "../contracts/StudentContract";
+import {
+  StudentContact,
+  CreateStudent,
+} from "../types/contracts/StudentContract";
 
 export class StudentService {
   // Share Instance

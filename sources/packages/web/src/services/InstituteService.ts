@@ -1,5 +1,5 @@
-import { Institute } from "../contracts/InstituteContract";
-import { EducationProgram } from "../contracts/EducationContract";
+import { Institute } from "../types/contracts/InstituteContract";
+import { EducationProgram } from "../types/contracts/EducationContract";
 
 export class InstituteService {
   // Share Instance

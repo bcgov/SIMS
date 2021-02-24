@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { GetConfig } from "../../contracts/ConfigContract";
+import { GetConfig } from "../../types/contracts/ConfigContract";
 
 export class ConfigApi extends HttpBaseClient {
   public async getConfig(): Promise<GetConfig> {
