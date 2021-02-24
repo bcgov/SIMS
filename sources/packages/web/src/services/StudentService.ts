@@ -1,28 +1,6 @@
 import ApiClient from "./http/ApiClient";
 import Helper from "../helpers/utilfunctions";
-export interface Student {
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
-
-export interface StudentContact {
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
-
-export interface CreateStudent extends Student {
-  sinNumber: string;
-}
+import { StudentContact, CreateStudent } from "../contracts/StudentContract";
 
 export class StudentService {
   // Share Instance

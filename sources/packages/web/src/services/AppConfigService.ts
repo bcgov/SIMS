@@ -1,15 +1,7 @@
 import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
 import ApiClient from "../services/http/ApiClient";
-
-export interface AppConfig {
-  authConfig: {
-    url: string;
-    realm: string;
-    clientId: string;
-  };
-  updateTime: Date;
-}
+import { AppConfig } from "../contracts/ConfigContract";
 
 export class AppConfigService {
   // Share Instance

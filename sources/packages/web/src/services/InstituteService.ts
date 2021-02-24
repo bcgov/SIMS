@@ -1,12 +1,5 @@
-export interface Institute {
-  name: string;
-  code?: string;
-}
-
-export interface EducationProgram {
-  name: string;
-  code?: string;
-}
+import { Institute } from "../contracts/InstituteContract";
+import { EducationProgram } from "../contracts/EducationContract";
 
 export class InstituteService {
   // Share Instance

@@ -1,14 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-
-export interface GetConfig {
-  auth: AuthConfig;
-}
-
-export interface AuthConfig {
-  url: string;
-  realm: string;
-  clientId: string;
-}
+import { GetConfig } from "../../contracts/ConfigContract";
 
 export class ConfigApi extends HttpBaseClient {
   public async getConfig(): Promise<GetConfig> {
