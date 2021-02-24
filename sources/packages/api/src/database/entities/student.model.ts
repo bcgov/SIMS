@@ -33,6 +33,11 @@ export class Student extends RecordDataModel {
   birthdate: Date;
 
   @Column({
+    name: "pd_verified",
+  })
+  studentPDVerified: boolean;
+
+  @Column({
     name: "gender",
   })
   gender: string;
