@@ -58,11 +58,11 @@ objects:
           ref: "${SOURCE_REPOSITORY_REF}"
         type: Git
       strategy:
-        dockerStrategy: 
+        dockerStrategy:
           from:
             kind: ImageStreamTag
             name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-          buildArgs: 
+          buildArgs:
             - name: ${ARG_KEY_1}
               value: ${ARG_VAL_1}
             - name: ${ARG_KEY_2}
@@ -93,7 +93,7 @@ parameters:
   - name: CPU_LIMIT
     value: "2"
   - name: MEMORY_LIMIT
-    value: "4Gi"
+    value: "8Gi"
   - name: CPU_REQUEST
     value: "1"
   - name: MEMORY_REQUEST
