@@ -4,7 +4,9 @@
       <div class="p-col fa-section-header">{{ title }}</div>
     </div>
     <div class="p-grid">
-      <div class="p-col">{{ subTitle }}</div>
+      <div class="p-col">
+        <slot name="sub-title">{{ subTitle }}</slot>
+      </div>
     </div>
     <div class="p-grid">
       <div class="p-col">
