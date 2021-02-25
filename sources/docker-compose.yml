@@ -10,6 +10,7 @@ services:
       context: ./packages/api
       dockerfile: Dockerfile.dev
     environment:
+      - NODE_ENV=docker
       - PORT=${API_PORT}
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
@@ -59,7 +60,7 @@ services:
     build:
       context: ./.docker/postgres
     environment:
-      - POSTGRES_MULTIPLE_DATABASES="${POSTGRES_DB}","sfas_db"
+      - POSTGRES_MULTIPLE_DATABASES="${POSTGRES_DB}","${ARCHIVE_DB}"
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PORT=${POSTGRES_PORT}

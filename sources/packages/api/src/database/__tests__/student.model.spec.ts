@@ -1,3 +1,4 @@
+require("../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
 import { Connection } from "typeorm";
 import * as faker from "faker";
@@ -7,6 +8,7 @@ import { StudentService } from "../../services";
 describe("Test student model", () => {
   let connection: Connection;
   beforeAll(async () => {
+    // console.dir(process.env);
     connection = await setupDB();
   });
   afterAll(async () => {
