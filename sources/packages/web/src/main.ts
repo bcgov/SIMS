@@ -20,6 +20,7 @@ import Checkbox from "primevue/checkbox";
 import ToastService from "primevue/toastservice";
 import Calendar from "primevue/calendar";
 import Dropdown from "primevue/dropdown";
+import InputNumber from "primevue/inputnumber";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 
@@ -43,5 +44,6 @@ AppConfigService.shared.init().then(() => {
     .component("Checkbox", Checkbox)
     .component("Calendar", Calendar)
     .component("Dropdown", Dropdown)
+    .component("InputNumber", InputNumber)
     .mount("#app");
 });
