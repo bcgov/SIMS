@@ -1,12 +1,12 @@
 import {
   Body,
-  Controller,  
+  Controller,
   Get,
   Post,
   Patch,
-  NotFoundException,,
+  NotFoundException,
   InternalServerErrorException,
-  UnprocessableEntityException
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { StudentService, UserService } from "../../services";
 import {
