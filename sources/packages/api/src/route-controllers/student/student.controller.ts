@@ -1,11 +1,12 @@
 import {
   Body,
-  Controller,
-  HttpException,
-  HttpStatus,
+  Controller,  
   Get,
   Post,
   Patch,
+  NotFoundException,,
+  InternalServerErrorException,
+  UnprocessableEntityException
 } from "@nestjs/common";
 import { StudentService, UserService } from "../../services";
 import {
@@ -17,7 +18,6 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
-import ExceptionRaiser from "../../helpers/ExceptionRaiser";
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
@@ -35,7 +35,7 @@ export class StudentController extends BaseController {
       userToken.userName,
     );
     if (!existingStudent) {
-      ExceptionRaiser.throwNotFoundException(
+      throw new NotFoundException(
         `No student was found with the student name ${userToken.userName}`,
       );
     }
@@ -43,7 +43,7 @@ export class StudentController extends BaseController {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (!existingUser) {
-      ExceptionRaiser.throwNotFoundException(
+      throw new NotFoundException(
         `No user record was found with for student ${userToken.userName}`,
       );
     }
@@ -71,7 +71,7 @@ export class StudentController extends BaseController {
       userToken.userName,
     );
     if (!student) {
-      ExceptionRaiser.throwNotFoundException(
+      throw new NotFoundException(
         `No student was found with the student name ${userToken.userName}`,
       );
     }
@@ -79,7 +79,7 @@ export class StudentController extends BaseController {
     // The student will be created with one and only one
     // address for now. This address is also required.
     if (student.contactInfo.addresses.length == 0) {
-      ExceptionRaiser.throwInternalServerErrorException(
+      throw new InternalServerErrorException(
         `The requested student is missing required data. User name ${userToken.userName}`,
       );
     }
@@ -116,7 +116,7 @@ export class StudentController extends BaseController {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (existingUser) {
-      ExceptionRaiser.throwUnprocessableEntityException("User already exists");
+      throw new UnprocessableEntityException("User already exists");
     }
 
     // Save student
