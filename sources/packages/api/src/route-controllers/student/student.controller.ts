@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   HttpException,
-  NotFoundException,
   HttpStatus,
   Get,
   Post,
@@ -18,7 +17,7 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
-
+import ExceptionRaiser from "../../helpers/ExceptionRaiser";
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
@@ -36,7 +35,7 @@ export class StudentController extends BaseController {
       userToken.userName,
     );
     if (!existingStudent) {
-      throw new NotFoundException(
+      ExceptionRaiser.throwNotFoundException(
         `No student was found with the student name ${userToken.userName}`,
       );
     }
@@ -44,8 +43,8 @@ export class StudentController extends BaseController {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (!existingUser) {
-      throw new NotFoundException(
-        `No student was found with the student name ${userToken.userName}`,
+      ExceptionRaiser.throwNotFoundException(
+        `No user record was found with for student ${userToken.userName}`,
       );
     }
 
@@ -72,24 +71,16 @@ export class StudentController extends BaseController {
       userToken.userName,
     );
     if (!student) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          message: `No student was found with the user name ${userToken.userName}`,
-        },
-        HttpStatus.NOT_FOUND,
+      ExceptionRaiser.throwNotFoundException(
+        `No student was found with the student name ${userToken.userName}`,
       );
     }
 
     // The student will be created with one and only one
     // address for now. This address is also required.
     if (student.contactInfo.addresses.length == 0) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: `The requested student is missing required data. User name ${userToken.userName}`,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      ExceptionRaiser.throwInternalServerErrorException(
+        `The requested student is missing required data. User name ${userToken.userName}`,
       );
     }
 
@@ -125,13 +116,7 @@ export class StudentController extends BaseController {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (existingUser) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: "User already exists",
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      ExceptionRaiser.throwUnprocessableEntityException("User already exists");
     }
 
     // Save student

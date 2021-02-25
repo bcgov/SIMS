@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import ErrorHelper from "../helpers/ErrorHelper";
 
 const sqlDirPath = "src-sql";
 
@@ -26,6 +27,6 @@ export const getSQLFileData = (fileName: string, subDirPath?: string) => {
   if (fs.existsSync(path)) {
     return fs.readFileSync(path, { encoding: "utf8" });
   } else {
-    throw new Error(`getSQLFileData: No file exists in path: ${path}`);
+    ErrorHelper.throwError(`getSQLFileData: No file exists in path: ${path}`);
   }
 };

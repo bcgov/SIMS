@@ -7,6 +7,7 @@ import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
+import ErrorHelper from "../../../helpers/ErrorHelper";
 
 /**
  * Manage the HTTP requests that need to be exeuted to Keycloak.
@@ -50,7 +51,7 @@ export class KeycloakService {
     } catch (ex) {
       // TODO: Add a logger.
       console.log(ex);
-      throw new Error("Error while loading Open Id Configuration.");
+      ErrorHelper.throwError("Error while loading Open Id Configuration.");
     }
   }
 
@@ -71,7 +72,7 @@ export class KeycloakService {
     } catch (ex) {
       // TODO: Add a logger.
       console.log(ex);
-      throw new Error("Error while loading Realm Config.");
+      ErrorHelper.throwError("Error while loading Realm Config.");
     }
   }
 
@@ -105,7 +106,7 @@ export class KeycloakService {
     } catch (ex) {
       // TODO: Add a logger.
       console.log(ex);
-      throw new Error("Error while requesting user token.");
+      ErrorHelper.throwError("Error while requesting user token.");
     }
   }
 }

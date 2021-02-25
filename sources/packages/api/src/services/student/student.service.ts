@@ -6,7 +6,7 @@ import { UserInfo } from "../../types";
 import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
 import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
-
+import ErrorHelper from "../../helpers/ErrorHelper";
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(@Inject("Connection") connection: Connection) {
@@ -58,7 +58,7 @@ export class StudentService extends RecordDataModelService<Student> {
   ): Promise<Student> {
     const student = await this.getStudentByUserName(userName);
     if (!student) {
-      throw new Error(
+      ErrorHelper.throwError(
         `Not able to find a student using the user name ${userName}`,
       );
     }
@@ -83,7 +83,7 @@ export class StudentService extends RecordDataModelService<Student> {
   async synchronizeFromUserInfo(userToken: IUserToken): Promise<Student> {
     const studentToSync = await this.getStudentByUserName(userToken.userName);
     if (!studentToSync) {
-      throw new Error(
+      ErrorHelper.throwError(
         "Not able to find a student using the username (bcsc name)",
       );
     }
