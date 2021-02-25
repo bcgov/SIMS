@@ -9,7 +9,6 @@ const config = require("../ormconfig");
   try {
     // Create Connection
     console.log("**** Running setupDB ****");
-    console.log(`ENV: ${JSON.stringify(process.env, null, 2)}`);
     delete config.schema;
     delete config.entities;
     const connection = await createConnection({

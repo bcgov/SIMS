@@ -28,7 +28,7 @@ RUN npm run build
 EXPOSE ${PORT}
 
 # Entry point
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "docker:start" ]
 
 # Sample line to run the unit tests tests for now.
 # Unit tests will be enabled on CI/CD on upcoming tasks.

@@ -22,7 +22,8 @@
     "setup:db": "ts-node scripts/setupDB",
     "local": "ENVIRONMENT=local NODE_ENV=local npm run start:dev",
     "test:local": "ENVIRONMENT=test NODE_ENV=local jest",
-    "setup:archive:db": "ts-node scripts/setupArchiveDB"
+    "setup:archive:db": "ts-node scripts/setupArchiveDB",
+    "docker:start": "npm run setup:db && npm run setup:archive:db && node dist/main"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.7",
