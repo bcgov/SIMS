@@ -1,26 +1,9 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { StudentInfo } from "./contracts/StudentContract";
-
-export interface StudentProfile {
-  phone: string;
-  sinNumber: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
-
-export interface StudentContact {
-  phone: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
-}
+import {
+  StudentInfo,
+  StudentContact,
+  StudentProfile,
+} from "../../types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
   public async createStudent(studentProfile: StudentProfile): Promise<void> {
