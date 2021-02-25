@@ -1,4 +1,4 @@
-<template>
+<template v-if="paragraphs">
   <div v-for="paragraph in paragraphs" :key="paragraph">
     <p>{{ paragraph }}</p>
   </div>
@@ -8,13 +8,14 @@
 import { computed } from "vue";
 export default {
   props: {
-    text: {
-      type: String,
-      required: true,
-    },
+    text: String,
   },
   setup(props: any) {
     const paragraphs = computed(() => {
+      if (!props.text) {
+        return null;
+      }
+
       if (props.text.indexOf("\n")) {
         return props.text.split("\n");
       }

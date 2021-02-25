@@ -30,7 +30,7 @@ import { reactive } from "vue";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import ContentGroup from "../components/ContentGroup.vue";
-import StringToHtmlParagraphs from "../components/fa-application/StringToHtmlParagraphs.vue";
+import StringToHtmlParagraphs from "../components/StringToHtmlParagraphs.vue";
 
 const questions = {
   previousYearTaxReturn: {
