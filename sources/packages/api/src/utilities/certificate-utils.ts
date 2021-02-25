@@ -1,5 +1,3 @@
-import ErrorHelper from "../helpers/ErrorHelper";
-
 // Used by the method convertStringToPEM to generate the
 // PEM string format required by the jwt validation frameworks.
 export const PEM_BEGIN_HEADER = "-----BEGIN PUBLIC KEY-----\n";
@@ -17,7 +15,7 @@ export const PEM_END_HEADER = "\n-----END PUBLIC KEY-----";
  */
 export function convertStringToPEM(publicKey: string): string {
   if (!publicKey) {
-    ErrorHelper.throwError("publicKey parameter was not provided");
+    throw new Error("publicKey parameter was not provided.");
   }
 
   return `${PEM_BEGIN_HEADER}${publicKey}${PEM_END_HEADER}`;
