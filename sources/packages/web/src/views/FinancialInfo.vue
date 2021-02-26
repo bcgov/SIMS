@@ -20,7 +20,21 @@
           </Question>
         </Section>
       </ContentGroup>
-      <Section title="More questions to come..." />
+
+      <ContentGroup>
+        <Section
+          :title="questions.livingSituationTravelCosts.title"
+          :sub-title="questions.livingSituationTravelCosts.subTitle"
+        >
+          <Question :text="questions.livingSituationTravelCosts.question">
+            <RadioButtonList
+              name="livingSituationTravelCosts"
+              v-model="financialInfoState.livingSituationTravelCostsValue"
+            >
+            </RadioButtonList>
+          </Question>
+        </Section>
+      </ContentGroup>
     </div>
   </div>
 </template>
@@ -31,18 +45,11 @@ import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import ContentGroup from "../components/ContentGroup.vue";
 import StringToHtmlParagraphs from "../components/StringToHtmlParagraphs.vue";
-
-const questions = {
-  previousYearTaxReturn: {
-    title: "2020 Tax Return Income",
-    subTitle:
-      "Enter your reported total income from line 15000 of your 2020 Income Tax Return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.\nIf you did not file a 2020 Income Tax Return, enter your total income from all sources both inside AND outside of Canada",
-    question: "My total income in 2020 was:",
-  },
-};
+import { questions } from "../helpers/questions-financial";
 
 interface FinancialInfoState {
   previousYearTaxReturn: number;
+  livingSituationTravelCostsValue: string;
 }
 export default {
   components: {

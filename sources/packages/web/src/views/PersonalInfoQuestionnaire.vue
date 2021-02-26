@@ -14,10 +14,7 @@
           <RadioButtonList
             name="residencyQuestion"
             v-model="personalInfoState.residencySelectedValue"
-            :options="
-              questionnaire.sections.residency.questions
-                .residencyQuestionOptions
-            "
+            :options="questionnaire.sections.residency.questions.options"
           >
           </RadioButtonList>
         </Question>
@@ -27,10 +24,6 @@
           <RadioButtonList
             name="bcResidencyQuestion"
             v-model="personalInfoState.bcResidencySelectedValue"
-            :options="
-              questionnaire.sections.residency.questions
-                .bcResidencyQuestionOptions
-            "
           >
           </RadioButtonList>
         </Question>
@@ -44,7 +37,6 @@
           <RadioButtonList
             name="residencyQuestion"
             v-model="personalInfoState.bankruptcySelectedValue"
-            :options="questionnaire.sections.bankruptcy.options"
           >
           </RadioButtonList>
         </Question>
@@ -86,7 +78,6 @@
           <RadioButtonList
             name="aboriginalStatusQuestion"
             v-model="personalInfoState.employmentStatusValue"
-            :options="questionnaire.sections.employment.options"
           >
           </RadioButtonList>
         </Question>
@@ -100,7 +91,6 @@
           <RadioButtonList
             name="aboriginalStatusQuestion"
             v-model="personalInfoState.aboriginalStatusSelectedValue"
-            :options="questionnaire.sections.aboriginalStatus.options"
           >
           </RadioButtonList>
         </Question>
@@ -114,7 +104,6 @@
           <RadioButtonList
             name="youthInCareQuestion"
             v-model="personalInfoState.youthInCareSelectedValue"
-            :options="questionnaire.sections.youthInCare.options"
           >
           </RadioButtonList>
         </Question>
@@ -128,7 +117,6 @@
           <RadioButtonList
             name="permanentDisabilityQuestion"
             v-model="personalInfoState.permanentDisabilitySelectedValue"
-            :options="questionnaire.sections.permanentDisability.options"
           >
           </RadioButtonList>
         </Question>
@@ -142,7 +130,6 @@
           <RadioButtonList
             name="dependentStatusQuestion"
             v-model="personalInfoState.dependentStatusSelectedValue"
-            :options="questionnaire.sections.dependentStatus.options"
           >
           </RadioButtonList>
         </Question>
@@ -199,14 +186,13 @@ const questionnaire = {
         "You must meet B.C. residency requirements to receive funding through StudentAid BC",
       questions: {
         residencyQuestion: "On my first day of class, I'll be a:",
-        residencyQuestionOptions: [
+        options: [
           { text: "Canadian citizen", value: "canadian" },
           { text: "Protected person", value: "protected" },
           { text: "Permanent resident", value: "pr" },
         ],
         bcResidencyQuestion:
           "I have lived in B.C. for at least 12 consecutive months without being a full-time post-secondary student",
-        bcResidencyQuestionOptions: yesNoOptions,
       },
     },
     bankruptcy: {
@@ -215,7 +201,6 @@ const questionnaire = {
         "StudentAid BC requires that applicants have not previously declared bankruptcy.",
       question:
         "Have you ever declared bankruptcy that included financial assistance?",
-      options: yesNoOptions,
     },
     highschoolAttendance: {
       title: "Date of Highschool Attendance",
@@ -240,13 +225,11 @@ const questionnaire = {
         "StudentAid BC requires applicants not work a full-time of more than 32 hours per week for at least half of their study period.",
       question:
         "Will you be working a full-time job of 32 hours per week for more than half of your study period?",
-      options: yesNoOptions,
     },
     aboriginalStatus: {
       title: "Aboriginal Status",
       subTitle: "Description of Indigenous heritage...",
       question: "Do you identify as an Aboriginal person?",
-      options: yesNoOptions,
     },
     youthInCare: {
       title: "Youth In Care",
@@ -254,7 +237,6 @@ const questionnaire = {
         "If may be eligible to the following programs as a current/former youth in care (part of a foster family).",
       question:
         "I am a current/former youth in care and I want to apply for the Provincial Tuition Waiver Program and the Youth Educational Assistance Fund grants",
-      options: yesNoOptions,
     },
     permanentDisability: {
       title: "Permanent Disability",
@@ -262,13 +244,11 @@ const questionnaire = {
         "Do you have a permanent disability that affects your studies on a daily basis?",
       question:
         "I have a permanent disability and want to apply for permanent disability grants:",
-      options: yesNoOptions,
     },
     dependentStatus: {
       title: "Dependent",
       subTitle: "Please specify your dependent status",
       question: "Do you have any dependents?",
-      options: yesNoOptions,
     },
   },
 };
