@@ -1,3 +1,8 @@
+<!--
+Used when we need to display some partial view of a longer text and we would like
+to give the option for the user to expand the content only if he wants it.
+It basically provides a "Read More/Read Less" like option on the page.
+-->
 <template>
   <div>
     <slot></slot>
@@ -26,6 +31,7 @@ export default {
     },
   },
   setup(props: any) {
+    // By default the long text will be collapsed with the link option of "Read More".
     const isExtended = ref(false);
     const extendedLabel = ref(props.collapsedText);
 

@@ -1,3 +1,9 @@
+<!--
+Represents a section from the Student Application.
+This section could be a primary one, a secondary one
+(usualy a section inside a section) or some additional
+section (usually a second section in a secondary).
+-->
 <template>
   <div class="p-component p-mx-4">
     <div class="p-grid">
