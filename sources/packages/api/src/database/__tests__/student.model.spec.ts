@@ -1,8 +1,9 @@
+require("../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
 import { Connection } from "typeorm";
 import * as faker from "faker";
 import { Student, User } from "../entities";
-import { StudentService } from "../../services";
+import { StudentService, ArchiveDbService } from "../../services";
 
 describe("Test student model", () => {
   let connection: Connection;
@@ -15,7 +16,8 @@ describe("Test student model", () => {
 
   it("should save student model object with user relationship and address jsonb", async () => {
     // Create
-    const controller = new StudentService(connection);
+    const archiveDB = new ArchiveDbService();
+    const controller = new StudentService(connection, archiveDB);
     const sub = new Student();
     sub.sin = "9999999999";
     sub.birthdate = faker.date.past(18);

@@ -1,7 +1,6 @@
-import { from } from "rxjs";
-import {  createConnection, ConnectionOptions } from 'typeorm';
-
-const config = require('../ormconfig');
+require("../env_setup");
+import { createConnection } from "typeorm";
+const config = require("../ormconfig");
 
 /**
  * Script main execution method
@@ -9,14 +8,14 @@ const config = require('../ormconfig');
 (async () => {
   try {
     // Create Connection
-    console.log(`**** Running setupDB ****`);
+    console.log("**** Running setupDB ****");
     delete config.schema;
     delete config.entities;
     const connection = await createConnection({
       ...config,
-      logging: ['error', 'warn', 'info'],
+      logging: ["error", "warn", "info"],
     });
-    const schema = process.env.DB_SCHEMA || 'sims';
+    const schema = process.env.DB_SCHEMA || "sims";
     await connection.query(`CREATE SCHEMA IF NOT EXISTS ${schema};`);
     await connection.query(`SET search_path TO ${schema}, public;`);
     await connection.query(`SET SCHEMA '${schema}';`);
@@ -26,6 +25,7 @@ const config = require('../ormconfig');
     console.log(`**** Running setupDB: [Complete] ****`);
   } catch (excp) {
     console.error(`Exception occurs during setup db process: ${excp}`);
+    console.dir(config);
     throw excp;
   }
 

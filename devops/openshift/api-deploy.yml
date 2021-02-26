@@ -36,6 +36,8 @@ objects:
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
+                - name: ARCHIVE_DB
+                  value: ${ARCHIVE_DB}
                 - name: PORT
                   value: "${PORT}"
                 - name: POSTGRES_HOST
@@ -110,7 +112,7 @@ objects:
 parameters:
   - name: NAME
     required: true
-  - name: PROJECT 
+  - name: PROJECT
     value: sims
   - name: SERVICE_NAME
     value: api
@@ -135,7 +137,7 @@ parameters:
   - name: DB_PASSWORD_KEY
     value: superuser-password
   - name: IMAGE_STREAM_TAG
-    required: true  
+    required: true
   - name: BUILD_NAMESPACE
     required: true
   - name: IMAGE_REGISTRY
@@ -158,4 +160,6 @@ parameters:
   - name: DATABASE_NAME_KEY
     value: database-name
   - name: BUILD_TAG
-    value: '0'
+    value: "0"
+  - name: ARCHIVE_DB
+    value: "sfasdb"
