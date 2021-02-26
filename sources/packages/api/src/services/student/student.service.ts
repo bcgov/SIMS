@@ -7,10 +7,14 @@ import { CreateStudentDto } from "../../route-controllers/student/models/student
 import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
 import { ArchiveDbService } from "../archive-db/archive-db.service";
+import { StudentLegacyData } from "../../types";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
-  constructor(@Inject("Connection") connection: Connection, private readonly archiveDB: ArchiveDbService) {
+  constructor(
+    @Inject("Connection") connection: Connection,
+    private readonly archiveDB: ArchiveDbService,
+  ) {
     super(connection.getRepository(Student));
   }
 
@@ -52,9 +56,9 @@ export class StudentService extends RecordDataModelService<Student> {
     student.user = user;
 
     // Get PD status from Archive DB
-    const result: { permanent_disability_flg: string | null } = await this.archiveDB.getIndividualPDStatus(student);
-    if (result.permanent_disability_flg === 'Y') {
-      student.studentPDVerified = true
+    const result: StudentLegacyData [] = await this.archiveDB.getIndividualPDStatus(student);
+    if (result[0].disability === "Y") {
+      student.studentPDVerified = true;
     }
     return await this.save(student);
   }

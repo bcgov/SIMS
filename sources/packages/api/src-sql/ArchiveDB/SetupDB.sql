@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS individual (
   date_of_birth timestamp without time zone
 );
 
--- Insert Test Item
-INSERT INTO individual(sin,permanent_disability_flg,date_of_birth) VALUES (123456799.000000000,'Y','2000-03-11 00:00:00');
+-- Insert two Test Item
+INSERT INTO individual(sin,permanent_disability_flg,date_of_birth) VALUES (634392948.000000000,'Y','2000-03-11 00:00:00');
+INSERT INTO individual(sin,permanent_disability_flg,date_of_birth) VALUES (347320509.000000000, NULL,'1997-09-1 00:00:00');

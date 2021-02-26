@@ -24,14 +24,14 @@ N.B: ROOT means repository root directory
 3. Keycloak realm
 4. [Docker](https://store.docker.com/search?type=edition&offering=community) (For local development only)
 5. Make cmd (For local development only - windows users)
-6.Test cmd (You can comment out when using as well - windows users)
+   6.Test cmd (You can comment out when using as well - windows users)
 
 ## Local Development
 
 1. Clone Repo to local machine
-  `git clone https://github.com/bcgov/SIMS`
+   `git clone https://github.com/bcgov/SIMS`
 
-2. Change directory to `ROOT/sources/`
+2. Create .env file in repo Root dir, for reference check /config/env-example for env reference. Change directory to `ROOT/sources/` and
 
 3. To build application: `make local-build`
 
@@ -87,6 +87,7 @@ Under `ROOT/devops/openshift/`, all the OpenShift related template file are stor
 We have created a setup of make helper commands, Now we can perform following steps to setup any namespace
 
 - Setup your env variable in `ROOT/.env` file or in `ROOT/devops/Makefile`, sample env file is available under `ROOT/configs/env-example`. The list of essential env variables are
+
   1. NAMESPACE
   2. BUILD_NAMESPACE
   3. HOST_PREFIX (optional)

@@ -6,7 +6,7 @@ import {
   StudentService,
   UserService,
   ConfigService,
-  ArchiveDbService
+  ArchiveDbService,
 } from "./services";
 import {
   UserController,
@@ -31,4 +31,4 @@ import { AuthModule } from "./auth/auth.module";
     ArchiveDbService,
   ],
 })
-export class AppModule { }
+export class AppModule {}
