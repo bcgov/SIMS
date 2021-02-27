@@ -1,10 +1,4 @@
 export const questionsFin = {
-  previousYearTaxReturn: {
-    title: "2020 Tax Return Income",
-    subTitle:
-      "Enter your reported total income from line 15000 of your 2020 Income Tax Return. This income will be matched with Canada Revenue Agency records, which may affect your assessment of need and/or grant eligibility.\nIf you did not file a 2020 Income Tax Return, enter your total income from all sources both inside AND outside of Canada",
-    question: "My total income in 2020 was:",
-  },
   livingSituation: {
     title: "Living Situation and Travel Costs",
     subTitle:
@@ -15,5 +9,8 @@ export const questionsFin = {
   travelCosts: {
     question:
       "Will you be relocating to a different city to attend school and returning home atleast once during your study period?",
+  },
+  returnTripCosts: {
+    question: "What is the cost of one return trip home?",
   },
 };

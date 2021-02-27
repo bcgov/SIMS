@@ -70,6 +70,22 @@
                 >
                 </RadioButtonList>
               </Question>
+
+              <ContentGroup
+                v-if="financialInfoState.travelCostsValue === 'yes'"
+              >
+                <Section>
+                  <Question :text="questionsFin.returnTripCosts.question">
+                    <InputNumber
+                      class="p-m-2"
+                      mode="currency"
+                      currency="CAD"
+                      :maxFractionDigits="2"
+                      v-model="financialInfoState.returnTripCostValue"
+                    />
+                  </Question>
+                </Section>
+              </ContentGroup>
             </Section>
           </ContentGroup>
         </Section>
@@ -93,8 +109,10 @@ import { questionsFin } from "../helpers/questions-financial";
 
 interface FinancialInfoState {
   previousYearTaxReturn: number;
+  craConsent: boolean;
   livingSituationValue: string;
   travelCostsValue: string;
+  returnTripCostValue: number;
 }
 const questions = {
   previousYearTaxReturn: {
@@ -112,10 +130,6 @@ const questions = {
   },
 };
 
-interface FinancialInfoState {
-  previousYearTaxReturn: number;
-  craConsent: boolean;
-}
 export default {
   components: {
     Section,
