@@ -171,11 +171,6 @@ interface PersonalInfoState {
   highschoolAttendanceSelectedDate: Date;
 }
 
-const yesNoOptions = [
-  { text: "Yes", value: "yes" },
-  { text: "No", value: "no" },
-];
-
 // TODO: Refactor This into a simple static model
 // TODO: Refactor import static texts from constant file
 const questionnaire = {
