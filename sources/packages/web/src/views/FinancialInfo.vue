@@ -61,7 +61,7 @@
             >
             </RadioButtonList>
           </Question>
-          <ContentGroup>
+          <ContentGroup v-if="financialInfoState.livingSituationValue === 'no'">
             <Section>
               <Question :text="questionsFin.travelCosts.question">
                 <RadioButtonList
