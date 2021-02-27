@@ -1,3 +1,7 @@
+<!--
+Used when texts have line breaks (\n) and we need to display
+this line breaks as HTML paragraphs.
+-->
 <template v-if="paragraphs">
   <div v-for="paragraph in paragraphs" :key="paragraph">
     <p>{{ paragraph }}</p>
