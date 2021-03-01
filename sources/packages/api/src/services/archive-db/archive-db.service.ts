@@ -21,6 +21,7 @@ export class ArchiveDbService {
     }
     try {
       this._connection = await createConnection({
+        name: "archiveDB",
         type: "postgres",
         host: config.host,
         port: config.port,
