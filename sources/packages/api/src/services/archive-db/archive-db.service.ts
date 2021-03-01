@@ -19,8 +19,13 @@ export class ArchiveDbService {
     if (this._connection) {
       return;
     }
+    let migrations = [];
+    if (process.env.NODE_ENV === "local") {
+      migrations = ["./src/services/archive-db/migrations/*.ts"];
+    }
     try {
       this._connection = await createConnection({
+        name: "archiveDB",
         type: "postgres",
         host: config.host,
         port: config.port,
@@ -28,7 +33,7 @@ export class ArchiveDbService {
         password: config.password,
         database: process.env.ARCHIVE_DB || "sfas_db",
         logging: ["error", "info", "warn"],
-        migrations: ["./src/services/archive-db/migrations/*.ts"],
+        migrations,
         synchronize: false,
         migrationsRun: false,
       });
