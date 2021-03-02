@@ -70,12 +70,7 @@
       <!-- Education Program-->
       <!-- Body-->
       <!-- Footer-->
-      <div class="p-grid">
-        <Button @click="onPrevious" class="p-col-2 p-m-6 p-button-outlined">
-          Previous Section
-        </Button>
-        <Button @click="onNext" class="p-col-2 p-m-6">Next Section</Button>
-      </div>
+      <FooterNavigator previous="personal-info" next="financial-info" />
       <!-- Footer -->
     </div>
   </div>
@@ -83,12 +78,12 @@
 
 <script lang="ts">
 import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import InstituteList from "../components/fa-application/InstituteList.vue";
 import EducationProgramList from "../components/fa-application/EducationProgramList.vue";
+import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
 
 const questions = {
   institute: {
@@ -116,6 +111,7 @@ export default {
     Question,
     InstituteList,
     EducationProgramList,
+    FooterNavigator,
   },
   setup() {
     const response = reactive({} as SelectProgramResponse);
@@ -125,22 +121,13 @@ export default {
       enableEducationProgram.value = true;
       selectedInstitute.value = event.value;
     };
-    // TODO: Create Reuseable interface in FAApplication view or some custom component to handle Next | Previous
-    const router = useRouter();
-    const onNext = () => {
-      router.push("/application/financial-info");
-    };
-    const onPrevious = () => {
-      router.push("/application/personal-info");
-    };
+
     return {
       questions,
       response,
       enableEducationProgram,
       onInstituteSelect,
       selectedInstitute,
-      onNext,
-      onPrevious,
     };
   },
 };
