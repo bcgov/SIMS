@@ -15,6 +15,14 @@
         style="color: white"
         @click="$router.push('/student-profile/edit')"
       />
+      <Button
+        v-if="isAuthenticated"
+        label="Log off"
+        icon="pi pi-fw pi-power-off"
+        class="p-button-text"
+        style="color: white"
+        @click="logoff"
+      />
     </template>
   </Menubar>
 </template>
@@ -28,7 +36,12 @@ export default {
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
-    return { menuItems, isAuthenticated };
+
+    const logoff = () => {
+      AppConfigService.shared.authService?.logout();
+    };
+
+    return { menuItems, isAuthenticated, logoff };
   },
 };
 </script>
