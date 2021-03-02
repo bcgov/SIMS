@@ -50,6 +50,7 @@
           </div>
         </Section>
       </ContentGroup>
+
       <ContentGroup>
         <Section
           :title="questionsFin.livingSituation.title"
@@ -92,8 +93,7 @@
           </ContentGroup>
         </Section>
       </ContentGroup>
-
-      <Section title="More questions to come..." />
+      <FooterNavigator previous="select-program" next="confirm-submission" />
     </div>
   </div>
 </template>
@@ -105,6 +105,7 @@ import Question from "../components/fa-application/Question.vue";
 import ContentGroup from "../components/ContentGroup.vue";
 import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
+import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
 import StringToHtmlParagraphs from "../components/StringToHtmlParagraphs.vue";
 import ReadMoreContainer from "../components/ReadMoreContainer.vue";
 import { questionsFin } from "../constants/fa-application/questions-financial";
@@ -126,6 +127,7 @@ export default {
     StringToHtmlParagraphs,
     RadioButtonList,
     ReadMoreContainer,
+    FooterNavigator,
   },
   setup() {
     const financialInfoState = reactive({} as FinancialInfoState);

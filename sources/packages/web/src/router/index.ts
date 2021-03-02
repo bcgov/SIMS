@@ -7,6 +7,7 @@ import PageNotFound from "../views/PageNotFound.vue";
 import PersonalInfoQuestionnaire from "../views/PersonalInfoQuestionnaire.vue";
 import SelectProgram from "../views/SelectProgram.vue";
 import FinancialInfo from "../views/FinancialInfo.vue";
+import ConfirmSubmission from "../views/ConfirmSubmission.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -37,15 +38,23 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "personal-info",
+        name: "personal-info",
         component: PersonalInfoQuestionnaire,
       },
       {
         path: "select-program",
+        name: "select-program",
         component: SelectProgram,
       },
       {
         path: "financial-info",
+        name: "financial-info",
         component: FinancialInfo,
+      },
+      {
+        path: "confirm-submission",
+        name: "confirm-submission",
+        component: ConfirmSubmission,
       },
     ],
   },

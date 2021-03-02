@@ -136,27 +136,18 @@
       </Section>
       <HorizontalSeparator />
     </div>
-    <div class="p-grid">
-      <Button
-        @click="onPrevious"
-        class="p-col-2 p-m-6 p-button-outlined"
-        style="text-color: "
-      >
-        Previous Section
-      </Button>
-      <Button @click="onNext" class="p-col-2 p-m-6">Next Section</Button>
-    </div>
+    <FooterNavigator previous="application" next="select-program" />
   </div>
 </template>
 
 <script lang="ts">
 import { reactive } from "vue";
-import { useRouter } from "vue-router";
 import Section from "../components/fa-application/Section.vue";
 import Question from "../components/fa-application/Question.vue";
 import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
 import ConfirmStudentAidBCProfileInfo from "../components/fa-application/ConfirmStudentAidBCProfileInfo.vue";
+import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
 import { questionsPI } from "../constants/fa-application/questions-personalinfo";
 
 interface PersonalInfoState {
@@ -181,21 +172,13 @@ export default {
     RadioButtonList,
     HorizontalSeparator,
     ConfirmStudentAidBCProfileInfo,
+    FooterNavigator,
   },
   setup() {
     const personalInfoState = reactive({} as PersonalInfoState);
-    const router = useRouter();
-    const onNext = () => {
-      router.push("/application/select-program");
-    };
-    const onPrevious = () => {
-      router.push("/application");
-    };
     return {
       questionsPI,
       personalInfoState,
-      onNext,
-      onPrevious,
     };
   },
 };
