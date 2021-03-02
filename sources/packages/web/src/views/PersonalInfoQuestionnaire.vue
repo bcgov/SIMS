@@ -5,56 +5,48 @@
     </div>
     <div class="p-grid">
       <Section
-        :title="questionnaire.sections.residency.title"
-        :sub-title="questionnaire.sections.residency.subTitle"
+        :title="questionsPI.sections.residency.title"
+        :sub-title="questionsPI.sections.residency.subTitle"
       >
         <Question
-          :text="questionnaire.sections.residency.questions.residencyQuestion"
+          :text="questionsPI.sections.residency.questions.residencyQuestion"
         >
           <RadioButtonList
             name="residencyQuestion"
             v-model="personalInfoState.residencySelectedValue"
-            :options="
-              questionnaire.sections.residency.questions
-                .residencyQuestionOptions
-            "
+            :options="questionsPI.sections.residency.questions.options"
           >
           </RadioButtonList>
         </Question>
         <Question
-          :text="questionnaire.sections.residency.questions.bcResidencyQuestion"
+          :text="questionsPI.sections.residency.questions.bcResidencyQuestion"
         >
           <RadioButtonList
             name="bcResidencyQuestion"
             v-model="personalInfoState.bcResidencySelectedValue"
-            :options="
-              questionnaire.sections.residency.questions
-                .bcResidencyQuestionOptions
-            "
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.bankruptcy.title"
-        :sub-title="questionnaire.sections.bankruptcy.subTitle"
+        :title="questionsPI.sections.bankruptcy.title"
+        :sub-title="questionsPI.sections.bankruptcy.subTitle"
       >
-        <Question :text="questionnaire.sections.bankruptcy.question">
+        <Question :text="questionsPI.sections.bankruptcy.question">
           <RadioButtonList
             name="residencyQuestion"
             v-model="personalInfoState.bankruptcySelectedValue"
-            :options="questionnaire.sections.bankruptcy.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.highschoolAttendance.title"
-        :sub-title="questionnaire.sections.highschoolAttendance.subTitle"
+        :title="questionsPI.sections.highschoolAttendance.title"
+        :sub-title="questionsPI.sections.highschoolAttendance.subTitle"
       >
-        <Question :text="questionnaire.sections.highschoolAttendance.question">
+        <Question :text="questionsPI.sections.highschoolAttendance.question">
           <Calendar
             v-model="personalInfoState.highschoolAttendanceSelectedDate"
             view="month"
@@ -65,84 +57,79 @@
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.relationship.title"
-        :sub-title="questionnaire.sections.relationship.subTitle"
+        :title="questionsPI.sections.relationship.title"
+        :sub-title="questionsPI.sections.relationship.subTitle"
       >
-        <Question :text="questionnaire.sections.relationship.question">
+        <Question :text="questionsPI.sections.relationship.question">
           <RadioButtonList
             name="relationshipQuestion"
             v-model="personalInfoState.relationshipSelectedValue"
-            :options="questionnaire.sections.relationship.options"
+            :options="questionsPI.sections.relationship.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.employment.title"
-        :sub-title="questionnaire.sections.employment.subTitle"
+        :title="questionsPI.sections.employment.title"
+        :sub-title="questionsPI.sections.employment.subTitle"
       >
-        <Question :text="questionnaire.sections.employment.question">
+        <Question :text="questionsPI.sections.employment.question">
           <RadioButtonList
             name="aboriginalStatusQuestion"
             v-model="personalInfoState.employmentStatusValue"
-            :options="questionnaire.sections.employment.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.aboriginalStatus.title"
-        :sub-title="questionnaire.sections.aboriginalStatus.subTitle"
+        :title="questionsPI.sections.aboriginalStatus.title"
+        :sub-title="questionsPI.sections.aboriginalStatus.subTitle"
       >
-        <Question :text="questionnaire.sections.aboriginalStatus.question">
+        <Question :text="questionsPI.sections.aboriginalStatus.question">
           <RadioButtonList
             name="aboriginalStatusQuestion"
             v-model="personalInfoState.aboriginalStatusSelectedValue"
-            :options="questionnaire.sections.aboriginalStatus.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.youthInCare.title"
-        :sub-title="questionnaire.sections.youthInCare.subTitle"
+        :title="questionsPI.sections.youthInCare.title"
+        :sub-title="questionsPI.sections.youthInCare.subTitle"
       >
-        <Question :text="questionnaire.sections.youthInCare.question">
+        <Question :text="questionsPI.sections.youthInCare.question">
           <RadioButtonList
             name="youthInCareQuestion"
             v-model="personalInfoState.youthInCareSelectedValue"
-            :options="questionnaire.sections.youthInCare.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.permanentDisability.title"
-        :sub-title="questionnaire.sections.permanentDisability.subTitle"
+        :title="questionsPI.sections.permanentDisability.title"
+        :sub-title="questionsPI.sections.permanentDisability.subTitle"
       >
-        <Question :text="questionnaire.sections.permanentDisability.question">
+        <Question :text="questionsPI.sections.permanentDisability.question">
           <RadioButtonList
             name="permanentDisabilityQuestion"
             v-model="personalInfoState.permanentDisabilitySelectedValue"
-            :options="questionnaire.sections.permanentDisability.options"
           >
           </RadioButtonList>
         </Question>
       </Section>
       <HorizontalSeparator />
       <Section
-        :title="questionnaire.sections.dependentStatus.title"
-        :sub-title="questionnaire.sections.dependentStatus.subTitle"
+        :title="questionsPI.sections.dependentStatus.title"
+        :sub-title="questionsPI.sections.dependentStatus.subTitle"
       >
-        <Question :text="questionnaire.sections.dependentStatus.question">
+        <Question :text="questionsPI.sections.dependentStatus.question">
           <RadioButtonList
             name="dependentStatusQuestion"
             v-model="personalInfoState.dependentStatusSelectedValue"
-            :options="questionnaire.sections.dependentStatus.options"
           >
           </RadioButtonList>
         </Question>
@@ -161,6 +148,7 @@ import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
 import ConfirmStudentAidBCProfileInfo from "../components/fa-application/ConfirmStudentAidBCProfileInfo.vue";
 import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
+import { questionsPI } from "../constants/fa-application/questions-personalinfo";
 
 interface PersonalInfoState {
   residencySelectedValue: string;
@@ -175,94 +163,7 @@ interface PersonalInfoState {
   highschoolAttendanceSelectedDate: Date;
 }
 
-const yesNoOptions = [
-  { text: "Yes", value: "yes" },
-  { text: "No", value: "no" },
-];
-
 // TODO: Refactor This into a simple static model
-// TODO: Refactor import static texts from constant file
-const questionnaire = {
-  sections: {
-    residency: {
-      title: "Citizen and Residency",
-      subTitle:
-        "You must meet B.C. residency requirements to receive funding through StudentAid BC",
-      questions: {
-        residencyQuestion: "On my first day of class, I'll be a:",
-        residencyQuestionOptions: [
-          { text: "Canadian citizen", value: "canadian" },
-          { text: "Protected person", value: "protected" },
-          { text: "Permanent resident", value: "pr" },
-        ],
-        bcResidencyQuestion:
-          "I have lived in B.C. for at least 12 consecutive months without being a full-time post-secondary student",
-        bcResidencyQuestionOptions: yesNoOptions,
-      },
-    },
-    bankruptcy: {
-      title: "Bankruptcy",
-      subTitle:
-        "StudentAid BC requires that applicants have not previously declared bankruptcy.",
-      question:
-        "Have you ever declared bankruptcy that included financial assistance?",
-      options: yesNoOptions,
-    },
-    highschoolAttendance: {
-      title: "Date of Highschool Attendance",
-      subTitle:
-        "Please enter the date when you graduated or when you orginally left highschool before coming back to graduate.",
-      question: " I graduated or left highschool on:",
-    },
-    relationship: {
-      title: "Relationship Status",
-      subTitle: "We use your relationship status to ensure you will receive.",
-      question: "On my first day of class, I'll be:",
-      options: [
-        { text: "Single", value: "single" },
-        { text: "Married", value: "married" },
-        { text: "Common law", value: "commonlaw" },
-        { text: "Separated/divorced/widowed", value: "separated" },
-      ],
-    },
-    employment: {
-      title: "Employment Information",
-      subTitle:
-        "StudentAid BC requires applicants not work a full-time of more than 32 hours per week for at least half of their study period.",
-      question:
-        "Will you be working a full-time job of 32 hours per week for more than half of your study period?",
-      options: yesNoOptions,
-    },
-    aboriginalStatus: {
-      title: "Aboriginal Status",
-      subTitle: "Description of Indigenous heritage...",
-      question: "Do you identify as an Aboriginal person?",
-      options: yesNoOptions,
-    },
-    youthInCare: {
-      title: "Youth In Care",
-      subTitle:
-        "If may be eligible to the following programs as a current/former youth in care (part of a foster family).",
-      question:
-        "I am a current/former youth in care and I want to apply for the Provincial Tuition Waiver Program and the Youth Educational Assistance Fund grants",
-      options: yesNoOptions,
-    },
-    permanentDisability: {
-      title: "Permanent Disability",
-      subTitle:
-        "Do you have a permanent disability that affects your studies on a daily basis?",
-      question:
-        "I have a permanent disability and want to apply for permanent disability grants:",
-      options: yesNoOptions,
-    },
-    dependentStatus: {
-      title: "Dependent",
-      subTitle: "Please specify your dependent status",
-      question: "Do you have any dependents?",
-      options: yesNoOptions,
-    },
-  },
-};
 
 export default {
   components: {
@@ -276,7 +177,7 @@ export default {
   setup() {
     const personalInfoState = reactive({} as PersonalInfoState);
     return {
-      questionnaire,
+      questionsPI,
       personalInfoState,
     };
   },
