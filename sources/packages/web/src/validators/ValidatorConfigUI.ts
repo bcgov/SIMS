@@ -6,5 +6,7 @@ export default function configValidationRules() {
   // A list of available rules to be used could be found on
   // https://vee-validate.logaretm.com/v4/guide/global-validators#available-rules
   defineRule("required", required);
+  console.log(`In validator Config UI `);
+  console.dir(process.env);
   defineRule("sin-number", sinValidationRule);
 }

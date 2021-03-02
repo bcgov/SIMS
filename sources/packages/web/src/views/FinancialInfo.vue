@@ -16,7 +16,8 @@
             <InputNumber
               class="p-m-2"
               mode="currency"
-              currency="USD"
+              currency="CAD"
+              locale="en-CA"
               :maxFractionDigits="0"
               v-model="financialInfoState.previousYearTaxReturn"
             />
@@ -80,6 +81,7 @@
                       class="p-m-2"
                       mode="currency"
                       currency="CAD"
+                      locale="en-CA"
                       :maxFractionDigits="2"
                       v-model="financialInfoState.returnTripCostValue"
                     />
@@ -105,7 +107,7 @@ import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
 import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
 import StringToHtmlParagraphs from "../components/StringToHtmlParagraphs.vue";
 import ReadMoreContainer from "../components/ReadMoreContainer.vue";
-import { questionsFin } from "../helpers/questions-financial";
+import { questionsFin } from "../constants/fa-application/questions-financial";
 
 interface FinancialInfoState {
   previousYearTaxReturn: number;
