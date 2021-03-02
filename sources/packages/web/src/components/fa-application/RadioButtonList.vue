@@ -49,6 +49,12 @@ export default {
     options: {
       type: Array,
       required: true,
+      default: function() {
+        return [
+          { text: "Yes", value: "yes" },
+          { text: "No", value: "no" },
+        ];
+      },
     },
   },
   setup(props: any, context: SetupContext) {
