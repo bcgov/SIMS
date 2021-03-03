@@ -1,8 +1,11 @@
+import { Loggable, LoggerEnable } from "../common";
+import { LoggerService } from "../logger/logger.service";
 import { Connection, Repository } from "typeorm";
 import { BaseModel } from "./entities/base.model";
 import { RecordDataModel } from "./entities/record.model";
 
-export class DataModelService<DataModel extends BaseModel> {
+@LoggerEnable()
+export class DataModelService<DataModel extends BaseModel> implements Loggable {
   static getRepo<DataModel>(
     connection: Connection,
     entity: Function,
@@ -11,6 +14,10 @@ export class DataModelService<DataModel extends BaseModel> {
   }
 
   constructor(protected repo: Repository<DataModel>) {}
+
+  logger(): LoggerService | undefined {
+    return;
+  }
 
   create(): DataModel {
     return this.repo.create() as DataModel;

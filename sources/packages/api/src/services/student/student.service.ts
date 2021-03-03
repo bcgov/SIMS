@@ -57,13 +57,16 @@ export class StudentService extends RecordDataModelService<Student> {
 
     // Get PD status from Archive DB
     try {
-      const result: StudentLegacyData [] = await this.archiveDB.getIndividualPDStatus(student);
+      const result: StudentLegacyData[] = await this.archiveDB.getIndividualPDStatus(
+        student,
+      );
       if (result && result.length > 0 && result[0].disability === "Y") {
         student.studentPDVerified = true;
       }
-    } catch(excp) {
-      // TODO: Replace with proper logging
-      console.warn(`Unable to get archived information of student with exception: ${excp}`);
+    } catch (excp) {
+      this.logger().warn(
+        `Unable to get archived information of student with exception: ${excp}`,
+      );
     }
     return await this.save(student);
   }

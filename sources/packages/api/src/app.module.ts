@@ -14,9 +14,10 @@ import {
   ConfigController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
+import { LoggerModule } from "./logger/logger.module";
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [DatabaseModule, AuthModule, LoggerModule],
   controllers: [
     AppController,
     UserController,

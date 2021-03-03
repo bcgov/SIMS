@@ -1,4 +1,5 @@
 import { createConnection, getConnection } from "typeorm";
+
 const config = require("../../ormconfig");
 
 export async function setupDB() {

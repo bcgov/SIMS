@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    let userToken = payload as IUserToken;
+    const userToken = payload as IUserToken;
     // For now we are adding all the roles from the different clients into one single array.
     // In the future we can decide how to proper handle roles, but the only issue to have
     // then flatten for now is if we create a role with the same name in 2 different
