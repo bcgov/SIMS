@@ -67,7 +67,7 @@
 </template>
 <script>
 import { onMounted, ref, reactive } from "vue";
-import { StudentService } from "../../services/StudentService";
+import { StudentService } from "../../../../services/StudentService";
 
 export default {
   setup() {

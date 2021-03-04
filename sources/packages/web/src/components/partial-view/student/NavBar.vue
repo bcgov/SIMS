@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { computed } from "vue";
-import { AppConfigService } from "../services/AppConfigService";
+import { AppConfigService } from "../../services/AppConfigService";
 export default {
   setup() {
     const menuItems: any = [];

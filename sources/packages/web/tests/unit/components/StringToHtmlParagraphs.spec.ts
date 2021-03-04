@@ -1,5 +1,5 @@
 import { mount, shallowMount } from "@vue/test-utils";
-import StringToHtmlParagraphs from "../../../src/components/StringToHtmlParagraphs.vue";
+import StringToHtmlParagraphs from "../../../src/components/generic/StringToHtmlParagraphs.vue";
 
 describe("StringToHtmlParagraphs.vue", () => {
   it("should add two html paragraphs when the text has one line break", () => {

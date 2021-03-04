@@ -2,7 +2,7 @@ import { mount } from "@vue/test-utils";
 import store from "../../src/store";
 
 // Target Vue
-import Home from "../../src/views/Home.vue";
+import Home from "../../src/views/student/Home.vue";
 
 describe("Test Home.vue", () => {
   beforeAll(() => {

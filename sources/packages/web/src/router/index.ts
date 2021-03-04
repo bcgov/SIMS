@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
-import Login from "../views/Login.vue";
-import Student from "../views/Student.vue";
-import FAApplication from "../views/FAApplication.vue";
+import Home from "../views/student/Home.vue";
+import Login from "../views/student/Login.vue";
+import Student from "../views/student/financial-aid-application/Student.vue";
+import FAApplication from "../views/student/financial-aid-application/FAApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
-import PersonalInfoQuestionnaire from "../views/PersonalInfoQuestionnaire.vue";
-import SelectProgram from "../views/SelectProgram.vue";
-import FinancialInfo from "../views/FinancialInfo.vue";
-import ConfirmSubmission from "../views/ConfirmSubmission.vue";
+import PersonalInfoQuestionnaire from "../views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";
+import SelectProgram from "../views/student/financial-aid-application/SelectProgram.vue";
+import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
+import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {

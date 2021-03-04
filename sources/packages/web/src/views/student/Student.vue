@@ -152,9 +152,9 @@ import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { useForm, Field } from "vee-validate";
-import { StudentService } from "../services/StudentService";
+import { StudentService } from "../../services/StudentService";
 import { useToast } from "primevue/usetoast";
-import ValidatedInput from "../components/ValidatedInput.vue";
+import ValidatedInput from "../../components/generic/ValidatedInput.vue";
 
 interface ProfileState {
   phone: string;

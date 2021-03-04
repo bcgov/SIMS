@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import Section from "../../../../src/components/fa-application/Section.vue";
+import Section from "../../../../src/components/shared/Section.vue";
 
 const sectionTitleSelector = "#sectionTitle";
 

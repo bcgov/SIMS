@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import NavBar from "./components/NavBar.vue";
+import NavBar from "./components/student/NavBar.vue";
 import { AppConfigService } from "./services/AppConfigService";
 import { UserService } from "./services/UserService";
 import { StudentService } from "./services/StudentService";
