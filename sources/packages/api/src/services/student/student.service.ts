@@ -8,14 +8,19 @@ import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
 import { ArchiveDbService } from "../archive-db/archive-db.service";
 import { StudentLegacyData } from "../../types";
+import { LoggerService } from "../../logger/logger.service";
+import { InjectLogger } from "../../common";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
+  @InjectLogger()
+  logger: LoggerService;
   constructor(
     @Inject("Connection") connection: Connection,
     private readonly archiveDB: ArchiveDbService,
   ) {
     super(connection.getRepository(Student));
+    this.logger.log("[Created]");
   }
 
   async getStudentByUserName(userName: string): Promise<Student> {
@@ -64,7 +69,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student.studentPDVerified = true;
       }
     } catch (excp) {
-      this.logger().warn(
+      this.logger.warn(
         `Unable to get archived information of student with exception: ${excp}`,
       );
     }

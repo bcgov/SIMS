@@ -1,15 +1,16 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoggerModule } from "../logger/logger.module";
 import { DatabaseService } from "./database.service";
-const config = require("../../ormconfig");
+
+const config = require("../../ormconfig"); // eslint-disable-line
 
 const finalConfig: any = { ...config, schema: process.env.DB_SCHEMA || "sims" };
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       ...finalConfig,
-      logging: ["error", "warn", "info"],
+      logging: ["error", "warn"],
     }),
     LoggerModule,
   ],

@@ -7,7 +7,7 @@ import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
-import { Loggable, LoggerEnable } from "../../../common";
+import { InjectLogger } from "../../../common";
 import { LoggerService } from "../../../logger/logger.service";
 
 /**
@@ -19,16 +19,14 @@ import { LoggerService } from "../../../logger/logger.service";
  * to create mockups for unit tests.
  */
 @Injectable()
-@LoggerEnable()
-export class KeycloakService implements Loggable {
+export class KeycloakService {
   private readonly authConfig: IAuthConfig;
+
+  @InjectLogger()
+  logger: LoggerService;
 
   constructor(configService: ConfigService) {
     this.authConfig = configService.getConfig().auth;
-  }
-
-  logger(): LoggerService | undefined {
-    return;
   }
 
   private static _shared: KeycloakService;
@@ -56,7 +54,7 @@ export class KeycloakService implements Loggable {
       return response.data as OpenIdConfig;
     } catch (ex) {
       // TODO: Add a logger.
-      this.logger().log(ex);
+      this.logger.error(ex);
       throw new Error("Error while loading Open Id Configuration.");
     }
   }
@@ -77,7 +75,7 @@ export class KeycloakService implements Loggable {
       };
     } catch (ex) {
       // TODO: Add a logger.
-      this.logger().log(ex);
+      this.logger.error(ex);
       throw new Error("Error while loading Realm Config.");
     }
   }
@@ -111,7 +109,7 @@ export class KeycloakService implements Loggable {
       return response.data as TokenResponse;
     } catch (ex) {
       // TODO: Add a logger.
-      this.logger().log(ex);
+      this.logger.error(ex);
       throw new Error("Error while requesting user token.");
     }
   }

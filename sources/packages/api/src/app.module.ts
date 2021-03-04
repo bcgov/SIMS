@@ -17,7 +17,7 @@ import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 
 @Module({
-  imports: [DatabaseModule, AuthModule, LoggerModule],
+  imports: [LoggerModule, DatabaseModule, AuthModule],
   controllers: [
     AppController,
     UserController,

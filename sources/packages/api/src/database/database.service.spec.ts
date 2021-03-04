@@ -24,6 +24,6 @@ describe("Database Service", () => {
     const connection = getConnection();
     const svc = new DatabaseService(connection);
     expect(svc).toBeDefined();
-    expect(svc.logger()).toBeDefined();
+    expect(svc.anotherLogger()).toBeDefined();
   });
 });

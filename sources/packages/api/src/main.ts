@@ -11,9 +11,7 @@ import { exit } from "process";
 
 async function bootstrap() {
   await KeycloakConfig.load();
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: false,
-  });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
   // Setting global prefix
   app.setGlobalPrefix("api");
