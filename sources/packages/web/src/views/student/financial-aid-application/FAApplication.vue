@@ -17,7 +17,7 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Steps from "primevue/steps";
-import WelcomePage from "../../../components/student/financial-aid-application/WelcomePage.vue";
+import WelcomePage from "../../../components/partial-view/student/financial-aid-application/WelcomePage.vue";
 
 const applicationSteps = [
   {

@@ -142,12 +142,12 @@
 
 <script lang="ts">
 import { reactive } from "vue";
-import Section from "../../../components/shared/Section.vue";
-import Question from "../../../components/shared/Question.vue";
-import RadioButtonList from "../../../components/shared/RadioButtonList.vue";
-import HorizontalSeparator from "../../../components/shared/HorizontalSeparator.vue";
-import ConfirmStudentAidBCProfileInfo from "../../../components/student/financial-aid-application/ConfirmStudentAidBCProfileInfo.vue";
-import FooterNavigator from "../../../components/shared/FooterNavigator.vue";
+import Section from "../../../components/generic/Section.vue";
+import Question from "../../../components/generic/Question.vue";
+import RadioButtonList from "../../../components/generic/RadioButtonList.vue";
+import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
+import ConfirmStudentAidBCProfileInfo from "../../../components/partial-view/student/financial-aid-application/ConfirmStudentAidBCProfileInfo.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
 import { questionsPI } from "../../../constants/fa-application/questions-personalinfo";
 
 interface PersonalInfoState {

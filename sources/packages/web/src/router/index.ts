@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/student/Home.vue";
 import Login from "../views/student/Login.vue";
-import Student from "../views/student/financial-aid-application/Student.vue";
+import Student from "../views/student/Student.vue";
 import FAApplication from "../views/student/financial-aid-application/FAApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import PersonalInfoQuestionnaire from "../views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";

@@ -100,12 +100,12 @@
 
 <script lang="ts">
 import { reactive } from "vue";
-import Section from "../../../components/shared/Section.vue";
-import Question from "../../../components/shared/Question.vue";
+import Section from "../../../components/generic/Section.vue";
+import Question from "../../../components/generic/Question.vue";
 import ContentGroup from "../../../components/generic/ContentGroup.vue";
-import RadioButtonList from "../../../components/shared/RadioButtonList.vue";
-import HorizontalSeparator from "../../../components/shared/HorizontalSeparator.vue";
-import FooterNavigator from "../../../components/shared/FooterNavigator.vue";
+import RadioButtonList from "../../../components/generic/RadioButtonList.vue";
+import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
 import StringToHtmlParagraphs from "../../../components/generic/StringToHtmlParagraphs.vue";
 import ReadMoreContainer from "../../../components/generic/ReadMoreContainer.vue";
 import { questionsFin } from "../../../constants/fa-application/questions-financial";

@@ -94,6 +94,6 @@ export default {
 }
 
 .img-background {
-  background-image: url("../../assets/images/icon_assistance.svg");
+  background-image: url("../../../../assets/images/icon_assistance.svg");
 }
 </style>
