@@ -1,4 +1,3 @@
-import { LoggerService } from "../logger/logger.service";
 import { Connection, Repository } from "typeorm";
 import { BaseModel } from "./entities/base.model";
 import { RecordDataModel } from "./entities/record.model";
@@ -13,9 +12,7 @@ export class DataModelService<DataModel extends BaseModel>  {
   }
 
   constructor(protected repo: Repository<DataModel>) {}
-
   
-
   create(): DataModel {
     return this.repo.create() as DataModel;
   }
