@@ -4,6 +4,8 @@ import { Student } from "src/database/entities";
 import { createConnection, Connection } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import { StudentLegacyData } from "../../types";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 
 const config: PostgresConnectionOptions = require("../../../ormconfig");
 
@@ -11,9 +13,18 @@ const config: PostgresConnectionOptions = require("../../../ormconfig");
 export class ArchiveDbService {
   private _connection?: Connection;
 
+  @InjectLogger()
+  logger: LoggerService;
+
+  constructor() {
+    this.logger.log("[Created]");
+  }
+
   public get connection(): Connection {
     return this._connection;
   }
+
+  
 
   async init() {
     if (this._connection) {
@@ -38,7 +49,7 @@ export class ArchiveDbService {
         migrationsRun: false,
       });
     } catch (excp) {
-      console.error(`Unable to connect archive db for ${excp}`);
+      this.logger.error(`Unable to connect archive db for ${excp}`);
       throw excp;
     }
   }
@@ -48,7 +59,7 @@ export class ArchiveDbService {
       await this.init();
       return this._connection.query(raw, parameters);
     } catch (excp) {
-      console.error(`Unable to query in archive db for ${excp}`);
+      this.logger.error(`Unable to query in archive db for ${excp}`);
       return null;
     }
   }

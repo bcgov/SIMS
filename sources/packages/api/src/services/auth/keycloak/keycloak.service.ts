@@ -7,6 +7,8 @@ import { TokenResponse } from "./token-response.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../../auth/keycloakConfig";
+import { InjectLogger } from "../../../common";
+import { LoggerService } from "../../../logger/logger.service";
 
 /**
  * Manage the HTTP requests that need to be exeuted to Keycloak.
@@ -19,6 +21,9 @@ import { KeycloakConfig } from "../../../auth/keycloakConfig";
 @Injectable()
 export class KeycloakService {
   private readonly authConfig: IAuthConfig;
+
+  @InjectLogger()
+  logger: LoggerService;
 
   constructor(configService: ConfigService) {
     this.authConfig = configService.getConfig().auth;
@@ -49,7 +54,7 @@ export class KeycloakService {
       return response.data as OpenIdConfig;
     } catch (ex) {
       // TODO: Add a logger.
-      console.log(ex);
+      this.logger.error(ex);
       throw new Error("Error while loading Open Id Configuration.");
     }
   }
@@ -70,7 +75,7 @@ export class KeycloakService {
       };
     } catch (ex) {
       // TODO: Add a logger.
-      console.log(ex);
+      this.logger.error(ex);
       throw new Error("Error while loading Realm Config.");
     }
   }
@@ -104,7 +109,7 @@ export class KeycloakService {
       return response.data as TokenResponse;
     } catch (ex) {
       // TODO: Add a logger.
-      console.log(ex);
+      this.logger.error(ex);
       throw new Error("Error while requesting user token.");
     }
   }
