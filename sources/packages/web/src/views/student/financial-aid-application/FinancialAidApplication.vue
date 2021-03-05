@@ -1,6 +1,5 @@
 <template>
   <WelcomePage v-if="!isReady" />
-  <!-- Application Main View-->
   <div v-else>
     <div class="card">
       <Steps :model="applicationSteps" :readonly="false"></Steps>
@@ -22,19 +21,19 @@ import WelcomePage from "../../../components/partial-view/student/financial-aid-
 const applicationSteps = [
   {
     label: "Personal Information",
-    to: "/application/personal-info",
+    to: "/student/application/personal-info",
   },
   {
     label: "Select Program",
-    to: "/application/select-program",
+    to: "/student/application/select-program",
   },
   {
     label: "Financial Information",
-    to: "/application/financial-info",
+    to: "/student/application/financial-info",
   },
   {
     label: "Confirm Submission",
-    to: "/application/confirm-submission",
+    to: "/student/application/confirm-submission",
   },
 ];
 
@@ -44,9 +43,11 @@ export default {
     WelcomePage,
   },
   setup() {
+    console.log("In FAA.vue");
     const isReady = ref(false);
     const route = useRoute();
-    if (route.path !== "/application") {
+    console.log(`route.path in faa is ${route.path}`);
+    if (route.path !== "/student/application") {
       isReady.value = true;
     }
     return {

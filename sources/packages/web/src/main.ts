@@ -5,7 +5,8 @@ import "primeflex/primeflex.css";
 
 import { createApp } from "vue";
 import App from "./App.vue";
-import router from "./router";
+import StudentRouter from "./router/StudentRouter";
+import InstitutionRouter from "./router/InstitutionRouter";
 import store from "./store";
 import PrimeVue from "primevue/config";
 import Menubar from "primevue/menubar";
@@ -30,7 +31,9 @@ configValidationRules();
 AppConfigService.shared.init().then(() => {
   createApp(App)
     .use(store)
-    .use(router)
+    //    .use(router)
+    .use(StudentRouter)
+    //.use(InstitutionRouter)
     .use(PrimeVue)
     .use(ToastService)
     .component("Toast", Toast)

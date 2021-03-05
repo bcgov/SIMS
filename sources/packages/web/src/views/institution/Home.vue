@@ -1,17 +1,23 @@
 <template>
   <div class="p-m-4">
-    <h1>Home - Student Dashboard</h1>
+    <h1>Home - Institution Dashboard</h1>
   </div>
   <Card class="p-m-4">
     <template #title>
-      Welcome Student - {{ user.givenNames }}, let's get started
+      Welcome Institution - {{ user.givenNames }}, let's get started
     </template>
-    <template #content> Please start your Financial Aid application </template>
+    <template #content>
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </template>
     <template #footer>
       <Button
         label="Start Application"
         class="p-button-raised"
-        @click="$router.push({ name: 'application' })"
+        @click="$router.push('/application')"
       />
     </template>
   </Card>

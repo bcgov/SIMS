@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/student/Home.vue";
 import Login from "../views/student/Login.vue";
 import Student from "../views/student/Student.vue";
-import FAApplication from "../views/student/financial-aid-application/FAApplication.vue";
+import FAApplication from "../views/student/financial-aid-application/FinancialAidApplication.vue";
 import PageNotFound from "../views/PageNotFound.vue";
 import PersonalInfoQuestionnaire from "../views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";
 import SelectProgram from "../views/student/financial-aid-application/SelectProgram.vue";
@@ -64,9 +64,9 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-});
+// const router = createRouter({
+//   history: createWebHistory(process.env.BASE_URL),
+//   routes,
+// });
 
-export default router;
+// export default router;
