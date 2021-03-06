@@ -2,9 +2,9 @@ import { mount } from "@vue/test-utils";
 import store from "../../src/store";
 
 // Target Vue
-import Home from "../../src/views/student/Home.vue";
+import StudentDashboard from "../../src/views/student/StudentDashboard.vue";
 
-describe("Test Home.vue", () => {
+describe("Test StudentDashboard.vue", () => {
   beforeAll(() => {
     store.dispatch("student/setStudentProfileData", {
       tokenParsed: {
@@ -13,7 +13,7 @@ describe("Test Home.vue", () => {
     });
   });
   it("should load home component", () => {
-    const wrapper = mount(Home, {
+    const wrapper = mount(StudentDashboard, {
       global: {
         plugins: [store],
         stubs: {
@@ -23,6 +23,6 @@ describe("Test Home.vue", () => {
       },
       shallow: true,
     });
-    expect(wrapper.html()).toContain("Home - Student Dashboard");
+    expect(wrapper.html()).toContain("Student Dashboard");
   });
 });

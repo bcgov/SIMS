@@ -1,6 +1,6 @@
 <template>
   <div>
     <Toast />
-    <router-view :key="$route.fullPath" />
+    <router-view />
   </div>
 </template>

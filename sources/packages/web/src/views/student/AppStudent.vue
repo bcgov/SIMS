@@ -29,7 +29,7 @@ export default class AppStudent extends Vue {
       And Redirect to Home page (Student's Dashboard)*/
       await StudentService.shared.synchronizeFromUserInfo();
       router.push({
-        name: "Home",
+        name: "StudentDashboard",
       });
     } else {
       /* User doesn't exist in SABC Database and so redirect the user to Student Profile page

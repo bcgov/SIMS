@@ -43,10 +43,8 @@ export default {
     WelcomePage,
   },
   setup() {
-    console.log("In FAA.vue");
     const isReady = ref(false);
     const route = useRoute();
-    console.log(`route.path in faa is ${route.path}`);
     if (route.path !== "/student/application") {
       isReady.value = true;
     }

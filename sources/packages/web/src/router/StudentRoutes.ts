@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/student/Home.vue";
+import { RouteRecordRaw } from "vue-router";
+import StudentDashboard from "../views/student/StudentDashboard.vue";
 import Login from "../views/student/Login.vue";
 import Student from "../views/student/Student.vue";
 import AppStudent from "../views/student/AppStudent.vue";
@@ -10,16 +10,16 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 
-const routes: Array<RouteRecordRaw> = [
+export const studentRoutes: Array<RouteRecordRaw> = [
   {
     path: "/student",
     name: "AppStudent",
     component: AppStudent,
     children: [
       {
-        path: "home",
-        name: "Home",
-        component: Home,
+        path: "student-dashboard",
+        name: "StudentDashboard",
+        component: StudentDashboard,
       },
       {
         path: "login",
@@ -66,16 +66,4 @@ const routes: Array<RouteRecordRaw> = [
       },
     ], //Children under /Student
   },
-
-  {
-    path: "/:pathMatch(.*)*",
-    component: PageNotFound,
-  },
 ];
-
-const StudentRouter = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-});
-
-export default StudentRouter;
