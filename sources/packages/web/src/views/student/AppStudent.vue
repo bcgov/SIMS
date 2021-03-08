@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavBar />
-    <router-view :key="$route.fullPath" />
+    <router-view v-if="isAuthReady" :key="$route.fullPath" />
   </div>
 </template>
 
@@ -19,25 +19,43 @@ import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
   },
 })
 export default class AppStudent extends Vue {
+  // Flag to hold whole student app children mounding
+  isAuthReady = false;
   async created() {
     const router = this.$router;
+    const route = this.$route;
+    await AppConfigService.shared.initAuthService("student");
+    this.isAuthReady = true;
     if (!AppConfigService.shared.authService?.authenticated) {
       router.push({
         name: StudentRoutesConst.LOGIN,
       });
-    } else if (await UserService.shared.checkUser()) {
-      /*After checking the user exists, information differences between BC Service card and SABC is synced
-      And Redirect to Home page (Student's Dashboard)*/
-      await StudentService.shared.synchronizeFromUserInfo();
-      router.push({
-        name: StudentRoutesConst.STUDENT_DASHBOARD,
-      });
     } else {
-      /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
+      // TODO:
+      // - Try to implement a role based processing
+      // Get path
+      const path = route.path;
+      console.log("Not ok if called before KC");
+      if (path.includes("/student")) {
+        if (await UserService.shared.checkUser()) {
+          if (path.includes("/student")) {
+            await StudentService.shared.synchronizeFromUserInfo();
+
+            // Not allowing to load login page
+            if (path.includes("login")) {
+              router.push({
+                name: "StudentDashboard",
+              });
+            }
+          }
+        } else {
+          /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
        where they can provide information and create SABC account */
-      router.push({
-        name: StudentRoutesConst.STUDENT_PROFILE,
-      });
+          router.push({
+            name: "Student-Profile",
+          });
+        }
+      }
     }
   }
 }

@@ -2,17 +2,15 @@ export interface GetConfig {
   auth: AuthConfig;
 }
 
+export type ClientIdType = "student" | "institute";
+
 export interface AuthConfig {
   url: string;
   realm: string;
-  clientId: string;
+  clientIds: {[K in ClientIdType] : string};
 }
 
 export interface AppConfig {
-  authConfig: {
-    url: string;
-    realm: string;
-    clientId: string;
-  };
+  authConfig: AuthConfig;
   updateTime: Date;
 }
