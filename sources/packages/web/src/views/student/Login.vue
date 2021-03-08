@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import { AppConfigService } from "../services/AppConfigService";
+import { AppConfigService } from "../../services/AppConfigService";
 
 @Options({
   components: {},

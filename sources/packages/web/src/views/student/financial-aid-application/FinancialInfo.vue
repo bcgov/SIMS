@@ -100,15 +100,15 @@
 
 <script lang="ts">
 import { reactive } from "vue";
-import Section from "../components/fa-application/Section.vue";
-import Question from "../components/fa-application/Question.vue";
-import ContentGroup from "../components/ContentGroup.vue";
-import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
-import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
-import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
-import StringToHtmlParagraphs from "../components/StringToHtmlParagraphs.vue";
-import ReadMoreContainer from "../components/ReadMoreContainer.vue";
-import { questionsFin } from "../constants/fa-application/questions-financial";
+import Section from "../../../components/generic/Section.vue";
+import Question from "../../../components/generic/Question.vue";
+import ContentGroup from "../../../components/generic/ContentGroup.vue";
+import RadioButtonList from "../../../components/generic/RadioButtonList.vue";
+import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
+import StringToHtmlParagraphs from "../../../components/generic/StringToHtmlParagraphs.vue";
+import ReadMoreContainer from "../../../components/generic/ReadMoreContainer.vue";
+import { questionsFin } from "../../../constants/fa-application/questions-financial";
 
 interface FinancialInfoState {
   previousYearTaxReturn: number;

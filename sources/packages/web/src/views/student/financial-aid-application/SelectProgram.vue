@@ -78,13 +78,13 @@
 
 <script lang="ts">
 import { reactive, ref } from "vue";
-import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
-import Section from "../components/fa-application/Section.vue";
-import Question from "../components/fa-application/Question.vue";
-import InstituteList from "../components/fa-application/InstituteList.vue";
-import EducationProgramList from "../components/fa-application/EducationProgramList.vue";
-import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
-import { questionsSelectProgram } from "../constants/fa-application/questions-selectProgram";
+import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
+import Section from "../../../components/generic/Section.vue";
+import Question from "../../../components/generic/Question.vue";
+import InstituteList from "../../../components/partial-view/student/financial-aid-application/InstituteList.vue";
+import EducationProgramList from "../../../components/partial-view/student/financial-aid-application/EducationProgramList.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
+import { questionsSelectProgram } from "../../../constants/fa-application/questions-selectProgram";
 
 interface SelectProgramResponse {
   instituteSelectValue: any;

@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <h1>Home - Student Dashboard</h1>
+    <h1>Student Dashboard</h1>
   </div>
   <Card class="p-m-4">
     <template #title>
@@ -11,7 +11,7 @@
       <Button
         label="Start Application"
         class="p-button-raised"
-        @click="$router.push('/application')"
+        @click="$router.push({ name: 'application' })"
       />
     </template>
   </Card>

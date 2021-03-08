@@ -8,8 +8,8 @@
 </template>
 
 <script lang="ts">
-import Section from "../components/fa-application/Section.vue";
-import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
+import Section from "../../../components/generic/Section.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
 
 export default {
   components: {

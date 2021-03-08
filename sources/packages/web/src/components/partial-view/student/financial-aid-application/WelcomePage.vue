@@ -55,7 +55,7 @@ export default {
     const router = useRouter();
     const handleClick = () => {
       context.emit("user-ready");
-      router.push("/application/personal-info");
+      router.push({ name: "personal-info" });
     };
     return {
       handleClick,
@@ -94,6 +94,6 @@ export default {
 }
 
 .img-background {
-  background-image: url("../../assets/images/icon_assistance.svg");
+  background-image: url("../../../../assets/images/icon_assistance.svg");
 }
 </style>

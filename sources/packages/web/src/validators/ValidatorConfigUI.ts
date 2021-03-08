@@ -8,6 +8,8 @@ export default function configValidationRules() {
   defineRule("required", required);
   //We dont SIN Validation for local development
   if (process.env.NODE_ENV !== "development") {
+    defineRule("sin-number", () => true);
+  } else {
     defineRule("sin-number", sinValidationRule);
   }
 }
