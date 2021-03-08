@@ -61,7 +61,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: "confirm-submission",
             component: ConfirmSubmission,
           },
-        ], //Children under /Student/FAApplication
+        ], //Children under /Student/FinancialAidApplication
       },
     ], //Children under /Student
   },
