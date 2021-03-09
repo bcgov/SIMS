@@ -50,13 +50,13 @@
 <script lang="ts">
 import { SetupContext } from "vue";
 import { useRouter } from "vue-router";
-import { studentRoutesConst } from "../../../../constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../../../constants/routes/RouteConstants";
 export default {
   setup(props: any, context: SetupContext) {
     const router = useRouter();
     const handleClick = () => {
       context.emit("user-ready");
-      router.push({ name: studentRoutesConst.PERSONAL_INFO });
+      router.push({ name: StudentRoutesConst.PERSONAL_INFO });
     };
     return {
       handleClick,

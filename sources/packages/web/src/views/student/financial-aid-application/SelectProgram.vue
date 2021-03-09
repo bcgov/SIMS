@@ -71,8 +71,8 @@
       <!-- Body-->
       <!-- Footer-->
       <FooterNavigator
-        :previous="studentRoutesConst.PERSONAL_INFO"
-        :next="studentRoutesConst.FINANCIAL_INFO"
+        :previous="StudentRoutesConst.PERSONAL_INFO"
+        :next="StudentRoutesConst.FINANCIAL_INFO"
       />
       <!-- Footer -->
     </div>
@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import { reactive, ref } from "vue";
-import { studentRoutesConst } from "../../../constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
@@ -119,7 +119,7 @@ export default {
       enableEducationProgram,
       onInstituteSelect,
       selectedInstitute,
-      studentRoutesConst,
+      StudentRoutesConst,
     };
   },
 };

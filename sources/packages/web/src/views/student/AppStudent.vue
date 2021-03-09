@@ -11,7 +11,7 @@ import NavBar from "../../components/partial-view/student/NavBar.vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
-import { studentRoutesConst } from "../../constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 
 @Options({
   components: {
@@ -23,20 +23,20 @@ export default class AppStudent extends Vue {
     const router = this.$router;
     if (!AppConfigService.shared.authService?.authenticated) {
       router.push({
-        name: studentRoutesConst.LOGIN,
+        name: StudentRoutesConst.LOGIN,
       });
     } else if (await UserService.shared.checkUser()) {
       /*After checking the user exists, information differences between BC Service card and SABC is synced
       And Redirect to Home page (Student's Dashboard)*/
       await StudentService.shared.synchronizeFromUserInfo();
       router.push({
-        name: studentRoutesConst.STUDENT_DASHBOARD,
+        name: StudentRoutesConst.STUDENT_DASHBOARD,
       });
     } else {
       /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
        where they can provide information and create SABC account */
       router.push({
-        name: studentRoutesConst.STUDENT_PROFILE,
+        name: StudentRoutesConst.STUDENT_PROFILE,
       });
     }
   }

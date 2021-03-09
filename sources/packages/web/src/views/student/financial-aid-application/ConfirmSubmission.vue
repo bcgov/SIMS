@@ -2,7 +2,7 @@
   <div class="p-component">
     <div class="p-card p-m-4">
       <Section title="Confirm Submission Page..." />
-      <FooterNavigator :previous="studentRoutesConst.FINANCIAL_INFO" />
+      <FooterNavigator :previous="StudentRoutesConst.FINANCIAL_INFO" />
     </div>
   </div>
 </template>
@@ -10,7 +10,7 @@
 <script lang="ts">
 import Section from "../../../components/generic/Section.vue";
 import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
-import { studentRoutesConst } from "../../../constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 
 export default {
   components: {
@@ -19,7 +19,7 @@ export default {
   },
   setup() {
     return {
-      studentRoutesConst,
+      StudentRoutesConst,
     };
   },
 };

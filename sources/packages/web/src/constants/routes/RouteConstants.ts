@@ -1,4 +1,4 @@
-export const studentRoutesConst = {
+export const StudentRoutesConst = {
   //Student
   APP_STUDENT: Symbol(),
   STUDENT_DASHBOARD: Symbol(),
@@ -11,7 +11,7 @@ export const studentRoutesConst = {
   FINANCIAL_INFO: Symbol(),
   CONFIRM_SUBMISSION: Symbol(),
 };
-export const institutionRoutesConst = {
+export const InstitutionRoutesConst = {
   //Institution
   APP_INSTITUTION: Symbol(),
   INSTITUTION_DASHBOARD: Symbol(),

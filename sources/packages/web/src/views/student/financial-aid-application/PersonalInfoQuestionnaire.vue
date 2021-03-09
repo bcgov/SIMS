@@ -137,15 +137,15 @@
       <HorizontalSeparator />
     </div>
     <FooterNavigator
-      :previous="studentRoutesConst.FINANCIAL_AID_APPLICATION"
-      :next="studentRoutesConst.SELECT_PROGRAM"
+      :previous="StudentRoutesConst.FINANCIAL_AID_APPLICATION"
+      :next="StudentRoutesConst.SELECT_PROGRAM"
     />
   </div>
 </template>
 
 <script lang="ts">
 import { reactive } from "vue";
-import { studentRoutesConst } from "../../../constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
 import RadioButtonList from "../../../components/generic/RadioButtonList.vue";
@@ -184,7 +184,7 @@ export default {
     return {
       questionsPI,
       personalInfoState,
-      studentRoutesConst,
+      StudentRoutesConst,
     };
   },
 };

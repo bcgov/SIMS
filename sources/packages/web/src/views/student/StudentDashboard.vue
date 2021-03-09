@@ -12,7 +12,7 @@
         label="Start Application"
         class="p-button-raised"
         @click="
-          $router.push({ name: studentRoutesConst.FINANCIAL_AID_APPLICATION })
+          $router.push({ name: StudentRoutesConst.FINANCIAL_AID_APPLICATION })
         "
       />
     </template>
@@ -21,7 +21,7 @@
 <script lang="ts">
 import { computed } from "vue";
 import { useStore } from "vuex";
-import { studentRoutesConst } from "../../constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 
 export default {
   setup() {
@@ -30,7 +30,7 @@ export default {
 
     return {
       user,
-      studentRoutesConst,
+      StudentRoutesConst,
     };
   },
 };
