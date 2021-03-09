@@ -70,7 +70,10 @@
       <!-- Education Program-->
       <!-- Body-->
       <!-- Footer-->
-      <FooterNavigator previous="personal-info" next="financial-info" />
+      <FooterNavigator
+        :previous="StudentRoutesConst.PERSONAL_INFO"
+        :next="StudentRoutesConst.FINANCIAL_INFO"
+      />
       <!-- Footer -->
     </div>
   </div>
@@ -78,6 +81,7 @@
 
 <script lang="ts">
 import { reactive, ref } from "vue";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
@@ -109,13 +113,13 @@ export default {
       enableEducationProgram.value = true;
       selectedInstitute.value = event.value;
     };
-
     return {
       questionsSelectProgram,
       response,
       enableEducationProgram,
       onInstituteSelect,
       selectedInstitute,
+      StudentRoutesConst,
     };
   },
 };

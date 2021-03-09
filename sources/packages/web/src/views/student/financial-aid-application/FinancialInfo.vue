@@ -93,13 +93,17 @@
           </ContentGroup>
         </Section>
       </ContentGroup>
-      <FooterNavigator previous="select-program" next="confirm-submission" />
+      <FooterNavigator
+        :previous="StudentRoutesConst.SELECT_PROGRAM"
+        :next="StudentRoutesConst.CONFIRM_SUBMISSION"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { reactive } from "vue";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
 import ContentGroup from "../../../components/generic/ContentGroup.vue";
@@ -131,9 +135,11 @@ export default {
   },
   setup() {
     const financialInfoState = reactive({} as FinancialInfoState);
+
     return {
       questionsFin,
       financialInfoState,
+      StudentRoutesConst,
     };
   },
 };
