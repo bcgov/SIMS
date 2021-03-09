@@ -12,6 +12,7 @@ import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
+import { ClientIdType } from "@/types/contracts/ConfigContract";
 
 @Options({
   components: {
@@ -24,7 +25,7 @@ export default class AppStudent extends Vue {
   async created() {
     const router = this.$router;
     const route = this.$route;
-    await AppConfigService.shared.initAuthService("student");
+    await AppConfigService.shared.initAuthService(ClientIdType.STUDENT);
     this.isAuthReady = true;
     if (!AppConfigService.shared.authService?.authenticated) {
       router.push({
@@ -34,27 +35,19 @@ export default class AppStudent extends Vue {
       // TODO:
       // - Try to implement a role based processing
       // Get path
-      const path = route.path;
-      console.log("Not ok if called before KC");
-      if (path.includes("/student")) {
-        if (await UserService.shared.checkUser()) {
-          if (path.includes("/student")) {
-            await StudentService.shared.synchronizeFromUserInfo();
-
-            // Not allowing to load login page
-            if (path.includes("login")) {
-              router.push({
-                name: "StudentDashboard",
-              });
-            }
-          }
-        } else {
-          /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
-       where they can provide information and create SABC account */
+      if (await UserService.shared.checkUser()) {
+        await StudentService.shared.synchronizeFromUserInfo();
+        if (route.path === "/student") {
           router.push({
-            name: "Student-Profile",
+            name: StudentRoutesConst.STUDENT_DASHBOARD,
           });
         }
+      } else {
+        /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
+       where they can provide information and create SABC account */
+        router.push({
+          name: StudentRoutesConst.STUDENT_PROFILE,
+        });
       }
     }
   }

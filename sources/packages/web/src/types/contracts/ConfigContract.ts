@@ -2,12 +2,15 @@ export interface GetConfig {
   auth: AuthConfig;
 }
 
-export type ClientIdType = "student" | "institute";
+export enum ClientIdType {
+  STUDENT = "student",
+  INSTITUTE = "institute"
+}
 
 export interface AuthConfig {
   url: string;
   realm: string;
-  clientIds: {[K in ClientIdType] : string};
+  clientIds: {[Value in ClientIdType] : string};
 }
 
 export interface AppConfig {
