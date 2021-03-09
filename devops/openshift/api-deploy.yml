@@ -34,6 +34,8 @@ objects:
                   value: ${KEYCLOAK_CLIENT}
                 - name: KEYCLOAK_AUTH_URL
                   value: ${KEYCLOAK_AUTH_URL}
+                - name: BCeID_WEB_SERVICE_WSDL
+                  value: ${BCeID_WEB_SERVICE_WSDL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: ARCHIVE_DB
@@ -156,6 +158,8 @@ parameters:
   - name: KEYCLOAK_CLIENT
     required: true
   - name: KEYCLOAK_AUTH_URL
+    required: true
+  - name: BCeID_WEB_SERVICE_WSDL
     required: true
   - name: DATABASE_NAME_KEY
     value: database-name
