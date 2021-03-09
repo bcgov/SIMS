@@ -1,17 +1,17 @@
 import { RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
-import { routeConstants } from "../constants/routes/RouteConstants";
+import { institutionRoutesConst } from "../constants/routes/RouteConstants";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
     path: "/institution",
-    name: routeConstants.APPINSTITUTION,
+    name: institutionRoutesConst.APP_INSTITUTION,
     component: AppInstitution,
     children: [
       {
         path: "institution-dashboard",
-        name: routeConstants.INSTITUTIONDASHBOARD,
+        name: institutionRoutesConst.INSTITUTION_DASHBOARD,
         component: InstitutionDashboard,
       },
     ],

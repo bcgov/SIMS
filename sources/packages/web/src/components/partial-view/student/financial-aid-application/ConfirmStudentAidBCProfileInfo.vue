@@ -27,7 +27,7 @@
     </div>
     <h4 class="p-mb-5">
       If the Information is incorrect, please
-      <router-link :to="{ name: studentProfileEditPath }"
+      <router-link :to="{ name: studentRoutesConst.STUDENT_PROFILE_EDIT }"
         >click here</router-link
       >
     </h4>
@@ -68,14 +68,13 @@
 <script>
 import { onMounted, ref, reactive } from "vue";
 import { StudentService } from "../../../../services/StudentService";
-import { routeConstants } from "../../../../constants/routes/RouteConstants";
+import { studentRoutesConst } from "../../../../constants/routes/RouteConstants";
 export default {
   setup() {
     //Creating a reactive array
     const studentInfo = ref([]);
     const studentContact = ref([]);
     const confirmState = reactive({ checked: false });
-    const studentProfileEditPath = routeConstants.STUDENTPROFILEEDIT;
 
     onMounted(async () => {
       //Get the student info from api call
@@ -87,7 +86,7 @@ export default {
       studentInfo,
       studentContact,
       confirmState,
-      studentProfileEditPath,
+      studentRoutesConst,
     };
   },
 };

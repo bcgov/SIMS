@@ -21,8 +21,6 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    console.log("props");
-    console.dir(props.previous);
     const onPrevious = () => {
       if (props.previous) {
         router.push({ name: props.previous });

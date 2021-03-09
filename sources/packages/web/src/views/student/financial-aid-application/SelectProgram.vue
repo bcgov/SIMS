@@ -71,8 +71,8 @@
       <!-- Body-->
       <!-- Footer-->
       <FooterNavigator
-        v-bind:previous="personalInfo"
-        v-bind:next="financialInfo"
+        v-bind:previous="studentRoutesConst.PERSONAL_INFO"
+        v-bind:next="studentRoutesConst.FINANCIAL_INFO"
       />
       <!-- Footer -->
     </div>
@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import { reactive, ref } from "vue";
-import { routeConstants } from "../../../constants/routes/RouteConstants";
+import { studentRoutesConst } from "../../../constants/routes/RouteConstants";
 import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
@@ -113,16 +113,13 @@ export default {
       enableEducationProgram.value = true;
       selectedInstitute.value = event.value;
     };
-    const financialInfo = routeConstants.FINANCIALINFO;
-    const personalInfo = routeConstants.PERSONALINFO;
     return {
       questionsSelectProgram,
       response,
       enableEducationProgram,
       onInstituteSelect,
       selectedInstitute,
-      financialInfo,
-      personalInfo,
+      studentRoutesConst,
     };
   },
 };

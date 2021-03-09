@@ -1,17 +1,18 @@
-export const routeConstants = {
+export const studentRoutesConst = {
   //Student
-  APPSTUDENT: Symbol(),
-  STUDENTDASHBOARD: Symbol(),
+  APP_STUDENT: Symbol(),
+  STUDENT_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
-  STUDENTPROFILE: Symbol(),
-  STUDENTPROFILEEDIT: Symbol(),
-  FINANCIALAIDAPPLICATION: Symbol(),
-  PERSONALINFO: Symbol(),
-  SELECTPROGRAM: Symbol(),
-  FINANCIALINFO: Symbol(),
-  CONFIRMSUBMISSION: Symbol(),
-
+  STUDENT_PROFILE: Symbol(),
+  STUDENT_PROFILE_EDIT: Symbol(),
+  FINANCIAL_AID_APPLICATION: Symbol(),
+  PERSONAL_INFO: Symbol(),
+  SELECT_PROGRAM: Symbol(),
+  FINANCIAL_INFO: Symbol(),
+  CONFIRM_SUBMISSION: Symbol(),
+};
+export const institutionRoutesConst = {
   //Institution
-  APPINSTITUTION: Symbol(),
-  INSTITUTIONDASHBOARD: Symbol(),
+  APP_INSTITUTION: Symbol(),
+  INSTITUTION_DASHBOARD: Symbol(),
 };

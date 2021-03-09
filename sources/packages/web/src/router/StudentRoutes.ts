@@ -8,58 +8,58 @@ import PersonalInfoQuestionnaire from "../views/student/financial-aid-applicatio
 import SelectProgram from "../views/student/financial-aid-application/SelectProgram.vue";
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
-import { routeConstants } from "../constants/routes/RouteConstants";
+import { studentRoutesConst } from "../constants/routes/RouteConstants";
 
 export const studentRoutes: Array<RouteRecordRaw> = [
   {
     path: "/student",
-    name: routeConstants.APPSTUDENT,
+    name: studentRoutesConst.APP_STUDENT,
     component: AppStudent,
     children: [
       {
         path: "student-dashboard",
-        name: routeConstants.STUDENTDASHBOARD,
+        name: studentRoutesConst.STUDENT_DASHBOARD,
         component: StudentDashboard,
       },
       {
         path: "login",
-        name: routeConstants.LOGIN,
+        name: studentRoutesConst.LOGIN,
         component: Login,
       },
       {
         path: "student-profile",
-        name: routeConstants.STUDENTPROFILE,
+        name: studentRoutesConst.STUDENT_PROFILE,
         component: Student,
         props: { editMode: false },
       },
       {
         path: "student-profile/edit",
-        name: routeConstants.STUDENTPROFILEEDIT,
+        name: studentRoutesConst.STUDENT_PROFILE_EDIT,
         component: Student,
       },
       {
         path: "application",
-        name: routeConstants.FINANCIALAIDAPPLICATION,
+        name: studentRoutesConst.FINANCIAL_AID_APPLICATION,
         component: FinancialAidApplication,
         children: [
           {
             path: "personal-info",
-            name: routeConstants.PERSONALINFO,
+            name: studentRoutesConst.PERSONAL_INFO,
             component: PersonalInfoQuestionnaire,
           },
           {
             path: "select-program",
-            name: routeConstants.SELECTPROGRAM,
+            name: studentRoutesConst.SELECT_PROGRAM,
             component: SelectProgram,
           },
           {
             path: "financial-info",
-            name: routeConstants.FINANCIALINFO,
+            name: studentRoutesConst.FINANCIAL_INFO,
             component: FinancialInfo,
           },
           {
             path: "confirm-submission",
-            name: routeConstants.CONFIRMSUBMISSION,
+            name: studentRoutesConst.CONFIRM_SUBMISSION,
             component: ConfirmSubmission,
           },
         ], //Children under /Student/FinancialAidApplication

@@ -94,8 +94,8 @@
         </Section>
       </ContentGroup>
       <FooterNavigator
-        v-bind:previous="selectProgram"
-        v-bind:next="confirmSubmission"
+        v-bind:previous="studentRoutesConst.SELECT_PROGRAM"
+        v-bind:next="studentRoutesConst.CONFIRM_SUBMISSION"
       />
     </div>
   </div>
@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import { reactive } from "vue";
-import { routeConstants } from "../../../constants/routes/RouteConstants";
+import { studentRoutesConst } from "../../../constants/routes/RouteConstants";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
 import ContentGroup from "../../../components/generic/ContentGroup.vue";
@@ -135,14 +135,11 @@ export default {
   },
   setup() {
     const financialInfoState = reactive({} as FinancialInfoState);
-    const confirmSubmission = routeConstants.CONFIRMSUBMISSION;
-    const selectProgram = routeConstants.SELECTPROGRAM;
 
     return {
       questionsFin,
       financialInfoState,
-      confirmSubmission,
-      selectProgram,
+      studentRoutesConst,
     };
   },
 };
