@@ -5,7 +5,13 @@ import { BCeIDConfig } from "../../types/config";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService } from "../config/config.service";
 import { AccountDetails } from "./account-details.model";
+import { ResponseCodes } from "./bceid.models";
 
+/**
+ * Manage the execution of SOAP requests to the BCeID Web Service as per described
+ * on https://sminfo.gov.bc.ca/ based on the documentation available on
+ * "BCeID Client - New Web Services - Developers Guide - V2.10.0 (for BCeID WS V10).docx"
+ */
 @Injectable()
 export class BCeIDService {
   private bceidConfig: BCeIDConfig;
@@ -13,43 +19,55 @@ export class BCeIDService {
     this.bceidConfig = this.config.getConfig().bceid;
   }
 
-  public async getAccountDetails(userId: string): Promise<AccountDetails> {
+  /**
+   * This method allows you to retrieve the details of a single BCeID account.
+   * This method respects the information sharing rules. To perform a query, there must be an
+   * information sharing rule for the online service (onlineServiceId) with the specified requester
+   * user account type (requesterAccountTypeCode) and target user account type (accountTypeCode).
+   * The information returned by a query is restricted to the properties included in the information sharing rules.
+   * @param userName Username associated with the account whose details are being queried.
+   * @returns account details
+   */
+  public async getAccountDetails(userName: string): Promise<AccountDetails> {
     var client = await this.getSoapClient();
-
+    // SOAP call body to execute the getAccountDetail request.
     var body = {
       accountDetailRequest: {
         onlineServiceId: this.bceidConfig.onlineServiceId,
+        // Internal indicate that the user being provided
+        // on requesterUserGuid is an user that belongs
+        // to the internal gov network.
         requesterAccountTypeCode: "Internal",
+        // The user guid of the user on the internal gov network.
         requesterUserGuid: this.bceidConfig.requesterUserGuid,
-        userId: userId,
+        userId: userName,
+        // Type of the user account to search for the userId
+        // parameter provided above. Only business BCeID are
+        // on the scope of the application.
         accountTypeCode: "Business",
       },
     };
 
     try {
+      // Destructuring the result of the SOAP request to get the
+      // first item on the array where the parsed js object is.
       const [result] = await client.getAccountDetailAsync(body);
-      if (!result.getAccountDetailResult) {
-        throw new Error(
-          "Unexpected result from getAccountDetail method from BCeID Web Service.",
-        );
-      }
+      this.ensureSuccessStatusResult(result?.getAccountDetailResult);
 
       const userAccount = result.getAccountDetailResult.account;
-      if (result.getAccountDetailResult) {
-        return {
-          user: {
-            guid: userAccount.guid.value,
-            displayName: userAccount.displayName.value,
-            firstname: userAccount.individualIdentity?.name?.firstname.value,
-            surname: userAccount.individualIdentity?.name?.surname.value,
-            email: userAccount.contact?.email.value,
-          },
-          institution: {
-            guid: userAccount.business?.guid.value,
-            legalName: userAccount.business?.legalName.value,
-          },
-        };
-      }
+      return {
+        user: {
+          guid: userAccount.guid.value,
+          displayName: userAccount.displayName.value,
+          firstname: userAccount.individualIdentity?.name?.firstname.value,
+          surname: userAccount.individualIdentity?.name?.surname.value,
+          email: userAccount.contact?.email.value,
+        },
+        institution: {
+          guid: userAccount.business?.guid.value,
+          legalName: userAccount.business?.legalName.value,
+        },
+      };
     } catch (error) {
       this.logger.error(
         "Error while retrieving account details from BCeID Web Service.",
@@ -59,7 +77,14 @@ export class BCeIDService {
     }
   }
 
+  /**
+   * Creates a SOAP Client ready to execute the authenticated SOAP requests.
+   * @returns Configured SOAP client.
+   */
   private async getSoapClient(): Promise<Client> {
+    // Authentication header to retrieve the WSDL necessary to initialize the SOAP Client.
+    const wsdlAuthHeader = this.getWsdlAuthHeader();
+    // Authentication needed to execute each SOAP action request.
     const clientSecurity = new BasicAuthSecurity(
       this.bceidConfig.credential.userName,
       this.bceidConfig.credential.password,
@@ -67,17 +92,47 @@ export class BCeIDService {
 
     try {
       var client = await createClientAsync(this.bceidConfig.wsdlEndpoint, {
-        wsdl_headers: this.getWsdlAuthHeader(),
+        wsdl_headers: wsdlAuthHeader,
       });
       client.setSecurity(clientSecurity);
       return client;
     } catch (error) {
-      this.logger.error("Error while creating BCeID Web Service client.");
-      this.logger.error(error);
+      this.logger.error(
+        `Error while creating BCeID Web Service client. Error: ${error}`,
+      );
       throw error;
     }
   }
 
+  /**
+   * Ensures that the method was successfully executed and
+   * returned with the expected Success code.
+   * @param methodCallResult Specific result object from response.
+   * For instance, for accountDetailRequest it would be inner object
+   * getAccountDetailResult from the getAccountDetailResponse.
+   */
+  private ensureSuccessStatusResult(methodCallResult: any) {
+    if (!methodCallResult) {
+      throw new Error("Unexpected result from BCeID Web Service.");
+    }
+
+    if (methodCallResult.code !== ResponseCodes.Success) {
+      this.logger.error(
+        `Method returned an unsuccessful status.
+         Code: ${methodCallResult.code},
+         failureCode: ${methodCallResult.failureCode},
+         message: ${methodCallResult.message}`,
+      );
+      throw new Error(
+        "Unexpected result while executing request to BCeID Web Service.",
+      );
+    }
+  }
+
+  /**
+   * Gets WSDL authentication header needed to retrieve the WSDL from BCeID Web Service.
+   * @returns Authorization header converted to base64 string.
+   */
   private getWsdlAuthHeader() {
     const auth =
       "Basic " +
