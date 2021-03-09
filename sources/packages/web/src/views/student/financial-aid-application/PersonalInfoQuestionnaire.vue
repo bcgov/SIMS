@@ -136,12 +136,16 @@
       </Section>
       <HorizontalSeparator />
     </div>
-    <FooterNavigator previous="application" next="select-program" />
+    <FooterNavigator
+      v-bind:previous="financialAidApplication"
+      v-bind:next="selectProgram"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { reactive } from "vue";
+import { routeConstants } from "../../../constants/routes/RouteConstants";
 import Section from "../../../components/generic/Section.vue";
 import Question from "../../../components/generic/Question.vue";
 import RadioButtonList from "../../../components/generic/RadioButtonList.vue";
@@ -176,9 +180,14 @@ export default {
   },
   setup() {
     const personalInfoState = reactive({} as PersonalInfoState);
+    const financialAidApplication = routeConstants.FINANCIALAIDAPPLICATION;
+    const selectProgram = routeConstants.SELECTPROGRAM;
+
     return {
       questionsPI,
       personalInfoState,
+      financialAidApplication,
+      selectProgram,
     };
   },
 };

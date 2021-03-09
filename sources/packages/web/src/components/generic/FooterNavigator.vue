@@ -16,11 +16,13 @@ import { useRouter } from "vue-router";
 
 export default {
   props: {
-    previous: String,
-    next: String,
+    previous: Symbol,
+    next: Symbol,
   },
   setup(props: any) {
     const router = useRouter();
+    console.log("props");
+    console.dir(props.previous);
     const onPrevious = () => {
       if (props.previous) {
         router.push({ name: props.previous });

@@ -13,7 +13,7 @@
         icon="pi pi-fw pi-user"
         class="p-button-text"
         style="color: white"
-        @click="$router.push({ name: 'Student-Profile-Edit' })"
+        @click="$router.push({ name: studentProfileEditPath })"
       />
       <Button
         v-if="isAuthenticated"
@@ -30,18 +30,20 @@
 <script lang="ts">
 import { computed } from "vue";
 import { AppConfigService } from "../../../services/AppConfigService";
+import { routeConstants } from "../../../constants/routes/RouteConstants";
 export default {
   setup() {
     const menuItems: any = [];
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
+    const studentProfileEditPath = routeConstants.STUDENTPROFILEEDIT;
 
     const logoff = () => {
       AppConfigService.shared.authService?.logout();
     };
 
-    return { menuItems, isAuthenticated, logoff };
+    return { menuItems, isAuthenticated, logoff, studentProfileEditPath };
   },
 };
 </script>
