@@ -18,3 +18,22 @@ export enum ResponseCodes {
    */
   UnknownError = "UnknownError",
 }
+
+/**
+ * Common SOAP call response properties.
+ */
+export interface ResponseBase {
+  /**
+   * The coarse grain result of the request.
+   */
+  code: ResponseCodes;
+  /**
+   * The coarse grain failure result of the request.
+   */
+  failureCode: string;
+  /**
+   * The English language description of the result of the request.
+   * Used for development and debugging purposes.
+   */
+  message: string;
+}

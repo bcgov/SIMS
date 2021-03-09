@@ -5,7 +5,7 @@ import { BCeIDConfig } from "../../types/config";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService } from "../config/config.service";
 import { AccountDetails } from "./account-details.model";
-import { ResponseCodes } from "./bceid.models";
+import { ResponseBase, ResponseCodes } from "./bceid.models";
 
 /**
  * Manage the execution of SOAP requests to the BCeID Web Service as per described
@@ -111,7 +111,7 @@ export class BCeIDService {
    * For instance, for accountDetailRequest it would be inner object
    * getAccountDetailResult from the getAccountDetailResponse.
    */
-  private ensureSuccessStatusResult(methodCallResult: any) {
+  private ensureSuccessStatusResult(methodCallResult: ResponseBase) {
     if (!methodCallResult) {
       throw new Error("Unexpected result from BCeID Web Service.");
     }
