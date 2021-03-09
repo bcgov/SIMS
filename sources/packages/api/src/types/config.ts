@@ -24,8 +24,8 @@ export interface BCeIDConfig {
    * The Online Service Identifier is a unique key given to each Online Service.
    * When you create an Online Service this identifier is generated.
    * This key will be used in conjunction with the service account to
-   * determine authorizations to access each method. The expectation is to
-   * receive this as a configurable parameter.
+   * determine authorizations to access each method.
+   * Linked to the IDIR by BCeID (IDIM team-CITZ Services), ISA required.
    */
   onlineServiceId: string;
   /**

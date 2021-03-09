@@ -1,27 +1,27 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: api-deploy-pre-req
+  name: api-pre-req
 labels:
-  project: ${PROJECT}
+  project: ${PROJECT_NAME}
   service: ${NAME}
 objects:
   - apiVersion: v1
     kind: Secret
     metadata:
-      name: ${NAME}-creds
+      name: ${PROJECT_NAME}-${NAME}-creds
     stringData:
-      bceid-web-service_online_service_id: ${BCeID_WEB_SERVICE_ONLINE_SERVICE_ID}
-      bceid-web-service_requester_user_guid: ${BCeID_WEB_SERVICE_REQUESTER_USER_GUID}
-      bceid-web-service_auth_user_name: ${BCeID_WEB_SERVICE_AUTH_USER_NAME}
-      bceid-web-service_auth_user_password: ${REQ_BCeID_WEB_SERVICE_AUTH_USER_PASSWORD}
+      bceid-web-service-online-service-id: ${BCeID_WEB_SERVICE_ONLINE_SERVICE_ID}
+      bceid-web-service-requester-user-guid: ${BCeID_WEB_SERVICE_REQUESTER_USER_GUID}
+      bceid-web-service-auth-user-name: ${BCeID_WEB_SERVICE_AUTH_USER_NAME}
+      bceid-web-service-auth-user-password: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD}
 parameters:
   - name: NAME
     description: |
       The name of the application for labelling all artifacts.
     displayName: Application Name
     value: api
-  - name: PROJECT
+  - name: PROJECT_NAME
     value: sims
   - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID
     displayName: BCeID Web Service Online Service ID
@@ -29,8 +29,8 @@ parameters:
       The Online Service Identifier is a unique key given to each Online Service.
       When you create an Online Service this identifier is generated.
       This key will be used in conjunction with the service account to
-      determine authorizations to access each method. The expectation is to
-      receive this as a configurable parameter.
+      determine authorizations to access each method.
+      Linked to the IDIR by BCeID (IDIM team-CITZ Services), ISA required.
     required: true
   - name: BCeID_WEB_SERVICE_REQUESTER_USER_GUID
     displayName: BCeID Web Service Requester User Guid
