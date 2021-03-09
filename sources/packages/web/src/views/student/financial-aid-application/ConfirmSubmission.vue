@@ -2,7 +2,7 @@
   <div class="p-component">
     <div class="p-card p-m-4">
       <Section title="Confirm Submission Page..." />
-      <FooterNavigator v-bind:previous="studentRoutesConst.FINANCIAL_INFO" />
+      <FooterNavigator :previous="studentRoutesConst.FINANCIAL_INFO" />
     </div>
   </div>
 </template>

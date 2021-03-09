@@ -137,8 +137,8 @@
       <HorizontalSeparator />
     </div>
     <FooterNavigator
-      v-bind:previous="studentRoutesConst.FINANCIAL_AID_APPLICATION"
-      v-bind:next="studentRoutesConst.SELECT_PROGRAM"
+      :previous="studentRoutesConst.FINANCIAL_AID_APPLICATION"
+      :next="studentRoutesConst.SELECT_PROGRAM"
     />
   </div>
 </template>

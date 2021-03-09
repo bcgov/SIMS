@@ -94,8 +94,8 @@
         </Section>
       </ContentGroup>
       <FooterNavigator
-        v-bind:previous="studentRoutesConst.SELECT_PROGRAM"
-        v-bind:next="studentRoutesConst.CONFIRM_SUBMISSION"
+        :previous="studentRoutesConst.SELECT_PROGRAM"
+        :next="studentRoutesConst.CONFIRM_SUBMISSION"
       />
     </div>
   </div>

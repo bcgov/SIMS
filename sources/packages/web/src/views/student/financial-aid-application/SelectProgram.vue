@@ -71,8 +71,8 @@
       <!-- Body-->
       <!-- Footer-->
       <FooterNavigator
-        v-bind:previous="studentRoutesConst.PERSONAL_INFO"
-        v-bind:next="studentRoutesConst.FINANCIAL_INFO"
+        :previous="studentRoutesConst.PERSONAL_INFO"
+        :next="studentRoutesConst.FINANCIAL_INFO"
       />
       <!-- Footer -->
     </div>
