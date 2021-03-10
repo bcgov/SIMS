@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavBar />
+    <NavBar v-if="isAuthReady" />
     <router-view v-if="isAuthReady" :key="$route.fullPath" />
   </div>
 </template>
@@ -62,5 +62,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
