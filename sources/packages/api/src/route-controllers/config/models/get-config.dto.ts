@@ -5,5 +5,5 @@ export interface IConfig {
 export interface IAuthConfig {
   url: string;
   realm: string;
-  clientId: string;
+  clientIds: { [key: string] : string};
 }

@@ -9,6 +9,7 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import { StudentRoutesConst } from "../constants/routes/RouteConstants";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export const studentRoutes: Array<RouteRecordRaw> = [
   {
@@ -25,6 +26,26 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "login",
         name: StudentRoutesConst.LOGIN,
         component: Login,
+        beforeEnter: (to, from, next) => {
+          // Check Auth service is available or not
+          if (AppConfigService.shared.authService) {
+            const auth =
+              AppConfigService.shared.authService?.authenticated || false;
+            if (!auth) {
+              // Allowing to load login iff when user is not authenticated
+              next();
+            } else {
+              next({
+                name: StudentRoutesConst.STUDENT_DASHBOARD,
+              });
+            }
+          } else {
+            // Auth service is not initialize so loading to student root
+            next({
+              name: StudentRoutesConst.APP_STUDENT,
+            });
+          }
+        },
       },
       {
         path: "student-profile",

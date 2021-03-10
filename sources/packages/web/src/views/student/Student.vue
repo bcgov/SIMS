@@ -155,6 +155,7 @@ import { useForm, Field } from "vee-validate";
 import { StudentService } from "../../services/StudentService";
 import { useToast } from "primevue/usetoast";
 import ValidatedInput from "../../components/generic/ValidatedInput.vue";
+import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 
 interface ProfileState {
   phone: string;
@@ -204,7 +205,7 @@ export default {
       }
     });
 
-    const onSubmit = handleSubmit(async formValues => {
+    const onSubmit = handleSubmit(async (formValues) => {
       let redirectHome = true;
       if (props.editMode) {
         await StudentService.shared.updateStudent({ ...formValues });
@@ -237,7 +238,7 @@ export default {
       }
 
       if (redirectHome) {
-        router.push({ name: "Home" });
+        router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
       }
     });
 
