@@ -94,3 +94,14 @@ export class ResponseBase {
     );
   }
 }
+
+export enum BCeIDAccountTypeCodes {
+  /**
+   * The Internal BC Government directory (IDIR).
+   */
+  Internal = "Internal",
+  /**
+   * Business BCeID account type.
+   */
+  Business = "Business",
+}

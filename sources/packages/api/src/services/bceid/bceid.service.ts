@@ -5,7 +5,11 @@ import { BCeIDConfig } from "../../types/config";
 import { LoggerService } from "../../logger/logger.service";
 import { ConfigService } from "../config/config.service";
 import { AccountDetails } from "./account-details.model";
-import { ResponseBase, ResponseCodes } from "./bceid.models";
+import {
+  BCeIDAccountTypeCodes,
+  ResponseBase,
+  ResponseCodes,
+} from "./bceid.models";
 
 /**
  * Manage the execution of SOAP requests to the BCeID Web Service as per described
@@ -37,14 +41,14 @@ export class BCeIDService {
         // Internal indicate that the user being provided
         // on requesterUserGuid is an user that belongs
         // to the internal gov network.
-        requesterAccountTypeCode: "Internal",
+        requesterAccountTypeCode: BCeIDAccountTypeCodes.Internal,
         // The user guid of the user on the internal gov network.
         requesterUserGuid: this.bceidConfig.requesterUserGuid,
         userId: userName,
         // Type of the user account to search for the userId
         // parameter provided above. Only business BCeID are
         // on the scope of the application.
-        accountTypeCode: "Business",
+        accountTypeCode: BCeIDAccountTypeCodes.Business,
       },
     };
 
