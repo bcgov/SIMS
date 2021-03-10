@@ -1,7 +1,7 @@
 import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
 import ApiClient from "../services/http/ApiClient";
-import { AppConfig } from "../types/contracts/ConfigContract";
+import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
 
 export class AppConfigService {
   // Share Instance
@@ -71,7 +71,14 @@ export class AppConfigService {
   }
 
   async init() {
-    const config = (await this.config()) as AppConfig;
-    this.authService = await AuthService(config);
+    await this.config();
+  }
+
+  async initAuthService(type: ClientIdType) {
+    if (this._config) {
+      this.authService = await AuthService(this._config, type);
+    } else {
+      throw new Error("Unable to load application: server is not responding");
+    }
   }
 }

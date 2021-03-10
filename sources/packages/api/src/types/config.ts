@@ -1,3 +1,5 @@
+export type ClientType = "student" | "institute";
+
 export interface IConfig {
   auth: IAuthConfig;
   bceid: BCeIDConfig;
@@ -6,7 +8,7 @@ export interface IConfig {
 export interface IAuthConfig {
   url: string;
   realm: string;
-  clientId: string;
+  clientIds: {[K in ClientType]: string};
   openIdConfigurationUrl: string;
 }
 

@@ -2,17 +2,18 @@ export interface GetConfig {
   auth: AuthConfig;
 }
 
+export enum ClientIdType {
+  STUDENT = "student",
+  INSTITUTE = "institute"
+}
+
 export interface AuthConfig {
   url: string;
   realm: string;
-  clientId: string;
+  clientIds: {[Value in ClientIdType] : string};
 }
 
 export interface AppConfig {
-  authConfig: {
-    url: string;
-    realm: string;
-    clientId: string;
-  };
+  authConfig: AuthConfig;
   updateTime: Date;
 }

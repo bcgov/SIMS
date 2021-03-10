@@ -1,11 +1,12 @@
 import Keycloak from "keycloak-js";
 import store from "../store/index";
-import { AppConfig } from "../types/contracts/ConfigContract";
+import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
 
 let keycloak: Keycloak.KeycloakInstance;
 
 export default async function(
   config: AppConfig,
+  type: ClientIdType,
 ): Promise<Keycloak.KeycloakInstance> {
   if (keycloak) {
     return keycloak;
@@ -13,7 +14,7 @@ export default async function(
   keycloak = Keycloak({
     url: config.authConfig.url,
     realm: config.authConfig.realm,
-    clientId: config.authConfig.clientId,
+    clientId: config.authConfig.clientIds[type],
   });
 
   try {
@@ -23,10 +24,16 @@ export default async function(
       checkLoginIframe: false,
     });
     if (keycloak.authenticated) {
-      store.dispatch("student/setStudentProfileData", keycloak);
+      switch (type) {
+        case "student":
+          store.dispatch("student/setStudentProfileData", keycloak);
+          break;
+        case "institute":
+          "do nothing";
+      }
     }
   } catch (excp) {
-    console.log(`KC - init excp : ${excp}`);
+    console.error(`KC - init excp : ${excp} - ${type}`);
   }
   keycloak.onTokenExpired = () => {
     store.dispatch("auth/logout");
