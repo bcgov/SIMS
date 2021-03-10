@@ -4,7 +4,7 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { extractRawUserName } from "../../utilities/auth-utils";
-import { BCeIDDetails } from "./models/bceid-account.model";
+import { BCeIDDetails } from "./models/bceid-account.dto";
 
 @Controller("users")
 export class UserController extends BaseController {
