@@ -136,19 +136,23 @@
       </Section>
       <HorizontalSeparator />
     </div>
-    <FooterNavigator previous="application" next="select-program" />
+    <FooterNavigator
+      :previous="StudentRoutesConst.FINANCIAL_AID_APPLICATION"
+      :next="StudentRoutesConst.SELECT_PROGRAM"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { reactive } from "vue";
-import Section from "../components/fa-application/Section.vue";
-import Question from "../components/fa-application/Question.vue";
-import RadioButtonList from "../components/fa-application/RadioButtonList.vue";
-import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
-import ConfirmStudentAidBCProfileInfo from "../components/fa-application/ConfirmStudentAidBCProfileInfo.vue";
-import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
-import { questionsPI } from "../constants/fa-application/questions-personalinfo";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
+import Section from "../../../components/generic/Section.vue";
+import Question from "../../../components/generic/Question.vue";
+import RadioButtonList from "../../../components/generic/RadioButtonList.vue";
+import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
+import ConfirmStudentAidBCProfileInfo from "../../../components/partial-view/student/financial-aid-application/ConfirmStudentAidBCProfileInfo.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
+import { questionsPI } from "../../../constants/fa-application/questions-personalinfo";
 
 interface PersonalInfoState {
   residencySelectedValue: string;
@@ -176,9 +180,11 @@ export default {
   },
   setup() {
     const personalInfoState = reactive({} as PersonalInfoState);
+
     return {
       questionsPI,
       personalInfoState,
+      StudentRoutesConst,
     };
   },
 };

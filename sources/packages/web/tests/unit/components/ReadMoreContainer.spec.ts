@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import ReadMoreContainer from "../../../src/components/ReadMoreContainer.vue";
+import ReadMoreContainer from "../../../src/components/generic/ReadMoreContainer.vue";
 
 const extendedContentSelector = "#extendedContent";
 const toggleButtonSelector = "#toggleButton";

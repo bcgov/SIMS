@@ -1,6 +1,5 @@
 <template>
   <WelcomePage v-if="!isReady" />
-  <!-- Application Main View-->
   <div v-else>
     <div class="card">
       <Steps :model="applicationSteps" :readonly="false"></Steps>
@@ -17,24 +16,24 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Steps from "primevue/steps";
-import WelcomePage from "../components/fa-application/WelcomePage.vue";
+import WelcomePage from "../../../components/partial-view/student/financial-aid-application/WelcomePage.vue";
 
 const applicationSteps = [
   {
     label: "Personal Information",
-    to: "/application/personal-info",
+    to: "/student/application/personal-info",
   },
   {
     label: "Select Program",
-    to: "/application/select-program",
+    to: "/student/application/select-program",
   },
   {
     label: "Financial Information",
-    to: "/application/financial-info",
+    to: "/student/application/financial-info",
   },
   {
     label: "Confirm Submission",
-    to: "/application/confirm-submission",
+    to: "/student/application/confirm-submission",
   },
 ];
 
@@ -46,7 +45,7 @@ export default {
   setup() {
     const isReady = ref(false);
     const route = useRoute();
-    if (route.path !== "/application") {
+    if (route.path !== "/student/application") {
       isReady.value = true;
     }
     return {

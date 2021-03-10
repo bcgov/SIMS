@@ -16,8 +16,8 @@ import { useRouter } from "vue-router";
 
 export default {
   props: {
-    previous: String,
-    next: String,
+    previous: Symbol,
+    next: Symbol,
   },
   setup(props: any) {
     const router = useRouter();

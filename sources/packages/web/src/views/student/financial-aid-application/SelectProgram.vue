@@ -70,7 +70,10 @@
       <!-- Education Program-->
       <!-- Body-->
       <!-- Footer-->
-      <FooterNavigator previous="personal-info" next="financial-info" />
+      <FooterNavigator
+        :previous="StudentRoutesConst.PERSONAL_INFO"
+        :next="StudentRoutesConst.FINANCIAL_INFO"
+      />
       <!-- Footer -->
     </div>
   </div>
@@ -78,13 +81,14 @@
 
 <script lang="ts">
 import { reactive, ref } from "vue";
-import HorizontalSeparator from "../components/fa-application/HorizontalSeparator.vue";
-import Section from "../components/fa-application/Section.vue";
-import Question from "../components/fa-application/Question.vue";
-import InstituteList from "../components/fa-application/InstituteList.vue";
-import EducationProgramList from "../components/fa-application/EducationProgramList.vue";
-import FooterNavigator from "../components/fa-application/FooterNavigator.vue";
-import { questionsSelectProgram } from "../constants/fa-application/questions-selectProgram";
+import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
+import HorizontalSeparator from "../../../components/generic/HorizontalSeparator.vue";
+import Section from "../../../components/generic/Section.vue";
+import Question from "../../../components/generic/Question.vue";
+import InstituteList from "../../../components/partial-view/student/financial-aid-application/InstituteList.vue";
+import EducationProgramList from "../../../components/partial-view/student/financial-aid-application/EducationProgramList.vue";
+import FooterNavigator from "../../../components/generic/FooterNavigator.vue";
+import { questionsSelectProgram } from "../../../constants/fa-application/questions-selectProgram";
 
 interface SelectProgramResponse {
   instituteSelectValue: any;
@@ -109,13 +113,13 @@ export default {
       enableEducationProgram.value = true;
       selectedInstitute.value = event.value;
     };
-
     return {
       questionsSelectProgram,
       response,
       enableEducationProgram,
       onInstituteSelect,
       selectedInstitute,
+      StudentRoutesConst,
     };
   },
 };

@@ -27,7 +27,7 @@
     </div>
     <h4 class="p-mb-5">
       If the Information is incorrect, please
-      <router-link :to="{ name: 'Student-Profile-Edit' }"
+      <router-link :to="{ name: StudentRoutesConst.STUDENT_PROFILE_EDIT }"
         >click here</router-link
       >
     </h4>
@@ -67,8 +67,8 @@
 </template>
 <script>
 import { onMounted, ref, reactive } from "vue";
-import { StudentService } from "../../services/StudentService";
-
+import { StudentService } from "../../../../services/StudentService";
+import { StudentRoutesConst } from "../../../../constants/routes/RouteConstants";
 export default {
   setup() {
     //Creating a reactive array
@@ -82,7 +82,12 @@ export default {
       studentInfo.value = studentInfoFrmService;
       studentContact.value = studentInfoFrmService.contact;
     });
-    return { studentInfo, studentContact, confirmState };
+    return {
+      studentInfo,
+      studentContact,
+      confirmState,
+      StudentRoutesConst,
+    };
   },
 };
 </script>

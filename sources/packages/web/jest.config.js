@@ -4,7 +4,8 @@ module.exports = {
     "^.+\\.vue$": "vue-jest",
   },
   globals: {
-    "ts-jest": {
+    "ts-jest": {      
+      babelConfig: 'babel.config.js',
       diagnostics: {
         warnOnly: true,
       },

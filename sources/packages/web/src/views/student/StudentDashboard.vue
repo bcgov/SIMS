@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <h1>Home - Student Dashboard</h1>
+    <h1>Student Dashboard</h1>
   </div>
   <Card class="p-m-4">
     <template #title>
@@ -11,7 +11,9 @@
       <Button
         label="Start Application"
         class="p-button-raised"
-        @click="$router.push('/application')"
+        @click="
+          $router.push({ name: StudentRoutesConst.FINANCIAL_AID_APPLICATION })
+        "
       />
     </template>
   </Card>
@@ -19,12 +21,16 @@
 <script lang="ts">
 import { computed } from "vue";
 import { useStore } from "vuex";
+import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
+
 export default {
   setup() {
     const store = useStore();
     const user = computed(() => store.state.student.profile);
+
     return {
       user,
+      StudentRoutesConst,
     };
   },
 };
