@@ -1,17 +1,16 @@
 name: Deploy to TEST in OpenShift
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       BUILD_REF:
-        description: 'Buildref'     
+        description: "Buildref"
         required: true
-        default: 'main'
+        default: "main"
       BUILD_ID:
-        description: 'buildid'     
+        description: "buildid"
         required: true
-        default: 'NULL'
-
+        default: "NULL"
 
 jobs:
   # Deploy API/App images in Test
@@ -27,6 +26,7 @@ jobs:
       KEYCLOAK_REALM: "jxoe2o46"
       KEYCLOAK_CLIENT: "student"
       KEYCLOAK_AUTH_URL: "https://test.oidc.gov.bc.ca/auth/"
+      BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
     steps:
       - name: Print env
         run: |
@@ -35,7 +35,7 @@ jobs:
           echo NAMESPACE: $NAMESPACE
           echo BRANCH: $BUILD_REF
           echo HOST_PREFIX: $HOST_PREFIX
-          
+
       # Checkout the PR branch
       - name: Checkout Target Branch
         uses: actions/checkout@v1
@@ -55,4 +55,3 @@ jobs:
         working-directory: "./devops/"
         run: |
           make oc-deploy-web
-     

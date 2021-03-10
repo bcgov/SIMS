@@ -34,6 +34,8 @@ objects:
                   value: ${KEYCLOAK_CLIENT}
                 - name: KEYCLOAK_AUTH_URL
                   value: ${KEYCLOAK_AUTH_URL}
+                - name: BCeID_WEB_SERVICE_WSDL
+                  value: ${BCeID_WEB_SERVICE_WSDL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: ARCHIVE_DB
@@ -57,6 +59,26 @@ objects:
                     secretKeyRef:
                       key: ${DATABASE_NAME_KEY}
                       name: ${DB_SECRET_NAME}
+                - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: BCeID_WEB_SERVICE_REQUESTER_USER_GUID
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${BCeID_WEB_SERVICE_REQUESTER_USER_GUID_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: BCeID_WEB_SERVICE_AUTH_USER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${BCeID_WEB_SERVICE_AUTH_USER_NAME_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: BCeID_WEB_SERVICE_AUTH_USER_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY}
+                      name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -157,9 +179,21 @@ parameters:
     required: true
   - name: KEYCLOAK_AUTH_URL
     required: true
+  - name: BCeID_WEB_SERVICE_WSDL
+    required: true
   - name: DATABASE_NAME_KEY
     value: database-name
   - name: BUILD_TAG
     value: "0"
   - name: ARCHIVE_DB
     value: "sfasdb"
+  - name: API_SECRET_NAME
+    value: sims-api-creds
+  - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY
+    value: bceid-web-service-online-service-id
+  - name: BCeID_WEB_SERVICE_REQUESTER_USER_GUID_NAME_KEY
+    value: bceid-web-service-requester-user-guid
+  - name: BCeID_WEB_SERVICE_AUTH_USER_NAME_NAME_KEY
+    value: bceid-web-service-auth-user-name
+  - name: BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY
+    value: bceid-web-service-auth-user-password

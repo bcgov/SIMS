@@ -7,6 +7,7 @@ import {
   UserService,
   ConfigService,
   ArchiveDbService,
+  BCeIDService,
 } from "./services";
 import {
   UserController,
@@ -30,6 +31,7 @@ import { LoggerModule } from "./logger/logger.module";
     StudentService,
     ConfigService,
     ArchiveDbService,
+    BCeIDService,
   ],
 })
 export class AppModule {}

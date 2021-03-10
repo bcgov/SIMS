@@ -18,7 +18,9 @@ export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
 export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), student)
 # E2E Test
 export E2E_TEST_STUDENT_USERNAME := $(or $(E2E_TEST_STUDENT_USERNAME), student_e2e_test)
-# E2E_TEST_STUDENT_PASSWORD must be defined at .env file, as shown in the .env.sample file.
+export E2E_TEST_BCeID_USERNAME := $(or $(E2E_TEST_BCeID_USERNAME), SIMS_E2ETests)
+# BCeID Web Service
+export BCeID_WEB_SERVICE_WSDL := $(or $(BCeID_WEB_SERVICE_WSDL), https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
@@ -47,7 +49,9 @@ print-status:
 	@echo " | KEYCLOAK_CLIENT: $(KEYCLOAK_CLIENT) "
 	@echo " | E2E Test"
 	@echo " | E2E_TEST_STUDENT_USERNAME: $(E2E_TEST_STUDENT_USERNAME) "
-	@echo " | E2E_TEST_STUDENT_PASSWORD: $(E2E_TEST_STUDENT_PASSWORD) "
+	@echo " | E2E_TEST_BCeID_USERNAME: $(E2E_TEST_BCeID_USERNAME) "
+	@echo " | BCeID Web Service"
+	@echo " | BCeID_WEB_SERVICE_WSDL: $(BCeID_WEB_SERVICE_WSDL) "
 	@echo " +---------------------------------------------------------+ "
 
 #################################################################
