@@ -27,14 +27,25 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.LOGIN,
         component: Login,
         beforeEnter: (to, from, next) => {
-          if (!AppConfigService.shared.authService?.authenticated) {
-            next()
+          // Check Auth service is available or not
+          if (AppConfigService.shared.authService) {
+            const auth =
+              AppConfigService.shared.authService?.authenticated || false;
+            if (!auth) {
+              // Allowing to load login iff when user is not authenticated
+              next();
+            } else {
+              next({
+                name: StudentRoutesConst.STUDENT_DASHBOARD,
+              });
+            }
           } else {
+            // Auth service is not initialize so loading to student root
             next({
-              name: StudentRoutesConst.STUDENT_DASHBOARD
-            })
+              name: StudentRoutesConst.APP_STUDENT,
+            });
           }
-        }
+        },
       },
       {
         path: "student-profile",

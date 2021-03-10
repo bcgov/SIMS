@@ -155,7 +155,7 @@ import { useForm, Field } from "vee-validate";
 import { StudentService } from "../../services/StudentService";
 import { useToast } from "primevue/usetoast";
 import ValidatedInput from "../../components/generic/ValidatedInput.vue";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 
 interface ProfileState {
   phone: string;

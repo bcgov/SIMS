@@ -6,50 +6,61 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
+
 import NavBar from "../../components/partial-view/student/NavBar.vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-import { ClientIdType } from "@/types/contracts/ConfigContract";
+import { ClientIdType } from "../../types/contracts/ConfigContract";
 
-@Options({
+export default {
   components: {
     NavBar,
   },
-})
-export default class AppStudent extends Vue {
-  // Flag to hold whole student app children mounding
-  isAuthReady = false;
-  async created() {
-    const router = this.$router;
-    const route = this.$route;
-    await AppConfigService.shared.initAuthService(ClientIdType.STUDENT);
-    this.isAuthReady = true;
-    if (!AppConfigService.shared.authService?.authenticated) {
-      router.push({
-        name: StudentRoutesConst.LOGIN,
-      });
-    } else {
-      // TODO:
-      // - Try to implement a role based processing
-      // Get path
-      if (await UserService.shared.checkUser()) {
-        await StudentService.shared.synchronizeFromUserInfo();
-        if (route.path === "/student") {
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const isAuthReady = ref(false);
+
+    // Mounding hook
+    onMounted(async () => {
+      await AppConfigService.shared.initAuthService(ClientIdType.STUDENT);
+      isAuthReady.value = true;
+      const auth = AppConfigService.shared.authService?.authenticated ?? false;
+      if (!auth) {
+        router.push({
+          name: StudentRoutesConst.LOGIN,
+        });
+      } else {
+        // TODO:
+        // - Try to implement a role based processing
+        // Get path
+        if (await UserService.shared.checkUser()) {
+          await StudentService.shared.synchronizeFromUserInfo();
+          if (route.path === "/student") {
+            // Loading student dash board if user try to load /student path
+            router.push({
+              name: StudentRoutesConst.STUDENT_DASHBOARD,
+            });
+          }
+        } else {
+          /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
+       where they can provide information and create SABC account */
           router.push({
-            name: StudentRoutesConst.STUDENT_DASHBOARD,
+            name: StudentRoutesConst.STUDENT_PROFILE,
           });
         }
-      } else {
-        /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
-       where they can provide information and create SABC account */
-        router.push({
-          name: StudentRoutesConst.STUDENT_PROFILE,
-        });
       }
-    }
-  }
-}
+    });
+    return {
+      isAuthReady,
+    };
+  },
+};
 </script>
+
+<style lang="scss">
+</style>
