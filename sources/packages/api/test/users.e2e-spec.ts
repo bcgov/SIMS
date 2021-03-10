@@ -40,7 +40,19 @@ describe("Users controller (e2e)", () => {
       return request(app.getHttpServer())
         .get("/users/bceid-account")
         .auth(accesstoken, { type: "bearer" })
-        .expect(HttpStatus.OK);
+        .expect(HttpStatus.OK)
+        .then((resp) => {
+          expect(resp.body).toBeDefined();
+          expect(resp.body.user).toBeDefined();
+          expect(resp.body.user.guid).toBeTruthy();
+          expect(resp.body.user.displayName).toBeTruthy();
+          expect(resp.body.user.firstname).toBeTruthy();
+          expect(resp.body.user.surname).toBeTruthy();
+          expect(resp.body.user.email).toBeTruthy();
+          expect(resp.body.institution).toBeDefined();
+          expect(resp.body.institution.guid).toBeTruthy();
+          expect(resp.body.institution.legalName).toBeTruthy();
+        });
     });
   });
 
