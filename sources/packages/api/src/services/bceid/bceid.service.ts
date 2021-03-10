@@ -25,8 +25,8 @@ export class BCeIDService {
    * information sharing rule for the online service (onlineServiceId) with the specified requester
    * user account type (requesterAccountTypeCode) and target user account type (accountTypeCode).
    * The information returned by a query is restricted to the properties included in the information sharing rules.
-   * @param userName Username associated with the account whose details are being queried.
-   * @returns account details
+   * @param userName User name associated with the account whose details are being queried.
+   * @returns account details if the account was found, otherwise null.
    */
   public async getAccountDetails(userName: string): Promise<AccountDetails> {
     var client = await this.getSoapClient();
@@ -52,7 +52,13 @@ export class BCeIDService {
       // Destructuring the result of the SOAP request to get the
       // first item on the array where the parsed js object is.
       const [result] = await client.getAccountDetailAsync(body);
-      this.ensureSuccessStatusResult(result?.getAccountDetailResult);
+      const response = result.getAccountDetailResult as ResponseBase;
+
+      if (ResponseBase.hasNoResults(response)) {
+        return null;
+      }
+
+      this.ensureSuccessStatusResult(response);
 
       const userAccount = result.getAccountDetailResult.account;
       return {
@@ -70,9 +76,8 @@ export class BCeIDService {
       };
     } catch (error) {
       this.logger.error(
-        "Error while retrieving account details from BCeID Web Service.",
+        `Error while retrieving account details from BCeID Web Service. ${error}`,
       );
-      this.logger.error(error);
       throw error;
     }
   }
@@ -98,7 +103,7 @@ export class BCeIDService {
       return client;
     } catch (error) {
       this.logger.error(
-        `Error while creating BCeID Web Service client. Error: ${error}`,
+        `Error while creating BCeID Web Service client. ${error}`,
       );
       throw error;
     }
@@ -112,10 +117,6 @@ export class BCeIDService {
    * getAccountDetailResult from the getAccountDetailResponse.
    */
   private ensureSuccessStatusResult(methodCallResult: ResponseBase) {
-    if (!methodCallResult) {
-      throw new Error("Unexpected result from BCeID Web Service.");
-    }
-
     if (methodCallResult.code !== ResponseCodes.Success) {
       this.logger.error(
         `Method returned an unsuccessful status.
