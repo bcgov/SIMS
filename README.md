@@ -16,7 +16,7 @@ High, new features released weekly
 
 ## Draft-Architecture
 
-![Draft Architecture](DraftArchitecture.jpg)
+![Draft Architecture](./docs/assets/DraftArchitecture.jpg)
 
 ## License
 
