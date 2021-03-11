@@ -21,7 +21,7 @@ High, new features released weekly
 ## Continue Reading
 
 - [Technologies Overview](./docs/technologies-overview.md)
-- [BCeID-Web Service Integration](./docs/technologies-overview.md)
+- [BCeID-Web Service Integration](./docs/bceid-webservice-integration.md)
 - How To
   - [DevOps](./docs/howto/devops.md)
   - [Database Migration](./docs/howto/db-migration.md)
