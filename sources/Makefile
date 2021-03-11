@@ -3,7 +3,7 @@
 export $(shell sed 's/=.*//' ../.env)
 export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 export PROJECT_NAME := $(or $(PROJECT_NAME), aest-sims)
-export BUILD_REF :=  $(or $(GIT_LOCAL_BRANCH), dev)
+export BUILD_REF :=  $(or $(BUILD_REF), dev)
 export BUILD_ID := $(or $(BUILD_ID), 0)
 export API_PORT := $(or $(API_PORT), 3000)
 export APP_PORT := $(or $(APP_PORT), 8080)
@@ -15,7 +15,8 @@ export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
-export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), student)
+export KEYCLOAK_CLIENT_STUDENT := $(or $(KEYCLOAK_CLIENT_STUDENT), student)
+export KEYCLOAK_CLIENT_INSTITUTION := $(or $(KEYCLOAK_CLIENT_INSTITUTION), institution)
 # E2E Test
 export E2E_TEST_STUDENT_USERNAME := $(or $(E2E_TEST_STUDENT_USERNAME), student_e2e_test)
 export E2E_TEST_BCeID_USERNAME := $(or $(E2E_TEST_BCeID_USERNAME), SIMS_E2ETests)
