@@ -15,7 +15,7 @@ export class ConfigController {
       auth: {
         url: config.auth.url,
         realm: config.auth.realm,
-        clientId: config.auth.clientId,
+        clientIds: config.auth.clientIds,
       },
     };
   }

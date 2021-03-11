@@ -70,7 +70,6 @@ print-status:
 	@echo " | HOST NAME: 	$(HOST) "
 	@echo " +---------------------------------------------------------+ "
 
-
 init-project:
 	@echo "Run initial set-up for the project, including network security\n" 
 	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
@@ -79,6 +78,14 @@ init-project:
 build-patroni:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH)  -p NAME=patroni -p TAG="12-latest" -p BASE_IMAGE_NAME=postgres -p BASE_IMAGE_TAG="12" -p SOURCE_REPOSITORY_URL="https://github.com/BCDevOps/platform-services.git" -p SOURCE_REPOSITORY_REF="master" -p SOURCE_CONTEXT_DIR="apps/pgsql/patroni/docker" | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/patroni --wait
+
+init-api:
+	@echo "++\n Init Api in $(NAMESPACE) \n++"
+	test -n $(API_INIT_BCeID_WEB_SERVICE_ONLINE_SERVICE_ID)
+	test -n $(API_INIT_BCeID_WEB_SERVICE_REQUESTER_USER_GUID)
+	test -n $(API_INIT_BCeID_WEB_SERVICE_AUTH_USER_NAME)
+	test -n $(API_INIT_REQ_BCeID_WEB_SERVICE_AUTH_USER_PASSWORD)
+	@oc -n $(NAMESPACE) process -f openshift/api-pre-req.yml -p NAME=api -p BCeID_WEB_SERVICE_ONLINE_SERVICE_ID=$(API_INIT_BCeID_WEB_SERVICE_ONLINE_SERVICE_ID) -p BCeID_WEB_SERVICE_REQUESTER_USER_GUID=$(API_INIT_BCeID_WEB_SERVICE_REQUESTER_USER_GUID) -p BCeID_WEB_SERVICE_AUTH_USER_NAME=$(API_INIT_BCeID_WEB_SERVICE_AUTH_USER_NAME) -p BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=$(API_INIT_REQ_BCeID_WEB_SERVICE_AUTH_USER_PASSWORD) | oc -n $(NAMESPACE) apply -f -
 
 build-api:
 	test -n "$(BUILD_REF)"
@@ -121,8 +128,9 @@ deploy-api:
 	test -n "$(KEYCLOAK_REALM)"
 	test -n "$(KEYCLOAK_CLIENT)"
 	test -n "$(KEYCLOAK_AUTH_URL)"
+	test -n "$(BCeID_WEB_SERVICE_WSDL)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_REALM=$(KEYCLOAK_REALM) -p KEYCLOAK_CLIENT=$(KEYCLOAK_CLIENT) -p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) -p BUILD_TAG=$(BUILD_TAG) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml -p NAME=$(API) -p HOST_NAME=$(HOST) -p DB_SERVICE=$(DB_SERVICE_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(API):$(BUILD_TAG)" -p KEYCLOAK_REALM=$(KEYCLOAK_REALM) -p KEYCLOAK_CLIENT=$(KEYCLOAK_CLIENT) -p KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) -p BCeID_WEB_SERVICE_WSDL=$(BCeID_WEB_SERVICE_WSDL) -p BUILD_TAG=$(BUILD_TAG) | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
 deploy-web:
