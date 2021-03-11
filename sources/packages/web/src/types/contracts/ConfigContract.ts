@@ -4,13 +4,13 @@ export interface GetConfig {
 
 export enum ClientIdType {
   STUDENT = "student",
-  INSTITUTE = "institute"
+  INSTITUTION = "institution",
 }
 
 export interface AuthConfig {
   url: string;
   realm: string;
-  clientIds: {[Value in ClientIdType] : string};
+  clientIds: { [Value in ClientIdType]: string };
 }
 
 export interface AppConfig {

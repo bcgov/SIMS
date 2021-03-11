@@ -1,26 +1,26 @@
 <template>
   <Card class="p-m-4">
     <template #title>
-      Login
+      Institutional Login
     </template>
     <template #content>
       <div>
-        <h1>Welcome to Institution Portal</h1>
+        <h1>Welcome to StudentAid BC</h1>
         <h4>
-          We are using BCeid for authentication. Please click on Login/Register
+          We are using BCeID for authentication. Please click on Login/Register
           buttons below to start your sign in/sign up.
         </h4>
       </div>
     </template>
     <template #footer>
       <Button
-        label="Login"
+        label="Login with BCeID"
         icon="pi pi-check"
         class="p-mr-2"
         @click="login"
       ></Button>
       <Button
-        label="Register"
+        label="Sign Up with BCeID"
         icon="pi pi-user"
         class="p-button-info"
         @click="login"
@@ -30,17 +30,18 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
 import { AppConfigService } from "../../services/AppConfigService";
 
-@Options({
+export default {
   components: {},
-})
-export default class Login extends Vue {
-  login() {
-    AppConfigService.shared.authService?.login({
-      idpHint: "bcsc",
-    });
-  }
-}
+  setup() {
+    const login = () => {
+      AppConfigService.shared.authService?.login({
+        idpHint: "bceid",
+      });
+    };
+
+    return { login };
+  },
+};
 </script>

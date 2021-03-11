@@ -15,7 +15,7 @@ export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
-export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), student)
+export KEYCLOAK_CLIENT := $(or $(KEYCLOAK_CLIENT), institution)
 # E2E Test
 export E2E_TEST_STUDENT_USERNAME := $(or $(E2E_TEST_STUDENT_USERNAME), student_e2e_test)
 export E2E_TEST_BCeID_USERNAME := $(or $(E2E_TEST_BCeID_USERNAME), SIMS_E2ETests)

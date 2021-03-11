@@ -10,7 +10,7 @@ export class ConfigService {
         realm: process.env.KEYCLOAK_REALM,
         clientIds: {
           student: process.env.KEYCLOAK_CLIENT,
-          institute: "",
+          institution: process.env.KEYCLOAK_CLIENT,
         },
         openIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
       },

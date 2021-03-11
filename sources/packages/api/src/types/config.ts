@@ -1,4 +1,4 @@
-export type ClientType = "student" | "institute";
+export type ClientType = "student" | "institution";
 
 export interface IConfig {
   auth: IAuthConfig;
@@ -8,7 +8,7 @@ export interface IConfig {
 export interface IAuthConfig {
   url: string;
   realm: string;
-  clientIds: {[K in ClientType]: string};
+  clientIds: { [K in ClientType]: string };
   openIdConfigurationUrl: string;
 }
 
