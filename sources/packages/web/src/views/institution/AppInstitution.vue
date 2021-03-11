@@ -5,11 +5,36 @@
 </template>
 
 <script lang="ts">
-import { Vue } from "vue-class-component";
+import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { AppConfigService } from "../../services/AppConfigService";
+import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import { ClientIdType } from "../../types/contracts/ConfigContract";
 
-export default class AppInstitution extends Vue {
-  created() {
-    console.log("App Institution created");
-  }
-}
+export default {
+  setup() {
+    const router = useRouter();
+    const isAuthReady = ref(false);
+
+    // Mounding hook
+    onMounted(async () => {
+      await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
+      isAuthReady.value = true;
+      const auth = AppConfigService.shared.authService?.authenticated ?? false;
+      if (!auth) {
+        router.push({
+          name: InstitutionRoutesConst.LOGIN,
+        });
+      } else {
+        router.push({
+          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+        });
+      }
+    });
+
+    return {
+      isAuthReady,
+    };
+  },
+};
 </script>

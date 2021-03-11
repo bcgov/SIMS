@@ -2,6 +2,7 @@ import { RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import { InstitutionRoutesConst } from "../constants/routes/RouteConstants";
+import Login from "../views/institution/Login.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -9,6 +10,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
     name: InstitutionRoutesConst.APP_INSTITUTION,
     component: AppInstitution,
     children: [
+      {
+        path: "login",
+        name: InstitutionRoutesConst.LOGIN,
+        component: Login,
+      },
       {
         path: "institution-dashboard",
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,

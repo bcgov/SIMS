@@ -28,7 +28,7 @@ export default async function(
         case ClientIdType.STUDENT:
           store.dispatch("student/setStudentProfileData", keycloak);
           break;
-        case ClientIdType.INSTITUTE:
+        case ClientIdType.INSTITUTION:
           "do nothing";
       }
     }
