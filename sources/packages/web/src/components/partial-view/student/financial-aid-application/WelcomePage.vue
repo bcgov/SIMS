@@ -38,7 +38,7 @@
             <Button
               label="Begin with your personal information"
               class="p-button-raised"
-              @click="handleClick"
+              @click="beginPersonalInfo"
             />
           </template>
         </Card>
@@ -54,12 +54,12 @@ import { StudentRoutesConst } from "../../../../constants/routes/RouteConstants"
 export default {
   setup(props: any, context: SetupContext) {
     const router = useRouter();
-    const handleClick = () => {
+    const beginPersonalInfo = () => {
       context.emit("user-ready");
       router.push({ name: StudentRoutesConst.PERSONAL_INFO });
     };
     return {
-      handleClick,
+      beginPersonalInfo,
     };
   },
 };

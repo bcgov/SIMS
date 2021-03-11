@@ -5,8 +5,7 @@ import { InjectLogger } from "./common";
 import { LoggerService } from "./logger/logger.service";
 
 @Catch()
-export class AppAllExceptionsFilter
-  extends BaseExceptionFilter {
+export class AppAllExceptionsFilter extends BaseExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     // TODO: Customize error response
     const ctx = host.switchToHttp();
@@ -15,6 +14,7 @@ export class AppAllExceptionsFilter
     // Logging Additional info
     this.logger.error("Un-handle exception");
     this.logger.error(`Request Path [${request.path}]`);
+    this.logger.error(`Exception Details: \n ***** \n\t${exception} \n *****`);
 
     // Calling super
     super.catch(exception, host);
@@ -22,5 +22,4 @@ export class AppAllExceptionsFilter
 
   @InjectLogger()
   logger: LoggerService;
-
 }

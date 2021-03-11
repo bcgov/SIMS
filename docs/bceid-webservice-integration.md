@@ -29,7 +29,7 @@ To retrieve the additional information we are going to use the method *getAccoun
    <soapenv:Body>
       <v10:getAccountDetail>
          <v10:accountDetailRequest>
-         	  <!-- IDIM Service Account -->
+            <!-- IDIM Service Account -->
             <v10:onlineServiceId>9191-9999-9999-9A9A</v10:onlineServiceId>
             <!-- Internal = IDIR -->
             <v10:requesterAccountTypeCode>Internal</v10:requesterAccountTypeCode>

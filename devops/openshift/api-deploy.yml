@@ -30,8 +30,10 @@ objects:
                   value: ${JWT_SECRET}
                 - name: KEYCLOAK_REALM
                   value: ${KEYCLOAK_REALM}
-                - name: KEYCLOAK_CLIENT
-                  value: ${KEYCLOAK_CLIENT}
+                - name: KEYCLOAK_CLIENT_STUDENT
+                  value: ${KEYCLOAK_CLIENT_STUDENT}
+                - name: KEYCLOAK_CLIENT_INSTITUTION
+                  value: ${KEYCLOAK_CLIENT_INSTITUTION}
                 - name: KEYCLOAK_AUTH_URL
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: BCeID_WEB_SERVICE_WSDL
@@ -175,7 +177,9 @@ parameters:
     generate: expression
   - name: KEYCLOAK_REALM
     required: true
-  - name: KEYCLOAK_CLIENT
+  - name: KEYCLOAK_CLIENT_STUDENT
+    required: true
+  - name: KEYCLOAK_CLIENT_INSTITUTION
     required: true
   - name: KEYCLOAK_AUTH_URL
     required: true
