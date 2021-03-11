@@ -74,17 +74,18 @@ OpenShift is cloud-native deployment platform to run all our application stacks.
 
 Under `ROOT/devops/openshift/`, all the OpenShift related template file are stored.
 
-- `docker-build.yml`: Generic builder template
-- `api-deploy.yml`: Api deployment config template
-- `we-deploy.yml`: Web app deployment config template
+- `docker-build.yml`: Generic builder template.
+- `api-pre-req.yml`: Api deployment template that contains prerequisits that need to be executed manually in the Open Shift namespace where the `api-deploy.yml` will be executed.
+- `api-deploy.yml`: Api deployment config template.
+- `we-deploy.yml`: Web app deployment config template.
 - `patroni-deploy.yml`: Patroni(Postgres) State-full-state deployment template.
 - `patroni-pre-req.yml`: OpenShit secret creation template for Patroni app.
 - `security-init.yml`: Network and security polices template to enable any namespace for application dev.
-- `createdb-job.yml`: Job template to create separate database in patroni postgres database
+- `createdb-job.yml`: Job template to create separate database in patroni postgres database.
 
 ### OpenShift Setup
 
-We have created a setup of make helper commands, Now we can perform following steps to setup any namespace
+We have created a setup of make helper commands, Now we can perform following steps to setup any namespace.
 
 - Setup your env variable in `ROOT/.env` file or in `ROOT/devops/Makefile`, sample env file is available under `ROOT/configs/env-example`. The list of essential env variables are
 
@@ -103,6 +104,8 @@ We have created a setup of make helper commands, Now we can perform following st
 - Setup Patroni secrets: `make init-patroni`
 
 - Deploy Patroni: `make oc-deploy-patroni`
+
+- Setup API prerequisites (e.g. secrets): `make init-api`
 
 - Build API: `make oc-build-api`
 
