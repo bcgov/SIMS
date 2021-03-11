@@ -16,7 +16,15 @@ High, new features released weekly
 
 ## Draft-Architecture
 
-![Draft Architecture](DraftArchitecture.jpg)
+![Draft Architecture](./docs/assets/DraftArchitecture.jpg)
+
+## Continue Reading
+
+- [Technologies Overview](./docs/technologies-overview.md)
+- [BCeID-Web Service Integration](./docs/bceid-webservice-integration.md)
+- How To
+  - [DevOps](./docs/howto/devops.md)
+  - [Database Migration](./docs/howto/db-migration.md)
 
 ## License
 
