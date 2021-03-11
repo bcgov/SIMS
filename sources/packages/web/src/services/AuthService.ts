@@ -25,10 +25,10 @@ export default async function(
     });
     if (keycloak.authenticated) {
       switch (type) {
-        case "student":
+        case ClientIdType.STUDENT:
           store.dispatch("student/setStudentProfileData", keycloak);
           break;
-        case "institute":
+        case ClientIdType.INSTITUTE:
           "do nothing";
       }
     }
