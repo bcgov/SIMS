@@ -18,6 +18,14 @@ High, new features released weekly
 
 ![Draft Architecture](./docs/assets/DraftArchitecture.jpg)
 
+## Continue Reading
+
+- [Technologies Overview](./docs/technologies-overview.md)
+- [BCeID-Web Service Integration](./docs/technologies-overview.md)
+- How To
+  - [DevOps](./docs/howto/devops.md)
+  - [Database Migration](./docs/howto/db-migration.md)
+
 ## License
 
 Code released under the [Apache License, Version 2.0](./LICENSE).
