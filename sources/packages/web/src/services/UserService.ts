@@ -1,23 +1,9 @@
 import ApiClient from "./http/ApiClient";
-
-export default interface User {
-  email: string;
-  firstName: string;
-  id: number;
-  lastName: string;
-  userName: string;
-}
+import { BCeIDDetailsDto } from "../types/contracts/UserContract";
 
 export class UserService {
   // Share Instance
   private static instance: UserService;
-
-  /**
-   * The Singleton’s constructor should always be private to prevent direct
-   * construction calls with the new operator.
-   */
-  //TODO : this throws a compile error
-  //private UserService(){}
 
   public static get shared(): UserService {
     return this.instance || (this.instance = new this());
@@ -25,5 +11,9 @@ export class UserService {
 
   async checkUser(): Promise<boolean> {
     return await ApiClient.User.checkUser();
+  }
+
+  async getBCeIDAccountDetails(): Promise<BCeIDDetailsDto> {
+    return await ApiClient.User.bceidAccount();
   }
 }

@@ -4,7 +4,7 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { extractRawUserName } from "../../utilities/auth-utils";
-import { BCeIDDetails } from "./models/bceid-account.dto";
+import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -31,7 +31,7 @@ export class UserController extends BaseController {
   }
 
   @Get("bceid-account")
-  async getBCeID(@UserToken() userToken: IUserToken): Promise<BCeIDDetails> {
+  async getBCeID(@UserToken() userToken: IUserToken): Promise<BCeIDDetailsDto> {
     const userName = extractRawUserName(userToken.userName);
     const account = await this.bceidService.getAccountDetails(userName);
     return {
