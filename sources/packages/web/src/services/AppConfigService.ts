@@ -2,12 +2,15 @@ import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
 import ApiClient from "../services/http/ApiClient";
 import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
+import { AppIDPType, ApplicationToken, AppRoutes, AuthStatus } from "../types";
+import { RouteHelper } from "../helpers";
 
 export class AppConfigService {
   // Share Instance
   private static instance: AppConfigService;
 
   private _config?: AppConfig;
+  private _authClientType?: ClientIdType;
   public authService?: KeyCloak.KeycloakInstance;
 
   private readonly _storageKey: string = "app-config";
@@ -15,6 +18,10 @@ export class AppConfigService {
 
   public static get shared(): AppConfigService {
     return this.instance || (this.instance = new this());
+  }
+
+  public get authClientType(): ClientIdType | undefined {
+    return this._authClientType;
   }
 
   private isValidConfig(config: AppConfig) {
@@ -75,10 +82,57 @@ export class AppConfigService {
   }
 
   async initAuthService(type: ClientIdType) {
+    if (this.authService) {
+      return;
+    }
     if (this._config) {
+      this._authClientType = type;
       this.authService = await AuthService(this._config, type);
     } else {
       throw new Error("Unable to load application: server is not responding");
+    }
+  }
+
+  // TODO: Remove this to RouteHelper
+  authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
+    if (options.type === this._authClientType) {
+      const auth = this.authService?.authenticated || false;
+      if (auth) {
+        let validUser = false;
+        if (this.authService?.tokenParsed) {
+          const token = this.authService?.tokenParsed as ApplicationToken;
+          switch (options.type) {
+            case ClientIdType.INSTITUTION: {
+              if (token.IDP === AppIDPType.BCeID) {
+                validUser = true;
+              }
+              break;
+            }
+            case ClientIdType.STUDENT: {
+              if (token.IDP === AppIDPType.BCSC) {
+                validUser = true;
+              }
+              break;
+            }
+            default:
+              validUser = false;
+          }
+        }
+        if (!validUser) {
+          return AuthStatus.ForbiddenUser;
+        }
+        if (RouteHelper.isRootRoute(options.path, options.type)) {
+          return AuthStatus.RedirectHome;
+        }
+        return AuthStatus.Continue;
+      } else {
+        if (options.path.includes(AppRoutes.Login)) {
+          return AuthStatus.Continue;
+        }
+        return AuthStatus.RequiredLogin;
+      }
+    } else {
+      return AuthStatus.ForbiddenUser;
     }
   }
 }

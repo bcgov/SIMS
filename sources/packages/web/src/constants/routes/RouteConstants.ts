@@ -18,3 +18,8 @@ export const InstitutionRoutesConst = {
   LOGIN: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
 };
+
+export const SharedRouteConst = {
+  PAGE_NOT_FOUND: Symbol(),
+  FORBIDDEN_USER: Symbol(),
+};
