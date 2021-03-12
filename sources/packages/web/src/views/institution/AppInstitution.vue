@@ -27,7 +27,7 @@ export default {
         });
       } else {
         router.push({
-          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+          name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         });
       }
     });

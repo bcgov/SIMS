@@ -1,12 +1,5 @@
+import { BCeIDDetailsDto } from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
-
-export default interface User {
-  email: string;
-  firstName: string;
-  id: number;
-  lastName: string;
-  userName: string;
-}
 
 export class UserApi extends HttpBaseClient {
   public async checkUser(): Promise<boolean> {
@@ -16,6 +9,19 @@ export class UserApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as boolean;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async bceidAccount(): Promise<BCeIDDetailsDto> {
+    try {
+      const response = await this.apiClient.get(
+        "users/bceid-account",
+        this.addAuthHeader(),
+      );
+      return response.data as BCeIDDetailsDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
