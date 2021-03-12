@@ -7,7 +7,7 @@
       <div>
         <h1>Welcome to StudentAid BC</h1>
         <h4>
-          We are using BCeID for authentication. Please click on Login/Register
+          We are using BCeID for Authentication. Please click on Login/Register
           buttons below to start your sign in/sign up.
         </h4>
       </div>
