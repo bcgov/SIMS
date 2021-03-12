@@ -1,5 +1,6 @@
 <template>
   <div>
+    <NavBar title="Institution Portal" v-if="isAuthReady" />
     <router-view />
   </div>
 </template>
@@ -10,8 +11,12 @@ import { ref, onMounted } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
+import NavBar from "../../components/partial-view/student/NavBar.vue";
 
 export default {
+  components: {
+    NavBar,
+  },
   setup() {
     const router = useRouter();
     const isAuthReady = ref(false);
