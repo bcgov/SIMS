@@ -93,21 +93,6 @@ export class AppConfigService {
     }
   }
 
-  roles(): string[] {
-    if (this.authService && this.authService.tokenParsed) {
-      const resourceAccess = this.authService.tokenParsed.resource_access || {};
-      let roles: string[] = [];
-      for (const resourceKey of Object.keys(resourceAccess)) {
-        const resource = resourceAccess[resourceKey];
-        if (resource.roles) {
-          roles = [...roles, ...resource.roles];
-        }
-      }
-      return roles;
-    }
-    return [];
-  }
-
   // TODO: Remove this to RouteHelper
   authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
     if (options.type === this._authClientType) {
