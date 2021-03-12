@@ -205,7 +205,7 @@ export default {
       }
     });
 
-    const onSubmit = handleSubmit(async (formValues) => {
+    const onSubmit = handleSubmit(async formValues => {
       let redirectHome = true;
       if (props.editMode) {
         await StudentService.shared.updateStudent({ ...formValues });

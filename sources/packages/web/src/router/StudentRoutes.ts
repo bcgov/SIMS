@@ -8,12 +8,17 @@ import PersonalInfoQuestionnaire from "../views/student/financial-aid-applicatio
 import SelectProgram from "../views/student/financial-aid-application/SelectProgram.vue";
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
-import { StudentRoutesConst } from "../constants/routes/RouteConstants";
-import { AppConfigService } from "@/services/AppConfigService";
+import {
+  StudentRoutesConst,
+  SharedRouteConst,
+} from "../constants/routes/RouteConstants";
+import { AppConfigService } from "../services/AppConfigService";
+import { AppRoutes, AuthStatus } from "../types";
+import { ClientIdType } from "../types/contracts/ConfigContract";
 
 export const studentRoutes: Array<RouteRecordRaw> = [
   {
-    path: "/student",
+    path: AppRoutes.StudentRoot,
     name: StudentRoutesConst.APP_STUDENT,
     component: AppStudent,
     children: [
@@ -86,5 +91,36 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         ], //Children under /Student/FinancialAidApplication
       },
     ], //Children under /Student
+    beforeEnter: (to, from, next) => {
+      AppConfigService.shared
+        .initAuthService(ClientIdType.STUDENT)
+        .then(() => {
+          const status = AppConfigService.shared.authStatus({
+            type: ClientIdType.STUDENT,
+            path: to.path,
+          });
+          switch (status) {
+            case AuthStatus.Continue:
+              next();
+              break;
+            case AuthStatus.RequiredLogin:
+              next({
+                name: StudentRoutesConst.LOGIN,
+              });
+              break;
+            case AuthStatus.RedirectHome:
+              next({
+                name: StudentRoutesConst.STUDENT_DASHBOARD,
+              });
+              break;
+            case AuthStatus.ForbiddenUser:
+              next({
+                name: SharedRouteConst.FORBIDDEN_USER,
+              });
+              break;
+          }
+        })
+        .catch(e => console.error(e));
+    },
   },
 ];
