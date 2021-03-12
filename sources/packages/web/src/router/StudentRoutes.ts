@@ -118,9 +118,16 @@ export const studentRoutes: Array<RouteRecordRaw> = [
                 name: SharedRouteConst.FORBIDDEN_USER,
               });
               break;
+            default:
+              next({
+                name: SharedRouteConst.FORBIDDEN_USER,
+              });
           }
         })
-        .catch(e => console.error(e));
+        .catch(e => {
+          console.error(e);
+          throw e;
+        });
     },
   },
 ];
