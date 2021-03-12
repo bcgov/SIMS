@@ -14,4 +14,5 @@ export interface IUserToken {
   givenNames: string;
   identity_assurance_level: string;
   roles: string[];
+  bceid_user_name: string;
 }

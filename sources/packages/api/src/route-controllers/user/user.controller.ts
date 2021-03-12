@@ -32,8 +32,9 @@ export class UserController extends BaseController {
 
   @Get("bceid-account")
   async getBCeID(@UserToken() userToken: IUserToken): Promise<BCeIDDetailsDto> {
-    const userName = extractRawUserName(userToken.userName);
-    const account = await this.bceidService.getAccountDetails(userName);
+    const account = await this.bceidService.getAccountDetails(
+      userToken.bceid_user_name,
+    );
     return {
       user: {
         guid: account.user.guid,

@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { UserService } from "../../services/UserService";
 
 interface ReadonlyProfileState {
