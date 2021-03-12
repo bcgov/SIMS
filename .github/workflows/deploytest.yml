@@ -24,7 +24,8 @@ jobs:
       BUILD_REF: ${{ github.event.inputs.BUILD_REF }}
       HOST_PREFIX: test-
       KEYCLOAK_REALM: "jxoe2o46"
-      KEYCLOAK_CLIENT: "student"
+      KEYCLOAK_CLIENT_STUDENT: "student"
+      KEYCLOAK_CLIENT_INSTITUTION: "institution"
       KEYCLOAK_AUTH_URL: "https://test.oidc.gov.bc.ca/auth/"
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
     steps:
