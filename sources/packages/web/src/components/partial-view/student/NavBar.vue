@@ -3,18 +3,11 @@
     <template #start>
       <div class="p-menubar-start">
         <img alt="logo" src="../../../assets/images/bc_logo.svg" height="40" />
-        <span class="title">Student Aid</span>
+        <span class="title">{{ title }}</span>
       </div>
     </template>
     <template #end>
-      <Button
-        v-if="isAuthenticated"
-        label="Student Profile"
-        icon="pi pi-fw pi-user"
-        class="p-button-text"
-        style="color: white"
-        @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
-      />
+      <slot name="end"></slot>
       <Button
         v-if="isAuthenticated"
         label="Log off"
@@ -30,8 +23,14 @@
 <script lang="ts">
 import { computed } from "vue";
 import { AppConfigService } from "../../../services/AppConfigService";
-import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
+
 export default {
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+  },
   setup() {
     const menuItems: any = [];
     const isAuthenticated = computed(
@@ -42,7 +41,7 @@ export default {
       AppConfigService.shared.authService?.logout();
     };
 
-    return { menuItems, isAuthenticated, logoff, StudentRoutesConst };
+    return { menuItems, isAuthenticated, logoff };
   },
 };
 </script>

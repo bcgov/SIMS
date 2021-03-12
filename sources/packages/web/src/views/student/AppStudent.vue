@@ -1,13 +1,26 @@
 <template>
   <div>
-    <NavBar v-if="isAuthReady" />
+    <NavBar title="Student Aid" v-if="isAuthReady">
+      <template #end>
+        <Button
+          v-if="isAuthenticated"
+          label="Student Profile"
+          icon="pi pi-fw pi-user"
+          class="p-button-text"
+          style="color: white"
+          @click="
+            $router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })
+          "
+        />
+      </template>
+    </NavBar>
     <router-view v-if="isAuthReady" :key="$route.fullPath" />
   </div>
 </template>
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 import NavBar from "../../components/partial-view/student/NavBar.vue";
 import { AppConfigService } from "../../services/AppConfigService";
@@ -24,6 +37,10 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
+
+    const isAuthenticated = computed(
+      () => AppConfigService.shared.authService?.authenticated === true,
+    );
 
     // Mounding hook
     onMounted(async () => {
@@ -57,6 +74,8 @@ export default {
     });
     return {
       isAuthReady,
+      isAuthenticated,
+      StudentRoutesConst,
     };
   },
 };
