@@ -108,8 +108,8 @@ api: ## <Helper> :: Executes into the workspace container.
 
 local-api-test: ## Run API tests
 	@echo "+\n++ Run API tests+\n++"
-	@docker-compose exec api npm run test
-	@docker-compose exec api npm run test:e2e
+	@docker-compose exec -T api npm run test
+	@docker-compose exec -T api npm run test:e2e
 
 local-db:
 	@echo "Make: Shelling into database workspace ..."
