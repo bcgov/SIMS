@@ -37,6 +37,7 @@ jobs:
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
       E2E_TEST_STUDENT_USERNAME: student_e2e_test
       E2E_TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
+      COMPOSE_INTERACTIVE_NO_CLI: 1
     steps:
       - name: Print env
         run: |
