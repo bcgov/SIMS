@@ -26,8 +26,9 @@ export BCeID_WEB_SERVICE_WSDL := $(or $(BCeID_WEB_SERVICE_WSDL), https://gws1.te
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
+local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
-test-api: | print-status local-build api-detached local-api-test local-stop
+test-api: | print-status local-api-test
 
 ####################################################################
 ## Status Output

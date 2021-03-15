@@ -61,4 +61,16 @@ jobs:
       - name: Build an Run API in Docker
         working-directory: "./sources/"
         run: |
+          make local-api-detached
+      - name: Sleep for 10 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+            time: '10s'
+      - name: Run tests
+        working-directory: "./sources/"
+        run: |
           make test-api
+      - name: Stop
+        working-directory: "./sources/"
+        run: |
+          make local-stop
