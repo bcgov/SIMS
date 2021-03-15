@@ -14,7 +14,7 @@ jobs:
         run: |
           echo Git Base Ref: ${{ github.base_ref }}
           echo Git Build ID: ${{ github.event.number }}
-          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }
+          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
   test:
     name: Deploy App, API, and DB to DEV environment
     runs-on: ubuntu-latest
