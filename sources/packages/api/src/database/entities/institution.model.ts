@@ -7,7 +7,12 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { ContactInfo, LegalAuthorityContactInfo } from "../../types";
+import {
+  InstitutionContact,
+  InstitutionMailingContact,
+  InstitutionPrimaryContact,
+  LegalAuthorityContact,
+} from "../../types";
 import { User } from "./user.model";
 
 @Entity({ name: TableNames.Institution })
@@ -16,30 +21,40 @@ export class Institution extends RecordDataModel {
   id: number;
 
   @Column({
-    name: "operatingName",
+    name: "legal_operating_name",
+  })
+  legalOperatingName: string;
+
+  @Column({
+    name: "operating_name",
+    nullable: true,
   })
   operatingName: string;
 
   @Column({
-    name: "institution_address_info",
-    type: "jsonb",
-    nullable: false,
+    name: "primary_phone",
   })
-  institutionAddress: ContactInfo;
+  primaryPhone: string;
 
   @Column({
-    name: "institution_mailing_address_info",
-    type: "jsonb",
-    nullable: true,
+    name: "primary_email",
   })
-  institutionMailingAddress: ContactInfo;
+  primaryEmail: string;
+
+  //This field seen in the mockup but not in userstory
+  @Column({
+    name: "institution_type",
+  })
+  institutionType: string;
 
   @Column({
-    name: "legal_authority_contact_info",
-    type: "jsonb",
-    nullable: false,
+    name: "website",
   })
-  legalAuthorityContactInfo: LegalAuthorityContactInfo;
+  website: string;
+  @Column({
+    name: "regulating_body",
+  })
+  regulatingBody: string;
 
   @Column({
     name: "established_date",
@@ -47,19 +62,30 @@ export class Institution extends RecordDataModel {
   established_date: Date;
 
   @Column({
-    name: "website",
+    name: "primary_contact",
+    type: "jsonb",
+    nullable: false,
   })
-  website: string;
+  institutionPrimaryContact: InstitutionPrimaryContact;
 
   @Column({
-    name: "primaryPhone",
+    name: "legal_authority_contact",
+    type: "jsonb",
   })
-  primaryPhone: string;
+  legalAuthorityContact: LegalAuthorityContact;
 
   @Column({
-    name: "regulatingBody",
+    name: "institution_address",
+    type: "jsonb",
   })
-  regulatingBody: string;
+  institutionAddress: InstitutionContact;
+
+  @Column({
+    name: "institution_mailing_address",
+    type: "jsonb",
+    nullable: true,
+  })
+  institutionMailingAddress: InstitutionMailingContact;
 
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({

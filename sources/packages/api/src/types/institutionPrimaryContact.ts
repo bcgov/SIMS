@@ -1,6 +1,6 @@
 export interface InstitutionPrimaryContact {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactEmail: string;
+  primaryPhone: string;
 }

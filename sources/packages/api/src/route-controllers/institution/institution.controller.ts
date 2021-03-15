@@ -1,4 +1,9 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Post,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { InstitutionService, UserService } from "../../services";
 import { CreateInstitutionDto } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
@@ -22,7 +27,7 @@ export class InstitutionController extends BaseController {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (existingUser) {
-      throw new UnprocessableEntityException("User already exists");
+      throw new UnprocessableEntityException("Institution User already exists");
     }
 
     // Save student

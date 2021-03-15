@@ -2,12 +2,59 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateInstitutionDto {
   @IsNotEmpty()
-  legalName: string;
+  legalOperatingName: string;
+
   @IsOptional()
   operatingName: string;
 
+  @IsNotEmpty()
+  primaryPhone: string;
+
+  @IsNotEmpty()
+  primaryEmail: string;
+
+  @IsNotEmpty()
+  website: string;
+
+  @IsNotEmpty()
+  institutionType: string;
+
+  @IsNotEmpty()
+  regulatingBody: string;
+
+  @IsNotEmpty()
+  establishedDate: string;
+
+  //TODO Can be broken into a different DTO if needed
+  //Institutions Primary Contact Information
+  @IsNotEmpty()
+  primaryContactFirstName: string;
+
+  @IsNotEmpty()
+  primaryContactLastName: string;
+
+  @IsNotEmpty()
+  primaryContactEmail: string;
+
+  @IsNotEmpty()
+  primaryContactPhone: string;
+
+  //TODO Can be broken into a different DTO if needed
+  // Legal Authority Contact Info
+  @IsNotEmpty()
+  legalAuthorityFirstName: string;
+
+  @IsNotEmpty()
+  legalAuthorityLastName: string;
+
+  @IsNotEmpty()
+  legalAuthorityEmail: string;
+
+  @IsNotEmpty()
+  legalAuthorityPhone: string;
+
   //TODO Can be broken into a different DTO
-  //Institution Address
+  //Primary Institution Address
   @IsNotEmpty()
   addressLine1: string;
   @IsOptional()
@@ -23,60 +70,16 @@ export class CreateInstitutionDto {
 
   //TODO Can be broken into a different DTO
   //Institution Mailing Address
-  @IsNotEmpty()
+  @IsOptional()
   mailingAddressLine1: string;
   @IsOptional()
   mailingAddressLine2: string;
-  @IsNotEmpty()
+  @IsOptional()
   mailingCity: string;
-  @IsNotEmpty()
+  @IsOptional()
   mailingProvinceState: string;
-  @IsNotEmpty()
+  @IsOptional()
   mailingCountry: string;
-  @IsNotEmpty()
+  @IsOptional()
   mailingPostalCode: string;
-
-  @IsNotEmpty()
-  website: string;
-
-  @IsNotEmpty()
-  establishedDate: string;
-
-  @IsNotEmpty()
-  primaryPhone: string;
-  @IsNotEmpty()
-  primaryEmail: string;
-
-  //TODO Can be broken into a different DTO
-  // Legal Authority Contact Info
-  @IsNotEmpty()
-  legalAuthorityFirstName: string;
-
-  @IsNotEmpty()
-  legalAuthorityLastName: string;
-
-  @IsNotEmpty()
-  legalAuthorityEmail: string;
-
-  @IsNotEmpty()
-  legalAuthorityPhoneNumber: string;
-
-  //TODO Can be broken into a different DTO
-  //Institutions Primary Contact Information
-  @IsNotEmpty()
-  institutionPrimaryContactFirstName: string;
-
-  @IsNotEmpty()
-  institutionPrimaryContactLastName: string;
-
-  @IsNotEmpty()
-  institutionPrimaryContactEmail: string;
-
-  @IsNotEmpty()
-  institutionPrimaryContactPhone: string;
-
-  //TODO Can be broken into a different DTO
-  //Institution Regulating body that governs the institutions-
-  @IsNotEmpty()
-  institutionRegulatingBody: string;
 }

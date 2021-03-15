@@ -1,6 +1,6 @@
-export interface LegalAuthorityContactInfo {
+export interface LegalAuthorityContact {
   legalAuthorityFirstName: string;
   legalAuthorityLastName: string;
   legalAuthorityEmail: string;
-  legalAuthorityPhoneNumber: string;
+  legalAuthorityPhone: string;
 }
