@@ -58,7 +58,7 @@ jobs:
         # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
       # Deploy the api
-      - name: Build an Run API in Docker
+      - name: Build and run API in Docker
         working-directory: "./sources/"
         run: |
           make local-api-detached
