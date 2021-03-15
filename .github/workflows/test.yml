@@ -1,0 +1,57 @@
+name: Test Application
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  # Print variables for logging and debugging purposes
+  checkEnv:
+    name: Check Env variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Env Vars
+        run: |
+          echo Git Base Ref: ${{ github.base_ref }}
+          echo Git Build ID: ${{ github.event.number }}
+          echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }
+  test:
+    name: Deploy App, API, and DB to DEV environment
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged != true}
+    env:
+      PROJECT_NAME: aest-sims
+      BUILD_ID: ${{ github.event.number }}
+      POSTGRES_PASSWORD: bcgov!
+      BUILD_REF: ${{ github.base_ref }}
+      POSTGRES_DB: sims
+      KEYCLOAK_REALM: "jxoe2o46"
+      KEYCLOAK_CLIENT_STUDENT: "student"
+      KEYCLOAK_CLIENT_INSTITUTION: "institution"
+      KEYCLOAK_AUTH_URL: "https://dev.oidc.gov.bc.ca/auth/"
+      BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
+      E2E_TEST_STUDENT_USERNAME: student_e2e_test
+      E2E_TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
+    needs:
+      - build
+    steps:
+      - name: Print env
+        run: |
+          echo BUILD ID: $BUILD_ID
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: $BUILD_REF
+      # Checkout the PR branch and pull docker images
+      - name: Checkout Target Branch
+        uses: actions/checkout@v1
+      - run: cd /sources && docker-compose pull
+      # In this step, this action saves a list of existing images,
+      # the cache is created without them in the post run.
+      # It also restores the cache if it exists.
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+      # Deploy the api
+      - name: Build an Run API in Docker
+        working-directory: "./sources/"
+        run: |
+          make test-api

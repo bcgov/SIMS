@@ -41,7 +41,7 @@ const removeIndividuals = async (service: ArchiveDbService) => {
 describe("ArchiveDbService", () => {
   let service: ArchiveDbService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [ArchiveDbService],
     }).compile();
@@ -51,7 +51,7 @@ describe("ArchiveDbService", () => {
     await createIndividuals(service);
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await removeIndividuals(service);
     await service.connection.close();
   });

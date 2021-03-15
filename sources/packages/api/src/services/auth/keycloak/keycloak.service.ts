@@ -110,6 +110,7 @@ export class KeycloakService {
     } catch (ex) {
       // TODO: Add a logger.
       this.logger.error(ex);
+      console.error(ex);
       throw new Error("Error while requesting user token.");
     }
   }
