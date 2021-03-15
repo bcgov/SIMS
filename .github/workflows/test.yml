@@ -16,7 +16,7 @@ jobs:
           echo Git Build ID: ${{ github.event.number }}
           echo Git Pull Request Ref: ${{ github.event.pull_request.head.sha }}
   test:
-    name: Deploy App, API, and DB to DEV environment
+    name: Test API in Docker env
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged != true }}
     env:
@@ -41,7 +41,9 @@ jobs:
       # Checkout the PR branch and pull docker images
       - name: Checkout Target Branch
         uses: actions/checkout@v1
-      - run: cd /sources && docker-compose pull
+      - name: Docker Pull
+        working-directory: "./sources/"
+        run: docker-compose pull
       # In this step, this action saves a list of existing images,
       # the cache is created without them in the post run.
       # It also restores the cache if it exists.
