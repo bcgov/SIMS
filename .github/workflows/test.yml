@@ -18,7 +18,7 @@ jobs:
   test:
     name: Deploy App, API, and DB to DEV environment
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged != true}
+    if: ${{ github.event.pull_request.merged != true }}
     env:
       PROJECT_NAME: aest-sims
       BUILD_ID: ${{ github.event.number }}
