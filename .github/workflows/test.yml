@@ -87,6 +87,7 @@ jobs:
       - name: Web unit tests
         working-directory: "./sources/packages/web"
         run: |
+          npm ci
           npm run test:unit
 
 
