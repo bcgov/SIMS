@@ -1,0 +1,46 @@
+CREATE TABLE IF NOT EXISTS institutions(
+  id SERIAL PRIMARY KEY, 
+  legalOperatingName VARCHAR(64) NOT NULL, 
+  operatingName VARCHAR(64) NOT NULL,  
+  primaryPhone VARCHAR(64) NOT NULL,  
+  primaryEmail VARCHAR(64) NOT NULL,  
+  institutionType VARCHAR(64) NOT NULL,  
+  website VARCHAR(64) NOT NULL,  
+  regulatingBody VARCHAR(64) NOT NULL,  
+  established_date  Date NOT NULL DEFAULT now(), 
+  institutionPrimaryContact JSONB NOT NULL,
+  legalAuthorityContact JSONB NOT NULL,  
+  institutionAddress JSONB NOT NULL,  
+  institutionMailingAddress JSONB,
+  -- Reference Columns
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Audit columns
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone NOT NULL DEFAULT now(),
+  creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL,
+  modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL
+),
+
+-- ## Comments
+COMMENT ON TABLE institutions IS 'The main resource table to store student related information. This table consists of mandatory contact information and social insurance number of student',
+COMMENT ON COLUMN institutions.id IS 'Auto-generated sequential primary key column',
+COMMENT ON COLUMN institutions.contact_info IS 'A JSONB structure to store contact information. Possible json structure will consists address object containing [address line1, address line2, country, province, postal code] and international phone number field',
+COMMENT ON COLUMN institutions.legalOperatingName IS 'Legal Name of the institution', 
+COMMENT ON COLUMN institutions.operatingName IS 'Optional Operating Name of the insitution',  
+COMMENT ON COLUMN institutions.primaryPhone IS 'Primary Phone of the Institution',  
+COMMENT ON COLUMN institutions.primaryEmail IS 'Primary Email of the Institution',  
+COMMENT ON COLUMN institutions.institutionType IS 'Institution Type - BC Private or ...',  
+COMMENT ON COLUMN institutions.website IS 'Official Website Address',  
+COMMENT ON COLUMN institutions.regulatingBody IS 'Regulating Body',  
+COMMENT ON COLUMN institutions.established_date IS 'Date when this institute was established', 
+COMMENT ON COLUMN institutions.institutionPrimaryContact IS 'A JSONB structure to store Primary Contact Information',
+COMMENT ON COLUMN institutions.legalAuthorityContact IS 'A JSONB structure to store Legal Authorities Contact Information',  
+COMMENT ON COLUMN institutions.institutionAddress IS 'Primary Address for the Institution',  
+COMMENT ON COLUMN institutions.institutionMailingAddress IS 'Mailing Address for the Institution',
+
+COMMENT ON COLUMN institutions.user_id IS 'Foreign key reference to users table which includes users related information of student',
+COMMENT ON COLUMN institutions.created_at IS 'Record creation timestamp',
+COMMENT ON COLUMN institutions.updated_at IS 'Record update timestamp',
+COMMENT ON COLUMN institutions.creator IS 'Creator of the record. Null specified the record is created by system',
+COMMENT ON COLUMN institutions.modifier IS 'Modifier of the record. Null specified the record is modified by system',

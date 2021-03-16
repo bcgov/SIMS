@@ -1,4 +1,4 @@
-export interface InstitutionMailingContact {
+export interface InstitutionMailingAddress {
   mailingAddressLine1: string;
   mailingAddressLine2?: string;
   mailingCity: string;

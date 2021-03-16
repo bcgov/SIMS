@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-export class Student1611091981943 implements MigrationInterface {
+export class addInstitutionTable1615852126487 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData("Create-Institution.sql", "Institution"),

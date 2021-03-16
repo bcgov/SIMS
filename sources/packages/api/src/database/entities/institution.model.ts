@@ -8,8 +8,8 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
-  InstitutionContact,
-  InstitutionMailingContact,
+  InstitutionAddress,
+  InstitutionMailingAddress,
   InstitutionPrimaryContact,
   LegalAuthorityContact,
 } from "../../types";
@@ -78,14 +78,14 @@ export class Institution extends RecordDataModel {
     name: "institution_address",
     type: "jsonb",
   })
-  institutionAddress: InstitutionContact;
+  institutionAddress: InstitutionAddress;
 
   @Column({
     name: "institution_mailing_address",
     type: "jsonb",
     nullable: true,
   })
-  institutionMailingAddress: InstitutionMailingContact;
+  institutionMailingAddress: InstitutionMailingAddress;
 
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({
