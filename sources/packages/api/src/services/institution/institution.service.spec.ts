@@ -10,7 +10,7 @@ describe("InstitutionService", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [InstitutionService, ArchiveDbService],
+      providers: [InstitutionService],
     }).compile();
     await module.init();
 

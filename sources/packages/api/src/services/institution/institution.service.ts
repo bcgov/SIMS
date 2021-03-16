@@ -16,15 +16,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.logger.log("[Created]");
   }
 
-  async getInstitutionByUserName(userName: string): Promise<Institution> {
-    const institution = await this.repo
-      .createQueryBuilder("institution")
-      .leftJoinAndSelect("institution.user", "user")
-      .where("user.userName = :userNameParam", { userNameParam: userName })
-      .getOneOrFail();
-    return institution;
-  }
-
   async createInstitution(
     userInfo: UserInfo,
     institutionDto: CreateInstitutionDto,
@@ -38,6 +29,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     //Institution Information
     institution.legalOperatingName = institutionDto.legalOperatingName;
+    institution.operatingName = institutionDto.operatingName;
     institution.primaryPhone = institutionDto.primaryPhone;
     institution.primaryEmail = institutionDto.primaryEmail;
     institution.website = institutionDto.website;
