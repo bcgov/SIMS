@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS institutions(
   id SERIAL PRIMARY KEY, 
   legal_operating_name VARCHAR(64) NOT NULL, 
-  operating_name VARCHAR(64) NOT NULL,  
+  operating_name VARCHAR(64) NULL,  
   primary_phone VARCHAR(64) NOT NULL,  
   primary_email VARCHAR(64) NOT NULL,  
   institution_type VARCHAR(64) NOT NULL,  

@@ -9,5 +9,5 @@ export const ColumnNames = {
 export const TableNames = {
   User: "users",
   Student: "students",
-  Institution: "institution",
+  Institution: "institutions",
 };

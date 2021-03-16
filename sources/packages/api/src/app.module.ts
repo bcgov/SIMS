@@ -7,11 +7,13 @@ import {
   UserService,
   ConfigService,
   ArchiveDbService,
+  InstitutionService,
   BCeIDService,
 } from "./services";
 import {
   UserController,
   StudentController,
+  InstitutionController,
   ConfigController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -23,12 +25,14 @@ import { LoggerModule } from "./logger/logger.module";
     AppController,
     UserController,
     StudentController,
+    InstitutionController,
     ConfigController,
   ],
   providers: [
     AppService,
     UserService,
     StudentService,
+    InstitutionService,
     ConfigService,
     ArchiveDbService,
     BCeIDService,
