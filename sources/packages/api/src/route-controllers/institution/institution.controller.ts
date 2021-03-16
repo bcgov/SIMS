@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
@@ -17,6 +18,11 @@ export class InstitutionController extends BaseController {
     private readonly institutionService: InstitutionService,
   ) {
     super();
+  }
+
+  @Get("hello")
+  async helloInsti() {
+    return "hello insti";
   }
 
   @Post()

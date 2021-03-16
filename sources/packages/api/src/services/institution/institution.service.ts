@@ -33,7 +33,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const user = new User();
     //Username retrieved from the token
     user.userName = userInfo.userName;
-    user.email = userInfo.email;
+    user.email = userInfo.email || institutionDto.primaryEmail;
     institution.user = user;
 
     //Institution Information
