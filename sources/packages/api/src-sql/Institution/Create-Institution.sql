@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS institutions(
   institution_type VARCHAR(64) NOT NULL,  
   website VARCHAR(64) NOT NULL,  
   regulating_body VARCHAR(64) NOT NULL,  
-  established_date  Date NOT NULL DEFAULT now(), 
+  established_date  Date NOT NULL, 
   primary_contact JSONB NOT NULL,
   legal_authority_contact JSONB NOT NULL,  
   institution_address JSONB NOT NULL,  

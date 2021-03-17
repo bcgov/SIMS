@@ -1,13 +1,9 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
-
-import { Public } from "../../auth/decorators/public.decorator";
-
 import { InstitutionService, UserService } from "../../services";
 import { CreateInstitutionDto } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
@@ -19,9 +15,7 @@ export class InstitutionController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
-  ) {
-    super();
-  }
+  ) {}
 
   @Post()
   async create(
