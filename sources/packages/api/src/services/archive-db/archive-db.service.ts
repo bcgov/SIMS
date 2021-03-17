@@ -24,14 +24,12 @@ export class ArchiveDbService {
     return this._connection;
   }
 
-  
-
   async init() {
     if (this._connection) {
       return;
     }
     let migrations = [];
-    if (process.env.NODE_ENV === "local") {
+    if (process.env.NODE_ENV === "local" || process.env.NODE_ENV == "docker") {
       migrations = ["./src/services/archive-db/migrations/*.ts"];
     }
     try {
@@ -43,7 +41,7 @@ export class ArchiveDbService {
         username: config.username,
         password: config.password,
         database: process.env.ARCHIVE_DB || "sfas_db",
-        logging: ["error", "info", "warn"],
+        logging: ["error", "warn"],
         migrations,
         synchronize: false,
         migrationsRun: false,

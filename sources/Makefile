@@ -12,6 +12,7 @@ export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
+export ARCHIVE_DB := $(or $(ARCHIVE_DB), sfas_db)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
@@ -25,7 +26,9 @@ export BCeID_WEB_SERVICE_WSDL := $(or $(BCeID_WEB_SERVICE_WSDL), https://gws1.te
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only
+local-api-detached: | print-status local-build api-detached
 db: | print-status postgres
+test-api: | print-status local-api-test
 
 ####################################################################
 ## Status Output
@@ -95,8 +98,28 @@ api-only:
 	@docker-compose -f docker-compose.yml up -d postgres
 	@docker-compose -f docker-compose.yml up api
 
+api-detached:
+	@echo "+\n++ Make: Running DB and API only"
+	@docker-compose -f docker-compose.yml up -d postgres
+	@docker-compose -f docker-compose.yml up -d api
+
 # Local App
 api: ## <Helper> :: Executes into the workspace container.
-	@echo "Shelling into local workspace ..."
+	@echo "+\n++Shelling into local workspace ...++\n+"
 	@docker-compose exec api bash
+
+local-api-test: ## Run API tests
+	@echo "+\n++ Run API tests+\n++"
+	@docker-compose exec -T api npm run test
+	@docker-compose exec -T api npm run test:e2e
+
+local-db:
+	@echo "Make: Shelling into database workspace ..."
+	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
+
+local-db-archive-db:
+	@echo "Make: Shelling into database workspace ..."
+	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) $(ARCHIVE_DB)
+
+
 
