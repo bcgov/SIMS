@@ -15,7 +15,9 @@ export class InstitutionController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Post()
   async create(
