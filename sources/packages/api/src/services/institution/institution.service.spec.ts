@@ -19,6 +19,5 @@ describe("InstitutionService", () => {
 
   it("should be defined", () => {
     expect(service).toBeDefined();
-    expect(service.logger()).toBeDefined();
   });
 });
