@@ -6,7 +6,7 @@ import { AppModule } from "../src/app.module";
 import { KeycloakConfig } from "../src/auth/keycloakConfig";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 
-describe("Users controller (e2e)", () => {
+describe.skip("Users controller (e2e)", () => {
   // Use the student client to retrieve the token from.
   // The BCeID user is a Keyclock user, so doesn't matter
   // from which client it will be retrieved.
@@ -35,7 +35,7 @@ describe("Users controller (e2e)", () => {
     await app.init();
   });
 
-  describe("bceid-account route", () => {
+  describe.skip("bceid-account route", () => {
     it("Should return a HttpStatus OK(200) with user account information when user is valid", () => {
       return request(app.getHttpServer())
         .get("/users/bceid-account")
