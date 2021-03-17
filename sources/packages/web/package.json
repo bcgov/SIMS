@@ -24,7 +24,8 @@
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
-    "vuex-class": "^0.3.2"
+    "vuex-class": "^0.3.2",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",

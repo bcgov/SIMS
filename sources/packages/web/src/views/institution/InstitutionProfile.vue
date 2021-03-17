@@ -107,22 +107,19 @@
           <div class="p-field p-col-12">
             <label for="regulatingBody">Institution Regulating body</label>
             <ValidatedInput property-name="regulatingBody">
-              <Field
-                name="regulatingBody"
-                label="Institution Regulating body"
-                rules="required"
-                as="InputText"
+              <Dropdown
+                v-model="regulatingBody"
+                :options="regulatingBodyOptions"
               />
             </ValidatedInput>
           </div>
           <div class="p-field p-col-6">
             <label for="estabilishdDate">Established Date</label>
             <ValidatedInput property-name="estabilishdDate">
-              <Field
-                name="estabilishdDate"
-                label="Established Date"
-                rules="required"
-                as="InputText"
+              <Calendar
+                v-model="estabilishdDate"
+                showIcon="true"
+                dateFormat="dd/mm/yy"
               />
             </ValidatedInput>
           </div>
@@ -329,8 +326,9 @@ import { onMounted, ref, reactive } from "vue";
 import { UserService } from "../../services/UserService";
 import HorizontalSeparator from "../../components/generic/HorizontalSeparator.vue";
 import ContentGroup from "../../components/generic/ContentGroup.vue";
-import { useForm, Field } from "vee-validate";
+import { useForm, Field, useField } from "vee-validate";
 import ValidatedInput from "../../components/generic/ValidatedInput.vue";
+import * as yup from "yup";
 
 interface ReadonlyProfileState {
   userfirstName: string;
@@ -391,47 +389,48 @@ export default {
         userLastName: bceidAccount.user.surname,
         institutionLegalName: bceidAccount.institution.legalName,
       };
-
-      const state = {} as ProfileState;
-      state.studentEmail = "Student email@test.com";
-      state.operatingName = "Operating Name";
-      state.primaryPhoneNumber = "123 456 7891";
-      state.primaryEmail = "Primary Email@test.com";
-      state.institutionWebsite = "Institution Website";
-      state.regulatingBody = "Regulating Body";
-      state.estabilishdDate = new Date();
-      state.primaryContact = {
-        firstName: "Primary First Name",
-        lastName: "Primary Last Name",
-        email: "Primary Email",
-        phoneNumber: "Primary Phone Number",
-      };
-      state.legalContact = {
-        firstName: "Legal First Name",
-        lastName: "Legal Last Name",
-        email: "Legal Email",
-        phoneNumber: "Legal Phone Number",
-      };
-      state.primaryAddress = {
-        address1: "Primary Address Address 1",
-        address2: "Primary Address Address 2",
-        city: "Primary Address City",
-        postalCode: "Primary Address Postal Code",
-        provinceState: "Primary Address Province State",
-        coutry: "Primary Address Country",
-      };
-      setValues(state);
     });
 
     const onSubmit = handleSubmit(async formValues => {
       console.dir(formValues);
     });
 
+    const today = new Date();
+    const { value: estabilishdDate } = useField(
+      "estabilishdDate",
+      yup
+        .date()
+        .required("Established Date is required.")
+        .max(today, "Established Date should be today or a date in the past.")
+        .typeError(
+          "Established Date is not in the correct format DD/MM/YYYY or it is an invalid date.",
+        ),
+      { label: "Established Date" },
+    );
+
+    const { value: regulatingBody } = useField(
+      "regulatingBody",
+      yup.string().required(),
+      { label: "Regulating Body" },
+    );
+
+    const regulatingBodyOptions = [
+      "Private Act of BC Legislature",
+      "ICBC",
+      "DQAB",
+      "PTIB",
+      "ITA",
+    ];
+
     return {
       readonlyProfileState,
       onSubmit,
       isSubmitting,
       profileState,
+      estabilishdDate,
+      regulatingBody,
+      regulatingBodyOptions,
+      today,
     };
   },
 };
