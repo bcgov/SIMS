@@ -11,6 +11,8 @@ import {
 import { AuthTestController } from "../src/testHelpers/controllers/auth-test/auth-test.controller";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 
+jest.setTimeout(10000);
+
 describe("Authentication (e2e)", () => {
   // Use the student client to retrieve the token from
   // Keycloak since it is the only one that we have currently.

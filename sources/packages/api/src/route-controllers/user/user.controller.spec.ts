@@ -1,19 +1,28 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { DatabaseService } from "../../database/database.service";
 import { DatabaseModule } from "../../database/database.module";
-import { UserService } from "../../services";
+import { BCeIDService, ConfigService, UserService } from "../../services";
 import { UserController } from "./user.controller";
 
 describe("UserController", () => {
   let controller: UserController;
+  let dbService: DatabaseService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [UserService],
+      providers: [UserService, BCeIDService, ConfigService],
       controllers: [UserController],
     }).compile();
 
+    await module.init();
+
     controller = module.get<UserController>(UserController);
+    dbService = module.get<DatabaseService>(DatabaseService);
+  });
+
+  afterAll(async () => {
+    await dbService.connection.close();
   });
 
   it("should be defined", () => {

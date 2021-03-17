@@ -10,6 +10,7 @@ describe("ConfigController", () => {
       providers: [ConfigService],
       controllers: [ConfigController],
     }).compile();
+    await module.init();
     controller = module.get<ConfigController>(ConfigController);
   });
 
