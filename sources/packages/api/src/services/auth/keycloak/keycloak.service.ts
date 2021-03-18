@@ -108,7 +108,6 @@ export class KeycloakService {
       );
       return response.data as TokenResponse;
     } catch (ex) {
-      // TODO: Add a logger.
       this.logger.error(ex);
       throw new Error("Error while requesting user token.");
     }

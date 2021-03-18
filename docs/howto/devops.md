@@ -47,6 +47,8 @@ N.B: ROOT means repository root directory
 
 9. Shell into local api container: `make api`
 
+10. Run api test on Docker: `make test-api`
+
 ## OpenShift
 
 OpenShift is cloud-native deployment platform to run all our application stacks. The OpenShift (oc) CLI is required to run any OpenShit operation from local machine or OpenShift web console.

@@ -25,6 +25,7 @@ High, new features released weekly
 - How To
   - [DevOps](./docs/howto/devops.md)
   - [Database Migration](./docs/howto/db-migration.md)
+  - [Keycloak Configuration](./docs/hotwot/keycloak-config.md)
 
 ## License
 
