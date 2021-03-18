@@ -118,7 +118,7 @@
             <ValidatedInput property-name="estabilishdDate">
               <Calendar
                 v-model="estabilishdDate"
-                showIcon="true"
+                :showIcon="true"
                 dateFormat="dd/mm/yy"
               />
             </ValidatedInput>
@@ -374,28 +374,11 @@ export default {
   },
   setup() {
     const readonlyProfileState = ref({} as ReadonlyProfileState);
-    const profileState = reactive({
-      primaryContact: {} as ContactInfo,
-      legalContact: {} as ContactInfo,
-      primaryAddress: {} as Address,
-    } as ProfileState);
-
     const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
 
-    onMounted(async () => {
-      const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
-      readonlyProfileState.value = {
-        userfirstName: bceidAccount.user.firstname,
-        userLastName: bceidAccount.user.surname,
-        institutionLegalName: bceidAccount.institution.legalName,
-      };
-    });
-
-    const onSubmit = handleSubmit(async formValues => {
-      console.dir(formValues);
-    });
-
     const today = new Date();
+    // estabilishdDate is using a Calendar UI component that works properly
+    // only with v-model, that why it has a different setup.
     const { value: estabilishdDate } = useField(
       "estabilishdDate",
       yup
@@ -405,9 +388,9 @@ export default {
         .typeError(
           "Established Date is not in the correct format DD/MM/YYYY or it is an invalid date.",
         ),
-      { label: "Established Date" },
     );
-
+    // regulatingBody is using a Calendar UI component that works properly
+    // only with v-model, that why it has a different setup.
     const { value: regulatingBody } = useField(
       "regulatingBody",
       yup.string().required(),
@@ -422,11 +405,31 @@ export default {
       "ITA",
     ];
 
+    onMounted(async () => {
+      const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
+      readonlyProfileState.value = {
+        userfirstName: bceidAccount.user.firstname,
+        userLastName: bceidAccount.user.surname,
+        institutionLegalName: bceidAccount.institution.legalName,
+      };
+
+      setValues({
+        // This should be pre-populated only during user creation.
+        studentEmail: bceidAccount.user.email,
+      });
+    });
+
+    const onSubmit = handleSubmit(async formValues => {
+      // TODO: Submit to the API
+      // This method will be invoked only if all the validations passed,
+      // handleSubmit will ensure it. No need of any additional logic.
+      console.dir(formValues);
+    });
+
     return {
       readonlyProfileState,
       onSubmit,
       isSubmitting,
-      profileState,
       estabilishdDate,
       regulatingBody,
       regulatingBodyOptions,
