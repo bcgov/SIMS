@@ -56,11 +56,11 @@ export class InstitutionService {
       legalAuthorityPhone: institutionProfile.legalContact.phoneNumber,
       // Primary address
       addressLine1: institutionProfile.primaryAddress.address1,
-      addressLine2: institutionProfile.primaryAddress.address1,
-      city: institutionProfile.primaryAddress.address1,
-      provinceState: institutionProfile.primaryAddress.address1,
-      country: institutionProfile.primaryAddress.address1,
-      postalCode: institutionProfile.primaryAddress.address1,
+      addressLine2: institutionProfile.primaryAddress.address2,
+      city: institutionProfile.primaryAddress.city,
+      provinceState: institutionProfile.primaryAddress.provinceState,
+      country: institutionProfile.primaryAddress.coutry,
+      postalCode: institutionProfile.primaryAddress.postalCode,
     };
     await ApiClient.Institution.createInstitution(institutionDto);
   }
