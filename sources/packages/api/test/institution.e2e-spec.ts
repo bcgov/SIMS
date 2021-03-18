@@ -44,7 +44,6 @@ describe("Users controller (e2e)", () => {
           primaryPhone: "Test",
           primaryEmail: "Test",
           website: "Test",
-          institutionType: "Test",
           regulatingBody: "Test",
           establishedDate: "2021-03-01",
           primaryContactFirstName: "Test",

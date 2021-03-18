@@ -17,9 +17,6 @@ export class CreateInstitutionDto {
   website: string;
 
   @IsNotEmpty()
-  institutionType: string;
-
-  @IsNotEmpty()
   regulatingBody: string;
 
   @IsNotEmpty()

@@ -41,12 +41,6 @@ export class Institution extends RecordDataModel {
   })
   primaryEmail: string;
 
-  //This field seen in the mockup but not in userstory
-  @Column({
-    name: "institution_type",
-  })
-  institutionType: string;
-
   @Column({
     name: "website",
   })
