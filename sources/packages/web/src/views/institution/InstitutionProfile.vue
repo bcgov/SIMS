@@ -110,6 +110,8 @@
               <Dropdown
                 v-model="regulatingBody"
                 :options="regulatingBodyOptions"
+                optionLabel="name"
+                optionValue="value"
               />
             </ValidatedInput>
           </div>
@@ -322,47 +324,33 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { UserService } from "../../services/UserService";
+import { useForm, Field, useField } from "vee-validate";
+import { useToast } from "primevue/usetoast";
+import * as yup from "yup";
+import { InstitutionProfileState } from "../../types";
+import { InstitutionService } from "../../services/InstitutionService";
+import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import ValidatedInput from "../../components/generic/ValidatedInput.vue";
 import HorizontalSeparator from "../../components/generic/HorizontalSeparator.vue";
 import ContentGroup from "../../components/generic/ContentGroup.vue";
-import { useForm, Field, useField } from "vee-validate";
-import ValidatedInput from "../../components/generic/ValidatedInput.vue";
-import * as yup from "yup";
+
+// These options are temporarily hardcoded here as per team decision.
+// These should be moved to or shared between API/web layer.
+const regulatingBodyOptions = [
+  { name: "Private Act of BC Legislature", value: "private-act" },
+  { name: "ICBC", value: "icbc" },
+  { name: "DQAB", value: "dqab" },
+  { name: "PTIB", value: "ptib" },
+  { name: "ITA", value: "ita" },
+];
 
 interface ReadonlyProfileState {
   userfirstName: string;
   userLastName: string;
   institutionLegalName: string;
-}
-
-interface ProfileState {
-  studentEmail: string;
-  operatingName: string;
-  primaryPhoneNumber: string;
-  primaryEmail: string;
-  institutionWebsite: string;
-  regulatingBody: string;
-  estabilishdDate: Date;
-  primaryContact: ContactInfo;
-  legalContact: ContactInfo;
-  primaryAddress: Address;
-}
-
-interface ContactInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
-interface Address {
-  address1: string;
-  address2: string;
-  city: string;
-  postalCode: string;
-  provinceState: string;
-  coutry: string;
 }
 
 export default {
@@ -373,8 +361,13 @@ export default {
     Field,
   },
   setup() {
+    const toast = useToast();
+    const router = useRouter();
+
     const readonlyProfileState = ref({} as ReadonlyProfileState);
-    const { handleSubmit, isSubmitting, setValues } = useForm<ProfileState>();
+    const { handleSubmit, isSubmitting, setValues } = useForm<
+      InstitutionProfileState
+    >();
 
     const today = new Date();
     // estabilishdDate is using a Calendar UI component that works properly
@@ -393,19 +386,11 @@ export default {
     // only with v-model, that why it has a different setup.
     const { value: regulatingBody } = useField(
       "regulatingBody",
-      yup.string().required(),
-      { label: "Regulating Body" },
+      yup.string().required("Regulating Body is required."),
     );
 
-    const regulatingBodyOptions = [
-      "Private Act of BC Legislature",
-      "ICBC",
-      "DQAB",
-      "PTIB",
-      "ITA",
-    ];
-
     onMounted(async () => {
+      // Load read-only information from BCeID.
       const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
       readonlyProfileState.value = {
         userfirstName: bceidAccount.user.firstname,
@@ -420,10 +405,24 @@ export default {
     });
 
     const onSubmit = handleSubmit(async formValues => {
-      // TODO: Submit to the API
-      // This method will be invoked only if all the validations passed,
-      // handleSubmit will ensure it. No need of any additional logic.
-      console.dir(formValues);
+      try {
+        await InstitutionService.shared.createInstitution(formValues);
+        toast.add({
+          severity: "success",
+          summary: "Created!",
+          detail: "Institution and User successfully created!",
+          life: 5000,
+        });
+        router.push({ name: InstitutionRoutesConst.INSTITUTION_DASHBOARD });
+      } catch (error) {
+        console.log(error);
+        toast.add({
+          severity: "error",
+          summary: "Unexpected error",
+          detail: "An error happened during the creation process.",
+          life: 5000,
+        });
+      }
     });
 
     return {
