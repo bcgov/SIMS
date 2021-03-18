@@ -1,5 +1,9 @@
 import { Institute } from "../types/contracts/InstituteContract";
-import { EducationProgram, InstitutionProfileState } from "../types";
+import {
+  CreateInstitutionDto,
+  EducationProgram,
+  InstitutionProfileState,
+} from "../types";
 import ApiClient from "./http/ApiClient";
 
 export class InstitutionService {
@@ -37,7 +41,7 @@ export class InstitutionService {
   }
 
   public async createInstitution(institutionProfile: InstitutionProfileState) {
-    const institutionDto = {
+    const institutionDto: CreateInstitutionDto = {
       operatingName: institutionProfile.operatingName,
       primaryPhone: institutionProfile.primaryPhoneNumber,
       primaryEmail: institutionProfile.primaryEmail,
