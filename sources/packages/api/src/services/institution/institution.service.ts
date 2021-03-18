@@ -33,7 +33,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.primaryPhone = institutionDto.primaryPhone;
     institution.primaryEmail = institutionDto.primaryEmail;
     institution.website = institutionDto.website;
-    institution.institutionType = institutionDto.institutionType;
     institution.regulatingBody = institutionDto.regulatingBody;
     institution.established_date = new Date(institutionDto.establishedDate);
 
