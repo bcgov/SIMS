@@ -6,7 +6,7 @@ import { DatabaseModule } from "../../database/database.module";
 describe("InstitutionController", () => {
   let controller: InstitutionController;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
       providers: [InstitutionService, UserService, BCeIDService],

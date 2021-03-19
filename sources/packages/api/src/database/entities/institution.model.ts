@@ -78,7 +78,7 @@ export class Institution extends RecordDataModel {
   })
   institutionAddress: InstitutionAddress;
 
-  @ManyToMany(() => User, { eager: true, cascade: true })
+  @ManyToMany(() => User, { eager: false, cascade: true })
   @JoinTable({
     name: "institutions_users",
     joinColumns: [{ name: "institution_id" }],

@@ -32,7 +32,6 @@ describe("Institution controller (e2e)", () => {
     await app.init();
   });
 
-  //IN progress- Will unskip once there is a delete user in place to that this test can be run idempotently.
   describe.skip("save institution", () => {
     it("Should return a HttpStatus OK(200) with institution information when user is valid and user doesnt exist", () => {
       return request(app.getHttpServer())

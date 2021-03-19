@@ -7,7 +7,7 @@ import { BCeIDService } from "../bceid/bceid.service";
 describe("InstitutionService", () => {
   let service: InstitutionService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
       providers: [InstitutionService, BCeIDService],
