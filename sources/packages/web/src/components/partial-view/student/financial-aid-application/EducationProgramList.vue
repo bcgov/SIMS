@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { SetupContext, ref, onUpdated } from "vue";
-import { InstituteService } from "../../../../services/InstituteService";
+import { InstitutionService } from "../../../../services/InstitutionService";
 import { EducationProgram } from "../../../../types/contracts/EducationContract";
 import { Institute } from "../../../../types/contracts/InstituteContract";
 export default {
@@ -34,7 +34,7 @@ export default {
     };
     onUpdated(async () => {
       if (props.institute && props.enable && programs.value.length === 0) {
-        programs.value = await InstituteService.shared.getProgramsFor(
+        programs.value = await InstitutionService.shared.getProgramsFor(
           props.institute as Institute,
         );
       }

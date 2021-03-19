@@ -6,3 +6,5 @@ export * from "./contracts/ConfigContract";
 export * from "./contracts/EducationContract";
 export * from "./contracts/StudentContract";
 export * from "./contracts/UserContract";
+export * from "./contracts/institution/CreateInstitutionDto";
+export * from "./contracts/institution/ProfileContract";

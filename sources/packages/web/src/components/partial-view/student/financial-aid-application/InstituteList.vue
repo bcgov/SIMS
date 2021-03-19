@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { SetupContext, onMounted, ref } from "vue";
-import { InstituteService } from "../../../../services/InstituteService";
+import { InstitutionService } from "../../../../services/InstitutionService";
 import { Institute } from "../../../../types/contracts/InstituteContract";
 
 export default {
@@ -30,7 +30,7 @@ export default {
       context.emit("change", event);
     };
     onMounted(async () => {
-      institutes.value = await InstituteService.shared.getInstitutes();
+      institutes.value = await InstitutionService.shared.getInstitutes();
     });
     return {
       institutes,
