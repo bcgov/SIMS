@@ -5,7 +5,7 @@ export interface InstitutionProfileState {
   primaryEmail: string;
   institutionWebsite: string;
   regulatingBody: string;
-  estabilishdDate: Date;
+  establishedDate: Date;
   primaryContact: ContactInfo;
   legalContact: ContactInfo;
   primaryAddress: Address;

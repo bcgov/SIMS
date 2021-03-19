@@ -117,9 +117,9 @@
           </div>
           <div class="p-field p-col-6">
             <label for="estabilishdDate">Established Date</label>
-            <ValidatedInput property-name="estabilishdDate">
+            <ValidatedInput property-name="establishedDate">
               <Calendar
-                v-model="estabilishdDate"
+                v-model="establishedDate"
                 :showIcon="true"
                 dateFormat="dd/mm/yy"
               />
@@ -370,10 +370,10 @@ export default {
     >();
 
     const today = new Date();
-    // estabilishdDate is using a Calendar UI component that works properly
+    // establishedDate is using a Calendar UI component that works properly
     // only with v-model, that why it has a different setup.
-    const { value: estabilishdDate } = useField(
-      "estabilishdDate",
+    const { value: establishedDate } = useField(
+      "establishedDate",
       yup
         .date()
         .required("Established Date is required.")
@@ -429,7 +429,7 @@ export default {
       readonlyProfileState,
       onSubmit,
       isSubmitting,
-      estabilishdDate,
+      establishedDate,
       regulatingBody,
       regulatingBodyOptions,
       today,

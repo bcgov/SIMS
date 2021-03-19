@@ -47,7 +47,7 @@ export class InstitutionService {
       primaryEmail: institutionProfile.primaryEmail,
       website: institutionProfile.institutionWebsite,
       regulatingBody: institutionProfile.regulatingBody,
-      establishedDate: institutionProfile.estabilishdDate,
+      establishedDate: institutionProfile.establishedDate,
       // Primary Contact
       primaryContactFirstName: institutionProfile.primaryContact.firstName,
       primaryContactLastName: institutionProfile.primaryContact.lastName,
