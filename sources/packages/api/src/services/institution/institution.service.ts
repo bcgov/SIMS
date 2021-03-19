@@ -29,6 +29,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
+    console.log("here");
+    console.dir(account);
+    if (account == null) {
+      //TODO: This scenario occurs when basic BCeID users try to push the bceid account into our application.
+      //Ideally this should be handled at the login page where a Basic BCeID user should NOT be allowed to enter the portal
+      this.logger.error(
+        "Account information could not be retrieved from BCeID",
+      );
+      return;
+    }
 
     //Username retrieved from the token
     user.userName = userInfo.userName;
