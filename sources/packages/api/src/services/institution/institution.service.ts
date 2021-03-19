@@ -59,7 +59,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactFirstName: institutionDto.primaryContactFirstName,
       primaryContactLastName: institutionDto.primaryContactLastName,
       primaryContactEmail: institutionDto.primaryContactEmail,
-      primaryPhone: institutionDto.primaryPhone,
+      primaryContactPhone: institutionDto.primaryContactPhone,
     };
 
     //Institution Legal Authority Contact Information

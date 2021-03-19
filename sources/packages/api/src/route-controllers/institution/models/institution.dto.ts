@@ -1,9 +1,6 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateInstitutionDto {
-  @IsNotEmpty()
-  legalOperatingName: string;
-
   @IsOptional()
   operatingName: string;
 
