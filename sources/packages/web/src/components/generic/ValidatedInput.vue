@@ -37,4 +37,8 @@ export default {
 .validation-error input {
   border: 2px solid red;
 }
+
+.validation-error > .p-component {
+  border: 2px solid red;
+}
 </style>
