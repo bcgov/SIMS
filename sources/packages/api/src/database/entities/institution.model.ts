@@ -1,15 +1,14 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
+  ManyToMany,
   PrimaryGeneratedColumn,
+  JoinTable,
 } from "typeorm";
-import { ColumnNames, TableNames } from "../constant";
+import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
   InstitutionAddress,
-  InstitutionMailingAddress,
   InstitutionPrimaryContact,
   LegalAuthorityContact,
 } from "../../types";
@@ -19,6 +18,11 @@ import { User } from "./user.model";
 export class Institution extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    name: "guid",
+  })
+  guid: string;
 
   @Column({
     name: "legal_operating_name",
@@ -53,7 +57,7 @@ export class Institution extends RecordDataModel {
   @Column({
     name: "established_date",
   })
-  established_date: Date;
+  establishedDate: Date;
 
   @Column({
     name: "primary_contact",
@@ -74,17 +78,11 @@ export class Institution extends RecordDataModel {
   })
   institutionAddress: InstitutionAddress;
 
-  @Column({
-    name: "institution_mailing_address",
-    type: "jsonb",
-    nullable: true,
+  @ManyToMany(() => User, { eager: true, cascade: true })
+  @JoinTable({
+    name: "institutions_users",
+    joinColumns: [{ name: "institution_id" }],
+    inverseJoinColumns: [{ name: "user_id" }],
   })
-  institutionMailingAddress: InstitutionMailingAddress;
-
-  @OneToOne((type) => User, { eager: true, cascade: true })
-  @JoinColumn({
-    name: "user_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  user: User;
+  users: User[];
 }

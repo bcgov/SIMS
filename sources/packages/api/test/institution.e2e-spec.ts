@@ -60,12 +60,6 @@ describe("Users controller (e2e)", () => {
           provinceState: "Test",
           country: "Test",
           postalCode: "Test",
-          mailingAddressLine1: "Test",
-          mailingAddressLine2: "Test",
-          mailingCity: "Test",
-          mailingProvinceState: "Test",
-          mailingCountry: "Test",
-          mailingPostalCode: "Test",
         })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)

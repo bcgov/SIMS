@@ -112,7 +112,7 @@ export class StudentController extends BaseController {
   async create(
     @Body() payload: CreateStudentDto,
     @UserToken() userToken: IUserToken,
-  ) {
+  ): Promise<void> {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (existingUser) {
@@ -120,7 +120,7 @@ export class StudentController extends BaseController {
     }
 
     // Save student
-    return this.studentService.createStudent(userToken, payload);
+    await this.studentService.createStudent(userToken, payload);
   }
 
   @Patch("/sync")

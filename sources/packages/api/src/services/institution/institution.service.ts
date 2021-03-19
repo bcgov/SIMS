@@ -5,12 +5,16 @@ import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import { CreateInstitutionDto } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
+import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
   @InjectLogger()
   logger: LoggerService;
+  @Inject()
+  bceidService: BCeIDService;
+
   constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(Institution));
     this.logger.log("[Created]");
@@ -22,19 +26,24 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     const institution = this.create();
     const user = new User();
+    const account = await this.bceidService.getAccountDetails(
+      userInfo.idp_user_name,
+    );
+
     //Username retrieved from the token
     user.userName = userInfo.userName;
-    user.email = userInfo.email || institutionDto.primaryEmail;
-    institution.user = user;
-
-    //Institution Information
-    institution.legalOperatingName = institutionDto.legalOperatingName;
+    user.firstName = account.user.firstname;
+    user.lastName = account.user.surname;
+    user.email = institutionDto.primaryEmail;
+    institution.users = [user];
+    institution.guid = account.institution.guid;
+    institution.legalOperatingName = account.institution.legalName;
     institution.operatingName = institutionDto.operatingName;
     institution.primaryPhone = institutionDto.primaryPhone;
     institution.primaryEmail = institutionDto.primaryEmail;
     institution.website = institutionDto.website;
     institution.regulatingBody = institutionDto.regulatingBody;
-    institution.established_date = new Date(institutionDto.establishedDate);
+    institution.establishedDate = new Date(institutionDto.establishedDate);
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
@@ -52,7 +61,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       legalAuthorityPhone: institutionDto.legalAuthorityPhone,
     };
 
-    //User story talks about Address and then a mailing address but figma doesnt. Is user going to have both?
     //Institution Address
     institution.institutionAddress = {
       addressLine1: institutionDto.addressLine1,
@@ -62,17 +70,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       country: institutionDto.country,
       postalCode: institutionDto.postalCode,
       phone: institutionDto.primaryPhone,
-    };
-
-    //User story talks about Address and then a mailing address but figma doesnt. Is user going to have both?
-    //Institution Mailing Address
-    institution.institutionMailingAddress = {
-      mailingAddressLine1: institutionDto.mailingAddressLine1,
-      mailingAddressLine2: institutionDto.mailingAddressLine2,
-      mailingCity: institutionDto.mailingCity,
-      mailingProvinceState: institutionDto.mailingProvinceState,
-      mailingCountry: institutionDto.mailingCountry,
-      mailingPostalCode: institutionDto.mailingPostalCode,
     };
 
     return await this.save(institution);

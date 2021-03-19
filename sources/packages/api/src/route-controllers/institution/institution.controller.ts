@@ -23,14 +23,14 @@ export class InstitutionController extends BaseController {
   async create(
     @Body() payload: CreateInstitutionDto,
     @UserToken() userToken: IUserToken,
-  ) {
+  ): Promise<void> {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
     if (existingUser) {
       throw new UnprocessableEntityException("Institution User already exists");
     }
 
-    // Save student
-    return this.institutionService.createInstitution(userToken, payload);
+    // Save institution
+    await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
 } //Class ends

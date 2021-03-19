@@ -54,29 +54,19 @@ export class CreateInstitutionDto {
   //Primary Institution Address
   @IsNotEmpty()
   addressLine1: string;
+
   @IsOptional()
   addressLine2: string;
+
   @IsNotEmpty()
   city: string;
+
   @IsNotEmpty()
   provinceState: string;
+
   @IsNotEmpty()
   country: string;
+
   @IsNotEmpty()
   postalCode: string;
-
-  //TODO Can be broken into a different DTO
-  //Institution Mailing Address
-  @IsOptional()
-  mailingAddressLine1: string;
-  @IsOptional()
-  mailingAddressLine2: string;
-  @IsOptional()
-  mailingCity: string;
-  @IsOptional()
-  mailingProvinceState: string;
-  @IsOptional()
-  mailingCountry: string;
-  @IsOptional()
-  mailingPostalCode: string;
 }
