@@ -12,10 +12,11 @@ import { InjectLogger } from "../../common";
 export class InstitutionService extends RecordDataModelService<Institution> {
   @InjectLogger()
   logger: LoggerService;
-  @Inject()
-  bceidService: BCeIDService;
 
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(
+    @Inject("Connection") connection: Connection,
+    private readonly bceidService: BCeIDService,
+  ) {
     super(connection.getRepository(Institution));
     this.logger.log("[Created]");
   }
@@ -29,11 +30,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    console.log("here");
-    console.dir(account);
+
     if (account == null) {
-      //TODO: This scenario occurs when basic BCeID users try to push the bceid account into our application.
-      //Ideally this should be handled at the login page where a Basic BCeID user should NOT be allowed to enter the portal
+      //This scenario occurs if basic BCeID users try to push the bceid account into our application.
       this.logger.error(
         "Account information could not be retrieved from BCeID",
       );

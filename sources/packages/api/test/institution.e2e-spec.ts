@@ -6,7 +6,7 @@ import { AppModule } from "../src/app.module";
 import { KeycloakConfig } from "../src/auth/keycloakConfig";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
 
-describe("Users controller (e2e)", () => {
+describe("Institution controller (e2e)", () => {
   const clientId = "student";
   // Nest application to be shared for all e2e tests
   // that need execute a HTTP request.
