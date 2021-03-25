@@ -15,10 +15,11 @@ import {
   StudentController,
   InstitutionController,
   ConfigController,
+  DynamicFormController,
+  WorkflowController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
-
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
   controllers: [
@@ -27,6 +28,8 @@ import { LoggerModule } from "./logger/logger.module";
     StudentController,
     InstitutionController,
     ConfigController,
+    DynamicFormController,
+    WorkflowController,
   ],
   providers: [
     AppService,

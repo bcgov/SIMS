@@ -15,6 +15,7 @@ import {
 import { AppConfigService } from "../services/AppConfigService";
 import { AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
+import OddOrEven from "../views/student/OddOrEven.vue";
 
 export const studentRoutes: Array<RouteRecordRaw> = [
   {
@@ -51,6 +52,12 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             });
           }
         },
+      },
+
+      {
+        path: "odd-or-even",
+        name: "odd-or-even",
+        component: OddOrEven,
       },
       {
         path: "student-profile",
