@@ -1,4 +1,5 @@
 <template>
+  <ProgressSpinner v-if="!hideSpinner" />
   <div ref="formioContainerRef"></div>
 </template>
 
@@ -18,6 +19,7 @@ export default {
   },
   setup(props: any, context: SetupContext) {
     const formioContainerRef = ref(null);
+    const hideSpinner = ref(false);
 
     onMounted(async () => {
       // Use SIMS API as a proxy to retrieve the form definition from formio.
@@ -30,12 +32,13 @@ export default {
         formDefinition.data,
       );
       form.nosubmit = true;
+      hideSpinner.value = true;
       form.on("submit", (submision: any) => {
         context.emit("submitted", submision.data);
       });
     });
 
-    return { formioContainerRef };
+    return { formioContainerRef, hideSpinner };
   },
 };
 </script>

@@ -12,4 +12,13 @@ export class DynamicFormsApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async getFormlist(): Promise<any> {
+    try {
+      return await this.apiClient.get(`dynamic-form`, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

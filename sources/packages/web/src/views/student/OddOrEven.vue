@@ -1,8 +1,6 @@
 <template>
   <Card class="p-m-4">
-    <template #title>
-      Odd or Even Form IO Integration Test
-    </template>
+    <template #title> Odd or Even Form IO Integration Test </template>
     <template #content>
       <formio formName="odd-or-even" @submitted="submitted"></formio>
     </template>

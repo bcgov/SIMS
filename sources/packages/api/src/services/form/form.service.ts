@@ -15,4 +15,10 @@ export class FormService {
     const content = await axios.get(`${this.config.formsUrl}/${formName}`);
     return content.data;
   }
+
+  async list() {
+    return (
+      await axios.get(`${this.config.formsUrl}/form?type=form&tags=common`)
+    ).data;
+  }
 }

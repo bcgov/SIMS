@@ -9,6 +9,10 @@ export class DynamicFormController extends BaseController {
     super();
   }
 
+  @Get()
+  async list(): Promise<any> {
+    return this.formService.list();
+  }
   @Get(":formName")
   async getForm(@Param("formName") formName: string): Promise<any> {
     return this.formService.fetch(formName);
