@@ -2,7 +2,11 @@
   <Card class="p-m-4">
     <template #title> {{ title }} </template>
     <template #content>
-      <formio :formName="formName" @submitted="submitted"></formio>
+      <formio
+        :formName="formName"
+        @submitted="submitted"
+        @loaded="onLoaded"
+      ></formio>
     </template>
   </Card>
 </template>
@@ -19,6 +23,9 @@ export default {
     const formName = query.formName || "unknown";
     const title = ref(`Form ${formName} is loading ....`);
 
+    const onLoaded = () => {
+      title.value = `${formName}`;
+    };
     const submitted = async (args: any) => {
       console.dir(args);
     };
@@ -26,6 +33,7 @@ export default {
       title,
       formName,
       submitted,
+      onLoaded,
     };
   },
 };

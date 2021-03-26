@@ -10,7 +10,7 @@ import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
 
 export default {
-  emits: ["submitted"],
+  emits: ["submitted", "loaded"],
   props: {
     formName: {
       type: String,
@@ -33,6 +33,7 @@ export default {
       );
       form.nosubmit = true;
       hideSpinner.value = true;
+      context.emit("loaded", form);
       form.on("submit", (submision: any) => {
         context.emit("submitted", submision.data);
       });
