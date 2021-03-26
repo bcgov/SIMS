@@ -6,7 +6,7 @@ export async function setupDB() {
   try {
     const connection = await createConnection({
       ...config,
-      logging: ["error", "warn", "info"],
+      logging: ["error", "warn"],
     });
     return connection;
   } catch (excp) {

@@ -1,3 +1,4 @@
+require("../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { getConnection } from "typeorm";
 import { AppController } from "./app.controller";
