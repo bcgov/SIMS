@@ -23,6 +23,14 @@ export class ConfigService {
           password: process.env.BCeID_WEB_SERVICE_AUTH_USER_PASSWORD,
         },
       },
+      workflow: {
+        ruleEngineUrl: process.env.RULE_ENGINE_URL,
+        formsUrl: process.env.FORMS_URL,
+        serviceAccountCredential: {
+          userName: process.env.WORKFLOW_SA_USER_NAME,
+          password: process.env.WORKFLOW_SA_PASSWORD,
+        },
+      },
     };
   }
 

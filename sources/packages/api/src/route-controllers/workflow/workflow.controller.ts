@@ -1,10 +1,10 @@
 import { Body, Controller, Param, Post } from "@nestjs/common";
 import BaseController from "../BaseController";
-import axios from "axios";
+import { RuleEngineService } from "../../services";
 
 @Controller("workflow")
 export class WorkflowController extends BaseController {
-  constructor() {
+  constructor(private readonly engine: RuleEngineService) {
     super();
   }
 
@@ -13,9 +13,6 @@ export class WorkflowController extends BaseController {
     @Param("workflowName") workflowName: string,
     @Body() payload: any,
   ): Promise<any> {
-    console.log(payload);
-    const workflowUrl = `http://localhost:8181/engine-rest/process-definition/key/${workflowName}/start`;
-    const response = await axios.post(workflowUrl, payload);
-    return response.data;
+    return (await this.engine.start(workflowName, payload)).data;
   }
 }

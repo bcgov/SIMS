@@ -3,6 +3,7 @@ export type ClientType = "student" | "institution";
 export interface IConfig {
   auth: IAuthConfig;
   bceid: BCeIDConfig;
+  workflow: WorkflowConfig;
 }
 
 export interface IAuthConfig {
@@ -48,4 +49,10 @@ export interface BCeIDConfig {
 export interface UserPasswordCredential {
   userName: string;
   password: string;
+}
+
+export interface WorkflowConfig {
+  ruleEngineUrl: string;
+  formsUrl: string;
+  serviceAccountCredential: UserPasswordCredential;
 }
