@@ -31,9 +31,17 @@ export default {
         formioContainerRef.value,
         formDefinition.data,
       );
+
       form.nosubmit = true;
       hideSpinner.value = true;
+
       context.emit("loaded", form);
+
+      // Triggered when any component in the form is changed.
+      form.on("change", (event: any) => {
+        context.emit("changed", form, event);
+      });
+
       form.on("submit", (submision: any) => {
         context.emit("submitted", submision.data);
       });
