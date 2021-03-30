@@ -53,14 +53,22 @@ export default {
     };
 
     const submitted = async (args: any) => {
-      await ApiClient.Workflow.startWorkflow("odd-even", {
-        variables: {
-          value1: {
-            value: args.value1,
-            type: "integer",
-          },
-        },
+      if (!args.workflowName) {
+        throw new Error("Workflow not defined.");
+      }
+
+      const payload = { variables: {} };
+      const variables = Object.entries(args).map(entry => {
+        const [key, formValue] = entry;
+        const newVariableValue = {
+          value: String(formValue),
+          type: "string",
+        };
+        return [key, newVariableValue];
       });
+
+      payload.variables = Object.fromEntries(variables);
+      await ApiClient.Workflow.startWorkflow(args.workflowName, payload);
     };
 
     return { changed, submitted };
