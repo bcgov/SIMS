@@ -1,3 +1,4 @@
+require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseService } from "../../database/database.service";
 import { DatabaseModule } from "../../database/database.module";

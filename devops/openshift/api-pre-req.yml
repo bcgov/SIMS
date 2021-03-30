@@ -15,6 +15,8 @@ objects:
       bceid-web-service-requester-user-guid: ${BCeID_WEB_SERVICE_REQUESTER_USER_GUID}
       bceid-web-service-auth-user-name: ${BCeID_WEB_SERVICE_AUTH_USER_NAME}
       bceid-web-service-auth-user-password: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD}
+      workflow-sa-user-name: ${WORKFLOW_SA_USER_NAME}
+      workflow-sa-password: ${WORKFLOW_SA_PASSWORD}
 parameters:
   - name: NAME
     description: |
@@ -51,3 +53,13 @@ parameters:
     required: true
     description: |
       Password used to authenticate to the BCeID Web Service.
+  - name: WORKFLOW_SA_USER_NAME
+    displayName: Service Account Username (from Keycloak) for workflow engine (Camunda)
+    required: true
+    description: |
+      Service Account Username (from Keycloak) for workflow engine (Camunda).
+  - name: WORKFLOW_SA_PASSWORD
+    displayName: Service Account password (from Keycloak) for workflow engine (Camunda)
+    required: true
+    description: |
+      Service Account password (from Keycloak) for workflow engine (Camunda).

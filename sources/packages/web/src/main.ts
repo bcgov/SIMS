@@ -21,6 +21,7 @@ import ToastService from "primevue/toastservice";
 import Calendar from "primevue/calendar";
 import Dropdown from "primevue/dropdown";
 import InputNumber from "primevue/inputnumber";
+import ProgressSpinner from "primevue/progressspinner";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 
@@ -45,5 +46,6 @@ AppConfigService.shared.init().then(() => {
     .component("Calendar", Calendar)
     .component("Dropdown", Dropdown)
     .component("InputNumber", InputNumber)
+    .component("ProgressSpinner", ProgressSpinner)
     .mount("#app");
 });

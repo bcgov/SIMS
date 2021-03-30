@@ -5,9 +5,9 @@ import { Request, Response } from "express";
 export class LoggerService extends Logger {
   static apiLogger(req: Request, res: Response, next: Function) {
     Logger.log(
-      `Receive Request [${req.method}] From ${
+      `Receive Request {METHOD: [${req.method}]} | {PATH: [${req.path}]} From ${
         req.headers.origin ?? "unknown"
-      } | ${req.headers["user-agent"]}`,
+      } | ${req.headers["user-agent"] || "unknown"}`,
     );
     next();
   }

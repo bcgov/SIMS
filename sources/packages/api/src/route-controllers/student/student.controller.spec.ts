@@ -1,3 +1,4 @@
+require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ArchiveDbService, StudentService, UserService } from "../../services";
 import { StudentController } from "./student.controller";

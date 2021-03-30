@@ -1,3 +1,4 @@
+require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "../../services/config/config.service";
 import { ConfigController } from "./config.controller";

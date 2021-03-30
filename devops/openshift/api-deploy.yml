@@ -38,6 +38,10 @@ objects:
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: BCeID_WEB_SERVICE_WSDL
                   value: ${BCeID_WEB_SERVICE_WSDL}
+                - name: RULE_ENGINE_URL
+                  value: ${RULE_ENGINE_URL}
+                - name: FORMS_URL
+                  value: ${FORMS_URL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
                 - name: ARCHIVE_DB
@@ -80,6 +84,16 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: WORKFLOW_SA_USER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${WORKFLOW_SA_USER_NAME_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: WORKFLOW_SA_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${WORKFLOW_SA_PASSWORD_NAME_KEY}
                       name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
@@ -185,6 +199,10 @@ parameters:
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
     required: true
+  - name: RULE_ENGINE_URL
+    required: true
+  - name: FORMS_URL
+    required: true
   - name: DATABASE_NAME_KEY
     value: database-name
   - name: BUILD_TAG
@@ -201,3 +219,7 @@ parameters:
     value: bceid-web-service-auth-user-name
   - name: BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY
     value: bceid-web-service-auth-user-password
+  - name: WORKFLOW_SA_USER_NAME_NAME_KEY
+    value: workflow-sa-user-name
+  - name: WORKFLOW_SA_PASSWORD_NAME_KEY
+    value: workflow-sa-password

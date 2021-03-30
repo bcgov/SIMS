@@ -60,7 +60,7 @@ export default {
           if (route.path === "/student") {
             // Loading student dash board if user try to load /student path
             router.push({
-              name: StudentRoutesConst.STUDENT_DASHBOARD,
+              name: "odd-or-even",
             });
           }
         } else {

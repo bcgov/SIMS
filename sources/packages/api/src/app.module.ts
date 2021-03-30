@@ -15,10 +15,14 @@ import {
   StudentController,
   InstitutionController,
   ConfigController,
+  DynamicFormController,
+  WorkflowController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
-
+import { RuleEngineService } from "./services/rule-engine/rule-engine.service";
+import { FormService } from "./services/form/form.service";
+import { ServiceAccountService } from "./services/service-account/service-account.service";
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
   controllers: [
@@ -27,6 +31,8 @@ import { LoggerModule } from "./logger/logger.module";
     StudentController,
     InstitutionController,
     ConfigController,
+    DynamicFormController,
+    WorkflowController,
   ],
   providers: [
     AppService,
@@ -36,6 +42,9 @@ import { LoggerModule } from "./logger/logger.module";
     ConfigService,
     ArchiveDbService,
     BCeIDService,
+    ServiceAccountService,
+    RuleEngineService,
+    FormService,
   ],
 })
 export class AppModule {}

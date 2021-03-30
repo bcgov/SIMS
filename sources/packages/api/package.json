@@ -21,7 +21,7 @@
     "test:e2e": "ENVIRONMENT=test jest --config ./test/jest-e2e.json",
     "setup:db": "ts-node scripts/setupDB",
     "local": "ENVIRONMENT=local NODE_ENV=local npm run start:dev",
-    "test:local": "NODE_ENV=local jest",
+    "test:local": "NODE_ENV=local ENVIRONMENT=test jest",
     "setup:archive:db": "ts-node scripts/setupArchiveDB",
     "docker:start": "npm run setup:db && npm run setup:archive:db && node dist/main"
   },
