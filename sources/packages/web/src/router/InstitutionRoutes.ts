@@ -41,6 +41,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             type: ClientIdType.INSTITUTION,
             path: to.path,
           });
+          console.log("next is ");
+          console.dir(next);
           switch (status) {
             case AuthStatus.Continue:
               next();

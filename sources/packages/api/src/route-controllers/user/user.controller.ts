@@ -1,9 +1,8 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, NotFoundException } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
-import { extractRawUserName } from "../../utilities/auth-utils";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 
 @Controller("users")
@@ -35,6 +34,14 @@ export class UserController extends BaseController {
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
     );
+    console.log("bceid account is ");
+    console.dir(account);
+
+    if (account == null) {
+      throw new NotFoundException(
+        `No bceid account was found for  ${userToken.userName}`,
+      );
+    }
     return {
       user: {
         guid: account.user.guid,

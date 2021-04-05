@@ -29,7 +29,9 @@ export default async function(
           store.dispatch("student/setStudentProfileData", keycloak);
           break;
         case ClientIdType.INSTITUTION:
-          "do nothing";
+          console.log(
+            `After Authenticating Keycloak Institution User ${keycloak.tokenParsed}`,
+          );
       }
     }
   } catch (excp) {
