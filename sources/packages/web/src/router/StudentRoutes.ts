@@ -9,6 +9,7 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "../views/student/DynamicStudentApp.vue";
+import DynamicProfile from "../views/student/DynamicProfile.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -52,6 +53,11 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             });
           }
         },
+      },
+      {
+        path: "dynamic-student-profile",
+        name: "dynamicStudentProfile",
+        component: DynamicProfile,
       },
       {
         path: "student-profile",
