@@ -22,6 +22,7 @@ import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import formio from "../../components/generic/formio.vue";
 import { StudentService } from "../../services/StudentService";
+import { sinValidationRule } from "../../validators/SinNumberValidator";
 import {
   StudentInfo,
   StudentContact,
@@ -32,7 +33,12 @@ type StudentFormData = Pick<
   StudentInfo,
   "firstName" | "lastName" | "gender" | "email"
 > &
-  StudentContact & { givenNames: string; dateOfBirth: string; mode: string };
+  StudentContact & {
+    givenNames: string;
+    dateOfBirth: string;
+    mode: string;
+    isSinValid?: boolean;
+  };
 
 export default {
   components: { formio },
@@ -47,7 +53,23 @@ export default {
     const store = useStore();
     const initialData = ref({} as StudentFormData);
     const changed = (form: any, event: any) => {
-      console.dir(event.data);
+      if (
+        event.changed &&
+        event.changed.component.key === "sin" &&
+        event.changed.value
+      ) {
+        const value = event.changed.value;
+
+        const isValidSin = sinValidationRule(value);
+        const newSubmissionData: StudentFormData = {
+          ...event.data,
+          isSinValid: isValidSin,
+        };
+
+        form.submission = {
+          data: newSubmissionData,
+        };
+      }
     };
 
     const submitted = async (args: any) => {
