@@ -58,7 +58,7 @@ export default {
       }
 
       const payload = { variables: {} };
-      const variables = Object.entries(args).map(entry => {
+      const variables = Object.entries(args).map((entry) => {
         const [key, formValue] = entry;
         const newVariableValue = {
           value: String(formValue),
