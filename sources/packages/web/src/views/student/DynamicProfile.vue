@@ -9,7 +9,7 @@
     <template #content>
       <formio
         formName="studentinformation"
-        :data="init"
+        :data="initialData"
         @changed="changed"
         @submitted="submitted"
       ></formio>
@@ -18,21 +18,35 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useStore } from "vuex";
 import formio from "../../components/generic/formio.vue";
+import { StudentService } from "../../services/StudentService";
+import {
+  StudentInfo,
+  StudentContact,
+} from "../../types/contracts/StudentContract";
 // import ApiClient from "../../services/http/ApiClient";
+
+type StudentFormData = Pick<
+  StudentInfo,
+  "firstName" | "lastName" | "gender" | "email"
+> &
+  StudentContact & { givenNames: string; dateOfBirth: string; mode: string };
 
 export default {
   components: { formio },
-  setup() {
-    const init = ref({
-      givenNames: "Laba",
-      lastName: "Ballabh",
-    });
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+  },
+  setup(props: any) {
+    const store = useStore();
+    const initialData = ref({} as StudentFormData);
     const changed = (form: any, event: any) => {
-      if (event.changed) {
-        console.dir(event.changed.component);
-      }
       console.dir(event.data);
     };
 
@@ -40,7 +54,31 @@ export default {
       console.log(`Submission: \n ${JSON.stringify(args, null, 2)}`);
     };
 
-    return { changed, submitted, init };
+    onMounted(async () => {
+      if (props.editMode) {
+        const studentAllInfo = await StudentService.shared.getStudentInfo();
+        const data: StudentFormData = {
+          ...studentAllInfo,
+          ...studentAllInfo.contact,
+          givenNames: studentAllInfo.firstName,
+          dateOfBirth: studentAllInfo.birthDateFormatted2,
+          mode: "edit",
+        };
+        initialData.value = data;
+      } else {
+        console.dir(store.state.student.profile);
+        const profile = store.state.student.profile;
+        const obj: StudentFormData = {
+          ...profile,
+          firstName: profile.givenNames,
+          dateOfBirth: profile.birthdate,
+          mode: "create",
+        };
+        initialData.value = obj;
+      }
+    });
+
+    return { changed, submitted, initialData };
   },
 };
 </script>

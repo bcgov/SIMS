@@ -58,6 +58,13 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "dynamic-student-profile",
         name: "dynamicStudentProfile",
         component: DynamicProfile,
+        props: { editMode: false },
+      },
+      {
+        path: "dynamic-student-profile/edit",
+        name: "dynamicStudentProfileEdit",
+        component: DynamicProfile,
+        props: { editMode: true },
       },
       {
         path: "student-profile",
