@@ -1,7 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import StudentDashboard from "../views/student/StudentDashboard.vue";
 import Login from "../views/student/Login.vue";
-import Student from "../views/student/Student.vue";
 import AppStudent from "../views/student/AppStudent.vue";
 import FinancialAidApplication from "../views/student/financial-aid-application/FinancialAidApplication.vue";
 import PersonalInfoQuestionnaire from "../views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";
@@ -9,7 +8,7 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "../views/student/DynamicStudentApp.vue";
-import DynamicProfile from "../views/student/DynamicProfile.vue";
+import StudentProfile from "../views/student/StudentProfile.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -55,27 +54,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "dynamic-student-profile",
-        name: "dynamicStudentProfile",
-        component: DynamicProfile,
-        props: { editMode: false },
-      },
-      {
-        path: "dynamic-student-profile/edit",
-        name: "dynamicStudentProfileEdit",
-        component: DynamicProfile,
-        props: { editMode: true },
-      },
-      {
         path: "student-profile",
         name: StudentRoutesConst.STUDENT_PROFILE,
-        component: Student,
+        component: StudentProfile,
         props: { editMode: false },
       },
       {
         path: "student-profile/edit",
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
-        component: Student,
+        component: StudentProfile,
       },
       {
         path: "dynamic-application-form",
