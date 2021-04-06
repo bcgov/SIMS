@@ -97,7 +97,7 @@ export class AppConfigService {
   authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
     if (options.type === this._authClientType) {
       const auth = this.authService?.authenticated || false;
-      console.log(`auth is ${auth}`);
+
       if (auth) {
         let validUser = false;
         if (this.authService?.tokenParsed) {
@@ -125,7 +125,6 @@ export class AppConfigService {
         if (RouteHelper.isRootRoute(options.path, options.type)) {
           return AuthStatus.RedirectHome;
         }
-        console.log(`Returning as continue ${AuthStatus.Continue}`);
         return AuthStatus.Continue;
       } else {
         //If not authenticated through authservice, ie. auth=false

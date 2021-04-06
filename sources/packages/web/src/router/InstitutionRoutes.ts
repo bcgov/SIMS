@@ -23,6 +23,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: Login,
       },
       {
+        path: AppRoutes.LoginBasicBCeID,
+        name: InstitutionRoutesConst.LOGIN_BASICBCEID,
+        component: Login,
+        props: { basicBCeID: true },
+      },
+      {
         path: AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         component: InstitutionDashboard,
@@ -41,8 +47,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             type: ClientIdType.INSTITUTION,
             path: to.path,
           });
-          console.log("next is ");
-          console.dir(next);
           switch (status) {
             case AuthStatus.Continue:
               next();

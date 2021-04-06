@@ -34,26 +34,22 @@ export class UserController extends BaseController {
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
     );
-    console.log("bceid account is ");
-    console.dir(account);
-
     if (account == null) {
-      throw new NotFoundException(
-        `No bceid account was found for  ${userToken.userName}`,
-      );
+      return {} as BCeIDDetailsDto;
+    } else {
+      return {
+        user: {
+          guid: account.user.guid,
+          displayName: account.user.displayName,
+          firstname: account.user.firstname,
+          surname: account.user.surname,
+          email: account.user.email,
+        },
+        institution: {
+          guid: account.institution.guid,
+          legalName: account.institution.legalName,
+        },
+      };
     }
-    return {
-      user: {
-        guid: account.user.guid,
-        displayName: account.user.displayName,
-        firstname: account.user.firstname,
-        surname: account.user.surname,
-        email: account.user.email,
-      },
-      institution: {
-        guid: account.institution.guid,
-        legalName: account.institution.legalName,
-      },
-    };
-  }
+  } //Close getBCeID method
 }

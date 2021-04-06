@@ -8,19 +8,26 @@
         <h1>Welcome to StudentAid BC</h1>
         <h4>
           We are using BCeID for Authentication. Please click on Login/Register
-          buttons below to start your sign in/sign up.
+          buttons below to start your sign in/sign up with your Business BCeID.
         </h4>
       </div>
+
+      <Message severity="error" v-if="basicBCeID">
+        No such account has been found with BCeID or You have mistakely used a
+        Basic BCeID instead of a Business BCeID.Please login with your Business
+        BCeId
+      </Message>
     </template>
+
     <template #footer>
       <Button
-        label="Login with BCeID"
+        label="Login with Business BCeID"
         icon="pi pi-check"
         class="p-mr-2"
         @click="login"
       ></Button>
       <Button
-        label="Sign Up with BCeID"
+        label="Sign Up for Business BCeID"
         icon="pi pi-user"
         class="p-button-info"
         @click="login"
@@ -34,8 +41,17 @@ import { AppConfigService } from "../../services/AppConfigService";
 
 export default {
   components: {},
-  setup() {
+  props: {
+    basicBCeID: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props: any) {
     const login = () => {
+      //logging off so that refreshes to this page log off users
+      AppConfigService.shared.authService?.logout();
+
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
       });
