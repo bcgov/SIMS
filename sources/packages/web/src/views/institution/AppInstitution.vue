@@ -31,18 +31,9 @@ export default {
           name: InstitutionRoutesConst.LOGIN,
         });
       } else {
-        const bceIdAccountDetails = await UserService.shared.getBCeIDAccountDetails();
-
-        if (!bceIdAccountDetails.user) {
-          //If the user is a basic user, there wont be any bceid details in the response
-          router.push({
-            name: InstitutionRoutesConst.LOGIN_BASICBCEID,
-          });
-        } else {
-          router.push({
-            name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-          });
-        }
+        router.push({
+          name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+        });
       }
     });
 

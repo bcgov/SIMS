@@ -13,9 +13,8 @@
       </div>
 
       <Message severity="error" v-if="basicBCeID">
-        No such account has been found with BCeID or You have mistakely used a
-        Basic BCeID instead of a Business BCeID.Please login with your Business
-        BCeId
+        No such Business account has been found with BCeID. Please login with
+        your Business BCeId
       </Message>
     </template>
 
@@ -38,6 +37,7 @@
 
 <script lang="ts">
 import { AppConfigService } from "../../services/AppConfigService";
+import { onMounted } from "vue";
 
 export default {
   components: {},
@@ -47,11 +47,15 @@ export default {
       default: false,
     },
   },
-  setup(props: any) {
-    const login = () => {
-      //logging off so that refreshes to this page log off users
-      AppConfigService.shared.authService?.logout();
 
+  setup(props: any) {
+    onMounted(async () => {
+      // if (props.basicBCeID) {
+      //   //logging off so that refreshes to this page log off users
+      //   await AppConfigService.shared.authService?.logout();
+      // }
+    });
+    const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
       });
