@@ -22,12 +22,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.LOGIN,
         component: Login,
       },
-      // {
-      //   path: AppRoutes.LoginBasicBCeID,
-      //   name: InstitutionRoutesConst.LOGIN_BASICBCEID,
-      //   component: Login,
-      //   props: { basicBCeID: true },
-      // },
+      {
+        path: AppRoutes.LoginBasicBCeID,
+        name: InstitutionRoutesConst.LOGIN_BASICBCEID,
+        component: Login,
+        props: { basicBCeID: true },
+      },
       {
         path: AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
@@ -47,8 +47,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             type: ClientIdType.INSTITUTION,
             path: to.path,
           });
-          //Start Here
-          //if to inculdes /login?bcEID=true , set status to AuthStatus.Continue
+          console.log(status);
           switch (status) {
             case AuthStatus.Continue:
               next();
@@ -58,6 +57,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
                 name: InstitutionRoutesConst.LOGIN,
               });
               break;
+            // case AuthStatus.ReLogin:
+            //   next({
+            //     name: InstitutionRoutesConst.LOGIN_BASICBCEID,
+            //   });
+            //   break;
             case AuthStatus.RedirectHome:
               next({
                 name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
