@@ -1,10 +1,14 @@
 <template>
-  <div class="p-m-4">
-    <formio
-      formName="fulltimeapplication"
-      :data="initialData"
-      @submitted="submitted"
-    ></formio>
+  <div class="center-container">
+    <div class="p-card p-m-4 application-container">
+      <div class="p-p-4">
+        <formio
+          formName="fulltimeapplication"
+          :data="initialData"
+          @submitted="submitted"
+        ></formio>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -13,7 +17,6 @@ import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref, reactive } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
-//import { StudentRoutesConst } from "../../../../constants/routes/RouteConstants";
 export default {
   components: {
     formio,
@@ -28,7 +31,6 @@ export default {
     const initialData = ref({});
 
     const submitted = async (args: any) => {
-      console.log(args);
       if (props.id) {
         console.log("Must update");
         return;
@@ -95,7 +97,21 @@ export default {
   line-height: 34px;
 }
 
+.center-container {
+  display: flex;
+  justify-content: center;
+}
+
+.application-container {
+  max-width: 900px;
+}
+
 .img-background {
   background-image: url("../../../assets/images/icon_assistance.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  min-height: 350px;
 }
 </style>

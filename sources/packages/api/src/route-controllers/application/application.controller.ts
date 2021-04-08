@@ -22,7 +22,7 @@ export class ApplicationController extends BaseController {
   async getByApplicationId(
     @Param("id") applicationId: string,
     @UserToken() userToken: IUserToken,
-  ): Promise<void> {
+  ): Promise<any> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       userToken.userName,
@@ -40,7 +40,7 @@ export class ApplicationController extends BaseController {
   async create(
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
-  ): Promise<string> {
+  ): Promise<number> {
     const createdApplication = await this.applicationService.createApplication(
       userToken,
       payload,

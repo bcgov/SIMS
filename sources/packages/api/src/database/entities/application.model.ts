@@ -11,8 +11,8 @@ import { Student } from "./student.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({
     name: "data",
@@ -21,7 +21,7 @@ export class Application extends RecordDataModel {
   })
   data: any;
 
-  @OneToOne(() => Student, { eager: false, cascade: false })
+  @OneToOne(() => Student, { eager: false, cascade: true })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
