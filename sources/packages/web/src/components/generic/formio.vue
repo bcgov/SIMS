@@ -10,11 +10,14 @@ import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
 
 export default {
-  emits: ["submitted", "loaded"],
+  emits: ["submitted", "loaded", "changed"],
   props: {
     formName: {
       type: String,
       required: true,
+    },
+    data: {
+      type: Object,
     },
   },
   setup(props: any, context: SetupContext) {
@@ -34,6 +37,11 @@ export default {
 
       form.nosubmit = true;
       hideSpinner.value = true;
+      if (props.data) {
+        form.submission = {
+          data: props.data,
+        };
+      }
 
       context.emit("loaded", form);
 
