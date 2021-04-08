@@ -7,3 +7,4 @@ export * from "./institution/institution.service";
 export * from "./service-account/service-account.service";
 export * from "./rule-engine/rule-engine.service";
 export * from "./form/form.service";
+export * from "./application/application.service";
