@@ -80,18 +80,14 @@ export class AppConfigService {
   async init() {
     await this.config();
   }
-  // async resetRequiredLogin(flag: boolean) {
-  //   this.authService?.loginRequired = flag;
-  // }
+
   async initAuthService(type: ClientIdType) {
     if (this.authService) {
-      console.log("returning existing authService");
       return;
     }
     if (this._config) {
       this._authClientType = type;
       this.authService = await AuthService(this._config, type);
-      console.log("returning new authService");
     } else {
       throw new Error("Unable to load application: server is not responding");
     }
@@ -101,16 +97,13 @@ export class AppConfigService {
   authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
     if (options.type === this._authClientType) {
       const auth = this.authService?.authenticated || false;
-      console.log(`in authstatus ${auth}`);
+
       if (auth) {
         let validUser = false;
         if (this.authService?.tokenParsed) {
           const token = this.authService?.tokenParsed as ApplicationToken;
           switch (options.type) {
             case ClientIdType.INSTITUTION: {
-              // if (this.authService.loginRequired == true) {
-              //   validUser = false;
-              // } else
               if (token.IDP === AppIDPType.BCeID) {
                 validUser = true;
               }
@@ -126,12 +119,6 @@ export class AppConfigService {
               validUser = false;
           }
         }
-
-        // //This will happen when institution user is using a basicBCeID account
-        // // instead of Business BCeID account
-        // if (!validUser && options.type === ClientIdType.INSTITUTION) {
-        //   return AuthStatus.ReLogin;
-        // }
 
         if (!validUser) {
           return AuthStatus.ForbiddenUser;

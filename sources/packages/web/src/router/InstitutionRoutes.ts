@@ -23,12 +23,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: Login,
       },
       {
-        path: AppRoutes.LoginBasicBCeID,
-        name: InstitutionRoutesConst.LOGIN_BASICBCEID,
-        component: Login,
-        props: { basicBCeID: true },
-      },
-      {
         path: AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         component: InstitutionDashboard,
@@ -40,7 +34,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       },
     ],
     beforeEnter: (to, from, next) => {
-      console.log(`before entering ${to.path} from ${from.path}`);
       AppConfigService.shared
         .initAuthService(ClientIdType.INSTITUTION)
         .then(() => {

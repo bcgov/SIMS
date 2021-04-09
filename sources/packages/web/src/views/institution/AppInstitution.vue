@@ -11,7 +11,6 @@ import { ref, onMounted } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
-//import { UserService } from "../../services/UserService";
 import NavBar from "../../components/partial-view/student/NavBar.vue";
 
 export default {

@@ -10,10 +10,8 @@ export default async function(
   type: ClientIdType,
 ): Promise<Keycloak.KeycloakInstance> {
   if (keycloak) {
-    console.log("returning existing keycloak");
     return keycloak;
   }
-  console.log("creating new keycloak");
   keycloak = Keycloak({
     url: config.authConfig.url,
     realm: config.authConfig.realm,
