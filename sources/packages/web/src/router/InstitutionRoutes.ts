@@ -40,6 +40,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       },
     ],
     beforeEnter: (to, from, next) => {
+      console.log(`before entering ${to.path} from ${from.path}`);
       AppConfigService.shared
         .initAuthService(ClientIdType.INSTITUTION)
         .then(() => {
@@ -47,7 +48,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             type: ClientIdType.INSTITUTION,
             path: to.path,
           });
-          console.log(status);
           switch (status) {
             case AuthStatus.Continue:
               next();
@@ -57,11 +57,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
                 name: InstitutionRoutesConst.LOGIN,
               });
               break;
-            // case AuthStatus.ReLogin:
-            //   next({
-            //     name: InstitutionRoutesConst.LOGIN_BASICBCEID,
-            //   });
-            //   break;
             case AuthStatus.RedirectHome:
               next({
                 name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,

@@ -80,14 +80,18 @@ export class AppConfigService {
   async init() {
     await this.config();
   }
-
+  // async resetRequiredLogin(flag: boolean) {
+  //   this.authService?.loginRequired = flag;
+  // }
   async initAuthService(type: ClientIdType) {
     if (this.authService) {
+      console.log("returning existing authService");
       return;
     }
     if (this._config) {
       this._authClientType = type;
       this.authService = await AuthService(this._config, type);
+      console.log("returning new authService");
     } else {
       throw new Error("Unable to load application: server is not responding");
     }
@@ -97,7 +101,7 @@ export class AppConfigService {
   authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
     if (options.type === this._authClientType) {
       const auth = this.authService?.authenticated || false;
-      console.log(auth);
+      console.log(`in authstatus ${auth}`);
       if (auth) {
         let validUser = false;
         if (this.authService?.tokenParsed) {

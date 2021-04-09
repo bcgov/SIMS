@@ -11,10 +11,6 @@
           buttons below to start your sign in/sign up with your Business BCeID.
         </h4>
       </div>
-      <h1>The user is {{ $route.params.basicBCeID }}</h1>
-      <h1>The user is {{ route.query.basicBCeID }}</h1>
-      <h1>The user is {{ $route.query.basicBCeID }}</h1>
-
       <Message severity="error" v-if="basicBCeID">
         No such Business account has been found with BCeID. Please login with
         your Business BCeId
@@ -40,37 +36,21 @@
 
 <script lang="ts">
 import { AppConfigService } from "../../services/AppConfigService";
-import { onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 
 export default {
   components: {},
-  props: {
-    basicBCeID: {
-      type: Boolean,
-      default: false,
-    },
-  },
 
   setup(props: any) {
-    const router = useRouter();
     const route = useRoute();
-    console.log(route.path);
-    console.log(route.fullPath);
-    onMounted(async () => {
-      // if (props.basicBCeID) {
-      //   //logging off so that refreshes to this page log off users
-      //   await AppConfigService.shared.authService?.logout();
-      // }
-    });
+    const basicBCeID = route.query.basicBCeID;
     const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
-        redirectUri: "",
       });
     };
 
-    return { login, router, route };
+    return { login, basicBCeID };
   },
 };
 </script>

@@ -18,7 +18,6 @@ export const InstitutionRoutesConst = {
   INSTITUTION_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
-  LOGIN_BASICBCEID: Symbol(),
 };
 
 export const SharedRouteConst = {

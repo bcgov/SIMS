@@ -1,0 +1,31 @@
+# Project Specific Env
+PROJECT_NAME=sims
+ENVIRONMENT=local
+BUILD_REF=dev
+BUILD_ID=0
+API_PORT=3000
+APP_PORT=8080
+
+
+
+E2E_TEST_STUDENT_PASSWORD=qK6Bryp3W3u
+E2E_TEST_STUDENT_USERNAME=student_e2e_test
+
+E2E_TEST_BCeID_USERNAME=4861e92082bd4884842f304c39f63fcb@bceid
+E2E_TEST_BCeID_PASSWORD=*0i2VYvDodz*
+
+# BCeID Web Service
+BCeID_WEB_SERVICE_WSDL=https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl
+BCeID_WEB_SERVICE_ONLINE_SERVICE_ID=1BA2-0174-6429-4E7A
+BCeID_WEB_SERVICE_REQUESTER_USER_GUID=842654f7-7b1e-4fc2-ab59-818220fa62de
+BCeID_WEB_SERVICE_AUTH_USER_NAME=IDIR\dynwebt
+BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=Talisman1-2021
+
+# Workflow related
+# Camunda
+RULE_ENGINE_URL=https://dev-aest-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda/engine-rest
+# Forms
+FORMS_URL=https://dev-aest-ffa-forms.apps.silver.devops.gov.bc.ca
+# Service Account
+WORKFLOW_SA_USER_NAME=formflow@service
+WORKFLOW_SA_PASSWORD=a4pcq6vMb2tL

@@ -10,8 +10,10 @@ export default async function(
   type: ClientIdType,
 ): Promise<Keycloak.KeycloakInstance> {
   if (keycloak) {
+    console.log("returning existing keycloak");
     return keycloak;
   }
+  console.log("creating new keycloak");
   keycloak = Keycloak({
     url: config.authConfig.url,
     realm: config.authConfig.realm,
@@ -19,49 +21,42 @@ export default async function(
   });
 
   try {
-    console.log("Initializing Auth Service");
     await keycloak.init({
       onLoad: "check-sso",
       responseMode: "query",
       checkLoginIframe: false,
     });
 
-    console.log(`keycloak.authenticated ${keycloak.authenticated}`);
     if (keycloak.authenticated) {
-      console.log("In AUth Service Client Type Insti 1");
       switch (type) {
         case ClientIdType.STUDENT:
           store.dispatch("student/setStudentProfileData", keycloak);
           break;
         case ClientIdType.INSTITUTION: {
-          console.log("In AUth Service Client Type Insti 2");
-
           const authHeader = HttpBaseClient.createAuthHeader(keycloak.token);
           const bceIdAccountDetails = await UserService.shared.getBCeIDAccountDetails(
             authHeader,
           );
-          console.dir(bceIdAccountDetails);
           if (!bceIdAccountDetails.user) {
-            console.log("It is a Basic User");
             const url = keycloak.createLoginUrl();
+            //query params ?basicBCeID=true is going to be used in Login.vue to
+            //show a corresponding message to the user
+            const redirectUrl = decodeURIComponent(
+              url
+                .substring(url.indexOf("?") + 1)
+                .split("&")[1]
+                .split("=")[1]
+                .concat("?basicBCeID=true"),
+            );
 
-            const redirectUrl = url
-              .substring(url.indexOf("?") + 1)
-              .split("&")[1]
-              .split("=")[1]
-              .concat("/basicBCeID");
-
-            console.log(`keycloak.redirectUri is ${redirectUrl}`);
             await keycloak.logout({
               redirectUri: redirectUrl,
             });
-            //keycloak.loginRequired = true;
           }
-        }
-      } //Switch case ends
-    }
+        } //Institution switch case ends
+      } //Switch block ends
+    } //KeyCloak Authenticate = true
   } catch (excp) {
-    console.dir(excp);
     console.error(`KC - init excp : ${excp} - ${type}`);
   }
   keycloak.onTokenExpired = () => {

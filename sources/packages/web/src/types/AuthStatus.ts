@@ -3,5 +3,4 @@ export enum AuthStatus {
   RedirectHome,
   ForbiddenUser,
   Continue,
-  ReLogin,
 }
