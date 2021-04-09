@@ -19,6 +19,9 @@ export default {
     data: {
       type: Object,
     },
+    draft: {
+      type: Boolean,
+    },
   },
   setup(props: any, context: SetupContext) {
     const formioContainerRef = ref(null);
@@ -41,6 +44,22 @@ export default {
         form.submission = {
           data: props.data,
         };
+      } else {
+        if (props.draft) {
+          try {
+            const draftData = await ApiClient.DynamicForms.getDraft(
+              props.formName,
+            );
+            console.dir(draftData);
+            if (draftData) {
+              form.submission = {
+                data: draftData.data,
+              };
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
       }
 
       context.emit("loaded", form);
@@ -53,6 +72,12 @@ export default {
       form.on("submit", (submision: any) => {
         context.emit("submitted", submision.data);
       });
+
+      if (props.draft) {
+        form.on("draft", async (data: any) => {
+          await ApiClient.DynamicForms.saveDraft(props.formName, data);
+        });
+      }
     });
 
     return { formioContainerRef, hideSpinner };

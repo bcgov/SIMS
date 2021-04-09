@@ -10,6 +10,7 @@ const finalConfig: any = { ...config, schema: process.env.DB_SCHEMA || "sims" };
   imports: [
     TypeOrmModule.forRoot({
       ...finalConfig,
+      migrations: [], // No Migrations required for general connection
       logging: ["error", "warn"],
     }),
     LoggerModule,

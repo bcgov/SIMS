@@ -13,7 +13,7 @@ const config = require("../ormconfig");
     delete config.entities;
     const connection = await createConnection({
       ...config,
-      logging: ["error", "warn", "info"],
+      logging: ["error", "warn"],
     });
     const schema = process.env.DB_SCHEMA || "sims";
     await connection.query(`CREATE SCHEMA IF NOT EXISTS ${schema};`);
@@ -28,5 +28,4 @@ const config = require("../ormconfig");
     console.dir(config);
     throw excp;
   }
-
 })();

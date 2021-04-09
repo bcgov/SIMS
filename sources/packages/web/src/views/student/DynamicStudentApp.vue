@@ -6,6 +6,7 @@
     <template #content>
       <formio
         formName="sfaa2122"
+        draft="draft"
         @changed="changed"
         @submitted="submitted"
       ></formio>
@@ -14,12 +15,14 @@
 </template>
 
 <script lang="ts">
+import { ref } from "vue";
 import formio from "../../components/generic/formio.vue";
 import ApiClient from "../../services/http/ApiClient";
 
 export default {
   components: { formio },
   setup() {
+    const draft = ref(true);
     const changed = (form: any, event: any) => {
       if (
         event.changed &&
@@ -71,7 +74,7 @@ export default {
       await ApiClient.Workflow.startWorkflow(args.workflowName, payload);
     };
 
-    return { changed, submitted };
+    return { changed, submitted, draft };
   },
 };
 </script>

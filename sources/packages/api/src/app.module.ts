@@ -9,6 +9,7 @@ import {
   ArchiveDbService,
   InstitutionService,
   BCeIDService,
+  UsersDraftService,
   ApplicationService,
 } from "./services";
 import {
@@ -48,6 +49,7 @@ import { ServiceAccountService } from "./services/service-account/service-accoun
     ServiceAccountService,
     RuleEngineService,
     FormService,
+    UsersDraftService,
     ApplicationService,
   ],
 })
