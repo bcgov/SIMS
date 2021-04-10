@@ -29,6 +29,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const student = await this.studentService.getStudentByUserName(
       userInfo.userName,
     );
+    if (!student) {
+      throw new Error(
+        "Not able to find a student associated with the current user name.",
+      );
+    }
 
     // Create the new application.
     const newApplication = new Application();

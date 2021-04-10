@@ -66,7 +66,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentProfile,
       },
       {
-        path: "dynamic-application-form/:id?",
+        path: "application-form/:id?",
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
         component: DynamicStudentApp,
         props: true,
