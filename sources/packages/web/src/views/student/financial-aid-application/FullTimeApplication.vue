@@ -53,12 +53,18 @@ export default {
       } else {
         //Get the student info from api call
         const studentInfo = await StudentService.shared.getStudentInfo();
+
+        // TODO: Move formatted address to a common place in Vue app or API.
+        // Adjust the spaces when optional fields are not present.
+        const address = studentInfo.contact;
+        const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
+
         initialData.value = {
           studentFullName: `${studentInfo.firstName} ${studentInfo.lastName}`,
           studentGender: studentInfo.gender,
           studentDateOfBirth: studentInfo.birthDateFormatted,
           studentPhoneNumber: studentInfo.contact.phone,
-          studentHomeAddress: "111-234 Esquimalt Rd Victoria BC Canada",
+          studentHomeAddress: formattedAddress,
         };
       }
     });
