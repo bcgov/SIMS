@@ -32,7 +32,7 @@ export default {
 
     const submitted = async (args: any) => {
       if (props.id) {
-        console.log("Must update");
+        // TODO: Define how the update will happen.
         return;
       }
 
@@ -48,7 +48,6 @@ export default {
         const dataToLoad = await ApiClient.Application.getApplicationData(
           props.id,
         );
-        console.dir(dataToLoad);
         initialData.value = dataToLoad;
       } else {
         //Get the student info from api call

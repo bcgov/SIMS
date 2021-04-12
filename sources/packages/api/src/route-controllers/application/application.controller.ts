@@ -10,7 +10,10 @@ import { ApplicationService } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { CreateApplicationDto } from "./models/application.model";
+import {
+  CreateApplicationDto,
+  GetApplicationDataDto,
+} from "./models/application.model";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -22,7 +25,7 @@ export class ApplicationController extends BaseController {
   async getByApplicationId(
     @Param("id") applicationId: string,
     @UserToken() userToken: IUserToken,
-  ): Promise<any> {
+  ): Promise<GetApplicationDataDto> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
       userToken.userName,
@@ -33,7 +36,7 @@ export class ApplicationController extends BaseController {
       );
     }
 
-    return application.data;
+    return { data: application.data };
   }
 
   @Post()
