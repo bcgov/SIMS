@@ -10,10 +10,10 @@ import {
 import BaseController from "../BaseController";
 import axios from "axios";
 import { FormService, UsersDraftService } from "../../services";
-import { UserToken } from "src/auth/decorators/userToken.decorator";
-import { IUserToken } from "src/auth/userToken.interface";
-import { LoggerService } from "src/logger/logger.service";
-import { InjectLogger } from "src/common";
+import { UserToken } from "../../auth/decorators/userToken.decorator";
+import { IUserToken } from "../../auth/userToken.interface";
+import { LoggerService } from "../../logger/logger.service";
+import { InjectLogger } from "../../common";
 
 @Controller("dynamic-form")
 export class DynamicFormController extends BaseController {
