@@ -17,6 +17,8 @@ objects:
       bceid-web-service-auth-user-password: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD}
       workflow-sa-user-name: ${WORKFLOW_SA_USER_NAME}
       workflow-sa-password: ${WORKFLOW_SA_PASSWORD}
+      forms-sa-user-name: ${FORMS_SA_USER_NAME}
+      forms-sa-password: ${FORMS_SA_PASSWORD}
 parameters:
   - name: NAME
     description: |
@@ -63,3 +65,13 @@ parameters:
     required: true
     description: |
       Service Account password (from Keycloak) for workflow engine (Camunda).
+  - name: FORMS_SA_USER_NAME
+    displayName: Service Account Username for formio
+    required: true
+    description: |
+      Service Account Username for formio.
+  - name: FORMS_SA_PASSWORD
+    displayName: Service Account Password for formio
+    required: true
+    description: |
+      Service Account Password for formio.
