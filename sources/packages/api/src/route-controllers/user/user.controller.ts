@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";

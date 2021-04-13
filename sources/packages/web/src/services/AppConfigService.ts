@@ -97,7 +97,6 @@ export class AppConfigService {
   authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
     if (options.type === this._authClientType) {
       const auth = this.authService?.authenticated || false;
-
       if (auth) {
         let validUser = false;
         if (this.authService?.tokenParsed) {
@@ -119,7 +118,6 @@ export class AppConfigService {
               validUser = false;
           }
         }
-
         if (!validUser) {
           return AuthStatus.ForbiddenUser;
         }

@@ -25,7 +25,6 @@ export default {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
       isAuthReady.value = true;
       const auth = AppConfigService.shared.authService?.authenticated ?? false;
-
       if (!auth) {
         router.push({
           name: InstitutionRoutesConst.LOGIN,
