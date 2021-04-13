@@ -124,6 +124,9 @@ export class AppConfigService {
         if (RouteHelper.isRootRoute(options.path, options.type)) {
           return AuthStatus.RedirectHome;
         }
+        if (options.path.includes(AppRoutes.Login)) {
+          return AuthStatus.RedirectHome;
+        }
         return AuthStatus.Continue;
       } else {
         if (options.path.includes(AppRoutes.Login)) {
