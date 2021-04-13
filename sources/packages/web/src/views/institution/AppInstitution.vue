@@ -6,12 +6,14 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import NavBar from "../../components/partial-view/student/NavBar.vue";
+import { UserService } from "../../services/UserService";
+import { AppRoutes } from "../../types";
 
 export default {
   components: {
@@ -19,6 +21,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const isAuthReady = ref(false);
     // Mounding hook
     onMounted(async () => {
@@ -30,9 +33,17 @@ export default {
           name: InstitutionRoutesConst.LOGIN,
         });
       } else {
-        router.push({
-          name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-        });
+        if (await UserService.shared.checkUser()) {
+          if (route.path === AppRoutes.InstitutionRoot) {
+            router.push({
+              name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+            });
+          }
+        } else {
+          router.push({
+            name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+          });
+        }
       }
     });
 

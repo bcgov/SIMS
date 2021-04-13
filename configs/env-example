@@ -52,3 +52,6 @@ FORMS_URL=
 # Service Account
 WORKFLOW_SA_USER_NAME=
 WORKFLOW_SA_PASSWORD=
+
+# Dummy BCeID account response
+DUMMY_BCeID_ACCOUNT_RESPONSE=no

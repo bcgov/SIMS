@@ -28,6 +28,7 @@ import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
+import { AppRoutes } from "../../types";
 
 export default {
   components: {
@@ -57,10 +58,10 @@ export default {
         // Get path
         if (await UserService.shared.checkUser()) {
           await StudentService.shared.synchronizeFromUserInfo();
-          if (route.path === "/student") {
+          if (route.path === AppRoutes.StudentRoot) {
             // Loading student dash board if user try to load /student path
             router.push({
-              name: "odd-or-even",
+              name: StudentRoutesConst.STUDENT_DASHBOARD,
             });
           }
         } else {
