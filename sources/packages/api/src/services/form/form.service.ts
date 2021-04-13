@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { FormsConfig, DryRunSubmissionResult } from "src/types";
+import { FormsConfig, DryRunSubmissionResult } from "../../types";
 import { ConfigService } from "../config/config.service";
 import axios from "axios";
 
