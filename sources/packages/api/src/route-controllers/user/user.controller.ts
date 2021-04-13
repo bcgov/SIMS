@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, NotFoundException } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
@@ -30,12 +30,14 @@ export class UserController extends BaseController {
   }
 
   @Get("bceid-account")
-  async getBCeID(@UserToken() userToken: IUserToken): Promise<BCeIDDetailsDto> {
+  async getBCeID(
+    @UserToken() userToken: IUserToken,
+  ): Promise<BCeIDDetailsDto | null> {
     const account = await this.bceidService.getAccountDetails(
       userToken.idp_user_name,
     );
     if (account == null) {
-      return {} as BCeIDDetailsDto;
+      return null;
     } else {
       return {
         user: {

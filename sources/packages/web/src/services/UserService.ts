@@ -13,7 +13,9 @@ export class UserService {
     return await ApiClient.User.checkUser();
   }
 
-  async getBCeIDAccountDetails(authHeader?: any): Promise<BCeIDDetailsDto> {
+  async getBCeIDAccountDetails(
+    authHeader?: any,
+  ): Promise<BCeIDDetailsDto | null> {
     return await ApiClient.User.bceidAccount(authHeader);
   }
 }

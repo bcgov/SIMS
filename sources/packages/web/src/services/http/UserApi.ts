@@ -15,7 +15,7 @@ export class UserApi extends HttpBaseClient {
     }
   }
 
-  public async bceidAccount(headers?: any): Promise<BCeIDDetailsDto> {
+  public async bceidAccount(headers?: any): Promise<BCeIDDetailsDto | null> {
     try {
       const response = await this.apiClient.get(
         "users/bceid-account",

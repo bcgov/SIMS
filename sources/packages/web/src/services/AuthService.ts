@@ -35,7 +35,9 @@ export default async function(
           const bceIdAccountDetails = await UserService.shared.getBCeIDAccountDetails(
             authHeader,
           );
-          if (!bceIdAccountDetails.user) {
+
+          if (!bceIdAccountDetails) {
+            //basicbceid user or a user that doesnt exist with bceid
             const url = keycloak.createLoginUrl();
             //query params ?basicBCeID=true is going to be used in Login.vue to
             //show a corresponding message to the user
