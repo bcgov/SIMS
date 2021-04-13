@@ -5,14 +5,17 @@ import HttpClient from "./HttpClient";
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
 
-  protected addAuthHeader(): AxiosRequestConfig {
-    const token = AppConfigService.shared.authService?.token;
+  static createAuthHeader(token: any) {
     if (token) {
       const authorization = `Bearer ${token}`;
       return { headers: { Authorization: authorization } };
+    } else {
+      throw new Error("User is not authenticated!");
     }
-
-    throw new Error("User is not authenticated!");
+  }
+  protected addAuthHeader(): AxiosRequestConfig {
+    const token = AppConfigService.shared.authService?.token;
+    return HttpBaseClient.createAuthHeader(token);
   }
 
   protected handleRequestError(e: any) {

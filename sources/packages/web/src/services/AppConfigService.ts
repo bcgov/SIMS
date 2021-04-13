@@ -126,12 +126,14 @@ export class AppConfigService {
         }
         return AuthStatus.Continue;
       } else {
+        //If not authenticated through authservice, ie. auth=false
         if (options.path.includes(AppRoutes.Login)) {
           return AuthStatus.Continue;
         }
         return AuthStatus.RequiredLogin;
       }
     } else {
+      //If client type is not as expected from the list
       return AuthStatus.ForbiddenUser;
     }
   }

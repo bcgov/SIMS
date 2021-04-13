@@ -20,7 +20,6 @@ export default {
   setup() {
     const router = useRouter();
     const isAuthReady = ref(false);
-
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
