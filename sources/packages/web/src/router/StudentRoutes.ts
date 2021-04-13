@@ -7,8 +7,9 @@ import PersonalInfoQuestionnaire from "../views/student/financial-aid-applicatio
 import SelectProgram from "../views/student/financial-aid-application/SelectProgram.vue";
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
-import DynamicStudentApp from "../views/student/DynamicStudentApp.vue";
+import DynamicStudentApp from "../views/student/financial-aid-application/FullTimeApplication.vue";
 import StudentProfile from "../views/student/StudentProfile.vue";
+
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -65,9 +66,10 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentProfile,
       },
       {
-        path: "dynamic-application-form",
+        path: "application-form/:id?",
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
         component: DynamicStudentApp,
+        props: true,
       },
       {
         path: "application",

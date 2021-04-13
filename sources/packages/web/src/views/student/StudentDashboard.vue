@@ -12,7 +12,7 @@
         label="Start Application"
         class="p-button-raised"
         @click="
-          $router.push({ name: StudentRoutesConst.FINANCIAL_AID_APPLICATION })
+          $router.push({ name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM })
         "
       />
     </template>

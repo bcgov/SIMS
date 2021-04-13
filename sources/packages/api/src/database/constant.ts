@@ -10,4 +10,5 @@ export const TableNames = {
   User: "users",
   Student: "students",
   Institution: "institutions",
+  Applications: "applications",
 };

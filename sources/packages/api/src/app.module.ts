@@ -9,6 +9,7 @@ import {
   ArchiveDbService,
   InstitutionService,
   BCeIDService,
+  ApplicationService,
 } from "./services";
 import {
   UserController,
@@ -17,6 +18,7 @@ import {
   ConfigController,
   DynamicFormController,
   WorkflowController,
+  ApplicationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -33,6 +35,7 @@ import { ServiceAccountService } from "./services/service-account/service-accoun
     ConfigController,
     DynamicFormController,
     WorkflowController,
+    ApplicationController,
   ],
   providers: [
     AppService,
@@ -45,6 +48,7 @@ import { ServiceAccountService } from "./services/service-account/service-accoun
     ServiceAccountService,
     RuleEngineService,
     FormService,
+    ApplicationService,
   ],
 })
 export class AppModule {}
