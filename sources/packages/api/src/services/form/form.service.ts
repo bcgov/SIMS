@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { FormsConfig } from "src/types";
+import { FormsConfig, DryRunSubmissionResult } from "src/types";
 import { ConfigService } from "../config/config.service";
 import axios from "axios";
 
@@ -14,6 +14,11 @@ export class FormService {
     return this.configService.getConfig().forms;
   }
 
+  /**
+   * Get a form definition from formio.
+   * @param formName Name of the form to be retrieved.
+   * @returns Form definition.
+   */
   async fetch(formName: string) {
     const authHeader = await this.createAuthHeader();
     const content = await axios.get(
@@ -23,10 +28,45 @@ export class FormService {
     return content.data;
   }
 
+  /**
+   * Lists form definitions that contains the tag 'common'.
+   */
   async list() {
     return (
       await axios.get(`${this.config.formsUrl}/form?type=form&tags=common`)
     ).data;
+  }
+
+  /**
+   * Drys run submission allows the data to be validated by Formio API and also to
+   * returned a processed data model more close to what would be saved on Formio.
+   * For instance, formio allows that the form elements be defined to not be stored
+   * on the server side, this kind of validations will be applied during this
+   * API call and the result will be the data after processed by formio.
+   * Please note that the data will not be saved on formio database.
+   * @param formName Name of the form to be validated.
+   * @param data Data to be validated/processed.
+   * @returns Status indicating if the data being submitted is valid or not
+   * alongside with the data after formio procecessing.
+   */
+  async dryRunSubmission(
+    formName: string,
+    data: any,
+  ): Promise<DryRunSubmissionResult> {
+    try {
+      const authHeader = await this.createAuthHeader();
+      const submissionResponse = await axios.post(
+        `${this.config.formsUrl}/${formName}/submission?dryrun=1`,
+        { data },
+        authHeader,
+      );
+      return { valid: true, data: submissionResponse.data };
+    } catch (error) {
+      if (error.response.status === HttpStatus.BAD_REQUEST) {
+        return { valid: false };
+      }
+      throw error;
+    }
   }
 
   /**

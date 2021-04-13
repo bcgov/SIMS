@@ -1,12 +1,14 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
 } from "@nestjs/common";
-import { ApplicationService } from "../../services";
+import { ApplicationService, FormService } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -17,7 +19,10 @@ import {
 
 @Controller("application")
 export class ApplicationController extends BaseController {
-  constructor(private readonly applicationService: ApplicationService) {
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly formService: FormService,
+  ) {
     super();
   }
 
@@ -30,6 +35,7 @@ export class ApplicationController extends BaseController {
       applicationId,
       userToken.userName,
     );
+
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
@@ -44,10 +50,22 @@ export class ApplicationController extends BaseController {
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      "fulltimeapplication",
+      payload.data,
+    );
+
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create an applicaion due to an invalid request.",
+      );
+    }
+
     const createdApplication = await this.applicationService.createApplication(
       userToken,
-      payload,
+      submissionResult.data,
     );
+
     return createdApplication.id;
   }
 }
