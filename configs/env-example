@@ -47,11 +47,15 @@ API_INIT_FORMS_SA_PASSWORD=
 # Workflow related 
 # Camunda
 RULE_ENGINE_URL=
-# Forms
-FORMS_URL=
 # Service Account
 WORKFLOW_SA_USER_NAME=
 WORKFLOW_SA_PASSWORD=
+
+# Forms Related
+FORMS_URL=
+# Service Account
+FORMS_SA_USER_NAME=
+FORMS_SA_PASSWORD=
 
 # Dummy BCeID account response
 DUMMY_BCeID_ACCOUNT_RESPONSE=no
