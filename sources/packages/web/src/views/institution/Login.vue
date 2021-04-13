@@ -8,19 +8,24 @@
         <h1>Welcome to StudentAid BC</h1>
         <h4>
           We are using BCeID for Authentication. Please click on Login/Register
-          buttons below to start your sign in/sign up.
+          buttons below to start your sign in/sign up with your Business BCeID.
         </h4>
       </div>
+      <Message severity="error" v-if="basicBCeID">
+        No such Business account has been found with BCeID. Please login with
+        your Business BCeId
+      </Message>
     </template>
+
     <template #footer>
       <Button
-        label="Login with BCeID"
+        label="Login with Business BCeID"
         icon="pi pi-check"
         class="p-mr-2"
         @click="login"
       ></Button>
       <Button
-        label="Sign Up with BCeID"
+        label="Sign Up for Business BCeID"
         icon="pi pi-user"
         class="p-button-info"
         @click="login"
@@ -31,17 +36,21 @@
 
 <script lang="ts">
 import { AppConfigService } from "../../services/AppConfigService";
+import { useRoute } from "vue-router";
 
 export default {
   components: {},
-  setup() {
+
+  setup(props: any) {
+    const route = useRoute();
+    const basicBCeID = route.query.basicBCeID;
     const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
       });
     };
 
-    return { login };
+    return { login, basicBCeID };
   },
 };
 </script>

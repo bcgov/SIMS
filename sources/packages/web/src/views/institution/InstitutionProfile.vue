@@ -348,9 +348,9 @@ const regulatingBodyOptions = [
 ];
 
 interface ReadonlyProfileState {
-  userfirstName: string;
-  userLastName: string;
-  institutionLegalName: string;
+  userfirstName?: string;
+  userLastName?: string;
+  institutionLegalName?: string;
 }
 
 export default {
@@ -393,14 +393,14 @@ export default {
       // Load read-only information from BCeID.
       const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
       readonlyProfileState.value = {
-        userfirstName: bceidAccount.user.firstname,
-        userLastName: bceidAccount.user.surname,
-        institutionLegalName: bceidAccount.institution.legalName,
+        userfirstName: bceidAccount?.user.firstname,
+        userLastName: bceidAccount?.user.surname,
+        institutionLegalName: bceidAccount?.institution.legalName,
       };
 
       setValues({
         // This should be pre-populated only during user creation.
-        studentEmail: bceidAccount.user.email,
+        studentEmail: bceidAccount?.user.email,
       });
     });
 
