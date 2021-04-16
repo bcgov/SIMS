@@ -20,11 +20,8 @@ export class FormService {
    * @returns Form definition.
    */
   async fetch(formName: string) {
-    const authHeader = await this.createAuthHeader();
-    const content = await axios.get(
-      `${this.config.formsUrl}/${formName}`,
-      authHeader,
-    );
+    // const authHeader = await this.createAuthHeader();
+    const content = await axios.get(`${this.config.formsUrl}/${formName}`);
     return content.data;
   }
 

@@ -7,6 +7,7 @@
 import { onMounted, ref } from "vue";
 import { Formio } from "formiojs";
 import { SetupContext } from "vue";
+import { useToast } from "primevue/usetoast";
 import ApiClient from "../../services/http/ApiClient";
 
 export default {
@@ -26,6 +27,7 @@ export default {
   setup(props: any, context: SetupContext) {
     const formioContainerRef = ref(null);
     const hideSpinner = ref(false);
+    const toast = useToast();
 
     onMounted(async () => {
       // Use SIMS API as a proxy to retrieve the form definition from formio.
@@ -76,6 +78,22 @@ export default {
       if (props.draft) {
         form.on("draft", async (data: any) => {
           await ApiClient.DynamicForms.saveDraft(props.formName, data);
+          toast.add({
+            severity: "success",
+            summary: "Draft saved",
+            detail: "",
+            life: 3000,
+          });
+        });
+
+        form.on("draft-clear", async () => {
+          await ApiClient.DynamicForms.deleteDraft(props.formName);
+          toast.add({
+            severity: "success",
+            summary: "Draft removed",
+            detail: "",
+            life: 3000,
+          });
         });
       }
     });
