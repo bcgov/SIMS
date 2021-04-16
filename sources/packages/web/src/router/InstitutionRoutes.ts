@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue";
-import InstitutionProfile from "../views/institution/InstitutionProfile.vue";
+import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import {
   InstitutionRoutesConst,

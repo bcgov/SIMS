@@ -2,12 +2,17 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { FormsConfig, DryRunSubmissionResult } from "../../types";
 import { ConfigService } from "../config/config.service";
 import axios from "axios";
+import { LoggerService } from "../../logger/logger.service";
+import { InjectLogger } from "../../common";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
 
 @Injectable()
 export class FormService {
+  @InjectLogger()
+  logger: LoggerService;
+
   constructor(private readonly configService: ConfigService) {}
 
   get config(): FormsConfig {
@@ -99,19 +104,38 @@ export class FormService {
    * in case the result is anything different from HTTP 200 code.
    */
   private async getUserLogin() {
-    const authRequest = await axios.post(`${this.config.formsUrl}/user/login`, {
-      data: {
-        email: this.config.serviceAccountCredential.userName,
-        password: this.config.serviceAccountCredential.password,
-      },
-    });
-
-    if (authRequest.status !== HttpStatus.OK) {
-      throw new Error(
-        `Error while retrieving formio authentication token. Error ${authRequest.status}: ${authRequest.statusText}`,
+    try {
+      const authRequest = await axios.post(
+        `${this.config.formsUrl}/user/login`,
+        {
+          data: {
+            email: this.config.serviceAccountCredential.userName,
+            password: this.config.serviceAccountCredential.password,
+          },
+        },
       );
-    }
 
-    return authRequest;
+      if (authRequest.status !== HttpStatus.OK) {
+        throw new Error(
+          `Error while retrieving formio authentication token. Error ${authRequest.status}: ${authRequest.statusText}`,
+        );
+      }
+
+      return authRequest;
+    } catch (excp) {
+      this.logger.error(`Received exception while getting form SA token`);
+      this.logger.error(
+        `${JSON.stringify(
+          {
+            status: excp.response.status,
+            statusText: excp.response.statusText,
+            data: excp.response.data,
+          },
+          null,
+          2,
+        )}`,
+      );
+      throw excp;
+    }
   }
 }
