@@ -115,12 +115,6 @@ export class FormService {
         },
       );
 
-      if (authRequest.status !== HttpStatus.OK) {
-        throw new Error(
-          `Error while retrieving formio authentication token. Error ${authRequest.status}: ${authRequest.statusText}`,
-        );
-      }
-
       return authRequest;
     } catch (excp) {
       this.logger.error(`Received exception while getting form SA token`);
