@@ -1,4 +1,6 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
 
 export class CreateInstitutionDto {
   @IsOptional()
@@ -17,7 +19,7 @@ export class CreateInstitutionDto {
   regulatingBody: string;
 
   @IsNotEmpty()
-  establishedDate: string;
+  establishedDate: Date;
 
   //TODO Can be broken into a different DTO if needed
   //Institutions Primary Contact Information
@@ -66,4 +68,11 @@ export class CreateInstitutionDto {
 
   @IsNotEmpty()
   postalCode: string;
+}
+
+export class InstituteDto extends PartialType(CreateInstitutionDto) {}
+
+export interface InstitutionDetailDto {
+  institution: InstituteDto;
+  account: BCeIDDetailsDto;
 }

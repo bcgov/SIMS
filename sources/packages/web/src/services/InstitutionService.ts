@@ -1,8 +1,10 @@
 import { Institute } from "../types/contracts/InstituteContract";
 import {
-  CreateInstitutionDto,
+  InstitutionDto,
   EducationProgram,
+  InstitutionDetailDto,
   InstitutionProfileState,
+  UpdateInstituteDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -41,7 +43,7 @@ export class InstitutionService {
   }
 
   public async createInstitution(institutionProfile: InstitutionProfileState) {
-    const institutionDto: CreateInstitutionDto = {
+    const institutionDto: InstitutionDto = {
       operatingName: institutionProfile.operatingName,
       primaryPhone: institutionProfile.primaryPhoneNumber,
       primaryEmail: institutionProfile.primaryEmail,
@@ -67,5 +69,17 @@ export class InstitutionService {
       postalCode: institutionProfile.primaryAddress.postalCode,
     };
     await ApiClient.Institution.createInstitution(institutionDto);
+  }
+
+  public async createInstitutionV2(data: InstitutionDto) {
+    await ApiClient.Institution.createInstitution(data);
+  }
+
+  public async updateInstitute(data: UpdateInstituteDto) {
+    await ApiClient.Institution.updateInstitution(data);
+  }
+
+  public async getDetail(): Promise<InstitutionDetailDto> {
+    return ApiClient.Institution.getDetail();
   }
 }

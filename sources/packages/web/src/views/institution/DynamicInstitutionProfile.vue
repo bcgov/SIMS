@@ -19,11 +19,23 @@
 
 <script lang="ts">
 import { ref, onMounted } from "vue";
+import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { UserService } from "../../services/UserService";
+import { InstitutionDto, InstitutionDetailDto } from "../../types";
+import { InstitutionService } from "../../services/InstitutionService";
 export default {
   components: { formio },
-  setup() {
+  props: {
+    editMode: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+  },
+  setup(props: any) {
+    // Hooks
+    const toast = useToast();
     // Data-bind
     const initialData = ref({});
 
@@ -31,19 +43,67 @@ export default {
     const changed = async () => {
       console.log("changed");
     };
-    const submitted = async () => {
-      console.log("changed");
+    const submitted = async (data: InstitutionDto) => {
+      if (props.editMode) {
+        try {
+          await InstitutionService.shared.updateInstitute(data);
+          toast.add({
+            severity: "success",
+            summary: "Updated!",
+            detail: "Institution and User successfully updated!",
+            life: 5000,
+          });
+        } catch (excp) {
+          toast.add({
+            severity: "error",
+            summary: "Unexpected error",
+            detail: "An error happened during the update process.",
+            life: 5000,
+          });
+        }
+      } else {
+        try {
+          await InstitutionService.shared.createInstitutionV2(data);
+          toast.add({
+            severity: "success",
+            summary: "Created!",
+            detail: "Institution and User successfully created!",
+            life: 5000,
+          });
+        } catch (excp) {
+          toast.add({
+            severity: "error",
+            summary: "Unexpected error",
+            detail: "An error happened during the creation process.",
+            life: 5000,
+          });
+        }
+      }
     };
 
     // Hooks
     onMounted(async () => {
-      const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
-      initialData.value = {
-        userfFrstName: bceidAccount?.user.firstname,
-        userLastName: bceidAccount?.user.surname,
-        userEmail: bceidAccount?.user.email,
-        institutionLegalName: bceidAccount?.institution.legalName,
-      };
+      if (props.editMode) {
+        const resp: any = await InstitutionService.shared.getDetail();
+
+        const detail: InstitutionDetailDto = resp.data;
+        const bceidAccount = detail.account;
+        initialData.value = {
+          userfFrstName: bceidAccount?.user.firstname,
+          userLastName: bceidAccount?.user.surname,
+          userEmail: bceidAccount?.user.email,
+          institutionLegalName: bceidAccount?.institution.legalName,
+          ...detail.institution,
+        };
+      } else {
+        const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
+        initialData.value = {
+          userfFrstName: bceidAccount?.user.firstname,
+          userLastName: bceidAccount?.user.surname,
+          userEmail: bceidAccount?.user.email,
+          institutionLegalName: bceidAccount?.institution.legalName,
+        };
+      }
     });
 
     return {

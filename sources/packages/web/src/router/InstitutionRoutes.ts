@@ -31,6 +31,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.InstitutionProfile,
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         component: InstitutionProfile,
+        props: { editMode: false },
+      },
+      {
+        path: AppRoutes.InstitutionProfileEdit,
+        name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
+        component: InstitutionProfile,
       },
     ],
     beforeEnter: (to, from, next) => {

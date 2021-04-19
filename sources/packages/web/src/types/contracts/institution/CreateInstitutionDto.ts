@@ -1,4 +1,6 @@
-export interface CreateInstitutionDto {
+import { BCeIDDetailsDto } from "../UserContract";
+
+export interface InstitutionDto {
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -22,4 +24,13 @@ export interface CreateInstitutionDto {
   provinceState: string;
   country: string;
   postalCode: string;
+}
+
+export interface UpdateInstituteDto extends Partial<InstitutionDto> {
+  id?: number;
+}
+
+export interface InstitutionDetailDto {
+  institution: UpdateInstituteDto;
+  account: BCeIDDetailsDto;
 }
