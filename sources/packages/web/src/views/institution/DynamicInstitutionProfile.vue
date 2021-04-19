@@ -19,11 +19,14 @@
 
 <script lang="ts">
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { UserService } from "../../services/UserService";
 import { InstitutionDto, InstitutionDetailDto } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
+import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+
 export default {
   components: { formio },
   props: {
@@ -36,6 +39,7 @@ export default {
   setup(props: any) {
     // Hooks
     const toast = useToast();
+    const router = useRouter();
     // Data-bind
     const initialData = ref({});
 
@@ -44,6 +48,7 @@ export default {
       console.log("changed");
     };
     const submitted = async (data: InstitutionDto) => {
+      let redirectHome = true;
       if (props.editMode) {
         try {
           await InstitutionService.shared.updateInstitute(data);
@@ -54,6 +59,7 @@ export default {
             life: 5000,
           });
         } catch (excp) {
+          redirectHome = false;
           toast.add({
             severity: "error",
             summary: "Unexpected error",
@@ -71,6 +77,7 @@ export default {
             life: 5000,
           });
         } catch (excp) {
+          redirectHome = false;
           toast.add({
             severity: "error",
             summary: "Unexpected error",
@@ -78,6 +85,12 @@ export default {
             life: 5000,
           });
         }
+      }
+
+      if (redirectHome) {
+        router.push({
+          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+        });
       }
     };
 
