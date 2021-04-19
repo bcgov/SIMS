@@ -70,9 +70,9 @@ export class CreateInstitutionDto {
   postalCode: string;
 }
 
-export class InstituteDto extends PartialType(CreateInstitutionDto) {}
+export class InstitutionDto extends PartialType(CreateInstitutionDto) {}
 
 export interface InstitutionDetailDto {
-  institution: InstituteDto;
+  institution: InstitutionDto;
   account: BCeIDDetailsDto;
 }

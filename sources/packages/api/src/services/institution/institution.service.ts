@@ -9,7 +9,7 @@ import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import {
   CreateInstitutionDto,
-  InstituteDto,
+  InstitutionDto,
   InstitutionDetailDto,
 } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
@@ -31,7 +31,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.logger.log("[Created]");
   }
 
-  toDtoObject(institutionEntity: Institution): InstituteDto {
+  toDtoObject(institutionEntity: Institution): InstitutionDto {
     return {
       operatingName: institutionEntity.operatingName,
       primaryPhone: institutionEntity.primaryPhone,
@@ -127,7 +127,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return await this.save(institution);
   }
 
-  async updateInstitution(userInfo: UserInfo, institutionDto: InstituteDto) {
+  async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );

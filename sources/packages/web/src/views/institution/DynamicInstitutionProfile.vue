@@ -10,7 +10,6 @@
       <formio
         formName="institutionprofile"
         :data="initialData"
-        @changed="changed"
         @submitted="submitted"
       ></formio>
     </template>
@@ -43,10 +42,6 @@ export default {
     // Data-bind
     const initialData = ref({});
 
-    // Event handler
-    const changed = async () => {
-      console.log("changed");
-    };
     const submitted = async (data: InstitutionDto) => {
       let redirectHome = true;
       if (props.editMode) {
@@ -121,12 +116,10 @@ export default {
 
     return {
       initialData,
-      changed,
       submitted,
     };
   },
 };
 </script>
 
-<style>
-</style>
+<style></style>
