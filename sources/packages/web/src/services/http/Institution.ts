@@ -4,6 +4,7 @@ import {
   InstitutionDetailDto,
   UpdateInstitutionDto,
 } from "../../types";
+import { AxiosResponse } from "axios";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -32,7 +33,8 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getDetail(): Promise<InstitutionDetailDto> {
     try {
-      return this.getCall("institution");
+      const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall("institution");
+      return resp.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

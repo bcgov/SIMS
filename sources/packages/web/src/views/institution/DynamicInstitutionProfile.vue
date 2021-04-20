@@ -92,9 +92,7 @@ export default {
     // Hooks
     onMounted(async () => {
       if (props.editMode) {
-        const resp: any = await InstitutionService.shared.getDetail();
-
-        const detail: InstitutionDetailDto = resp.data;
+        const detail: InstitutionDetailDto = await InstitutionService.shared.getDetail();
         initialData.value = {
           institutionLegalName: detail.institution.legalOperatingName,
           ...detail.institution,
