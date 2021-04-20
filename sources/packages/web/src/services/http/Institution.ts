@@ -1,9 +1,14 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { CreateInstitutionDto } from "../../types";
+import {
+  InstitutionDto,
+  InstitutionDetailDto,
+  UpdateInstitutionDto,
+} from "../../types";
+import { AxiosResponse } from "axios";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
-    createInstitutionDto: CreateInstitutionDto,
+    createInstitutionDto: InstitutionDto,
   ): Promise<void> {
     try {
       await this.apiClient.post(
@@ -11,6 +16,25 @@ export class InstitutionApi extends HttpBaseClient {
         createInstitutionDto,
         this.addAuthHeader(),
       );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateInstitution(data: UpdateInstitutionDto) {
+    try {
+      await this.apiClient.patch("institution", data, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getDetail(): Promise<InstitutionDetailDto> {
+    try {
+      const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall("institution");
+      return resp.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

@@ -1,6 +1,6 @@
 export interface BCeIDDetailsDto {
   user: UserDetailsDto;
-  institution: InstitutionDetailsDto;
+  institution: InstitutionAccountDetailsDto;
 }
 
 export interface UserDetailsDto {
@@ -11,7 +11,7 @@ export interface UserDetailsDto {
   email: string;
 }
 
-export interface InstitutionDetailsDto {
+export interface InstitutionAccountDetailsDto {
   guid: string;
   legalName: string;
 }

@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue";
-import InstitutionProfile from "../views/institution/InstitutionProfile.vue";
+import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import {
   InstitutionRoutesConst,
@@ -30,6 +30,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.InstitutionProfile,
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+        component: InstitutionProfile,
+        props: { editMode: false },
+      },
+      {
+        path: AppRoutes.InstitutionProfileEdit,
+        name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
         component: InstitutionProfile,
       },
     ],

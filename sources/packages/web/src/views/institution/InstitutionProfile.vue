@@ -365,9 +365,11 @@ export default {
     const router = useRouter();
 
     const readonlyProfileState = ref({} as ReadonlyProfileState);
-    const { handleSubmit, isSubmitting, setValues } = useForm<
-      InstitutionProfileState
-    >();
+    const {
+      handleSubmit,
+      isSubmitting,
+      setValues,
+    } = useForm<InstitutionProfileState>();
 
     const today = new Date();
     // establishedDate is using a Calendar UI component that works properly
@@ -404,7 +406,7 @@ export default {
       });
     });
 
-    const onSubmit = handleSubmit(async formValues => {
+    const onSubmit = handleSubmit(async (formValues) => {
       try {
         await InstitutionService.shared.createInstitution(formValues);
         toast.add({

@@ -18,6 +18,7 @@ export const InstitutionRoutesConst = {
   INSTITUTION_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
+  INSTITUTION_PROFILE_EDIT: Symbol(),
 };
 
 export const SharedRouteConst = {
