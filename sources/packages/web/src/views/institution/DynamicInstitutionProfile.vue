@@ -95,11 +95,8 @@ export default {
         const resp: any = await InstitutionService.shared.getDetail();
 
         const detail: InstitutionDetailDto = resp.data;
-        const bceidAccount = detail.account;
         initialData.value = {
-          userFirstName: bceidAccount?.user.firstname,
-          userLastName: bceidAccount?.user.surname,
-          institutionLegalName: bceidAccount?.institution.legalName,
+          institutionLegalName: detail.institution.legalOperatingName,
           ...detail.institution,
         };
       } else {

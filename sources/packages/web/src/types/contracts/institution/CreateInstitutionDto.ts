@@ -29,6 +29,9 @@ export interface InstitutionDto {
 export interface UpdateInstitutionDto extends Partial<InstitutionDto> {
   id?: number;
   userEmail?: string;
+  userFirstName?: string;
+  userLastName?: string;
+  legalOperatingName?: string;
 }
 
 export interface InstitutionDetailDto {

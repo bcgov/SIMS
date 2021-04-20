@@ -75,8 +75,18 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   @IsOptional()
   userEmail?: string;
 
+  @IsOptional()
+  userFirstName?: string;
+
+  @IsOptional()
+  userLastName?: string;
+
+  @IsOptional()
+  legalOperatingName?: string;
+
   static fromEntity(institutionEntity: Institution): InstitutionDto {
     return {
+      legalOperatingName: institutionEntity.legalOperatingName,
       operatingName: institutionEntity.operatingName,
       primaryPhone: institutionEntity.primaryPhone,
       primaryEmail: institutionEntity.primaryEmail,

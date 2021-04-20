@@ -169,6 +169,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     const institution = InstitutionDto.fromEntity(institutionEntity);
     institution.userEmail = user?.email;
+    institution.userFirstName = user?.firstName;
+    institution.userLastName = user?.lastName;
 
     return {
       institution,
