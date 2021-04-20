@@ -97,16 +97,15 @@ export default {
         const detail: InstitutionDetailDto = resp.data;
         const bceidAccount = detail.account;
         initialData.value = {
-          userfFrstName: bceidAccount?.user.firstname,
+          userFirstName: bceidAccount?.user.firstname,
           userLastName: bceidAccount?.user.surname,
-          userEmail: bceidAccount?.user.email,
           institutionLegalName: bceidAccount?.institution.legalName,
           ...detail.institution,
         };
       } else {
         const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
         initialData.value = {
-          userfFrstName: bceidAccount?.user.firstname,
+          userFirstName: bceidAccount?.user.firstname,
           userLastName: bceidAccount?.user.surname,
           userEmail: bceidAccount?.user.email,
           institutionLegalName: bceidAccount?.institution.legalName,

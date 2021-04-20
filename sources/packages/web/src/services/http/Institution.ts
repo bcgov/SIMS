@@ -2,7 +2,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   InstitutionDto,
   InstitutionDetailDto,
-  UpdateInstituteDto,
+  UpdateInstitutionDto,
 } from "../../types";
 
 export class InstitutionApi extends HttpBaseClient {
@@ -21,7 +21,7 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async updateInstitution(data: UpdateInstituteDto) {
+  public async updateInstitution(data: UpdateInstitutionDto) {
     try {
       await this.apiClient.patch("institution", data, this.addAuthHeader());
     } catch (error) {

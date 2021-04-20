@@ -4,7 +4,7 @@ import {
   EducationProgram,
   InstitutionDetailDto,
   InstitutionProfileState,
-  UpdateInstituteDto,
+  UpdateInstitutionDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -75,7 +75,7 @@ export class InstitutionService {
     await ApiClient.Institution.createInstitution(data);
   }
 
-  public async updateInstitute(data: UpdateInstituteDto) {
+  public async updateInstitute(data: UpdateInstitutionDto) {
     await ApiClient.Institution.updateInstitution(data);
   }
 

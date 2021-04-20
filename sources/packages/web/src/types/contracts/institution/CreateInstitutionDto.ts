@@ -26,11 +26,12 @@ export interface InstitutionDto {
   postalCode: string;
 }
 
-export interface UpdateInstituteDto extends Partial<InstitutionDto> {
+export interface UpdateInstitutionDto extends Partial<InstitutionDto> {
   id?: number;
+  userEmail?: string;
 }
 
 export interface InstitutionDetailDto {
-  institution: UpdateInstituteDto;
+  institution: UpdateInstitutionDto;
   account: BCeIDDetailsDto;
 }

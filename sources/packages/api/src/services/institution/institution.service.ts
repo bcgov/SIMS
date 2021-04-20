@@ -31,39 +31,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.logger.log("[Created]");
   }
 
-  toDtoObject(institutionEntity: Institution): InstitutionDto {
-    return {
-      operatingName: institutionEntity.operatingName,
-      primaryPhone: institutionEntity.primaryPhone,
-      primaryEmail: institutionEntity.primaryEmail,
-      website: institutionEntity.website,
-      regulatingBody: institutionEntity.regulatingBody,
-      establishedDate: institutionEntity.establishedDate,
-      primaryContactEmail:
-        institutionEntity.institutionPrimaryContact.primaryContactEmail,
-      primaryContactFirstName:
-        institutionEntity.institutionPrimaryContact.primaryContactFirstName,
-      primaryContactLastName:
-        institutionEntity.institutionPrimaryContact.primaryContactLastName,
-      primaryContactPhone:
-        institutionEntity.institutionPrimaryContact.primaryContactPhone,
-      legalAuthorityEmail:
-        institutionEntity.legalAuthorityContact.legalAuthorityEmail,
-      legalAuthorityFirstName:
-        institutionEntity.legalAuthorityContact.legalAuthorityFirstName,
-      legalAuthorityLastName:
-        institutionEntity.legalAuthorityContact.legalAuthorityLastName,
-      legalAuthorityPhone:
-        institutionEntity.legalAuthorityContact.legalAuthorityPhone,
-      addressLine1: institutionEntity.institutionAddress.addressLine1,
-      addressLine2: institutionEntity.institutionAddress.addressLine2,
-      city: institutionEntity.institutionAddress.city,
-      country: institutionEntity.institutionAddress.country,
-      provinceState: institutionEntity.institutionAddress.provinceState,
-      postalCode: institutionEntity.institutionAddress.postalCode,
-    };
-  }
-
   async createInstitution(
     userInfo: UserInfo,
     institutionDto: CreateInstitutionDto,
@@ -146,10 +113,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       guid: account.institution.guid,
     });
 
-    const user = await this.userService.getUser(userInfo.idp_user_name);
+    const user = await this.userService.getUser(userInfo.userName);
 
     if (user) {
-      user.email = institutionDto.primaryEmail;
+      user.email = institutionDto.userEmail;
       await this.userService.save(user);
     }
 
@@ -198,8 +165,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       guid: account.institution.guid,
     });
 
+    const user = await this.userService.getUser(userInfo.userName);
+
+    const institution = InstitutionDto.fromEntity(institutionEntity);
+    institution.userEmail = user?.email;
+
     return {
-      institution: this.toDtoObject(institutionEntity),
+      institution,
       account,
     };
   }
