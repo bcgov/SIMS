@@ -100,7 +100,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     );
 
     if (account == null) {
-      //This scenario occurs if basic BCeID users try to push the bceid account into our application.
+      // Due to any connection or any other integration error retrieval of account info failed.
       this.logger.error(
         "Account information could not be retrieved from BCeID",
       );
