@@ -102,7 +102,8 @@ export class AppConfigService {
       authService || this.authService;
     if (auth) {
       let redirectUri = `${window.location.protocol}//${window.location.host}/${type}`;
-      const externalLogoutUrl = this._config?.authConfig.externalLogoutUrl;
+      const externalLogoutUrl = this._config?.authConfig
+        .externalSiteMinderLogoutUrl;
       switch (type) {
         case ClientIdType.STUDENT: {
           await auth.logout({

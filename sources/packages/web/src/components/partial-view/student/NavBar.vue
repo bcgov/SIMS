@@ -42,7 +42,6 @@ export default {
     );
 
     const logoff = () => {
-      // AppConfigService.shared.authService?.logout();
       AppConfigService.shared.logout(props.clientType);
     };
 

@@ -12,7 +12,7 @@ export interface IAuthConfig {
   realm: string;
   clientIds: { [K in ClientType]: string };
   openIdConfigurationUrl: string;
-  externalLogoutUrl?: string;
+  externalSiteMinderLogoutUrl?: string;
 }
 
 /**

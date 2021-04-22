@@ -13,7 +13,7 @@ export class ConfigService {
           institution: process.env.KEYCLOAK_CLIENT_INSTITUTION,
         },
         openIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
-        externalLogoutUrl: process.env.SITE_MINDER_LOGOUT_URL,
+        externalSiteMinderLogoutUrl: process.env.SITE_MINDER_LOGOUT_URL,
       },
       bceid: {
         wsdlEndpoint: process.env.BCeID_WEB_SERVICE_WSDL,
