@@ -35,7 +35,6 @@
 <script lang="ts">
 import { ref } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
-// import { useRoute } from "vue-router";
 
 export default {
   components: {},
@@ -47,7 +46,6 @@ export default {
     },
   },
   setup(props: any) {
-    // const route = useRoute();
     const basicBCeID = ref(props.showBasicBCeIDMessage);
     const login = () => {
       AppConfigService.shared.authService?.login({
