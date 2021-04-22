@@ -6,12 +6,6 @@ import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
 let keycloak: Keycloak.KeycloakInstance;
 
-const delay = async (time: number): Promise<void> => {
-  return new Promise(res => {
-    setTimeout(res, time);
-  });
-};
-
 export default async function(
   config: AppConfig,
   type: ClientIdType,
