@@ -1,6 +1,10 @@
 <template>
   <div>
-    <NavBar title="Institution Portal" v-if="isAuthReady">
+    <NavBar
+      title="Institution Portal"
+      :clientType="clientType"
+      v-if="isAuthReady"
+    >
       <template #end>
         <Button
           v-if="isAuthenticated"
@@ -38,6 +42,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
+    const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
@@ -69,6 +74,7 @@ export default {
       isAuthReady,
       isAuthenticated,
       InstitutionRoutesConst,
+      clientType,
     };
   },
 };

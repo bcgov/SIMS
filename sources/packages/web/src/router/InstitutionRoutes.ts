@@ -23,6 +23,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: Login,
       },
       {
+        path: AppRoutes.LoginWithBusinessBCeID,
+        name: InstitutionRoutesConst.LOGIN_WITH_BUSINESS_BCEID,
+        component: Login,
+        props: { showBasicBCeIDMessage: true },
+      },
+      {
         path: AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         component: InstitutionDashboard,

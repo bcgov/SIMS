@@ -1,9 +1,16 @@
 import Keycloak from "keycloak-js";
 import store from "../store/index";
 import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
+import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
 let keycloak: Keycloak.KeycloakInstance;
+
+const delay = async (time: number): Promise<void> => {
+  return new Promise(res => {
+    setTimeout(res, time);
+  });
+};
 
 export default async function(
   config: AppConfig,
@@ -17,6 +24,7 @@ export default async function(
     realm: config.authConfig.realm,
     clientId: config.authConfig.clientIds[type],
   });
+  let isForbiddenUser = false;
 
   try {
     await keycloak.init({
@@ -37,21 +45,12 @@ export default async function(
           );
 
           if (!bceIdAccountDetails) {
-            //basicbceid user or a user that doesnt exist with bceid
-            const url = keycloak.createLoginUrl();
-            //query params ?basicBCeID=true is going to be used in Login.vue to
-            //show a corresponding message to the user
-            const redirectUrl = decodeURIComponent(
-              url
-                .substring(url.indexOf("?") + 1)
-                .split("&")[1]
-                .split("=")[1]
-                .concat("?basicBCeID=true"),
+            await AppConfigService.shared.logout(
+              ClientIdType.INSTITUTION,
+              keycloak,
+              true,
             );
-
-            await keycloak.logout({
-              redirectUri: redirectUrl,
-            });
+            isForbiddenUser = true;
           }
         } //Institution switch case ends
       } //Switch block ends
@@ -62,5 +61,8 @@ export default async function(
   keycloak.onTokenExpired = () => {
     store.dispatch("auth/logout");
   };
+  if (isForbiddenUser) {
+    throw new Error("Forbidden user");
+  }
   return keycloak;
 }

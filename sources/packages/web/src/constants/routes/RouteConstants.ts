@@ -17,6 +17,7 @@ export const InstitutionRoutesConst = {
   APP_INSTITUTION: Symbol(),
   INSTITUTION_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
+  LOGIN_WITH_BUSINESS_BCEID: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
   INSTITUTION_PROFILE_EDIT: Symbol(),
 };

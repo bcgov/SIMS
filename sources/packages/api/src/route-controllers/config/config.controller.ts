@@ -16,6 +16,7 @@ export class ConfigController {
         url: config.auth.url,
         realm: config.auth.realm,
         clientIds: config.auth.clientIds,
+        externalLogoutUrl: config.auth.externalLogoutUrl,
       },
     };
   }

@@ -30,15 +30,20 @@ export default {
       type: String,
       required: true,
     },
+    clientType: {
+      type: String,
+      required: true,
+    },
   },
-  setup() {
+  setup(props: any) {
     const menuItems: any = [];
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
 
     const logoff = () => {
-      AppConfigService.shared.authService?.logout();
+      // AppConfigService.shared.authService?.logout();
+      AppConfigService.shared.logout(props.clientType);
     };
 
     return { menuItems, isAuthenticated, logoff };
