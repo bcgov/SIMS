@@ -82,4 +82,8 @@ export class InstitutionService {
   public async getDetail(): Promise<InstitutionDetailDto> {
     return ApiClient.Institution.getDetail();
   }
+
+  public async sync() {
+    return ApiClient.Institution.sync();
+  }
 }

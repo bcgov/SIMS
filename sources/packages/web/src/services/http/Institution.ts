@@ -33,8 +33,19 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getDetail(): Promise<InstitutionDetailDto> {
     try {
-      const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall("institution");
+      const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall(
+        "institution",
+      );
       return resp.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async sync() {
+    try {
+      await this.apiClient.patch("institution/sync", {}, this.addAuthHeader());
     } catch (error) {
       this.handleRequestError(error);
       throw error;

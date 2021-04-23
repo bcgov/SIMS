@@ -1,6 +1,8 @@
 
 const entities = process.env.ENVIRONMENT === 'test' ? ['src/database/entities/*.model{.ts,.js}'] : ['dist/database/entities/*.model{.ts,.js}'];
 
+const migrations = process.env.ENVIRONMENT === "test" ? ['src/database/migrations/*{.ts,.js}'] : ['dist/database/migrations/*{.ts,.js}']
+
 module.exports = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST || 'localhost',
@@ -9,11 +11,12 @@ module.exports = {
   username: process.env.POSTGRES_USER || 'admin',
   password: process.env.POSTGRES_PASSWORD,
   synchronize: false,
-  migrations: ['dist/database/migrations/*{.ts,.js}'],
+  migrations,
   cli: {
     migrationsDir: 'src/database/migrations',
     entitiesDir: 'src/database/entities'
   },
   entities,
   schema: process.env.DB_SCHEMA || 'sims',
+  migrationsRun: process.env.ENVIRONMENT === 'test',
 };

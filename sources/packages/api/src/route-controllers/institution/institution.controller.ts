@@ -55,4 +55,9 @@ export class InstitutionController extends BaseController {
   ): Promise<InstitutionDetailDto> {
     return this.institutionService.institutionDetail(token);
   }
+
+  @Patch("/sync")
+  async sync(@UserToken() token: IUserToken) {
+    await this.institutionService.syncInstitution(token);
+  }
 } //Class ends

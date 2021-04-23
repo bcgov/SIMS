@@ -94,24 +94,18 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return await this.save(institution);
   }
 
+  async getInstitute(userInfo: { userName: string }): Promise<Institution> {
+    const query = this.repo
+      .createQueryBuilder("institution")
+      .leftJoinAndSelect("institution.users", "users");
+    const institution = await query
+      .where("users.userName = :userName", { userName: userInfo.userName })
+      .getOneOrFail();
+    return institution;
+  }
+
   async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
-    const account = await this.bceidService.getAccountDetails(
-      userInfo.idp_user_name,
-    );
-
-    if (account == null) {
-      // Due to any connection or any other integration error retrieval of account info failed.
-      this.logger.error(
-        "Account information could not be retrieved from BCeID",
-      );
-      throw new InternalServerErrorException(
-        `Unable to fetch account information from BCeID`,
-      );
-    }
-
-    const institution: Institution = await this.repo.findOneOrFail({
-      guid: account.institution.guid,
-    });
+    const institution: Institution = await this.getInstitute(userInfo);
 
     const user = await this.userService.getUser(userInfo.userName);
 
@@ -157,13 +151,25 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return await this.save(institution);
   }
 
+  async syncInstitution(userInfo: UserInfo): Promise<void> {
+    const account = await this.bceidService.getAccountDetails(
+      userInfo.idp_user_name,
+    );
+    const institutionEntity = await this.getInstitute(userInfo);
+    institutionEntity.guid = account.institution.guid;
+    institutionEntity.legalOperatingName = account.institution.legalName;
+    await this.save(institutionEntity);
+    const user = await this.userService.getUser(userInfo.userName);
+    user.firstName = account.user.firstname;
+    user.lastName = account.user.surname;
+    await this.userService.save(user);
+  }
+
   async institutionDetail(userInfo: UserInfo): Promise<InstitutionDetailDto> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const institutionEntity = await this.repo.findOne({
-      guid: account.institution.guid,
-    });
+    const institutionEntity = await this.getInstitute(userInfo);
 
     const user = await this.userService.getUser(userInfo.userName);
 

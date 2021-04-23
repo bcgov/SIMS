@@ -33,6 +33,7 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import NavBar from "../../components/partial-view/student/NavBar.vue";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
+import { InstitutionService } from "../../services/InstitutionService";
 
 export default {
   components: {
@@ -57,6 +58,7 @@ export default {
         });
       } else {
         if (await UserService.shared.checkUser()) {
+          await InstitutionService.shared.sync();
           if (route.path === AppRoutes.InstitutionRoot) {
             router.push({
               name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
