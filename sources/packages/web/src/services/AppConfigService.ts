@@ -93,6 +93,44 @@ export class AppConfigService {
     }
   }
 
+  async logout(
+    type: ClientIdType,
+    authService?: KeyCloak.KeycloakInstance,
+    isBasicBCeID?: boolean,
+  ) {
+    const auth: KeyCloak.KeycloakInstance | undefined =
+      authService || this.authService;
+    if (auth) {
+      let redirectUri = `${window.location.protocol}//${window.location.host}/${type}`;
+      const externalLogoutUrl = this._config?.authConfig
+        .externalSiteMinderLogoutUrl;
+      switch (type) {
+        case ClientIdType.STUDENT: {
+          await auth.logout({
+            redirectUri,
+          });
+          break;
+        }
+        case ClientIdType.INSTITUTION: {
+          if (isBasicBCeID) {
+            redirectUri = redirectUri + "/login/business-bceid";
+          }
+          const logoutURL = auth.createLogoutUrl({
+            redirectUri,
+          });
+          const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
+          window.location.href = siteMinderLogoutURL;
+          break;
+        }
+        default:
+          await auth.logout();
+          break;
+      }
+    } else {
+      throw new Error("No auth unable to logout");
+    }
+  }
+
   // TODO: Remove this to RouteHelper
   authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
     if (options.type === this._authClientType) {

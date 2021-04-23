@@ -105,6 +105,8 @@ objects:
                     secretKeyRef:
                       key: ${FORMS_SA_PASSWORD_NAME_KEY}
                       name: ${API_SECRET_NAME}
+                - name: SITE_MINDER_LOGOUT_URL
+                  value: ${SITE_MINDER_LOGOUT_URL}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -237,3 +239,5 @@ parameters:
     value: forms-sa-user-name
   - name: FORMS_SA_PASSWORD_NAME_KEY
     value: forms-sa-password
+  - name: SITE_MINDER_LOGOUT_URL
+    require: true

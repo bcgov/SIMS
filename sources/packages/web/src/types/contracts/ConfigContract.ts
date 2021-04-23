@@ -11,6 +11,7 @@ export interface AuthConfig {
   url: string;
   realm: string;
   clientIds: { [Value in ClientIdType]: string };
+  externalSiteMinderLogoutUrl?: string;
 }
 
 export interface AppConfig {

@@ -5,5 +5,6 @@ export interface IConfig {
 export interface IAuthConfig {
   url: string;
   realm: string;
-  clientIds: { [key: string] : string};
+  clientIds: { [key: string]: string };
+  externalSiteMinderLogoutUrl?: string;
 }

@@ -99,12 +99,20 @@ export default {
         };
       } else {
         const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
-        initialData.value = {
-          userFirstName: bceidAccount?.user.firstname,
-          userLastName: bceidAccount?.user.surname,
-          userEmail: bceidAccount?.user.email,
-          institutionLegalName: bceidAccount?.institution.legalName,
-        };
+        if (bceidAccount) {
+          initialData.value = {
+            userFirstName: bceidAccount?.user.firstname,
+            userLastName: bceidAccount?.user.surname,
+            userEmail: bceidAccount?.user.email,
+            institutionLegalName: bceidAccount?.institution.legalName,
+          };
+        } else {
+          toast.add({
+            severity: "error",
+            summary: "BCeID Account error",
+            detail: "Unable to fetch account details.",
+          });
+        }
       }
     });
 

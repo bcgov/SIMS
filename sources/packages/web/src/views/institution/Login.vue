@@ -1,8 +1,6 @@
 <template>
   <Card class="p-m-4">
-    <template #title>
-      Institutional Login
-    </template>
+    <template #title> Institutional Login </template>
     <template #content>
       <div>
         <h1>Welcome to StudentAid BC</h1>
@@ -35,15 +33,20 @@
 </template>
 
 <script lang="ts">
+import { ref } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
-import { useRoute } from "vue-router";
 
 export default {
   components: {},
-
+  props: {
+    showBasicBCeIDMessage: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+  },
   setup(props: any) {
-    const route = useRoute();
-    const basicBCeID = route.query.basicBCeID;
+    const basicBCeID = ref(props.showBasicBCeIDMessage);
     const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
