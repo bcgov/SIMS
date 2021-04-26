@@ -81,9 +81,7 @@ describe("InstitutionService", () => {
   it("should get institution using user name", async () => {
     const [institution, user] = await factory(userService, service);
 
-    const result = await service.getInstitute({
-      userName: user.userName,
-    });
+    const result = await service.getInstituteByUserName(user.userName);
     expect(result).toBeDefined();
     expect(result.id).toEqual(institution.id);
     expect(result.guid).toEqual(institution.guid);

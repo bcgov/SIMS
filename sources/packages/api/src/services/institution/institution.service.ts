@@ -2,6 +2,7 @@ import {
   Injectable,
   Inject,
   InternalServerErrorException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Institution, User } from "../../database/entities";
@@ -94,18 +95,20 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return await this.save(institution);
   }
 
-  async getInstitute(userInfo: { userName: string }): Promise<Institution> {
+  async getInstituteByUserName(userName: string): Promise<Institution> {
     const query = this.repo
       .createQueryBuilder("institution")
       .leftJoinAndSelect("institution.users", "users");
     const institution = await query
-      .where("users.userName = :userName", { userName: userInfo.userName })
+      .where("users.userName = :userName", { userName })
       .getOneOrFail();
     return institution;
   }
 
   async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
-    const institution: Institution = await this.getInstitute(userInfo);
+    const institution: Institution = await this.getInstituteByUserName(
+      userInfo.userName,
+    );
 
     const user = await this.userService.getUser(userInfo.userName);
 
@@ -155,21 +158,36 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const institutionEntity = await this.getInstitute(userInfo);
-    institutionEntity.guid = account.institution.guid;
+    const institutionEntity = await this.getInstituteByUserName(
+      userInfo.userName,
+    );
+    if (institutionEntity.guid !== account.institution.guid) {
+      throw new UnprocessableEntityException(
+        "Unable to process BCeID account of current user because account institution guid mismatch",
+      );
+    }
     institutionEntity.legalOperatingName = account.institution.legalName;
+    if (institutionEntity.users && institutionEntity.users.length > 0) {
+      const filtered = institutionEntity.users.filter(
+        (usr) => usr.userName === userInfo.userName,
+      );
+      if (filtered.length > 0) {
+        const user = filtered[0];
+        user.firstName = account.user.firstname;
+        user.lastName = account.user.surname;
+      }
+    }
+
     await this.save(institutionEntity);
-    const user = await this.userService.getUser(userInfo.userName);
-    user.firstName = account.user.firstname;
-    user.lastName = account.user.surname;
-    await this.userService.save(user);
   }
 
   async institutionDetail(userInfo: UserInfo): Promise<InstitutionDetailDto> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const institutionEntity = await this.getInstitute(userInfo);
+    const institutionEntity = await this.getInstituteByUserName(
+      userInfo.userName,
+    );
 
     const user = await this.userService.getUser(userInfo.userName);
 
