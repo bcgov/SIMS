@@ -2,6 +2,7 @@ import {
   Injectable,
   Inject,
   InternalServerErrorException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Institution, User } from "../../database/entities";
@@ -94,24 +95,18 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return await this.save(institution);
   }
 
+  async getInstituteByUserName(userName: string): Promise<Institution> {
+    return this.repo
+      .createQueryBuilder("institution")
+      .leftJoin("institution.users", "users")
+      .where("users.userName = :userName", { userName })
+      .getOneOrFail();
+  }
+
   async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
-    const account = await this.bceidService.getAccountDetails(
-      userInfo.idp_user_name,
+    const institution: Institution = await this.getInstituteByUserName(
+      userInfo.userName,
     );
-
-    if (account == null) {
-      // Due to any connection or any other integration error retrieval of account info failed.
-      this.logger.error(
-        "Account information could not be retrieved from BCeID",
-      );
-      throw new InternalServerErrorException(
-        `Unable to fetch account information from BCeID`,
-      );
-    }
-
-    const institution: Institution = await this.repo.findOneOrFail({
-      guid: account.institution.guid,
-    });
 
     const user = await this.userService.getUser(userInfo.userName);
 
@@ -157,13 +152,36 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return await this.save(institution);
   }
 
+  async syncInstitution(userInfo: UserInfo): Promise<void> {
+    const account = await this.bceidService.getAccountDetails(
+      userInfo.idp_user_name,
+    );
+    const institutionEntity = await this.getInstituteByUserName(
+      userInfo.userName,
+    );
+    if (institutionEntity.guid !== account.institution.guid) {
+      throw new UnprocessableEntityException(
+        "Unable to process BCeID account of current user because account institution guid mismatch",
+      );
+    }
+    institutionEntity.legalOperatingName = account.institution.legalName;
+    await this.save(institutionEntity);
+
+    const user = await this.userService.getUser(userInfo.userName);
+    if (user) {
+      user.firstName = account.user.firstname;
+      user.lastName = account.user.surname;
+      await this.userService.save(user);
+    }
+  }
+
   async institutionDetail(userInfo: UserInfo): Promise<InstitutionDetailDto> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const institutionEntity = await this.repo.findOne({
-      guid: account.institution.guid,
-    });
+    const institutionEntity = await this.getInstituteByUserName(
+      userInfo.userName,
+    );
 
     const user = await this.userService.getUser(userInfo.userName);
 
