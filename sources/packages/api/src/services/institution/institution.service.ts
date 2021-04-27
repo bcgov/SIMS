@@ -96,13 +96,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   async getInstituteByUserName(userName: string): Promise<Institution> {
-    const query = this.repo
+    return this.repo
       .createQueryBuilder("institution")
-      .leftJoinAndSelect("institution.users", "users");
-    const institution = await query
+      .leftJoinAndSelect("institution.users", "users")
       .where("users.userName = :userName", { userName })
       .getOneOrFail();
-    return institution;
   }
 
   async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
