@@ -78,7 +78,7 @@ describe("InstitutionService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should get institution using user name", async () => {
+  it.skip("should get institution using user name", async () => {
     const [institution, user] = await factory(userService, service);
 
     const result = await service.getInstituteByUserName(user.userName);
