@@ -3,14 +3,10 @@ FROM node:12.18.3-slim
 
 LABEL maintainer="BC GOV"
 
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
 
 # Application Port
 ENV PORT 3000
 
-# Setting app as work dir
-WORKDIR /app
 
 # Copying package.json and package-lock.json
 COPY ./package*.json ./
