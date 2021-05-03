@@ -20,6 +20,7 @@ export const InstitutionRoutesConst = {
   LOGIN_WITH_BUSINESS_BCEID: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
   INSTITUTION_PROFILE_EDIT: Symbol(),
+  MANAGE_LOCATION: Symbol(),
 };
 
 export const SharedRouteConst = {
