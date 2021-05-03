@@ -36,7 +36,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         children: [
           {
             path: AppRoutes.InstitutionManageLocations,
-            name: InstitutionRoutesConst.MANAGE_LOCATION,
+            name: InstitutionRoutesConst.MANAGE_LOCATIONS,
             component: ManageLocation,
           },
         ],

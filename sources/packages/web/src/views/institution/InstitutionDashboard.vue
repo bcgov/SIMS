@@ -42,7 +42,7 @@ export default {
         command: () => {
           hideDashboard.value = true;
           router.push({
-            name: InstitutionRoutesConst.MANAGE_LOCATION,
+            name: InstitutionRoutesConst.MANAGE_LOCATIONS,
           });
         },
       },
