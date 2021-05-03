@@ -8,4 +8,5 @@ export enum AppRoutes {
   Login = "login",
   ForbiddenUser = "/forbidden-user",
   LoginWithBusinessBCeID = "login/business-bceid",
+  InstitutionManageLocations = "manage-locations",
 }
