@@ -10,7 +10,6 @@ export class InstitutionLocationsController extends BaseController {
     super();
   }
 
-  @Public()
   @Get(":id")
   async getInstitutionLocation(
     @Param("id") id: number,
