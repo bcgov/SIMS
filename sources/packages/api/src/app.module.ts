@@ -19,12 +19,15 @@ import {
   DynamicFormController,
   WorkflowController,
   ApplicationController,
+  InstitutionLocationsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { RuleEngineService } from "./services/rule-engine/rule-engine.service";
 import { FormService } from "./services/form/form.service";
 import { ServiceAccountService } from "./services/service-account/service-account.service";
+import { InstitutionLocationService } from "./services/institution-location/institution-location.service";
+
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
   controllers: [
@@ -36,6 +39,7 @@ import { ServiceAccountService } from "./services/service-account/service-accoun
     DynamicFormController,
     WorkflowController,
     ApplicationController,
+    InstitutionLocationsController,
   ],
   providers: [
     AppService,
@@ -49,6 +53,7 @@ import { ServiceAccountService } from "./services/service-account/service-accoun
     RuleEngineService,
     FormService,
     ApplicationService,
+    InstitutionLocationService,
   ],
 })
 export class AppModule {}
