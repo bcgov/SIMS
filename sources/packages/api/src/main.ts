@@ -26,10 +26,8 @@ async function bootstrap() {
   // Getting application port
   const port = process.env.PORT || 3000;
 
-  // Enabling cors for non prod env
-  if (process.env.NODE_ENV !== "production") {
-    app.enableCors();
-  }
+  // TODO: Configure CORS to be as much restrictive as possible.
+  app.enableCors();
 
   // Setting express middleware for req
   app.use(LoggerService.apiLogger);
