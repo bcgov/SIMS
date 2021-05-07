@@ -1,8 +1,7 @@
 import { Controller, Get, Post, NotFoundException, Param, Body, BadRequestException } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
-import { GetInstitutionLocationDto } from "./models/institution-location.dto";
-import { InstitutionLocationType } from '../../types'
+import { GetInstitutionLocationDto, InstitutionLocationTypeDto } from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 
@@ -35,9 +34,9 @@ export class InstitutionLocationsController extends BaseController {
 
   @Post()
   async create(
-    @Body() payload: InstitutionLocationType,
+    @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IUserToken,
-  ): Promise<GetInstitutionLocationDto> {
+  ): Promise<number> {
     const submissionResult = await this.formService.dryRunSubmission(
       "institutionlocationcreation",
       payload,

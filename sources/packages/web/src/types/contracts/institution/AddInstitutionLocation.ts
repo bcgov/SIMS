@@ -7,5 +7,4 @@ export interface Institutionlocation {
   locationName: string;
   postalZipCode: string;
   provinceState: string;
-  submit: boolean;
 }
