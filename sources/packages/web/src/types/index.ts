@@ -8,3 +8,4 @@ export * from "./contracts/StudentContract";
 export * from "./contracts/UserContract";
 export * from "./contracts/institution/CreateInstitutionDto";
 export * from "./contracts/institution/ProfileContract";
+export * from "./contracts/institution/AddInstitutionLocation";

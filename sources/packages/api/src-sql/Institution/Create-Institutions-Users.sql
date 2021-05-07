@@ -16,3 +16,4 @@ COMMENT ON TABLE institutions_users IS 'This is a pivot table to capture the rel
 COMMENT ON COLUMN institutions_users.id IS 'Auto-generated sequential primary key column';
 COMMENT ON COLUMN institutions_users.user_id IS 'Foreign key reference to users table users';
 COMMENT ON COLUMN institutions_users.institution_id IS 'Foreign key reference to users table institutions';  
+1
