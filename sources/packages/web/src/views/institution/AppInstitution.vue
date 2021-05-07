@@ -1,27 +1,29 @@
 <template>
-  <div>
-    <NavBar
-      title="Institution Portal"
-      :clientType="clientType"
-      v-if="isAuthReady"
-    >
-      <template #end>
-        <Button
-          v-if="isAuthenticated"
-          label="Institution Profile"
-          icon="pi pi-fw pi-user"
-          class="p-button-text"
-          style="color: white"
-          @click="
-            $router.push({
-              name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
-            })
-          "
-        />
-      </template>
-    </NavBar>
-    <router-view v-if="isAuthReady" />
-  </div>
+  <v-container>
+    <div>
+      <NavBar
+        title="Institution Portal"
+        :clientType="clientType"
+        v-if="isAuthReady"
+      >
+        <template #end>
+          <Button
+            v-if="isAuthenticated"
+            label="Institution Profile"
+            icon="pi pi-fw pi-user"
+            class="p-button-text"
+            style="color: white"
+            @click="
+              $router.push({
+                name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
+              })
+            "
+          />
+        </template>
+      </NavBar>
+      <router-view v-if="isAuthReady" />
+    </div>
+  </v-container>
 </template>
 
 <script lang="ts">

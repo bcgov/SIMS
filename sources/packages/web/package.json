@@ -5,11 +5,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "NODE_OPTIONS=--max_old_space_size=2048 vue-cli-service build",
-    "build-local": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build-local": "vue-cli-service build"
   },
   "dependencies": {
+    "@mdi/font": "5.9.55",
     "@types/vuelidate": "^0.7.13",
     "@vee-validate/rules": "^4.0.4",
     "axios": "^0.21.1",
@@ -20,10 +21,12 @@
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primevue": "^3.1.2",
+    "roboto-fontface": "*",
     "vee-validate": "^4.1.12",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
+    "vuetify": "^3.0.0-alpha.0",
     "vuex": "^4.0.0-0",
     "vuex-class": "^0.3.2",
     "yup": "^0.32.9"
@@ -49,8 +52,9 @@
     "eslint-plugin-vue": "^7.5.0",
     "prettier": "^1.19.1",
     "sass": "^1.32.5",
-    "sass-loader": "^8.0.2",
+    "sass-loader": "^10.0.0",
     "typescript": "~3.9.3",
+    "vue-cli-plugin-vuetify": "~2.4.0",
     "vue-jest": "^5.0.0-0"
   }
 }
