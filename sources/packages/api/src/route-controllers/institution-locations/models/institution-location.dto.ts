@@ -5,3 +5,13 @@ export class GetInstitutionLocationDto {
   data: InstitutionLocationInfo;
   name: string;
 }
+
+export interface InstitutionLocationTypeDto {
+  address1: string;
+  address2?: string;
+  city: string;
+  country: string;
+  locationName: string;
+  postalZipCode: string;
+  provinceState: string;
+}

@@ -21,6 +21,7 @@ export const InstitutionRoutesConst = {
   INSTITUTION_PROFILE: Symbol(),
   INSTITUTION_PROFILE_EDIT: Symbol(),
   MANAGE_LOCATIONS: Symbol(),
+  ADD_INSTITUTION_LOCATION: Symbol(),
 };
 
 export const SharedRouteConst = {

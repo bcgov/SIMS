@@ -6,13 +6,28 @@
         label="Add New Location"
         icon="pi pi-map-marker"
         iconPos="right"
+        @click="goToAddNewLocation()"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-export default {};
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+
+export default {
+
+  setup(props: any) {
+    const router = useRouter();
+
+    const goToAddNewLocation = () => {
+      router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
+    };
+
+    return { goToAddNewLocation };
+  }
+}
 </script>
 
 <style></style>
