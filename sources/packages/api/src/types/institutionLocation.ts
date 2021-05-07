@@ -7,8 +7,5 @@ export interface ValidatedInstitutionLocation {
     provinceState: string,
     postalZipCode: string,
     country: string,
-    applicationId: string,
-    pid: string,
-    process_pid: string
   }
 }
