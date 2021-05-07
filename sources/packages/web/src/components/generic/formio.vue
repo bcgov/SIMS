@@ -29,7 +29,7 @@ export default {
       const formDefinition = await ApiClient.DynamicForms.getFormDefinition(
         props.formName,
       );
-      
+
       const form = await Formio.createForm(
         formioContainerRef.value,
         formDefinition.data,
