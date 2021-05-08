@@ -55,6 +55,7 @@ export interface UserPasswordCredential {
 
 export interface WorkflowConfig {
   ruleEngineUrl: string;
+  formFlowUrl: string;
   serviceAccountCredential: UserPasswordCredential;
 }
 

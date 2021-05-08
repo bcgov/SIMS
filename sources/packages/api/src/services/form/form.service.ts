@@ -1,5 +1,9 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { FormsConfig, DryRunSubmissionResult } from "../../types";
+import {
+  FormsConfig,
+  DryRunSubmissionResult,
+  SubmissionResult,
+} from "../../types";
 import { ConfigService } from "../config/config.service";
 import axios from "axios";
 import { LoggerService } from "../../logger/logger.service";
@@ -70,6 +74,34 @@ export class FormService {
       if (error.response.status === HttpStatus.BAD_REQUEST) {
         return { valid: false };
       }
+      throw error;
+    }
+  }
+
+  async Submission(formName: string, data: any): Promise<SubmissionResult> {
+    try {
+      const authHeader = await this.createAuthHeader();
+      const response = await axios.post(
+        `${this.config.formsUrl}/${formName}/submission`,
+        { data },
+        authHeader,
+      );
+      const absolutePath = `${this.config.formsUrl}/form/${response.data.form}/submission/${response.data._id}`;
+      return {
+        submissionId: response.data._id,
+        state: response.data.state,
+        data: response.data.data,
+        formId: response.data.form,
+        absolutePath,
+        valid: true,
+      };
+    } catch (error) {
+      if (error.response.status === HttpStatus.BAD_REQUEST) {
+        return { valid: false } as SubmissionResult;
+      }
+      this.logger.error(
+        `Error while executing the submission of the form ${formName}`,
+      );
       throw error;
     }
   }

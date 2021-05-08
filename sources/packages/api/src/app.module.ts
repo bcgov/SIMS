@@ -27,6 +27,7 @@ import { RuleEngineService } from "./services/rule-engine/rule-engine.service";
 import { FormService } from "./services/form/form.service";
 import { ServiceAccountService } from "./services/service-account/service-account.service";
 import { InstitutionLocationService } from "./services/institution-location/institution-location.service";
+import { FormsFlowService } from "./services/forms-flow/forms-flow.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -54,6 +55,7 @@ import { InstitutionLocationService } from "./services/institution-location/inst
     FormService,
     ApplicationService,
     InstitutionLocationService,
+    FormsFlowService,
   ],
 })
 export class AppModule {}

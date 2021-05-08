@@ -1,16 +1,29 @@
-import { Controller, Get, Post, NotFoundException, Param, Body, BadRequestException } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  NotFoundException,
+  Param,
+  Body,
+  BadRequestException,
+} from "@nestjs/common";
 import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
-import { GetInstitutionLocationDto, InstitutionLocationTypeDto } from "./models/institution-location.dto";
+import {
+  GetInstitutionLocationDto,
+  InstitutionLocationTypeDto,
+} from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
+import { FormsFlowService } from "src/services/forms-flow/forms-flow.service";
 
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
-    ) {
+    private readonly formsFlowService: FormsFlowService,
+  ) {
     super();
   }
 
@@ -37,20 +50,33 @@ export class InstitutionLocationsController extends BaseController {
     @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
-    const submissionResult = await this.formService.dryRunSubmission(
+    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       "institutionlocationcreation",
       payload,
     );
-    if (!submissionResult.valid) {
+
+    if (!dryRunSubmissionResult.valid) {
       throw new BadRequestException(
         "Not able to create the institution location due to an invalid request.",
       );
     }
+
     const createdInstitutionlocation = await this.locationService.createtLocation(
       userToken,
-      submissionResult.data,
+      dryRunSubmissionResult.data,
     );
+
+    const submissionResult = await this.formService.Submission(
+      "institutionlocation",
+      payload,
+    );
+
+    await this.formsFlowService.createApplication({
+      formId: submissionResult.formId,
+      formUrl: submissionResult.absolutePath,
+      submissionId: submissionResult.submissionId,
+    });
+
     return createdInstitutionlocation.id;
   }
-
 }
