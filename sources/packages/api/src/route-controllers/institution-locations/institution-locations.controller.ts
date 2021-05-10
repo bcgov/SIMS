@@ -15,7 +15,7 @@ import {
 } from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
-import { FormsFlowService } from "src/services/forms-flow/forms-flow.service";
+import { FormsFlowService } from "../../services/forms-flow/forms-flow.service";
 
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {

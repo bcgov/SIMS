@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigService } from "..";
+import { ConfigService, KeycloakService } from "..";
 import { FormsFlowService } from "./forms-flow.service";
 
 describe("FormsFlowService", () => {
@@ -7,7 +7,7 @@ describe("FormsFlowService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FormsFlowService, ConfigService],
+      providers: [FormsFlowService, ConfigService, KeycloakService],
     }).compile();
 
     service = module.get<FormsFlowService>(FormsFlowService);
