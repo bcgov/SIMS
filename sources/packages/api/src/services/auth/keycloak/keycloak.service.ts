@@ -81,7 +81,7 @@ export class KeycloakService {
   }
 
   /**
-   * Authenticate an user on Keycloak using a provided user name and password.
+   * Retrieve an token from Keycloak using a provided user name and password.
    * @param username User name.
    * @param password Password.
    * @param clientId Client ID.
@@ -92,13 +92,41 @@ export class KeycloakService {
     password: string,
     clientId: string,
   ): Promise<TokenResponse> {
+    const payload = {
+      grant_type: "password",
+      client_id: clientId,
+      username,
+      password,
+    };
+    return this.getKeyCloakToken(payload);
+  }
+
+  /**
+   * Retrieve an token from Keycloak using a provided client id and client secret.
+   * @param clientSecret Client secret.
+   * @param clientId Client ID.
+   * @returns token
+   */
+  public async getTokenFromClientSecret(
+    clientId: string,
+    clientSecret: string,
+  ): Promise<TokenResponse> {
+    const payload = {
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret,
+    };
+    return this.getKeyCloakToken(payload);
+  }
+
+  /**
+   * Retrieve an token from Keycloak.
+   * @param payload Payload request (e.g. password or client_credentials).
+   * @returns token
+   */
+  private async getKeyCloakToken(payload: any): Promise<TokenResponse> {
     try {
-      const data = stringify({
-        grant_type: "password",
-        client_id: clientId,
-        username,
-        password,
-      });
+      const data = stringify(payload);
       const response = await axios.post(
         KeycloakConfig.openIdConfig.token_endpoint,
         data,

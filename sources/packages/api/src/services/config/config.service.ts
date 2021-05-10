@@ -26,7 +26,6 @@ export class ConfigService {
       },
       workflow: {
         ruleEngineUrl: process.env.RULE_ENGINE_URL,
-        formFlowUrl: process.env.FORMS_FLOW_BASE_URL,
         serviceAccountCredential: {
           userName: process.env.WORKFLOW_SA_USER_NAME,
           password: process.env.WORKFLOW_SA_PASSWORD,
@@ -37,6 +36,13 @@ export class ConfigService {
         serviceAccountCredential: {
           userName: process.env.FORMS_SA_USER_NAME,
           password: process.env.FORMS_SA_PASSWORD,
+        },
+      },
+      formsFlow: {
+        formFlowUrl: process.env.FORMS_FLOW_BASE_URL,
+        credential: {
+          ClientId: process.env.SIMS_API_CLIENT_ID,
+          ClientSecret: process.env.SIMS_API_CLIENT_SECRET,
         },
       },
     };
