@@ -5,7 +5,7 @@ import {
   NotFoundException,
   Param,
   Body,
-  BadRequestException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
@@ -57,7 +57,7 @@ export class InstitutionLocationsController extends BaseController {
     );
 
     if (!dryRunSubmissionResult.valid) {
-      throw new BadRequestException(
+      throw new UnprocessableEntityException(
         "Not able to create the institution location due to an invalid request.",
       );
     }
@@ -69,7 +69,7 @@ export class InstitutionLocationsController extends BaseController {
     );
 
     // Save a form to formio to handle the location approval.
-    const submissionResult = await this.formService.Submission(
+    const submissionResult = await this.formService.submission(
       "institutionlocation",
       payload,
     );

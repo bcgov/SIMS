@@ -85,7 +85,7 @@ export class FormService {
    * @param data Data to be saved.
    * @returns Submission related information from formio submission result.
    */
-  async Submission(formName: string, data: any): Promise<SubmissionResult> {
+  async submission(formName: string, data: any): Promise<SubmissionResult> {
     try {
       const authHeader = await this.createAuthHeader();
       const response = await axios.post(
