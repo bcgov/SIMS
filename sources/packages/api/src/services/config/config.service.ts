@@ -38,6 +38,13 @@ export class ConfigService {
           password: process.env.FORMS_SA_PASSWORD,
         },
       },
+      formsFlow: {
+        formFlowApiUrl: process.env.FORMS_FLOW_API_URL,
+        credential: {
+          ClientId: process.env.SIMS_API_CLIENT_ID,
+          ClientSecret: process.env.SIMS_API_CLIENT_SECRET,
+        },
+      },
     };
   }
 

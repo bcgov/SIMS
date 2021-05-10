@@ -19,6 +19,8 @@ objects:
       workflow-sa-password: ${WORKFLOW_SA_PASSWORD}
       forms-sa-user-name: ${FORMS_SA_USER_NAME}
       forms-sa-password: ${FORMS_SA_PASSWORD}
+      sims-api-client-id: ${SIMS_API_CLIENT_ID}
+      sims-api-client-secret: ${SIMS_API_CLIENT_SECRET}
 parameters:
   - name: NAME
     description: |
@@ -75,3 +77,13 @@ parameters:
     required: true
     description: |
       Service Account Password for formio.
+  - name: SIMS_API_CLIENT_ID
+    displayName: Keycloak Client ID
+    required: true
+    description: |
+      Keycloak Client ID to allow SIMS Api to retrieve the token.
+  - name: SIMS_API_CLIENT_SECRET
+    displayName: Keycloak Client Secret
+    required: true
+    description: |
+      Keycloak Client Secret to allow SIMS Api to retrieve the token.

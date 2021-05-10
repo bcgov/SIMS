@@ -107,6 +107,18 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
+                - name: FORMS_FLOW_API_URL
+                  value: ${FORMS_FLOW_API_URL}
+                - name: SIMS_API_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SIMS_API_CLIENT_ID_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: SIMS_API_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SIMS_API_CLIENT_SECRET_NAME_KEY}
+                      name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -241,3 +253,7 @@ parameters:
     value: forms-sa-password
   - name: SITE_MINDER_LOGOUT_URL
     require: true
+  - name: SIMS_API_CLIENT_ID_NAME_KEY
+    value: sims-api-client-id
+  - name: SIMS_API_CLIENT_SECRET_NAME_KEY
+    value: sims-api-client-secret

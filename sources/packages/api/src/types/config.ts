@@ -5,6 +5,7 @@ export interface IConfig {
   bceid: BCeIDConfig;
   workflow: WorkflowConfig;
   forms: FormsConfig;
+  formsFlow: FormsFlowConfig;
 }
 
 export interface IAuthConfig {
@@ -53,12 +54,23 @@ export interface UserPasswordCredential {
   password: string;
 }
 
+export interface ClientCredential {
+  ClientId: string;
+  ClientSecret: string;
+}
+
 export interface WorkflowConfig {
   ruleEngineUrl: string;
+
   serviceAccountCredential: UserPasswordCredential;
 }
 
 export interface FormsConfig {
   formsUrl: string;
   serviceAccountCredential: UserPasswordCredential;
+}
+
+export interface FormsFlowConfig {
+  formFlowApiUrl: string;
+  credential: ClientCredential;
 }
