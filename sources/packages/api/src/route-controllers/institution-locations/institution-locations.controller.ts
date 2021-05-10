@@ -62,7 +62,7 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
 
-    // If the data is valid tre location is saved to SIMS DB.
+    // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionlocation = await this.locationService.createtLocation(
       userToken,
       dryRunSubmissionResult.data,
