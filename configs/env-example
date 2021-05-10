@@ -47,6 +47,8 @@ API_INIT_FORMS_SA_PASSWORD=
 # Workflow related 
 # Camunda
 RULE_ENGINE_URL=
+#FormsFlow.ai
+FORMS_FLOW_BASE_URL=
 # Service Account
 WORKFLOW_SA_USER_NAME=
 WORKFLOW_SA_PASSWORD=

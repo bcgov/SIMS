@@ -72,6 +72,7 @@ jobs:
       RULE_ENGINE_URL: "https://dev-aest-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda/engine-rest"
       FORMS_URL: "https://dev-aest-ffa-forms.apps.silver.devops.gov.bc.ca"
       SITE_MINDER_LOGOUT_URL: "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi"
+      FORMS_FLOW_BASE_URL: "https://dev-aest-ffa-api.apps.silver.devops.gov.bc.ca"
     needs:
       - build
     steps:

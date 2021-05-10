@@ -107,6 +107,8 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
+                - name: FORMS_FLOW_BASE_URL
+                  value: ${FORMS_FLOW_BASE_URL}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
