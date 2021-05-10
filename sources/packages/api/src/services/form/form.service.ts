@@ -78,6 +78,13 @@ export class FormService {
     }
   }
 
+  /**
+   * Validate and save the data to the From IO environment generating also
+   * the absolute path for the formio generated submission.
+   * @param formName Name of the form to be saved.
+   * @param data Data to be saved.
+   * @returns Submission related information from formio submission result.
+   */
   async Submission(formName: string, data: any): Promise<SubmissionResult> {
     try {
       const authHeader = await this.createAuthHeader();

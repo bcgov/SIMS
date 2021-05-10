@@ -50,6 +50,7 @@ export class InstitutionLocationsController extends BaseController {
     @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
+    // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       "institutionlocationcreation",
       payload,
@@ -61,16 +62,20 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
 
+    // If the data is valid tre location is saved to SIMS DB.
     const createdInstitutionlocation = await this.locationService.createtLocation(
       userToken,
       dryRunSubmissionResult.data,
     );
 
+    // Save a form to formio to handle the location approval.
     const submissionResult = await this.formService.Submission(
       "institutionlocation",
       payload,
     );
 
+    // Create an application entry on FormFlow.ai, using the
+    // previously created form definition on formio.
     await this.formsFlowService.createApplication({
       formId: submissionResult.formId,
       formUrl: submissionResult.absolutePath,

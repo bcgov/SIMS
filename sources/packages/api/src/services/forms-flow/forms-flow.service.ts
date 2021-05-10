@@ -5,6 +5,9 @@ import axios from "axios";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 
+/**
+ * Service to handle interactions with FormsFlow.ai.
+ */
 @Injectable()
 export class FormsFlowService {
   @InjectLogger()
@@ -25,7 +28,7 @@ export class FormsFlowService {
       const authHeader = await this.createAuthHeader();
       await axios.post(endpoint, payload, authHeader);
     } catch (error) {
-      this.logger.error("Error while creating an application on Forms Flow.");
+      this.logger.error("Error while creating an application on FormsFlow.ai.");
       throw error;
     }
   }
