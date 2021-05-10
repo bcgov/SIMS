@@ -29,7 +29,7 @@ export class FormsFlowService {
 
   public async createApplication(payload: CreateApplicationPayload) {
     try {
-      const endpoint = `${this.config.formFlowUrl}/application/create`;
+      const endpoint = `${this.config.formFlowApiUrl}/application/create`;
       const authHeader = await this.createAuthHeader();
       await axios.post(endpoint, payload, authHeader);
     } catch (error) {

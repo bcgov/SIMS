@@ -71,6 +71,6 @@ export interface FormsConfig {
 }
 
 export interface FormsFlowConfig {
-  formFlowUrl: string;
+  formFlowApiUrl: string;
   credential: ClientCredential;
 }

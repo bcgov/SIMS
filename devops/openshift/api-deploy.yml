@@ -107,8 +107,8 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
-                - name: FORMS_FLOW_BASE_URL
-                  value: ${FORMS_FLOW_BASE_URL}
+                - name: FORMS_FLOW_API_URL
+                  value: ${FORMS_FLOW_API_URL}
                 - name: SIMS_API_CLIENT_ID
                   valueFrom:
                     secretKeyRef:

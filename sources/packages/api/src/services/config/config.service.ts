@@ -39,7 +39,7 @@ export class ConfigService {
         },
       },
       formsFlow: {
-        formFlowUrl: process.env.FORMS_FLOW_BASE_URL,
+        formFlowApiUrl: process.env.FORMS_FLOW_API_URL,
         credential: {
           ClientId: process.env.SIMS_API_CLIENT_ID,
           ClientSecret: process.env.SIMS_API_CLIENT_SECRET,
