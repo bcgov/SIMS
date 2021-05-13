@@ -20,6 +20,7 @@ import {
   WorkflowController,
   ApplicationController,
   InstitutionLocationsController,
+  CraIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -30,6 +31,7 @@ import {
   InstitutionLocationService,
   FormsFlowService,
   KeycloakService,
+  SshService,
 } from "./services";
 
 @Module({
@@ -44,6 +46,7 @@ import {
     WorkflowController,
     ApplicationController,
     InstitutionLocationsController,
+    CraIntegrationController,
   ],
   providers: [
     AppService,
@@ -60,6 +63,7 @@ import {
     InstitutionLocationService,
     FormsFlowService,
     KeycloakService,
+    SshService,
   ],
 })
 export class AppModule {}

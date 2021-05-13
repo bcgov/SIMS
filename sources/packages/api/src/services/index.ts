@@ -11,3 +11,4 @@ export * from "./application/application.service";
 export * from "./institution-location/institution-location.service";
 export * from "./auth/keycloak/keycloak.service";
 export * from "./forms-flow/forms-flow.service";
+export * from "./ssh/ssh.service";
