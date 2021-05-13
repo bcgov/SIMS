@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main style="position: auto">
       <router-view></router-view>
     </v-main>
   </v-app>
@@ -20,3 +20,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.auto-pos {
+  position: auto;
+}
+</style>
