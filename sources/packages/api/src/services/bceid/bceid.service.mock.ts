@@ -4,6 +4,8 @@ import {
   SearchAccountOptions,
   SearchBCeIDAccountResult,
 } from "./search-bceid.model";
+import getAccountDetailsMock from "./mockups/getAccountDetails.mock";
+import searchBCeIDAccountsMock from "./mockups/searchBCeIDAccounts.mock";
 
 // This service is intended to return only fake data for development purposes only.
 // It allows the simulation of the response from BCeID Web Service.
@@ -15,12 +17,12 @@ import {
 @Injectable()
 export class BCeIDServiceMock {
   public async getAccountDetails(userName: string): Promise<AccountDetails> {
-    return require("./mockups/getAccountDetails.mock").mock;
+    return getAccountDetailsMock;
   }
 
   public async searchBCeIDAccounts(
     options: SearchAccountOptions,
   ): Promise<SearchBCeIDAccountResult> {
-    return require("./mockups/searchBCeIDAccounts.mock").mock;
+    return searchBCeIDAccountsMock;
   }
 }

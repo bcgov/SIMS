@@ -5,7 +5,7 @@
 // DUMMY_BCeID_ACCOUNT_RESPONSE === "yes"
 // For a complete response from the BCeID Test Web Service please
 // copy the file available on "Teams>Files>BCeID Web Service Mockups"
-export const mock = {
+export default {
   accounts: [
     {
       guid: "4861E92082BD4884842F304C39F63FCB",
