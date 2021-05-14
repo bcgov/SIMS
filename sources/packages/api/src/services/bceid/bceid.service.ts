@@ -93,6 +93,12 @@ export class BCeIDService {
     }
   }
 
+  /**
+   * Retrieves business BCeIDs accounts under the specified institution (options.businessGuid)
+   * and that the user (options.requesterUserGuid) executing the search has access to.
+   * @param options Search parameters.
+   * @returns The list of BCeIDs for the institution.
+   */
   public async searchBCeIDAccounts(
     options: SearchAccountOptions,
   ): Promise<SearchBCeIDAccountResult> {

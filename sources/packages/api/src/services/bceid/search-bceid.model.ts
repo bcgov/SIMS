@@ -16,7 +16,7 @@ export const PAGINATION_MAX_PAGE_SIZE = 500;
  */
 export class SearchAccountOptions {
   /**
-   * Guid from the BCeID user executing th search.
+   * Guid from the BCeID user executing the search.
    */
   requesterUserGuid: string;
   /**
@@ -31,16 +31,25 @@ export class SearchAccountOptions {
   pagination = new PaginationOptions();
 }
 
+/**
+ * Pagination options allowed on BCeID Web Service search request.
+ */
 export class PaginationOptions {
   pageSize?: Number = PAGINATION_MAX_PAGE_SIZE;
   pageIndex?: Number = PAGINATION_FIRST_PAGE_INDEX;
 }
 
+/**
+ * Search result from a BCeID Web Service request.
+ */
 export interface SearchBCeIDAccountResult {
   readonly accounts: SearchResultAccount[];
   readonly paginationResult: PaginationResult;
 }
 
+/**
+ * Represents each BCeID account returned from the search operation.
+ */
 export interface SearchResultAccount {
   readonly guid: string;
   readonly userId: string;
@@ -51,8 +60,27 @@ export interface SearchResultAccount {
   readonly telephone: string;
 }
 
+/**
+ * Pagination result from the BCeID Web Service result
+ * that contains informations useful to handle the pagination,
+ * for instance, the total of items present on the server, that
+ * could be different from the total of items returned due to
+ * the size of the page requested.
+ */
 export interface PaginationResult {
+  /**
+   * Total of items that would be returned by the search
+   * disconsidering the page size requested.
+   */
   readonly totalItems: number;
+  /**
+   * Size of the page requested.
+   */
   readonly requestedPageSize: number;
+  /**
+   * Index of the page returned.
+   * Please note that the page index is not 0 based,
+   * the first page is the index 1.
+   */
   readonly requestedPageIndex: number;
 }
