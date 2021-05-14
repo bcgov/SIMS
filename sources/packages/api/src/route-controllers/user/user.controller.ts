@@ -77,6 +77,7 @@ export class UserController extends BaseController {
     const searchResult = await this.bceidService.searchBCeIDAccounts(
       searchOptions,
     );
+
     const accounts = searchResult.accounts.map((account) => {
       return {
         guid: account.guid,

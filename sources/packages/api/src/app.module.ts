@@ -8,8 +8,8 @@ import {
   ConfigService,
   ArchiveDbService,
   InstitutionService,
-  BCeIDService,
   ApplicationService,
+  BCeIDServiceProvider,
 } from "./services";
 import {
   UserController,
@@ -52,7 +52,7 @@ import {
     InstitutionService,
     ConfigService,
     ArchiveDbService,
-    BCeIDService,
+    BCeIDServiceProvider,
     ServiceAccountService,
     RuleEngineService,
     FormService,

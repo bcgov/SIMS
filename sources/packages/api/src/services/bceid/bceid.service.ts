@@ -40,21 +40,6 @@ export class BCeIDService {
    * @returns account details if the account was found, otherwise null.
    */
   public async getAccountDetails(userName: string): Promise<AccountDetails> {
-    if (process.env.DUMMY_BCeID_ACCOUNT_RESPONSE === "yes") {
-      return {
-        user: {
-          guid: "a90b3-ff78c-98b0c-2e5fb-7c667",
-          displayName: "Test Account",
-          firstname: "Test",
-          surname: "Account",
-          email: "test.account@sims.ca",
-        },
-        institution: {
-          guid: "b90a3-ee78b-98a0d-2f5db-7a457",
-          legalName: "Test Institute",
-        },
-      };
-    }
     var client = await this.getSoapClient();
     // SOAP call body to execute the getAccountDetail request.
     var body = {
