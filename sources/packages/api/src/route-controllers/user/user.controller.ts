@@ -1,9 +1,10 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, UnprocessableEntityException } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
+import { SearchAccountOptions } from "src/services/bceid/search-bceid.model";
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -53,5 +54,25 @@ export class UserController extends BaseController {
         },
       };
     }
-  } //Close getBCeID method
+  }
+
+  @Get("bceid-accounts")
+  async getAllBCeIDs(@UserToken() userToken: IUserToken): Promise<any> {
+    const account = await this.bceidService.getAccountDetails(
+      userToken.idp_user_name,
+    );
+
+    if (!account) {
+      throw new UnprocessableEntityException(
+        "Not able to retrieve BCeID business account details for the current authenticated user.",
+      );
+    }
+
+    const searchOptions = new SearchAccountOptions();
+    searchOptions.requesterUserGuid = account.user.guid;
+    searchOptions.businessGuid = account.institution.guid;
+    const accounts = await this.bceidService.searchBCeIDAccounts(searchOptions);
+
+    return accounts;
+  }
 }

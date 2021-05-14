@@ -6,9 +6,16 @@ import { LoggerService } from "../../logger/logger.service";
 import { ConfigService } from "../config/config.service";
 import { AccountDetails } from "./account-details.model";
 import {
+  SearchAccountOptions,
+  SearchBCeIDAccountResult,
+  SearchResultAccount,
+} from "./search-bceid.model";
+import {
   BCeIDAccountTypeCodes,
   ResponseBase,
   ResponseCodes,
+  SortBCeIDAccountOnProperty,
+  SortDirection,
 } from "./bceid.models";
 
 /**
@@ -96,6 +103,62 @@ export class BCeIDService {
     } catch (error) {
       this.logger.error(
         `Error while retrieving account details from BCeID Web Service. ${error}`,
+      );
+      throw error;
+    }
+  }
+
+  public async searchBCeIDAccounts(
+    options: SearchAccountOptions,
+  ): Promise<SearchBCeIDAccountResult> {
+    var client = await this.getSoapClient();
+    // SOAP call body to execute the searchBCeIDAccount request.
+    var body = {
+      bceidAccountSearchRequest: {
+        onlineServiceId: this.bceidConfig.onlineServiceId,
+        requesterAccountTypeCode: BCeIDAccountTypeCodes.Business,
+        requesterUserGuid: options.requesterUserGuid,
+        pagination: {
+          pageSizeMaximum: options.pagination.pageSize,
+          pageIndex: options.pagination.pageIndex,
+        },
+        sort: {
+          direction: SortDirection.Ascending,
+          onProperty: SortBCeIDAccountOnProperty.Firstname,
+        },
+        accountMatch: {
+          searchableAccountType: BCeIDAccountTypeCodes.Business,
+        },
+        businessMatch: {
+          businessGuid: options.businessGuid,
+        },
+      },
+    };
+
+    try {
+      // Destructuring the result of the SOAP request to get the
+      // first item on the array where the parsed js object is.
+      const [result] = await client.searchBCeIDAccountAsync(body);
+      const response = result.searchBCeIDAccountResult as ResponseBase;
+      this.ensureSuccessStatusResult(response);
+      // Array os items from SOAP response that contains all accounts.
+      const accounts = result.searchBCeIDAccountResult.accountList.BCeIDAccount;
+
+      const accountResults = accounts.map((account: any) => {
+        return {
+          guid: account.guid.value,
+          userId: account.userId.value,
+          firstname: account.individualIdentity?.name?.firstname.value,
+          surname: account.individualIdentity?.name?.surname.value,
+          email: account.contact?.email.value,
+          telephone: account.contact?.telephone.value,
+        } as SearchResultAccount;
+      });
+
+      return { accounts: accountResults };
+    } catch (error) {
+      this.logger.error(
+        `Error while searching BCeID accounts on BCeID Web Service. ${error}`,
       );
       throw error;
     }

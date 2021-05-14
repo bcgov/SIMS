@@ -105,3 +105,59 @@ export enum BCeIDAccountTypeCodes {
    */
   Business = "Business",
 }
+
+/**
+ * While executing a search on BCeID, these are the sort options.
+ */
+export enum SortBCeIDAccountOnProperty {
+  /**
+   * No sort field specified. Specifying this value will result in an error message.
+   */
+  Void = "Void",
+  /**
+   * Sort on User ID.
+   */
+  UserId = "UserId",
+  /**
+   * Sort on first name.
+   */
+  Firstname = "Firstname",
+  /**
+   * Sort on last name.
+   */
+  LastName = "LastName",
+  /**
+   * Sort on middle name.
+   */
+  MiddleName1 = "MiddleName1",
+  /**
+   * Sort on other middle name.
+   */
+  MiddleName2 = "MiddleName2",
+  /**
+   * Sort on email address
+   */
+  Email = "Email",
+  /**
+   * Sort on telephone.
+   */
+  Telephone = "Telephone",
+}
+
+/**
+ * While executing a search on BCeID, these are the sort direction options.
+ */
+export enum SortDirection {
+  /**
+   * No direction specified. Specifying this value will result in an error message.
+   */
+  Void = "Void",
+  /**
+   * Sort in ascending order.
+   */
+  Ascending = "Ascending",
+  /**
+   * Sort in descending order.
+   */
+  Descending = "Descending",
+}
