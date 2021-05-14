@@ -1,23 +1,21 @@
 <template>
-  <v-container>
-    <div>
-      <NavBar title="Student Aid" :clientType="clientType" v-if="isAuthReady">
-        <template #end>
-          <Button
-            v-if="isAuthenticated"
-            label="Student Profile"
-            icon="pi pi-fw pi-user"
-            class="p-button-text"
-            style="color: white"
-            @click="
-              $router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })
-            "
-          />
-        </template>
-      </NavBar>
-      <router-view v-if="isAuthReady" :key="$route.fullPath" />
-    </div>
-  </v-container>
+  <div>
+    <NavBar title="Student Aid" :clientType="clientType" v-if="isAuthReady">
+      <template #end>
+        <Button
+          v-if="isAuthenticated"
+          label="Student Profile"
+          icon="pi pi-fw pi-user"
+          class="p-button-text"
+          style="color: white"
+          @click="
+            $router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })
+          "
+        />
+      </template>
+    </NavBar>
+    <router-view v-if="isAuthReady" :key="$route.fullPath" />
+  </div>
 </template>
 
 <script lang="ts">

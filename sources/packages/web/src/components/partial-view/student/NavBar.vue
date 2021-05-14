@@ -2,7 +2,12 @@
   <Menubar :model="menuItems" class="gov-header">
     <template #start>
       <div class="p-menubar-start">
-        <img alt="logo" src="../../../assets/images/bc_logo.svg" height="40" />
+        <v-img
+          width="156.7"
+          height="43.5"
+          alt="logo"
+          src="../../../assets/images/bc_logo.svg"
+        />
         <span class="title">{{ title }}</span>
       </div>
     </template>
