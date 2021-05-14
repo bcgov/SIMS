@@ -143,11 +143,13 @@ export class BCeIDService {
       this.ensureSuccessStatusResult(response);
       // Array os items from SOAP response that contains all accounts.
       const accounts = result.searchBCeIDAccountResult.accountList.BCeIDAccount;
+      const pagination = result.searchBCeIDAccountResult.pagination;
 
       const accountResults = accounts.map((account: any) => {
         return {
           guid: account.guid.value,
           userId: account.userId.value,
+          displayName: `${account.individualIdentity?.name?.firstname.value} ${account.individualIdentity?.name?.surname.value}`.trim(),
           firstname: account.individualIdentity?.name?.firstname.value,
           surname: account.individualIdentity?.name?.surname.value,
           email: account.contact?.email.value,
@@ -155,7 +157,14 @@ export class BCeIDService {
         } as SearchResultAccount;
       });
 
-      return { accounts: accountResults };
+      return {
+        accounts: accountResults,
+        paginationResult: {
+          totalItems: pagination.totalVirtualItems,
+          requestedPageSize: pagination.requestedPageSize,
+          requestedPageIndex: pagination.requestedPageIndex,
+        },
+      };
     } catch (error) {
       this.logger.error(
         `Error while searching BCeID accounts on BCeID Web Service. ${error}`,
