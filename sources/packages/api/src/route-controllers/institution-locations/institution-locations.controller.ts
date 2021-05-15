@@ -84,4 +84,15 @@ export class InstitutionLocationsController extends BaseController {
 
     return createdInstitutionlocation.id;
   }
+
+  @Get()
+  async getAllInstitutionLocations(
+    @UserToken() userToken: IUserToken,
+  ): Promise<any> {
+    // get all institution locations.
+    const Institutionlocations = await this.locationService.getAllInstitutionlocations(
+      userToken
+    );
+    return Institutionlocations;
+  }
 }

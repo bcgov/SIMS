@@ -52,4 +52,22 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
     return await this.repo.save(newLocation);
   }
+
+  async getAllInstitutionlocations(userInfo: UserInfo): Promise<any> {
+    //To retrive institution id
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userInfo.userName,
+    );
+    if (!institutionDetails) {
+      throw new Error(
+        "Not able to find a institution associated with the current user name.",
+      );
+    }
+    return this.repo
+      .createQueryBuilder("institution_location")
+      .select(['institution_location.name', 'institution_location.data', 'institution.institutionPrimaryContact'])
+      .leftJoin("institution_location.institution", "institution", "institution.id = institution_location.institution_id")
+      .where('institution.id = :Id', { Id: institutionDetails.id})
+      .getMany();
+  }
 }
