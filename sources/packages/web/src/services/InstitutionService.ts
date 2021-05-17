@@ -5,7 +5,7 @@ import {
   InstitutionDetailDto,
   InstitutionProfileState,
   UpdateInstitutionDto,
-  Institutionlocation
+  Institutionlocation,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -91,5 +91,8 @@ export class InstitutionService {
   public async createInstitutionLocation(data: Institutionlocation) {
     await ApiClient.InstitutionLocation.createInstitutionLocation(data);
   }
-}
 
+  public async getAllInstitutionLocations() {
+    return await ApiClient.InstitutionLocation.allInstitutionLocationsApi();
+  }
+}

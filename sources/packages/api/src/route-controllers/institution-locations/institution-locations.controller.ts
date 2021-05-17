@@ -11,18 +11,19 @@ import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
 import {
   GetInstitutionLocationDto,
+  InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
 } from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
-import { FormsFlowService } from "../../services/forms-flow/forms-flow.service";
-
+import { FormsFlowService, InstitutionService } from "../../services";
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
     private readonly formsFlowService: FormsFlowService,
+    private readonly institutionService: InstitutionService
   ) {
     super();
   }
@@ -61,10 +62,18 @@ export class InstitutionLocationsController extends BaseController {
         "Not able to create the institution location due to an invalid request.",
       );
     }
+    
+    //To retrive institution id
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userToken.userName,
+    );
+    if (!institutionDetails) {
+      throw new UnprocessableEntityException("Not able to find a institution associated with the current user name.");
+    }
 
     // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionlocation = await this.locationService.createtLocation(
-      userToken,
+      institutionDetails.id,
       dryRunSubmissionResult.data,
     );
 
@@ -83,5 +92,23 @@ export class InstitutionLocationsController extends BaseController {
     });
 
     return createdInstitutionlocation.id;
+  }
+
+  @Get()
+  async getAllInstitutionLocations(
+    @UserToken() userToken: IUserToken,
+  ): Promise<InstitutionLocationsDetailsDto[]> {
+    //To retrive institution id
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userToken.userName,
+    );
+    if (!institutionDetails) {
+      throw new UnprocessableEntityException("Not able to find a institution associated with the current user name.");
+    }
+    // get all institution locations.
+    const Institutionlocations = await this.locationService.getAllInstitutionlocations(
+      institutionDetails.id
+    );
+    return Institutionlocations;
   }
 }
