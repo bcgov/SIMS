@@ -15,3 +15,25 @@ export interface InstitutionLocationTypeDto {
   postalZipCode: string;
   provinceState: string;
 }
+
+export interface InstitutionLocationsDetailsDto {
+  name: string;
+  data: {
+    address: {
+      addressLine1: string;
+      addressLine2?: string;
+      province: string;
+      country: string;
+      city: string;
+      postalCode: string;
+    };
+  };
+  institution: {
+    institutionPrimaryContact : {
+      primaryContactEmail: string;
+      primaryContactFirstName: string;
+      primaryContactLastName: string;
+      primaryContactPhone: string;
+    };
+  };
+}
