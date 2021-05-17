@@ -6,7 +6,7 @@ import { AppModule } from "../../app.module";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 
-describe("Users controller (e2e)", () => {
+describe.skip("Users controller (e2e)", () => {
   // Use the student client to retrieve the token from.
   // The BCeID user is a Keyclock user, so doesn't matter
   // from which client it will be retrieved.
