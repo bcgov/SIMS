@@ -36,11 +36,12 @@
                 <v-badge
                   bordered
                   color="green"
-                  content="Desginated"
+                  content="&#10004;  DESIGNATED"
                   location="top-right"
+                  text-color="white"
                 >
                   <template v-slot:default>
-                    <v-icon>mdi-map-marker-radiusq</v-icon>
+                    <v-icon>mdi-map-markers-radius</v-icon>
                   </template>
                 </v-badge>
               </h4>
