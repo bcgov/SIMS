@@ -4,7 +4,7 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
-import { SearchAccountOptions } from "src/services/bceid/search-bceid.model";
+import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 
 @Controller("users")
