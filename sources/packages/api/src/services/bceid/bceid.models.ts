@@ -161,3 +161,35 @@ export enum SortDirection {
    */
   Descending = "Descending",
 }
+
+/**
+ * Raw value from BCeID Soap response.
+ */
+export interface SoapResponseRawValue {
+  readonly value: string;
+}
+
+export interface IndividualIdentitySoapResponse {
+  readonly name: IndividualIdentityNameSoapResponse;
+}
+
+export interface IndividualIdentityNameSoapResponse {
+  readonly firstname: SoapResponseRawValue;
+  readonly surname: SoapResponseRawValue;
+}
+
+export interface IndividualIdentityContactSoapResponse {
+  readonly email: SoapResponseRawValue;
+  readonly telephone: SoapResponseRawValue;
+}
+
+/**
+ * BCeID account soap response from searchBCeIDAccount
+ * method from BCeID Web Service.
+ */
+export interface BCeIDAccountSoapResponse {
+  readonly guid: SoapResponseRawValue;
+  readonly userId: SoapResponseRawValue;
+  readonly individualIdentity?: IndividualIdentitySoapResponse;
+  readonly contact?: IndividualIdentityContactSoapResponse;
+}

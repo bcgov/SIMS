@@ -11,6 +11,7 @@ import {
   SearchResultAccount,
 } from "./search-bceid.model";
 import {
+  BCeIDAccountSoapResponse,
   BCeIDAccountTypeCodes,
   ResponseBase,
   ResponseCodes,
@@ -136,17 +137,19 @@ export class BCeIDService {
       const accounts = result.searchBCeIDAccountResult.accountList.BCeIDAccount;
       const pagination = result.searchBCeIDAccountResult.pagination;
 
-      const accountResults = accounts.map((account: any) => {
-        return {
-          guid: account.guid.value,
-          userId: account.userId.value,
-          displayName: `${account.individualIdentity?.name?.firstname.value} ${account.individualIdentity?.name?.surname.value}`.trim(),
-          firstname: account.individualIdentity?.name?.firstname.value,
-          surname: account.individualIdentity?.name?.surname.value,
-          email: account.contact?.email.value,
-          telephone: account.contact?.telephone.value,
-        } as SearchResultAccount;
-      });
+      const accountResults = accounts.map(
+        (account: BCeIDAccountSoapResponse) => {
+          return {
+            guid: account.guid.value,
+            userId: account.userId.value,
+            displayName: `${account.individualIdentity?.name?.firstname.value} ${account.individualIdentity?.name?.surname.value}`.trim(),
+            firstname: account.individualIdentity?.name?.firstname.value,
+            surname: account.individualIdentity?.name?.surname.value,
+            email: account.contact?.email.value,
+            telephone: account.contact?.telephone.value,
+          } as SearchResultAccount;
+        },
+      );
 
       return {
         accounts: accountResults,
