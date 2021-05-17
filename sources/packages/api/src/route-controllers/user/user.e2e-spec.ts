@@ -1,10 +1,10 @@
-require("../env_setup");
+require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { AppModule } from "../src/app.module";
-import { KeycloakConfig } from "../src/auth/keycloakConfig";
-import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
+import { AppModule } from "../../app.module";
+import { KeycloakConfig } from "../../auth/keycloakConfig";
+import { KeycloakService } from "../../services/auth/keycloak/keycloak.service";
 
 describe.skip("Users controller (e2e)", () => {
   // Use the student client to retrieve the token from.
@@ -35,7 +35,7 @@ describe.skip("Users controller (e2e)", () => {
     await app.init();
   });
 
-  describe.skip("bceid-account route", () => {
+  describe("bceid-account route", () => {
     it("Should return a HttpStatus OK(200) with user account information when user is valid", () => {
       return request(app.getHttpServer())
         .get("/users/bceid-account")
@@ -52,6 +52,29 @@ describe.skip("Users controller (e2e)", () => {
           expect(resp.body.institution).toBeDefined();
           expect(resp.body.institution.guid).toBeTruthy();
           expect(resp.body.institution.legalName).toBeTruthy();
+        });
+    });
+  });
+
+  describe("bceid-accounts route", () => {
+    it("Should return a HttpStatus OK(200) with user accounts information when user is valid", () => {
+      return request(app.getHttpServer())
+        .get("/users/bceid-accounts")
+        .auth(accesstoken, { type: "bearer" })
+        .expect(HttpStatus.OK)
+        .then((resp) => {
+          expect(resp.body).toBeDefined();
+          expect(resp.body.accounts).toBeDefined();
+          const account = resp.body.accounts[0];
+          expect(account.guid).toBeTruthy();
+          expect(account.firstname).toBeTruthy();
+          expect(account.surname).toBeTruthy();
+          expect(account.displayName).toBeTruthy();
+          expect(account.displayName).toBe(
+            `${account.firstname} ${account.surname}`,
+          );
+          expect(account.email).toBeTruthy();
+          expect(account.telephone).toBeDefined();
         });
     });
   });
