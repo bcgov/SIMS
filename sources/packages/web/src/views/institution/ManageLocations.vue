@@ -112,7 +112,7 @@
             </v-col>
           </v-row>
           <v-divider></v-divider>
-          <!-- TODO: beloW values are todo -->
+          <!-- TODO: below values are todo -->
           <v-row>
             <v-col>
               <span><b>250</b></span> Students
