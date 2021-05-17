@@ -1,7 +1,8 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
-  InstitutionlocationData
+  InstitutionlocationData,
+  InstitutionLocationsDetails
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -19,8 +20,8 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
-  public async allInstitutionLocationsApi(): Promise<any> {
-    let data: InstitutionlocationData[] = [];
+  public async allInstitutionLocationsApi(): Promise<InstitutionLocationsDetails[]> {
+    let data: InstitutionLocationsDetails[] = [];
     try {
       const res = await this.apiClient.get(
         "institution/location",

@@ -25,7 +25,6 @@ import InputNumber from "primevue/inputnumber";
 import ProgressSpinner from "primevue/progressspinner";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
-import "./assets/css/institution.css";
 
 // Configure the UI validations rules globally available.
 configValidationRules();

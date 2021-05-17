@@ -16,6 +16,7 @@ import {
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { FormsFlowService } from "../../services/forms-flow/forms-flow.service";
+import { InstitutionLocationsDetails } from "../../types";
 
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
@@ -88,7 +89,7 @@ export class InstitutionLocationsController extends BaseController {
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IUserToken,
-  ): Promise<any> {
+  ): Promise<InstitutionLocationsDetails[]> {
     // get all institution locations.
     const Institutionlocations = await this.locationService.getAllInstitutionlocations(
       userToken

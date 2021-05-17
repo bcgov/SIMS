@@ -1,8 +1,8 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject, UnprocessableEntityException } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection } from "typeorm";
-import { UserInfo, ValidatedInstitutionLocation } from "../../types";
+import { UserInfo, ValidatedInstitutionLocation, InstitutionLocationsDetails } from "../../types";
 import { InstitutionService } from "..";
 
 
@@ -53,20 +53,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return await this.repo.save(newLocation);
   }
 
-  async getAllInstitutionlocations(userInfo: UserInfo): Promise<any> {
+  async getAllInstitutionlocations(userInfo: UserInfo): Promise<InstitutionLocationsDetails[]> {
     //To retrive institution id
     const institutionDetails = await this.institutionService.getInstituteByUserName(
       userInfo.userName,
     );
     if (!institutionDetails) {
-      throw new Error(
-        "Not able to find a institution associated with the current user name.",
-      );
+      throw new UnprocessableEntityException("Not able to find a institution associated with the current user name.");
     }
     return this.repo
       .createQueryBuilder("institution_location")
       .select(['institution_location.name', 'institution_location.data', 'institution.institutionPrimaryContact'])
-      .leftJoin("institution_location.institution", "institution", "institution.id = institution_location.institution_id")
+      .leftJoin("institution_location.institution", "institution")
       .where('institution.id = :Id', { Id: institutionDetails.id})
       .getMany();
   }
