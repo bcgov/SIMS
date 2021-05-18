@@ -1,7 +1,5 @@
 CREATE TABLE IF NOT EXISTS institution_user_type_roles(
   id SERIAL PRIMARY KEY,
-  user_type_description VARCHAR(500) NULL,
-  user_role_description VARCHAR(500) NULL,
   user_type VARCHAR(100) NOT NULL,
   user_role VARCHAR(100) NULL,
   active_indicator BOOLEAN NOT NULL DEFAULT TRUE,
@@ -20,10 +18,6 @@ CREATE TABLE IF NOT EXISTS institution_user_type_roles(
 COMMENT ON TABLE institution_user_type_roles IS 'Code table to manage different institution user types defined in system.';
 
 COMMENT ON COLUMN institution_user_type_roles.id IS 'Auto-generated sequential primary key column';
-
-COMMENT ON COLUMN institution_user_type_roles.user_type_description IS 'The business related description of respective user type element';
-
-COMMENT ON COLUMN institution_user_type_roles.user_role_description IS 'The business related description of respective user role element';
 
 COMMENT ON COLUMN institution_user_type_roles.user_type IS 'Unique code to identify each user type. In application this will be represented by string enum';
 

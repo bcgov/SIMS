@@ -21,18 +21,6 @@ export class InstitutionUserTypeAndRole extends RecordDataModel {
   role: string;
 
   @Column({
-    name: "user_type_description",
-    nullable: true,
-  })
-  typeDescription: string;
-
-  @Column({
-    name: "user_role_description",
-    nullable: true,
-  })
-  roleDescription: string;
-
-  @Column({
     name: "active_indicator",
     nullable: false,
   })

@@ -93,7 +93,6 @@ describe.skip("Test institution user and auth model", () => {
     expect(subject.authorizations).toBeDefined();
     expect(subject.institution.id).toEqual(institution.id);
     expect(subjectAuth.length).toBeGreaterThan(0);
-    expect(subjectAuth[0].location.id).toEqual(location.id);
 
     // Clean
     await institutionUserRepo.remove([institutionUser]);
