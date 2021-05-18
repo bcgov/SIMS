@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-  JoinTable,
-} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
@@ -78,11 +72,5 @@ export class Institution extends RecordDataModel {
   })
   institutionAddress: InstitutionAddress;
 
-  @ManyToMany(() => User, { eager: false, cascade: true })
-  @JoinTable({
-    name: "institutions_users",
-    joinColumns: [{ name: "institution_id" }],
-    inverseJoinColumns: [{ name: "user_id" }],
-  })
   users: User[];
 }
