@@ -27,7 +27,6 @@ import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
-import { type } from "ormconfig";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
