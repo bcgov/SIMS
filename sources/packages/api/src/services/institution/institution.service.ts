@@ -205,11 +205,17 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user");
     }
-    let institutionEntity = await this.getInstituteByUserName(
-      userInfo.userName,
-    );
-    if (!institutionEntity) {
-      // Try to load it from db
+    let institutionEntity: Institution;
+    try {
+      institutionEntity = await this.getInstituteByUserName(userInfo.userName);
+    } catch (excp) {
+      this.logger.error(
+        `Unable to load institution for user: ${user.userName} error: ${excp}`,
+      );
+      this.logger.log(
+        "Try to load institution from bceid account info and create association",
+      );
+
       institutionEntity = await this.repo.findOne({
         guid: account.institution.guid,
       });

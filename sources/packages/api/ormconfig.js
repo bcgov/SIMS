@@ -1,5 +1,5 @@
 
-const directLoad = (process.env.ENVIRONMENT === "test" || process.env.NODE_ENV === "local")
+const directLoad = (process.env.ENVIRONMENT === "test" || process.env.NODE_ENV === "cmd")
 
 const entities = directLoad ? ["src/database/entities/*.model{.ts,.js}"] : ["dist/database/entities/*.model{.ts,.js}"];
 
