@@ -20,7 +20,7 @@ import {
 } from "../factories";
 import { InstitutionLocation } from "../entities/institution-location.model";
 
-describe("Test student model", () => {
+describe.skip("Test institution user and auth model", () => {
   let connection: Connection;
   let typeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
   let userAuthRepo: Repository<InstitutionUserAuth>;

@@ -27,6 +27,7 @@ import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
+import { type } from "ormconfig";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -201,9 +202,31 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const institutionEntity = await this.getInstituteByUserName(
+    const user = await this.userService.getUser(userInfo.userName);
+    if (!user) {
+      throw new UnprocessableEntityException("No user record found for user");
+    }
+    let institutionEntity = await this.getInstituteByUserName(
       userInfo.userName,
     );
+    if (!institutionEntity) {
+      // Try to load it from db
+      institutionEntity = await this.repo.findOne({
+        guid: account.institution.guid,
+      });
+      if (institutionEntity) {
+        // Create association with user
+        await this.createAssociation(
+          institutionEntity,
+          user,
+          InstitutionUserType.admin,
+        );
+      } else {
+        throw new UnprocessableEntityException(
+          "Unable to find institution for user",
+        );
+      }
+    }
     if (institutionEntity.guid !== account.institution.guid) {
       throw new UnprocessableEntityException(
         "Unable to process BCeID account of current user because account institution guid mismatch",
@@ -212,7 +235,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institutionEntity.legalOperatingName = account.institution.legalName;
     await this.save(institutionEntity);
 
-    const user = await this.userService.getUser(userInfo.userName);
     if (user) {
       user.firstName = account.user.firstname;
       user.lastName = account.user.surname;
