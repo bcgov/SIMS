@@ -6,13 +6,14 @@ import { DatabaseModule } from "../../database/database.module";
 import { BCeIDService } from "../bceid/bceid.service";
 import { ConfigService } from "../config/config.service";
 import { UserService } from "../user/user.service";
-import { Institution, User } from "../../database/entities";
+import { Institution, InstitutionUser, User } from "../../database/entities";
 import { DatabaseService } from "../../database/database.service";
+import { InstitutionUserType } from "../../types";
 
 const factory = async (
   userService: UserService,
   service: InstitutionService,
-): Promise<[Institution, User]> => {
+): Promise<[Institution, User, InstitutionUser]> => {
   const user = userService.create();
   user.email = faker.internet.email();
   user.firstName = faker.name.firstName();
@@ -47,10 +48,14 @@ const factory = async (
     legalAuthorityPhone: faker.phone.phoneNumber(),
   };
   institution.regulatingBody = "ICBC";
-  institution.users = [user];
-  await service.save(institution);
 
-  return [institution, user];
+  const iu = await service.createAssociation(
+    institution,
+    user,
+    InstitutionUserType.admin,
+  );
+
+  return [institution, user, iu];
 };
 
 describe("InstitutionService", () => {
@@ -79,12 +84,15 @@ describe("InstitutionService", () => {
   });
 
   it("should get institution using user name", async () => {
-    const [institution, user] = await factory(userService, service);
-
+    const [institution, user, institutionUser] = await factory(
+      userService,
+      service,
+    );
     const result = await service.getInstituteByUserName(user.userName);
     expect(result).toBeDefined();
     expect(result.id).toEqual(institution.id);
     expect(result.guid).toEqual(institution.guid);
+    await service.institutionUserRepo.remove(institutionUser);
     await service.remove(institution);
     await service.remove(user);
   });

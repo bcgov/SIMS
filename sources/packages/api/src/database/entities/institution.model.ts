@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-  JoinTable,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
@@ -13,6 +7,7 @@ import {
   LegalAuthorityContact,
 } from "../../types";
 import { User } from "./user.model";
+import { InstitutionUser } from "./institution-user.model";
 
 @Entity({ name: TableNames.Institution })
 export class Institution extends RecordDataModel {
@@ -78,11 +73,9 @@ export class Institution extends RecordDataModel {
   })
   institutionAddress: InstitutionAddress;
 
-  @ManyToMany(() => User, { eager: false, cascade: true })
-  @JoinTable({
-    name: "institutions_users",
-    joinColumns: [{ name: "institution_id" }],
-    inverseJoinColumns: [{ name: "user_id" }],
+  @OneToMany((type) => InstitutionUser, (user) => user.institution, {
+    eager: false,
+    cascade: false,
   })
-  users: User[];
+  users: InstitutionUser[];
 }
