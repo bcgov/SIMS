@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS institution_user_auth(
 
   -- Ref columns
   institution_user_id INT NOT NULL,
-  institution_location_id INT NOT NULL,
+  institution_location_id INT NULL,
   institution_user_type_role_id INT NOT NULL,
 
   -- Foreign Constraints

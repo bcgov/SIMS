@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
@@ -7,6 +7,7 @@ import {
   LegalAuthorityContact,
 } from "../../types";
 import { User } from "./user.model";
+import { InstitutionUser } from "./institution-user.model";
 
 @Entity({ name: TableNames.Institution })
 export class Institution extends RecordDataModel {
@@ -72,5 +73,9 @@ export class Institution extends RecordDataModel {
   })
   institutionAddress: InstitutionAddress;
 
-  users: User[];
+  @OneToMany((type) => InstitutionUser, (user) => user.institution, {
+    eager: false,
+    cascade: false,
+  })
+  users: InstitutionUser[];
 }

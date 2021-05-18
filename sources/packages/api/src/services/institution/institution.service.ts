@@ -5,9 +5,19 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Institution, User } from "../../database/entities";
-import { Connection } from "typeorm";
-import { UserInfo } from "../../types";
+import {
+  Institution,
+  InstitutionUser,
+  InstitutionUserAuth,
+  InstitutionUserTypeAndRole,
+  User,
+} from "../../database/entities";
+import { Connection, Repository } from "typeorm";
+import {
+  InstitutionUserRole,
+  InstitutionUserType,
+  UserInfo,
+} from "../../types";
 import {
   CreateInstitutionDto,
   InstitutionDto,
@@ -23,13 +33,45 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   @InjectLogger()
   logger: LoggerService;
 
+  institutionUserRepo: Repository<InstitutionUser>;
+  institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
+  institutionUserAuthRepo: Repository<InstitutionUserAuth>;
   constructor(
     @Inject("Connection") connection: Connection,
     private readonly bceidService: BCeIDService,
     private readonly userService: UserService,
   ) {
     super(connection.getRepository(Institution));
+    this.institutionUserRepo = connection.getRepository(InstitutionUser);
+    this.institutionUserTypeAndRoleRepo = connection.getRepository(
+      InstitutionUserTypeAndRole,
+    );
+    this.institutionUserAuthRepo = connection.getRepository(
+      InstitutionUserAuth,
+    );
     this.logger.log("[Created]");
+  }
+
+  async createAssociation(
+    institution: Institution,
+    user: User,
+    type: InstitutionUserType = InstitutionUserType.user,
+    role?: InstitutionUserRole,
+  ): Promise<InstitutionUser> {
+    const institutionUser = this.institutionUserRepo.create();
+    institutionUser.user = user;
+    institutionUser.institution = institution;
+    const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
+      type,
+      role: role || null,
+    });
+    const auth = this.institutionUserAuthRepo.create();
+    auth.authType = authType;
+    auth.institutionUser = institutionUser;
+    institutionUser.authorizations = [auth];
+    institution.users = [institutionUser];
+
+    return await this.institutionUserRepo.save(institutionUser);
   }
 
   async createInstitution(
@@ -55,7 +97,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
     user.email = institutionDto.primaryEmail;
-    institution.users = [user];
+
     institution.guid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
     institution.operatingName = institutionDto.operatingName;
@@ -92,14 +134,17 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       phone: institutionDto.primaryPhone,
     };
 
-    return await this.save(institution);
+    await this.createAssociation(institution, user, InstitutionUserType.admin);
+
+    return institution;
   }
 
   async getInstituteByUserName(userName: string): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .leftJoin("institution.users", "users")
-      .where("users.userName = :userName", { userName })
+      .leftJoin("institution.users", "institutionUsers")
+      .leftJoin("institutionUsers.user", "user")
+      .where("user.userName = :userName", { userName })
       .getOneOrFail();
   }
 
