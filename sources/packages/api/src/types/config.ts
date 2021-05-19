@@ -6,6 +6,8 @@ export interface IConfig {
   workflow: WorkflowConfig;
   forms: FormsConfig;
   formsFlow: FormsFlowConfig;
+  zoneB_SFTP: SFTPConfig;
+  CRAIntegration: CRAIntegrationConfig;
 }
 
 export interface IAuthConfig {
@@ -73,4 +75,19 @@ export interface FormsConfig {
 export interface FormsFlowConfig {
   formFlowApiUrl: string;
   credential: ClientCredential;
+}
+
+export interface SFTPConfig {
+  host: string;
+  port: number;
+  username: string;
+  passphrase: string;
+  privateKey: string;
+}
+
+export interface CRAIntegrationConfig {
+  ftpRequestFolder: string;
+  ftpResponseFolder: string;
+  programAreaCode: string;
+  environmentCode: string;
 }

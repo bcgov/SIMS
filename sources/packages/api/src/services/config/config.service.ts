@@ -45,6 +45,19 @@ export class ConfigService {
           ClientSecret: process.env.SIMS_API_CLIENT_SECRET,
         },
       },
+      zoneB_SFTP: {
+        host: process.env.ZONE_B_SFTP_SERVER,
+        port: parseInt(process.env.ZONE_B_SFTP_SERVER_PORT),
+        username: process.env.ZONE_B_SFTP_USER_NAME,
+        passphrase: process.env.ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE,
+        privateKey: process.env.ZONE_B_SFTP_PRIVATE_KEY,
+      },
+      CRAIntegration: {
+        ftpRequestFolder: process.env.CRA_REQUEST_FOLDER,
+        ftpResponseFolder: process.env.CRA_RESPONSE_FOLDER,
+        programAreaCode: process.env.CRA_PROGRAM_AREA_CODE,
+        environmentCode: process.env.CRA_ENVIRONMENT_CODE,
+      },
     };
   }
 

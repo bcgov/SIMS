@@ -1,24 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
+import { SFTPConfig } from "../../types";
 import * as Client from "ssh2-sftp-client";
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class SshService {
-  public async connect(): Promise<any> {
+  public async createClient(config: SFTPConfig): Promise<Client> {
     const client = new Client();
-    await client.connect({
-      host: "linda.dmz",
-      port: 22,
-      username: "ASIGNO_A",
-      passphrase: process.env.ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE,
-      privateKey: process.env.ZONE_B_SFTP_PRIVATE_KEY,
-    });
-
-    const response = await client.put(
-      Buffer.from("File Content Test"),
-      "CRA/In/Test.txt",
-    );
-    console.log(response);
-
-    return response;
+    await client.connect(config);
+    return client;
   }
 }
