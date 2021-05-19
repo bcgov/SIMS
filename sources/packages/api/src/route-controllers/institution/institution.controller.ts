@@ -16,6 +16,7 @@ import {
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
+import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -59,5 +60,32 @@ export class InstitutionController extends BaseController {
   @Patch("/sync")
   async sync(@UserToken() token: IUserToken) {
     await this.institutionService.syncInstitution(token);
+  }
+
+  @Get("/users")
+  async allUsers(
+    @UserToken() user: IUserToken,
+  ): Promise<InstitutionUserRespDto[]> {
+    const institution = await this.institutionService.getInstituteByUserName(
+      user.userName,
+    );
+    return (await this.institutionService.allUsers(institution.id)).map(
+      (item) => {
+        const r: InstitutionUserRespDto = {
+          id: item.id,
+          authorizations: item.authorizations.map((auth) => ({
+            authType: {
+              role: auth.authType?.role,
+              type: auth.authType?.type,
+            },
+            location: auth?.location?.name,
+          })),
+          user: {
+            ...item.user,
+          },
+        };
+        return r;
+      },
+    );
   }
 } //Class ends

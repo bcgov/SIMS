@@ -51,4 +51,17 @@ export class InstitutionApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async getUsers() {
+    try {
+      const resp = await this.apiClient.get(
+        "institution/users",
+        this.addAuthHeader(),
+      );
+      return resp.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

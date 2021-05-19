@@ -9,52 +9,22 @@ import { UserService } from "../user/user.service";
 import { Institution, InstitutionUser, User } from "../../database/entities";
 import { DatabaseService } from "../../database/database.service";
 import { InstitutionUserType } from "../../types";
+import { institutionFactory, userFactory } from "../../database/factories";
+import { type } from "ormconfig";
 
 const factory = async (
   userService: UserService,
   service: InstitutionService,
 ): Promise<[Institution, User, InstitutionUser]> => {
-  const user = userService.create();
-  user.email = faker.internet.email();
-  user.firstName = faker.name.firstName();
-  user.lastName = faker.name.lastName();
-  user.userName = `${faker.random.uuid()}@bceid`;
-  const institution = service.create();
-  institution.legalOperatingName = faker.company.companyName();
-  institution.operatingName = institution.legalOperatingName;
-  institution.guid = faker.random.uuid();
-  institution.establishedDate = faker.date.past();
-  institution.website = faker.internet.url();
-  institution.institutionAddress = {
-    phone: faker.phone.phoneNumber(),
-    addressLine1: faker.address.streetAddress(),
-    city: "Victoria",
-    country: "Canada",
-    postalCode: "V8V1M9",
-    provinceState: "BC",
-  };
-  institution.primaryEmail = faker.internet.email();
-  institution.primaryPhone = faker.phone.phoneNumber();
-  institution.institutionPrimaryContact = {
-    primaryContactEmail: faker.internet.email(),
-    primaryContactLastName: faker.name.lastName(),
-    primaryContactFirstName: faker.name.firstName(),
-    primaryContactPhone: faker.phone.phoneNumber(),
-  };
-  institution.legalAuthorityContact = {
-    legalAuthorityEmail: faker.internet.email(),
-    legalAuthorityLastName: faker.name.lastName(),
-    legalAuthorityFirstName: faker.name.firstName(),
-    legalAuthorityPhone: faker.phone.phoneNumber(),
-  };
-  institution.regulatingBody = "ICBC";
-
+  const user = await userFactory({
+    userName: `${faker.random.uuid()}@bceid`,
+  });
+  const institution = await institutionFactory();
   const iu = await service.createAssociation(
     institution,
     user,
     InstitutionUserType.admin,
   );
-
   return [institution, user, iu];
 };
 
@@ -95,5 +65,49 @@ describe("InstitutionService", () => {
     await service.institutionUserRepo.remove(institutionUser);
     await service.remove(institution);
     await service.remove(user);
+  });
+
+  it("should return all institution users", async () => {
+    // Setup
+    const [institution, user, institutionUser] = await factory(
+      userService,
+      service,
+    );
+
+    // Create new user
+    const newUser = await userFactory();
+
+    // Create new association
+    await service.createAssociation(
+      institution,
+      newUser,
+      InstitutionUserType.user,
+    );
+
+    // Test
+    const users: InstitutionUser[] = await service.allUsers(institution.id);
+
+    expect(users.length).toEqual(2);
+
+    // User1
+    const user1 = users.filter((item) => item.user.id === user.id)[0];
+    expect(user1).toBeDefined();
+    expect(user1.authorizations.length).toBeGreaterThan(0);
+    expect(user1.authorizations[0].authType.type).toEqual(
+      InstitutionUserType.admin,
+    );
+
+    // User2
+    const user2 = users.filter((item) => item.user.id === newUser.id)[0];
+    expect(user2).toBeDefined();
+    expect(user2.authorizations.length).toBeGreaterThan(0);
+    expect(user2.authorizations[0].authType.type).toEqual(
+      InstitutionUserType.user,
+    );
+
+    // Clean
+    service.remove(institution);
+    userService.remove(user);
+    userService.remove(newUser);
   });
 });
