@@ -32,8 +32,6 @@ export class CraFileRecord implements CraFileLine {
     record.AppendWithEndFiller(this.freeProjectArea ?? "", 30, FILLER);
     record.RepeatAppend(FILLER, 3);
     record.Append("0");
-
-    console.log(record.ToString());
     return record.ToString();
   }
 }

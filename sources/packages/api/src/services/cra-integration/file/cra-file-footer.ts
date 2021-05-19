@@ -22,11 +22,10 @@ export class CraFileFooter implements CraFileLine {
     header.Append(FILLER);
     header.Append(this.programAreaCode);
     header.Append(this.environmentCode);
-    header.RepeatAppend(FILLER, 6);
-    header.AppendWithStartFiller(this.recordCount.toString(), 8, FILLER);
+    header.RepeatAppend(FILLER, 11);
+    header.AppendWithStartFiller(this.recordCount.toString(), 8, "0");
     header.RepeatAppend(FILLER, 85);
     header.Append("0");
-    console.log(header.ToString());
     return header.ToString();
   }
 }

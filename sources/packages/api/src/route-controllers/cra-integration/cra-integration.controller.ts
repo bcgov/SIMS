@@ -8,8 +8,8 @@ export class CraIntegrationController {
 
   @Public()
   @Get()
-  async createFile(): Promise<any> {
-    return await this.cra.createSinVerificationRequest([
+  async createMatchingRun(): Promise<any> {
+    const fileContent = this.cra.createMatchingRunContent([
       {
         sin: "485153696",
         individualSurname: "Sinclair",
@@ -29,5 +29,7 @@ export class CraIntegrationController {
         individualBirthDate: new Date(1964, 4, 5),
       },
     ]);
+    const fileName = this.cra.createRequestFileName(1);
+    this.cra.uploadContent(fileContent, fileName);
   }
 }

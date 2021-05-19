@@ -21,9 +21,8 @@ export class CraFileHeader implements CraFileLine {
     header.Append(FILLER);
     header.Append(this.programAreaCode);
     header.Append(this.environmentCode);
-    header.RepeatAppend(FILLER, 99);
+    header.RepeatAppend(FILLER, 104);
     header.Append("0");
-    console.log(header.ToString());
     return header.ToString();
   }
 }

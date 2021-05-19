@@ -23,7 +23,7 @@ export class CraIntegrationService {
     this.ftpConfig = config.getConfig().zoneB_SFTP;
   }
 
-  public async createSinVerificationRequest(records: CraRecord[]) {
+  public createMatchingRunContent(records: CraRecord[]): CraFileLine[] {
     const sequenceNumber = 1;
     const processDate = new Date();
     const craFileLines: CraFileLine[] = [];
@@ -36,16 +36,16 @@ export class CraIntegrationService {
     );
     craFileLines.push(fileHeader);
     // Records
-    const fileRecords = records.map((record) => {
-      return {
-        transactionCode: TransactionCodes.MatchingRunRecord,
-        sin: record.sin,
-        transactionSubCode: TransactionSubCodes.IVRequest,
-        individualSurname: record.individualSurname,
-        individualGivenName: record.individualGivenName,
-        individualBirthDate: record.individualBirthDate,
-        programAreaCode: this.craConfig.programAreaCode,
-      } as CraFileRecord;
+    const fileRecords = records.map((r) => {
+      const record = new CraFileRecord();
+      record.transactionCode = TransactionCodes.MatchingRunRecord;
+      record.sin = r.sin;
+      record.transactionSubCode = TransactionSubCodes.IVRequest;
+      record.individualSurname = r.individualSurname;
+      record.individualGivenName = r.individualGivenName;
+      record.individualBirthDate = r.individualBirthDate;
+      record.programAreaCode = this.craConfig.programAreaCode;
+      return record;
     });
     craFileLines.push(...fileRecords);
     // Footer
@@ -57,18 +57,24 @@ export class CraIntegrationService {
     );
     craFileLines.push(fileFooter);
 
+    return craFileLines;
+  }
+
+  public async uploadContent(
+    craFileLines: CraFileLine[],
+    remoteFilePath: string,
+  ): Promise<void> {
     // Generate fixed formatted file.
-    const fixedFormttedLines = craFileLines.map((line) => {
-      return line.getFixedFormat();
-    });
-    const craFileContent = fixedFormttedLines.join("\n");
+    const fixedFormttedLines: string[] = craFileLines.map(
+      (line: CraFileLine) => {
+        return line.getFixedFormat();
+      },
+    );
+    const craFileContent = fixedFormttedLines.join("\r\n");
 
     // Send the file to ftp.
     const client = await this.getClient();
-    client.put(
-      Buffer.from(craFileContent),
-      this.createRequestFileName(sequenceNumber),
-    );
+    await client.put(Buffer.from(craFileContent), remoteFilePath);
   }
 
   private createHeader(
@@ -76,13 +82,13 @@ export class CraIntegrationService {
     processDate: Date,
     sequence: number,
   ): CraFileHeader {
-    return {
-      transactionCode: code,
-      processDate: processDate,
-      programAreaCode: this.craConfig.programAreaCode,
-      environmentCode: this.craConfig.environmentCode,
-      sequence: sequence,
-    } as CraFileHeader;
+    const header = new CraFileHeader();
+    header.transactionCode = code;
+    header.processDate = processDate;
+    header.programAreaCode = this.craConfig.programAreaCode;
+    header.environmentCode = this.craConfig.environmentCode;
+    header.sequence = sequence;
+    return header;
   }
 
   private createFooter(
@@ -90,18 +96,18 @@ export class CraIntegrationService {
     processDate: Date,
     sequence: number,
     recordCount: number,
-  ): CraFileHeader {
-    return {
-      transactionCode: code,
-      processDate: processDate,
-      programAreaCode: this.craConfig.programAreaCode,
-      environmentCode: this.craConfig.environmentCode,
-      sequence: sequence,
-      recordCount: recordCount + 2, // Number of records + header + footer.
-    } as CraFileFooter;
+  ): CraFileFooter {
+    const footer = new CraFileFooter();
+    footer.transactionCode = code;
+    footer.processDate = processDate;
+    footer.programAreaCode = this.craConfig.programAreaCode;
+    footer.environmentCode = this.craConfig.environmentCode;
+    footer.sequence = sequence;
+    footer.recordCount = recordCount + 2; // Number of records + header + footer.
+    return footer;
   }
 
-  private createRequestFileName(sequence: number): string {
+  public createRequestFileName(sequence: number): string {
     const sequenceFile = sequence.toString().padStart(5, "0");
     return `${this.craConfig.ftpRequestFolder}\\CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
   }

@@ -10,6 +10,7 @@ import {
   InstitutionService,
   ApplicationService,
   BCeIDServiceProvider,
+  CraIntegrationService,
 } from "./services";
 import {
   UserController,
@@ -64,6 +65,7 @@ import {
     FormsFlowService,
     KeycloakService,
     SshService,
+    CraIntegrationService,
   ],
 })
 export class AppModule {}
