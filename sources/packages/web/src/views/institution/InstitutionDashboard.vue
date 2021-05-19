@@ -46,6 +46,16 @@ export default {
           });
         },
       },
+      {
+        label: "Manage institution users",
+        icon: "pi pi-users",
+        command: () => {
+          hideDashboard.value = true;
+          router.push({
+            name: InstitutionRoutesConst.MANAGE_USERS,
+          });
+        },
+      },
     ]);
 
     return {

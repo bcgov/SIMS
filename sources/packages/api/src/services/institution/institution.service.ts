@@ -69,7 +69,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     auth.authType = authType;
     auth.institutionUser = institutionUser;
     institutionUser.authorizations = [auth];
-    institution.users = [institutionUser];
 
     return await this.institutionUserRepo.save(institutionUser);
   }
@@ -266,5 +265,23 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution,
       account,
     };
+  }
+
+  async allUsers(institutionId: number): Promise<InstitutionUser[]> {
+    /*return this.institutionUserRepo.find({
+      where: {
+        institution: { id: institutionId },
+      },
+      relations: ["user", "authorizations", "authorizations.location"],
+    });*/
+    return this.institutionUserRepo
+      .createQueryBuilder("institutionUser")
+      .leftJoinAndSelect("institutionUser.user", "user")
+      .leftJoin("institutionUser.institution", "institution")
+      .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
+      .leftJoinAndSelect("authorizations.location", "locations")
+      .leftJoinAndSelect("authorizations.authType", "authType")
+      .where("institution.id = :institutionId", { institutionId })
+      .getMany();
   }
 }
