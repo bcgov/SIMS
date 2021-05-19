@@ -136,7 +136,6 @@ import { onMounted, ref } from "vue";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { InstitutionService } from "../../services/InstitutionService";
 import "@/assets/css/institution.css";
-import { InstitutionLocationsDetails } from "../../types";
 
 export default {
   setup() {
@@ -148,7 +147,7 @@ export default {
     const getInstitutionLocationList = async () => {
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
     };
-    
+
     onMounted(getInstitutionLocationList);
     return {
       goToAddNewLocation,

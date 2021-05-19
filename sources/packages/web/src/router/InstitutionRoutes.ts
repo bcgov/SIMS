@@ -15,7 +15,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
 import Institution from "../views/institution/Institution.vue";
 import ManageInstitutionSideBar from "../layouts/institution/ManageInstitutionSideBar.vue";
-import InstitutionHomeSideBar from "../layouts/institution/HomeSideBar.vue"
+import InstitutionHomeSideBar from "../layouts/institution/HomeSideBar.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -36,7 +36,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: "",
-        redirect: AppRoutes.InstitutionRoot+"/"+AppRoutes.InstitutionDashboard,
+        redirect: `${AppRoutes.InstitutionRoot}/${AppRoutes.InstitutionDashboard}`,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         component: Institution,
         children: [
@@ -45,33 +45,33 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
             components: {
               default: InstitutionDashboard,
-              sidebar: InstitutionHomeSideBar
-            }
+              sidebar: InstitutionHomeSideBar,
+            },
           },
           {
             path: AppRoutes.InstitutionManageLocations,
             name: InstitutionRoutesConst.MANAGE_LOCATIONS,
             components: {
               default: ManageLocation,
-              sidebar: ManageInstitutionSideBar
-            }
+              sidebar: ManageInstitutionSideBar,
+            },
           },
           {
             path: AppRoutes.ManageInstitutionDesignation,
             name: InstitutionRoutesConst.MANAGE_DESGINATION,
             components: {
               default: ManageDesgination,
-              sidebar: ManageInstitutionSideBar
-            }
+              sidebar: ManageInstitutionSideBar,
+            },
           },
           {
             path: AppRoutes.InstitutionProfileEdit,
             name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
             components: {
               default: InstitutionProfile,
-              sidebar: ManageInstitutionSideBar
-            }
-          }
+              sidebar: ManageInstitutionSideBar,
+            },
+          },
         ],
       },
       {

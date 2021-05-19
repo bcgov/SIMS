@@ -33,7 +33,7 @@ export default {
       type: Boolean,
       required: true,
       default: true,
-    }
+    },
   },
   setup(props: any) {
     // Hooks
@@ -42,7 +42,6 @@ export default {
     // Data-bind
     const initialData = ref({});
 
-    
     const submitted = async (data: InstitutionDto) => {
       let redirectHome = true;
       if (props.editMode) {

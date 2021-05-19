@@ -10,7 +10,7 @@ const storeOptions: StoreOptions<RootState> = {
     version: "1.0.0",
   },
   modules: {
-    student
+    student,
   },
 };
 
