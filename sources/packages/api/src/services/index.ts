@@ -3,6 +3,7 @@ export * from "./user/user.service";
 export * from "./config/config.service";
 export * from "./archive-db/archive-db.service";
 export * from "./bceid/bceid.service";
+export * from "./bceid/bceid.service.provider";
 export * from "./institution/institution.service";
 export * from "./service-account/service-account.service";
 export * from "./rule-engine/rule-engine.service";

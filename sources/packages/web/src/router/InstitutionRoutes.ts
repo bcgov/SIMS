@@ -3,7 +3,7 @@ import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue"
 import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
-import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue"
+import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
@@ -45,7 +45,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.AddInstitutionLocation,
         name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION,
-        component:AddInstitutionLocation,
+        component: AddInstitutionLocation,
       },
       {
         path: AppRoutes.InstitutionProfile,

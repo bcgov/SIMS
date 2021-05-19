@@ -6,9 +6,17 @@ import { LoggerService } from "../../logger/logger.service";
 import { ConfigService } from "../config/config.service";
 import { AccountDetails } from "./account-details.model";
 import {
+  SearchAccountOptions,
+  SearchBCeIDAccountResult,
+  SearchResultAccount,
+} from "./search-bceid.model";
+import {
+  BCeIDAccountSoapResponse,
   BCeIDAccountTypeCodes,
   ResponseBase,
   ResponseCodes,
+  SortBCeIDAccountOnProperty,
+  SortDirection,
 } from "./bceid.models";
 
 /**
@@ -33,21 +41,6 @@ export class BCeIDService {
    * @returns account details if the account was found, otherwise null.
    */
   public async getAccountDetails(userName: string): Promise<AccountDetails> {
-    if (process.env.DUMMY_BCeID_ACCOUNT_RESPONSE === "yes") {
-      return {
-        user: {
-          guid: "a90b3-ff78c-98b0c-2e5fb-7c667",
-          displayName: "Test Account",
-          firstname: "Test",
-          surname: "Account",
-          email: "test.account@sims.ca",
-        },
-        institution: {
-          guid: "b90a3-ee78b-98a0d-2f5db-7a457",
-          legalName: "Test Institute",
-        },
-      };
-    }
     var client = await this.getSoapClient();
     // SOAP call body to execute the getAccountDetail request.
     var body = {
@@ -96,6 +89,79 @@ export class BCeIDService {
     } catch (error) {
       this.logger.error(
         `Error while retrieving account details from BCeID Web Service. ${error}`,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves business BCeIDs accounts under the specified institution (options.businessGuid)
+   * and that the user (options.requesterUserGuid) executing the search has access to.
+   * @param options Search parameters.
+   * @returns The list of BCeIDs for the institution.
+   */
+  public async searchBCeIDAccounts(
+    options: SearchAccountOptions,
+  ): Promise<SearchBCeIDAccountResult> {
+    var client = await this.getSoapClient();
+    // SOAP call body to execute the searchBCeIDAccount request.
+    var body = {
+      bceidAccountSearchRequest: {
+        onlineServiceId: this.bceidConfig.onlineServiceId,
+        requesterAccountTypeCode: BCeIDAccountTypeCodes.Business,
+        requesterUserGuid: options.requesterUserGuid,
+        pagination: {
+          pageSizeMaximum: options.pagination.pageSize,
+          pageIndex: options.pagination.pageIndex,
+        },
+        sort: {
+          direction: SortDirection.Ascending,
+          onProperty: SortBCeIDAccountOnProperty.Firstname,
+        },
+        accountMatch: {
+          searchableAccountType: BCeIDAccountTypeCodes.Business,
+        },
+        businessMatch: {
+          businessGuid: options.businessGuid,
+        },
+      },
+    };
+
+    try {
+      // Destructuring the result of the SOAP request to get the
+      // first item on the array where the parsed js object is.
+      const [result] = await client.searchBCeIDAccountAsync(body);
+      const response = result.searchBCeIDAccountResult as ResponseBase;
+      this.ensureSuccessStatusResult(response);
+      // Array os items from SOAP response that contains all accounts.
+      const accounts = result.searchBCeIDAccountResult.accountList.BCeIDAccount;
+      const pagination = result.searchBCeIDAccountResult.pagination;
+
+      const accountResults = accounts.map(
+        (account: BCeIDAccountSoapResponse) => {
+          return {
+            guid: account.guid.value,
+            userId: account.userId.value,
+            displayName: `${account.individualIdentity?.name?.firstname.value} ${account.individualIdentity?.name?.surname.value}`.trim(),
+            firstname: account.individualIdentity?.name?.firstname.value,
+            surname: account.individualIdentity?.name?.surname.value,
+            email: account.contact?.email.value,
+            telephone: account.contact?.telephone.value,
+          } as SearchResultAccount;
+        },
+      );
+
+      return {
+        accounts: accountResults,
+        paginationResult: {
+          totalItems: pagination.totalVirtualItems,
+          requestedPageSize: pagination.requestedPageSize,
+          requestedPageIndex: pagination.requestedPageIndex,
+        },
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error while searching BCeID accounts on BCeID Web Service. ${error}`,
       );
       throw error;
     }

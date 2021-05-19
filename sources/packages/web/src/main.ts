@@ -4,6 +4,7 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
 import { createApp } from "vue";
+import vuetify from "./plugins/vuetify";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
@@ -30,6 +31,7 @@ configValidationRules();
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
+    .use(vuetify)
     .use(store)
     .use(router)
     .use(PrimeVue)

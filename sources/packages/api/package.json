@@ -20,9 +20,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "ENVIRONMENT=test jest --config ./test/jest-e2e.json",
     "test:e2e:local": "NODE_ENV=local ENVIRONMENT=test jest --config ./test/jest-e2e.json",
+    "test:e2e:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest --config ./test/jest-e2e.json",
     "setup:db": "ts-node scripts/setupDB",
     "local": "ENVIRONMENT=local NODE_ENV=local npm run start:dev",
     "test:local": "NODE_ENV=local ENVIRONMENT=test jest",
+    "test:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest",
     "setup:archive:db": "ts-node scripts/setupArchiveDB",
     "docker:start": "npm run setup:db && npm run setup:archive:db && node dist/main"
   },

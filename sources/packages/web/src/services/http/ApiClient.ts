@@ -5,7 +5,7 @@ import { InstitutionApi } from "./Institution";
 import { DynamicFormsApi } from "./DynamicForms";
 import { WorkflowApi } from "./WorkflowApi";
 import { ApplicationApi } from "./ApplicationApi";
-import { InstitutionLocationApi } from './InstitutionLocation';
+import { InstitutionLocationApi } from "./InstitutionLocation";
 
 const ApiClient = {
   Configs: new ConfigApi(),
