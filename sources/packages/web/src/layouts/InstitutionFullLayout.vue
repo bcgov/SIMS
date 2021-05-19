@@ -1,37 +1,27 @@
 <template>
 <v-app>
   <v-navigation-drawer app>
-    <ManageInstitutionSidebar v-if="store.state.institution.showManageInstitution"/>
-    <HomeSideBar v-if="store.state.institution.showHome"/>
+    <router-view name="sidebar"></router-view>
   </v-navigation-drawer>
   <div>
-    <v-container fluid tag="div">
+    <!-- TODO: added v-container instead of v-main 
+    (since v-main has scrolling issue), replace 
+    container with main, when vuetify3 stable
+     version is relased -->
+    <v-container fluid>
         <router-view></router-view>
     </v-container>
   </div>
 </v-app>
 </template>
 <script>
-import { useStore } from "vuex";
-import ManageInstitutionSidebar from "./institution/ManageInstitutionSideBar.vue";
-import HomeSideBar from "./institution/HomeSideBar.vue"
 
 export default {
-  name: "FullLayout",
-  components: {
-    ManageInstitutionSidebar,
-    HomeSideBar
-  },
-  setup () {
-    const store = useStore();
-    return {
-      store
-    }
-  }
 };
 </script>
 
 <style>
+/* remove the style once vuetify stable version is released - added for padding and scrolling issue */
 .v-container--fluid {
     max-width: 86% !important;
     margin-left: 258px !important;

@@ -4,6 +4,7 @@ import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.v
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
+import ManageDesgination from "../views/institution/ManageDesgination.vue";
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
@@ -12,8 +13,9 @@ import Login from "../views/institution/Login.vue";
 import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
-import ManageDesgination from "../views/institution/ManageDesgination.vue";
 import Institution from "../views/institution/Institution.vue";
+import ManageInstitutionSideBar from "../layouts/institution/ManageInstitutionSideBar.vue";
+import InstitutionHomeSideBar from "../layouts/institution/HomeSideBar.vue"
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -41,26 +43,34 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.InstitutionDashboard,
             name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-            component: InstitutionDashboard,
-            props: {showHomeSideBar: true}
+            components: {
+              default: InstitutionDashboard,
+              sidebar: InstitutionHomeSideBar
+            }
           },
           {
             path: AppRoutes.InstitutionManageLocations,
             name: InstitutionRoutesConst.MANAGE_LOCATIONS,
-            component: ManageLocation,
-            props: {showManageInstitutionSideBar: true}
+            components: {
+              default: ManageLocation,
+              sidebar: ManageInstitutionSideBar
+            }
           },
           {
             path: AppRoutes.ManageInstitutionDesignation,
             name: InstitutionRoutesConst.MANAGE_DESGINATION,
-            component: ManageDesgination,
-            props: {showManageInstitutionSideBar: true}
+            components: {
+              default: ManageDesgination,
+              sidebar: ManageInstitutionSideBar
+            }
           },
           {
             path: AppRoutes.InstitutionProfileEdit,
             name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
-            component: InstitutionProfile,
-            props: {showManageInstitutionSideBar: true}
+            components: {
+              default: InstitutionProfile,
+              sidebar: ManageInstitutionSideBar
+            }
           }
         ],
       },

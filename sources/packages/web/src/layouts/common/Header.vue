@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { useStore, mapActions } from "vuex";
 import { ref, onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
@@ -43,11 +42,7 @@ export default {
   components: {
     NavBar,
   },
-  methods: {
-    ...mapActions(["setShowHome", "setShowManageLocation"]),
-  },
   setup() {
-    const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
@@ -56,13 +51,9 @@ export default {
       () => AppConfigService.shared.authService?.authenticated === true,
     );
     const clickedHome = () => {
-      store.dispatch("institution/setShowManageInstitution", false);
-      store.dispatch("institution/setShowHome", true);
       router.push({ name: InstitutionRoutesConst.INSTITUTION_DASHBOARD });
     };
     const clickedManageLocation = () => {
-      store.dispatch("institution/setShowHome", false);
-      store.dispatch("institution/setShowManageInstitution", true);
       router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
     };
     // Mounding hook

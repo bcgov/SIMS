@@ -1,10 +1,9 @@
 <template>
-  <Menu :model="items" v-if="store.state.institution.showHome" />
+  <Menu :model="items"/>
 </template>
 <script lang="ts">
 import Menu from "primevue/menu";
 import { ref } from "vue";
-import { useStore } from "vuex";
 
 interface MenuModel {
   label: string;
@@ -17,7 +16,6 @@ export default {
     Menu,
   },
   setup() {
-    const store = useStore();
     const items = ref<MenuModel[]>([
       {
         label: "Dashboard",
@@ -41,8 +39,7 @@ export default {
     ]);
 
     return {
-      items,
-      store
+      items
     };
   },
 };

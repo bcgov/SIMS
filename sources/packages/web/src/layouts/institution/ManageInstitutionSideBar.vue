@@ -1,10 +1,9 @@
 <template>
-  <Menu :model="items" v-if="store.state.institution.showManageInstitution" />
+  <Menu :model="items"/>
 </template>
 <script lang="ts">
 import Menu from "primevue/menu";
 import { ref } from "vue";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -20,7 +19,6 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const store = useStore();
     const items = ref<MenuModel[]>([
       {
         label: "Institution Details",
@@ -56,8 +54,7 @@ export default {
     ]);
 
     return {
-      items,
-      store
+      items
     };
   },
 };

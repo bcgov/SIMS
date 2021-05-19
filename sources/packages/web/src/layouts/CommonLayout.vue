@@ -15,8 +15,4 @@ export default {
 </script>
 
 <style>
-.v-container--fluid {
-    max-width: 86% !important;
-    margin-left: 258px !important;
-}
 </style>

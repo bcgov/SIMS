@@ -133,24 +133,13 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
-import { useStore, mapActions } from "vuex";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { InstitutionService } from "../../services/InstitutionService";
 import "@/assets/css/institution.css";
 import { InstitutionLocationsDetails } from "../../types";
 
 export default {
-  props: {
-    showManageInstitutionSideBar: {
-      type: Boolean,
-      default: true
-    }
-  },
-  methods: {
-    ...mapActions(["setShowHome", "setShowManageLocation"]),
-  },
-  setup(props: any) {
-    const store = useStore();
+  setup() {
     const router = useRouter();
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
@@ -159,9 +148,7 @@ export default {
     const getInstitutionLocationList = async () => {
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
     };
-    // to manage sidebar
-    store.dispatch("institution/setShowManageInstitution", props.showManageInstitutionSideBar);
-    store.dispatch("institution/setShowHome", !props.showManageInstitutionSideBar);
+    
     onMounted(getInstitutionLocationList);
     return {
       goToAddNewLocation,

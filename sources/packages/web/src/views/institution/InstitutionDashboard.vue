@@ -5,28 +5,7 @@
 </template>
 
 <script lang="ts">
-import { useStore, mapActions } from "vuex";
-
-export default {
-  props:{
-    showHomeSideBar: {
-      type: Boolean,
-      default: true
-    }
-  },
-  methods: {
-    ...mapActions(["setShowHome", "setShowManageLocation"]),
-  },
-  setup(props: any) {
-    const store = useStore();
-    // to manage sidebar
-    store.dispatch("institution/setShowHome", props.showHomeSideBar);
-    store.dispatch("institution/setShowManageInstitution", !props.showHomeSideBar);
-    return {
-      store,
-    };
-  },
-}
+export default {}
 </script>
 
 <style></style>
