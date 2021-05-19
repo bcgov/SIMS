@@ -12,6 +12,8 @@ import Login from "../views/institution/Login.vue";
 import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
+import ManageDesgination from "../views/institution/ManageDesgination.vue";
+import Institution from "../views/institution/Institution.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -31,15 +33,35 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: { showBasicBCeIDMessage: true },
       },
       {
-        path: AppRoutes.InstitutionDashboard,
+        path: "",
+        redirect: AppRoutes.InstitutionRoot+"/"+AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-        component: InstitutionDashboard,
+        component: Institution,
         children: [
+          {
+            path: AppRoutes.InstitutionDashboard,
+            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+            component: InstitutionDashboard,
+            props: {showHomeSideBar: true}
+          },
           {
             path: AppRoutes.InstitutionManageLocations,
             name: InstitutionRoutesConst.MANAGE_LOCATIONS,
             component: ManageLocation,
+            props: {showManageInstitutionSideBar: true}
           },
+          {
+            path: AppRoutes.ManageInstitutionDesignation,
+            name: InstitutionRoutesConst.MANAGE_DESGINATION,
+            component: ManageDesgination,
+            props: {showManageInstitutionSideBar: true}
+          },
+          {
+            path: AppRoutes.InstitutionProfileEdit,
+            name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
+            component: InstitutionProfile,
+            props: {showManageInstitutionSideBar: true}
+          }
         ],
       },
       {
@@ -52,11 +74,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         component: InstitutionProfile,
         props: { editMode: false },
-      },
-      {
-        path: AppRoutes.InstitutionProfileEdit,
-        name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
-        component: InstitutionProfile,
       },
     ],
     beforeEnter: (to, from, next) => {

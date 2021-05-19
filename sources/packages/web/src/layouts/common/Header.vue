@@ -1,25 +1,53 @@
 <template>
-  <v-app>
-    <CommonLayout v-if="(isAuthReady)" />
-  </v-app>
+  <div>
+    <NavBar
+      title="INSTITUTION APPLICATION"
+      :clientType="clientType"
+      v-if="isAuthReady"
+    >
+      <template #end>
+        <Button
+          v-if="isAuthenticated"
+          label="Home"
+          icon="pi pi-fw pi-home"
+          class="p-button-text"
+          style="color: white"
+          @click="clickedHome()"
+        />
+        <Button
+          v-if="isAuthenticated"
+          label="Manage Institution"
+          icon="pi pi-fw pi-map-marker"
+          class="p-button-text"
+          style="color: white"
+          @click="clickedManageLocation()"
+        />
+      </template>
+    </NavBar>
+  </div>
 </template>
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
+import { useStore, mapActions } from "vuex";
 import { ref, onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
+import NavBar from "../../components/partial-view/student/NavBar.vue";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
-import CommonLayout from "../../layouts/CommonLayout.vue"
 
 export default {
   components: {
-    CommonLayout,
+    NavBar,
+  },
+  methods: {
+    ...mapActions(["setShowHome", "setShowManageLocation"]),
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
@@ -27,6 +55,16 @@ export default {
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
+    const clickedHome = () => {
+      store.dispatch("institution/setShowManageInstitution", false);
+      store.dispatch("institution/setShowHome", true);
+      router.push({ name: InstitutionRoutesConst.INSTITUTION_DASHBOARD });
+    };
+    const clickedManageLocation = () => {
+      store.dispatch("institution/setShowHome", false);
+      store.dispatch("institution/setShowManageInstitution", true);
+      router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
+    };
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
@@ -57,6 +95,8 @@ export default {
       isAuthenticated,
       InstitutionRoutesConst,
       clientType,
+      clickedHome,
+      clickedManageLocation
     };
   },
 };

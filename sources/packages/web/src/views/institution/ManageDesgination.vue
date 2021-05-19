@@ -1,6 +1,7 @@
 <template>
   <v-container>
-    <h1 class="d-flex justify-content-center">Dashboard Work in Progress</h1>
+    <h5 class="color-grey">Manage Desgination</h5>
+    <h2>Desgination In Progress</h2>
   </v-container>
 </template>
 
@@ -8,8 +9,8 @@
 import { useStore, mapActions } from "vuex";
 
 export default {
-  props:{
-    showHomeSideBar: {
+  props: {
+    showManageInstitutionSideBar: {
       type: Boolean,
       default: true
     }
@@ -20,13 +21,11 @@ export default {
   setup(props: any) {
     const store = useStore();
     // to manage sidebar
-    store.dispatch("institution/setShowHome", props.showHomeSideBar);
-    store.dispatch("institution/setShowManageInstitution", !props.showHomeSideBar);
+    store.dispatch("institution/setShowManageInstitution", props.showManageInstitutionSideBar);
+    store.dispatch("institution/setShowHome", !props.showManageInstitutionSideBar);
     return {
       store,
     };
   },
-}
+};
 </script>
-
-<style></style>

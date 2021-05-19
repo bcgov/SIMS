@@ -19,6 +19,7 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useStore, mapActions } from "vuex";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { UserService } from "../../services/UserService";
@@ -27,6 +28,9 @@ import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 export default {
+  methods: {
+    ...mapActions(["setShowHome", "setShowManageLocation"]),
+  },
   components: { formio },
   props: {
     editMode: {
@@ -34,13 +38,21 @@ export default {
       required: true,
       default: true,
     },
+    showManageInstitutionSideBar: {
+      type: Boolean,
+      default: true
+    }
   },
   setup(props: any) {
     // Hooks
     const toast = useToast();
     const router = useRouter();
+    const store = useStore();
     // Data-bind
     const initialData = ref({});
+    // to manage sidebar
+    store.dispatch("institution/setShowManageInstitution", props.showManageInstitutionSideBar);
+    store.dispatch("institution/setShowHome", !props.showManageInstitutionSideBar);
 
     const submitted = async (data: InstitutionDto) => {
       let redirectHome = true;
