@@ -14,3 +14,4 @@ export * from "./auth/keycloak/keycloak.service";
 export * from "./forms-flow/forms-flow.service";
 export * from "./ssh/ssh.service";
 export * from "./cra-integration/cra-integration.service";
+export * from "./cra-integration/cra-student-integration.service";

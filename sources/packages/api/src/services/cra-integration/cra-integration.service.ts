@@ -3,7 +3,7 @@ import { ConfigService } from "..";
 import { SshService } from "../ssh/ssh.service";
 import * as Client from "ssh2-sftp-client";
 import {
-  CraRecord,
+  CraPersonRecord,
   TransactionCodes,
   TransactionSubCodes,
 } from "./cra-integration.models";
@@ -23,8 +23,10 @@ export class CraIntegrationService {
     this.ftpConfig = config.getConfig().zoneB_SFTP;
   }
 
-  public createMatchingRunContent(records: CraRecord[]): CraFileLine[] {
-    const sequenceNumber = 1;
+  public createMatchingRunContent(
+    records: CraPersonRecord[],
+    sequence: number,
+  ): CraFileLine[] {
     const processDate = new Date();
     const craFileLines: CraFileLine[] = [];
 
@@ -32,7 +34,7 @@ export class CraIntegrationService {
     const fileHeader = this.createHeader(
       TransactionCodes.MatchingRunHeader,
       processDate,
-      sequenceNumber,
+      sequence,
     );
     craFileLines.push(fileHeader);
     // Records
@@ -41,9 +43,9 @@ export class CraIntegrationService {
       record.transactionCode = TransactionCodes.MatchingRunRecord;
       record.sin = r.sin;
       record.transactionSubCode = TransactionSubCodes.IVRequest;
-      record.individualSurname = r.individualSurname;
-      record.individualGivenName = r.individualGivenName;
-      record.individualBirthDate = r.individualBirthDate;
+      record.individualSurname = r.surname;
+      record.individualGivenName = r.givenName;
+      record.individualBirthDate = r.birthDate;
       record.programAreaCode = this.craConfig.programAreaCode;
       return record;
     });
@@ -52,7 +54,7 @@ export class CraIntegrationService {
     const fileFooter = this.createFooter(
       TransactionCodes.MatchingRunFooter,
       processDate,
-      sequenceNumber,
+      sequence,
       records.length,
     );
     craFileLines.push(fileFooter);

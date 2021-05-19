@@ -1,7 +1,7 @@
 import { StringBuilder } from "../../../utilities/string-builder";
 import {
   DATE_FORMAT,
-  FILLER,
+  SPACE_FILLER,
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
@@ -22,15 +22,19 @@ export class CraFileRecord implements CraFileLine {
     const record = new StringBuilder();
     record.Append(this.transactionCode);
     record.Append(this.sin);
-    record.RepeatAppend(FILLER, 4);
+    record.RepeatAppend(SPACE_FILLER, 4);
     record.Append(this.transactionSubCode);
-    record.AppendWithEndFiller(this.individualSurname, 30, FILLER);
-    record.AppendWithEndFiller(this.individualGivenName, 30, FILLER);
+    record.AppendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);
+    record.AppendWithEndFiller(this.individualGivenName, 30, SPACE_FILLER);
     record.AppendDate(this.individualBirthDate, DATE_FORMAT);
-    record.AppendWithEndFiller((this.taxYear ?? "").toString(), 20, FILLER);
+    record.AppendWithEndFiller(
+      (this.taxYear ?? "").toString(),
+      20,
+      SPACE_FILLER,
+    );
     record.Append(this.programAreaCode);
-    record.AppendWithEndFiller(this.freeProjectArea ?? "", 30, FILLER);
-    record.RepeatAppend(FILLER, 3);
+    record.AppendWithEndFiller(this.freeProjectArea ?? "", 30, SPACE_FILLER);
+    record.RepeatAppend(SPACE_FILLER, 3);
     record.Append("0");
     return record.ToString();
   }

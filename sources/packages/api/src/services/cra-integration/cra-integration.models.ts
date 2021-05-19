@@ -1,5 +1,6 @@
 export const DATE_FORMAT = "YYYYMMDD";
-export const FILLER = " ";
+export const SPACE_FILLER = " ";
+export const NUMBER_FILLER = "0";
 
 export enum TransactionCodes {
   MatchingRunHeader = "7000",
@@ -14,10 +15,10 @@ export enum TransactionSubCodes {
   IVRequest = "0020",
 }
 
-export interface CraRecord {
+export interface CraPersonRecord {
   sin: string;
-  individualSurname: string;
-  individualGivenName: string;
-  individualBirthDate: Date;
+  surname: string;
+  givenName: string;
+  birthDate: Date;
   taxYear?: number;
 }

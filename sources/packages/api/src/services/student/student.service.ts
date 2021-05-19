@@ -16,7 +16,7 @@ export class StudentService extends RecordDataModelService<Student> {
   @InjectLogger()
   logger: LoggerService;
   constructor(
-    @Inject("Connection") connection: Connection,
+    @Inject("Connection") private readonly connection: Connection,
     private readonly archiveDB: ArchiveDbService,
   ) {
     super(connection.getRepository(Student));
@@ -141,5 +141,14 @@ export class StudentService extends RecordDataModelService<Student> {
 
     // If information between token and SABC db is same, then just returning without the database call
     return studentToSync;
+  }
+
+  /**
+   * Gets all the students that have the SIN validation pending.
+   * TODO: Real logic still to be defined, for now returning all students.
+   * @returns Students pending SIN validation.
+   */
+  async getStudentsPendingSinValidation(): Promise<Student[]> {
+    return await this.repo.find();
   }
 }

@@ -1,35 +1,14 @@
-import { Controller, Get, Inject, Scope } from "@nestjs/common";
+import { Controller, Get, Inject, Post, Scope } from "@nestjs/common";
 import { Public } from "src/auth/decorators/public.decorator";
-import { ConfigService, CraIntegrationService } from "../../services";
+import { CraStudentIntegrationService } from "../../services";
 
 @Controller({ path: "cra-integration", scope: Scope.REQUEST })
 export class CraIntegrationController {
-  constructor(private readonly cra: CraIntegrationService) {}
+  constructor(private readonly cra: CraStudentIntegrationService) {}
 
   @Public()
-  @Get()
+  @Post("sin-validation")
   async createMatchingRun(): Promise<any> {
-    const fileContent = this.cra.createMatchingRunContent([
-      {
-        sin: "485153696",
-        individualSurname: "Sinclair",
-        individualGivenName: "Tulip",
-        individualBirthDate: new Date(1915, 6, 19),
-      },
-      {
-        sin: "444652291",
-        individualSurname: "Martin",
-        individualGivenName: "Elizabeth",
-        individualBirthDate: new Date(1975, 5, 9),
-      },
-      {
-        sin: "713365021",
-        individualSurname: "Gail",
-        individualGivenName: "Gordon",
-        individualBirthDate: new Date(1964, 4, 5),
-      },
-    ]);
-    const fileName = this.cra.createRequestFileName(1);
-    this.cra.uploadContent(fileContent, fileName);
+    await this.cra.createSinValidationRequest();
   }
 }

@@ -11,6 +11,7 @@ import {
   ApplicationService,
   BCeIDServiceProvider,
   CraIntegrationService,
+  CraStudentIntegrationService,
 } from "./services";
 import {
   UserController,
@@ -66,6 +67,7 @@ import {
     KeycloakService,
     SshService,
     CraIntegrationService,
+    CraStudentIntegrationService,
   ],
 })
 export class AppModule {}
