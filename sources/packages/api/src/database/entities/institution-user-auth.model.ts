@@ -11,7 +11,7 @@ export class InstitutionUserAuth extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => InstitutionLocation, { eager: true })
+  @ManyToOne((type) => InstitutionLocation, { eager: false })
   @JoinColumn({
     name: "institution_location_id",
     referencedColumnName: "id",
