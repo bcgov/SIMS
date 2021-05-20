@@ -19,7 +19,7 @@ export class InstitutionUser extends RecordDataModel {
   id: number;
 
   @Column({
-    name: "guid",
+    name: "user_guid",
     nullable: true,
   })
   guid: string;

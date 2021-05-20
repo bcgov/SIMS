@@ -1,1 +1,1 @@
-ALTER TABLE "institution_users" DROP COLUMN IF EXISTS "guid";
+ALTER TABLE "institution_users" DROP COLUMN IF EXISTS "user_guid";
