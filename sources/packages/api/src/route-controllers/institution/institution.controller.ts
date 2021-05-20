@@ -21,7 +21,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
-import { InstitutionUserRole, InstitutionUserType } from "src/types";
+import { InstitutionUserRole, InstitutionUserType } from "../../types";
 import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
 
 @Controller("institution")
@@ -93,7 +93,10 @@ export class InstitutionController extends BaseController {
           },
         })),
         user: {
-          ...institutionUser.user,
+          email: institutionUser.user.email,
+          firstName: institutionUser.user.firstName,
+          lastName: institutionUser.user.lastName,
+          userName: institutionUser.user.userName,
         },
       };
       return institutionUserResp;
