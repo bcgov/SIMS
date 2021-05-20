@@ -9,7 +9,7 @@ import { CRAPersonRecord, CRAUploadResult } from "./cra-integration.models";
  * individual that needs to have his data verified
  * by the Canada Revenue Agency (CRA).
  */
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class CRAPersonalVerificationService {
   constructor(
     private readonly craService: CRAIntegrationService,

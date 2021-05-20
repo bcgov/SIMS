@@ -19,7 +19,7 @@ import { CRAFileIVRequestRecord } from "./file/cra-file-request-record";
  * on a fixed size format and uploaded to a SFTP on Government
  * ZONE B network for further processing and final send to CRA servers.
  */
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class CRAIntegrationService {
   private readonly craConfig: CRAIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;

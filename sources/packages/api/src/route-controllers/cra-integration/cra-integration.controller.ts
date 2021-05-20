@@ -2,7 +2,7 @@ import { Controller, Post, Scope } from "@nestjs/common";
 import { CRAPersonalVerificationService } from "../../services";
 import { CreateSinValidationResDto } from "./models/create-sin-validation.res.dto";
 
-@Controller({ path: "cra-integration", scope: Scope.REQUEST })
+@Controller("cra-integration")
 export class CRAIntegrationController {
   constructor(private readonly cra: CRAPersonalVerificationService) {}
 
