@@ -1,27 +1,7 @@
 <template>
-  <div>
-    <NavBar
-      title="Institution Portal"
-      :clientType="clientType"
-      v-if="isAuthReady"
-    >
-      <template #end>
-        <Button
-          v-if="isAuthenticated"
-          label="Institution Profile"
-          icon="pi pi-fw pi-user"
-          class="p-button-text"
-          style="color: white"
-          @click="
-            $router.push({
-              name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
-            })
-          "
-        />
-      </template>
-    </NavBar>
-    <router-view v-if="isAuthReady" />
-  </div>
+  <v-app>
+    <CommonLayout v-if="(isAuthReady)" :isAuthenticated="isAuthenticated" />
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -30,14 +10,14 @@ import { ref, onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
-import NavBar from "../../components/partial-view/student/NavBar.vue";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
+import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
 
 export default {
   components: {
-    NavBar,
+    CommonLayout,
   },
   setup() {
     const router = useRouter();
