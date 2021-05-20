@@ -22,6 +22,7 @@ import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import { InstitutionUserRole, InstitutionUserType } from "src/types";
+import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -132,5 +133,10 @@ export class InstitutionController extends BaseController {
     });
 
     return true;
+  }
+
+  @Get("/user-types-roles")
+  getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
+    return this.institutionService.getUserTypesAndRoles();
   }
 } //Class ends

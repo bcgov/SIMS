@@ -27,7 +27,8 @@ import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
-import { InstitutionLocation } from "src/database/entities/institution-location.model";
+import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { InstitutionUserTypeAndRoleResponseDto } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -293,5 +294,24 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoinAndSelect("authorizations.authType", "authType")
       .where("institution.id = :institutionId", { institutionId })
       .getMany();
+  }
+
+  async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
+    const types: {
+      type: string;
+    }[] = await this.institutionUserTypeAndRoleRepo.query(
+      "SELECT DISTINCT user_type as type FROM sims.institution_user_type_roles;",
+    );
+    const roles: {
+      role: string;
+    }[] = await this.institutionUserTypeAndRoleRepo.query(
+      "SELECT DISTINCT user_role as role FROM sims.institution_user_type_roles;",
+    );
+    return {
+      userTypes: types.map((typeObject) => typeObject.type),
+      userRoles: roles
+        .filter((roleObject) => roleObject.role !== null)
+        .map((roleObject) => roleObject.role),
+    };
   }
 }
