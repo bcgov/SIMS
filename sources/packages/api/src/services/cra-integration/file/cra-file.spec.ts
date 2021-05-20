@@ -17,7 +17,7 @@ describe("CRA Integration", () => {
       const fixedFormatHeader = header.getFixedFormat();
       // Assert
       expect(fixedFormatHeader).toBe(
-        "7000                        20201231 ABCDA                                                                                                        0",
+        "7000                        20201231 ABCDA00001                                                                                                   0",
       );
     });
 
@@ -52,7 +52,7 @@ describe("CRA Integration", () => {
       const fixedFormatHeader = footer.getFixedFormat();
       // Assert
       expect(fixedFormatHeader).toBe(
-        "7002                        20201231 ABCDA           00000005                                                                                     0",
+        "7002                        20201231 ABCDA00001           00000005                                                                                0",
       );
     });
   });
