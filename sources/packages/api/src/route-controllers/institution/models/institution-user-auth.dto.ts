@@ -3,7 +3,7 @@ import { InstitutionUserType, InstitutionUserRole } from "../../../types";
 
 export class InstitutionUserAuthDto {
   @IsNotEmpty()
-  guid: string;
+  userGuid: string;
 
   @IsOptional()
   locationId?: number;
