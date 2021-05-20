@@ -119,6 +119,51 @@ objects:
                     secretKeyRef:
                       key: ${SIMS_API_CLIENT_SECRET_NAME_KEY}
                       name: ${API_SECRET_NAME}
+                - name: CRA_REQUEST_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_REQUEST_FOLDER_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: CRA_RESPONSE_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_RESPONSE_FOLDER_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: CRA_PROGRAM_AREA_CODE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_PROGRAM_AREA_CODE_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: CRA_ENVIRONMENT_CODE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CRA_ENVIRONMENT_CODE_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ZONE_B_SFTP_SERVER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_SERVER_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ZONE_B_SFTP_SERVER_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_SERVER_PORT_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ZONE_B_SFTP_USER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_USER_NAME_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ZONE_B_SFTP_PRIVATE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
+                      name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -259,3 +304,21 @@ parameters:
     value: sims-api-client-id
   - name: SIMS_API_CLIENT_SECRET_NAME_KEY
     value: sims-api-client-secret
+  - name: CRA_REQUEST_FOLDER_NAME_KEY
+    value: cra-request-folder
+  - name: CRA_RESPONSE_FOLDER_NAME_KEY
+    value: cra-response-folder
+  - name: CRA_PROGRAM_AREA_CODE_NAME_KEY
+    value: cra-program-area-code
+  - name: CRA_ENVIRONMENT_CODE_NAME_KEY
+    value: cra-environment-code
+  - name: ZONE_B_SFTP_SERVER_NAME_KEY
+    value: zone-b-sftp-server
+  - name: ZONE_B_SFTP_SERVER_PORT_NAME_KEY
+    value: zone-b-sftp-server-port
+  - name: ZONE_B_SFTP_USER_NAME_NAME_KEY
+    value: zone-b-sftp-user-name
+  - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE_NAME_KEY
+    value: zone-b-sftp-private-key-passphrase
+  - name: ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY
+    value: zone-b-sftp-private-key
