@@ -1,11 +1,11 @@
 <template>
   <v-container>
-    <h1 class="d-flex justify-content-center">Dashboard Work in Progress</h1>
+    <h5 class="color-grey">Manage Desgination</h5>
+    <h2>Desgination In Progress</h2>
   </v-container>
 </template>
 
 <script lang="ts">
 export default {}
 </script>
-
 <style></style>

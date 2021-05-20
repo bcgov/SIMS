@@ -10,4 +10,5 @@ export enum AppRoutes {
   LoginWithBusinessBCeID = "login/business-bceid",
   InstitutionManageLocations = "manage-locations",
   AddInstitutionLocation = "add-institution-location",
+  ManageInstitutionDesignation = "manage-desgination",
 }
