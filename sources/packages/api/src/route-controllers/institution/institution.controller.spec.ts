@@ -5,6 +5,7 @@ import {
   InstitutionService,
   UserService,
   ConfigService,
+  InstitutionLocationService,
 } from "../../services";
 import { InstitutionController } from "./institution.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -15,7 +16,13 @@ describe("InstitutionController", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [InstitutionService, UserService, BCeIDService, ConfigService],
+      providers: [
+        InstitutionService,
+        UserService,
+        BCeIDService,
+        ConfigService,
+        InstitutionLocationService,
+      ],
       controllers: [InstitutionController],
     }).compile();
     await module.init();
