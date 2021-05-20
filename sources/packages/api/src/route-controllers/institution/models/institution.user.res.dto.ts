@@ -1,10 +1,4 @@
-import {
-  InstitutionUserAuth,
-  InstitutionUserTypeAndRole,
-  User,
-} from "src/database/entities";
-import { InstitutionLocation } from "src/database/entities/institution-location.model";
-import { UserInfo } from "../../../types";
+import { User } from "../../../database/entities";
 
 export interface InstitutionUserRespDto {
   id: number;
