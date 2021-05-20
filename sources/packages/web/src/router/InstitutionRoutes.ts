@@ -14,8 +14,8 @@ import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
 import Institution from "../views/institution/Institution.vue";
-import ManageInstitutionSideBar from "../layouts/institution/ManageInstitutionSideBar.vue";
-import InstitutionHomeSideBar from "../layouts/institution/HomeSideBar.vue";
+import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
+import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {

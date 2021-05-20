@@ -1,5 +1,5 @@
 <template>
-  <Menu :model="items"/>
+  <Menu :model="items" />
 </template>
 <script lang="ts">
 import Menu from "primevue/menu";
@@ -54,7 +54,7 @@ export default {
     ]);
 
     return {
-      items
+      items,
     };
   },
 };

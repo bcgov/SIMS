@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <CommonLayout v-if="(isAuthReady)" />
+    <CommonLayout v-if="(isAuthReady)" :isAuthenticated="isAuthenticated" />
   </v-app>
 </template>
 
@@ -13,7 +13,7 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
-import CommonLayout from "../../layouts/CommonLayout.vue"
+import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
 
 export default {
   components: {
