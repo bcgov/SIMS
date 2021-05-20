@@ -129,7 +129,7 @@ export class InstitutionController extends BaseController {
       type: body.userType as InstitutionUserType,
       role: body.userRole as InstitutionUserRole,
       location,
-      guid: body.guid,
+      guid: body.userGuid,
     });
 
     return true;
