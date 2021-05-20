@@ -3,15 +3,13 @@
   <v-navigation-drawer app>
     <router-view name="sidebar"></router-view>
   </v-navigation-drawer>
-  <div>
-    <!-- TODO: added v-container instead of v-main 
-    (since v-main has scrolling issue), replace 
-    container with main, when vuetify3 stable
-     version is relased -->
-    <v-container fluid>
-        <router-view></router-view>
-    </v-container>
-  </div>
+  <!-- TODO: added v-container instead of v-main 
+  (since v-main has scrolling issue), replace 
+  container with main, when vuetify3 stable
+    version is relased -->
+  <v-container fluid>
+      <router-view></router-view>
+  </v-container>
 </v-app>
 </template>
 <script>
