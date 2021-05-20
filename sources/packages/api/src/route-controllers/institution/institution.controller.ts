@@ -123,6 +123,13 @@ export class InstitutionController extends BaseController {
       }
     }
 
+    // For location-manager type location is mandatory
+    if (body.userType === InstitutionUserType.locationManager && !location) {
+      throw new UnprocessableEntityException(
+        `Unable to create user with user type ${InstitutionUserType.locationManager} without location`,
+      );
+    }
+
     // Now create association
     await this.institutionService.createAssociation({
       institution,

@@ -99,4 +99,8 @@ export class InstitutionService {
   public async users() {
     return ApiClient.Institution.getUsers();
   }
+
+  public async getUserTypeAndRoles() {
+    return ApiClient.Institution.getUserTypeAndRoles();
+  }
 }
