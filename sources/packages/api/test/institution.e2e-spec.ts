@@ -1,11 +1,27 @@
 require("../env_setup");
+import jwtDecode from "jwt-decode";
+import * as faker from "faker";
+
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { KeycloakConfig } from "../src/auth/keycloakConfig";
 import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service";
+import {
+  InstitutionLocationService,
+  InstitutionService,
+  UserService,
+} from "../src/services";
+import {
+  institutionFactory,
+  institutionLocationFactory,
+  userFactory,
+} from "../src/database/factories";
+import { InstitutionUserType } from "../src/types";
 
+// Setting longer timeout because this test is connecting external system
+jest.setTimeout(15000);
 describe("Institution controller (e2e)", () => {
   const clientId = "student";
   // Nest application to be shared for all e2e tests
@@ -14,7 +30,11 @@ describe("Institution controller (e2e)", () => {
   // Token to be used for all e2e tests that need test
   // the authentication endpoints.
   // This token is retrieved from Keyclock.
-  let accesstoken: string;
+  let accessToken: string;
+  let institutionService: InstitutionService;
+  let locationService: InstitutionLocationService;
+  let userService: UserService;
+  let parsedToken: any;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -23,20 +43,26 @@ describe("Institution controller (e2e)", () => {
       process.env.E2E_TEST_STUDENT_PASSWORD,
       clientId,
     );
-    accesstoken = token.access_token;
+    accessToken = token.access_token;
+    parsedToken = jwtDecode(accessToken);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
+    institutionService = app.get<InstitutionService>(InstitutionService);
+    locationService = app.get<InstitutionLocationService>(
+      InstitutionLocationService,
+    );
+    userService = app.get<UserService>(UserService);
   });
 
   describe.skip("save institution", () => {
     it("Should return a HttpStatus OK(200) with institution information when user is valid and user doesnt exist", () => {
       return request(app.getHttpServer())
         .post("/institution")
-        .auth(accesstoken, { type: "bearer" })
+        .auth(accessToken, { type: "bearer" })
         .send({
           legalOperatingName: "E2ETest",
           operatingName: "Test",
@@ -64,6 +90,38 @@ describe("Institution controller (e2e)", () => {
         .expect("Content-Type", /json/)
         .expect(HttpStatus.CREATED);
     });
+  });
+
+  it("should Create institution user", async () => {
+    // Create institution
+    const institution = await institutionFactory();
+    const location = await institutionLocationFactory();
+    const user = await userFactory({
+      userName: parsedToken.userName,
+    });
+    await institutionService.save(institution);
+    location.institution = institution;
+    await locationService.save(location);
+    await userService.save(user);
+    await institutionService.createAssociation({
+      institution,
+      user,
+      type: InstitutionUserType.admin,
+    });
+    await request(app.getHttpServer())
+      .post("/institution/user")
+      .auth(accessToken, { type: "bearer" })
+      .send({
+        locationId: location.id,
+        guid: faker.random.uuid(),
+        userType: InstitutionUserType.user,
+      })
+      .set("Accept", "application/json")
+      .expect(HttpStatus.CREATED);
+
+    await locationService.remove(location);
+    await institutionService.remove(institution);
+    await userService.remove(user);
   });
 
   afterAll(async () => {

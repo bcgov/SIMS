@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   JoinColumn,
   OneToMany,
@@ -16,6 +17,12 @@ import { User } from "./user.model";
 export class InstitutionUser extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    name: "user_guid",
+    nullable: true,
+  })
+  userGuid: string;
 
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({

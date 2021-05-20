@@ -5,6 +5,7 @@ import {
   UpdateInstitutionDto,
 } from "../../types";
 import { AxiosResponse } from "axios";
+import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -46,6 +47,34 @@ export class InstitutionApi extends HttpBaseClient {
   public async sync() {
     try {
       await this.apiClient.patch("institution/sync", {}, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getUsers() {
+    try {
+      const resp = await this.apiClient.get(
+        "institution/users",
+        this.addAuthHeader(),
+      );
+      return resp.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getUserTypeAndRoles(): Promise<
+    InstitutionUserTypeAndRoleResponseDto
+  > {
+    try {
+      const resp = await this.apiClient.get(
+        "institution/user-types-roles",
+        this.addAuthHeader(),
+      );
+      return resp.data as InstitutionUserTypeAndRoleResponseDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

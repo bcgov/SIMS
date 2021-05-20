@@ -95,4 +95,12 @@ export class InstitutionService {
   public async getAllInstitutionLocations() {
     return await ApiClient.InstitutionLocation.allInstitutionLocationsApi();
   }
+
+  public async users() {
+    return ApiClient.Institution.getUsers();
+  }
+
+  public async getUserTypeAndRoles() {
+    return ApiClient.Institution.getUserTypeAndRoles();
+  }
 }
