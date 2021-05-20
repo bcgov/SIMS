@@ -93,14 +93,10 @@ export class InstitutionController extends BaseController {
           },
         })),
         user: {
-<<<<<<< HEAD
-          ...institutionUser.user,
-=======
           email: institutionUser.user.email,
           firstName: institutionUser.user.firstName,
           lastName: institutionUser.user.lastName,
           userName: institutionUser.user.userName,
->>>>>>> main
         },
       };
       return institutionUserResp;
