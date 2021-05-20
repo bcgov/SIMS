@@ -35,7 +35,7 @@ export class CRAIntegrationService {
    * @param records Personal/individual records to be processed.
    * @param sequence File request sequence number that is required
    * by CRA server processing.
-   * @returns matching run content
+   * @returns Matching run content.
    */
   public createMatchingRunContent(
     records: CRAPersonRecord[],
@@ -77,9 +77,9 @@ export class CRAIntegrationService {
 
   /**
    * Converts the craFileLines to the final content and upload it.
-   * @param craFileLines
-   * @param remoteFilePath
-   * @returns content
+   * @param craFileLines Array of lines to be converted to a formatted fixed size file.
+   * @param remoteFilePath Remote location to upload the file (path + file name).
+   * @returns Upload result.
    */
   public async uploadContent(
     craFileLines: CRAFileLine[],

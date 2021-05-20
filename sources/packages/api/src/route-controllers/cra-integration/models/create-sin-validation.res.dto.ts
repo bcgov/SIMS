@@ -1,4 +1,4 @@
-export interface CreateMatchingRunResDto {
+export interface CreateSinValidationResDto {
   generatedFile: string;
   uploadedRecords: number;
 }
