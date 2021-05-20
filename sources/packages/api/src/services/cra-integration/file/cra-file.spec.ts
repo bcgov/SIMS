@@ -1,16 +1,13 @@
-import {
-  TransactionCodes,
-  TransactionSubCodes,
-} from "../cra-integration.models";
-import { CraFileFooter } from "./cra-file-footer";
-import { CraFileHeader } from "./cra-file-header";
-import { CraFileRecord } from "./cra-file-record";
+import { TransactionCodes } from "../cra-integration.models";
+import { CRAFileFooter } from "./cra-file-footer";
+import { CRAFileHeader } from "./cra-file-header";
+import { CRAFileIVRequestRecord } from "./cra-file-request-record";
 
 describe("CRA Integration", () => {
   describe("Matching Run Request", () => {
     it("should create fixed format header", () => {
       // Arrange
-      const header = new CraFileHeader();
+      const header = new CRAFileHeader();
       header.transactionCode = TransactionCodes.MatchingRunHeader;
       header.processDate = new Date(2020, 11, 31);
       header.programAreaCode = "ABCD";
@@ -24,12 +21,11 @@ describe("CRA Integration", () => {
       );
     });
 
-    it("should create fixed format record", () => {
+    it("should create fixed format IV Request Record (0020)", () => {
       // Arrange
-      const record = new CraFileRecord();
+      const record = new CRAFileIVRequestRecord();
       record.transactionCode = TransactionCodes.MatchingRunRecord;
       record.sin = "123456789";
-      record.transactionSubCode = TransactionSubCodes.IVRequest;
       record.individualSurname = "Doe";
       record.individualGivenName = "John";
       record.individualBirthDate = new Date(1980, 0, 31);
@@ -45,7 +41,7 @@ describe("CRA Integration", () => {
 
     it("should create fixed format footer", () => {
       // Arrange
-      const footer = new CraFileFooter();
+      const footer = new CRAFileFooter();
       footer.transactionCode = TransactionCodes.MatchingRunFooter;
       footer.processDate = new Date(2020, 11, 31);
       footer.programAreaCode = "ABCD";

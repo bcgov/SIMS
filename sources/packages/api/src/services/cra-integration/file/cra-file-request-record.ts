@@ -5,12 +5,14 @@ import {
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
-import { CraFileLine } from "./cra-file";
+import { CRAFileLine } from "./cra-file";
 
-export class CraFileRecord implements CraFileLine {
+/**
+ * Record of a CRA request file (0020).
+ */
+export class CRAFileIVRequestRecord implements CRAFileLine {
   transactionCode: TransactionCodes;
   sin: string;
-  transactionSubCode: TransactionSubCodes;
   individualSurname: string;
   individualGivenName: string;
   individualBirthDate: Date;
@@ -23,7 +25,7 @@ export class CraFileRecord implements CraFileLine {
     record.Append(this.transactionCode);
     record.Append(this.sin);
     record.RepeatAppend(SPACE_FILLER, 4);
-    record.Append(this.transactionSubCode);
+    record.Append(TransactionSubCodes.IVRequest);
     record.AppendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);
     record.AppendWithEndFiller(this.individualGivenName, 30, SPACE_FILLER);
     record.AppendDate(this.individualBirthDate, DATE_FORMAT);

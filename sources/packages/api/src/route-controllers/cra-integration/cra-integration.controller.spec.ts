@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CraIntegrationController } from './cra-integration.controller';
+import { Test, TestingModule } from "@nestjs/testing";
+import { CRAIntegrationController } from "./cra-integration.controller";
 
-describe('CraIntegrationController', () => {
-  let controller: CraIntegrationController;
+describe("CRAIntegrationController", () => {
+  let controller: CRAIntegrationController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CraIntegrationController],
+      controllers: [CRAIntegrationController],
     }).compile();
 
-    controller = module.get<CraIntegrationController>(CraIntegrationController);
+    controller = module.get<CRAIntegrationController>(CRAIntegrationController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

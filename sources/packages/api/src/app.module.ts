@@ -10,8 +10,6 @@ import {
   InstitutionService,
   ApplicationService,
   BCeIDServiceProvider,
-  CraIntegrationService,
-  CraStudentIntegrationService,
 } from "./services";
 import {
   UserController,
@@ -22,7 +20,6 @@ import {
   WorkflowController,
   ApplicationController,
   InstitutionLocationsController,
-  CraIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -33,11 +30,11 @@ import {
   InstitutionLocationService,
   FormsFlowService,
   KeycloakService,
-  SshService,
 } from "./services";
+import { CraIntegrationModule } from "./route-controllers/cra-integration/cra-integration.module";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [LoggerModule, DatabaseModule, AuthModule, CraIntegrationModule],
   controllers: [
     AppController,
     UserController,
@@ -48,7 +45,6 @@ import {
     WorkflowController,
     ApplicationController,
     InstitutionLocationsController,
-    CraIntegrationController,
   ],
   providers: [
     AppService,
@@ -65,9 +61,6 @@ import {
     InstitutionLocationService,
     FormsFlowService,
     KeycloakService,
-    SshService,
-    CraIntegrationService,
-    CraStudentIntegrationService,
   ],
 })
 export class AppModule {}

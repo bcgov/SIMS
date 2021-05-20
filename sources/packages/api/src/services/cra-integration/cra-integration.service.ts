@@ -3,18 +3,24 @@ import { ConfigService } from "..";
 import { SshService } from "../ssh/ssh.service";
 import * as Client from "ssh2-sftp-client";
 import {
-  CraPersonRecord,
+  CRAPersonRecord,
+  CRAUploadResult,
   TransactionCodes,
-  TransactionSubCodes,
 } from "./cra-integration.models";
 import { CRAIntegrationConfig, SFTPConfig } from "../../types";
-import { CraFileHeader } from "./file/cra-file-header";
-import { CraFileFooter } from "./file/cra-file-footer";
-import { CraFileLine } from "./file/cra-file";
-import { CraFileRecord } from "./file/cra-file-record";
+import { CRAFileHeader } from "./file/cra-file-header";
+import { CRAFileFooter } from "./file/cra-file-footer";
+import { CRAFileLine } from "./file/cra-file";
+import { CRAFileIVRequestRecord } from "./file/cra-file-request-record";
 
+/**
+ * Manages the creation of the content files that needs to be sent
+ * to Canada Revenue Agency (CRA). These files are created based
+ * on a fixed size format and uploaded to a SFTP on Government
+ * ZONE B network for further processing and final send to CRA servers.
+ */
 @Injectable({ scope: Scope.TRANSIENT })
-export class CraIntegrationService {
+export class CRAIntegrationService {
   private readonly craConfig: CRAIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
@@ -23,12 +29,20 @@ export class CraIntegrationService {
     this.ftpConfig = config.getConfig().zoneB_SFTP;
   }
 
+  /**
+   * Creates a matching run request used, for instance, to validate
+   * the SIN information.
+   * @param records Personal/individual records to be processed.
+   * @param sequence File request sequence number that is required
+   * by CRA server processing.
+   * @returns matching run content
+   */
   public createMatchingRunContent(
-    records: CraPersonRecord[],
+    records: CRAPersonRecord[],
     sequence: number,
-  ): CraFileLine[] {
+  ): CRAFileLine[] {
     const processDate = new Date();
-    const craFileLines: CraFileLine[] = [];
+    const craFileLines: CRAFileLine[] = [];
 
     // Header
     const fileHeader = this.createHeader(
@@ -39,10 +53,9 @@ export class CraIntegrationService {
     craFileLines.push(fileHeader);
     // Records
     const fileRecords = records.map((r) => {
-      const record = new CraFileRecord();
+      const record = new CRAFileIVRequestRecord();
       record.transactionCode = TransactionCodes.MatchingRunRecord;
       record.sin = r.sin;
-      record.transactionSubCode = TransactionSubCodes.IVRequest;
       record.individualSurname = r.surname;
       record.individualGivenName = r.givenName;
       record.individualBirthDate = r.birthDate;
@@ -62,13 +75,19 @@ export class CraIntegrationService {
     return craFileLines;
   }
 
+  /**
+   * Converts the craFileLines to the final content and upload it.
+   * @param craFileLines
+   * @param remoteFilePath
+   * @returns content
+   */
   public async uploadContent(
-    craFileLines: CraFileLine[],
+    craFileLines: CRAFileLine[],
     remoteFilePath: string,
-  ): Promise<void> {
+  ): Promise<CRAUploadResult> {
     // Generate fixed formatted file.
     const fixedFormttedLines: string[] = craFileLines.map(
-      (line: CraFileLine) => {
+      (line: CRAFileLine) => {
         return line.getFixedFormat();
       },
     );
@@ -77,14 +96,18 @@ export class CraIntegrationService {
     // Send the file to ftp.
     const client = await this.getClient();
     await client.put(Buffer.from(craFileContent), remoteFilePath);
+    return {
+      generatedFile: remoteFilePath,
+      uploadedRecords: craFileLines.length,
+    };
   }
 
   private createHeader(
     code: TransactionCodes,
     processDate: Date,
     sequence: number,
-  ): CraFileHeader {
-    const header = new CraFileHeader();
+  ): CRAFileHeader {
+    const header = new CRAFileHeader();
     header.transactionCode = code;
     header.processDate = processDate;
     header.programAreaCode = this.craConfig.programAreaCode;
@@ -98,14 +121,14 @@ export class CraIntegrationService {
     processDate: Date,
     sequence: number,
     recordCount: number,
-  ): CraFileFooter {
-    const footer = new CraFileFooter();
+  ): CRAFileFooter {
+    const footer = new CRAFileFooter();
     footer.transactionCode = code;
     footer.processDate = processDate;
     footer.programAreaCode = this.craConfig.programAreaCode;
     footer.environmentCode = this.craConfig.environmentCode;
     footer.sequence = sequence;
-    footer.recordCount = recordCount + 2; // Number of records + header + footer.
+    footer.recordCount = recordCount + 2; // Must be the number of records + header + footer.
     return footer;
   }
 
