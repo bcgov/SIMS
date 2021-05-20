@@ -22,7 +22,7 @@ export class InstitutionUser extends RecordDataModel {
     name: "user_guid",
     nullable: true,
   })
-  guid: string;
+  userGuid: string;
 
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({
