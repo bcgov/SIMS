@@ -20,11 +20,12 @@ const factory = async (
     userName: `${faker.random.uuid()}@bceid`,
   });
   const institution = await institutionFactory();
-  const iu = await service.createAssociation(
+  const iu = await service.createAssociation({
     institution,
     user,
-    InstitutionUserType.admin,
-  );
+    type: InstitutionUserType.admin,
+  });
+
   return [institution, user, iu];
 };
 
@@ -78,11 +79,11 @@ describe("InstitutionService", () => {
     const newUser = await userFactory();
 
     // Create new association
-    await service.createAssociation(
+    await service.createAssociation({
       institution,
-      newUser,
-      InstitutionUserType.user,
-    );
+      type: InstitutionUserType.user,
+      user: newUser,
+    });
 
     // Test
     const users: InstitutionUser[] = await service.allUsers(institution.id);

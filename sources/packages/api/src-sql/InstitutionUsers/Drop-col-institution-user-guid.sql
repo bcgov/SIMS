@@ -1,0 +1,1 @@
+ALTER TABLE "institution_users" DROP COLUMN IF EXISTS "guid";
