@@ -7,14 +7,16 @@ import { InstitutionLocation } from "src/database/entities/institution-location.
 import { UserInfo } from "../../../types";
 
 export interface InstitutionUserRespDto {
-  id?: number;
+  id: number;
   user: Pick<User, "email" | "firstName" | "lastName" | "userName">;
   authorizations: {
-    id?: number;
+    id: number;
     authType: {
       role?: string;
       type: string;
     };
-    location?: string;
+    location?: {
+      name: string;
+    };
   }[];
 }

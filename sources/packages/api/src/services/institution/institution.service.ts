@@ -27,6 +27,7 @@ import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
+import { InstitutionLocation } from "src/database/entities/institution-location.model";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -52,15 +53,25 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.logger.log("[Created]");
   }
 
-  async createAssociation(
-    institution: Institution,
-    user: User,
-    type: InstitutionUserType = InstitutionUserType.user,
-    role?: InstitutionUserRole,
-  ): Promise<InstitutionUser> {
+  async createAssociation({
+    institution,
+    type = InstitutionUserType.user,
+    user,
+    location,
+    role,
+    guid,
+  }: {
+    institution: Institution;
+    type: InstitutionUserType;
+    user?: User;
+    location?: InstitutionLocation;
+    role?: InstitutionUserRole;
+    guid?: string;
+  }): Promise<InstitutionUser> {
     const institutionUser = this.institutionUserRepo.create();
     institutionUser.user = user;
     institutionUser.institution = institution;
+    institutionUser.guid = guid;
     const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
       type,
       role: role || null,
@@ -68,6 +79,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const auth = this.institutionUserAuthRepo.create();
     auth.authType = authType;
     auth.institutionUser = institutionUser;
+    auth.location = location;
     institutionUser.authorizations = [auth];
 
     return await this.institutionUserRepo.save(institutionUser);
@@ -133,7 +145,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       phone: institutionDto.primaryPhone,
     };
 
-    await this.createAssociation(institution, user, InstitutionUserType.admin);
+    await this.createAssociation({
+      institution,
+      user,
+      type: InstitutionUserType.admin,
+    });
 
     return institution;
   }
@@ -220,11 +236,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       });
       if (institutionEntity) {
         // Create association with user
-        await this.createAssociation(
-          institutionEntity,
+        await this.createAssociation({
+          institution: institutionEntity,
           user,
-          InstitutionUserType.admin,
-        );
+          type: InstitutionUserType.admin,
+        });
       } else {
         throw new UnprocessableEntityException(
           "Unable to find institution for user",
@@ -268,12 +284,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   async allUsers(institutionId: number): Promise<InstitutionUser[]> {
-    /*return this.institutionUserRepo.find({
-      where: {
-        institution: { id: institutionId },
-      },
-      relations: ["user", "authorizations", "authorizations.location"],
-    });*/
     return this.institutionUserRepo
       .createQueryBuilder("institutionUser")
       .leftJoinAndSelect("institutionUser.user", "user")

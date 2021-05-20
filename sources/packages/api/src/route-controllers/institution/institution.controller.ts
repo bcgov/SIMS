@@ -2,12 +2,15 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   Patch,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { InstitutionService, UserService } from "../../services";
+import {
+  InstitutionLocationService,
+  InstitutionService,
+  UserService,
+} from "../../services";
 import {
   CreateInstitutionDto,
   InstitutionDetailDto,
@@ -17,12 +20,15 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
+import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
+import { InstitutionUserRole, InstitutionUserType } from "src/types";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
+    private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super();
   }
@@ -69,23 +75,62 @@ export class InstitutionController extends BaseController {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
     );
-    return (await this.institutionService.allUsers(institution.id)).map(
-      (item) => {
-        const r: InstitutionUserRespDto = {
-          id: item.id,
-          authorizations: item.authorizations.map((auth) => ({
-            authType: {
-              role: auth.authType?.role,
-              type: auth.authType?.type,
-            },
-            location: auth?.location?.name,
-          })),
-          user: {
-            ...item.user,
-          },
-        };
-        return r;
-      },
+    const allInstitutionUsers = await this.institutionService.allUsers(
+      institution.id,
     );
+    return allInstitutionUsers.map((institutionUser) => {
+      const institutionUserResp: InstitutionUserRespDto = {
+        id: institutionUser.id,
+        authorizations: institutionUser.authorizations.map((auth) => ({
+          id: auth.id,
+          authType: {
+            role: auth.authType?.role,
+            type: auth.authType?.type,
+          },
+          location: {
+            name: auth.location?.name,
+          },
+        })),
+        user: {
+          ...institutionUser.user,
+        },
+      };
+      return institutionUserResp;
+    });
+  }
+
+  @Post("/user")
+  async createInstitutionUserWithAuth(
+    @UserToken() user: IUserToken,
+    @Body() body: InstitutionUserAuthDto,
+  ) {
+    // Validate data
+    // Get institution
+    const institution = await this.institutionService.getInstituteByUserName(
+      user.userName,
+    );
+    // Get location
+    let location;
+    if (body.locationId) {
+      location = await this.institutionLocationService.findById(
+        body.locationId,
+      );
+      if (!location) {
+        throw new UnprocessableEntityException(
+          `Unable to find institution location with id: ${body.locationId}`,
+        );
+      }
+    }
+
+    // Now create association
+    await this.institutionService.createAssociation({
+      institution,
+      type: body.userType as InstitutionUserType,
+      role: body.userRole as InstitutionUserRole,
+      location,
+      guid: body.guid,
+    });
+
+    return true;
   }
 } //Class ends
