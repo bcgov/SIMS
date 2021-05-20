@@ -111,4 +111,13 @@ describe("InstitutionService", () => {
     userService.remove(user);
     userService.remove(newUser);
   });
+
+  it("should return types and roles", async () => {
+    const results = await service.getUserTypesAndRoles();
+    expect(results).toBeDefined();
+    expect(results.userTypes).toBeDefined();
+    expect(results.userTypes.length).toBeGreaterThanOrEqual(3);
+    expect(results.userRoles).toBeDefined();
+    expect(results.userRoles.length).toBeGreaterThanOrEqual(2);
+  });
 });
