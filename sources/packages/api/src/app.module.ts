@@ -20,9 +20,11 @@ import {
   WorkflowController,
   ApplicationController,
   InstitutionLocationsController,
+  CRAIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
+import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import {
   RuleEngineService,
   FormService,
@@ -33,7 +35,7 @@ import {
 } from "./services";
 
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule],
+  imports: [LoggerModule, DatabaseModule, AuthModule, CraIntegrationModule],
   controllers: [
     AppController,
     UserController,
@@ -44,6 +46,7 @@ import {
     WorkflowController,
     ApplicationController,
     InstitutionLocationsController,
+    CRAIntegrationController,
   ],
   providers: [
     AppService,
