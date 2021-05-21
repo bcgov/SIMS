@@ -29,7 +29,7 @@ export class CRAFileFooter implements CRAFileLine {
     header.appendWithStartFiller(this.sequence.toString(), 5, NUMBER_FILLER);
     header.repeatAppend(SPACE_FILLER, 6);
     header.appendWithStartFiller(this.recordCount.toString(), 8, "0");
-    header.repeatAppend(SPACE_FILLER, 75);
+    header.repeatAppend(SPACE_FILLER, 85);
     header.append("0");
     return header.toString();
   }
