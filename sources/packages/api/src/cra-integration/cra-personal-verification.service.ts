@@ -1,7 +1,12 @@
-import { Injectable, Scope } from "@nestjs/common";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
-import { CRAIntegrationService, StudentService } from "..";
+import { Injectable } from "@nestjs/common";
+import { InjectLogger } from "../common";
+import { LoggerService } from "../logger/logger.service";
+import {
+  CRAIntegrationService,
+  StudentService,
+  SequenceControlService,
+  ConfigService,
+} from "../services";
 import { CRAPersonRecord, CRAUploadResult } from "./cra-integration.models";
 
 /**
@@ -14,6 +19,8 @@ export class CRAPersonalVerificationService {
   constructor(
     private readonly craService: CRAIntegrationService,
     private readonly studentService: StudentService,
+    private readonly configService: ConfigService,
+    private readonly sequenceService: SequenceControlService,
   ) {}
 
   /**
@@ -42,19 +49,36 @@ export class CRAPersonalVerificationService {
       } as CRAPersonRecord;
     });
 
-    try {
-      const fileContent = this.craService.createMatchingRunContent(
-        craRecords,
-        1,
-      );
-      const fileName = this.craService.createRequestFileName(1);
-      return this.craService.uploadContent(fileContent, fileName);
-    } catch (error) {
-      this.logger.error(
-        `Error while uploading content for SIN verification: ${error}`,
-      );
-      throw error;
-    }
+    const sequenceName = `CRA_${
+      this.configService.getConfig().CRAIntegration.programAreaCode
+    }`;
+
+    let uploadResult: CRAUploadResult;
+    await this.sequenceService.consumeNextSequence(
+      sequenceName,
+      async (nextSequenceNumber: number) => {
+        try {
+          const fileContent = this.craService.createMatchingRunContent(
+            craRecords,
+            nextSequenceNumber,
+          );
+          const fileName = this.craService.createRequestFileName(
+            nextSequenceNumber,
+          );
+          uploadResult = await this.craService.uploadContent(
+            fileContent,
+            fileName,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Error while uploading content for SIN verification: ${error}`,
+          );
+          throw error;
+        }
+      },
+    );
+
+    return uploadResult;
   }
 
   @InjectLogger()

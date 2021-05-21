@@ -1,17 +1,17 @@
 import { Injectable, Scope } from "@nestjs/common";
-import { ConfigService } from "..";
-import { SshService } from "../ssh/ssh.service";
+import { ConfigService } from "../services";
+import { SshService } from "../services/ssh/ssh.service";
 import * as Client from "ssh2-sftp-client";
 import {
   CRAPersonRecord,
   CRAUploadResult,
   TransactionCodes,
 } from "./cra-integration.models";
-import { CRAIntegrationConfig, SFTPConfig } from "../../types";
-import { CRAFileHeader } from "./file/cra-file-header";
-import { CRAFileFooter } from "./file/cra-file-footer";
-import { CRAFileLine } from "./file/cra-file";
-import { CRAFileIVRequestRecord } from "./file/cra-file-request-record";
+import { CRAIntegrationConfig, SFTPConfig } from "../types";
+import { CRAFileHeader } from "./cra-files/cra-file-header";
+import { CRAFileFooter } from "./cra-files/cra-file-footer";
+import { CRAFileLine } from "./cra-files/cra-file";
+import { CRAFileIVRequestRecord } from "./cra-files/cra-file-request-record";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -86,10 +86,8 @@ export class CRAIntegrationService {
     remoteFilePath: string,
   ): Promise<CRAUploadResult> {
     // Generate fixed formatted file.
-    const fixedFormttedLines: string[] = craFileLines.map(
-      (line: CRAFileLine) => {
-        return line.getFixedFormat();
-      },
+    const fixedFormttedLines: string[] = craFileLines.map((line: CRAFileLine) =>
+      line.getFixedFormat(),
     );
     const craFileContent = fixedFormttedLines.join("\r\n");
 

@@ -41,8 +41,8 @@ export class ConfigService {
       formsFlow: {
         formFlowApiUrl: process.env.FORMS_FLOW_API_URL,
         credential: {
-          ClientId: process.env.SIMS_API_CLIENT_ID,
-          ClientSecret: process.env.SIMS_API_CLIENT_SECRET,
+          clientId: process.env.SIMS_API_CLIENT_ID,
+          clientSecret: process.env.SIMS_API_CLIENT_SECRET,
         },
       },
       zoneB_SFTP: {

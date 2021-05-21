@@ -1,23 +1,24 @@
 import { Module } from "@nestjs/common";
-import { CRAIntegrationController } from "..";
 import {
   ArchiveDbService,
   ConfigService,
   CRAIntegrationService,
   CRAPersonalVerificationService,
+  SequenceControlService,
   SshService,
   StudentService,
-} from "../../services";
+} from "../services";
 
 @Module({
-  controllers: [CRAIntegrationController],
   providers: [
     SshService,
     CRAIntegrationService,
     CRAPersonalVerificationService,
+    SequenceControlService,
     StudentService,
     ArchiveDbService,
     ConfigService,
   ],
+  exports: [CRAPersonalVerificationService, CRAIntegrationService],
 })
 export class CraIntegrationModule {}

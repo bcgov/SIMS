@@ -57,8 +57,8 @@ export interface UserPasswordCredential {
 }
 
 export interface ClientCredential {
-  ClientId: string;
-  ClientSecret: string;
+  clientId: string;
+  clientSecret: string;
 }
 
 export interface WorkflowConfig {

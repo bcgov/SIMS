@@ -6,10 +6,7 @@ import * as dayjs from "dayjs";
  * string manipulation.
  */
 export class StringBuilder {
-  private readonly contents: string[];
-  constructor() {
-    this.contents = [];
-  }
+  private readonly contents: string[] = [];
 
   /**
    * Appends a string to the current content.

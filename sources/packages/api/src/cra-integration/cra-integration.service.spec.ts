@@ -1,6 +1,6 @@
 require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigService, SshService } from "..";
+import { ConfigService, SshService } from "../services";
 import { CRAIntegrationService } from "./cra-integration.service";
 
 describe("CRAIntegrationService", () => {

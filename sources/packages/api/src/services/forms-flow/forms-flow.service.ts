@@ -41,8 +41,8 @@ export class FormsFlowService {
   private async createAuthHeader(): Promise<any> {
     // TODO: Hold and reuse the ticket until it is valid.
     const tokenResponse = await this.keycloakService.getTokenFromClientSecret(
-      this.config.credential.ClientId,
-      this.config.credential.ClientSecret,
+      this.config.credential.clientId,
+      this.config.credential.clientSecret,
     );
     return {
       headers: { Authorization: `Bearer ${tokenResponse.access_token}` },

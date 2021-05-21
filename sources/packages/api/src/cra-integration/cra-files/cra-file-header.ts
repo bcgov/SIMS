@@ -1,4 +1,4 @@
-import { StringBuilder } from "../../../utilities/string-builder";
+import { StringBuilder } from "../../utilities/string-builder";
 import {
   DATE_FORMAT,
   SPACE_FILLER,
@@ -8,15 +8,14 @@ import {
 import { CRAFileLine } from "./cra-file";
 
 /**
- * Footer of a CRA request/response file.
+ * Header of a CRA request/response file.
  */
-export class CRAFileFooter implements CRAFileLine {
+export class CRAFileHeader implements CRAFileLine {
   transactionCode: TransactionCodes;
   processDate: Date;
   programAreaCode: string;
   environmentCode: string;
   sequence: number;
-  recordCount: number;
 
   public getFixedFormat(): string {
     const header = new StringBuilder();
@@ -27,9 +26,7 @@ export class CRAFileFooter implements CRAFileLine {
     header.Append(this.programAreaCode);
     header.Append(this.environmentCode);
     header.AppendWithStartFiller(this.sequence.toString(), 5, NUMBER_FILLER);
-    header.RepeatAppend(SPACE_FILLER, 11);
-    header.AppendWithStartFiller(this.recordCount.toString(), 8, "0");
-    header.RepeatAppend(SPACE_FILLER, 80);
+    header.RepeatAppend(SPACE_FILLER, 99);
     header.Append("0");
     return header.ToString();
   }

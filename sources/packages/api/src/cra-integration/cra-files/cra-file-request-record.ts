@@ -1,4 +1,4 @@
-import { StringBuilder } from "../../../utilities/string-builder";
+import { StringBuilder } from "../../utilities/string-builder";
 import {
   DATE_FORMAT,
   SPACE_FILLER,
