@@ -9,7 +9,7 @@ import { InstitutionUserType, InstitutionUserRole } from "../../../types";
 
 export class InstitutionUserAuthDto {
   @IsNotEmpty()
-  userGuid: string;
+  userId: string;
 
   @IsOptional()
   locationId?: number;
@@ -21,16 +21,4 @@ export class InstitutionUserAuthDto {
   @IsOptional()
   @IsIn(Object.values(InstitutionUserRole))
   userRole?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName: string;
-
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
 }

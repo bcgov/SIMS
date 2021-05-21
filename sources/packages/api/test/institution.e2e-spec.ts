@@ -101,7 +101,7 @@ describe("Institution controller (e2e)", () => {
     });
   });
 
-  it("should Create institution user", async () => {
+  it.skip("should Create institution user", async () => {
     // Create institution
     const institution = await institutionFactory();
     const location = await institutionLocationFactory();

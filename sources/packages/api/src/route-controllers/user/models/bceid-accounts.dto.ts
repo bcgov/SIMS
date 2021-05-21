@@ -9,4 +9,5 @@ export interface BCeIDAccountDto {
   firstname: string;
   surname: string;
   telephone: string;
+  userId: string;
 }

@@ -7,6 +7,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
+  BCeIDService,
   InstitutionLocationService,
   InstitutionService,
   UserService,
@@ -30,6 +31,7 @@ export class InstitutionController extends BaseController {
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly institutionLocationService: InstitutionLocationService,
+    private readonly accountService: BCeIDService,
   ) {
     super();
   }
@@ -133,12 +135,22 @@ export class InstitutionController extends BaseController {
       );
     }
 
+    // Get user details
+    const accountDetails = await this.accountService.getAccountDetails(
+      body.userId,
+    );
+    if (!accountDetails) {
+      throw new UnprocessableEntityException(
+        `Unable to account detail of user ${body.userId}`,
+      );
+    }
+
     // Create User
     const userEntity = this.userService.create();
-    userEntity.firstName = body.firstName;
-    userEntity.lastName = body.lastName;
-    userEntity.email = body.email;
-    userEntity.userName = `${body.userGuid}@bceid`;
+    userEntity.email = accountDetails.user.email;
+    userEntity.firstName = accountDetails.user.firstname;
+    userEntity.lastName = accountDetails.user.surname;
+    userEntity.userName = `${accountDetails.user.guid}@bceid`;
 
     // Now create association
     await this.institutionService.createAssociation({
