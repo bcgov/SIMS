@@ -76,7 +76,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.InstitutionManageUsers,
             name: InstitutionRoutesConst.MANAGE_USERS,
-            component: InstitutionUserDetails,
+            components: {
+              default: InstitutionUserDetails,
+              sidebar: ManageInstitutionSideBar,
+            },
           },
         ],
       },

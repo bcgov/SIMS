@@ -50,6 +50,11 @@ export default {
       {
         label: "Manage Users",
         icon: "pi pi-users",
+        command: () => {
+          router.push({
+            name: InstitutionRoutesConst.MANAGE_USERS,
+          });
+        },
       },
     ]);
 
