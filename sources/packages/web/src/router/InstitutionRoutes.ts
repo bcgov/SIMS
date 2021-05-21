@@ -4,6 +4,8 @@ import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.v
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
+import ManageDesgination from "../views/institution/ManageDesgination.vue";
+import InstitutionUserDetails from "../views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
@@ -12,6 +14,9 @@ import Login from "../views/institution/Login.vue";
 import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
+import Institution from "../views/institution/Institution.vue";
+import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
+import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -31,14 +36,50 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: { showBasicBCeIDMessage: true },
       },
       {
-        path: AppRoutes.InstitutionDashboard,
+        path: "",
+        redirect: `${AppRoutes.InstitutionRoot}/${AppRoutes.InstitutionDashboard}`,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-        component: InstitutionDashboard,
+        component: Institution,
         children: [
+          {
+            path: AppRoutes.InstitutionDashboard,
+            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+            components: {
+              default: InstitutionDashboard,
+              sidebar: InstitutionHomeSideBar,
+            },
+          },
           {
             path: AppRoutes.InstitutionManageLocations,
             name: InstitutionRoutesConst.MANAGE_LOCATIONS,
-            component: ManageLocation,
+            components: {
+              default: ManageLocation,
+              sidebar: ManageInstitutionSideBar,
+            },
+          },
+          {
+            path: AppRoutes.ManageInstitutionDesignation,
+            name: InstitutionRoutesConst.MANAGE_DESGINATION,
+            components: {
+              default: ManageDesgination,
+              sidebar: ManageInstitutionSideBar,
+            },
+          },
+          {
+            path: AppRoutes.InstitutionProfileEdit,
+            name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
+            components: {
+              default: InstitutionProfile,
+              sidebar: ManageInstitutionSideBar,
+            },
+          },
+          {
+            path: AppRoutes.InstitutionManageUsers,
+            name: InstitutionRoutesConst.MANAGE_USERS,
+            components: {
+              default: InstitutionUserDetails,
+              sidebar: ManageInstitutionSideBar,
+            },
           },
         ],
       },
@@ -52,11 +93,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         component: InstitutionProfile,
         props: { editMode: false },
-      },
-      {
-        path: AppRoutes.InstitutionProfileEdit,
-        name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
-        component: InstitutionProfile,
       },
     ],
     beforeEnter: (to, from, next) => {
