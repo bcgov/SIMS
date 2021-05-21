@@ -26,7 +26,7 @@ export class CRAIntegrationService {
 
   constructor(config: ConfigService, private readonly sshService: SshService) {
     this.craConfig = config.getConfig().CRAIntegration;
-    this.ftpConfig = config.getConfig().zoneB_SFTP;
+    this.ftpConfig = config.getConfig().zoneBsFTP;
   }
 
   /**

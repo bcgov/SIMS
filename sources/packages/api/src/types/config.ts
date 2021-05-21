@@ -6,7 +6,7 @@ export interface IConfig {
   workflow: WorkflowConfig;
   forms: FormsConfig;
   formsFlow: FormsFlowConfig;
-  zoneB_SFTP: SFTPConfig;
+  zoneBsFTP: SFTPConfig;
   CRAIntegration: CRAIntegrationConfig;
 }
 

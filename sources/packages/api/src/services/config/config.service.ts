@@ -45,7 +45,7 @@ export class ConfigService {
           clientSecret: process.env.SIMS_API_CLIENT_SECRET,
         },
       },
-      zoneB_SFTP: {
+      zoneBsFTP: {
         host: process.env.ZONE_B_SFTP_SERVER,
         port: parseInt(process.env.ZONE_B_SFTP_SERVER_PORT),
         username: process.env.ZONE_B_SFTP_USER_NAME,
