@@ -1,4 +1,4 @@
-require("../../../env_setup");
+require("../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService, SshService } from "../services";
 import { CRAIntegrationService } from "./cra-integration.service";

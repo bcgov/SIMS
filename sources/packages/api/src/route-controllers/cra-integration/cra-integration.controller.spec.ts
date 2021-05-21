@@ -5,6 +5,7 @@ import {
   ConfigService,
   CRAIntegrationService,
   CRAPersonalVerificationService,
+  SequenceControlService,
   SshService,
   StudentService,
 } from "../../services";
@@ -21,6 +22,7 @@ describe("CRAIntegrationController", () => {
         SshService,
         CRAIntegrationService,
         CRAPersonalVerificationService,
+        SequenceControlService,
         StudentService,
         ArchiveDbService,
         ConfigService,

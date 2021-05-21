@@ -93,11 +93,15 @@ export class CRAIntegrationService {
 
     // Send the file to ftp.
     const client = await this.getClient();
-    await client.put(Buffer.from(craFileContent), remoteFilePath);
-    return {
-      generatedFile: remoteFilePath,
-      uploadedRecords: craFileLines.length,
-    };
+    try {
+      await client.put(Buffer.from(craFileContent), remoteFilePath);
+      return {
+        generatedFile: remoteFilePath,
+        uploadedRecords: craFileLines.length,
+      };
+    } finally {
+      await SshService.closeQuietly(client);
+    }
   }
 
   private createHeader(
