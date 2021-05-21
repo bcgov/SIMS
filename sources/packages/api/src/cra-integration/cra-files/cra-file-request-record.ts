@@ -22,22 +22,22 @@ export class CRAFileIVRequestRecord implements CRAFileLine {
 
   public getFixedFormat(): string {
     const record = new StringBuilder();
-    record.Append(this.transactionCode);
-    record.Append(this.sin);
-    record.RepeatAppend(SPACE_FILLER, 4);
-    record.Append(TransactionSubCodes.IVRequest);
-    record.AppendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);
-    record.AppendWithEndFiller(this.individualGivenName, 30, SPACE_FILLER);
-    record.AppendDate(this.individualBirthDate, DATE_FORMAT);
-    record.AppendWithEndFiller(
+    record.append(this.transactionCode);
+    record.append(this.sin);
+    record.repeatAppend(SPACE_FILLER, 4);
+    record.append(TransactionSubCodes.IVRequest);
+    record.appendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);
+    record.appendWithEndFiller(this.individualGivenName, 30, SPACE_FILLER);
+    record.appendDate(this.individualBirthDate, DATE_FORMAT);
+    record.appendWithEndFiller(
       (this.taxYear ?? "").toString(),
       20,
       SPACE_FILLER,
     );
-    record.Append(this.programAreaCode);
-    record.AppendWithEndFiller(this.freeProjectArea ?? "", 30, SPACE_FILLER);
-    record.RepeatAppend(SPACE_FILLER, 3);
-    record.Append("0");
-    return record.ToString();
+    record.append(this.programAreaCode);
+    record.appendWithEndFiller(this.freeProjectArea ?? "", 30, SPACE_FILLER);
+    record.repeatAppend(SPACE_FILLER, 3);
+    record.append("0");
+    return record.toString();
   }
 }

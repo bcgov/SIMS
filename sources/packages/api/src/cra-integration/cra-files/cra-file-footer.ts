@@ -20,17 +20,17 @@ export class CRAFileFooter implements CRAFileLine {
 
   public getFixedFormat(): string {
     const header = new StringBuilder();
-    header.Append(this.transactionCode);
-    header.RepeatAppend(SPACE_FILLER, 24);
-    header.AppendDate(this.processDate, DATE_FORMAT);
-    header.Append(SPACE_FILLER);
-    header.Append(this.programAreaCode);
-    header.Append(this.environmentCode);
-    header.AppendWithStartFiller(this.sequence.toString(), 5, NUMBER_FILLER);
-    header.RepeatAppend(SPACE_FILLER, 11);
-    header.AppendWithStartFiller(this.recordCount.toString(), 8, "0");
-    header.RepeatAppend(SPACE_FILLER, 80);
-    header.Append("0");
-    return header.ToString();
+    header.append(this.transactionCode);
+    header.repeatAppend(SPACE_FILLER, 24);
+    header.appendDate(this.processDate, DATE_FORMAT);
+    header.append(SPACE_FILLER);
+    header.append(this.programAreaCode);
+    header.append(this.environmentCode);
+    header.appendWithStartFiller(this.sequence.toString(), 5, NUMBER_FILLER);
+    header.repeatAppend(SPACE_FILLER, 11);
+    header.appendWithStartFiller(this.recordCount.toString(), 8, "0");
+    header.repeatAppend(SPACE_FILLER, 80);
+    header.append("0");
+    return header.toString();
   }
 }

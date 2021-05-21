@@ -12,7 +12,7 @@ export class StringBuilder {
    * Appends a string to the current content.
    * @param s
    */
-  public Append(s: string) {
+  public append(s: string) {
     this.contents.push(s);
   }
 
@@ -22,8 +22,8 @@ export class StringBuilder {
    * @param length Fixed string length.
    * @param filler The string to pad the string being appended.
    */
-  public AppendWithEndFiller(s: string, length: number, filler: string) {
-    this.Append(s.padEnd(length, filler));
+  public appendWithEndFiller(s: string, length: number, filler: string) {
+    this.append(s.padEnd(length, filler));
   }
 
   /**
@@ -32,8 +32,8 @@ export class StringBuilder {
    * @param length Fixed string length.
    * @param filler The string to pad the string being appended.
    */
-  public AppendWithStartFiller(s: string, length: number, filler: string) {
-    this.Append(s.padStart(length, filler));
+  public appendWithStartFiller(s: string, length: number, filler: string) {
+    this.append(s.padStart(length, filler));
   }
 
   /**
@@ -41,8 +41,8 @@ export class StringBuilder {
    * @param s String to be appended.
    * @param length Fixed string length.
    */
-  public RepeatAppend(s: string, length: number) {
-    this.Append(s.repeat(length));
+  public repeatAppend(s: string, length: number) {
+    this.append(s.repeat(length));
   }
 
   /**
@@ -50,15 +50,15 @@ export class StringBuilder {
    * @param date
    * @param dateFormat
    */
-  public AppendDate(date: Date, dateFormat: string) {
-    this.Append(dayjs(date).format(dateFormat));
+  public appendDate(date: Date, dateFormat: string) {
+    this.append(dayjs(date).format(dateFormat));
   }
 
   /**
    * Outputs the current content.
    * @returns Current content.
    */
-  public ToString(): string {
+  public toString(): string {
     return this.contents.join("");
   }
 }
