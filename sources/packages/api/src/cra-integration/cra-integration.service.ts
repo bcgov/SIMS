@@ -52,15 +52,15 @@ export class CRAIntegrationService {
     );
     craFileLines.push(fileHeader);
     // Records
-    const fileRecords = records.map((r) => {
-      const record = new CRAFileIVRequestRecord();
-      record.transactionCode = TransactionCodes.MatchingRunRecord;
-      record.sin = r.sin;
-      record.individualSurname = r.surname;
-      record.individualGivenName = r.givenName;
-      record.individualBirthDate = r.birthDate;
-      record.programAreaCode = this.craConfig.programAreaCode;
-      return record;
+    const fileRecords = records.map((record) => {
+      const craRecord = new CRAFileIVRequestRecord();
+      craRecord.transactionCode = TransactionCodes.MatchingRunRecord;
+      craRecord.sin = record.sin;
+      craRecord.individualSurname = record.surname;
+      craRecord.individualGivenName = record.givenName;
+      craRecord.individualBirthDate = record.birthDate;
+      craRecord.programAreaCode = this.craConfig.programAreaCode;
+      return craRecord;
     });
     craFileLines.push(...fileRecords);
     // Footer

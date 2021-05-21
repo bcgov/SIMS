@@ -27,9 +27,9 @@ export class CRAFileFooter implements CRAFileLine {
     header.append(this.programAreaCode);
     header.append(this.environmentCode);
     header.appendWithStartFiller(this.sequence.toString(), 5, NUMBER_FILLER);
-    header.repeatAppend(SPACE_FILLER, 11);
+    header.repeatAppend(SPACE_FILLER, 6);
     header.appendWithStartFiller(this.recordCount.toString(), 8, "0");
-    header.repeatAppend(SPACE_FILLER, 80);
+    header.repeatAppend(SPACE_FILLER, 75);
     header.append("0");
     return header.toString();
   }
