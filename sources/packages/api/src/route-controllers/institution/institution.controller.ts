@@ -105,8 +105,8 @@ export class InstitutionController extends BaseController {
 
   @Post("/user")
   async createInstitutionUserWithAuth(
-    @UserToken() user: IUserToken,
     @Body() body: InstitutionUserAuthDto,
+    @UserToken() user: IUserToken,
   ) {
     // Validate data
     // Get institution
@@ -133,20 +133,26 @@ export class InstitutionController extends BaseController {
       );
     }
 
+    // Create User
+    const userEntity = this.userService.create();
+    userEntity.firstName = body.firstName;
+    userEntity.lastName = body.lastName;
+    userEntity.email = body.email;
+    userEntity.userName = `${body.userGuid}@bceid`;
+
     // Now create association
     await this.institutionService.createAssociation({
       institution,
       type: body.userType as InstitutionUserType,
       role: body.userRole as InstitutionUserRole,
       location,
-      guid: body.userGuid,
+      user: userEntity,
     });
-
     return true;
   }
 
   @Get("/user-types-roles")
-  getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
+  async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
     return this.institutionService.getUserTypesAndRoles();
   }
 } //Class ends

@@ -72,7 +72,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const institutionUser = this.institutionUserRepo.create();
     institutionUser.user = user;
     institutionUser.institution = institution;
-    institutionUser.userGuid = guid;
     const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
       type,
       role: role || null,
