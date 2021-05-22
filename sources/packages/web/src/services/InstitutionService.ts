@@ -6,6 +6,7 @@ import {
   InstitutionProfileState,
   UpdateInstitutionDto,
   Institutionlocation,
+  InstitutionUser
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -102,5 +103,9 @@ export class InstitutionService {
 
   public async getUserTypeAndRoles() {
     return ApiClient.Institution.getUserTypeAndRoles();
+  }
+
+  public async createUser(data: InstitutionUser) {
+    await ApiClient.InstitutionLocation.createUser(data);
   }
 }

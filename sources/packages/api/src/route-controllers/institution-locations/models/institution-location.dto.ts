@@ -17,6 +17,7 @@ export interface InstitutionLocationTypeDto {
 }
 
 export interface InstitutionLocationsDetailsDto {
+  id: number;
   name: string;
   data: {
     address: {

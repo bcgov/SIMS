@@ -15,3 +15,15 @@ export interface InstitutionAccountDetailsDto {
   guid: string;
   legalName: string;
 }
+
+export interface BCeIDAccountDto {
+  displayName: string;
+  email: string;
+  firstname: string;
+  guid: string;
+  surname: string;
+  telephone?: string;
+}
+export interface BCeIDAccountsDto {
+  accounts: BCeIDAccountDto[];
+}

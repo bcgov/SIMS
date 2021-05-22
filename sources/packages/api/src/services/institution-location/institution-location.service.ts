@@ -46,7 +46,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getAllInstitutionlocations(institution_id: number): Promise<InstitutionLocationsDetailsDto[]> {
     return this.repo
       .createQueryBuilder("institution_location")
-      .select(['institution_location.name', 'institution_location.data', 'institution.institutionPrimaryContact'])
+      .select(['institution_location.name', 'institution_location.data', 'institution.institutionPrimaryContact', 'institution_location.id'])
       .leftJoin("institution_location.institution", "institution")
       .where('institution.id = :Id', { Id: institution_id})
       .getMany();

@@ -1,5 +1,5 @@
 import ApiClient from "./http/ApiClient";
-import { BCeIDDetailsDto } from "../types/contracts/UserContract";
+import { BCeIDDetailsDto, BCeIDAccountsDto } from "../types/contracts/UserContract";
 
 export class UserService {
   // Share Instance
@@ -18,6 +18,16 @@ export class UserService {
   ): Promise<BCeIDDetailsDto | null> {
     try {
       return await ApiClient.User.bceidAccount(authHeader);
+    } catch (excp) {
+      return null;
+    }
+  }
+
+  async getBCeIDAccounts(
+    authHeader?: any,
+  ): Promise<BCeIDAccountsDto | null> {
+    try {
+      return await ApiClient.User.bceidAccounts(authHeader);
     } catch (excp) {
       return null;
     }
