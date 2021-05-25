@@ -170,22 +170,4 @@ export class InstitutionController extends BaseController {
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
     return this.institutionService.getUserTypesAndRoles();
   }
-
-  @Delete("/user/:id")
-  async removeUserAuth(
-    @Param("id") id: string,
-    @UserToken() token: IUserToken,
-  ) {
-    // Get auth
-    const institutionUser = await this.institutionService.getUser(+id);
-    if (!institutionUser) {
-      throw new UnprocessableEntityException(`Unable to find user id ${id}`);
-    }
-    // Check same user or not
-    // User can not delete his own auth
-    if (institutionUser.user.userName === token.userName) {
-      throw new ForbiddenException("User can not delete his own account");
-    }
-    await this.institutionService.removeUser(institutionUser);
-  }
 } //Class ends

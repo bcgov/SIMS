@@ -313,13 +313,4 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         .map((roleObject) => roleObject.role),
     };
   }
-
-  async removeUser(institutionUser: InstitutionUser) {
-    await this.institutionUserRepo.remove(institutionUser);
-    await this.userService.remove(institutionUser.user);
-  }
-
-  async getUser(id: number): Promise<InstitutionUser> {
-    return this.institutionUserRepo.findOne(id);
-  }
 }
