@@ -1,9 +1,15 @@
-import { IsIn, IsNotEmpty, IsOptional } from "class-validator";
+import {
+  IsEmail,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from "class-validator";
 import { InstitutionUserType, InstitutionUserRole } from "../../../types";
 
 export class InstitutionUserAuthDto {
   @IsNotEmpty()
-  userGuid: string;
+  userId: string;
 
   @IsOptional()
   locationId?: number;

@@ -107,9 +107,9 @@ describe("InstitutionService", () => {
     );
 
     // Clean
-    service.remove(institution);
-    userService.remove(user);
-    userService.remove(newUser);
+    await service.remove(institution);
+    await userService.remove(user);
+    await userService.remove(newUser);
   });
 
   it("should return types and roles", async () => {

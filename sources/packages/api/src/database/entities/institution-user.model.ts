@@ -18,12 +18,6 @@ export class InstitutionUser extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    name: "user_guid",
-    nullable: true,
-  })
-  userGuid: string;
-
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({
     name: "user_id",
