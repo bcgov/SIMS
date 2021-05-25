@@ -6,7 +6,8 @@ import {
   InstitutionProfileState,
   UpdateInstitutionDto,
   Institutionlocation,
-  InstitutionUser
+  InstitutionUser,
+  InstitutionUserRoleLocation,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -106,6 +107,22 @@ export class InstitutionService {
   }
 
   public async createUser(data: InstitutionUser) {
-    await ApiClient.InstitutionLocation.createUser(data);
+      const promises = [];
+      if (data.location) {
+        for (const value of data.location) {
+          let payload;
+          if (value.locationId && value.userType) {
+            payload = {
+              locationId: value.locationId,
+              userType: value.userType,
+              userId: data.userId,
+            }
+            promises.push(ApiClient.InstitutionLocation.createUser(payload))
+          }
+        }
+      } else {
+        promises.push(ApiClient.InstitutionLocation.createUser(data))
+      }
+    await Promise.all(promises)
   }
 }

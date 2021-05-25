@@ -1,7 +1,7 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
-  InstitutionlocationData,
+  InstitutionUserDto,
   InstitutionLocationsDetails,
   InstitutionUser
 } from "../../types";
@@ -35,12 +35,13 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
     return data;
   }
+
   public async createUser(
-    createInstitutionUserDto: InstitutionUser,
+    createInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
     try {
       await this.apiClient.post(
-        "institution/userrr",
+        "institution/user",
         createInstitutionUserDto,
         this.addAuthHeader(),
       );

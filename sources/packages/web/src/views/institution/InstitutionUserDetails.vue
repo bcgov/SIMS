@@ -38,7 +38,7 @@
                           :class="invalidName ? 'p-invalid' : ''"
                         />
                       </v-col>
-                      <v-col>
+                      <v-col v-if="selectUser.name">
                         <span class="form-text text-muted mb-2">
                           <b>Is this User an Admin?</b><br />
                           <b>
@@ -49,7 +49,7 @@
                         <InputSwitch v-model="isAdmin" />
                       </v-col>
                     </v-row>
-                    <span v-if="!isAdmin">
+                    <span v-if="!isAdmin && selectUser.name">
                       <v-divider></v-divider>
                       <h4 class="color-blue">Location Based Access</h4>
                       <v-row
@@ -59,7 +59,7 @@
                           </span> </v-col
                         ><v-col>
                           <span class="form-text text-muted mb-2">
-                            <b>User Role</b>
+                            <b>User Type</b>
                           </span>
                         </v-col>
                       </v-row>
@@ -75,8 +75,8 @@
                         </v-col>
                         <v-col>
                           <Dropdown
-                            v-model="location.user_role"
-                            :options="userRole"
+                            v-model="location.user_type"
+                            :options="userType"
                             optionLabel="name"
                             placeholder="Select a User Role"
                             :style="{ width: '25vw' }"
@@ -129,7 +129,7 @@ export default {
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
     };
     const userRoleType = ref();
-    const userRole = ref();
+    const userType = ref();
     const closeAddUser = () => {
       showAddUser.value = false;
       selectUser.value = { name: "", code: "" };
@@ -138,19 +138,21 @@ export default {
       getInstitutionLocationList();
     };
     const preparPayload = () => {
-      const payLoad = {
-        userGuid: selectUser.value.code,
-        location:
-          isAdmin.value == false
-            ? [
-                institutionLocationList.value.map((el: any) => ({
-                  locationId: el.id,
-                  userRole: el.user_role?.code,
-                })),
-              ]
-            : undefined,
-        userType: isAdmin.value == true ? "admin" : undefined,
-      };
+      let payLoad;
+      if (isAdmin.value == true) {
+        payLoad = {
+          userId: selectUser.value.code,
+          userType: "admin",
+        };
+      } else {
+        payLoad = {
+          userId: selectUser.value.code,
+          location: institutionLocationList.value.map((el: any) => ({
+            locationId: el.user_type?.code ? el.id : undefined,
+            userType: el.user_type?.code,
+          })),
+        };
+      }
       return payLoad;
     };
     const submitAddUser = async () => {
@@ -158,13 +160,13 @@ export default {
       if (selectUser.value.code) {
         try {
           const payLoad = preparPayload();
-          await InstitutionService.shared.createUser(payLoad);
-          toast.add({
-            severity: "success",
-            summary: `${selectUser.value.name} Added!`,
-            detail: " Successfully!",
-            life: 5000,
-          });
+          await InstitutionService.shared.createUser(payLoad),
+            toast.add({
+              severity: "success",
+              summary: `${selectUser.value.name} Successfully Added!`,
+              detail: " Successfully!",
+              life: 5000,
+            });
         } catch (excp) {
           toast.add({
             severity: "error",
@@ -190,13 +192,15 @@ export default {
       usersList.value = bceidUsers
         ? bceidUsers?.accounts.map((el: any) => ({
             name: el.displayName,
-            code: el.guid,
+            code: el.userId,
           }))
         : [];
       // Get User type and Role
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
-      userRole.value = userRoleType.value?.userRoles
-        ? userRoleType.value.userRoles.map((el: string) => ({ name: el, code: el }))
+      userType.value = userRoleType.value?.userTypes
+        ? userRoleType.value.userTypes.map((el: string) =>
+            el !== "admin" ? { name: el, code: el } : null
+          )
         : [];
     });
     return {
@@ -206,11 +210,12 @@ export default {
       usersList,
       selectUser,
       institutionLocationList,
-      userRole,
+      userType,
       closeAddUser,
       submitAddUser,
       isAdmin,
       invalidName,
+      userRoleType,
     };
   },
 };

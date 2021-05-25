@@ -39,12 +39,18 @@ export interface InstitutionLocationsDetails {
     }
   }
 }
-export interface InstitutionUserTypeLocation{
+export interface InstitutionUserRoleLocation {
   locationId?: string;
-  userRole?: string;
+  userType?: string;
 }
 export interface InstitutionUser {
-  userGuid: string;
+  userId: string;
   userType?: string;
-  location?: InstitutionUserTypeLocation[]
+  location?: InstitutionUserRoleLocation[]
   }
+
+export interface InstitutionUserDto {
+  locationId?: string;
+  userId: string;
+  userType?: string;
+}
