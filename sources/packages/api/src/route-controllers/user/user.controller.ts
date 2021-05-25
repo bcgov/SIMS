@@ -86,6 +86,7 @@ export class UserController extends BaseController {
         firstname: account.firstname,
         surname: account.surname,
         telephone: account.telephone,
+        userId: account.userId,
       };
     });
 
