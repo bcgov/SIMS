@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
+  ForbiddenException,
   Get,
+  Param,
   Patch,
   Post,
   UnprocessableEntityException,
