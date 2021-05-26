@@ -226,13 +226,13 @@ parameters:
   - name: SERVICE_NAME
     value: api
   - name: CPU_LIMIT
-    value: "0.5"
+    value: "1.0"
   - name: MEMORY_LIMIT
-    value: "256M"
+    value: "1000M"
   - name: CPU_REQUEST
-    value: "0.1"
+    value: "0.5"
   - name: MEMORY_REQUEST
-    value: "256M"
+    value: "512M"
   - name: REPLICAS
     value: "1"
   - name: PORT
