@@ -9,8 +9,12 @@ import { UserService } from "../user/user.service";
 import { Institution, InstitutionUser, User } from "../../database/entities";
 import { DatabaseService } from "../../database/database.service";
 import { InstitutionUserType } from "../../types";
-import { institutionFactory, userFactory } from "../../database/factories";
-import { type } from "ormconfig";
+import {
+  institutionFactory,
+  institutionLocationFactory,
+  userFactory,
+} from "../../database/factories";
+import { InstitutionLocationService } from "../institution-location/institution-location.service";
 
 const factory = async (
   userService: UserService,
@@ -33,17 +37,27 @@ describe("InstitutionService", () => {
   let service: InstitutionService;
   let userService: UserService;
   let dbService: DatabaseService;
+  let locationService: InstitutionLocationService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [InstitutionService, BCeIDService, ConfigService, UserService],
+      providers: [
+        InstitutionService,
+        BCeIDService,
+        ConfigService,
+        UserService,
+        InstitutionLocationService,
+      ],
     }).compile();
     await module.init();
 
     service = module.get<InstitutionService>(InstitutionService);
     userService = module.get<UserService>(UserService);
     dbService = module.get<DatabaseService>(DatabaseService);
+    locationService = module.get<InstitutionLocationService>(
+      InstitutionLocationService,
+    );
   });
 
   afterAll(async () => {
@@ -119,5 +133,43 @@ describe("InstitutionService", () => {
     expect(results.userTypes.length).toBeGreaterThanOrEqual(3);
     expect(results.userRoles).toBeDefined();
     expect(results.userRoles.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("should create auth association", async () => {
+    const user = await userFactory();
+    const institution = await institutionFactory();
+    const location = await institutionLocationFactory({
+      institution,
+    });
+    await userService.save(user);
+    await service.save(institution);
+    await locationService.save(location);
+    const institutionUser = await service.createAssociation({
+      user,
+      institution,
+      type: InstitutionUserType.admin,
+      location,
+    });
+    const subject = await service.getUser(institutionUser.id);
+    expect(subject).toBeDefined();
+    expect(subject.institution.id).toEqual(institution.id);
+    expect(subject.authorizations.length).toBeGreaterThan(0);
+    const auths = subject.authorizations.filter(
+      (auth) => auth.authType.type === InstitutionUserType.admin,
+    );
+    expect(auths.length).toBeGreaterThan(0);
+    const auth = auths[0];
+    expect(auth.location).toBeDefined();
+    expect(auth.location.id).toEqual(location.id);
+
+    const allUsers = await service.allUsers(institution.id);
+    const newSubjects = allUsers.filter(
+      (user) => user.id === institutionUser.id,
+    );
+    expect(newSubjects.length).toEqual(1);
+    expect(newSubjects[0].authorizations[0].location).toBeDefined();
+
+    await service.remove(institution);
+    await userService.remove(user);
   });
 });

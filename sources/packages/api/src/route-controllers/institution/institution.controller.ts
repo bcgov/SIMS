@@ -27,6 +27,7 @@ import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import { InstitutionUserRole, InstitutionUserType } from "../../types";
 import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
+import { User } from "src/database/entities";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -138,22 +139,35 @@ export class InstitutionController extends BaseController {
       );
     }
 
-    // Get user details
-    const accountDetails = await this.accountService.getAccountDetails(
-      body.userId,
-    );
-    if (!accountDetails) {
-      throw new UnprocessableEntityException(
-        `Unable to account detail of user ${body.userId}`,
-      );
+    let userEntity: User;
+
+    if (body.userGuid) {
+      userEntity = await this.userService.getUser(`${body.userGuid}@bceid`);
     }
 
-    // Create User
-    const userEntity = this.userService.create();
-    userEntity.email = accountDetails.user.email;
-    userEntity.firstName = accountDetails.user.firstname;
-    userEntity.lastName = accountDetails.user.surname;
-    userEntity.userName = `${accountDetails.user.guid}@bceid`;
+    if (!userEntity) {
+      // Get user details
+      const accountDetails = await this.accountService.getAccountDetails(
+        body.userId,
+      );
+      if (!accountDetails) {
+        throw new UnprocessableEntityException(
+          `Unable to account detail of user ${body.userId}`,
+        );
+      }
+      const userName = `${accountDetails.user.guid}@bceid`;
+
+      userEntity = await this.userService.getUser(userName);
+
+      if (!userEntity) {
+        // Create User
+        userEntity = this.userService.create();
+        userEntity.email = accountDetails.user.email;
+        userEntity.firstName = accountDetails.user.firstname;
+        userEntity.lastName = accountDetails.user.surname;
+        userEntity.userName = userName;
+      }
+    }
 
     // Now create association
     await this.institutionService.createAssociation({

@@ -11,6 +11,9 @@ export class InstitutionUserAuthDto {
   @IsNotEmpty()
   userId: string;
 
+  @IsNotEmpty()
+  userGuid?: string;
+
   @IsOptional()
   locationId?: number;
 
