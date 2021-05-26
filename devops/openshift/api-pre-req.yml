@@ -25,11 +25,6 @@ objects:
       cra-response-folder: ${CRA_RESPONSE_FOLDER}
       cra-program-area-code: ${CRA_PROGRAM_AREA_CODE}
       cra-environment-code: ${CRA_ENVIRONMENT_CODE}
-      zone-b-sftp-server: ${ZONE_B_SFTP_SERVER}
-      zone-b-sftp-server-port: ${ZONE_B_SFTP_SERVER_PORT}
-      zone-b-sftp-user-name: ${ZONE_B_SFTP_USER_NAME}
-      zone-b-sftp-private-key-passphrase: ${ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE}
-      zone-b-sftp-private-key: ${ZONE_B_SFTP_PRIVATE_KEY}
 parameters:
   - name: NAME
     description: |
@@ -116,28 +111,3 @@ parameters:
     required: true
     description: |
       CRA environment identifier (A=Test, P=Production).
-  - name: ZONE_B_SFTP_SERVER
-    displayName: ZONE B SFTP Server
-    required: true
-    description: |
-      ZONE B SFTP server (host name or IP address)
-  - name: ZONE_B_SFTP_SERVER_PORT
-    displayName: ZONE B SFTP Server Port
-    required: true
-    description: |
-      ZONE B SFTP server port (host name or IP address)
-  - name: ZONE_B_SFTP_USER_NAME
-    displayName: ZONE B SFTP User Name
-    required: true
-    description: |
-      ZONE B SFTP user Name.
-  - name: ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE
-    displayName: ZONE B SFTP Private Key Passphrase
-    required: true
-    description: |
-      ZONE B SFTP private key passphrase.
-  - name: ZONE_B_SFTP_PRIVATE_KEY
-    displayName: ZONE B SFTP Private Key
-    required: true
-    description: |
-      ZONE B SFTP private key.
