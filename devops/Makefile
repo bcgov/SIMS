@@ -112,15 +112,15 @@ init-api:
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:
-	test -n $(API_INIT_ZONE_B_SFTP_SERVER)
-	test -n $(API_INIT_ZONE_B_SFTP_SERVER_PORT)
-	test -n $(API_INIT_ZONE_B_SFTP_USER_NAME)
-	test -n $(API_INIT_ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE)
+	test -n $(INIT_ZONE_B_SFTP_SERVER)
+	test -n $(INIT_ZONE_B_SFTP_SERVER_PORT)
+	test -n $(INIT_ZONE_B_SFTP_USER_NAME)
+	test -n $(INIT_ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE)
 	@oc create secret generic zone-b-sftp -n $(NAMESPACE) \
-		--from-literal=server=$(API_INIT_ZONE_B_SFTP_SERVER) \
-		--from-literal=server-port=$(API_INIT_ZONE_B_SFTP_SERVER_PORT) \
-		--from-literal=user-name=$(API_INIT_ZONE_B_SFTP_USER_NAME) \
-		--from-literal=private-key-passphrase=$(API_INIT_ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE) \
+		--from-literal=server=$(INIT_ZONE_B_SFTP_SERVER) \
+		--from-literal=server-port=$(INIT_ZONE_B_SFTP_SERVER_PORT) \
+		--from-literal=user-name=$(INIT_ZONE_B_SFTP_USER_NAME) \
+		--from-literal=private-key-passphrase=$(INIT_ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE) \
 		--from-file=private-key=./openshift/zone-b-private-key.cer \
 		--dry-run=client -o yaml | oc apply -f -
 
