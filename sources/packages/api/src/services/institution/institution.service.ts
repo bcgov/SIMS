@@ -60,16 +60,19 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user,
     location,
     role,
+    institutionUser,
   }: {
     institution: Institution;
     type: InstitutionUserType;
     user?: User;
     location?: InstitutionLocation;
     role?: InstitutionUserRole;
+    institutionUser?: InstitutionUser;
   }): Promise<InstitutionUser> {
-    const institutionUser = this.institutionUserRepo.create();
-    institutionUser.user = user;
-    institutionUser.institution = institution;
+    const finalInstitutionUser =
+      institutionUser || this.institutionUserRepo.create();
+    finalInstitutionUser.user = user;
+    finalInstitutionUser.institution = institution;
     const auth = this.institutionUserAuthRepo.create();
     const authType = await this.institutionUserTypeAndRoleRepo.findOneOrFail({
       type,
@@ -78,9 +81,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     auth.authType = authType;
     auth.institutionUser = institutionUser;
     auth.location = location;
-    institutionUser.authorizations = [auth];
+    finalInstitutionUser.authorizations = [auth];
 
-    return await this.institutionUserRepo.save(institutionUser);
+    return await this.institutionUserRepo.save(finalInstitutionUser);
   }
 
   async createInstitution(
@@ -321,6 +324,20 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoinAndSelect("authorizations.location", "location")
       .leftJoinAndSelect("authorizations.authType", "authType")
       .where("institutionUser.id = :id", { id })
+      .getOne();
+  }
+
+  async getInstitutionUserByUserName(
+    userName: string,
+  ): Promise<InstitutionUser> {
+    return this.institutionUserRepo
+      .createQueryBuilder("institutionUser")
+      .leftJoinAndSelect("institutionUser.user", "user")
+      .leftJoinAndSelect("institutionUser.institution", "institution")
+      .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
+      .leftJoinAndSelect("authorizations.location", "location")
+      .leftJoinAndSelect("authorizations.authType", "authType")
+      .where("user.userName = :userName", { userName })
       .getOne();
   }
 }

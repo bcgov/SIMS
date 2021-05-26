@@ -139,7 +139,7 @@ export default {
     const invalidUserType = ref(false);
     const users = ref([] as InstitutionUserViewModel[]);
     const showAddUser = ref(false);
-    const selectUser = ref({ name: "", code: "" });
+    const selectUser = ref({ name: "", code: "", id: "" });
     const openNewUserModal = () => {
       showAddUser.value = true;
     };
@@ -153,7 +153,7 @@ export default {
     const userType = ref();
     const closeAddUser = () => {
       showAddUser.value = false;
-      selectUser.value = { name: "", code: "" };
+      selectUser.value = { name: "", code: "", id: "" };
       isAdmin.value = false;
       invalidName.value = false;
       getInstitutionLocationList();
@@ -164,9 +164,11 @@ export default {
         payLoad = {
           userId: selectUser.value.code,
           userType: "admin",
+          userGuid: selectUser.value.id,
         };
       } else {
         payLoad = {
+          userGuid: selectUser.value.id,
           userId: selectUser.value.code,
           location: institutionLocationList.value
             .map((el: any) => {
@@ -226,6 +228,7 @@ export default {
         ? bceidUsers?.accounts.map((el: any) => ({
             name: el.displayName,
             code: el.userId,
+            id: el.guid,
           }))
         : [];
       // Get User type and Role

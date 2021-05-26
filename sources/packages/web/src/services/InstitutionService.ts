@@ -10,7 +10,7 @@ import {
   InstitutionUserRoleLocation,
   InstitutionUserResDto,
   InstitutionUserViewModel,
-  InstitutionUserDto
+  InstitutionUserDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -152,22 +152,23 @@ export class InstitutionService {
   }
 
   public async createUser(data: InstitutionUser) {
-      const promises = [];
-      if (data.location) {
-        for (const value of data.location) {
-          let payload;
-          if (value.locationId && value.userType) {
-            payload = {
-              locationId: value.locationId,
-              userType: value.userType,
-              userId: data.userId,
-            }
-            promises.push(ApiClient.InstitutionLocation.createUser(payload))
-          }
+    const promises = [];
+    if (data.location) {
+      for (const value of data.location) {
+        let payload: InstitutionUserDto;
+        if (value.locationId && value.userType) {
+          payload = {
+            locationId: value.locationId,
+            userType: value.userType,
+            userId: data.userId,
+            userGuid: data.userGuid,
+          };
+          promises.push(ApiClient.InstitutionLocation.createUser(payload));
         }
-      } else {
-        promises.push(ApiClient.InstitutionLocation.createUser(data))
       }
-    await Promise.all(promises)
+    } else {
+      promises.push(ApiClient.InstitutionLocation.createUser(data));
+    }
+    await Promise.all(promises);
   }
 }

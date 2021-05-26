@@ -27,7 +27,7 @@ import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import { InstitutionUserRole, InstitutionUserType } from "../../types";
 import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
-import { User } from "../../database/entities";
+import { InstitutionUser, User } from "../../database/entities";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -142,6 +142,7 @@ export class InstitutionController extends BaseController {
     let userEntity: User;
 
     // Get user if userGuid is supplied
+    let userExists = false;
     if (body.userGuid) {
       userEntity = await this.userService.getUser(`${body.userGuid}@bceid`);
     }
@@ -169,6 +170,28 @@ export class InstitutionController extends BaseController {
         userEntity.firstName = accountDetails.user.firstname;
         userEntity.lastName = accountDetails.user.surname;
         userEntity.userName = userName;
+      } else {
+        userExists = true;
+      }
+    } else {
+      userExists = true;
+    }
+    let institutionUser: InstitutionUser;
+    if (userExists) {
+      // Get institutionUser
+      institutionUser = await this.institutionService.getInstitutionUserByUserName(
+        userEntity.userName,
+      );
+      // Check same auth available in same user or not
+      if (
+        institutionUser &&
+        institutionUser.authorizations.filter(
+          (auth) =>
+            auth.authType.type === body.userType &&
+            auth.location?.id === body.locationId,
+        ).length > 0
+      ) {
+        return false;
       }
     }
 
@@ -179,6 +202,7 @@ export class InstitutionController extends BaseController {
       role: body.userRole as InstitutionUserRole,
       location,
       user: userEntity,
+      institutionUser,
     });
     return true;
   }
