@@ -27,7 +27,7 @@ import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import { InstitutionUserRole, InstitutionUserType } from "../../types";
 import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
-import { User } from "src/database/entities";
+import { User } from "../../database/entities";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -141,12 +141,13 @@ export class InstitutionController extends BaseController {
 
     let userEntity: User;
 
+    // Get user if userGuid is supplied
     if (body.userGuid) {
       userEntity = await this.userService.getUser(`${body.userGuid}@bceid`);
     }
 
     if (!userEntity) {
-      // Get user details
+      // Get user details from BCeID
       const accountDetails = await this.accountService.getAccountDetails(
         body.userId,
       );
@@ -157,9 +158,11 @@ export class InstitutionController extends BaseController {
       }
       const userName = `${accountDetails.user.guid}@bceid`;
 
+      // Check user exists or not with same user name
       userEntity = await this.userService.getUser(userName);
 
       if (!userEntity) {
+        // User not exists
         // Create User
         userEntity = this.userService.create();
         userEntity.email = accountDetails.user.email;
