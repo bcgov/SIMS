@@ -8,8 +8,12 @@ import {
   Institutionlocation,
   InstitutionUser,
   InstitutionUserRoleLocation,
+  InstitutionUserResDto,
+  InstitutionUserViewModel,
+  InstitutionUserDto
 } from "../types";
 import ApiClient from "./http/ApiClient";
+import { AppConfigService } from "./AppConfigService";
 
 export class InstitutionService {
   // Share Instance
@@ -98,8 +102,49 @@ export class InstitutionService {
     return await ApiClient.InstitutionLocation.allInstitutionLocationsApi();
   }
 
-  public async users() {
-    return ApiClient.Institution.getUsers();
+  public async users(): Promise<InstitutionUserViewModel[]> {
+    const response: InstitutionUserResDto[] = await ApiClient.Institution.getUsers();
+    const viewModels: InstitutionUserViewModel[] = response.map(
+      institutionUser => {
+        const roleArray = institutionUser.authorizations
+          .map(auth => auth.authType.role || "")
+          .filter(role => role !== "");
+        const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
+        const locationArray = institutionUser.authorizations
+          .map(auth => auth.location?.name || "")
+          .filter(loc => loc !== "");
+        const userType = institutionUser.authorizations
+          .map(auth => auth.authType.type)
+          .join(" ");
+        const location = userType.toLowerCase().includes("admin")
+          ? "All"
+          : locationArray.length > 0
+          ? locationArray.join(" ")
+          : "";
+
+        const viewModel: InstitutionUserViewModel = {
+          id: institutionUser.id,
+          displayName: `${institutionUser.user.firstName} ${institutionUser.user.lastName}`,
+          email: institutionUser.user.email,
+          userName: institutionUser.user.userName,
+          userType,
+          role,
+          location,
+          status: "active",
+          disableRemove:
+            AppConfigService.shared.userToken?.userName ===
+            institutionUser.user.userName
+              ? true
+              : false,
+        };
+        return viewModel;
+      },
+    );
+    return viewModels;
+  }
+
+  async removeUser(id: number) {
+    return ApiClient.Institution.removeUser(id);
   }
 
   public async getUserTypeAndRoles() {

@@ -80,6 +80,7 @@
                             optionLabel="name"
                             placeholder="Select a User Role"
                             :style="{ width: '25vw' }"
+                            :class="invalidUserType ? 'p-invalid' : ''"
                           />
                         </v-col> </v-row
                     ></span>
@@ -96,6 +97,14 @@
             </Dialog>
           </v-col>
         </v-row>
+        <DataTable :value="users">
+          <Column field="displayName" header="Name"></Column>
+          <Column field="email" header="Email"></Column>
+          <Column field="userType" header="User Type"></Column>
+          <Column field="role" header="Role"></Column>
+          <Column field="location" header="Location"></Column>
+          <Column field="status" header="Status"></Column>
+        </DataTable>
       </v-container>
     </v-sheet>
   </v-container>
@@ -103,20 +112,24 @@
 
 <script lang="ts">
 import { ref, onMounted } from "vue";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
 import { InstitutionService } from "../../services/InstitutionService";
 import { UserService } from "../../services/UserService";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToast } from "primevue/usetoast";
+import { InstitutionUserViewModel } from "../../types";
 
 export default {
-  components: { Dialog, Dropdown, InputSwitch },
+  components: { Dialog, Dropdown, InputSwitch, DataTable, Column },
   setup() {
     const toast = useToast();
     const isAdmin = ref(false);
     const invalidName = ref(false);
-    const users = ref([]);
+    const invalidUserType = ref(false);
+    const users = ref([] as InstitutionUserViewModel[]);
     const showAddUser = ref(false);
     const selectUser = ref({ name: "", code: "" });
     const openNewUserModal = () => {
@@ -147,19 +160,29 @@ export default {
       } else {
         payLoad = {
           userId: selectUser.value.code,
-          location: institutionLocationList.value.map((el: any) => ({
-            locationId: el.user_type?.code ? el.id : undefined,
-            userType: el.user_type?.code,
-          })),
+          location: institutionLocationList.value
+            .map((el: any) => {
+              if (el.user_type?.code) {
+                return {
+                  locationId: el.id,
+                  userType: el.user_type?.code,
+                };
+              }
+            })
+            .filter((el: any) => el),
         };
+        if (payLoad.location.length === 0) {
+          invalidUserType.value = true;
+        }
       }
       return payLoad;
     };
     const submitAddUser = async () => {
       invalidName.value = false;
-      if (selectUser.value.code) {
+      invalidUserType.value = false;
+      const payLoad = preparPayload();
+      if (selectUser.value.code && !invalidUserType.value) {
         try {
-          const payLoad = preparPayload();
           await InstitutionService.shared.createUser(payLoad),
             toast.add({
               severity: "success",
@@ -177,10 +200,12 @@ export default {
         }
         closeAddUser();
       } else {
-        invalidName.value = true;
+        if (!selectUser.value.code) {
+          invalidName.value = true;
+        }
       }
-      invalidName;
     };
+
     onMounted(async () => {
       // call institution location
       getInstitutionLocationList();
@@ -215,7 +240,7 @@ export default {
       submitAddUser,
       isAdmin,
       invalidName,
-      userRoleType,
+      invalidUserType,
     };
   },
 };

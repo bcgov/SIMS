@@ -3,6 +3,7 @@ import {
   InstitutionDto,
   InstitutionDetailDto,
   UpdateInstitutionDto,
+  InstitutionUserResDto,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -53,7 +54,7 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getUsers() {
+  public async getUsers(): Promise<InstitutionUserResDto[]> {
     try {
       const resp = await this.apiClient.get(
         "institution/users",
@@ -64,6 +65,10 @@ export class InstitutionApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  public async removeUser(id: number): Promise<void> {
+    await this.apiClient.delete(`institution/user/${id}`, this.addAuthHeader());
   }
 
   public async getUserTypeAndRoles(): Promise<

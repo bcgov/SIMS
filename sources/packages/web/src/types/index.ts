@@ -9,3 +9,5 @@ export * from "./contracts/UserContract";
 export * from "./contracts/institution/CreateInstitutionDto";
 export * from "./contracts/institution/ProfileContract";
 export * from "./contracts/institution/AddInstitutionLocation";
+export * from "./contracts/institution/InstitutionUser";
+export * from "./contracts/institution/InstitutionUserTypeAndRoleResponseDto";

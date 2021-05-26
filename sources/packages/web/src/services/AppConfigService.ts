@@ -24,6 +24,10 @@ export class AppConfigService {
     return this._authClientType;
   }
 
+  public get userToken(): ApplicationToken | undefined {
+    return this.authService?.tokenParsed as ApplicationToken;
+  }
+
   private isValidConfig(config: AppConfig) {
     // Validating config from its update time with _config expiry time
     if (Date.now() - config.updateTime.getMilliseconds() > this._configExpiry) {
