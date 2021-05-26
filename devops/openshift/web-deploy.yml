@@ -47,6 +47,7 @@ objects:
                   port: "${{PORT}}"
                 initialDelaySeconds: 20
                 periodSeconds: 30
+                timeoutSeconds: 15
               livenessProbe:
                 failureThreshold: 10
                 httpGet:
@@ -55,6 +56,7 @@ objects:
                   scheme: HTTP
                 initialDelaySeconds: 10
                 periodSeconds: 30
+                timeoutSeconds: 15
   - apiVersion: v1
     kind: Service
     metadata:
