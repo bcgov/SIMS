@@ -41,11 +41,11 @@ objects:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
               readinessProbe:
-                failureThreshold: 2
+                failureThreshold: 5
                 httpGet:
                   path: /
                   port: "${{PORT}}"
-                initialDelaySeconds: 10
+                initialDelaySeconds: 20
                 periodSeconds: 30
               livenessProbe:
                 failureThreshold: 10
