@@ -6,8 +6,11 @@ import {
   InstitutionProfileState,
   UpdateInstitutionDto,
   Institutionlocation,
-  InstitutionUserDto,
+  InstitutionUser,
+  InstitutionUserRoleLocation,
+  InstitutionUserResDto,
   InstitutionUserViewModel,
+  InstitutionUserDto
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -100,7 +103,7 @@ export class InstitutionService {
   }
 
   public async users(): Promise<InstitutionUserViewModel[]> {
-    const response: InstitutionUserDto[] = await ApiClient.Institution.getUsers();
+    const response: InstitutionUserResDto[] = await ApiClient.Institution.getUsers();
     const viewModels: InstitutionUserViewModel[] = response.map(
       institutionUser => {
         const roleArray = institutionUser.authorizations
@@ -146,5 +149,25 @@ export class InstitutionService {
 
   public async getUserTypeAndRoles() {
     return ApiClient.Institution.getUserTypeAndRoles();
+  }
+
+  public async createUser(data: InstitutionUser) {
+      const promises = [];
+      if (data.location) {
+        for (const value of data.location) {
+          let payload;
+          if (value.locationId && value.userType) {
+            payload = {
+              locationId: value.locationId,
+              userType: value.userType,
+              userId: data.userId,
+            }
+            promises.push(ApiClient.InstitutionLocation.createUser(payload))
+          }
+        }
+      } else {
+        promises.push(ApiClient.InstitutionLocation.createUser(data))
+      }
+    await Promise.all(promises)
   }
 }

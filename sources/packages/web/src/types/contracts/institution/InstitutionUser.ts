@@ -1,4 +1,4 @@
-export interface InstitutionUserDto {
+export interface InstitutionUserResDto {
   id: number;
   user: {
     email: string;

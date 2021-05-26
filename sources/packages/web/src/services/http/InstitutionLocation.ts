@@ -1,8 +1,10 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
-  InstitutionlocationData,
-  InstitutionLocationsDetails
+  InstitutionUserResDto,
+  InstitutionLocationsDetails,
+  InstitutionUser,
+  InstitutionUserDto
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -33,5 +35,20 @@ export class InstitutionLocationApi extends HttpBaseClient {
       throw error;
     }
     return data;
+  }
+
+  public async createUser(
+    createInstitutionUserDto: InstitutionUserDto,
+  ): Promise<void> {
+    try {
+      await this.apiClient.post(
+        "institution/user",
+        createInstitutionUserDto,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }

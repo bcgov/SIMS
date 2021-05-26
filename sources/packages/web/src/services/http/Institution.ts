@@ -3,7 +3,7 @@ import {
   InstitutionDto,
   InstitutionDetailDto,
   UpdateInstitutionDto,
-  InstitutionUserDto,
+  InstitutionUserResDto,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -54,7 +54,7 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getUsers(): Promise<InstitutionUserDto[]> {
+  public async getUsers(): Promise<InstitutionUserResDto[]> {
     try {
       const resp = await this.apiClient.get(
         "institution/users",
