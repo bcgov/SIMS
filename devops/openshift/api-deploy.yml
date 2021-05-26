@@ -177,11 +177,11 @@ objects:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
               readinessProbe:
-                failureThreshold: 2
+                failureThreshold: 10
                 httpGet:
                   path: /api/
                   port: "${{PORT}}"
-                initialDelaySeconds: 10
+                initialDelaySeconds: 30
                 periodSeconds: 30
               livenessProbe:
                 failureThreshold: 10
