@@ -26,7 +26,9 @@
                     <p><b>Select a user to add to this location below.</b></p>
                     <v-row
                       ><v-col>
-                        <span class="form-text text-muted mb-2"> <b>User Name </b></span>
+                        <span class="form-text text-muted mb-2">
+                          <b>User Name </b></span
+                        >
                         <Dropdown
                           v-model="selectUser"
                           :options="usersList"
@@ -63,11 +65,15 @@
                           </span>
                         </v-col>
                       </v-row>
-                      <v-row v-for="location in institutionLocationList" :key="location"
+                      <v-row
+                        v-for="location in institutionLocationList"
+                        :key="location"
                         ><v-col>
                           <span>{{ location?.name }} <br /></span>
                           <span>
-                            <span>{{ location?.data?.address?.addressLine1 }}, </span>
+                            <span
+                              >{{ location?.data?.address?.addressLine1 }},
+                            </span>
                             <span>{{ location?.data?.address?.city }}, </span>
                             <span>{{ location?.data?.address?.province }}</span>
                             <br />
@@ -88,7 +94,9 @@
                 </v-container>
               </v-sheet>
               <template #footer>
-                <v-btn color="primary" outlined @click="closeAddUser()"> Cancel </v-btn>
+                <v-btn color="primary" outlined @click="closeAddUser()">
+                  Cancel
+                </v-btn>
                 <v-btn color="primary" @click="submitAddUser()">
                   Add User
                   <v-icon right>mdi-account </v-icon>
@@ -97,7 +105,7 @@
             </Dialog>
           </v-col>
         </v-row>
-        <DataTable :value="users">
+        <DataTable autoLayout="true" :value="users">
           <Column field="displayName" header="Name"></Column>
           <Column field="email" header="Email"></Column>
           <Column field="userType" header="User Type"></Column>
@@ -131,7 +139,7 @@ export default {
     const invalidUserType = ref(false);
     const users = ref([] as InstitutionUserViewModel[]);
     const showAddUser = ref(false);
-    const selectUser = ref({ name: "", code: "" });
+    const selectUser = ref({ name: "", code: "", id: "" });
     const openNewUserModal = () => {
       showAddUser.value = true;
     };
@@ -145,7 +153,7 @@ export default {
     const userType = ref();
     const closeAddUser = () => {
       showAddUser.value = false;
-      selectUser.value = { name: "", code: "" };
+      selectUser.value = { name: "", code: "", id: "" };
       isAdmin.value = false;
       invalidName.value = false;
       getInstitutionLocationList();
@@ -156,9 +164,11 @@ export default {
         payLoad = {
           userId: selectUser.value.code,
           userType: "admin",
+          userGuid: selectUser.value.id,
         };
       } else {
         payLoad = {
+          userGuid: selectUser.value.id,
           userId: selectUser.value.code,
           location: institutionLocationList.value
             .map((el: any) => {
@@ -218,13 +228,14 @@ export default {
         ? bceidUsers?.accounts.map((el: any) => ({
             name: el.displayName,
             code: el.userId,
+            id: el.guid,
           }))
         : [];
       // Get User type and Role
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
       userType.value = userRoleType.value?.userTypes
         ? userRoleType.value.userTypes.map((el: string) =>
-            el !== "admin" ? { name: el, code: el } : null
+            el !== "admin" ? { name: el, code: el } : null,
           )
         : [];
     });

@@ -19,25 +19,25 @@ export interface InstitutionlocationData {
   };
 }
 export interface InstitutionLocationsDetails {
-  name: string,
+  name: string;
   data: {
     address: {
-      addressLine1: string,
-      addressLine2?: string,
-      province: string,
-      country: string,
-      city: string,
-      postalCode: string,
-    }
-  },
+      addressLine1: string;
+      addressLine2?: string;
+      province: string;
+      country: string;
+      city: string;
+      postalCode: string;
+    };
+  };
   institution: {
-    institutionPrimaryContact : {
-      primaryContactEmail: string,
-      primaryContactFirstName: string,
-      primaryContactLastName: string,
-      primaryContactPhone: string,
-    }
-  }
+    institutionPrimaryContact: {
+      primaryContactEmail: string;
+      primaryContactFirstName: string;
+      primaryContactLastName: string;
+      primaryContactPhone: string;
+    };
+  };
 }
 export interface InstitutionUserRoleLocation {
   locationId?: string;
@@ -46,11 +46,13 @@ export interface InstitutionUserRoleLocation {
 export interface InstitutionUser {
   userId: string;
   userType?: string;
-  location?: InstitutionUserRoleLocation[]
-  }
+  location?: InstitutionUserRoleLocation[];
+  userGuid?: string;
+}
 
 export interface InstitutionUserDto {
   locationId?: string;
   userId: string;
   userType?: string;
+  userGuid?: string;
 }
