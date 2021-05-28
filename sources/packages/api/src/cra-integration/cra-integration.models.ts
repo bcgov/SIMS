@@ -12,6 +12,8 @@ export enum TransactionCodes {
   IncomeRequestHeader = "7100",
   IncomeRequestRecord = "7101",
   IncomeRequestFooter = "7102",
+  ResponseHeader = "7200",
+  ResponseRecord = "7201",
 }
 
 /**
@@ -19,6 +21,21 @@ export enum TransactionCodes {
  */
 export enum TransactionSubCodes {
   IVRequest = "0020",
+  ResponseRecord = "0022",
+}
+
+export enum RequestStatusCodes {
+  successfulRequest = "01",
+  successfulAnm = "02",
+  unsuccessfulAcctNotAvail = "55",
+  invalidProgramAreaCD = "56",
+  unsuccessfulRequestNoData = "59",
+}
+
+export enum MatchStatusCodes {
+  matchStatusCodeNotSet = "00",
+  successfulMatch = "01",
+  unsuccessfulMatch = "50",
 }
 
 /**

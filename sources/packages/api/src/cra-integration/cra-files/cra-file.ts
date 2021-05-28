@@ -4,6 +4,6 @@
  * interface allow the object to be represented
  * as a formatted fixed string.
  */
-export interface CRAFileLine {
+export interface CRARequestFileLine {
   getFixedFormat(): string;
 }

@@ -14,4 +14,9 @@ export class CRAIntegrationController {
       uploadedRecords: uploadResult.uploadedRecords,
     };
   }
+
+  @Post("process-responses")
+  async processResponses(): Promise<any> {
+    return await this.cra.processResponses();
+  }
 }

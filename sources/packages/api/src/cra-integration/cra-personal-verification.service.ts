@@ -7,7 +7,15 @@ import {
   SequenceControlService,
   ConfigService,
 } from "../services";
-import { CRAPersonRecord, CRAUploadResult } from "./cra-integration.models";
+import { CRAResponseFile } from "./cra-files/cra-file-response";
+import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import {
+  CRAPersonRecord,
+  CRAUploadResult,
+  MatchStatusCodes,
+  RequestStatusCodes,
+  TransactionSubCodes,
+} from "./cra-integration.models";
 
 /**
  * Manages the retrieval of students or parents or another
@@ -79,6 +87,28 @@ export class CRAPersonalVerificationService {
     );
 
     return uploadResult;
+  }
+
+  public async processResponses(): Promise<void> {
+    const files = await this.craService.downloadResponseFiles();
+    const filesProcess = files.map((file) => this.processResponse(file));
+    await Promise.all(filesProcess);
+  }
+
+  private async processResponse(responseFile: CRAResponseFile): Promise<void> {
+    responseFile.records.forEach((record) => {
+      if (record.transactionSubCode === TransactionSubCodes.ResponseRecord) {
+        this.processSINStatus(record as CRAResponseFileLine);
+      }
+    });
+  }
+
+  private processSINStatus(craRecord: CRAResponseFileLine) {
+    const isValidSIN =
+      craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
+      craRecord.getMatchStatusCode() == MatchStatusCodes.successfulMatch;
+
+    console.log("isValidSIN: " + isValidSIN);
   }
 
   @InjectLogger()

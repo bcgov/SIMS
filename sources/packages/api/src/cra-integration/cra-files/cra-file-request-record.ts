@@ -5,12 +5,12 @@ import {
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
-import { CRAFileLine } from "./cra-file";
+import { CRARequestFileLine } from "./cra-file";
 
 /**
  * Record of a CRA request file (0020).
  */
-export class CRAFileIVRequestRecord implements CRAFileLine {
+export class CRAFileIVRequestRecord implements CRARequestFileLine {
   transactionCode: TransactionCodes;
   sin: string;
   individualSurname: string;

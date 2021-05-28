@@ -1,4 +1,6 @@
-import { Injectable, Scope } from "@nestjs/common";
+import { InjectLogger } from "../common";
+import { LoggerService } from "../logger/logger.service";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "../services";
 import { SshService } from "../services/ssh/ssh.service";
 import * as Client from "ssh2-sftp-client";
@@ -6,12 +8,16 @@ import {
   CRAPersonRecord,
   CRAUploadResult,
   TransactionCodes,
+  TransactionSubCodes,
 } from "./cra-integration.models";
 import { CRAIntegrationConfig, SFTPConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
-import { CRAFileLine } from "./cra-files/cra-file";
+import { CRARequestFileLine } from "./cra-files/cra-file";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-request-record";
+import { CRARecordIdentification } from "./cra-files/cra-file-response-record-id";
+import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import { CRAResponseFile } from "./cra-files/cra-file-response";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -40,9 +46,9 @@ export class CRAIntegrationService {
   public createMatchingRunContent(
     records: CRAPersonRecord[],
     sequence: number,
-  ): CRAFileLine[] {
+  ): CRARequestFileLine[] {
     const processDate = new Date();
-    const craFileLines: CRAFileLine[] = [];
+    const craFileLines: CRARequestFileLine[] = [];
 
     // Header
     const fileHeader = this.createHeader(
@@ -82,12 +88,12 @@ export class CRAIntegrationService {
    * @returns Upload result.
    */
   public async uploadContent(
-    craFileLines: CRAFileLine[],
+    craFileLines: CRARequestFileLine[],
     remoteFilePath: string,
   ): Promise<CRAUploadResult> {
     // Generate fixed formatted file.
-    const fixedFormttedLines: string[] = craFileLines.map((line: CRAFileLine) =>
-      line.getFixedFormat(),
+    const fixedFormttedLines: string[] = craFileLines.map(
+      (line: CRARequestFileLine) => line.getFixedFormat(),
     );
     const craFileContent = fixedFormttedLines.join("\r\n");
 
@@ -139,7 +145,75 @@ export class CRAIntegrationService {
     return `${this.craConfig.ftpRequestFolder}\\CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
   }
 
+  public async downloadResponseFiles(): Promise<CRAResponseFile[]> {
+    let filesToProcess: Client.FileInfo[];
+    const client = await this.getClient();
+    try {
+      filesToProcess = await client.list(
+        `${this.craConfig.ftpResponseFolder}`,
+        /CCRA_RESPONSE_[\w]*\.txt/i,
+      );
+    } finally {
+      await SshService.closeQuietly(client);
+    }
+
+    const processes = filesToProcess.map((file) =>
+      this.downloadResponseFile(file.name),
+    );
+    const allFiles = await Promise.all(processes);
+    return ([] as CRAResponseFile[]).concat(...allFiles);
+  }
+
+  private async downloadResponseFile(
+    fileName: string,
+  ): Promise<CRAResponseFile> {
+    const client = await this.getClient();
+    try {
+      // Read all the files content and create a buffer.
+      const filePath = `${this.craConfig.ftpResponseFolder}/${fileName}`;
+      const fileContent = await client.get(filePath);
+      // Convert the file content to an array of string lines.
+      const fileLines = fileContent.toString().split("\r\n");
+      // Read the first line to check if the header code is the expected one.
+      const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
+      if (header.transactionCode !== TransactionCodes.ResponseHeader) {
+        this.logger.error(
+          `The CRA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
+        );
+        // If the header is not the expcted one, just ignore the file.
+        return null;
+      }
+
+      // Remove footer (not used).
+      fileLines.pop();
+
+      // Generate the records.
+      const records = fileLines.map((line) => {
+        var craRecord = new CRARecordIdentification(line);
+        switch (craRecord.transactionSubCode) {
+          case TransactionSubCodes.ResponseRecord:
+            return new CRAResponseFileLine(line);
+          case TransactionSubCodes.IVRequest:
+            // TODO: Change this to the specific 'Income Request Record (0020)'.
+            return craRecord;
+          default:
+            return craRecord;
+        }
+      });
+
+      return {
+        filePath,
+        records,
+      };
+    } finally {
+      await SshService.closeQuietly(client);
+    }
+  }
+
   private async getClient(): Promise<Client> {
     return this.sshService.createClient(this.ftpConfig);
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
