@@ -228,4 +228,17 @@ export class InstitutionController extends BaseController {
     await this.userService.updateUserStatus(institutionUser.user.id, body.isActive);
 
   }
+
+  @Get("/user/:userName")
+  async getInstitutionLocationByUserName(
+    @Param("userName") userName: string,
+  ): Promise<InstitutionUser> {
+    // Get institutionUser
+    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
+      userName,
+    );if (!institutionUser) {
+      throw new UnprocessableEntityException("Not able to retrieve the institution location user.");
+    }
+    return institutionUser;
+  }
 } //Class ends
