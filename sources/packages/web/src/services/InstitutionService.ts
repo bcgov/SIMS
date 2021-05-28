@@ -194,4 +194,9 @@ export class InstitutionService {
 
     await ApiClient.InstitutionLocation.createUser(payload);
   }
+  
+
+  public async getInstitutionLocationUserDetails(userName: string) {
+    return await ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
+  }
 }
