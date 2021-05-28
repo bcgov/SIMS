@@ -171,4 +171,9 @@ export class InstitutionService {
     }
     await Promise.all(promises);
   }
+  
+
+  public async getInstitutionLocationUserDetails(userName: string) {
+    return await ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
+  }
 }

@@ -80,7 +80,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
     auth.authType = authType;
     auth.institutionUser = institutionUser;
-    auth.location = location;
+    auth.location = location? location[0] : {};
     finalInstitutionUser.authorizations = [auth];
 
     return await this.institutionUserRepo.save(finalInstitutionUser);

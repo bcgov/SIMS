@@ -211,4 +211,17 @@ export class InstitutionController extends BaseController {
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
     return this.institutionService.getUserTypesAndRoles();
   }
+
+  @Get("/user/:userName")
+  async getInstitutionLocationByUserName(
+    @Param("userName") userName: string,
+  ): Promise<InstitutionUser> {
+    // Get institutionUser
+    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
+      userName,
+    );if (!institutionUser) {
+      throw new UnprocessableEntityException("Not able to retrieve the institution location user.");
+    }
+    return institutionUser;
+  }
 } //Class ends

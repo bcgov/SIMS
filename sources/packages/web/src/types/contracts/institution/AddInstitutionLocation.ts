@@ -19,6 +19,7 @@ export interface InstitutionlocationData {
   };
 }
 export interface InstitutionLocationsDetails {
+  id:number,
   name: string;
   data: {
     address: {
@@ -55,4 +56,32 @@ export interface InstitutionUserDto {
   userId: string;
   userType?: string;
   userGuid?: string;
+}
+
+export interface InstitutionUserWithUserType {
+  id?:number,
+  name?: string;
+  data?: {
+    address: {
+      addressLine1: string;
+      addressLine2?: string;
+      province: string;
+      country: string;
+      city: string;
+      postalCode: string;
+    };
+  };
+  institution?: {
+    institutionPrimaryContact: {
+      primaryContactEmail: string;
+      primaryContactFirstName: string;
+      primaryContactLastName: string;
+      primaryContactPhone: string;
+    };
+  };
+  userType?: {
+    name?: string;
+    code?: string;
+  },
+
 }
