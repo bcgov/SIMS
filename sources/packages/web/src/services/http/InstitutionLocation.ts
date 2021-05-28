@@ -84,4 +84,18 @@ export class InstitutionLocationApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async getInstitutionLocationUserDetails(
+    userName: string
+    ): Promise<any>{
+      try {
+        return await this.apiClient.get(
+          `institution/user/${userName}`,
+          this.addAuthHeader(),
+        );
+      } catch (error) {
+        this.handleRequestError(error);
+        throw error;
+      }
+  }
 }
