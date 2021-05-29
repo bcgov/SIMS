@@ -23,7 +23,7 @@ export class CRAFileIVRequestRecord implements CRARequestFileLine {
   public getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.transactionCode);
-    record.append(this.sin);
+    record.append(this.sin, 9);
     record.repeatAppend(SPACE_FILLER, 4);
     record.append(TransactionSubCodes.IVRequest);
     record.appendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);

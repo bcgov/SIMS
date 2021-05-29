@@ -1,4 +1,7 @@
-import { MatchStatusCodes } from "../cra-integration.models";
+import {
+  MatchStatusCodes,
+  RequestStatusCodes,
+} from "../cra-integration.models";
 import { CRARecordIdentification } from "./cra-file-response-record-id";
 
 /**
@@ -9,7 +12,15 @@ export class CRAResponseFileLine extends CRARecordIdentification {
     super(line);
   }
 
-  public getMatchStatusCode(): MatchStatusCodes {
-    return super.line.substr(29, 2) as MatchStatusCodes;
+  public get requestStatusCode(): RequestStatusCodes {
+    return this.line.substr(25, 2) as RequestStatusCodes;
+  }
+
+  public get matchStatusCode(): MatchStatusCodes {
+    return this.line.substr(29, 2) as MatchStatusCodes;
+  }
+
+  public get freeProjectArea(): string {
+    return this.line.substr(41, 30).trim();
   }
 }

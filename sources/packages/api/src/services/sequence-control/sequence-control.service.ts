@@ -74,6 +74,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      throw error;
     }
   }
 }

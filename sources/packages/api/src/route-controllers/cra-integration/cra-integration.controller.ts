@@ -1,6 +1,7 @@
-import { Controller, Post, Scope } from "@nestjs/common";
+import { Controller, Post } from "@nestjs/common";
 import { CRAPersonalVerificationService } from "../../services";
 import { CreateSinValidationResDto } from "./models/create-sin-validation.res.dto";
+import { ProcessResponseResDto } from "./models/process-response.res.dto";
 
 @Controller("cra-integration")
 export class CRAIntegrationController {
@@ -16,7 +17,13 @@ export class CRAIntegrationController {
   }
 
   @Post("process-responses")
-  async processResponses(): Promise<any> {
-    return await this.cra.processResponses();
+  async processResponses(): Promise<ProcessResponseResDto[]> {
+    const results = await this.cra.processResponses();
+    return results.map((result) => {
+      return {
+        processSummary: result.processSummary,
+        errorsSummary: result.errorsSummary,
+      };
+    });
   }
 }

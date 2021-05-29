@@ -1,3 +1,5 @@
+import { CRARecordIdentification } from "./cra-files/cra-file-response-record-id";
+
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
@@ -24,6 +26,11 @@ export enum TransactionSubCodes {
   ResponseRecord = "0022",
 }
 
+/**
+ * Request status codes (REQUEST-STATUS-CODE)
+ * presents on CRA Response Record
+ * (Trans Sub Code - 0022).
+ */
 export enum RequestStatusCodes {
   successfulRequest = "01",
   successfulAnm = "02",
@@ -32,6 +39,11 @@ export enum RequestStatusCodes {
   unsuccessfulRequestNoData = "59",
 }
 
+/**
+ * Match status codes (MATCH-STATUS-CODE)
+ * presents on CRA Response Record
+ * (Trans Sub Code - 0022)
+ */
 export enum MatchStatusCodes {
   matchStatusCodeNotSet = "00",
   successfulMatch = "01",
@@ -48,6 +60,7 @@ export interface CRAPersonRecord {
   givenName: string;
   birthDate: Date;
   taxYear?: number;
+  freeProjectArea?: string;
 }
 
 /**
@@ -56,4 +69,35 @@ export interface CRAPersonRecord {
 export interface CRAUploadResult {
   generatedFile: string;
   uploadedRecords: number;
+}
+
+/**
+ * Represents the parsed content of a file
+ * downloaded from the CRA sFTP response folder.
+ */
+export interface CRAsFtpResponseFile {
+  /**
+   * Full file path of the file on the sFTP.
+   */
+  filePath: string;
+  /**
+   * Parsed object from the CRA response files.
+   * Each object represents a line from the file.
+   */
+  records: CRARecordIdentification[];
+}
+
+/**
+ * Represents the output of the processing of
+ * one CRA response file from the. sFTP
+ */
+export class ProcessSftpResponseResult {
+  /**
+   * Processing summary for a file.
+   */
+  processSummary: string[] = [];
+  /**
+   * Errors found uring the processing.
+   */
+  errorsSummary: string[] = [];
 }
