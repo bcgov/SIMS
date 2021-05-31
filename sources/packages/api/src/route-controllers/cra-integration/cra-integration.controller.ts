@@ -7,6 +7,12 @@ import { ProcessResponseResDto } from "./models/process-response.res.dto";
 export class CRAIntegrationController {
   constructor(private readonly cra: CRAPersonalVerificationService) {}
 
+  /**
+   * Identifies all the students that still do not have their SIN
+   * validated and create the validation request file
+   * to be processed by CRA.
+   * @returns SIN validation request.
+   */
   @Post("sin-validation")
   async createSinValidation(): Promise<CreateSinValidationResDto> {
     const uploadResult = await this.cra.createSinValidationRequest();
@@ -16,6 +22,10 @@ export class CRAIntegrationController {
     };
   }
 
+  /**
+   * Download all files from CRA Response folder on sFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
   @Post("process-responses")
   async processResponses(): Promise<ProcessResponseResDto[]> {
     const results = await this.cra.processResponses();

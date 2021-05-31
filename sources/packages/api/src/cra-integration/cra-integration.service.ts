@@ -104,7 +104,7 @@ export class CRAIntegrationService {
       await client.put(Buffer.from(craFileContent), remoteFilePath);
       return {
         generatedFile: remoteFilePath,
-        uploadedRecords: craFileLines.length,
+        uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
       };
     } finally {
       await SshService.closeQuietly(client);

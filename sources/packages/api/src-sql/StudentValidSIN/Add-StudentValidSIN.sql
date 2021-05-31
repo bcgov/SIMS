@@ -1,4 +1,3 @@
-
 -- Add the column with valid_sin.
 ALTER TABLE students
     ADD COLUMN IF NOT EXISTS valid_sin BOOLEAN;
