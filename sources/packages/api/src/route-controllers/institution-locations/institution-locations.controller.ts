@@ -83,17 +83,6 @@ export class InstitutionLocationsController extends BaseController {
     @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IUserToken
     ): Promise<number> {
-      // Validate the location data that will be saved to SIMS DB.
-      const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-        "institutionlocationupdation",
-        payload,
-      );
-  
-      if (!dryRunSubmissionResult.valid) {
-        throw new UnprocessableEntityException(
-          "Not able to update the institution location due to an invalid request.",
-        );
-      }
       
       //To retrive institution id
       const institutionDetails = await this.institutionService.getInstituteByUserName(
@@ -104,19 +93,13 @@ export class InstitutionLocationsController extends BaseController {
       }
   
       // If the data is valid the location is updated to SIMS DB.
-      const updatedInstitutionlocation = await this.locationService.updateLocation(
+      const updateResult = await this.locationService.updateLocation(
         locationId,
         institutionDetails.id,
-        dryRunSubmissionResult.data,
-      );
-  
-      // Save a form to formio to handle the location approval.
-      const submissionResult = await this.formService.submission(
-        "institutionlocation",
         payload,
       );
 
-      return updatedInstitutionlocation.id;
+      return updateResult.affected;
     }
 
   @Get()

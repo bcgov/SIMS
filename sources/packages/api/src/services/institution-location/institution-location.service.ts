@@ -1,10 +1,10 @@
 import { Injectable, Inject, UnprocessableEntityException } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { Connection } from "typeorm";
+import { Connection, UpdateResult } from "typeorm";
 import { UserInfo, ValidatedInstitutionLocation } from "../../types";
 import { InstitutionService } from "..";
-import { InstitutionLocationsDetailsDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
+import { InstitutionLocationsDetailsDto, InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(@Inject("Connection") private readonly connection: Connection,
@@ -43,18 +43,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return await this.repo.save(newLocation);
   }
 
-  async updateLocation(locationId: number, institution_id: number, data: ValidatedInstitutionLocation): Promise<any> {
-    const institution = { id: institution_id };
+  async updateLocation(locationId: number, institutionId: number, data: InstitutionLocationTypeDto): Promise<UpdateResult> {
+    const institution = { id: institutionId };
     const updateLocation = {
-      name: data.data.locationName,
+      name: data.locationName,
       data: {
         address: {
-          addressLine1: data.data.address1,
-          addressLine2: data.data.address2,
-          province: data.data.provinceState,
-          country: data.data.country,
-          city: data.data.city,
-          postalCode: data.data.postalZipCode,
+          addressLine1: data.address1,
+          addressLine2: data.address2,
+          province: data.provinceState,
+          country: data.country,
+          city: data.city,
+          postalCode: data.postalZipCode,
         },
       },
       institution: institution,
@@ -72,12 +72,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getMany();
   }
 
-  async getInstitutionLocation(institution_id: number, location_id: number): Promise<InstitutionLocationsDetailsDto> {
+  async getInstitutionLocation(institutionId: number, locationId: number): Promise<InstitutionLocationsDetailsDto> {
     return this.repo
       .createQueryBuilder("institution_location")
       .select(['institution_location.name', 'institution_location.data', 'institution.institutionPrimaryContact', 'institution_location.id'])
       .leftJoin("institution_location.institution", "institution")
-      .where('institution.id = :Id and institution_Location.id = :locationId', { Id: institution_id, locationId: location_id})
+      .where('institution.id = :Id and institution_Location.id = :locationId', { Id: institutionId, locationId: locationId})
       .getOne();
   }
 
