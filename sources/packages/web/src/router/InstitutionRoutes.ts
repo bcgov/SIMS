@@ -4,6 +4,7 @@ import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.v
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
+import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
 import ManageDesgination from "../views/institution/ManageDesgination.vue";
 import InstitutionUserDetails from "../views/institution/InstitutionUserDetails.vue";
 import {
@@ -87,6 +88,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.AddInstitutionLocation,
         name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION,
         component: AddInstitutionLocation,
+      },
+      {
+        path: `${AppRoutes.EditInstitutionLocation}/:locationId`,
+        name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
+        component: EditInstitutionLocation,
+        props: true,
       },
       {
         path: AppRoutes.InstitutionProfile,

@@ -1,9 +1,7 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
-  InstitutionUserResDto,
   InstitutionLocationsDetails,
-  InstitutionUser,
   InstitutionUserDto
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
@@ -20,6 +18,37 @@ export class InstitutionLocationApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  public async updateInstitutionLocation(
+    locationId: number,
+    updateInstitutionLocationDto: Institutionlocation
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `institution/location/${locationId}`,
+        updateInstitutionLocationDto,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getInstitutionLocation(locationId: number): Promise<InstitutionLocationsDetails> {
+    let data: InstitutionLocationsDetails;
+    try {
+      const res = await this.apiClient.get(
+        `institution/location/${locationId}`,
+        this.addAuthHeader(),
+      );
+      data = res?.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+    return data;
   }
 
   public async allInstitutionLocationsApi(): Promise<InstitutionLocationsDetails[]> {

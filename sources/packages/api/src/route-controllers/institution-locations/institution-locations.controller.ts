@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   NotFoundException,
   Param,
   Body,
@@ -26,24 +27,6 @@ export class InstitutionLocationsController extends BaseController {
     private readonly institutionService: InstitutionService
   ) {
     super();
-  }
-
-  @Get(":id")
-  async getInstitutionLocation(
-    @Param("id") id: number,
-  ): Promise<GetInstitutionLocationDto> {
-    const location = await this.locationService.getById(id);
-    if (!location) {
-      throw new NotFoundException(
-        "Not able to retrieve the institution location.",
-      );
-    }
-
-    return {
-      id: location.id,
-      name: location.name,
-      data: location.data,
-    };
   }
 
   @Post()
@@ -94,6 +77,48 @@ export class InstitutionLocationsController extends BaseController {
     return createdInstitutionlocation.id;
   }
 
+  @Patch(":locationId")
+  async update(
+    @Param("locationId") locationId: number,
+    @Body() payload: InstitutionLocationTypeDto,
+    @UserToken() userToken: IUserToken
+    ): Promise<number> {
+      // Validate the location data that will be saved to SIMS DB.
+      const dryRunSubmissionResult = await this.formService.dryRunSubmission(
+        "institutionlocationupdation",
+        payload,
+      );
+  
+      if (!dryRunSubmissionResult.valid) {
+        throw new UnprocessableEntityException(
+          "Not able to update the institution location due to an invalid request.",
+        );
+      }
+      
+      //To retrive institution id
+      const institutionDetails = await this.institutionService.getInstituteByUserName(
+        userToken.userName,
+      );
+      if (!institutionDetails) {
+        throw new UnprocessableEntityException("Not able to find a institution associated with the current user name.");
+      }
+  
+      // If the data is valid the location is updated to SIMS DB.
+      const updatedInstitutionlocation = await this.locationService.updateLocation(
+        locationId,
+        institutionDetails.id,
+        dryRunSubmissionResult.data,
+      );
+  
+      // Save a form to formio to handle the location approval.
+      const submissionResult = await this.formService.submission(
+        "institutionlocation",
+        payload,
+      );
+
+      return updatedInstitutionlocation.id;
+    }
+
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IUserToken,
@@ -111,4 +136,24 @@ export class InstitutionLocationsController extends BaseController {
     );
     return Institutionlocations;
   }
+
+  @Get(":locationId")
+  async getInstitutionLocation(@Param("locationId") locationId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<InstitutionLocationsDetailsDto> {
+    //To retrive institution id
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userToken.userName,
+    );
+    if (!institutionDetails) {
+      throw new UnprocessableEntityException("Not able to find the Location associated.");
+    }
+    // get all institution locations.
+    const Institutionlocations = await this.locationService.getInstitutionLocation(
+      institutionDetails.id,
+      locationId
+    );
+    return Institutionlocations;
+  }
+  
 }

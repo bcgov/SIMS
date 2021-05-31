@@ -48,7 +48,8 @@
             </v-col>
             <v-col cols="2">
               <v-btn
-                plain>
+                plain
+                @click="getLocation(item.id)">
                 <v-icon
                   right
                   class="mr-2">
@@ -143,6 +144,13 @@ export default {
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
     };
+    const getLocation = async(locationId: number) => {
+      router.push({ name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
+      params: {
+        locationId: locationId
+       },
+      });
+    };
     const institutionLocationList = ref();
     const getInstitutionLocationList = async () => {
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
@@ -151,6 +159,7 @@ export default {
     onMounted(getInstitutionLocationList);
     return {
       goToAddNewLocation,
+      getLocation,
       getInstitutionLocationList,
       institutionLocationList,
     };
