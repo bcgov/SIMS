@@ -1,14 +1,23 @@
-import { Injectable, Inject, UnprocessableEntityException } from "@nestjs/common";
+import {
+  Injectable,
+  Inject,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { Connection } from "typeorm";
+import { Connection, UpdateResult } from "typeorm";
 import { UserInfo, ValidatedInstitutionLocation } from "../../types";
 import { InstitutionService } from "..";
-import { InstitutionLocationsDetailsDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
+import {
+  InstitutionLocationsDetailsDto,
+  InstitutionLocationTypeDto,
+} from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
-  constructor(@Inject("Connection") private readonly connection: Connection,
-  private readonly institutionService: InstitutionService,) {
+  constructor(
+    @Inject("Connection") private readonly connection: Connection,
+    private readonly institutionService: InstitutionService,
+  ) {
     super(connection.getRepository(InstitutionLocation));
   }
 
@@ -23,7 +32,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return await this.repo.findOne(id);
   }
 
-  async createtLocation(institution_id: number, data: ValidatedInstitutionLocation): Promise<any> {
+  async createtLocation(
+    institution_id: number,
+    data: ValidatedInstitutionLocation,
+  ): Promise<any> {
     const institution = { id: institution_id };
     const newLocation = {
       name: data.data.locationName,
@@ -43,12 +55,63 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return await this.repo.save(newLocation);
   }
 
-  async getAllInstitutionlocations(institution_id: number): Promise<InstitutionLocationsDetailsDto[]> {
+  async updateLocation(
+    locationId: number,
+    institutionId: number,
+    data: InstitutionLocationTypeDto,
+  ): Promise<UpdateResult> {
+    const institution = { id: institutionId };
+    const updateLocation = {
+      name: data.locationName,
+      data: {
+        address: {
+          addressLine1: data.address1,
+          addressLine2: data.address2,
+          province: data.provinceState,
+          country: data.country,
+          city: data.city,
+          postalCode: data.postalZipCode,
+        },
+      },
+      institution: institution,
+    };
+
+    return await this.repo.update(locationId, updateLocation);
+  }
+
+  async getAllInstitutionlocations(
+    institutionId: number,
+  ): Promise<InstitutionLocationsDetailsDto[]> {
     return this.repo
       .createQueryBuilder("institution_location")
-      .select(['institution_location.name', 'institution_location.data', 'institution.institutionPrimaryContact', 'institution_location.id'])
+      .select([
+        "institution_location.name",
+        "institution_location.data",
+        "institution.institutionPrimaryContact",
+        "institution_location.id",
+      ])
       .leftJoin("institution_location.institution", "institution")
-      .where('institution.id = :Id', { Id: institution_id})
+      .where("institution.id = :id", { id: institutionId })
       .getMany();
+  }
+
+  async getInstitutionLocation(
+    institutionId: number,
+    locationId: number,
+  ): Promise<InstitutionLocationsDetailsDto> {
+    return this.repo
+      .createQueryBuilder("institution_location")
+      .select([
+        "institution_location.name",
+        "institution_location.data",
+        "institution.institutionPrimaryContact",
+        "institution_location.id",
+      ])
+      .leftJoin("institution_location.institution", "institution")
+      .where("institution.id = :id and institution_Location.id = :locationId", {
+        id: institutionId,
+        locationId: locationId,
+      })
+      .getOne();
   }
 }

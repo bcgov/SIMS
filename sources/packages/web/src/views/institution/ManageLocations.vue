@@ -2,19 +2,14 @@
   <v-container>
     <h5 class="color-grey">Manage Institution Locations</h5>
     <h2>Location Summary</h2>
-    <v-sheet
-      elevation="1"
-      class="mx-auto">
+    <v-sheet elevation="1" class="mx-auto">
       <v-container>
         <v-row>
           <v-col cols="8">
             <h2 class="color-blue">Locations</h2>
           </v-col>
           <v-col cols="4">
-            <v-btn
-              class="float-right"
-              @click="goToAddNewLocation()"
-            >
+            <v-btn class="float-right" @click="goToAddNewLocation()">
               Add New Location
               <v-icon right>
                 mdi-map-marker-plus
@@ -47,11 +42,8 @@
               </h4>
             </v-col>
             <v-col cols="2">
-              <v-btn
-                plain>
-                <v-icon
-                  right
-                  class="mr-2">
+              <v-btn plain @click="getLocation(item.id)">
+                <v-icon right class="mr-2">
                   mdi-cog-outline
                 </v-icon>
                 Edit
@@ -143,6 +135,14 @@ export default {
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
     };
+    const getLocation = async (locationId: number) => {
+      router.push({
+        name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
+        params: {
+          locationId: locationId,
+        },
+      });
+    };
     const institutionLocationList = ref();
     const getInstitutionLocationList = async () => {
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
@@ -151,6 +151,7 @@ export default {
     onMounted(getInstitutionLocationList);
     return {
       goToAddNewLocation,
+      getLocation,
       getInstitutionLocationList,
       institutionLocationList,
     };

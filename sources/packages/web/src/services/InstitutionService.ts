@@ -6,8 +6,8 @@ import {
   InstitutionProfileState,
   UpdateInstitutionDto,
   Institutionlocation,
+  InstitutionLocationsDetails,
   InstitutionUser,
-  InstitutionUserRoleLocation,
   InstitutionUserResDto,
   InstitutionUserViewModel,
   InstitutionUserDto,
@@ -96,6 +96,24 @@ export class InstitutionService {
 
   public async createInstitutionLocation(data: Institutionlocation) {
     await ApiClient.InstitutionLocation.createInstitutionLocation(data);
+  }
+
+  public async updateInstitutionLocation(
+    locationId: number,
+    institutionlocation: Institutionlocation,
+  ) {
+    await ApiClient.InstitutionLocation.updateInstitutionLocation(
+      locationId,
+      institutionlocation,
+    );
+  }
+
+  public async getInstitutionLocation(
+    locationId: number,
+  ): Promise<InstitutionLocationsDetails> {
+    return await ApiClient.InstitutionLocation.getInstitutionLocation(
+      locationId,
+    );
   }
 
   public async getAllInstitutionLocations() {
