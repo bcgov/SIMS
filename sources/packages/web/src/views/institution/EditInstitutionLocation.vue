@@ -24,7 +24,7 @@ export default {
   props: {
     locationId: {
       type: Number,
-      required: true
+      required: true,
     },
   },
   setup(props: any) {
@@ -34,7 +34,10 @@ export default {
     const router = useRouter();
     const submitted = async (data: Institutionlocation) => {
       try {
-        await InstitutionService.shared.updateInstitutionLocation(props.locationId, data);
+        await InstitutionService.shared.updateInstitutionLocation(
+          props.locationId,
+          data,
+        );
         router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
         toast.add({
           severity: "success",
@@ -52,15 +55,17 @@ export default {
       }
     };
     onMounted(async () => {
-      const detail: InstitutionLocationsDetails = await InstitutionService.shared.getInstitutionLocation(props.locationId);
+      const detail: InstitutionLocationsDetails = await InstitutionService.shared.getInstitutionLocation(
+        props.locationId,
+      );
       initialData.value = {
-          address1:detail.data.address.addressLine1,
-          address2:detail.data.address.addressLine2,
-          city:detail.data.address.city,
-          country:detail.data.address.country,
-          locationName:detail.name,
-          postalZipCode:detail.data.address.postalCode,
-          provinceState:detail.data.address.province
+        address1: detail.data.address.addressLine1,
+        address2: detail.data.address.addressLine2,
+        city: detail.data.address.city,
+        country: detail.data.address.country,
+        locationName: detail.name,
+        postalZipCode: detail.data.address.postalCode,
+        provinceState: detail.data.address.province,
       };
     });
     return {

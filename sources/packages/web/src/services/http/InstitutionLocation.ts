@@ -2,7 +2,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
   InstitutionLocationsDetails,
-  InstitutionUserDto
+  InstitutionUserDto,
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -22,7 +22,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async updateInstitutionLocation(
     locationId: number,
-    updateInstitutionLocationDto: Institutionlocation
+    updateInstitutionLocationDto: Institutionlocation,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
@@ -36,7 +36,9 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
-  public async getInstitutionLocation(locationId: number): Promise<InstitutionLocationsDetails> {
+  public async getInstitutionLocation(
+    locationId: number,
+  ): Promise<InstitutionLocationsDetails> {
     let data: InstitutionLocationsDetails;
     try {
       const res = await this.apiClient.get(
@@ -51,7 +53,9 @@ export class InstitutionLocationApi extends HttpBaseClient {
     return data;
   }
 
-  public async allInstitutionLocationsApi(): Promise<InstitutionLocationsDetails[]> {
+  public async allInstitutionLocationsApi(): Promise<
+    InstitutionLocationsDetails[]
+  > {
     let data: InstitutionLocationsDetails[] = [];
     try {
       const res = await this.apiClient.get(

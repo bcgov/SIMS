@@ -98,12 +98,22 @@ export class InstitutionService {
     await ApiClient.InstitutionLocation.createInstitutionLocation(data);
   }
 
-  public async updateInstitutionLocation(locationId: number, institutionlocation: Institutionlocation) {
-    await ApiClient.InstitutionLocation.updateInstitutionLocation(locationId, institutionlocation);
+  public async updateInstitutionLocation(
+    locationId: number,
+    institutionlocation: Institutionlocation,
+  ) {
+    await ApiClient.InstitutionLocation.updateInstitutionLocation(
+      locationId,
+      institutionlocation,
+    );
   }
 
-  public async getInstitutionLocation(locationId: number): Promise<InstitutionLocationsDetails>  {
-    return await ApiClient.InstitutionLocation.getInstitutionLocation(locationId);
+  public async getInstitutionLocation(
+    locationId: number,
+  ): Promise<InstitutionLocationsDetails> {
+    return await ApiClient.InstitutionLocation.getInstitutionLocation(
+      locationId,
+    );
   }
 
   public async getAllInstitutionLocations() {
