@@ -2,7 +2,7 @@
   <Card class="p-m-4">
     <template #content>
       <formio
-        formName="institutionlocationupdation"
+        formName="editinstitutionlocation"
         :data="initialData"
         @submitted="submitted"
       ></formio>
