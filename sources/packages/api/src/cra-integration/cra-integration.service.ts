@@ -190,7 +190,7 @@ export class CRAIntegrationService {
       // Convert the file content to an array of text lines and remove possible blank lines.
       const fileLines = fileContent
         .toString()
-        .split("\r\n")
+        .split(/\r\n|\n\r|\n|\r/)
         .filter((line) => line.length > 0);
       // Read the first line to check if the header code is the expected one.
       const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.

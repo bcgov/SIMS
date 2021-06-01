@@ -17,11 +17,11 @@ import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
 
 describe("CRAIntegrationService", () => {
   // Dependencies of the service being tested.
-  const configService = new ConfigService();
+  const configServiceMock = new ConfigService();
   // Mock environment variables.
   const environmentCode = "A";
   const programAreaCode = "ABCD";
-  jest.spyOn(configService, "getConfig").mockImplementation(() => {
+  jest.spyOn(configServiceMock, "getConfig").mockImplementation(() => {
     const config = {} as IConfig;
     config.zoneBsFTP = {
       host: "HOST",
@@ -39,7 +39,7 @@ describe("CRAIntegrationService", () => {
     return config;
   });
   // Service to be tested.
-  const service = new CRAIntegrationService(configService, SshServiceMock);
+  const service = new CRAIntegrationService(configServiceMock, SshServiceMock);
 
   it("should create matching run content for 2 random people", () => {
     // Arrange
