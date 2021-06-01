@@ -148,7 +148,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students pending SIN validation.
    */
   async getStudentsPendingSinValidation(): Promise<Student[]> {
-    return await this.repo.find({ validSIN: null });
+    return this.repo.find({ validSIN: null });
   }
 
   /**

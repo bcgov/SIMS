@@ -102,7 +102,7 @@ export class CRAPersonalVerificationService {
     // Executes the processing of each file in parallel.
     const filesProcess = files.map((file) => this.processResponse(file));
     // Waits for all the parallel processes to be finished.
-    return await Promise.all(filesProcess);
+    return Promise.all(filesProcess);
   }
 
   /**

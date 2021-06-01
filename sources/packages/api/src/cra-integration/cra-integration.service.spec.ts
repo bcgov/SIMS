@@ -12,7 +12,7 @@ import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { IConfig } from "../types/config";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-request-record";
-import SshServiceMock from "./__mocks__/SShService";
+import SshServiceMock from "./__mocks__/SshServiceMock";
 import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
 
 describe("CRAIntegrationService", () => {
