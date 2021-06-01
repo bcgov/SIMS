@@ -9,6 +9,7 @@ import {
   CRAUploadResult,
   TransactionCodes,
   TransactionSubCodes,
+  CRAsFtpResponseFile,
 } from "./cra-integration.models";
 import { CRAIntegrationConfig, SFTPConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
@@ -17,7 +18,6 @@ import { CRARequestFileLine } from "./cra-files/cra-file";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-request-record";
 import { CRARecordIdentification } from "./cra-files/cra-file-response-record-id";
 import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
-import { CRAsFtpResponseFile } from "./cra-integration.models";
 
 /**
  * Manages the creation of the content files that needs to be sent

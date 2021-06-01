@@ -1,5 +1,4 @@
 import {
-  RequestStatusCodes,
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
