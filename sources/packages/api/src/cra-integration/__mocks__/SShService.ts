@@ -26,11 +26,7 @@ jest.spyOn(sshClientMock, "list").mockImplementation(() => {
 // the content of the mocked file on folder __mocks__/response-folder.
 jest.spyOn(sshClientMock, "get").mockImplementation((filePath: string) => {
   const mockedFilePath = path.resolve(__dirname, filePath);
-  // Temp code for debug.
-  console.log(mockedFilePath);
-  const fileContent = fs.readFileSync(mockedFilePath, "ascii");
-  console.log(fileContent);
-  return Promise.resolve(fileContent);
+  return Promise.resolve(fs.readFileSync(mockedFilePath, "ascii"));
 });
 // // Mock createClient method.
 jest.spyOn(SshServiceMock, "createClient").mockImplementation(() => {
