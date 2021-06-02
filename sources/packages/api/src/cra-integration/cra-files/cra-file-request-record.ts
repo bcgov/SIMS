@@ -5,12 +5,12 @@ import {
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
-import { CRAFileLine } from "./cra-file";
+import { CRARequestFileLine } from "./cra-file";
 
 /**
  * Record of a CRA request file (0020).
  */
-export class CRAFileIVRequestRecord implements CRAFileLine {
+export class CRAFileIVRequestRecord implements CRARequestFileLine {
   transactionCode: TransactionCodes;
   sin: string;
   individualSurname: string;
@@ -23,11 +23,16 @@ export class CRAFileIVRequestRecord implements CRAFileLine {
   public getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.transactionCode);
-    record.append(this.sin);
+    record.append(this.sin, 9);
     record.repeatAppend(SPACE_FILLER, 4);
     record.append(TransactionSubCodes.IVRequest);
     record.appendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);
-    record.appendWithEndFiller(this.individualGivenName, 30, SPACE_FILLER);
+    // Monoymous names will not have a first name/given name.
+    record.appendWithEndFiller(
+      this.individualGivenName ?? "",
+      30,
+      SPACE_FILLER,
+    );
     record.appendDate(this.individualBirthDate, DATE_FORMAT);
     record.appendWithEndFiller(
       (this.taxYear ?? "").toString(),

@@ -7,7 +7,18 @@ import {
   SequenceControlService,
   ConfigService,
 } from "../services";
-import { CRAPersonRecord, CRAUploadResult } from "./cra-integration.models";
+import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import {
+  CRAPersonRecord,
+  CRAUploadResult,
+  MatchStatusCodes,
+  RequestStatusCodes,
+  TransactionSubCodes,
+  CRAsFtpResponseFile,
+  ProcessSftpResponseResult,
+} from "./cra-integration.models";
+
+const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
 
 /**
  * Manages the retrieval of students or parents or another
@@ -44,8 +55,9 @@ export class CRAPersonalVerificationService {
       return {
         sin: student.sin,
         surname: student.user.lastName,
-        givenName: student.user.lastName,
+        givenName: student.user.firstName,
         birthDate: student.birthdate,
+        freeProjectArea: STUDENT_SIN_VALIDATION_TAG,
       } as CRAPersonRecord;
     });
 
@@ -79,6 +91,90 @@ export class CRAPersonalVerificationService {
     );
 
     return uploadResult;
+  }
+
+  /**
+   * Download all files from CRA Response folder on sFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  public async processResponses(): Promise<ProcessSftpResponseResult[]> {
+    const files = await this.craService.downloadResponseFiles();
+    // Executes the processing of each file in parallel.
+    const filesProcess = files.map((file) => this.processResponse(file));
+    // Waits for all the parallel processes to be finished.
+    return Promise.all(filesProcess);
+  }
+
+  /**
+   * Process each individual CRA response file downloaded from the the sFTP.
+   * @param responseFile CRA response file to be processed.
+   * @returns Process summary and errors summary.
+   */
+  private async processResponse(
+    responseFile: CRAsFtpResponseFile,
+  ): Promise<ProcessSftpResponseResult> {
+    const result = new ProcessSftpResponseResult();
+    result.processSummary.push(
+      `Processing file ${responseFile.filePath} with ${responseFile.records.length} records.`,
+    );
+
+    for (let index = 0; index < responseFile.records.length; index++) {
+      try {
+        const record = responseFile.records[index];
+        // Checks the type of record to define if must be processed.
+        // If the record type is 0022, it should process the SIN validation.
+        if (record.transactionSubCode === TransactionSubCodes.ResponseRecord) {
+          const craRecord = record as CRAResponseFileLine;
+          // 0022 could be present in a SIN validation response or income verification response.
+          // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
+          // request was made specifically for SIN validation.
+          if (craRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
+            await this.processSINStatus(craRecord);
+            result.processSummary.push(
+              `Processed SIN validation for record line ${index + 1}.`,
+            );
+          }
+          // TODO: Add the check to process income verification.
+        }
+      } catch (error) {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Error processing record line number ${
+          index + 1
+        } from file ${responseFile.filePath}`;
+        result.errorsSummary.push(errorDescription);
+        this.logger.error(`${errorDescription}. Error: ${error}`);
+      }
+    }
+
+    try {
+      await this.craService.deleteFile(responseFile.filePath);
+    } catch (error) {
+      // Log the error but allow the process to continue.
+      // If there was an issue only during the file removal, it will be
+      // processed again and could be deleted in the second attempt.
+      const logMessage = `Error while deleting CRA response file: ${responseFile.filePath}`;
+      this.logger.error(logMessage);
+      result.errorsSummary.push(logMessage);
+    }
+
+    return result;
+  }
+
+  /**
+   * Process a 0022 record to update the SIN status.
+   * @param craRecord
+   */
+  private async processSINStatus(
+    craRecord: CRAResponseFileLine,
+  ): Promise<void> {
+    const isValidSIN =
+      craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
+      craRecord.matchStatusCode == MatchStatusCodes.successfulMatch;
+
+    await this.studentService.updatePendingSinValidation(
+      craRecord.sin,
+      isValidSIN,
+    );
   }
 
   @InjectLogger()

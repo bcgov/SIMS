@@ -12,8 +12,21 @@ export class StringBuilder {
    * Appends a string to the current content.
    * @param s
    */
-  public append(s: string) {
+  public append(s: string, maxLength?: number) {
+    if (maxLength && s.length > maxLength) {
+      s = s.substr(0, maxLength);
+    }
     this.contents.push(s);
+  }
+
+  /**
+   * Appends a string to the current content
+   * alongside with a line break.
+   * @param s
+   */
+  public appendLine(s: string) {
+    this.append(s);
+    this.append("\n");
   }
 
   /**
@@ -23,6 +36,9 @@ export class StringBuilder {
    * @param filler The string to pad the string being appended.
    */
   public appendWithEndFiller(s: string, length: number, filler: string) {
+    if (s.length > length) {
+      s = s.substr(0, length);
+    }
     this.append(s.padEnd(length, filler));
   }
 

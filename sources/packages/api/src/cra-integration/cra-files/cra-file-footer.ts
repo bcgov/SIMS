@@ -5,12 +5,12 @@ import {
   NUMBER_FILLER,
   TransactionCodes,
 } from "../cra-integration.models";
-import { CRAFileLine } from "./cra-file";
+import { CRARequestFileLine } from "./cra-file";
 
 /**
  * Footer of a CRA request/response file.
  */
-export class CRAFileFooter implements CRAFileLine {
+export class CRAFileFooter implements CRARequestFileLine {
   transactionCode: TransactionCodes;
   processDate: Date;
   programAreaCode: string;

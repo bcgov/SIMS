@@ -42,6 +42,12 @@ export class Student extends RecordDataModel {
   })
   gender: string;
 
+  @Column({
+    name: "valid_sin",
+    nullable: true,
+  })
+  validSIN?: boolean;
+
   @OneToOne((type) => User, { eager: true, cascade: true })
   @JoinColumn({
     name: "user_id",
