@@ -43,6 +43,7 @@ export class CRAPersonalVerificationService {
    * @returns SIN validation request.
    */
   public async createSinValidationRequest(): Promise<CRAUploadResult> {
+    this.logger.log("Retrieving students with pending SIN validation...");
     const students = await this.studentService.getStudentsPendingSinValidation();
     if (!students) {
       return {
@@ -51,6 +52,7 @@ export class CRAPersonalVerificationService {
       };
     }
 
+    this.logger.log(`Found ${students.length} student(s).`);
     const craRecords = students.map((student) => {
       return {
         sin: student.sin,
@@ -70,6 +72,7 @@ export class CRAPersonalVerificationService {
       sequenceName,
       async (nextSequenceNumber: number) => {
         try {
+          this.logger.log("Creating matching run content...");
           const fileContent = this.craService.createMatchingRunContent(
             craRecords,
             nextSequenceNumber,
@@ -77,6 +80,7 @@ export class CRAPersonalVerificationService {
           const fileName = this.craService.createRequestFileName(
             nextSequenceNumber,
           );
+          this.logger.log("Uploading content...");
           uploadResult = await this.craService.uploadContent(
             fileContent,
             fileName,

@@ -2,6 +2,8 @@ import { Controller, Post } from "@nestjs/common";
 import { CRAPersonalVerificationService } from "../../services";
 import { CreateSinValidationResDto } from "./models/create-sin-validation.res.dto";
 import { ProcessResponseResDto } from "./models/process-response.res.dto";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 
 @Controller("cra-integration")
 export class CRAIntegrationController {
@@ -15,7 +17,9 @@ export class CRAIntegrationController {
    */
   @Post("sin-validation")
   async createSinValidation(): Promise<CreateSinValidationResDto> {
+    this.logger.log("Executing SIN validation...");
     const uploadResult = await this.cra.createSinValidationRequest();
+    this.logger.log("SIN validation executed.");
     return {
       generatedFile: uploadResult.generatedFile,
       uploadedRecords: uploadResult.uploadedRecords,
@@ -36,4 +40,7 @@ export class CRAIntegrationController {
       };
     });
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
