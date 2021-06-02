@@ -11,9 +11,9 @@ import { QueryRunner } from "typeorm";
  * @param queryRunner
  * @param seconds
  */
-export function configureIdleTransactionSessionSimeout(
+export async function configureIdleTransactionSessionSimeout(
   queryRunner: QueryRunner,
   seconds: number,
-) {
+): Promise<void> {
   queryRunner.query(`SET idle_in_transaction_session_timeout = '${seconds}s'`);
 }

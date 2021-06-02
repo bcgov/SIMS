@@ -39,7 +39,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
   ) {
     this.logger.log("Checking next sequence available...");
     const queryRunner = this.connection.createQueryRunner();
-    configureIdleTransactionSessionSimeout(
+    await configureIdleTransactionSessionSimeout(
       queryRunner,
       TRANSACTION_IDLE_TIMEOUT_SECONDS,
     );
@@ -78,13 +78,14 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       // update the new sequence number to the database.
       sequenceRecord.sequenceNumber = nextSequenceNumber;
       this.logger.log("Persisting new sequence number to database...");
-      queryRunner.manager.save(sequenceRecord);
+      await queryRunner.manager.save(sequenceRecord);
       await queryRunner.commitTransaction();
     } catch (error) {
-      this.logger.error(`Error while executing the process ${error}`);
       this.logger.error("Executing sequence number rollback...");
       await queryRunner.rollbackTransaction();
       throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
