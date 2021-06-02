@@ -3,6 +3,8 @@ import { configureIdleTransactionSessionSimeout } from "../../utilities/database
 import { Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { SequenceControl } from "../../database/entities";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -35,6 +37,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
     sequenceName: string,
     process: (sequenceNumber: number) => Promise<void>,
   ) {
+    this.logger.log("Checking next sequence available...");
     const queryRunner = this.connection.createQueryRunner();
     configureIdleTransactionSessionSimeout(
       queryRunner,
@@ -48,6 +51,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       // wait until the first one finishes, what will ensure that
       // two concurrent processes will not be generating a new
       // sequence number at the same time.
+      this.logger.log("Getting current sequence from DB...");
       let sequenceRecord = await queryRunner.manager
         .getRepository(SequenceControl)
         .createQueryBuilder("sc")
@@ -66,15 +70,24 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       // the record with the corresponding sequence name is locked.
       const nextSequenceNumber = sequenceRecord.sequenceNumber + 1;
       // Waits for the external process be executed.
+      this.logger.log(
+        `Executing process using sequence number ${nextSequenceNumber}`,
+      );
       await process(nextSequenceNumber);
       // If the external process was successfully execute
       // update the new sequence number to the database.
       sequenceRecord.sequenceNumber = nextSequenceNumber;
+      this.logger.log("Persisting new sequence number to database...");
       queryRunner.manager.save(sequenceRecord);
       await queryRunner.commitTransaction();
     } catch (error) {
+      this.logger.error(`Error while executing the process ${error}`);
+      this.logger.error("Executing sequence number rollback...");
       await queryRunner.rollbackTransaction();
       throw error;
     }
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

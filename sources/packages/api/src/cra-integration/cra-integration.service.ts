@@ -99,15 +99,19 @@ export class CRAIntegrationService {
     const craFileContent = fixedFormattedLines.join("\r\n");
 
     // Send the file to ftp.
+    this.logger.log("Creating new sFTP client to start upload...");
     const client = await this.getClient();
     try {
+      this.logger.log(`Uploading ${remoteFilePath}`);
       await client.put(Buffer.from(craFileContent), remoteFilePath);
       return {
         generatedFile: remoteFilePath,
         uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
       };
     } finally {
+      this.logger.log("Finalizing sFTP client...");
       await SshService.closeQuietly(client);
+      this.logger.log("sFTP client finalized.");
     }
   }
 
