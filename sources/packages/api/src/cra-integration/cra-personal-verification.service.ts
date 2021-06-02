@@ -45,7 +45,7 @@ export class CRAPersonalVerificationService {
   public async createSinValidationRequest(): Promise<CRAUploadResult> {
     this.logger.log("Retrieving students with pending SIN validation...");
     const students = await this.studentService.getStudentsPendingSinValidation();
-    if (!students) {
+    if (!students.length) {
       return {
         generatedFile: "none",
         uploadedRecords: 0,
@@ -106,7 +106,7 @@ export class CRAPersonalVerificationService {
     // Executes the processing of each file in parallel.
     const filesProcess = files.map((file) => this.processResponse(file));
     // Waits for all the parallel processes to be finished.
-    return Promise.all(filesProcess);
+    return await Promise.all(filesProcess);
   }
 
   /**
