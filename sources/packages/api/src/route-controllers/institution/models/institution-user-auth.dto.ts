@@ -1,9 +1,11 @@
+import { Type } from "class-transformer";
 import {
-  IsEmail,
+  ArrayMinSize,
+  IsArray,
   IsIn,
   IsNotEmpty,
   IsOptional,
-  IsString,
+  ValidateNested,
 } from "class-validator";
 import { InstitutionUserType, InstitutionUserRole } from "../../../types";
 
@@ -11,9 +13,14 @@ export class InstitutionUserAuthDto {
   @IsNotEmpty()
   userId: string;
 
-  @IsNotEmpty()
-  userGuid?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(1)
+  @Type(() => UserPermissionDto)
+  permissions: UserPermissionDto[];
+}
 
+export class UserPermissionDto {
   @IsOptional()
   locationId?: number;
 

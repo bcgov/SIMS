@@ -1,7 +1,6 @@
 import {
   Injectable,
   Inject,
-  InternalServerErrorException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
@@ -29,6 +28,8 @@ import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
+import { AccountDetails } from "../bceid/account-details.model";
+import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -84,6 +85,61 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     finalInstitutionUser.authorizations = [auth];
 
     return await this.institutionUserRepo.save(finalInstitutionUser);
+  }
+
+  /**
+   * Creates all necessary records to have a new user added to the
+   * institution, with the right permissions and ready to login.
+   * Records will be creates on sims.users, sims.institution_users
+   * and sims.institution_user_auth.
+   * @param institutionId Institution to add the user.
+   * @param bceidUserAccount BCeID account to be used to create the user.
+   * @param permissionInfo Permissions informations to be added to the user.
+   * @returns institution user
+   */
+  async createInstitutionUser(
+    institutionId: number,
+    bceidUserAccount: AccountDetails,
+    permissionInfo: InstitutionUserAuthDto,
+  ): Promise<InstitutionUser> {
+    // Used to create the relationships with institution.
+    const institution = { id: institutionId } as Institution;
+    // Create the new user to be added to sims.users table.
+    // The user should not be present at the table at this moment.
+    const userEntity = new User();
+    userEntity.email = bceidUserAccount.user.email;
+    userEntity.firstName = bceidUserAccount.user.firstname;
+    userEntity.lastName = bceidUserAccount.user.surname;
+    userEntity.userName = `${bceidUserAccount.user.guid}@bceid`.toLowerCase();
+    // Create new relationship between institution and the new user.
+    const newInstitutionUser = new InstitutionUser();
+    newInstitutionUser.user = userEntity;
+    newInstitutionUser.institution = institution;
+    newInstitutionUser.authorizations = [];
+    // Create the permissions for the user under the institution.
+    for (const permission of permissionInfo.permissions) {
+      const newAuthorization = new InstitutionUserAuth();
+      if (permission.locationId) {
+        // Add a location specific permission.
+        newAuthorization.location = {
+          id: permission.locationId,
+        } as InstitutionLocation;
+      }
+      // Find the correct user type and role.
+      const authType = await this.institutionUserTypeAndRoleRepo.findOne({
+        type: permission.userType,
+        role: permission.userRole ?? null,
+      });
+      if (!authType) {
+        throw new Error(
+          "The combination of user type and user role is not valid.",
+        );
+      }
+      newAuthorization.authType = authType;
+      newInstitutionUser.authorizations.push(newAuthorization);
+    }
+
+    return this.institutionUserRepo.save(newInstitutionUser);
   }
 
   async createInstitution(
