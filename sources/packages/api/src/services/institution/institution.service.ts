@@ -139,7 +139,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       newInstitutionUser.authorizations.push(newAuthorization);
     }
 
-    return await this.institutionUserRepo.save(newInstitutionUser);
+    return this.institutionUserRepo.save(newInstitutionUser);
   }
 
   async createInstitution(
