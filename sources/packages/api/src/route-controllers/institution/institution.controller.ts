@@ -1,20 +1,12 @@
 import {
   Body,
   Controller,
-  Delete,
-  ForbiddenException,
   Get,
-  Param,
   Patch,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import {
-  BCeIDService,
-  InstitutionLocationService,
-  InstitutionService,
-  UserService,
-} from "../../services";
+import { BCeIDService, InstitutionService, UserService } from "../../services";
 import {
   CreateInstitutionDto,
   InstitutionDetailDto,
@@ -25,16 +17,13 @@ import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
-import { InstitutionUserRole, InstitutionUserType } from "../../types";
 import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
-import { InstitutionUser, User } from "../../database/entities";
 
 @Controller("institution")
 export class InstitutionController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
-    private readonly institutionLocationService: InstitutionLocationService,
     private readonly accountService: BCeIDService,
   ) {
     super();
@@ -109,102 +98,51 @@ export class InstitutionController extends BaseController {
     });
   }
 
+  /**
+   * Creates all necessary records to have a new user added to the
+   * institution, with the right permissions and ready to login.
+   */
   @Post("/user")
   async createInstitutionUserWithAuth(
-    @Body() body: InstitutionUserAuthDto,
+    @Body() payload: InstitutionUserAuthDto,
     @UserToken() user: IUserToken,
-  ) {
-    // Validate data
+  ): Promise<number> {
     // Get institution
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
     );
-    // Get location
-    let location;
-    if (body.locationId) {
-      location = await this.institutionLocationService.findById(
-        body.locationId,
-      );
-      if (!location) {
-        throw new UnprocessableEntityException(
-          `Unable to find institution location with id: ${body.locationId}`,
-        );
-      }
-    }
-
-    // For location-manager type location is mandatory
-    if (body.userType === InstitutionUserType.locationManager && !location) {
+    if (!institution) {
       throw new UnprocessableEntityException(
-        `Unable to create user with user type ${InstitutionUserType.locationManager} without location`,
+        "The user has no institution associated with.",
+      );
+    }
+    // Find user on BCeID Web Service
+    const bceidUserAccount = await this.accountService.getAccountDetails(
+      payload.userId,
+    );
+    if (!bceidUserAccount) {
+      throw new UnprocessableEntityException(
+        "User not found on BCeID Web Service.",
+      );
+    }
+    // Check if the user being added to th institution belongs to the institution.
+    if (
+      institution.guid.toLowerCase() !==
+      bceidUserAccount.institution.guid.toLowerCase()
+    ) {
+      throw new UnprocessableEntityException(
+        "User not found under the institution.",
       );
     }
 
-    let userEntity: User;
+    // Create the user user and the related records.
+    const createdUser = await this.institutionService.createnInstitutionUser(
+      institution.id,
+      bceidUserAccount,
+      payload,
+    );
 
-    // Get user if userGuid is supplied
-    let userExists = false;
-    if (body.userGuid) {
-      userEntity = await this.userService.getUser(`${body.userGuid}@bceid`);
-    }
-
-    if (!userEntity) {
-      // Get user details from BCeID
-      const accountDetails = await this.accountService.getAccountDetails(
-        body.userId,
-      );
-      if (!accountDetails) {
-        throw new UnprocessableEntityException(
-          `Unable to account detail of user ${body.userId}`,
-        );
-      }
-      const userName = `${accountDetails.user.guid}@bceid`;
-
-      // Check user exists or not with same user name
-      userEntity = await this.userService.getUser(userName);
-
-      if (!userEntity) {
-        // User not exists
-        // Create User
-        userEntity = this.userService.create();
-        userEntity.email = accountDetails.user.email;
-        userEntity.firstName = accountDetails.user.firstname;
-        userEntity.lastName = accountDetails.user.surname;
-        userEntity.userName = userName;
-      } else {
-        userExists = true;
-      }
-    } else {
-      userExists = true;
-    }
-    let institutionUser: InstitutionUser;
-    if (userExists) {
-      // Get institutionUser
-      institutionUser = await this.institutionService.getInstitutionUserByUserName(
-        userEntity.userName,
-      );
-      // Check same auth available in same user or not
-      if (
-        institutionUser &&
-        institutionUser.authorizations.filter(
-          (auth) =>
-            auth.authType.type === body.userType &&
-            auth.location?.id === body.locationId,
-        ).length > 0
-      ) {
-        return false;
-      }
-    }
-
-    // Now create association
-    await this.institutionService.createAssociation({
-      institution,
-      type: body.userType as InstitutionUserType,
-      role: body.userRole as InstitutionUserRole,
-      location,
-      user: userEntity,
-      institutionUser,
-    });
-    return true;
+    return createdUser.id;
   }
 
   @Get("/user-types-roles")

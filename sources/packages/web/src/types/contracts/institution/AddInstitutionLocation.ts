@@ -51,8 +51,12 @@ export interface InstitutionUser {
 }
 
 export interface InstitutionUserDto {
-  locationId?: string;
   userId: string;
+  permissions: UserPermissionDto[];
+}
+
+export interface UserPermissionDto {
+  locationId?: number;
   userType?: string;
-  userGuid?: string;
+  userRole?: string;
 }
