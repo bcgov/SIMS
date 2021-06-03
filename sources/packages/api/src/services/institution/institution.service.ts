@@ -97,7 +97,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param permissionInfo Permissions informations to be added to the user.
    * @returns institution user
    */
-  async createnInstitutionUser(
+  async createInstitutionUser(
     institutionId: number,
     bceidUserAccount: AccountDetails,
     permissionInfo: InstitutionUserAuthDto,

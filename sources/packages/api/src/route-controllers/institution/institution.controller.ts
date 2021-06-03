@@ -136,13 +136,13 @@ export class InstitutionController extends BaseController {
     }
 
     // Create the user user and the related records.
-    const createdUser = await this.institutionService.createnInstitutionUser(
+    const createdInstitutionUser = await this.institutionService.createInstitutionUser(
       institution.id,
       bceidUserAccount,
       payload,
     );
 
-    return createdUser.id;
+    return createdInstitutionUser.id;
   }
 
   @Get("/user-types-roles")
