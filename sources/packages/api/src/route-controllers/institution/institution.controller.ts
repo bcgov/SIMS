@@ -23,7 +23,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
-import { InstitutionUserTypeAndRoleResponseDto , InstitutionUserPermissionDto,} from "./models/institution-user-type-role.res.dto";
+import { InstitutionUserTypeAndRoleResponseDto , InstitutionUserPermissionDto} from "./models/institution-user-type-role.res.dto";
 import {  InstitutionUser, InstitutionUserAuth } from "../../database/entities";
 import { UserDto } from "../user/models/user.dto";
 @Controller("institution")
