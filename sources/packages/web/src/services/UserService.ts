@@ -13,8 +13,8 @@ export class UserService {
     return this.instance || (this.instance = new this());
   }
 
-  async checkUser(): Promise<boolean> {
-    return await ApiClient.User.checkUser();
+  async checkUser(authHeader?: any): Promise<string> {
+    return await ApiClient.User.checkUser(authHeader);
   }
 
   async getBCeIDAccountDetails(

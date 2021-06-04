@@ -2,7 +2,7 @@ import { User } from "../../../database/entities";
 
 export interface InstitutionUserRespDto {
   id: number;
-  user: Pick<User, "email" | "firstName" | "lastName" | "userName">;
+  user: Pick<User, "email" | "firstName" | "lastName" | "userName" | "isActive">;
   authorizations: {
     id: number;
     authType: {

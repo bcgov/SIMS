@@ -1,11 +1,8 @@
+import {InstitutionlocationData, InstitutionLocationsDetails} from "./AddInstitutionLocation"
+import{InstitutionDto} from "./CreateInstitutionDto"
 export interface InstitutionUserResDto {
   id: number;
-  user: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    userName: string;
-  };
+  user: InstitutionUserDetails;
   authorizations: {
     id: number;
     authType: {
@@ -26,6 +23,74 @@ export interface InstitutionUserViewModel {
   location: string;
   userType: string;
   role: string;
-  status?: "active"; //TODO: Putting default value here, later replace with proper field
+  isActive: boolean; 
   disableRemove?: boolean;
+}
+
+export interface InstitutionAuthType{
+  active: boolean;
+  id: number;
+  role: string;
+  type: string;
+
+}
+export interface InstitutionAuth {
+  id?: number;
+  authType?: InstitutionAuthType;
+  location?: InstitutionlocationData;
+}
+
+export interface InstitutionUserDetails{
+  email: string;
+  firstName: string;
+  id: number;
+  lastName: string;
+  userName: string;
+  isActive:boolean
+}
+export interface InstitutionLocationUserAuthDto {
+  id: number;
+  authorizations: InstitutionAuth[];
+  institution: InstitutionDto;
+  user: InstitutionUserDetails;
+}
+
+export interface InstitutionUserRoleLocation {
+  locationId?: number;
+  userType?: string;
+}
+export interface InstitutionUser {
+  userId: string;
+  userType?: string;
+  location?: InstitutionUserRoleLocation[];
+  userGuid?: string;
+}
+
+export interface InstitutionUserDto {
+  userId: string;
+  permissions: UserPermissionDto[];
+}
+
+export interface UserPermissionDto extends InstitutionUserRoleLocation {
+  userId?: string;
+  userRole?: string;
+}
+
+export interface UserAuth {
+    name?: string;
+    code: string;
+    id?:string
+}
+
+export interface InstitutionUserWithUserType extends InstitutionLocationsDetails {
+  userType?: {
+    name?: string;
+    code?: string;
+  },
+}
+
+export interface InstitutionUserAuthDetails {
+  userType?: string;
+  location?: InstitutionUserRoleLocation[];
+  userGuid?: string;
 }

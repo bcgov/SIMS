@@ -12,6 +12,7 @@ import { UserLocationDto } from "../institution-locations/models/institution-loc
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 
+
 @Controller("users")
 export class UserController extends BaseController {
   constructor(
@@ -23,13 +24,17 @@ export class UserController extends BaseController {
   }
 
   @Get("/check-user")
-  async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
+  async checkUser(@UserToken() userToken: IUserToken): Promise<string> {
     try {
       const userInSABC = await this.service.getUser(userToken.userName);
       if (!userInSABC) {
-        return false;
+        return "False";
       } else {
-        return true;
+        if (userInSABC.isActive){
+          return "True"
+        }else{
+          return "Disabled";
+        }
       }
     } catch (error) {
       this.handleRequestError(error);

@@ -5,13 +5,13 @@
       <div>
         <h1>Welcome to StudentAid BC</h1>
         <h4>
-          We are using BCeID for Authentication. Please click on Login/Register
-          buttons below to start your sign in/sign up with your Business BCeID.
+          We are using BCeID for Authentication. Please click on Login/Register buttons
+          below to start your sign in/sign up with your Business BCeID.
         </h4>
       </div>
       <Message severity="error" v-if="basicBCeID">
-        No such Business account has been found with BCeID. Please login with
-        your Business BCeId
+        No such Business account has been found with BCeID. Please login with your
+        Business BCeId
       </Message>
     </template>
 

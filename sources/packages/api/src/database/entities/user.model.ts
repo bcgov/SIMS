@@ -27,4 +27,9 @@ export class User extends BaseModel {
     name: "last_name",
   })
   lastName: string;
+
+  @Column({
+    name: "is_active",
+  })
+  isActive: boolean;
 }

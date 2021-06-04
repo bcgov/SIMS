@@ -2,8 +2,13 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
   InstitutionLocationsDetails,
+  InstitutionUser,
   InstitutionUserDto,
+  InstitutionLocationUserAuthDto,
+  InstitutionUserWithUserType,
+  InstitutionUserAuthDetails
 } from "../../types";
+import { bool } from "yup";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: Institutionlocation,
@@ -87,15 +92,47 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async getInstitutionLocationUserDetails(
     userName: string
-    ): Promise<any>{
+    ): Promise<InstitutionLocationUserAuthDto>{
       try {
-        return await this.apiClient.get(
+        const result = await this.apiClient.get(
           `institution/user/${userName}`,
           this.addAuthHeader(),
         );
+        return result?.data
       } catch (error) {
         this.handleRequestError(error);
         throw error;
       }
+  }
+
+  public async updateUser(
+    userName: string,
+    updateInstitutionUserDto: InstitutionUserDto,
+  ): Promise<number[]> {
+    try {
+      return await this.apiClient.patch(
+        `institution/user/${userName}`,
+        updateInstitutionUserDto,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateUserStatus
+  (userName: string, userStatus: boolean)
+  :Promise<void>{
+    try {
+      await this.apiClient.patch(
+        `institution/user-status/${userName}`,
+        {'isActive':userStatus},
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }

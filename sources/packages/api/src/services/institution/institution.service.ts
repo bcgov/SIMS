@@ -83,7 +83,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     auth.institutionUser = institutionUser;
     auth.location = location? location[0] : {};
     finalInstitutionUser.authorizations = [auth];
-
     return await this.institutionUserRepo.save(finalInstitutionUser);
   }
 
@@ -217,6 +216,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoin("institution.users", "institutionUsers")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
+      .andWhere("(user.isActive = :isActive )", {isActive: true})
       .getOneOrFail();
   }
 
@@ -225,7 +225,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       userInfo.userName,
     );
 
-    const user = await this.userService.getUser(userInfo.userName);
+    const user = await this.userService.getActiveUser(userInfo.userName);
 
     if (user) {
       user.email = institutionDto.userEmail;
@@ -273,7 +273,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const user = await this.userService.getUser(userInfo.userName);
+    const user = await this.userService.getActiveUser(userInfo.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user");
     }
@@ -327,7 +327,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       userInfo.userName,
     );
 
-    const user = await this.userService.getUser(userInfo.userName);
+    const user = await this.userService.getActiveUser(userInfo.userName);
 
     const institution = InstitutionDto.fromEntity(institutionEntity);
     institution.userEmail = user?.email;
@@ -379,7 +379,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
       .leftJoinAndSelect("authorizations.location", "location")
       .leftJoinAndSelect("authorizations.authType", "authType")
-      .where("institutionUser.id = :id", { id })
+      .where("institutionUser.id = :id", { id }) 
       .getOne();
   }
 
@@ -395,5 +395,45 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoinAndSelect("authorizations.authType", "authType")
       .where("user.userName = :userName", { userName })
       .getOne();
+  }
+
+  async deleteAssociationByUserID(
+    institutionUser: InstitutionUser
+  ): Promise<void> {
+    const previousAssociations = await this.institutionUserAuthRepo.find({institutionUser:institutionUser});
+    await this.institutionUserAuthRepo.remove(previousAssociations);
+  }
+
+  async updateInstitutionUser(
+    permissionInfo: InstitutionUserAuthDto,
+    institutionUser: InstitutionUser
+  ): Promise<InstitutionUserAuth[]> {
+   let newAuthorizationEntries = [] as InstitutionUserAuth[]
+    // Create the permissions for the user under the institution.
+    for (const permission of permissionInfo.permissions) {
+      const newAuthorization = new InstitutionUserAuth();
+      newAuthorization.institutionUser = institutionUser
+      if (permission.locationId) {
+        // Add a location specific permission.
+        newAuthorization.location = {
+          id: permission.locationId,
+        } as InstitutionLocation;
+      }
+      // Find the correct user type and role.
+      const authType = await this.institutionUserTypeAndRoleRepo.findOne({
+        type: permission.userType,
+        role: permission.userRole ?? null,
+      });
+      if (!authType) {
+        throw new Error(
+          "The combination of user type and user role is not valid.",
+        );
+      }
+      newAuthorization.authType = authType;
+      newAuthorizationEntries.push(newAuthorization)
+    }
+    // delete existing associations
+    await this.deleteAssociationByUserID(institutionUser)
+    return this.institutionUserAuthRepo.save(newAuthorizationEntries);
   }
 }

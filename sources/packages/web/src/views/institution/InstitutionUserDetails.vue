@@ -20,6 +20,15 @@
               @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
               @getAllInstitutionUsers="getAllInstitutionUsers"
             />
+
+            <!-- edit user -->
+            <EditInstitutionUser
+              :userType="userType"
+              :showEditUser="showEditUser"
+              :institutionUserName="institutionUserName"
+              @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+              @getAllInstitutionUsers="getAllInstitutionUsers"
+            />
           </v-col>
         </v-row>
         <DataTable :autoLayout="true" :value="users">
@@ -28,29 +37,48 @@
           <Column field="userType" header="User Type"></Column>
           <Column field="role" header="Role"></Column>
           <Column field="location" header="Location"></Column>
-          <Column field="status" header="Status"></Column>
-          <Column field="" header=""
+          <Column field="isActive" header="Status"
             ><template #body="slotProps">
-              <v-btn plain>
-                <v-icon
-                  right
-                  class="mr-2"
-                  @click="editInstitutionUser(slotProps.data.userName)"
-                >
-                  mdi-pencil
-                </v-icon>
-              </v-btn>
+              <Chip
+                v-if="slotProps.data.isActive"
+                label="Active"
+                class="p-mr-2 p-mb-2 bg-success text-white"
+              /><Chip
+                v-else
+                label="Inactive"
+                class="p-mr-2 p-mb-2 bg-danger text-white"
+              /> </template
+          ></Column>
+          <Column field="" header="Actions"
+            ><template #body="slotProps">
+              <span v-if="slotProps.data.userName !== logginedUserDetails?.userName">
+                <v-btn plain>
+                  <v-icon
+                    v-if="slotProps.data.isActive"
+                    right
+                    class="mr-2"
+                    @click="editInstitutionUser(slotProps.data.userName)"
+                    v-tooltip="'Edit User'"
+                  >
+                    mdi-pencil </v-icon
+                  ><v-icon
+                    v-else
+                    right
+                    class="mr-2"
+                    v-tooltip="'Disabled User Cannot Be Edited'"
+                  >
+                    mdi-pencil
+                  </v-icon>
+                </v-btn>
+                <InputSwitch
+                  v-model="slotProps.data.isActive"
+                  v-tooltip="slotProps.data.isActive ? 'Disable User' : 'Enable User'"
+                  @change="updateUserStatus(slotProps.data)"
+                />
+              </span>
             </template>
           </Column>
         </DataTable>
-        <!-- edit user -->
-        <EditInstitutionUser
-          :userType="userType"
-          :showEditUser="showEditUser"
-          :userData="userData"
-          @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
       </v-container>
     </v-sheet>
   </v-container>
@@ -61,16 +89,32 @@ import { ref, onMounted } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { InstitutionService } from "../../services/InstitutionService";
-import { InstitutionUserViewModel } from "../../types";
-import AddInstitutionUser from "./modals/AddInstitutionUserModal.vue";
-import EditInstitutionUser from "./modals/EditInstitutionUserModal.vue";
+import { InstitutionUserViewModel, ApplicationToken } from "../../types";
+import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
+import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
+import Chip from "primevue/chip";
+import InputSwitch from "primevue/inputswitch";
+import Tooltip from "primevue/tooltip";
 import { useToast } from "primevue/usetoast";
+import { AppConfigService } from "../../services/AppConfigService";
 
 export default {
-  components: { DataTable, Column, AddInstitutionUser, EditInstitutionUser },
+  components: {
+    DataTable,
+    Column,
+    AddInstitutionUser,
+    EditInstitutionUser,
+    Chip,
+    InputSwitch,
+  },
+  directives: {
+    tooltip: Tooltip,
+  },
   setup() {
-    const userData = ref({});
     const toast = useToast();
+    const logginedUserDetails = ref(
+      AppConfigService.shared.authService?.tokenParsed as ApplicationToken
+    );
     const showAddUser = ref(false);
     const showEditUser = ref(false);
     const users = ref([] as InstitutionUserViewModel[]);
@@ -79,6 +123,7 @@ export default {
     const openNewUserModal = () => {
       showAddUser.value = true;
     };
+    const institutionUserName = ref();
     const getAllInstitutionUsers = async () => {
       const respUsers = await InstitutionService.shared.users();
       users.value = respUsers;
@@ -89,26 +134,37 @@ export default {
     const updateShowEditInstitutionModal = () => {
       showEditUser.value = !showEditUser.value;
     };
-    const editInstitutionUser = async (institutionUserName: string) => {
+    const editInstitutionUser = async (userName: string) => {
+      institutionUserName.value = userName;
+      showEditUser.value = true;
+    };
+    const updateUserStatus = async (userDetails: InstitutionUserViewModel) => {
       try {
-        const respUser = await InstitutionService.shared.getInstitutionLocationUserDetails(
-          institutionUserName
+        await InstitutionService.shared.updateUserStatus(
+          userDetails.userName,
+          userDetails.isActive
         );
-        showEditUser.value = true;
-
-        userData.value = respUser?.data;
-      } catch (error) {
+        await getAllInstitutionUsers();
+        toast.add({
+          severity: "success",
+          summary: `${userDetails.displayName} is ${
+            userDetails.isActive ? "Enabled" : "Disabled"
+          }`,
+          detail: " Successfully!",
+          life: 5000,
+        });
+      } catch (excp) {
         toast.add({
           severity: "error",
           summary: "Unexpected error",
-          detail: "An error happened during the fetch process.",
+          detail: "An error happened during the update process.",
           life: 5000,
         });
       }
     };
     onMounted(async () => {
       // Call Service
-      getAllInstitutionUsers();
+      await getAllInstitutionUsers();
       // Get User type and Role
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
       userType.value = userRoleType.value?.userTypes
@@ -125,9 +181,11 @@ export default {
       updateShowAddInstitutionModal,
       getAllInstitutionUsers,
       editInstitutionUser,
-      userData,
       updateShowEditInstitutionModal,
       userType,
+      institutionUserName,
+      updateUserStatus,
+      logginedUserDetails,
     };
   },
 };
