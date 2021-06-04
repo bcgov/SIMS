@@ -27,7 +27,7 @@ import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { InstitutionUserTypeAndRoleResponseDto } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
+import { InstitutionUserTypeAndRoleResponseDto, InstitutionUserPermissionDto } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 
@@ -405,7 +405,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   async updateInstitutionUser(
-    permissionInfo: InstitutionUserAuthDto,
+    permissionInfo: InstitutionUserPermissionDto,
     institutionUser: InstitutionUser
   ): Promise<InstitutionUserAuth[]> {
    let newAuthorizationEntries = [] as InstitutionUserAuth[]
