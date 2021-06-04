@@ -2,13 +2,13 @@ import { BCeIDDetailsDto, BCeIDAccountsDto } from "../../types/contracts/UserCon
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class UserApi extends HttpBaseClient {
-  public async checkUser(): Promise<boolean> {
+  public async checkUser(headers?: any): Promise<string> {
     try {
       const response = await this.apiClient.get(
         "users/check-user",
-        this.addAuthHeader(),
+        headers || this.addAuthHeader(),
       );
-      return response.data as boolean;
+      return response.data as string;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -40,4 +40,5 @@ export class UserApi extends HttpBaseClient {
       throw error;
     }
   }
+
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, UnprocessableEntityException } from "@nestjs/common";
+import { Controller, Get, UnprocessableEntityException, Param, Body, Patch } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
@@ -6,6 +6,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
+
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -17,13 +18,17 @@ export class UserController extends BaseController {
   }
 
   @Get("/check-user")
-  async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
+  async checkUser(@UserToken() userToken: IUserToken): Promise<string> {
     try {
       const userInSABC = await this.service.getUser(userToken.userName);
       if (!userInSABC) {
-        return false;
+        return "False";
       } else {
-        return true;
+        if (userInSABC.isActive){
+          return "True"
+        }else{
+          return "Disabled";
+        }
       }
     } catch (error) {
       this.handleRequestError(error);

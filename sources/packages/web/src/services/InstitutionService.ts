@@ -12,6 +12,7 @@ import {
   InstitutionUserViewModel,
   InstitutionUserDto,
   UserPermissionDto,
+  InstitutionUserAuthDetails
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -149,7 +150,7 @@ export class InstitutionService {
           userType,
           role,
           location,
-          status: "active",
+          isActive: institutionUser.user.isActive,
           disableRemove:
             AppConfigService.shared.userToken?.userName ===
             institutionUser.user.userName
@@ -199,4 +200,35 @@ export class InstitutionService {
   public async getInstitutionLocationUserDetails(userName: string) {
     return await ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
   }
+
+  public async updateUser(userName: string, data: InstitutionUserAuthDetails): Promise<void> {
+    const payload = {} as InstitutionUserDto;
+    // payload.userId = data.userId;
+
+    if (data.location) {
+      // Add locations specific permissions.
+      payload.permissions = data.location.map(
+        permission =>
+          ({
+            userType: permission.userType,
+            locationId: permission.locationId,
+          } as UserPermissionDto),
+      );
+    } else {
+      // Add institution specific permissions.
+      payload.permissions = [
+        {
+          userType: data.userType,
+        },
+      ];
+    }
+
+    await ApiClient.InstitutionLocation.updateUser(userName, payload);
+  }
+
+  
+  public async updateUserStatus(userName: string, userStatus: boolean){
+    return await ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
+  }
+
 }

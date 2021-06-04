@@ -40,38 +40,47 @@
           <span v-if="!isAdmin && selectUser.name">
             <v-divider></v-divider>
             <h4 class="color-blue">Location Based Access</h4>
-            <v-row
-              ><v-col>
-                <span class="form-text text-muted mb-2">
-                  <b>Locations</b>
-                </span> </v-col
-              ><v-col>
-                <span class="form-text text-muted mb-2">
-                  <b>User Type</b>
-                </span>
-              </v-col>
+            <v-row v-if="!institutionLocationList.length">
+              <Message :closable="false"
+                >Institution locations need to be added first inorder to add a non-admin
+                users to institution</Message
+              >
             </v-row>
-            <v-row v-for="location in institutionLocationList" :key="location"
-              ><v-col>
-                <span>{{ location?.name }} <br /></span>
-                <span>
-                  <span>{{ location?.data?.address?.addressLine1 }}, </span>
-                  <span>{{ location?.data?.address?.city }}, </span>
-                  <span>{{ location?.data?.address?.province }}</span>
-                  <br />
-                </span>
-              </v-col>
-              <v-col>
-                <Dropdown
-                  v-model="location.user_type"
-                  :options="userType"
-                  optionLabel="name"
-                  placeholder="Select a User Role"
-                  :style="{ width: '25vw' }"
-                  :class="invalidUserType ? 'p-invalid' : ''"
-                />
-              </v-col> </v-row
-          ></span>
+            <span v-else>
+              <v-row
+                ><v-col>
+                  <span class="form-text text-muted mb-2">
+                    <b>Locations</b>
+                  </span> </v-col
+                ><v-col>
+                  <span class="form-text text-muted mb-2">
+                    <b>User Type</b>
+                  </span>
+                </v-col>
+              </v-row>
+              <v-row v-for="location in institutionLocationList" :key="location"
+                ><v-col>
+                  <span>{{ location?.name }}</span> <br />
+                  <span>
+                    <span>{{ location?.data?.address?.addressLine1 }}, </span>
+                    <span>{{ location?.data?.address?.city }}, </span>
+                    <span>{{ location?.data?.address?.province }}</span>
+                    <br />
+                  </span>
+                </v-col>
+                <v-col>
+                  <Dropdown
+                    v-model="location.userType"
+                    :options="userType"
+                    optionLabel="name"
+                    placeholder="Select a User Role"
+                    :style="{ width: '25vw' }"
+                    :class="invalidUserType ? 'p-invalid' : ''"
+                  />
+                </v-col>
+              </v-row>
+            </span>
+          </span>
         </form>
       </v-container>
     </v-sheet>
@@ -87,16 +96,18 @@
 
 <script lang="ts">
 /* eslint-disable */
-import { ref, onMounted, watch } from "vue";
-import { InstitutionService } from "../../../services/InstitutionService";
-import { UserService } from "../../../services/UserService";
+import { ref, onMounted } from "vue";
+import { InstitutionService } from "@/services/InstitutionService";
+import { UserService } from "@/services/UserService";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToast } from "primevue/usetoast";
+import { InstitutionUserWithUserType, InstitutionUser, UserAuth } from "@/types";
+import Message from "primevue/message";
 
 export default {
-  components: { Dialog, Dropdown, InputSwitch },
+  components: { Dialog, Dropdown, InputSwitch, Message },
   props: {
     showAddUser: {
       type: Boolean,
@@ -107,14 +118,14 @@ export default {
       default: [],
     },
   },
-  emits: ["updateShowAddInstitutionModal", "refreshAllInstitutionUsers"],
+  emits: ["updateShowAddInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
     const toast = useToast();
     const isAdmin = ref(false);
     const invalidName = ref(false);
     const invalidUserType = ref(false);
     const display = ref(true);
-    const selectUser = ref({ name: "", code: "", id: "" });
+    const selectUser = ref({} as UserAuth);
     const usersList = ref();
     const institutionLocationList = ref();
     const getInstitutionLocationList = async () => {
@@ -130,7 +141,7 @@ export default {
       context.emit("updateShowAddInstitutionModal");
     };
     const preparPayload = () => {
-      let payLoad;
+      let payLoad = {} as InstitutionUser;
       if (isAdmin.value == true) {
         payLoad = {
           userId: selectUser.value.code,
@@ -142,11 +153,11 @@ export default {
           userGuid: selectUser.value.id,
           userId: selectUser.value.code,
           location: institutionLocationList.value
-            .map((el: any) => {
-              if (el.user_type?.code) {
+            .map((el: InstitutionUserWithUserType) => {
+              if (el.userType?.code) {
                 return {
                   locationId: el.id,
-                  userType: el.user_type?.code,
+                  userType: el.userType?.code,
                 };
               }
             })
@@ -161,7 +172,8 @@ export default {
       const payLoad = preparPayload();
       if (
         selectUser?.value?.code &&
-        (payLoad?.location?.length > 0 || isAdmin.value == true)
+        ((payLoad && payLoad?.location && payLoad?.location?.length) ||
+          isAdmin.value == true)
       ) {
         try {
           await InstitutionService.shared.createUser(payLoad);
