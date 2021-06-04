@@ -3,6 +3,9 @@ import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue"
 import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
+import LocationPrograms from "../views/institution/LocationPrograms.vue";
+import LocationUsers from "../views/institution/LocationUsers.vue";
+import LocationStudents from "../views/institution/LocationStudents.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
 import ManageDesgination from "../views/institution/ManageDesgination.vue";
@@ -49,6 +52,33 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: InstitutionDashboard,
               sidebar: InstitutionHomeSideBar,
             },
+          },
+          {
+            path: `${AppRoutes.LocationPrograms}/:locationId`,
+            name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+            components: {
+              default: LocationPrograms,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: `${AppRoutes.LocationStudents}/:locationId`,
+            name: InstitutionRoutesConst.LOCATION_STUDENTS,
+            components: {
+              default: LocationStudents,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: `${AppRoutes.LocationUsers}/:locationId`,
+            name: InstitutionRoutesConst.LOCATION_USERS,
+            components: {
+              default: LocationUsers,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
           },
           {
             path: AppRoutes.InstitutionManageLocations,

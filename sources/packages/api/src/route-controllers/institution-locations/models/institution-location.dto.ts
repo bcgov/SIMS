@@ -30,11 +30,16 @@ export interface InstitutionLocationsDetailsDto {
     };
   };
   institution: {
-    institutionPrimaryContact : {
+    institutionPrimaryContact: {
       primaryContactEmail: string;
       primaryContactFirstName: string;
       primaryContactLastName: string;
       primaryContactPhone: string;
     };
   };
+}
+
+export interface UserLocationDto {
+  id: number;
+  name: string;
 }
