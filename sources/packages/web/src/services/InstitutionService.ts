@@ -230,5 +230,4 @@ export class InstitutionService {
   public async updateUserStatus(userName: string, userStatus: boolean){
     return await ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
   }
-
 }
