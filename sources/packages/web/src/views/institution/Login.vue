@@ -13,6 +13,11 @@
         No such Business account has been found with BCeID. Please login with your
         Business BCeId
       </Message>
+
+      <Message severity="error" v-if="disabledUser">
+        Disabled User, you dont have access to the system. Please contact Administrator
+        for for informations.
+      </Message>
     </template>
 
     <template #footer>
@@ -41,19 +46,25 @@ export default {
   props: {
     showBasicBCeIDMessage: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
+    },
+    showBasicDisabledUserMessage: {
+      type: Boolean,
+      required: false,
       default: false,
     },
   },
   setup(props: any) {
     const basicBCeID = ref(props.showBasicBCeIDMessage);
+    const disabledUser = ref(props.showBasicDisabledUserMessage);
     const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
       });
     };
 
-    return { login, basicBCeID };
+    return { login, basicBCeID, disabledUser };
   },
 };
 </script>
