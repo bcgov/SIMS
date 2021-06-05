@@ -1,4 +1,4 @@
-import { Controller, Get, UnprocessableEntityException, Param, Body, Patch } from "@nestjs/common";
+import { Controller, Get, UnprocessableEntityException } from "@nestjs/common";
 import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";

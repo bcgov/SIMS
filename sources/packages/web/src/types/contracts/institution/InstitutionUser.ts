@@ -1,4 +1,5 @@
 import {InstitutionlocationData, InstitutionLocationsDetails} from "./AddInstitutionLocation"
+
 import{InstitutionDto} from "./CreateInstitutionDto"
 export interface InstitutionUserResDto {
   id: number;
@@ -59,13 +60,6 @@ export interface InstitutionUserRoleLocation {
   locationId?: number;
   userType?: string;
 }
-export interface InstitutionUser {
-  userId: string;
-  userType?: string;
-  location?: InstitutionUserRoleLocation[];
-  userGuid?: string;
-}
-
 export interface InstitutionUserDto {
   userId: string;
   permissions: UserPermissionDto[];
@@ -93,4 +87,11 @@ export interface InstitutionUserAuthDetails {
   userType?: string;
   location?: InstitutionUserRoleLocation[];
   userGuid?: string;
+}
+
+export interface InstitutionUser extends InstitutionUserAuthDetails{
+  userId: string;
+}
+export interface InstitutionUserEdit extends InstitutionUserAuthDetails{
+  userId: number;
 }

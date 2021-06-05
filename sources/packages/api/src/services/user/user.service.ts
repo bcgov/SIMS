@@ -16,7 +16,7 @@ export class UserService extends DataModelService<User> {
   }
 
   async updateUserStatus(userId: number, isActive: boolean){
-    return await this.repo
+    return this.repo
     .createQueryBuilder()
     .update(User)
     .set({ isActive: isActive})

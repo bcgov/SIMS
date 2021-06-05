@@ -12,7 +12,7 @@ import {
   InstitutionUserViewModel,
   InstitutionUserDto,
   UserPermissionDto,
-  InstitutionUserAuthDetails
+  InstitutionUserEdit
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -198,10 +198,10 @@ export class InstitutionService {
   
 
   public async getInstitutionLocationUserDetails(userName: string) {
-    return await ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
+    return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
   }
 
-  public async updateUser(userName: string, data: InstitutionUserAuthDetails): Promise<void> {
+  public async updateUser(userName: string, data: InstitutionUserEdit): Promise<void> {
     const payload = {} as InstitutionUserDto;
 
     if (data.location) {
@@ -227,6 +227,6 @@ export class InstitutionService {
 
   
   public async updateUserStatus(userName: string, userStatus: boolean){
-    return await ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
+    return ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
   }
 }

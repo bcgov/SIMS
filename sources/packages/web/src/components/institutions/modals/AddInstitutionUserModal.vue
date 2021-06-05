@@ -12,10 +12,10 @@
     <v-sheet color="white" elevation="1">
       <v-container>
         <form>
-          <p><b>Select a user to add to the locations below.</b></p>
+          <p><strong>Select a user to add to the locations below.</strong></p>
           <v-row
             ><v-col>
-              <span class="form-text text-muted mb-2"> <b>User Name </b></span>
+              <span class="form-text text-muted mb-2"> <strong>User Name </strong></span>
               <Dropdown
                 v-model="selectUser"
                 :options="usersList"
@@ -29,9 +29,10 @@
             </v-col>
             <v-col v-if="selectUser.name">
               <span class="form-text text-muted mb-2">
-                <b>Is this User an Admin?</b><br />
-                <b>
-                  Selected: <span v-if="isAdmin"> Yes </span><span v-else> No </span></b
+                <strong>Is this User an Admin?</strong><br />
+                <strong>
+                  Selected: <span v-if="isAdmin"> Yes </span
+                  ><span v-else> No </span></strong
                 ></span
               >
               <InputSwitch v-model="isAdmin" />
@@ -50,11 +51,11 @@
               <v-row
                 ><v-col>
                   <span class="form-text text-muted mb-2">
-                    <b>Locations</b>
+                    <strong>Locations</strong>
                   </span> </v-col
                 ><v-col>
                   <span class="form-text text-muted mb-2">
-                    <b>User Type</b>
+                    <strong>User Type</strong>
                   </span>
                 </v-col>
               </v-row>
@@ -129,6 +130,7 @@ export default {
     const selectUser = ref({} as UserAuth);
     const usersList = ref();
     const institutionLocationList = ref();
+    const payLoad = ref({} as InstitutionUser);
     const getInstitutionLocationList = async () => {
       //Get Institution Locations
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
@@ -142,15 +144,14 @@ export default {
       context.emit("updateShowAddInstitutionModal");
     };
     const preparPayload = () => {
-      let payLoad = {} as InstitutionUser;
-      if (isAdmin.value == true) {
-        payLoad = {
+      if (isAdmin.value) {
+        payLoad.value = {
           userId: selectUser.value.code,
           userType: "admin",
           userGuid: selectUser.value.id,
         };
       } else {
-        payLoad = {
+        payLoad.value = {
           userGuid: selectUser.value.id,
           userId: selectUser.value.code,
           location: institutionLocationList.value
@@ -165,19 +166,18 @@ export default {
             .filter((el: any) => el),
         };
       }
-      return payLoad;
     };
     const submitAddUser = async () => {
       invalidName.value = false;
       invalidUserType.value = false;
-      const payLoad = preparPayload();
+      preparPayload();
       if (
         selectUser?.value?.code &&
-        ((payLoad && payLoad?.location && payLoad?.location?.length) ||
-          isAdmin.value == true)
+        ((payLoad.value && payLoad.value?.location && payLoad.value?.location?.length) ||
+          isAdmin.value)
       ) {
         try {
-          await InstitutionService.shared.createUser(payLoad);
+          await InstitutionService.shared.createUser(payLoad.value);
           toast.add({
             severity: "success",
             summary: `${selectUser.value.name} Successfully Added!`,
@@ -198,7 +198,7 @@ export default {
         if (!selectUser.value.code) {
           invalidName.value = true;
         }
-        if (payLoad?.location?.length === 0) {
+        if (payLoad.value?.location?.length === 0) {
           invalidUserType.value = true;
         }
       }
@@ -231,5 +231,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
