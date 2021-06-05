@@ -1,11 +1,11 @@
 <template>
   <v-container>
-    <h2>Locations</h2>
+    <h2>{{ locationName }}</h2>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
         <v-row>
           <v-col cols="8">
-            <h2 class="color-blue">Location Programs</h2>
+            <h2 class="color-blue">Programs</h2>
           </v-col>
         </v-row>
       </v-container>
@@ -23,6 +23,9 @@ export default {
     locationName: {
       type: String,
       required: true,
+    },
+    setup(props: any) {
+      const locationName = props.locationName;
     },
   },
 };
