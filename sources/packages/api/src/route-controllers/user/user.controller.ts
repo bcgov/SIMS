@@ -6,12 +6,18 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
+import { InstitutionUserAuthService } from "../../services/institution-user-auth/institution-user-auth.service";
+import {
+  HasLocationAccess,
+  IsInstitutionAdmin,
+} from "../../auth/decorators/institution.decorator";
 
 @Controller("users")
 export class UserController extends BaseController {
   constructor(
     private readonly service: UserService,
     private readonly bceidService: BCeIDService,
+    private readonly userAuthService: InstitutionUserAuthService,
   ) {
     super();
   }
@@ -93,5 +99,11 @@ export class UserController extends BaseController {
     return {
       accounts,
     };
+  }
+
+  @HasLocationAccess("locationId")
+  @Get("locations/:locationId")
+  async getUserLocations(@UserToken() userToken: IUserToken): Promise<any> {
+    return this.userAuthService.getAuthorizationsByUserName(userToken.userName);
   }
 }

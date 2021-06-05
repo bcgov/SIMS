@@ -22,6 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const userToken = payload as IUserToken;
+    userToken.authorizedParty = payload.azp;
     // For now we are adding all the roles from the different clients into one single array.
     // In the future we can decide how to proper handle roles, but the only issue to have
     // then flatten for now is if we create a role with the same name in 2 different
@@ -36,6 +37,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
       }
     });
+
+    // if (userToken.authorizedParty === AuthorizedParties.institution) {
+    //   const institutionUserToken = userToken as IInstitutionUserToken;
+    //   institutionUserToken.authorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
+    //     userToken.userName,
+    //   );
+    //   return institutionUserToken;
+    // }
 
     return userToken;
   }
