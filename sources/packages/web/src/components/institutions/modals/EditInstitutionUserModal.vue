@@ -14,17 +14,17 @@
         <form>
           <v-row>
             <v-col>
-              <span class="form-text text-muted mb-2"><b>User Name</b></span>
+              <span class="form-text text-muted mb-2"><strong>User Name</strong></span>
               <span class="form-text text-muted mb-2">
                 {{ userData?.user?.firstName }} {{ userData?.user?.lastName }}
               </span>
             </v-col>
             <v-col>
               <span class="form-text text-muted mb-2">
-                <b>Is this User an Admin?</b><br />
-                <b>
+                <strong>Is this User an Admin?</strong><br />
+                <strong>
                   Selected:<span v-if="isAdmin"> Yes </span><span v-else> No </span>
-                </b>
+                </strong>
               </span>
               <InputSwitch v-model="isAdmin" />
             </v-col>
@@ -42,11 +42,11 @@
               <v-row
                 ><v-col>
                   <span class="form-text text-muted mb-2">
-                    <b>Locations</b>
+                    <strong>Locations</strong>
                   </span> </v-col
                 ><v-col>
                   <span class="form-text text-muted mb-2">
-                    <b>User Type</b>
+                    <strong>User Type</strong>
                   </span>
                 </v-col>
               </v-row>
@@ -98,7 +98,7 @@ import {
   InstitutionLocationUserAuthDto,
   InstitutionUserWithUserType,
   InstitutionUserRoleLocation,
-  InstitutionUserAuthDetails,
+  InstitutionUserEdit,
 } from "@/types";
 
 export default {
@@ -125,6 +125,7 @@ export default {
     const invalidUserType = ref(false);
     const display = ref(true);
     const institutionLocationList = ref();
+    const payLoad = ref({} as InstitutionUserEdit);
     const closeEditUser = async () => {
       context.emit("updateShowEditInstitutionModal");
       invalidUserType.value = false;
@@ -187,39 +188,37 @@ export default {
       }
     };
     const preparPayload = () => {
-      const payLoad = {
+      payLoad.value = {
         userId: userData.value?.user?.id,
         userGuid: props.institutionUserName
           ? (props.institutionUserName as string)
           : undefined,
-        userType: isAdmin.value == true ? "admin" : undefined,
-        location:
-          isAdmin.value != true
-            ? (institutionLocationList.value
-                .map((el: InstitutionUserWithUserType) => {
-                  if (el.userType?.code) {
-                    return {
-                      locationId: el?.id,
-                      userType: el.userType?.code,
-                    };
-                  }
-                })
-                .filter((el: any) => el) as InstitutionUserRoleLocation[])
-            : undefined,
-      } as InstitutionUserAuthDetails;
-      return payLoad;
+        userType: isAdmin.value ? "admin" : undefined,
+        location: !isAdmin.value
+          ? (institutionLocationList.value
+              .map((el: InstitutionUserWithUserType) => {
+                if (el.userType?.code) {
+                  return {
+                    locationId: el?.id,
+                    userType: el.userType?.code,
+                  };
+                }
+              })
+              .filter((el: any) => el) as InstitutionUserRoleLocation[])
+          : undefined,
+      };
     };
     const submitEditUser = async () => {
       invalidUserType.value = false;
-      const payLoad = preparPayload();
+      preparPayload();
       if (
-        (payLoad && payLoad?.location && payLoad?.location?.length) ||
-        isAdmin.value == true
+        (payLoad.value && payLoad.value?.location && payLoad.value?.location?.length) ||
+        isAdmin.value
       ) {
         try {
           await InstitutionService.shared.updateUser(
             props.institutionUserName as string,
-            payLoad
+            payLoad.value
           );
           toast.add({
             severity: "success",
@@ -238,7 +237,7 @@ export default {
         closeEditUser();
         context.emit("getAllInstitutionUsers");
       } else {
-        if (payLoad?.location?.length === 0) {
+        if (payLoad.value?.location?.length === 0) {
           invalidUserType.value = true;
         }
       }
@@ -264,5 +263,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
