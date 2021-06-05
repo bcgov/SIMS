@@ -13,4 +13,5 @@ export enum AppRoutes {
   EditInstitutionLocation = "edit-institution-location",
   ManageInstitutionDesignation = "manage-desgination",
   InstitutionManageUsers = "manage-users",
+  DisabledUser="login/disabled-user"
 }

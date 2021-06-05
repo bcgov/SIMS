@@ -10,8 +10,7 @@ import {
 import { 
   BCeIDService, 
   InstitutionService, 
-  UserService, 
-  InstitutionLocationService
+  UserService
  } from "../../services";
 import {
   CreateInstitutionDto,
@@ -32,7 +31,6 @@ export class InstitutionController extends BaseController {
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,
-    private readonly institutionLocationService: InstitutionLocationService,
 
   ) {
     super();
@@ -167,7 +165,8 @@ export class InstitutionController extends BaseController {
     // Get institutionUser
     const institutionUser = await this.institutionService.getInstitutionUserByUserName(
       userName,
-    );if (!institutionUser) {
+    );
+    if (!institutionUser) {
       throw new UnprocessableEntityException("Not able to retrieve the institution location user.");
     } else if (!institutionUser.user.isActive){
       throw new UnprocessableEntityException(
@@ -221,10 +220,15 @@ export class InstitutionController extends BaseController {
     @Param("userName") userName: string,
     @Body() body: UserDto,
   ): Promise<void> {
-    // Check its a active user
+    // Check  user exists or not
     const institutionUser = await this.institutionService.getInstitutionUserByUserName(
       userName,
     ) as InstitutionUser;
+    if(!institutionUser){
+      throw new UnprocessableEntityException(
+        "user does not exist in the system.",
+      );
+    } 
     await this.userService.updateUserStatus(institutionUser.user.id, body.isActive);
 
   }

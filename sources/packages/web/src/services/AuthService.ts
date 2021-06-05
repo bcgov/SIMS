@@ -50,6 +50,7 @@ export default async function(
               ClientIdType.INSTITUTION,
               keycloak,
               false,
+              true
             );
             isForbiddenUser = true;
         } 

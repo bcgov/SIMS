@@ -24,9 +24,9 @@ export class UserController extends BaseController {
       if (!userInSABC) {
         return "False";
       } else {
-        if (userInSABC.isActive){
+        if (userInSABC.isActive) {
           return "True"
-        }else{
+        } else {
           return "Disabled";
         }
       }

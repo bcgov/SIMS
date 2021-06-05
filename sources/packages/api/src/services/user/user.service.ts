@@ -5,14 +5,16 @@ import { User } from "../../database/entities";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
-  
   constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(User));
   }
 
   async getUser(userName: string) {
-    return this.repo.findOne({ where: {userName:userName} });
+    return this.repo.findOne({
+      userName,
+    });
   }
+
   async updateUserStatus(userId: number, isActive: boolean){
     return await this.repo
     .createQueryBuilder()
@@ -21,7 +23,9 @@ export class UserService extends DataModelService<User> {
     .where("id = :id", { id: userId })
     .execute();
   }
+
   async getActiveUser(userName: string) {
     return this.repo.findOne({ where: {userName:userName, isActive: true} });
   }
+
 }

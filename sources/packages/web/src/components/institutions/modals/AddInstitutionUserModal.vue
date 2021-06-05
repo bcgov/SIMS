@@ -60,7 +60,8 @@
               </v-row>
               <v-row v-for="location in institutionLocationList" :key="location"
                 ><v-col>
-                  <span>{{ location?.name }}</span> <br />
+                  <span>{{ location?.name }}</span
+                  ><br />
                   <span>
                     <span>{{ location?.data?.address?.addressLine1 }}, </span>
                     <span>{{ location?.data?.address?.city }}, </span>

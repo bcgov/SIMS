@@ -379,7 +379,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
       .leftJoinAndSelect("authorizations.location", "location")
       .leftJoinAndSelect("authorizations.authType", "authType")
-      .where("institutionUser.id = :id", { id }) 
+      .where("institutionUser.id = :id", { id })
       .getOne();
   }
 

@@ -2,13 +2,9 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   Institutionlocation,
   InstitutionLocationsDetails,
-  InstitutionUser,
   InstitutionUserDto,
   InstitutionLocationUserAuthDto,
-  InstitutionUserWithUserType,
-  InstitutionUserAuthDetails
 } from "../../types";
-import { bool } from "yup";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: Institutionlocation,

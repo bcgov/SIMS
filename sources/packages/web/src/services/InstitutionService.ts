@@ -203,7 +203,6 @@ export class InstitutionService {
 
   public async updateUser(userName: string, data: InstitutionUserAuthDetails): Promise<void> {
     const payload = {} as InstitutionUserDto;
-    // payload.userId = data.userId;
 
     if (data.location) {
       // Add locations specific permissions.
