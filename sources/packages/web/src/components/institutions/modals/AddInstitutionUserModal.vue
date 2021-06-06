@@ -105,7 +105,11 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToast } from "primevue/usetoast";
-import { InstitutionUserWithUserType, InstitutionUser, UserAuth } from "@/types";
+import {
+  InstitutionUserWithUserType,
+  InstitutionUserAuthDetails,
+  UserAuth,
+} from "@/types";
 import Message from "primevue/message";
 
 export default {
@@ -130,7 +134,7 @@ export default {
     const selectUser = ref({} as UserAuth);
     const usersList = ref();
     const institutionLocationList = ref();
-    const payLoad = ref({} as InstitutionUser);
+    const payLoad = ref({} as InstitutionUserAuthDetails);
     const getInstitutionLocationList = async () => {
       //Get Institution Locations
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();

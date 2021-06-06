@@ -61,7 +61,7 @@ export interface InstitutionUserRoleLocation {
   userType?: string;
 }
 export interface InstitutionUserDto {
-  userId: string;
+  userId?: string;
   permissions: UserPermissionDto[];
 }
 
@@ -87,11 +87,6 @@ export interface InstitutionUserAuthDetails {
   userType?: string;
   location?: InstitutionUserRoleLocation[];
   userGuid?: string;
-}
+  userId?: string;
 
-export interface InstitutionUser extends InstitutionUserAuthDetails{
-  userId: string;
-}
-export interface InstitutionUserEdit extends InstitutionUserAuthDetails{
-  userId: number;
 }

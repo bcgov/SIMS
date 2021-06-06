@@ -15,8 +15,8 @@
       </Message>
 
       <Message severity="error" v-if="disabledUser">
-        Disabled User, you dont have access to the system. Please contact Administrator
-        for for informations.
+        Disabled User - you dont have access to the system. Please contact Administrator
+        for more informations.
       </Message>
     </template>
 

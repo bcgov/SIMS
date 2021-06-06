@@ -98,7 +98,7 @@ import {
   InstitutionLocationUserAuthDto,
   InstitutionUserWithUserType,
   InstitutionUserRoleLocation,
-  InstitutionUserEdit,
+  InstitutionUserAuthDetails,
 } from "@/types";
 
 export default {
@@ -125,7 +125,7 @@ export default {
     const invalidUserType = ref(false);
     const display = ref(true);
     const institutionLocationList = ref();
-    const payLoad = ref({} as InstitutionUserEdit);
+    const payLoad = ref({} as InstitutionUserAuthDetails);
     const closeEditUser = async () => {
       context.emit("updateShowEditInstitutionModal");
       invalidUserType.value = false;
@@ -189,7 +189,6 @@ export default {
     };
     const preparPayload = () => {
       payLoad.value = {
-        userId: userData.value?.user?.id,
         userGuid: props.institutionUserName
           ? (props.institutionUserName as string)
           : undefined,
