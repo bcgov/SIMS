@@ -7,12 +7,12 @@ import {
   UpdateInstitutionDto,
   Institutionlocation,
   InstitutionLocationsDetails,
-  InstitutionUser,
+  InstitutionUserAuthDetails,
   InstitutionUserResDto,
   InstitutionUserViewModel,
   InstitutionUserDto,
   UserPermissionDto,
-  InstitutionUserEdit
+  InstitutionUserRoleLocation
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -171,14 +171,16 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  public async createUser(data: InstitutionUser): Promise<void> {
+  public async prepareUserPayload(isNew:boolean, data:InstitutionUserAuthDetails) {
     const payload = {} as InstitutionUserDto;
-    payload.userId = data.userId;
+    if(isNew){
+      payload.userId = data.userId;
+    }
 
     if (data.location) {
       // Add locations specific permissions.
       payload.permissions = data.location.map(
-        permission =>
+        (permission: InstitutionUserRoleLocation) =>
           ({
             userType: permission.userType,
             locationId: permission.locationId,
@@ -192,7 +194,11 @@ export class InstitutionService {
         },
       ];
     }
+    return payload
+  }
 
+  public async createUser(data: InstitutionUserAuthDetails): Promise<void> {
+    const payload = await this.prepareUserPayload(true, data)
     await ApiClient.InstitutionLocation.createUser(payload);
   }
   
@@ -201,27 +207,8 @@ export class InstitutionService {
     return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
   }
 
-  public async updateUser(userName: string, data: InstitutionUserEdit): Promise<void> {
-    const payload = {} as InstitutionUserDto;
-
-    if (data.location) {
-      // Add locations specific permissions.
-      payload.permissions = data.location.map(
-        permission =>
-          ({
-            userType: permission.userType,
-            locationId: permission.locationId,
-          } as UserPermissionDto),
-      );
-    } else {
-      // Add institution specific permissions.
-      payload.permissions = [
-        {
-          userType: data.userType,
-        },
-      ];
-    }
-
+  public async updateUser(userName: string, data: InstitutionUserAuthDetails): Promise<void> {
+    const payload = await this.prepareUserPayload(false, data)
     await ApiClient.InstitutionLocation.updateUser(userName, payload);
   }
 
