@@ -2,7 +2,13 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseService } from "../../database/database.service";
 import { DatabaseModule } from "../../database/database.module";
-import { BCeIDService, ConfigService, UserService } from "../../services";
+import {
+  BCeIDService,
+  ConfigService,
+  UserService,
+  InstitutionService,
+  InstitutionLocationService,
+} from "../../services";
 import { UserController } from "./user.controller";
 
 describe("UserController", () => {
@@ -12,7 +18,13 @@ describe("UserController", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [UserService, BCeIDService, ConfigService],
+      providers: [
+        UserService,
+        BCeIDService,
+        ConfigService,
+        InstitutionService,
+        InstitutionLocationService,
+      ],
       controllers: [UserController],
     }).compile();
 

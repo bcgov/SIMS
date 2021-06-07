@@ -3,7 +3,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { DatabaseService } from "../../database/database.service";
 import { DatabaseModule } from "../../database/database.module";
 import { BCeIDService } from "../bceid/bceid.service";
-import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { ConfigService } from "../config/config.service";
 import { UserService } from "./user.service";
 
@@ -14,12 +13,7 @@ describe("UserService", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [
-        UserService,
-        BCeIDService,
-        ConfigService,
-        InstitutionLocationService,
-      ],
+      providers: [UserService, BCeIDService, ConfigService],
     }).compile();
 
     await module.init();
