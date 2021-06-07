@@ -45,11 +45,11 @@ export class UserApi extends HttpBaseClient {
     }
   }
 
-  public async allUserLocationsApi(headers?: any): Promise<UserLocationDto[]> {
+  public async allUserLocationsApi(): Promise<UserLocationDto[]> {
     try {
       const response = await this.apiClient.get(
         "users/locations",
-        headers || this.addAuthHeader(),
+        this.addAuthHeader(),
       );
       return response.data as UserLocationDto[];
     } catch (error) {

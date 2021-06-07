@@ -21,7 +21,6 @@ export default {
   },
   setup() {
     const router = useRouter();
-    const subItems = ref<MenuModel[]>([]);
     const items = ref<MenuModel[]>([
       {
         label: "Dashboard",

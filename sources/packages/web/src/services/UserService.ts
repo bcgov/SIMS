@@ -35,7 +35,7 @@ export class UserService {
     }
   }
 
-  async getAllUserLocations(authHeader?: any): Promise<UserLocationDto[]> {
-    return await ApiClient.User.allUserLocationsApi(authHeader);
+  async getAllUserLocations(): Promise<UserLocationDto[]> {
+    return await ApiClient.User.allUserLocationsApi();
   }
 }
