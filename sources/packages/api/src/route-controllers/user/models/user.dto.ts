@@ -1,3 +1,3 @@
 export interface UserDto {
-    isActive: boolean;
+  isActive: boolean;
 }

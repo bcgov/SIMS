@@ -12,7 +12,7 @@ import {
   InstitutionUserViewModel,
   InstitutionUserDto,
   UserPermissionDto,
-  InstitutionUserRoleLocation
+  InstitutionUserRoleLocation,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -171,9 +171,12 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  public async prepareUserPayload(isNew:boolean, data:InstitutionUserAuthDetails) {
+  public async prepareUserPayload(
+    isNew: boolean,
+    data: InstitutionUserAuthDetails,
+  ) {
     const payload = {} as InstitutionUserDto;
-    if(isNew){
+    if (isNew) {
       payload.userId = data.userId;
     }
 
@@ -194,26 +197,29 @@ export class InstitutionService {
         },
       ];
     }
-    return payload
+    return payload;
   }
 
   public async createUser(data: InstitutionUserAuthDetails): Promise<void> {
-    const payload = await this.prepareUserPayload(true, data)
+    const payload = await this.prepareUserPayload(true, data);
     await ApiClient.InstitutionLocation.createUser(payload);
   }
-  
 
   public async getInstitutionLocationUserDetails(userName: string) {
-    return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(userName);
+    return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(
+      userName,
+    );
   }
 
-  public async updateUser(userName: string, data: InstitutionUserAuthDetails): Promise<void> {
-    const payload = await this.prepareUserPayload(false, data)
+  public async updateUser(
+    userName: string,
+    data: InstitutionUserAuthDetails,
+  ): Promise<void> {
+    const payload = await this.prepareUserPayload(false, data);
     await ApiClient.InstitutionLocation.updateUser(userName, payload);
   }
 
-  
-  public async updateUserStatus(userName: string, userStatus: boolean){
+  public async updateUserStatus(userName: string, userStatus: boolean) {
     return ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
   }
 

@@ -27,7 +27,10 @@ import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { InstitutionUserTypeAndRoleResponseDto, InstitutionUserPermissionDto } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
+import {
+  InstitutionUserTypeAndRoleResponseDto,
+  InstitutionUserPermissionDto,
+} from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 
@@ -49,9 +52,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.institutionUserTypeAndRoleRepo = connection.getRepository(
       InstitutionUserTypeAndRole,
     );
-    this.institutionUserAuthRepo = connection.getRepository(
-      InstitutionUserAuth,
-    );
+    this.institutionUserAuthRepo =
+      connection.getRepository(InstitutionUserAuth);
     this.logger.log("[Created]");
   }
 
@@ -81,7 +83,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
     auth.authType = authType;
     auth.institutionUser = institutionUser;
-    auth.location = location? location[0] : {};
+    auth.location = location;
     finalInstitutionUser.authorizations = [auth];
     return await this.institutionUserRepo.save(finalInstitutionUser);
   }
@@ -216,7 +218,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoin("institution.users", "institutionUsers")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
-      .andWhere("(user.isActive = :isActive )", {isActive: true})
+      .andWhere("(user.isActive = :isActive )", { isActive: true })
       .getOneOrFail();
   }
 
@@ -398,21 +400,23 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   async deleteAssociationByUserID(
-    institutionUser: InstitutionUser
+    institutionUser: InstitutionUser,
   ): Promise<void> {
-    const previousAssociations = await this.institutionUserAuthRepo.find({institutionUser:institutionUser});
+    const previousAssociations = await this.institutionUserAuthRepo.find({
+      institutionUser: institutionUser,
+    });
     await this.institutionUserAuthRepo.remove(previousAssociations);
   }
 
   async updateInstitutionUser(
     permissionInfo: InstitutionUserPermissionDto,
-    institutionUser: InstitutionUser
+    institutionUser: InstitutionUser,
   ): Promise<InstitutionUserAuth[]> {
-   let newAuthorizationEntries = [] as InstitutionUserAuth[]
+    let newAuthorizationEntries = [] as InstitutionUserAuth[];
     // Create the permissions for the user under the institution.
     for (const permission of permissionInfo.permissions) {
       const newAuthorization = new InstitutionUserAuth();
-      newAuthorization.institutionUser = institutionUser
+      newAuthorization.institutionUser = institutionUser;
       if (permission.locationId) {
         // Add a location specific permission.
         newAuthorization.location = {
@@ -430,10 +434,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         );
       }
       newAuthorization.authType = authType;
-      newAuthorizationEntries.push(newAuthorization)
+      newAuthorizationEntries.push(newAuthorization);
     }
     // delete existing associations
-    await this.deleteAssociationByUserID(institutionUser)
+    await this.deleteAssociationByUserID(institutionUser);
     return this.institutionUserAuthRepo.save(newAuthorizationEntries);
   }
 }

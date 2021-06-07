@@ -7,3 +7,4 @@ export * from "./institution-user-type-role.model";
 export * from "./institution-user.model";
 export * from "./institution-user-auth.model";
 export * from "./sequence-controls.model";
+export * from "./institution-location.model";

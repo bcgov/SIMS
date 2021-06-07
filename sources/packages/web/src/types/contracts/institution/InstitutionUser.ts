@@ -1,6 +1,9 @@
-import {InstitutionlocationData, InstitutionLocationsDetails} from "./AddInstitutionLocation"
+import {
+  InstitutionlocationData,
+  InstitutionLocationsDetails,
+} from "./AddInstitutionLocation";
 
-import{InstitutionDto} from "./CreateInstitutionDto"
+import { InstitutionDto } from "./CreateInstitutionDto";
 export interface InstitutionUserResDto {
   id: number;
   user: InstitutionUserDetails;
@@ -24,16 +27,15 @@ export interface InstitutionUserViewModel {
   location: string;
   userType: string;
   role: string;
-  isActive: boolean; 
+  isActive: boolean;
   disableRemove?: boolean;
 }
 
-export interface InstitutionAuthType{
+export interface InstitutionAuthType {
   active: boolean;
   id: number;
   role: string;
   type: string;
-
 }
 export interface InstitutionAuth {
   id?: number;
@@ -41,13 +43,13 @@ export interface InstitutionAuth {
   location?: InstitutionlocationData;
 }
 
-export interface InstitutionUserDetails{
+export interface InstitutionUserDetails {
   email: string;
   firstName: string;
   id: number;
   lastName: string;
   userName: string;
-  isActive:boolean
+  isActive: boolean;
 }
 export interface InstitutionLocationUserAuthDto {
   id: number;
@@ -71,16 +73,17 @@ export interface UserPermissionDto extends InstitutionUserRoleLocation {
 }
 
 export interface UserAuth {
-    name?: string;
-    code: string;
-    id?:string
+  name?: string;
+  code: string;
+  id?: string;
 }
 
-export interface InstitutionUserWithUserType extends InstitutionLocationsDetails {
+export interface InstitutionUserWithUserType
+  extends InstitutionLocationsDetails {
   userType?: {
     name?: string;
     code?: string;
-  },
+  };
 }
 
 export interface InstitutionUserAuthDetails {
@@ -88,5 +91,4 @@ export interface InstitutionUserAuthDetails {
   location?: InstitutionUserRoleLocation[];
   userGuid?: string;
   userId?: string;
-
 }

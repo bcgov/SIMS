@@ -37,13 +37,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LoginWithBusinessBCeID,
         name: InstitutionRoutesConst.LOGIN_WITH_BUSINESS_BCEID,
         component: Login,
-        props: { showBasicBCeIDMessage: true, showBasicDisabledUserMessage: false },
+        props: {
+          showBasicBCeIDMessage: true,
+          showBasicDisabledUserMessage: false,
+        },
       },
       {
         path: AppRoutes.DisabledUser,
         name: InstitutionRoutesConst.DISABLED_LOGIN,
         component: Login,
-        props: { showBasicBCeIDMessage: false, showBasicDisabledUserMessage: true },
+        props: {
+          showBasicBCeIDMessage: false,
+          showBasicDisabledUserMessage: true,
+        },
       },
       {
         path: "",
