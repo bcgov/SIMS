@@ -5,8 +5,8 @@ export interface InstitutionUserTypeAndRoleResponseDto {
 
 export interface InstitutionUserPermissionDto {
   permissions: {
-    userType: string,
-     locationId: number,
-     userRole?: string;
-    }[]
+    userType: string;
+    locationId: number;
+    userRole?: string;
+  }[];
 }

@@ -7,15 +7,15 @@ export interface InstitutionAddress {
   provinceState: string;
 }
 export interface Institutionlocation extends InstitutionAddress {
-  locationName: string
-} 
+  locationName: string;
+}
 export interface InstitutionlocationData {
-  id?:number
+  id?: number;
   name: string;
-  data:InstitutionAddress;
+  data: InstitutionAddress;
 }
 export interface InstitutionLocationsDetails {
-  id:number,
+  id: number;
   name: string;
   data: {
     address: {

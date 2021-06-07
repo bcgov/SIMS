@@ -5,13 +5,9 @@ import {
   Patch,
   Post,
   UnprocessableEntityException,
-  Param
+  Param,
 } from "@nestjs/common";
-import { 
-  BCeIDService, 
-  InstitutionService, 
-  UserService
- } from "../../services";
+import { BCeIDService, InstitutionService, UserService } from "../../services";
 import {
   CreateInstitutionDto,
   InstitutionDetailDto,
@@ -20,10 +16,17 @@ import {
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
+import {
+  InstitutionUserRespDto,
+  InstitutionLocationUserAuthDto,
+  InstitutionUserAuthorizations,
+} from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
-import { InstitutionUserTypeAndRoleResponseDto , InstitutionUserPermissionDto} from "./models/institution-user-type-role.res.dto";
-import {  InstitutionUser, InstitutionUserAuth } from "../../database/entities";
+import {
+  InstitutionUserTypeAndRoleResponseDto,
+  InstitutionUserPermissionDto,
+} from "./models/institution-user-type-role.res.dto";
+import { InstitutionUserAuth } from "../../database/entities";
 import { UserDto } from "../user/models/user.dto";
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -31,7 +34,6 @@ export class InstitutionController extends BaseController {
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,
-
   ) {
     super();
   }
@@ -144,11 +146,12 @@ export class InstitutionController extends BaseController {
     }
 
     // Create the user user and the related records.
-    const createdInstitutionUser = await this.institutionService.createInstitutionUser(
-      institution.id,
-      bceidUserAccount,
-      payload,
-    );
+    const createdInstitutionUser =
+      await this.institutionService.createInstitutionUser(
+        institution.id,
+        bceidUserAccount,
+        payload,
+      );
 
     return createdInstitutionUser.id;
   }
@@ -161,19 +164,36 @@ export class InstitutionController extends BaseController {
   @Get("/user/:userName")
   async getInstitutionLocationByUserName(
     @Param("userName") userName: string,
-  ): Promise<InstitutionUser> {
+  ): Promise<InstitutionLocationUserAuthDto> {
     // Get institutionUser
-    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
-      userName,
-    );
-    if (!institutionUser) {
-      throw new UnprocessableEntityException("Not able to retrieve the institution location user.");
-    } else if (!institutionUser.user.isActive){
-      throw new UnprocessableEntityException(
-        "Not an Active User.",
-      );
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+    // disabled users details can't be edited
+    if (!institutionUser.user.isActive) {
+      throw new UnprocessableEntityException("Not an Active User.");
     }
-    return institutionUser;
+    const institutionUserDetals: InstitutionLocationUserAuthDto = {
+      id: institutionUser.id,
+      user: {
+        firstName: institutionUser.user?.firstName,
+        lastName: institutionUser.user?.lastName,
+        userName: institutionUser.user?.userName,
+        isActive: institutionUser.user?.isActive,
+        id: institutionUser.user?.id,
+      },
+      authorizations: institutionUser.authorizations?.map((el) => {
+        const userAuth: InstitutionUserAuthorizations = {
+          location: {
+            name: el.location?.name,
+            data: el.location?.data,
+            id: el.location?.id,
+          },
+          authType: { type: el.authType?.type, role: el.authType?.role },
+        };
+        return userAuth;
+      }),
+    };
+    return institutionUserDetals;
   }
 
   @Patch("/user/:userName")
@@ -181,19 +201,16 @@ export class InstitutionController extends BaseController {
     @Param("userName") userName: string,
     @Body() payload: InstitutionUserPermissionDto,
     @UserToken() user: IUserToken,
-  )  : Promise<number[]>{
-     // Check its a active user
-    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
-      userName,
-    );
-    if(!institutionUser){
+  ): Promise<number[]> {
+    // Check its a active user
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+    if (!institutionUser) {
       throw new UnprocessableEntityException(
         "user does not exist in the system.",
       );
-    } else if (!institutionUser.user.isActive){
-      throw new UnprocessableEntityException(
-        "Not an Active User.",
-      );
+    } else if (!institutionUser.user.isActive) {
+      throw new UnprocessableEntityException("Not an Active User.");
     }
     // Get institution
     const institution = await this.institutionService.getInstituteByUserName(
@@ -204,14 +221,14 @@ export class InstitutionController extends BaseController {
         "The user has no institution associated.",
       );
     }
-    
+
     // remove existing associations and add new associations
-    const updateInstitutionUser = await this.institutionService.updateInstitutionUser(
-      payload,
-      institutionUser
-    );
-    return updateInstitutionUser.map((el:InstitutionUserAuth) => el.id);
-    
+    const updateInstitutionUser =
+      await this.institutionService.updateInstitutionUser(
+        payload,
+        institutionUser,
+      );
+    return updateInstitutionUser.map((el: InstitutionUserAuth) => el.id);
   }
 
   @Patch("user-status/:userName")
@@ -221,15 +238,16 @@ export class InstitutionController extends BaseController {
     @Body() body: UserDto,
   ): Promise<void> {
     // Check  user exists or not
-    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
-      userName,
-    );
-    if(!institutionUser){
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
+    if (!institutionUser) {
       throw new UnprocessableEntityException(
         "user does not exist in the system.",
       );
-    } 
-    await this.userService.updateUserStatus(institutionUser.user.id, body.isActive);
-
+    }
+    await this.userService.updateUserStatus(
+      institutionUser.user.id,
+      body.isActive,
+    );
   }
 } //Class ends

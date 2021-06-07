@@ -7,7 +7,6 @@ import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 
-
 @Controller("users")
 export class UserController extends BaseController {
   constructor(
@@ -25,7 +24,7 @@ export class UserController extends BaseController {
         return "False";
       } else {
         if (userInSABC.isActive) {
-          return "True"
+          return "True";
         } else {
           return "Disabled";
         }

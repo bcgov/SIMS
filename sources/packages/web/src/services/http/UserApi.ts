@@ -1,4 +1,7 @@
-import { BCeIDDetailsDto, BCeIDAccountsDto } from "../../types/contracts/UserContract";
+import {
+  BCeIDDetailsDto,
+  BCeIDAccountsDto,
+} from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class UserApi extends HttpBaseClient {
@@ -40,5 +43,4 @@ export class UserApi extends HttpBaseClient {
       throw error;
     }
   }
-
 }
