@@ -33,6 +33,7 @@ import {
 } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
+import { getConnection } from "typeorm";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -218,7 +219,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoin("institution.users", "institutionUsers")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
-      .andWhere("(user.isActive = :isActive )", { isActive: true })
+      .andWhere("user.isActive = :isActive", { isActive: true })
       .getOneOrFail();
   }
 
@@ -399,19 +400,18 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getOne();
   }
 
-  async deleteAssociationByUserID(
+  async getAssociationByUserID(
     institutionUser: InstitutionUser,
-  ): Promise<void> {
-    const previousAssociations = await this.institutionUserAuthRepo.find({
+  ): Promise<InstitutionUserAuth[]> {
+    return await this.institutionUserAuthRepo.find({
       institutionUser: institutionUser,
     });
-    await this.institutionUserAuthRepo.remove(previousAssociations);
   }
 
   async updateInstitutionUser(
     permissionInfo: InstitutionUserPermissionDto,
     institutionUser: InstitutionUser,
-  ): Promise<InstitutionUserAuth[]> {
+  ): Promise<void> {
     let newAuthorizationEntries = [] as InstitutionUserAuth[];
     // Create the permissions for the user under the institution.
     for (const permission of permissionInfo.permissions) {
@@ -436,8 +436,29 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       newAuthorization.authType = authType;
       newAuthorizationEntries.push(newAuthorization);
     }
-    // delete existing associations
-    await this.deleteAssociationByUserID(institutionUser);
-    return this.institutionUserAuthRepo.save(newAuthorizationEntries);
+
+    // establish  database connection
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    // get previous associations
+    const previousAssociations = await this.getAssociationByUserID(
+      institutionUser,
+    );
+    // open new transaction:
+    await queryRunner.startTransaction();
+    try {
+      // delete existing associations
+      await queryRunner.manager.remove(previousAssociations);
+      // add new associations
+      await queryRunner.manager.save(newAuthorizationEntries);
+      // commit transaction :
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // rollback on exceptions
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // release query runner
+      await queryRunner.release();
+    }
   }
 }

@@ -13,6 +13,8 @@ import {
   InstitutionUserDto,
   UserPermissionDto,
   InstitutionUserRoleLocation,
+  UserAuth,
+  InstitutionUserWithUserType,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -171,7 +173,7 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  public async prepareUserPayload(
+  private async prepareUserPayload(
     isNew: boolean,
     data: InstitutionUserAuthDetails,
   ) {
@@ -221,5 +223,53 @@ export class InstitutionService {
 
   public async updateUserStatus(userName: string, userStatus: boolean) {
     return ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
+  }
+
+  public async prepareAddUserPayload(
+    isAdmin: boolean,
+    selectUser: UserAuth,
+    institutionLocationList: InstitutionLocationsDetails[],
+  ) {
+    const payLoad: InstitutionUserAuthDetails = {
+      userId: selectUser.code,
+      userType: isAdmin ? "admin" : undefined,
+      userGuid: selectUser.id,
+      location: !isAdmin
+        ? institutionLocationList
+            .map((el: InstitutionUserWithUserType) => {
+              if (el.userType?.code) {
+                return {
+                  locationId: el.id,
+                  userType: el.userType?.code,
+                };
+              }
+            })
+            .filter((el: any) => el) as InstitutionUserRoleLocation[]
+        : undefined,
+    };
+
+    return payLoad;
+  }
+
+  public async prepareEditUserPayload(institutionUserName: string, isAdmin: boolean, institutionLocationList: InstitutionUserWithUserType[]){
+    const payLoad = {
+      userGuid: institutionUserName
+        ? (institutionUserName as string)
+        : undefined,
+      userType: isAdmin ? "admin" : undefined,
+      location: !isAdmin
+        ? (institutionLocationList
+            .map((el: InstitutionUserWithUserType) => {
+              if (el.userType?.code) {
+                return {
+                  locationId: el?.id,
+                  userType: el.userType?.code,
+                };
+              }
+            })
+            .filter((el: any) => el) as InstitutionUserRoleLocation[])
+        : undefined,
+    };
+    return payLoad
   }
 }

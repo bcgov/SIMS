@@ -49,7 +49,7 @@ export default {
       required: false,
       default: false,
     },
-    showBasicDisabledUserMessage: {
+    showDisabledUserMessage: {
       type: Boolean,
       required: false,
       default: false,
@@ -57,7 +57,7 @@ export default {
   },
   setup(props: any) {
     const basicBCeID = ref(props.showBasicBCeIDMessage);
-    const disabledUser = ref(props.showBasicDisabledUserMessage);
+    const disabledUser = ref(props.showDisabledUserMessage);
     const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",

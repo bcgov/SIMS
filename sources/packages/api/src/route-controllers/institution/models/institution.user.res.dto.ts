@@ -1,4 +1,4 @@
-import { User, InstitutionUserAuth, InstitutionLocation,  InstitutionUserTypeAndRole } from "../../../database/entities";
+import { User, InstitutionLocation,  InstitutionUserTypeAndRole } from "../../../database/entities";
 
 
 export interface InstitutionUserRespDto {

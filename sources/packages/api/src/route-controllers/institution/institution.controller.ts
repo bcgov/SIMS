@@ -172,7 +172,7 @@ export class InstitutionController extends BaseController {
     if (!institutionUser.user.isActive) {
       throw new UnprocessableEntityException("Not an Active User.");
     }
-    const institutionUserDetals: InstitutionLocationUserAuthDto = {
+    return {
       id: institutionUser.id,
       user: {
         firstName: institutionUser.user?.firstName,
@@ -182,18 +182,16 @@ export class InstitutionController extends BaseController {
         id: institutionUser.user?.id,
       },
       authorizations: institutionUser.authorizations?.map((el) => {
-        const userAuth: InstitutionUserAuthorizations = {
+        return {
           location: {
             name: el.location?.name,
             data: el.location?.data,
             id: el.location?.id,
           },
           authType: { type: el.authType?.type, role: el.authType?.role },
-        };
-        return userAuth;
+        } as InstitutionUserAuthorizations;
       }),
-    };
-    return institutionUserDetals;
+    } as InstitutionLocationUserAuthDto;
   }
 
   @Patch("/user/:userName")
@@ -201,7 +199,7 @@ export class InstitutionController extends BaseController {
     @Param("userName") userName: string,
     @Body() payload: InstitutionUserPermissionDto,
     @UserToken() user: IUserToken,
-  ): Promise<number[]> {
+  ): Promise<void> {
     // Check its a active user
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
@@ -228,7 +226,7 @@ export class InstitutionController extends BaseController {
         payload,
         institutionUser,
       );
-    return updateInstitutionUser.map((el: InstitutionUserAuth) => el.id);
+    // return updateInstitutionUser.map((el: InstitutionUserAuth) => el.id);
   }
 
   @Patch("user-status/:userName")
