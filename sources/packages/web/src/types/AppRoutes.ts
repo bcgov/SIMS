@@ -11,6 +11,9 @@ export enum AppRoutes {
   InstitutionManageLocations = "manage-locations",
   AddInstitutionLocation = "add-institution-location",
   EditInstitutionLocation = "edit-institution-location",
+  LocationPrograms = "location-programs",
+  LocationStudents = "location-students",
+  LocationUsers = "location-users",
   ManageInstitutionDesignation = "manage-desgination",
   InstitutionManageUsers = "manage-users",
 }

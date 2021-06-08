@@ -25,6 +25,9 @@ export const InstitutionRoutesConst = {
   EDIT_INSTITUTION_LOCATION: Symbol(),
   MANAGE_DESGINATION: Symbol(),
   MANAGE_USERS: Symbol(),
+  LOCATION_PROGRAMS: Symbol(),
+  LOCATION_STUDENTS: Symbol(),
+  LOCATION_USERS: Symbol(),
 };
 
 export const SharedRouteConst = {
