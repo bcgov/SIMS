@@ -4,7 +4,10 @@ import {
 } from "../../auth/user-types.enum";
 
 export class InstitutionUserAuthorizations {
-  constructor(private readonly authorizations: Authorizations[] = []) {}
+  constructor(
+    public readonly institutionId: number = 0,
+    private readonly authorizations: Authorizations[] = [],
+  ) {}
 
   isAdmin(): boolean {
     return this.authorizations.some(

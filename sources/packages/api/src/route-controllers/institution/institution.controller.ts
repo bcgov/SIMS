@@ -13,7 +13,7 @@ import {
   InstitutionDto,
 } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
@@ -38,7 +38,7 @@ export class InstitutionController extends BaseController {
   @Post()
   async create(
     @Body() payload: CreateInstitutionDto,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
@@ -54,7 +54,7 @@ export class InstitutionController extends BaseController {
   @Patch()
   async update(
     @Body() payload: InstitutionDto,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ) {
     await this.institutionService.updateInstitution(userToken, payload);
   }
@@ -62,20 +62,20 @@ export class InstitutionController extends BaseController {
   @IsInstitutionAdmin()
   @Get()
   async institutionDetail(
-    @UserToken() token: IUserToken,
+    @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionDetailDto> {
     return this.institutionService.institutionDetail(token);
   }
 
   @Patch("/sync")
-  async sync(@UserToken() token: IUserToken) {
+  async sync(@UserToken() token: IInstitutionUserToken) {
     await this.institutionService.syncInstitution(token);
   }
 
   @IsInstitutionAdmin()
   @Get("/users")
   async allUsers(
-    @UserToken() user: IUserToken,
+    @UserToken() user: IInstitutionUserToken,
   ): Promise<InstitutionUserRespDto[]> {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
@@ -115,7 +115,7 @@ export class InstitutionController extends BaseController {
   @Post("/user")
   async createInstitutionUserWithAuth(
     @Body() payload: InstitutionUserAuthDto,
-    @UserToken() user: IUserToken,
+    @UserToken() user: IInstitutionUserToken,
   ): Promise<number> {
     // Get institution
     const institution = await this.institutionService.getInstituteByUserName(

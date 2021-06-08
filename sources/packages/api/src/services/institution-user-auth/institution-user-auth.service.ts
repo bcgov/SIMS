@@ -25,22 +25,23 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
       .where("user.user_name = :userName", { userName })
       .select([
         "userAuth.institution_location_id",
+        "institutionUser.institution_id",
         "authType.user_type",
         "authType.user_role",
       ])
       .getRawMany();
 
     if (userAuthorizations.length) {
-      // If not an admin, load the locations authorizations.
+      // Load all the authorizations (admin and locations).
       const authorizations = userAuthorizations.map((auth) => ({
         locationId: auth.institution_location_id as number,
         userType: auth.user_type as InstitutionUserTypes,
         userRole: auth.user_role as InstitutionUserRoles,
       }));
-
-      return new InstitutionUserAuthorizations(authorizations);
+      const institutionId = userAuthorizations[0].institution_id;
+      return new InstitutionUserAuthorizations(institutionId, authorizations);
     }
 
-    return new InstitutionUserAuthorizations([]);
+    return new InstitutionUserAuthorizations();
   }
 }

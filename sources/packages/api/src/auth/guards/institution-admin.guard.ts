@@ -4,6 +4,9 @@ import { InstitutionUserAuthorizations } from "../../services/institution-user-a
 import { IS_INSTITUTION_ADMIN_KEY } from "../decorators/institution-admin.decorator";
 import { InstitutionUserRoles } from "../user-types.enum";
 
+/**
+ * Inspect the token to check if the user has institution admin rights.
+ */
 @Injectable()
 export class InstitutionAdminGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
@@ -18,7 +21,7 @@ export class InstitutionAdminGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    const authorizations = user.authorizations as InstitutionUserAuthorizations;
+    const authorizations = user.institutionAuthorizations as InstitutionUserAuthorizations;
 
     if (!authorizations.isAdmin()) {
       return false;

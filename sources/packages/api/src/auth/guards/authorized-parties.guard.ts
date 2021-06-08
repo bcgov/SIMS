@@ -3,6 +3,10 @@ import { Reflector } from "@nestjs/core";
 import { AuthorizedParties } from "../authorized-parties.enum";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
 
+/**
+ * Inspect the token to check if the correct authorized party
+ * (azp token property) is present on the user token.
+ */
 @Injectable()
 export class AuthorizedPartiesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

@@ -22,7 +22,7 @@ export class InstitutionLocationGuard implements CanActivate {
 
     if (hasLocationUserType) {
       const { user } = context.switchToHttp().getRequest();
-      const authorizations = user.authorizations as InstitutionUserAuthorizations;
+      const authorizations = user.institutionAuthorizations as InstitutionUserAuthorizations;
 
       if (authorizations.isAdmin()) {
         return true;

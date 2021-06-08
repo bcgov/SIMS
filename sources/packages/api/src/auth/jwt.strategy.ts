@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { KeycloakConfig } from "./keycloakConfig";
 import { IInstitutionUserToken, IUserToken } from "./userToken.interface";
 import { InstitutionUserAuthService, UserService } from "../services";
@@ -50,18 +50,29 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         userToken.authorizedParty,
       )
     ) {
-      // Add DB user information to the token.
+      // Get DB user information to be added to the token.
       const dbUser = await this.userService.getUserLoginInfo(
         userToken.userName,
       );
-      userToken.userId = dbUser.id;
-      userToken.isActive = dbUser.isActive;
+
+      if (dbUser?.isActive === false) {
+        throw new UnauthorizedException("User is not active.");
+      }
+
+      // Check if the user exists on DB.
+      // When Students and Institutions users logins for the first time
+      // there will no records until the Institution Profile or
+      // Student Profile be finalized.
+      if (dbUser) {
+        userToken.userId = dbUser.id;
+        userToken.isActive = dbUser.isActive;
+      }
 
       // If the token represents an institution, loads additional information
       // from the database that is needed for authorization.
       if (userToken.authorizedParty === AuthorizedParties.institution) {
         const institutionUserToken = userToken as IInstitutionUserToken;
-        institutionUserToken.authorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
+        institutionUserToken.institutionAuthorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
           userToken.userName,
         );
         return institutionUserToken;
