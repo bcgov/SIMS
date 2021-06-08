@@ -24,9 +24,6 @@ export default {
       type: String,
       required: true,
     },
-    setup(props: any) {
-      props.locationName;
-    },
   },
 };
 </script>
