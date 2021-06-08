@@ -25,10 +25,8 @@ export default {
       required: true,
     },
     setup(props: any) {
-      const locationName = props.locationName;
+      props.locationName;
     },
   },
 };
 </script>
-
-<style></style>

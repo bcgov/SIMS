@@ -105,9 +105,8 @@ export class UserController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<UserLocationDto[]> {
     // get all User locations.
-    const userlocations = await this.institutionLocationService.getAllUserLocations(
+    return this.institutionLocationService.getAllUserLocations(
       userToken.userName,
     );
-    return userlocations;
   }
 }

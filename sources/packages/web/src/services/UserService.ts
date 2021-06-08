@@ -36,6 +36,6 @@ export class UserService {
   }
 
   async getAllUserLocations(): Promise<UserLocationDto[]> {
-    return await ApiClient.User.allUserLocationsApi();
+    return ApiClient.User.allUserLocationsApi();
   }
 }

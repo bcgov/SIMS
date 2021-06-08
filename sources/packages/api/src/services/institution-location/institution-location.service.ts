@@ -116,7 +116,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getOne();
   }
 
-  //TODO query to be replaced, when the authorization is in place
+  //Query to be replaced, when the authorization is in place
   async getAllUserLocations(userName: string): Promise<UserLocationDto[]> {
     return this.repo
       .query(`SELECT institutionlocations.id, institutionlocations.NAME
