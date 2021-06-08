@@ -126,9 +126,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
               LEFT JOIN       sims.institution_user_auth INSTITUTIONUSERAUTH 
               ON              institutionuserauth.institution_user_id = institutionuser.id 
               LEFT OUTER JOIN sims.institution_locations INSTITUTIONLOCATIONS 
-              ON              institutionlocations.institution_id = institutionuser.id 
-              AND             institutionlocations.id = institutionuserauth.institution_location_id 
-              OR              institutionuserauth.institution_location_id IS NULL 
+              ON              institutionlocations.institution_id = institutionuser.institution_id 
+              AND             (institutionlocations.id = institutionuserauth.institution_location_id 
+              OR              institutionuserauth.institution_location_id IS NULL )
               WHERE           users.user_name = '${userName}'`);
   }
 }
