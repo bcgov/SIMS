@@ -72,7 +72,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // from the database that is needed for authorization.
       if (userToken.authorizedParty === AuthorizedParties.institution) {
         const institutionUserToken = userToken as IInstitutionUserToken;
-        institutionUserToken.institutionAuthorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
+        institutionUserToken.authorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
           userToken.userName,
         );
         return institutionUserToken;

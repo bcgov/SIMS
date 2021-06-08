@@ -116,11 +116,13 @@ export class InstitutionLocationsController extends BaseController {
     return updateResult.affected;
   }
 
-  @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
+    // TODO: Change to return only the locations that the user has access.
+    // It is currently returning all the locations for the inistitution.
+
     //To retrive institution id
     const institutionDetails = await this.institutionService.getInstituteByUserName(
       userToken.userName,

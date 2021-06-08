@@ -26,7 +26,7 @@ export class UserService extends DataModelService<User> {
     const user = await this.repo
       .createQueryBuilder("user")
       .where("user.user_name = :userName", { userName })
-      .select(["user.id"])
+      .select(["user.id", "user.is_active"])
       .getRawOne();
 
     if (!user) {
@@ -38,7 +38,7 @@ export class UserService extends DataModelService<User> {
 
     return {
       id: user.id,
-      isActive: true,
+      isActive: user.is_active,
     };
   }
 

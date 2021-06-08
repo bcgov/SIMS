@@ -24,5 +24,5 @@ export interface IUserToken {
 }
 
 export interface IInstitutionUserToken extends IUserToken {
-  institutionAuthorizations: InstitutionUserAuthorizations;
+  authorizations: InstitutionUserAuthorizations;
 }

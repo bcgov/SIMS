@@ -21,7 +21,7 @@ export class InstitutionAdminGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    const authorizations = user.institutionAuthorizations as InstitutionUserAuthorizations;
+    const authorizations = user.authorizations as InstitutionUserAuthorizations;
 
     if (!authorizations.isAdmin()) {
       return false;
