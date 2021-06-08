@@ -14,4 +14,17 @@ export class UserService extends DataModelService<User> {
       userName,
     });
   }
+
+  async updateUserStatus(userId: number, isActive: boolean) {
+    return this.repo
+      .createQueryBuilder()
+      .update(User)
+      .set({ isActive: isActive })
+      .where("id = :id", { id: userId })
+      .execute();
+  }
+
+  async getActiveUser(userName: string) {
+    return this.repo.findOne({ userName: userName, isActive: true });
+  }
 }

@@ -11,7 +11,7 @@ import {
   InstitutionUserTypeAndRole,
   User,
 } from "../../database/entities";
-import { Connection, Repository } from "typeorm";
+import { Connection, Repository, getConnection } from "typeorm";
 import {
   InstitutionUserRole,
   InstitutionUserType,
@@ -27,7 +27,10 @@ import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { InstitutionUserTypeAndRoleResponseDto } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
+import {
+  InstitutionUserTypeAndRoleResponseDto,
+  InstitutionUserPermissionDto,
+} from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 
@@ -49,9 +52,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     this.institutionUserTypeAndRoleRepo = connection.getRepository(
       InstitutionUserTypeAndRole,
     );
-    this.institutionUserAuthRepo = connection.getRepository(
-      InstitutionUserAuth,
-    );
+    this.institutionUserAuthRepo =
+      connection.getRepository(InstitutionUserAuth);
     this.logger.log("[Created]");
   }
 
@@ -83,7 +85,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     auth.institutionUser = institutionUser;
     auth.location = location;
     finalInstitutionUser.authorizations = [auth];
-
     return await this.institutionUserRepo.save(finalInstitutionUser);
   }
 
@@ -217,6 +218,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoin("institution.users", "institutionUsers")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
+      .andWhere("user.isActive = :isActive", { isActive: true })
       .getOneOrFail();
   }
 
@@ -225,7 +227,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       userInfo.userName,
     );
 
-    const user = await this.userService.getUser(userInfo.userName);
+    const user = await this.userService.getActiveUser(userInfo.userName);
 
     if (user) {
       user.email = institutionDto.userEmail;
@@ -273,7 +275,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
     );
-    const user = await this.userService.getUser(userInfo.userName);
+    const user = await this.userService.getActiveUser(userInfo.userName);
     if (!user) {
       throw new UnprocessableEntityException("No user record found for user");
     }
@@ -327,7 +329,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       userInfo.userName,
     );
 
-    const user = await this.userService.getUser(userInfo.userName);
+    const user = await this.userService.getActiveUser(userInfo.userName);
 
     const institution = InstitutionDto.fromEntity(institutionEntity);
     institution.userEmail = user?.email;
@@ -395,5 +397,68 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .leftJoinAndSelect("authorizations.authType", "authType")
       .where("user.userName = :userName", { userName })
       .getOne();
+  }
+
+  async getAssociationByUserID(
+    institutionUser: InstitutionUser,
+  ): Promise<InstitutionUserAuth[]> {
+    return this.institutionUserAuthRepo.find({
+      institutionUser: institutionUser,
+    });
+  }
+
+  async updateInstitutionUser(
+    permissionInfo: InstitutionUserPermissionDto,
+    institutionUser: InstitutionUser,
+  ): Promise<void> {
+    let newAuthorizationEntries = [] as InstitutionUserAuth[];
+    // Create the permissions for the user under the institution.
+    for (const permission of permissionInfo.permissions) {
+      const newAuthorization = new InstitutionUserAuth();
+      newAuthorization.institutionUser = institutionUser;
+      if (permission.locationId) {
+        // Add a location specific permission.
+        newAuthorization.location = {
+          id: permission.locationId,
+        } as InstitutionLocation;
+      }
+      // Find the correct user type and role.
+      const authType = await this.institutionUserTypeAndRoleRepo.findOne({
+        type: permission.userType,
+        role: permission.userRole ?? null,
+      });
+      if (!authType) {
+        throw new Error(
+          "The combination of user type and user role is not valid.",
+        );
+      }
+      newAuthorization.authType = authType;
+      newAuthorizationEntries.push(newAuthorization);
+    }
+
+    // establish  database connection
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    // get previous associations
+    const previousAssociations = await this.getAssociationByUserID(
+      institutionUser,
+    );
+    // open new transaction:
+    await queryRunner.startTransaction();
+    try {
+      // delete existing associations
+      await queryRunner.manager.remove(previousAssociations);
+      // add new associations
+      await queryRunner.manager.save(newAuthorizationEntries);
+      // commit transaction :
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // rollback on exceptions
+      await queryRunner.rollbackTransaction();
+      throw new Error(`Expection -${err}.`);
+    } finally {
+      // release query runner
+      await queryRunner.release();
+    }
   }
 }

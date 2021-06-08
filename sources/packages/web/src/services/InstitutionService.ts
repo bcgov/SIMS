@@ -7,11 +7,14 @@ import {
   UpdateInstitutionDto,
   Institutionlocation,
   InstitutionLocationsDetails,
-  InstitutionUser,
+  InstitutionUserAuthDetails,
   InstitutionUserResDto,
   InstitutionUserViewModel,
   InstitutionUserDto,
   UserPermissionDto,
+  InstitutionUserRoleLocation,
+  UserAuth,
+  InstitutionUserWithUserType,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -149,7 +152,7 @@ export class InstitutionService {
           userType,
           role,
           location,
-          status: "active",
+          isActive: institutionUser.user.isActive,
           disableRemove:
             AppConfigService.shared.userToken?.userName ===
             institutionUser.user.userName
@@ -170,14 +173,19 @@ export class InstitutionService {
     return ApiClient.Institution.getUserTypeAndRoles();
   }
 
-  public async createUser(data: InstitutionUser): Promise<void> {
+  private async prepareUserPayload(
+    isNew: boolean,
+    data: InstitutionUserAuthDetails,
+  ) {
     const payload = {} as InstitutionUserDto;
-    payload.userId = data.userId;
+    if (isNew) {
+      payload.userId = data.userId;
+    }
 
     if (data.location) {
       // Add locations specific permissions.
       payload.permissions = data.location.map(
-        permission =>
+        (permission: InstitutionUserRoleLocation) =>
           ({
             userType: permission.userType,
             locationId: permission.locationId,
@@ -191,7 +199,76 @@ export class InstitutionService {
         },
       ];
     }
+    return payload;
+  }
 
+  public async createUser(data: InstitutionUserAuthDetails): Promise<void> {
+    const payload = await this.prepareUserPayload(true, data);
     await ApiClient.InstitutionLocation.createUser(payload);
+  }
+
+  public async getInstitutionLocationUserDetails(userName: string) {
+    return ApiClient.InstitutionLocation.getInstitutionLocationUserDetails(
+      userName,
+    );
+  }
+
+  public async updateUser(
+    userName: string,
+    data: InstitutionUserAuthDetails,
+  ): Promise<void> {
+    const payload = await this.prepareUserPayload(false, data);
+    await ApiClient.InstitutionLocation.updateUser(userName, payload);
+  }
+
+  public async updateUserStatus(userName: string, userStatus: boolean) {
+    return ApiClient.InstitutionLocation.updateUserStatus(userName, userStatus);
+  }
+
+  public async prepareAddUserPayload(
+    isAdmin: boolean,
+    selectUser: UserAuth,
+    institutionLocationList: InstitutionLocationsDetails[],
+  ) {
+    return {
+      userId: selectUser.code,
+      userType: isAdmin ? "admin" : undefined,
+      userGuid: selectUser.id,
+      location: !isAdmin
+        ? (institutionLocationList
+            .map((el: InstitutionUserWithUserType) => {
+              if (el.userType?.code) {
+                return {
+                  locationId: el.id,
+                  userType: el.userType?.code,
+                };
+              }
+            })
+            .filter((el: any) => el) as InstitutionUserRoleLocation[])
+        : undefined,
+    } as InstitutionUserAuthDetails;
+  }
+
+  public async prepareEditUserPayload(
+    institutionUserName: string,
+    isAdmin: boolean,
+    institutionLocationList: InstitutionUserWithUserType[],
+  ) {
+    return {
+      userGuid: institutionUserName ? institutionUserName : undefined,
+      userType: isAdmin ? "admin" : undefined,
+      location: !isAdmin
+        ? (institutionLocationList
+            .map((el: InstitutionUserWithUserType) => {
+              if (el.userType?.code) {
+                return {
+                  locationId: el?.id,
+                  userType: el.userType?.code,
+                };
+              }
+            })
+            .filter((el: any) => el) as InstitutionUserRoleLocation[])
+        : undefined,
+    } as InstitutionUserAuthDetails;
   }
 }

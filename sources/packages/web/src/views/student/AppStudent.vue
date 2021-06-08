@@ -8,9 +8,7 @@
           icon="pi pi-fw pi-user"
           class="p-button-text"
           style="color: white"
-          @click="
-            $router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })
-          "
+          @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
         />
       </template>
     </NavBar>
@@ -41,7 +39,7 @@ export default {
     const clientType = ref(ClientIdType.STUDENT);
 
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true,
+      () => AppConfigService.shared.authService?.authenticated === true
     );
 
     // Mounding hook
@@ -58,12 +56,14 @@ export default {
         // - Try to implement a role based processing
         // Get path
         if (await UserService.shared.checkUser()) {
-          await StudentService.shared.synchronizeFromUserInfo();
-          if (route.path === AppRoutes.StudentRoot) {
-            // Loading student dash board if user try to load /student path
-            router.push({
-              name: StudentRoutesConst.STUDENT_DASHBOARD,
-            });
+          if (await UserService.shared.checkActiveUser()) {
+            await StudentService.shared.synchronizeFromUserInfo();
+            if (route.path === AppRoutes.StudentRoot) {
+              // Loading student dash board if user try to load /student path
+              router.push({
+                name: StudentRoutesConst.STUDENT_DASHBOARD,
+              });
+            }
           }
         } else {
           /* User doesn't exist in SABC Database and so redirect the user to Student Profile page

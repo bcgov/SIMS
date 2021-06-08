@@ -45,6 +45,16 @@ export default async function(
               true,
             );
             isForbiddenUser = true;
+          } else if (await UserService.shared.checkUser(authHeader)) {
+            if (!await UserService.shared.checkActiveUser(authHeader)) {
+              await AppConfigService.shared.logout(
+                ClientIdType.INSTITUTION,
+                keycloak,
+                false,
+                true,
+              );
+              isForbiddenUser = true;
+            }
           }
         } //Institution switch case ends
       } //Switch block ends

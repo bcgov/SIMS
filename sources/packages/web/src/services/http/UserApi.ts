@@ -6,11 +6,11 @@ import {
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class UserApi extends HttpBaseClient {
-  public async checkUser(): Promise<boolean> {
+  public async checkUser(headers?: any): Promise<boolean> {
     try {
       const response = await this.apiClient.get(
         "users/check-user",
-        this.addAuthHeader(),
+        headers || this.addAuthHeader(),
       );
       return response.data as boolean;
     } catch (error) {
@@ -52,6 +52,19 @@ export class UserApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as UserLocationDto[];
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async checkActiveUser(headers?: any): Promise<boolean> {
+    try {
+      const response = await this.apiClient.get(
+        "users/check-active-user",
+        headers || this.addAuthHeader(),
+      );
+      return response.data as boolean;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
