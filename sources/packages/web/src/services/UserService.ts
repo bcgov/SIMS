@@ -1,5 +1,9 @@
 import ApiClient from "./http/ApiClient";
-import { BCeIDDetailsDto, BCeIDAccountsDto } from "../types/contracts/UserContract";
+import {
+  BCeIDDetailsDto,
+  BCeIDAccountsDto,
+  UserLocationDto,
+} from "../types/contracts/UserContract";
 
 export class UserService {
   // Share Instance
@@ -9,8 +13,8 @@ export class UserService {
     return this.instance || (this.instance = new this());
   }
 
-  async checkUser(): Promise<boolean> {
-    return await ApiClient.User.checkUser();
+  async checkUser(authHeader?: any): Promise<boolean> {
+    return ApiClient.User.checkUser(authHeader);
   }
 
   async getBCeIDAccountDetails(
@@ -23,13 +27,19 @@ export class UserService {
     }
   }
 
-  async getBCeIDAccounts(
-    authHeader?: any,
-  ): Promise<BCeIDAccountsDto | null> {
+  async getBCeIDAccounts(authHeader?: any): Promise<BCeIDAccountsDto | null> {
     try {
       return await ApiClient.User.bceidAccounts(authHeader);
     } catch (excp) {
       return null;
     }
+  }
+
+  async getAllUserLocations(): Promise<UserLocationDto[]> {
+    return ApiClient.User.allUserLocationsApi();
+  }
+
+  async checkActiveUser(authHeader?: any): Promise<boolean> {
+    return ApiClient.User.checkActiveUser(authHeader);
   }
 }

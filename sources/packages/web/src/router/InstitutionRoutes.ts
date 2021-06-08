@@ -3,6 +3,9 @@ import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue"
 import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
+import LocationPrograms from "../views/institution/LocationPrograms.vue";
+import LocationUsers from "../views/institution/LocationUsers.vue";
+import LocationApplications from "../views/institution/LocationApplications.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
 import ManageDesgination from "../views/institution/ManageDesgination.vue";
@@ -34,7 +37,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LoginWithBusinessBCeID,
         name: InstitutionRoutesConst.LOGIN_WITH_BUSINESS_BCEID,
         component: Login,
-        props: { showBasicBCeIDMessage: true },
+        props: {
+          showBasicBCeIDMessage: true,
+          showDisabledUserMessage: false,
+        },
+      },
+      {
+        path: AppRoutes.DisabledUser,
+        name: InstitutionRoutesConst.DISABLED_LOGIN,
+        component: Login,
+        props: {
+          showBasicBCeIDMessage: false,
+          showDisabledUserMessage: true,
+        },
       },
       {
         path: "",
@@ -49,6 +64,33 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: InstitutionDashboard,
               sidebar: InstitutionHomeSideBar,
             },
+          },
+          {
+            path: `${AppRoutes.LocationPrograms}/:locationId`,
+            name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+            components: {
+              default: LocationPrograms,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: `${AppRoutes.LocationApplications}/:locationId`,
+            name: InstitutionRoutesConst.LOCATION_STUDENTS,
+            components: {
+              default: LocationApplications,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: `${AppRoutes.LocationUsers}/:locationId`,
+            name: InstitutionRoutesConst.LOCATION_USERS,
+            components: {
+              default: LocationUsers,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
           },
           {
             path: AppRoutes.InstitutionManageLocations,

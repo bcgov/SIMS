@@ -27,3 +27,8 @@ export interface BCeIDAccountDto {
 export interface BCeIDAccountsDto {
   accounts: BCeIDAccountDto[];
 }
+
+export interface UserLocationDto {
+  id: number;
+  name: string;
+}

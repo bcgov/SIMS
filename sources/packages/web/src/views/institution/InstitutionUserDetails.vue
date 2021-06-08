@@ -13,96 +13,22 @@
               Add New User
               <v-icon right> mdi-plus-circle </v-icon>
             </v-btn>
-            <Dialog
-              header="Add User to Account"
-              v-model:visible="showAddUser"
-              :modal="true"
-              :style="{ width: '50vw' }"
-            >
-              <v-divider></v-divider>
-              <v-sheet color="white" elevation="1">
-                <v-container>
-                  <form>
-                    <p><b>Select a user to add to this location below.</b></p>
-                    <v-row
-                      ><v-col>
-                        <span class="form-text text-muted mb-2">
-                          <b>User Name </b></span
-                        >
-                        <Dropdown
-                          v-model="selectUser"
-                          :options="usersList"
-                          optionLabel="name"
-                          placeholder="Select a User"
-                          :filter="true"
-                          filterPlaceholder="Find User"
-                          :style="{ width: '20vw' }"
-                          :class="invalidName ? 'p-invalid' : ''"
-                        />
-                      </v-col>
-                      <v-col v-if="selectUser.name">
-                        <span class="form-text text-muted mb-2">
-                          <b>Is this User an Admin?</b><br />
-                          <b>
-                            Selected: <span v-if="isAdmin"> Yes </span
-                            ><span v-else> No </span></b
-                          ></span
-                        >
-                        <InputSwitch v-model="isAdmin" />
-                      </v-col>
-                    </v-row>
-                    <span v-if="!isAdmin && selectUser.name">
-                      <v-divider></v-divider>
-                      <h4 class="color-blue">Location Based Access</h4>
-                      <v-row
-                        ><v-col>
-                          <span class="form-text text-muted mb-2">
-                            <b>Locations</b>
-                          </span> </v-col
-                        ><v-col>
-                          <span class="form-text text-muted mb-2">
-                            <b>User Type</b>
-                          </span>
-                        </v-col>
-                      </v-row>
-                      <v-row
-                        v-for="location in institutionLocationList"
-                        :key="location"
-                        ><v-col>
-                          <span>{{ location?.name }} <br /></span>
-                          <span>
-                            <span
-                              >{{ location?.data?.address?.addressLine1 }},
-                            </span>
-                            <span>{{ location?.data?.address?.city }}, </span>
-                            <span>{{ location?.data?.address?.province }}</span>
-                            <br />
-                          </span>
-                        </v-col>
-                        <v-col>
-                          <Dropdown
-                            v-model="location.user_type"
-                            :options="userType"
-                            optionLabel="name"
-                            placeholder="Select a User Role"
-                            :style="{ width: '25vw' }"
-                            :class="invalidUserType ? 'p-invalid' : ''"
-                          />
-                        </v-col> </v-row
-                    ></span>
-                  </form>
-                </v-container>
-              </v-sheet>
-              <template #footer>
-                <v-btn color="primary" outlined @click="closeAddUser()">
-                  Cancel
-                </v-btn>
-                <v-btn color="primary" @click="submitAddUser()">
-                  Add User
-                  <v-icon right>mdi-account </v-icon>
-                </v-btn>
-              </template>
-            </Dialog>
+            <!-- Add user -->
+            <AddInstitutionUser
+              :userType="userType"
+              :showAddUser="showAddUser"
+              @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
+              @getAllInstitutionUsers="getAllInstitutionUsers"
+            />
+
+            <!-- edit user -->
+            <EditInstitutionUser
+              :userType="userType"
+              :showEditUser="showEditUser"
+              :institutionUserName="institutionUserName"
+              @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+              @getAllInstitutionUsers="getAllInstitutionUsers"
+            />
           </v-col>
         </v-row>
         <DataTable autoLayout="true" :value="users">
@@ -111,7 +37,47 @@
           <Column field="userType" header="User Type"></Column>
           <Column field="role" header="Role"></Column>
           <Column field="location" header="Location"></Column>
-          <Column field="status" header="Status"></Column>
+          <Column field="isActive" header="Status"
+            ><template #body="slotProps">
+              <Chip
+                v-if="slotProps.data.isActive"
+                label="Active"
+                class="p-mr-2 p-mb-2 bg-success text-white"
+              /><Chip
+                v-else
+                label="Inactive"
+                class="p-mr-2 p-mb-2 bg-danger text-white"
+              /> </template
+          ></Column>
+          <Column field="" header="Actions"
+            ><template #body="slotProps">
+              <span v-if="slotProps.data.userName !== logginedUserDetails?.userName">
+                <v-btn plain>
+                  <v-icon
+                    v-if="slotProps.data.isActive"
+                    right
+                    class="mr-2"
+                    @click="editInstitutionUser(slotProps.data.userName)"
+                    v-tooltip="'Edit User'"
+                  >
+                    mdi-pencil </v-icon
+                  ><v-icon
+                    v-else
+                    right
+                    class="mr-2"
+                    v-tooltip="'Disabled User Cannot Be Edited'"
+                  >
+                    mdi-pencil
+                  </v-icon>
+                </v-btn>
+                <InputSwitch
+                  v-model="slotProps.data.isActive"
+                  v-tooltip="slotProps.data.isActive ? 'Disable User' : 'Enable User'"
+                  @change="updateUserStatus(slotProps.data)"
+                />
+              </span>
+            </template>
+          </Column>
         </DataTable>
       </v-container>
     </v-sheet>
@@ -123,119 +89,87 @@ import { ref, onMounted } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { InstitutionService } from "../../services/InstitutionService";
-import { UserService } from "../../services/UserService";
-import Dialog from "primevue/dialog";
-import Dropdown from "primevue/dropdown";
+import { InstitutionUserViewModel, ApplicationToken } from "../../types";
+import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
+import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
+import Chip from "primevue/chip";
 import InputSwitch from "primevue/inputswitch";
+import Tooltip from "primevue/tooltip";
 import { useToast } from "primevue/usetoast";
-import { InstitutionUserViewModel } from "../../types";
+import { AppConfigService } from "../../services/AppConfigService";
 
 export default {
-  components: { Dialog, Dropdown, InputSwitch, DataTable, Column },
+  components: {
+    DataTable,
+    Column,
+    AddInstitutionUser,
+    EditInstitutionUser,
+    Chip,
+    InputSwitch,
+  },
+  directives: {
+    tooltip: Tooltip,
+  },
   setup() {
     const toast = useToast();
-    const isAdmin = ref(false);
-    const invalidName = ref(false);
-    const invalidUserType = ref(false);
-    const users = ref([] as InstitutionUserViewModel[]);
+    const logginedUserDetails = ref(
+      AppConfigService.shared.authService?.tokenParsed as ApplicationToken
+    );
     const showAddUser = ref(false);
-    const selectUser = ref({ name: "", code: "", id: "" });
+    const showEditUser = ref(false);
+    const users = ref([] as InstitutionUserViewModel[]);
+    const userRoleType = ref();
+    const userType = ref();
     const openNewUserModal = () => {
       showAddUser.value = true;
     };
-    const usersList = ref();
-    const institutionLocationList = ref();
-    const getInstitutionLocationList = async () => {
-      //Get Institution Locations
-      institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
-    };
-    const userRoleType = ref();
-    const userType = ref();
-    const closeAddUser = () => {
-      showAddUser.value = false;
-      selectUser.value = { name: "", code: "", id: "" };
-      isAdmin.value = false;
-      invalidName.value = false;
-      getInstitutionLocationList();
-    };
-    const preparPayload = () => {
-      let payLoad;
-      if (isAdmin.value == true) {
-        payLoad = {
-          userId: selectUser.value.code,
-          userType: "admin",
-          userGuid: selectUser.value.id,
-        };
-      } else {
-        payLoad = {
-          userGuid: selectUser.value.id,
-          userId: selectUser.value.code,
-          location: institutionLocationList.value
-            .map((el: any) => {
-              if (el.user_type?.code) {
-                return {
-                  locationId: el.id,
-                  userType: el.user_type?.code,
-                };
-              }
-            })
-            .filter((el: any) => el),
-        };
-        if (payLoad.location.length === 0) {
-          invalidUserType.value = true;
-        }
-      }
-      return payLoad;
-    };
-    const submitAddUser = async () => {
-      invalidName.value = false;
-      invalidUserType.value = false;
-      const payLoad = preparPayload();
-      if (selectUser.value.code && !invalidUserType.value) {
-        try {
-          await InstitutionService.shared.createUser(payLoad),
-            toast.add({
-              severity: "success",
-              summary: `${selectUser.value.name} Successfully Added!`,
-              detail: " Successfully!",
-              life: 5000,
-            });
-        } catch (excp) {
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: "An error happened during the create process.",
-            life: 5000,
-          });
-        }
-        closeAddUser();
-      } else {
-        if (!selectUser.value.code) {
-          invalidName.value = true;
-        }
-      }
-    };
-
-    onMounted(async () => {
-      // call institution location
-      getInstitutionLocationList();
-      // Call Service
+    const institutionUserName = ref();
+    const getAllInstitutionUsers = async () => {
       const respUsers = await InstitutionService.shared.users();
       users.value = respUsers;
-      //  Get All users from Bceid;
-      const bceidUsers = await UserService.shared.getBCeIDAccounts();
-      usersList.value = bceidUsers
-        ? bceidUsers?.accounts.map((el: any) => ({
-            name: el.displayName,
-            code: el.userId,
-            id: el.guid,
-          }))
-        : [];
+    };
+    const updateShowAddInstitutionModal = () => {
+      showAddUser.value = !showAddUser.value;
+    };
+    const updateShowEditInstitutionModal = () => {
+      showEditUser.value = !showEditUser.value;
+    };
+    const editInstitutionUser = async (userName: string) => {
+      institutionUserName.value = userName;
+      showEditUser.value = true;
+    };
+    const updateUserStatus = async (userDetails: InstitutionUserViewModel) => {
+      try {
+        await InstitutionService.shared.updateUserStatus(
+          userDetails.userName,
+          userDetails.isActive
+        );
+        await getAllInstitutionUsers();
+        toast.add({
+          severity: "success",
+          summary: `${userDetails.displayName} is ${
+            userDetails.isActive ? "Enabled" : "Disabled"
+          }`,
+          detail: " Successfully!",
+          life: 5000,
+        });
+      } catch (excp) {
+        toast.add({
+          severity: "error",
+          summary: "Unexpected error",
+          detail: "An error happened during the update process.",
+          life: 5000,
+        });
+      }
+    };
+    onMounted(async () => {
+      // Call Service
+      await getAllInstitutionUsers();
       // Get User type and Role
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
       userType.value = userRoleType.value?.userTypes
         ? userRoleType.value.userTypes.map((el: string) =>
-            el !== "admin" ? { name: el, code: el } : null,
+            el !== "admin" ? { name: el, code: el } : null
           )
         : [];
     });
@@ -243,15 +177,15 @@ export default {
       users,
       openNewUserModal,
       showAddUser,
-      usersList,
-      selectUser,
-      institutionLocationList,
+      showEditUser,
+      updateShowAddInstitutionModal,
+      getAllInstitutionUsers,
+      editInstitutionUser,
+      updateShowEditInstitutionModal,
       userType,
-      closeAddUser,
-      submitAddUser,
-      isAdmin,
-      invalidName,
-      invalidUserType,
+      institutionUserName,
+      updateUserStatus,
+      logginedUserDetails,
     };
   },
 };

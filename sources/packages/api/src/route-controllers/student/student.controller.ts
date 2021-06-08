@@ -44,7 +44,9 @@ export class StudentController extends BaseController {
     }
 
     // Check user exists or not
-    const existingUser = await this.userService.getUser(userToken.userName);
+    const existingUser = await this.userService.getActiveUser(
+      userToken.userName,
+    );
     if (!existingUser) {
       throw new NotFoundException(
         `No user record was found with for student ${userToken.userName}`,

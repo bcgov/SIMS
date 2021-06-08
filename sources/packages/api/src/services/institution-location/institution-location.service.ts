@@ -11,6 +11,7 @@ import { InstitutionService } from "..";
 import {
   InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
+  UserLocationDto,
 } from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
@@ -113,5 +114,21 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         locationId: locationId,
       })
       .getOne();
+  }
+
+  //Query to be replaced, when the authorization is in place
+  async getAllUserLocations(userName: string): Promise<UserLocationDto[]> {
+    return this.repo
+      .query(`SELECT institutionlocations.id, institutionlocations.NAME
+              FROM            sims.users USERS 
+              LEFT JOIN       sims.institution_users INSTITUTIONUSER 
+              ON              institutionuser.user_id = users.id 
+              LEFT JOIN       sims.institution_user_auth INSTITUTIONUSERAUTH 
+              ON              institutionuserauth.institution_user_id = institutionuser.id 
+              LEFT OUTER JOIN sims.institution_locations INSTITUTIONLOCATIONS 
+              ON              institutionlocations.institution_id = institutionuser.institution_id 
+              AND             (institutionlocations.id = institutionuserauth.institution_location_id 
+              OR              institutionuserauth.institution_location_id IS NULL )
+              WHERE           users.user_name = '${userName}'`);
   }
 }

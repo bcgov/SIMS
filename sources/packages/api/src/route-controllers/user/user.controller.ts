@@ -1,13 +1,16 @@
 import { Controller, Get, UnprocessableEntityException } from "@nestjs/common";
-import { BCeIDService, UserService } from "../../services";
+import {
+  BCeIDService,
+  UserService,
+  InstitutionLocationService,
+} from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
-import { InstitutionUserAuthService } from "../../services/institution-user-auth/institution-user-auth.service";
-import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
+import { UserLocationDto } from "../institution-locations/models/institution-location.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
@@ -16,7 +19,7 @@ export class UserController extends BaseController {
   constructor(
     private readonly service: UserService,
     private readonly bceidService: BCeIDService,
-    private readonly userAuthService: InstitutionUserAuthService,
+    private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super();
   }
@@ -100,9 +103,28 @@ export class UserController extends BaseController {
     };
   }
 
-  @HasLocationAccess("locationId")
-  @Get("locations/:locationId")
-  async getUserLocations(@UserToken() userToken: IUserToken): Promise<any> {
-    return this.userAuthService.getAuthorizationsByUserName(userToken.userName);
+  @Get("locations")
+  async getAllUserLocations(
+    @UserToken() userToken: IUserToken,
+  ): Promise<UserLocationDto[]> {
+    // get all User locations.
+    return this.institutionLocationService.getAllUserLocations(
+      userToken.userName,
+    );
+  }
+
+  @Get("/check-active-user")
+  async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {
+    try {
+      const isActive = await this.service.getActiveUser(userToken.userName);
+      if (!isActive) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }

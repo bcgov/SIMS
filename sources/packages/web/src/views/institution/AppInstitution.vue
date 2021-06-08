@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <CommonLayout v-if="(isAuthReady)" :isAuthenticated="isAuthenticated" />
+    <CommonLayout v-if="isAuthReady" :isAuthenticated="isAuthenticated" />
   </v-app>
 </template>
 
@@ -14,7 +14,6 @@ import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
-
 export default {
   components: {
     CommonLayout,
@@ -25,7 +24,7 @@ export default {
     const isAuthReady = ref(false);
     const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true,
+      () => AppConfigService.shared.authService?.authenticated === true
     );
     // Mounding hook
     onMounted(async () => {
@@ -38,11 +37,13 @@ export default {
         });
       } else {
         if (await UserService.shared.checkUser()) {
-          await InstitutionService.shared.sync();
-          if (route.path === AppRoutes.InstitutionRoot) {
-            router.push({
-              name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-            });
+          if (await UserService.shared.checkActiveUser()) {
+            await InstitutionService.shared.sync();
+            if (route.path === AppRoutes.InstitutionRoot) {
+              router.push({
+                name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+              });
+            }
           }
         } else {
           router.push({

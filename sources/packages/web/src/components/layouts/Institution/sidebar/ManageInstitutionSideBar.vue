@@ -2,7 +2,7 @@
   <Menu :model="items" />
 </template>
 <script lang="ts">
-import Menu from "primevue/menu";
+import Menu from "primevue/panelmenu";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -31,7 +31,7 @@ export default {
       },
       {
         label: "Manage Locations",
-        icon: "pi pi-map-marker",
+        icon: "pi pi-globe",
         command: () => {
           router.push({
             name: InstitutionRoutesConst.MANAGE_LOCATIONS,
@@ -40,7 +40,7 @@ export default {
       },
       {
         label: "Manage Designation",
-        icon: "pi pi-map",
+        icon: "pi pi-briefcase",
         command: () => {
           router.push({
             name: InstitutionRoutesConst.MANAGE_DESGINATION,

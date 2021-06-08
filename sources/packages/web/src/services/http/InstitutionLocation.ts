@@ -3,6 +3,7 @@ import {
   Institutionlocation,
   InstitutionLocationsDetails,
   InstitutionUserDto,
+  InstitutionLocationUserAuthDto,
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -77,6 +78,52 @@ export class InstitutionLocationApi extends HttpBaseClient {
       await this.apiClient.post(
         "institution/user",
         createInstitutionUserDto,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getInstitutionLocationUserDetails(
+    userName: string
+    ): Promise<InstitutionLocationUserAuthDto>{
+      try {
+        const result = await this.apiClient.get(
+          `institution/user/${userName}`,
+          this.addAuthHeader(),
+        );
+        return result?.data
+      } catch (error) {
+        this.handleRequestError(error);
+        throw error;
+      }
+  }
+
+  public async updateUser(
+    userName: string,
+    updateInstitutionUserDto: InstitutionUserDto,
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `institution/user/${userName}`,
+        updateInstitutionUserDto,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateUserStatus
+  (userName: string, userStatus: boolean)
+  :Promise<void>{
+    try {
+      await this.apiClient.patch(
+        `institution/user-status/${userName}`,
+        {'isActive':userStatus},
         this.addAuthHeader(),
       );
     } catch (error) {

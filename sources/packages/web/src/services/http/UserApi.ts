@@ -1,12 +1,16 @@
-import { BCeIDDetailsDto, BCeIDAccountsDto } from "../../types/contracts/UserContract";
+import {
+  BCeIDDetailsDto,
+  BCeIDAccountsDto,
+  UserLocationDto,
+} from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class UserApi extends HttpBaseClient {
-  public async checkUser(): Promise<boolean> {
+  public async checkUser(headers?: any): Promise<boolean> {
     try {
       const response = await this.apiClient.get(
         "users/check-user",
-        this.addAuthHeader(),
+        headers || this.addAuthHeader(),
       );
       return response.data as boolean;
     } catch (error) {
@@ -35,6 +39,32 @@ export class UserApi extends HttpBaseClient {
         headers || this.addAuthHeader(),
       );
       return response.data as BCeIDAccountsDto;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async allUserLocationsApi(): Promise<UserLocationDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        "users/locations",
+        this.addAuthHeader(),
+      );
+      return response.data as UserLocationDto[];
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async checkActiveUser(headers?: any): Promise<boolean> {
+    try {
+      const response = await this.apiClient.get(
+        "users/check-active-user",
+        headers || this.addAuthHeader(),
+      );
+      return response.data as boolean;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
