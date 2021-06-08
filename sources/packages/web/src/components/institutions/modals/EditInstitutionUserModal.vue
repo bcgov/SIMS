@@ -94,12 +94,7 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToast } from "primevue/usetoast";
-import {
-  InstitutionLocationUserAuthDto,
-  InstitutionUserWithUserType,
-  InstitutionUserRoleLocation,
-  InstitutionUserAuthDetails,
-} from "@/types";
+import { InstitutionLocationUserAuthDto, InstitutionUserAuthDetails } from "@/types";
 
 export default {
   components: { Dialog, Dropdown, InputSwitch },

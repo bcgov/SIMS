@@ -11,7 +11,7 @@ import {
   InstitutionUserTypeAndRole,
   User,
 } from "../../database/entities";
-import { Connection, Repository } from "typeorm";
+import { Connection, Repository, getConnection } from "typeorm";
 import {
   InstitutionUserRole,
   InstitutionUserType,
@@ -33,7 +33,6 @@ import {
 } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
-import { getConnection } from "typeorm";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -403,7 +402,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async getAssociationByUserID(
     institutionUser: InstitutionUser,
   ): Promise<InstitutionUserAuth[]> {
-    return await this.institutionUserAuthRepo.find({
+    return this.institutionUserAuthRepo.find({
       institutionUser: institutionUser,
     });
   }
@@ -456,6 +455,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     } catch (err) {
       // rollback on exceptions
       await queryRunner.rollbackTransaction();
+      throw new Error(`Expection -${err}.`);
     } finally {
       // release query runner
       await queryRunner.release();

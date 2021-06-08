@@ -221,9 +221,9 @@ export class InstitutionController extends BaseController {
 
     // remove existing associations and add new associations
     await this.institutionService.updateInstitutionUser(
-      payload,
-      institutionUser,
-    );
+        payload,
+        institutionUser,
+      );
   }
 
   @Patch("user-status/:userName")
