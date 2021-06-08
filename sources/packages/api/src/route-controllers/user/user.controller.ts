@@ -23,8 +23,8 @@ export class UserController extends BaseController {
       if (!userInSABC) {
         return false;
       } else {
-        return true
-        }
+        return true;
+      }
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -102,7 +102,7 @@ export class UserController extends BaseController {
       if (!isActive) {
         return false;
       } else {
-          return true;
+        return true;
       }
     } catch (error) {
       this.handleRequestError(error);
