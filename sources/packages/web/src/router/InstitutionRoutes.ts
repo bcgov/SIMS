@@ -5,7 +5,7 @@ import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
 import LocationPrograms from "../views/institution/LocationPrograms.vue";
 import LocationUsers from "../views/institution/LocationUsers.vue";
-import LocationStudents from "../views/institution/LocationStudents.vue";
+import LocationApplications from "../views/institution/LocationApplications.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
 import ManageDesgination from "../views/institution/ManageDesgination.vue";
@@ -63,10 +63,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             props: true,
           },
           {
-            path: `${AppRoutes.LocationStudents}/:locationId`,
+            path: `${AppRoutes.LocationApplications}/:locationId`,
             name: InstitutionRoutesConst.LOCATION_STUDENTS,
             components: {
-              default: LocationStudents,
+              default: LocationApplications,
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
