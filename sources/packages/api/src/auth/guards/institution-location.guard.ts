@@ -20,42 +20,40 @@ export class InstitutionLocationGuard implements CanActivate {
       return true;
     }
 
-    if (hasLocationUserType) {
-      const { user } = context.switchToHttp().getRequest();
-      const authorizations = user.authorizations as InstitutionUserAuthorizations;
+    const { user } = context.switchToHttp().getRequest();
+    const authorizations = user.authorizations as InstitutionUserAuthorizations;
 
-      if (authorizations.isAdmin()) {
-        return true;
-      }
-
-      const request = context.switchToHttp().getRequest();
-      const locationId = parseInt(
-        request.params[hasLocationUserType.locationIdParamName],
-      );
-
-      if (!user.authorizations.hasLocationAccess(locationId)) {
-        return false;
-      }
-
-      if (hasLocationUserType.userType) {
-        const hasSomeAccess = hasLocationUserType.userType.some((userType) =>
-          authorizations.hasLocationUserType(locationId, userType),
-        );
-        if (!hasSomeAccess) {
-          return false;
-        }
-      }
-
-      if (hasLocationUserType.userRoles) {
-        const hasSomeRole = hasLocationUserType.userRoles.some((role) =>
-          authorizations.hasLocationRole(locationId, role),
-        );
-        if (!hasSomeRole) {
-          return false;
-        }
-      }
-
+    if (authorizations.isAdmin()) {
       return true;
     }
+
+    const request = context.switchToHttp().getRequest();
+    const locationId = parseInt(
+      request.params[hasLocationUserType.locationIdParamName],
+    );
+
+    if (!user.authorizations.hasLocationAccess(locationId)) {
+      return false;
+    }
+
+    if (hasLocationUserType.userType) {
+      const hasSomeAccess = hasLocationUserType.userType.some((userType) =>
+        authorizations.hasLocationUserType(locationId, userType),
+      );
+      if (!hasSomeAccess) {
+        return false;
+      }
+    }
+
+    if (hasLocationUserType.userRoles) {
+      const hasSomeRole = hasLocationUserType.userRoles.some((role) =>
+        authorizations.hasLocationRole(locationId, role),
+      );
+      if (!hasSomeRole) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

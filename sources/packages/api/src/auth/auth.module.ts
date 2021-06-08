@@ -10,6 +10,7 @@ import {
   InstitutionLocationGuard,
   AuthorizedPartiesGuard,
   InstitutionAdminGuard,
+  ActiveUserGuard,
 } from "./guards";
 import { RolesGuard } from "./roles.guard";
 @Module({
@@ -31,6 +32,11 @@ import { RolesGuard } from "./roles.guard";
       provide: APP_GUARD,
       useClass: AuthorizedPartiesGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: ActiveUserGuard,
+    },
+
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

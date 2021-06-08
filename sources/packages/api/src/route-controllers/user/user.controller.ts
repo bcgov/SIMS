@@ -12,7 +12,7 @@ import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { UserLocationDto } from "../institution-locations/models/institution-location.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
 
 @AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
 @Controller("users")
@@ -25,6 +25,7 @@ export class UserController extends BaseController {
     super();
   }
 
+  @AllowInactiveUser()
   @Get("/check-user")
   async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
     try {
@@ -40,6 +41,7 @@ export class UserController extends BaseController {
     }
   }
 
+  @AllowInactiveUser()
   @Get("bceid-account")
   async getBCeID(
     @UserToken() userToken: IUserToken,
@@ -114,6 +116,7 @@ export class UserController extends BaseController {
     );
   }
 
+  @AllowInactiveUser()
   @Get("/check-active-user")
   async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {
     try {

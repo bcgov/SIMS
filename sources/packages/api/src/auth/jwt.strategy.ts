@@ -55,10 +55,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         userToken.userName,
       );
 
-      if (dbUser?.isActive === false) {
-        throw new UnauthorizedException("User is not active.");
-      }
-
       // Check if the user exists on DB.
       // When Students and Institutions users logins for the first time
       // there will no records until the Institution Profile or
