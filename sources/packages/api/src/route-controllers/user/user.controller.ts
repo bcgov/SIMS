@@ -12,6 +12,7 @@ import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { UserLocationDto } from "../institution-locations/models/institution-location.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { AllowAuthorizedParty } from "../../auth/decorators";
 
 @AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
 @Controller("users")

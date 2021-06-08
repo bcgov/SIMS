@@ -208,7 +208,6 @@ export class InstitutionController extends BaseController {
   async UpdateInstitutionUserWithAuth(
     @Param("userName") userName: string,
     @Body() payload: InstitutionUserPermissionDto,
-    @UserToken() user: IUserToken,
   ): Promise<void> {
     // Check its a active user
     const institutionUser = await this.institutionService.getInstitutionUserByUserName(
@@ -240,11 +239,13 @@ export class InstitutionController extends BaseController {
 
   @Patch("user-status/:userName")
   async updateUserStatus(
-    @UserToken() userToken: IUserToken,
     @Param("userName") userName: string,
     @Body() body: UserDto,
   ): Promise<void> {
     // Check  user exists or not
+    // TODO: Check if the user belongs to the institution.
+    // We can pass the institution id to getInstitutionUserByUserName to ensure it.
+    // The institution id is present on token.
     const institutionUser = await this.institutionService.getInstitutionUserByUserName(
       userName,
     );
@@ -258,4 +259,4 @@ export class InstitutionController extends BaseController {
       body.isActive,
     );
   }
-} //Class ends
+}
