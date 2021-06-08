@@ -8,9 +8,9 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
-import { UserLocationDto } from "../institution-locations/models/institution-location.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
+import { UserLocationDto } from "../institution-locations/models/institution-location.dto";
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -100,6 +100,7 @@ export class UserController extends BaseController {
       accounts,
     };
   }
+
   @Get("locations")
   async getAllUserLocations(
     @UserToken() userToken: IUserToken,
@@ -108,6 +109,7 @@ export class UserController extends BaseController {
     return this.institutionLocationService.getAllUserLocations(
       userToken.userName,
     );
+  }
 
   @Get("/check-active-user")
   async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {

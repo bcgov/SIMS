@@ -69,4 +69,5 @@ export class UserApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
 }
