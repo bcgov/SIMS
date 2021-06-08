@@ -134,11 +134,9 @@ export default {
       await getAndSetAllLocations();
     };
     const checkIsAdmin = () => {
-      isAdmin.value =
-        userData.value?.authorizations?.filter((el: any) => el?.authType?.type == "admin")
-          .length < 1
-          ? false
-          : true;
+      isAdmin.value = userData.value?.authorizations?.some(
+        (el: any) => el?.authType?.type == "admin"
+      );
     };
     const getAndSetAllLocations = async () => {
       institutionLocationList.value = [];
@@ -187,29 +185,14 @@ export default {
         });
       }
     };
-    const preparPayload = () => {
-      payLoad.value = {
-        userGuid: props.institutionUserName
-          ? (props.institutionUserName as string)
-          : undefined,
-        userType: isAdmin.value ? "admin" : undefined,
-        location: !isAdmin.value
-          ? (institutionLocationList.value
-              .map((el: InstitutionUserWithUserType) => {
-                if (el.userType?.code) {
-                  return {
-                    locationId: el?.id,
-                    userType: el.userType?.code,
-                  };
-                }
-              })
-              .filter((el: any) => el) as InstitutionUserRoleLocation[])
-          : undefined,
-      };
-    };
+
     const submitEditUser = async () => {
       invalidUserType.value = false;
-      preparPayload();
+      payLoad.value = await InstitutionService.shared.prepareEditUserPayload(
+        props.institutionUserName,
+        isAdmin.value,
+        institutionLocationList.value
+      );
       if (
         (payLoad.value && payLoad.value?.location && payLoad.value?.location?.length) ||
         isAdmin.value

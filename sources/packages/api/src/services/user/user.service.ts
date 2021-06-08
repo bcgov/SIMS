@@ -25,6 +25,6 @@ export class UserService extends DataModelService<User> {
   }
 
   async getActiveUser(userName: string) {
-    return this.repo.findOne({ where: { userName: userName, isActive: true } });
+    return this.repo.findOne({ userName: userName, isActive: true });
   }
 }

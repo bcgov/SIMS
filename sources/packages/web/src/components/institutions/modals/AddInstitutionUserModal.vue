@@ -3,7 +3,7 @@
   <Dialog
     v-if="showAddUser"
     header="Add User to Account"
-    v-model:visible="display"
+    :visible="display"
     :modal="true"
     :style="{ width: '50vw' }"
     :closable="false"
@@ -97,7 +97,6 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable */
 import { ref, onMounted } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { UserService } from "@/services/UserService";
@@ -121,7 +120,9 @@ export default {
     },
     userType: {
       type: Array,
-      default: [],
+      default() {
+        return [];
+      },
     },
   },
   emits: ["updateShowAddInstitutionModal", "getAllInstitutionUsers"],
@@ -140,41 +141,21 @@ export default {
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
     };
 
-    const closeAddUser = () => {
+    const closeAddUser = async () => {
       selectUser.value = { name: "", code: "", id: "" };
       isAdmin.value = false;
       invalidName.value = false;
-      getInstitutionLocationList();
+      await getInstitutionLocationList();
       context.emit("updateShowAddInstitutionModal");
-    };
-    const preparPayload = () => {
-      if (isAdmin.value) {
-        payLoad.value = {
-          userId: selectUser.value.code,
-          userType: "admin",
-          userGuid: selectUser.value.id,
-        };
-      } else {
-        payLoad.value = {
-          userGuid: selectUser.value.id,
-          userId: selectUser.value.code,
-          location: institutionLocationList.value
-            .map((el: InstitutionUserWithUserType) => {
-              if (el.userType?.code) {
-                return {
-                  locationId: el.id,
-                  userType: el.userType?.code,
-                };
-              }
-            })
-            .filter((el: any) => el),
-        };
-      }
     };
     const submitAddUser = async () => {
       invalidName.value = false;
       invalidUserType.value = false;
-      preparPayload();
+      payLoad.value = await InstitutionService.shared.prepareAddUserPayload(
+        isAdmin.value,
+        selectUser.value,
+        institutionLocationList.value
+      );
       if (
         selectUser?.value?.code &&
         ((payLoad.value && payLoad.value?.location && payLoad.value?.location?.length) ||
@@ -210,7 +191,7 @@ export default {
 
     onMounted(async () => {
       // call institution location
-      getInstitutionLocationList();
+      await getInstitutionLocationList();
       //  Get All users from Bceid;
       const bceidUsers = await UserService.shared.getBCeIDAccounts();
       usersList.value = bceidUsers

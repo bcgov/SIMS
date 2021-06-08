@@ -23,18 +23,14 @@ export class UserController extends BaseController {
   }
 
   @Get("/check-user")
-  async checkUser(@UserToken() userToken: IUserToken): Promise<string> {
+  async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
     try {
       const userInSABC = await this.service.getUser(userToken.userName);
       if (!userInSABC) {
-        return "False";
+        return false;
       } else {
-        if (userInSABC.isActive) {
-          return "True";
-        } else {
-          return "Disabled";
+        return true
         }
-      }
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -112,5 +108,19 @@ export class UserController extends BaseController {
     return this.institutionLocationService.getAllUserLocations(
       userToken.userName,
     );
+
+  @Get("/check-active-user")
+  async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {
+    try {
+      const isActive = await this.service.getActiveUser(userToken.userName);
+      if (!isActive) {
+        return false;
+      } else {
+          return true;
+      }
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }
