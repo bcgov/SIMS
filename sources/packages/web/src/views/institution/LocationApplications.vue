@@ -5,7 +5,7 @@
       <v-container>
         <v-row>
           <v-col cols="8">
-            <h2 class="color-blue">Students</h2>
+            <h2 class="color-blue">Applications</h2>
           </v-col>
         </v-row>
       </v-container>

@@ -56,7 +56,7 @@ export default {
               },
             },
             {
-              label: "Students",
+              label: "Applications",
               icon: "pi pi-id-card",
               command: () => {
                 router.push({
