@@ -18,7 +18,13 @@ import BaseController from "../BaseController";
 import { InstitutionUserRespDto } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import { InstitutionUserTypeAndRoleResponseDto } from "./models/institution-user-type-role.res.dto";
+import {
+  AllowAuthorizedParty,
+  IsInstitutionAdmin,
+} from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
+@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 export class InstitutionController extends BaseController {
   constructor(
@@ -44,6 +50,7 @@ export class InstitutionController extends BaseController {
     await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
 
+  @IsInstitutionAdmin()
   @Patch()
   async update(
     @Body() payload: InstitutionDto,
@@ -52,6 +59,7 @@ export class InstitutionController extends BaseController {
     await this.institutionService.updateInstitution(userToken, payload);
   }
 
+  @IsInstitutionAdmin()
   @Get()
   async institutionDetail(
     @UserToken() token: IUserToken,
@@ -64,6 +72,7 @@ export class InstitutionController extends BaseController {
     await this.institutionService.syncInstitution(token);
   }
 
+  @IsInstitutionAdmin()
   @Get("/users")
   async allUsers(
     @UserToken() user: IUserToken,
@@ -102,6 +111,7 @@ export class InstitutionController extends BaseController {
    * Creates all necessary records to have a new user added to the
    * institution, with the right permissions and ready to login.
    */
+  @IsInstitutionAdmin()
   @Post("/user")
   async createInstitutionUserWithAuth(
     @Body() payload: InstitutionUserAuthDto,

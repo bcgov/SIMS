@@ -1,8 +1,10 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import BaseController from "../BaseController";
-import axios from "axios";
 import { FormService } from "../../services";
+import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
+@AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
 @Controller("dynamic-form")
 export class DynamicFormController extends BaseController {
   constructor(private readonly formService: FormService) {

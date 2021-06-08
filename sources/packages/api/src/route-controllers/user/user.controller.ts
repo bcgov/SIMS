@@ -7,11 +7,10 @@ import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { InstitutionUserAuthService } from "../../services/institution-user-auth/institution-user-auth.service";
-import {
-  HasLocationAccess,
-  IsInstitutionAdmin,
-} from "../../auth/decorators/institution.decorator";
+import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
+@AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
 @Controller("users")
 export class UserController extends BaseController {
   constructor(

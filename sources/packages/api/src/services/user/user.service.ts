@@ -14,4 +14,18 @@ export class UserService extends DataModelService<User> {
       userName,
     });
   }
+
+  async getUserLoginInfo(
+    userName: string,
+  ): Promise<{ id: number; isActive: boolean }> {
+    const user = await this.repo
+      .createQueryBuilder("user")
+      .where("user.user_name = :userName", { userName })
+      .select(["user.id"])
+      .getRawOne();
+    return {
+      id: user.id,
+      isActive: true,
+    };
+  }
 }

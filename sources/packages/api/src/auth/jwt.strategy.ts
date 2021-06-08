@@ -2,7 +2,9 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import { KeycloakConfig } from "./keycloakConfig";
-import { IUserToken } from "./userToken.interface";
+import { IInstitutionUserToken, IUserToken } from "./userToken.interface";
+import { InstitutionUserAuthService, UserService } from "../services";
+import { AuthorizedParties } from "./authorized-parties.enum";
 
 /**
  * Inspect the header looking for the authentication header,
@@ -12,7 +14,10 @@ import { IUserToken } from "./userToken.interface";
  */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(
+    private readonly userService: UserService,
+    private readonly institutionUserAuthService: InstitutionUserAuthService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -38,13 +43,30 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
     });
 
-    // if (userToken.authorizedParty === AuthorizedParties.institution) {
-    //   const institutionUserToken = userToken as IInstitutionUserToken;
-    //   institutionUserToken.authorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
-    //     userToken.userName,
-    //   );
-    //   return institutionUserToken;
-    // }
+    // Check if it is expected that a user exists on DB for the
+    // specific authorized party (only Students and Institution for now).
+    if (
+      [AuthorizedParties.institution, AuthorizedParties.student].includes(
+        userToken.authorizedParty,
+      )
+    ) {
+      // Add DB user information to the token.
+      const dbUser = await this.userService.getUserLoginInfo(
+        userToken.userName,
+      );
+      userToken.userId = dbUser.id;
+      userToken.isActive = dbUser.isActive;
+
+      // If the token represents an institution, loads additional information
+      // from the database that is needed for authorization.
+      if (userToken.authorizedParty === AuthorizedParties.institution) {
+        const institutionUserToken = userToken as IInstitutionUserToken;
+        institutionUserToken.authorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
+          userToken.userName,
+        );
+        return institutionUserToken;
+      }
+    }
 
     return userToken;
   }

@@ -2,10 +2,7 @@ import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import { InstitutionUserAuth } from "../../database/entities";
-import {
-  InstitutionUserAuthorizations,
-  LocationAuthorizations,
-} from "./institution-user-auth.models";
+import { InstitutionUserAuthorizations } from "./institution-user-auth.models";
 import {
   InstitutionUserRoles,
   InstitutionUserTypes,
@@ -33,32 +30,17 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
       ])
       .getRawMany();
 
-    // Create the object to be returned.
-    let authorizations: InstitutionUserAuthorizations;
-
     if (userAuthorizations.length) {
-      // Check if the user is admin. Only one record should exist.
-      const isAdmin = userAuthorizations.some(
-        (auth) => auth.user_type === InstitutionUserTypes.admin,
-      );
+      // If not an admin, load the locations authorizations.
+      const authorizations = userAuthorizations.map((auth) => ({
+        locationId: auth.institution_location_id as number,
+        userType: auth.user_type as InstitutionUserTypes,
+        userRole: auth.user_role as InstitutionUserRoles,
+      }));
 
-      if (isAdmin) {
-        authorizations = new InstitutionUserAuthorizations(isAdmin);
-      } else {
-        // If not an admin, load the locations authorizations.
-        const locationsAuthorizations = userAuthorizations.map((auth) => ({
-          locationId: auth.institution_location_id as number,
-          userType: auth.user_type as InstitutionUserTypes,
-          userRole: auth.user_role as InstitutionUserRoles,
-        }));
-
-        authorizations = new InstitutionUserAuthorizations(
-          false,
-          locationsAuthorizations,
-        );
-      }
+      return new InstitutionUserAuthorizations(authorizations);
     }
 
-    return authorizations;
+    return new InstitutionUserAuthorizations([]);
   }
 }

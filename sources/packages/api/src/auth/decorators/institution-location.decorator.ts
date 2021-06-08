@@ -1,10 +1,6 @@
 import { SetMetadata } from "@nestjs/common";
 import { InstitutionUserRoles, InstitutionUserTypes } from "../user-types.enum";
 
-export const IS_INSTITUTION_ADMIN_KEY = "is-institution-admin";
-export const IsInstitutionAdmin = () =>
-  SetMetadata(IS_INSTITUTION_ADMIN_KEY, true);
-
 export const HAS_LOCATION_ACCESS_KEY = "has-location-access-key";
 export const HasLocationAccess = (
   locationIdParamName: string,

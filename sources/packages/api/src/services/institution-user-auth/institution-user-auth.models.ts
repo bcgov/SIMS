@@ -4,30 +4,53 @@ import {
 } from "../../auth/user-types.enum";
 
 export class InstitutionUserAuthorizations {
-  constructor(
-    public readonly isAdmin: boolean,
-    private readonly authorizations: LocationAuthorizations[] = [],
-  ) {}
+  constructor(private readonly authorizations: Authorizations[] = []) {}
+
+  isAdmin(): boolean {
+    return this.authorizations.some(
+      (auth) =>
+        auth.locationId === null &&
+        auth.userType === InstitutionUserTypes.admin,
+    );
+  }
+
+  hasAdminRole(role: InstitutionUserRoles): boolean {
+    return this.authorizations.some(
+      (auth) =>
+        auth.locationId === null &&
+        auth.userType === InstitutionUserTypes.admin &&
+        auth.userRole === role,
+    );
+  }
 
   hasLocationAccess(locationId: number): boolean {
     return this.authorizations.some((auth) => auth.locationId === locationId);
   }
 
-  hasUserType(locationId: number, userType: InstitutionUserTypes): boolean {
+  hasLocationUserType(
+    locationId: number,
+    userType: InstitutionUserTypes,
+  ): boolean {
     return this.authorizations.some(
       (auth) => auth.locationId === locationId && auth.userType === userType,
     );
   }
 
-  hasRole(locationId: number, role: InstitutionUserRoles): boolean {
+  hasLocationRole(locationId: number, role: InstitutionUserRoles): boolean {
     return this.authorizations.some(
       (auth) => auth.locationId === locationId && auth.userRole === role,
     );
   }
+
+  getLocationsIds(): number[] {
+    return this.authorizations
+      .filter((auth) => auth.locationId)
+      .map((auth) => auth.locationId);
+  }
 }
 
-export interface LocationAuthorizations {
-  locationId: number;
+export interface Authorizations {
+  locationId?: number;
   userType: InstitutionUserTypes;
   userRole: InstitutionUserRoles;
 }

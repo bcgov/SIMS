@@ -3,20 +3,21 @@ import {
   Body,
   Controller,
   Get,
-  HttpStatus,
   NotFoundException,
   Param,
   Post,
 } from "@nestjs/common";
 import { ApplicationService, FormService } from "../../services";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   CreateApplicationDto,
   GetApplicationDataDto,
 } from "./models/application.model";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
+@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
