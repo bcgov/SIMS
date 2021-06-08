@@ -104,9 +104,9 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async updateUser(
     userName: string,
     updateInstitutionUserDto: InstitutionUserDto,
-  ): Promise<number[]> {
+  ): Promise<void> {
     try {
-      return await this.apiClient.patch(
+      await this.apiClient.patch(
         `institution/user/${userName}`,
         updateInstitutionUserDto,
         this.addAuthHeader(),

@@ -230,12 +230,12 @@ export class InstitutionService {
     selectUser: UserAuth,
     institutionLocationList: InstitutionLocationsDetails[],
   ) {
-    const payLoad: InstitutionUserAuthDetails = {
+    return {
       userId: selectUser.code,
       userType: isAdmin ? "admin" : undefined,
       userGuid: selectUser.id,
       location: !isAdmin
-        ? institutionLocationList
+        ? (institutionLocationList
             .map((el: InstitutionUserWithUserType) => {
               if (el.userType?.code) {
                 return {
@@ -244,18 +244,18 @@ export class InstitutionService {
                 };
               }
             })
-            .filter((el: any) => el) as InstitutionUserRoleLocation[]
+            .filter((el: any) => el) as InstitutionUserRoleLocation[])
         : undefined,
-    };
-
-    return payLoad;
+    } as InstitutionUserAuthDetails;
   }
 
-  public async prepareEditUserPayload(institutionUserName: string, isAdmin: boolean, institutionLocationList: InstitutionUserWithUserType[]){
-    const payLoad = {
-      userGuid: institutionUserName
-        ? (institutionUserName as string)
-        : undefined,
+  public async prepareEditUserPayload(
+    institutionUserName: string,
+    isAdmin: boolean,
+    institutionLocationList: InstitutionUserWithUserType[],
+  ) {
+    return {
+      userGuid: institutionUserName ? institutionUserName : undefined,
       userType: isAdmin ? "admin" : undefined,
       location: !isAdmin
         ? (institutionLocationList
@@ -269,7 +269,6 @@ export class InstitutionService {
             })
             .filter((el: any) => el) as InstitutionUserRoleLocation[])
         : undefined,
-    };
-    return payLoad
+    } as InstitutionUserAuthDetails;
   }
 }

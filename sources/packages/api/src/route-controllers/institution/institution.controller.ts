@@ -26,7 +26,6 @@ import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,
 } from "./models/institution-user-type-role.res.dto";
-import { InstitutionUserAuth } from "../../database/entities";
 import { UserDto } from "../user/models/user.dto";
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -221,12 +220,10 @@ export class InstitutionController extends BaseController {
     }
 
     // remove existing associations and add new associations
-    const updateInstitutionUser =
-      await this.institutionService.updateInstitutionUser(
+    await this.institutionService.updateInstitutionUser(
         payload,
         institutionUser,
       );
-    // return updateInstitutionUser.map((el: InstitutionUserAuth) => el.id);
   }
 
   @Patch("user-status/:userName")
