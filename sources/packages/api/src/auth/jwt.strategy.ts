@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { KeycloakConfig } from "./keycloakConfig";
 import { IInstitutionUserToken, IUserToken } from "./userToken.interface";
 import { InstitutionUserAuthService, UserService } from "../services";
