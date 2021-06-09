@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Patch,
-  NotFoundException,
   Param,
   Body,
   UnprocessableEntityException,
@@ -11,13 +10,23 @@ import {
 import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
 import {
-  GetInstitutionLocationDto,
   InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
 } from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IUserToken } from "../../auth/userToken.interface";
+import {
+  IInstitutionUserToken,
+  IUserToken,
+} from "../../auth/userToken.interface";
 import { FormsFlowService, InstitutionService } from "../../services";
+import {
+  HasLocationAccess,
+  IsInstitutionAdmin,
+  AllowAuthorizedParty,
+} from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+
+@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
@@ -29,6 +38,7 @@ export class InstitutionLocationsController extends BaseController {
     super();
   }
 
+  @IsInstitutionAdmin()
   @Post()
   async create(
     @Body() payload: InstitutionLocationTypeDto,
@@ -79,11 +89,12 @@ export class InstitutionLocationsController extends BaseController {
     return createdInstitutionlocation.id;
   }
 
+  @HasLocationAccess("locationId")
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
     @Body() payload: InstitutionLocationTypeDto,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
     //To retrive institution id
     const institutionDetails = await this.institutionService.getInstituteByUserName(
@@ -109,6 +120,9 @@ export class InstitutionLocationsController extends BaseController {
   async getAllInstitutionLocations(
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
+    // TODO: Change to return only the locations that the user has access.
+    // It is currently returning all the locations for the inistitution.
+
     //To retrive institution id
     const institutionDetails = await this.institutionService.getInstituteByUserName(
       userToken.userName,
@@ -125,6 +139,7 @@ export class InstitutionLocationsController extends BaseController {
     return Institutionlocations;
   }
 
+  @HasLocationAccess("locationId")
   @Get(":locationId")
   async getInstitutionLocation(
     @Param("locationId") locationId: number,

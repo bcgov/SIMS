@@ -18,6 +18,9 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
+import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(

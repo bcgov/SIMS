@@ -4,7 +4,10 @@ import { CreateSinValidationResDto } from "./models/create-sin-validation.res.dt
 import { ProcessResponseResDto } from "./models/process-response.res.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
+@AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("cra-integration")
 export class CRAIntegrationController {
   constructor(private readonly cra: CRAPersonalVerificationService) {}

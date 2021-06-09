@@ -14,7 +14,7 @@ import {
   InstitutionDto,
 } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   InstitutionUserRespDto,
@@ -27,6 +27,13 @@ import {
   InstitutionUserPermissionDto,
 } from "./models/institution-user-type-role.res.dto";
 import { UserDto } from "../user/models/user.dto";
+import {
+  AllowAuthorizedParty,
+  IsInstitutionAdmin,
+} from "../../auth/decorators";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+
+@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 export class InstitutionController extends BaseController {
   constructor(
@@ -40,7 +47,7 @@ export class InstitutionController extends BaseController {
   @Post()
   async create(
     @Body() payload: CreateInstitutionDto,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     // Check user exists or not
     const existingUser = await this.userService.getUser(userToken.userName);
@@ -52,29 +59,32 @@ export class InstitutionController extends BaseController {
     await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
 
+  @IsInstitutionAdmin()
   @Patch()
   async update(
     @Body() payload: InstitutionDto,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ) {
     await this.institutionService.updateInstitution(userToken, payload);
   }
 
+  @IsInstitutionAdmin()
   @Get()
   async institutionDetail(
-    @UserToken() token: IUserToken,
+    @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionDetailDto> {
     return this.institutionService.institutionDetail(token);
   }
 
   @Patch("/sync")
-  async sync(@UserToken() token: IUserToken) {
+  async sync(@UserToken() token: IInstitutionUserToken) {
     await this.institutionService.syncInstitution(token);
   }
 
+  @IsInstitutionAdmin()
   @Get("/users")
   async allUsers(
-    @UserToken() user: IUserToken,
+    @UserToken() user: IInstitutionUserToken,
   ): Promise<InstitutionUserRespDto[]> {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
@@ -111,10 +121,11 @@ export class InstitutionController extends BaseController {
    * Creates all necessary records to have a new user added to the
    * institution, with the right permissions and ready to login.
    */
+  @IsInstitutionAdmin()
   @Post("/user")
   async createInstitutionUserWithAuth(
     @Body() payload: InstitutionUserAuthDto,
-    @UserToken() user: IUserToken,
+    @UserToken() user: IInstitutionUserToken,
   ): Promise<number> {
     // Get institution
     const institution = await this.institutionService.getInstituteByUserName(
@@ -145,12 +156,11 @@ export class InstitutionController extends BaseController {
     }
 
     // Create the user user and the related records.
-    const createdInstitutionUser =
-      await this.institutionService.createInstitutionUser(
-        institution.id,
-        bceidUserAccount,
-        payload,
-      );
+    const createdInstitutionUser = await this.institutionService.createInstitutionUser(
+      institution.id,
+      bceidUserAccount,
+      payload,
+    );
 
     return createdInstitutionUser.id;
   }
@@ -165,8 +175,9 @@ export class InstitutionController extends BaseController {
     @Param("userName") userName: string,
   ): Promise<InstitutionLocationUserAuthDto> {
     // Get institutionUser
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
+    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
+      userName,
+    );
     // disabled users details can't be edited
     if (!institutionUser.user.isActive) {
       throw new UnprocessableEntityException("Not an Active User.");
@@ -197,11 +208,11 @@ export class InstitutionController extends BaseController {
   async UpdateInstitutionUserWithAuth(
     @Param("userName") userName: string,
     @Body() payload: InstitutionUserPermissionDto,
-    @UserToken() user: IUserToken,
   ): Promise<void> {
     // Check its a active user
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
+    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
+      userName,
+    );
     if (!institutionUser) {
       throw new UnprocessableEntityException(
         "user does not exist in the system.",
@@ -221,20 +232,23 @@ export class InstitutionController extends BaseController {
 
     // remove existing associations and add new associations
     await this.institutionService.updateInstitutionUser(
-        payload,
-        institutionUser,
-      );
+      payload,
+      institutionUser,
+    );
   }
 
   @Patch("user-status/:userName")
   async updateUserStatus(
-    @UserToken() userToken: IUserToken,
     @Param("userName") userName: string,
     @Body() body: UserDto,
   ): Promise<void> {
     // Check  user exists or not
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(userName);
+    // TODO: Check if the user belongs to the institution.
+    // We can pass the institution id to getInstitutionUserByUserName to ensure it.
+    // The institution id is present on token.
+    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
+      userName,
+    );
     if (!institutionUser) {
       throw new UnprocessableEntityException(
         "user does not exist in the system.",
@@ -245,4 +259,4 @@ export class InstitutionController extends BaseController {
       body.isActive,
     );
   }
-} //Class ends
+}

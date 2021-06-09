@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
-import { IS_PUBLIC_KEY } from "./decorators/public.decorator";
+import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
 /**
  * Enable global validation for authenticated users and
@@ -23,6 +23,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     if (isPublic) {
       return true;
     }
+
     return super.canActivate(context);
   }
 }
