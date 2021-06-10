@@ -11,6 +11,7 @@ import {
   ApplicationService,
   BCeIDServiceProvider,
   InstitutionUserAuthService,
+  EducationProgramService,
 } from "./services";
 import {
   UserController,
@@ -22,6 +23,7 @@ import {
   ApplicationController,
   InstitutionLocationsController,
   CRAIntegrationController,
+  EducationProgramController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -48,6 +50,7 @@ import {
     ApplicationController,
     InstitutionLocationsController,
     CRAIntegrationController,
+    EducationProgramController,
   ],
   providers: [
     AppService,
@@ -65,6 +68,7 @@ import {
     FormsFlowService,
     KeycloakService,
     InstitutionUserAuthService,
+    EducationProgramService,
   ],
 })
 export class AppModule {}
