@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS education_programs(
   id SERIAL PRIMARY KEY,
   program_name VARCHAR(300) NOT NULL,
-  program_description VARCHAR(300) NOT NULL,
+  program_description VARCHAR(500) NOT NULL,
   credential_type VARCHAR(50) NOT NULL,
   credential_type_other VARCHAR(300) NOT NULL,
   cip_code VARCHAR(50) NOT NULL,
