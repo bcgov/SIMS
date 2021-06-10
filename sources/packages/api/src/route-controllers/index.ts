@@ -7,3 +7,4 @@ export * from "./workflow/workflow.controller";
 export * from "./application/application.controller";
 export * from "./institution-locations/institution-locations.controller";
 export * from "./cra-integration/cra-integration.controller";
+export * from "./education-program/education-program.controller";

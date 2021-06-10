@@ -10,16 +10,17 @@ CREATE TABLE IF NOT EXISTS education_programs(
   regulatory_body VARCHAR(100) NOT NULL,
   delivered_on_site BIT NOT NULL, 
   delivered_online BIT NOT NULL,
-  delivered_online_also_onsite BIT NULL, 
-  same_online_credits_earned BIT NULL,
-  earn_academic_credits_other_institution BIT NULL,
+  delivered_online_also_onsite VARCHAR(50) NULL, 
+  same_online_credits_earned VARCHAR(50) NULL,
+  earn_academic_credits_other_institution VARCHAR(50) NULL,
   course_load_calculation VARCHAR(50) NOT NULL,
   average_hours_study INT NOT NULL,
   completion_years VARCHAR(50) NOT NULL,
   admission_requirement VARCHAR(50) NOT NULL,
-  has_minimun_age BIT NULL,
+  has_minimun_age VARCHAR(50) NOT NULL,
   esl_eligibility VARCHAR(50) NOT NULL,
-  has_joint_institution BIT NOT NULL,
+  has_joint_institution VARCHAR(50) NOT NULL,
+  has_joint_designated_institution VARCHAR(50) NULL,
   
   -- Reference Columns
   institution_id INT REFERENCES institutions(id) ON DELETE CASCADE,
@@ -28,7 +29,7 @@ CREATE TABLE IF NOT EXISTS education_programs(
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone NOT NULL DEFAULT now(),
   creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL,
-  modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL,
+  modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE SET NULL
 );
 
 
@@ -55,6 +56,7 @@ COMMENT ON COLUMN education_programs.admission_requirement IS 'Code for the admi
 COMMENT ON COLUMN education_programs.has_minimun_age IS 'Indicates if there is a minimum age requirement';
 COMMENT ON COLUMN education_programs.esl_eligibility IS 'Indicates the "English as a Second Language (ESL)" requirement';
 COMMENT ON COLUMN education_programs.has_joint_institution IS 'Indicates if the program is offered jointly or in partnership with other institutions';
+COMMENT ON COLUMN education_programs.has_joint_designated_institution IS 'When institution has partner this indicates if all institutions you partner with for this program are designated by Student Aid BC';
 COMMENT ON COLUMN education_programs.institution_id IS 'Foreign key reference to institutions table which includes institutions related information';
 COMMENT ON COLUMN education_programs.created_at IS 'Record creation timestamp';
 COMMENT ON COLUMN education_programs.updated_at IS 'Record update timestamp';

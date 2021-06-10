@@ -8,3 +8,4 @@ export * from "./institution-user.model";
 export * from "./institution-user-auth.model";
 export * from "./sequence-controls.model";
 export * from "./institution-location.model";
+export * from "./education-program.model";

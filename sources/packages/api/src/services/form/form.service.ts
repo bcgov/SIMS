@@ -69,6 +69,7 @@ export class FormService {
         { data },
         authHeader,
       );
+
       return { valid: true, data: submissionResponse.data };
     } catch (error) {
       if (error.response.status === HttpStatus.BAD_REQUEST) {

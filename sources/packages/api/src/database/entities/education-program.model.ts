@@ -97,7 +97,7 @@ export class EducationProgram extends RecordDataModel {
     name: "delivered_online_also_onsite",
     nullable: true,
   })
-  deliveredOnlineAlsoOnsite?: boolean;
+  deliveredOnlineAlsoOnsite?: string;
   /**
    * Indicates if the students will earn the same number of credits in the same time period as
    * students in other StudentAid BC eligible programs delivered on site.
@@ -106,7 +106,7 @@ export class EducationProgram extends RecordDataModel {
     name: "same_online_credits_earned",
     nullable: true,
   })
-  sameOnlineCreditsEarned?: boolean;
+  sameOnlineCreditsEarned?: string;
   /**
    * Indicates if the students will earn academic credits that are recognized at another designated institution
    * listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions.
@@ -114,7 +114,7 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "earn_academic_credits_other_institution",
   })
-  earnAcademicCreditsOtherInstitution?: boolean;
+  earnAcademicCreditsOtherInstitution?: string;
   /**
    * Program course load calculation options like "Credit based" or "Hours based".
    */
@@ -150,7 +150,7 @@ export class EducationProgram extends RecordDataModel {
     name: "has_minimun_age",
     nullable: true,
   })
-  hasMinimunAge?: boolean;
+  hasMinimunAge?: string;
   /**
    * Code to indicates the "English as a Second Language (ESL)" requirement
    */
@@ -166,6 +166,12 @@ export class EducationProgram extends RecordDataModel {
     name: "has_joint_institution",
   })
   hasJointInstitution: string;
+
+  @Column({
+    name: "has_joint_designated_institution",
+  })
+  hasJointDesignatedInstitution: string;
+
   /**
    * Related institution.
    */
