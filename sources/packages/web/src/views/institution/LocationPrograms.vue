@@ -11,7 +11,7 @@
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewProgram()">
               <v-icon left>
-                open-in-new
+                mdi-open-in-new
               </v-icon>
               Create New Program
             </v-btn>

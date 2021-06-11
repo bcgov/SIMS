@@ -36,8 +36,8 @@ export class EducationProgramController {
       );
     }
 
-    // The payload returned from form.io contains the approval_status as
-    // a calculated server value. If the approval_status value is sent
+    // The payload returned from form.io contains the approvalStatus as
+    // a calculated server value. If the approvalStatus value is sent
     // from the client form it will be overrided by the server calculated one.
     const createProgramPaylod: CreateEducationProgram = {
       ...submissionResult.data.data,
