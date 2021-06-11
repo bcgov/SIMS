@@ -21,7 +21,7 @@ export class EducationProgram extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Program name
+   * Program name.
    */
   @Column({
     name: "program_name",
@@ -95,7 +95,6 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "delivered_online_also_onsite",
-    nullable: true,
   })
   deliveredOnlineAlsoOnsite?: string;
   /**
@@ -104,7 +103,6 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "same_online_credits_earned",
-    nullable: true,
   })
   sameOnlineCreditsEarned?: string;
   /**
@@ -148,7 +146,6 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "has_minimun_age",
-    nullable: true,
   })
   hasMinimunAge?: string;
   /**
@@ -166,12 +163,21 @@ export class EducationProgram extends RecordDataModel {
     name: "has_joint_institution",
   })
   hasJointInstitution: string;
-
+  /**
+   * When institution has partners this indicates if all institutions you
+   * partner with for this program are designated by Student Aid BC.
+   */
   @Column({
     name: "has_joint_designated_institution",
   })
   hasJointDesignatedInstitution: string;
-
+  /**
+   * Approval status of the program like pending or approved.
+   */
+  @Column({
+    name: "approval_status",
+  })
+  approvalStatus: string;
   /**
    * Related institution.
    */

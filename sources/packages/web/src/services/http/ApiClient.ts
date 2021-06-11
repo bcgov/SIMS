@@ -6,6 +6,7 @@ import { DynamicFormsApi } from "./DynamicForms";
 import { WorkflowApi } from "./WorkflowApi";
 import { ApplicationApi } from "./ApplicationApi";
 import { InstitutionLocationApi } from "./InstitutionLocation";
+import { EducationProgramApi } from "./EducationProgramApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -16,6 +17,7 @@ const ApiClient = {
   Workflow: new WorkflowApi(),
   Application: new ApplicationApi(),
   InstitutionLocation: new InstitutionLocationApi(),
+  EducationProgram: new EducationProgramApi(),
 };
 
 export default ApiClient;
