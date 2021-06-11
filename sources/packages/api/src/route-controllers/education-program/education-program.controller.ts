@@ -10,6 +10,7 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { CreateEducationProgramDto } from "./models/create-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
+import { CreateEducationProgram } from "../../services/education-program/education-program.service.models";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/education-program")
@@ -35,9 +36,16 @@ export class EducationProgramController {
       );
     }
 
+    // The payload returned from form.io contains the approval_status as
+    // a calculated server value. If the approval_status value is sent
+    // from the client form it will be overrided by the server calculated one.
+    const createProgramPaylod: CreateEducationProgram = {
+      ...submissionResult.data.data,
+      programDeliveryTypes: submissionResult.data.data.programDeliveryTypes,
+      institutionId: userToken.authorizations.institutionId,
+    };
     const createdProgram = await this.programService.createEducationProgram(
-      userToken.authorizations.institutionId,
-      payload,
+      createProgramPaylod,
     );
     return createdProgram.id;
   }

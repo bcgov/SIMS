@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { EducationProgram, Institution } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { CreateEducationProgramDto } from "src/route-controllers/education-program/models/create-education-program.dto";
+import { CreateEducationProgram } from "./education-program.service.models";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -13,13 +13,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   /**
    * Creates a new education program at institution level
    * that will be available for all locations.
-   * @param institutionId Institution id to associate the new program.
    * @param educationProgram Information used to create the program.
    * @returns Education program created.
    */
   async createEducationProgram(
-    institutionId: number,
-    educationProgram: CreateEducationProgramDto,
+    educationProgram: CreateEducationProgram,
   ): Promise<EducationProgram> {
     const program = new EducationProgram();
     program.name = educationProgram.name;
@@ -48,7 +46,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.hasJointInstitution = educationProgram.hasJointInstitution;
     program.hasJointDesignatedInstitution =
       educationProgram.hasJointDesignatedInstitution;
-    program.institution = { id: institutionId } as Institution;
+    program.approvalStatus = educationProgram.approvalStatus;
+    program.institution = { id: educationProgram.institutionId } as Institution;
     return this.repo.save(program);
   }
 }

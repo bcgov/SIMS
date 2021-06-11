@@ -12,9 +12,10 @@ export enum AppRoutes {
   AddInstitutionLocation = "add-institution-location",
   EditInstitutionLocation = "edit-institution-location",
   LocationPrograms = "location-programs",
+  LocationProgramsCreate = "location-programs/:locationId/create",
   LocationApplications = "location-applications",
   LocationUsers = "location-users",
   ManageInstitutionDesignation = "manage-desgination",
   InstitutionManageUsers = "manage-users",
-  DisabledUser="login/disabled-user"
+  DisabledUser = "login/disabled-user",
 }
