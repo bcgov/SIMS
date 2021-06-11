@@ -1,5 +1,4 @@
 import ApiClient from "./http/ApiClient";
-import { CreateEducationProgramDto } from "../types";
 
 export class EducationProgramService {
   // Share Instance
@@ -9,7 +8,7 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
-  public async createProgram(data: CreateEducationProgramDto): Promise<void> {
+  public async createProgram(data: any): Promise<void> {
     await ApiClient.EducationProgram.createProgram(data);
   }
 }

@@ -12,7 +12,6 @@ import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { EducationProgramService } from "../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
-import { CreateEducationProgramDto } from "../../types";
 
 export default {
   components: { formio },
@@ -25,7 +24,7 @@ export default {
   setup(props: any) {
     const toast = useToast();
     const router = useRouter();
-    const submitted = async (data: CreateEducationProgramDto) => {
+    const submitted = async (data: any) => {
       try {
         await EducationProgramService.shared.createProgram(data);
         router.push({

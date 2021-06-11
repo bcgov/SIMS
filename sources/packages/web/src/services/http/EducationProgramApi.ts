@@ -1,10 +1,7 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { CreateEducationProgramDto } from "../../types";
 
 export class EducationProgramApi extends HttpBaseClient {
-  public async createProgram(
-    createProgramDto: CreateEducationProgramDto,
-  ): Promise<void> {
+  public async createProgram(createProgramDto: any): Promise<void> {
     try {
       await this.apiClient.post(
         "institution/education-program",
