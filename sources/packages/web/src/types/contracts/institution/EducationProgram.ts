@@ -1,3 +1,4 @@
+// @SONAR_STOP@
 export interface CreateEducationProgramDto {
   name: string;
   description: string;
@@ -25,3 +26,4 @@ export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
   deliveredOnline: boolean;
 }
+// @SONAR_START@
