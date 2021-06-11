@@ -4,14 +4,14 @@ export interface CreateEducationProgramOfferingDto {
   studyEndDate: Date;
   breakStartDate: Date;
   breakEndDate: Date;
-  actualTutionCosts: number;
+  actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
   exceptionalExpenses: number;
-  amountRequested: number;
+  tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
-  lacksProgramDates: boolean;
+  lacksStudyDates: boolean;
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
-  tutionRemittanceRequested: string;
+  tuitionRemittanceRequested: string;
 }

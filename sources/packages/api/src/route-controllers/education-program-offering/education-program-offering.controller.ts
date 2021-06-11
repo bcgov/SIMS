@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Param } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import { CreateEducationProgramOfferingDto } from "./models/create-education-program-offering.dto";
 import { EducationProgramOfferingService } from "../../services";
 
@@ -11,6 +11,7 @@ export class EducationProgramOfferingController {
     private readonly programOfferingService: EducationProgramOfferingService,
   ) {}
 
+  @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
     @Body() payload: CreateEducationProgramOfferingDto,

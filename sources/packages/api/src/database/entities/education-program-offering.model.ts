@@ -60,13 +60,13 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   breakEndDate: Date;
   /**
-   * Offering Actual Tution Costs
+   * Offering Actual Tuition Costs
    */
   @Column({
-    name: "actual_tution_costs",
+    name: "actual_tuition_costs",
     nullable: true,
   })
-  actualTutionCosts: number;
+  actualTuitionCosts: number;
   /**
    * Offering Program Related Costs
    */
@@ -92,13 +92,13 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   exceptionalExpenses: number;
   /**
-   * Offering Amount Requested
+   * Offering Tuition Remittance Amount Requested
    */
   @Column({
-    name: "amount_requested",
+    name: "tuition_remittance_requested_amount",
     nullable: true,
   })
-  amountRequested: number;
+  tuitionRemittanceRequestedAmount: number;
   /**
    * How Offering is Delivered like Onsite, Online, Blended
    */
@@ -107,12 +107,12 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   offeringDelivered: string;
   /**
-   * Offering does not have Program Dates?
+   * Offering does not have Study Dates?
    */
   @Column({
-    name: "lacks_program_dates",
+    name: "lacks_study_dates",
   })
-  lacksProgramDates: boolean;
+  lacksStudyDates: boolean;
   /**
    * Offering does not have Study Breaks?
    */
@@ -128,12 +128,12 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   lacksFixedCosts: boolean;
   /**
-   * Offering Tution Remittance Requested like Yes, No
+   * Offering Tuition Remittance Requested like Yes, No
    */
   @Column({
-    name: "tution_remittance_requested",
+    name: "tuition_remittance_requested",
   })
-  tutionRemittanceRequested: string;
+  tuitionRemittanceRequested: string;
   /**
    * Related program.
    */
