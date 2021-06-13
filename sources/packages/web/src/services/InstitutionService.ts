@@ -15,6 +15,7 @@ import {
   InstitutionUserRoleLocation,
   UserAuth,
   InstitutionUserWithUserType,
+  InstitutionUserAndAuthDetails,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -270,5 +271,17 @@ export class InstitutionService {
             .filter((el: any) => el) as InstitutionUserRoleLocation[])
         : undefined,
     } as InstitutionUserAuthDetails;
+  }
+
+  public async getMyInstitutionDetails(): Promise<
+    InstitutionUserAndAuthDetails
+  > {
+    return await ApiClient.Institution.getMyInstitutionDetails();
+  }
+
+  public async getMyInstitutionLocationsDetails(): Promise<
+    InstitutionLocationsDetails
+  > {
+    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
   }
 }

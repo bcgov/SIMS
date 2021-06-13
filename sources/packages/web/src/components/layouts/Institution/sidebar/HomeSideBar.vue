@@ -1,11 +1,11 @@
 <template>
-  <Menu :model="items" />
+  <PanelMenu :model="items" />
 </template>
 <script lang="ts">
-import Menu from "primevue/panelmenu";
+import PanelMenu from "primevue/panelmenu";
 import { useRouter } from "vue-router";
-import { UserService } from "../../../../services/UserService";
-import { ref, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 interface MenuModel {
@@ -17,27 +17,38 @@ interface MenuModel {
 
 export default {
   components: {
-    Menu,
+    PanelMenu,
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
-    const items = ref<MenuModel[]>([
-      {
-        label: "Dashboard",
-        icon: "pi pi-home",
-      },
-      {
-        label: "Notifications",
-        icon: "pi pi-bell",
-      },
-      {
-        label: "LOCATIONS",
-        icon: "pi pi-globe",
-      },
-    ]);
+    // const userLocationList = computed({
+    //   get: () => store.state.institution.myInstitutionLocationsState,
+    //   set: () => {
+    //     store.dispatch("institution/getUserInstitutionLocationDetails");
+    //   },
+    // });
+    const userLocationList = computed(
+      () => store.state.institution.myInstitutionLocationsState
+    );
+    const items = ref<MenuModel[]>([]);
+
     const getuserLocationList = async () => {
-      const userLocationList = await UserService.shared.getAllUserLocations();
-      for (const data of userLocationList) {
+      items.value = [
+        {
+          label: "Dashboard",
+          icon: "pi pi-home",
+        },
+        {
+          label: "Notifications",
+          icon: "pi pi-bell",
+        },
+        {
+          label: "LOCATIONS",
+          icon: "pi pi-globe",
+        },
+      ];
+      for (const data of userLocationList.value) {
         items.value.push({
           label: data.name,
           icon: "pi pi-map-marker",
@@ -85,7 +96,17 @@ export default {
         });
       }
     };
-    onMounted(getuserLocationList);
+    watch(
+      () => userLocationList.value,
+      async () => {
+        // get user details
+        await getuserLocationList();
+      }
+    );
+    onMounted(async () => {
+      // get user details
+      await getuserLocationList();
+    });
     return {
       items,
       getuserLocationList,

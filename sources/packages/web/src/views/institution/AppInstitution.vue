@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
+import { useStore } from "vuex";
 import { ref, onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
@@ -19,6 +20,7 @@ export default {
     CommonLayout,
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
@@ -50,6 +52,11 @@ export default {
             name: InstitutionRoutesConst.INSTITUTION_PROFILE,
           });
         }
+      }
+      if (isAuthenticated.value) {
+        store.dispatch("institution/initialize");
+        store.dispatch("institution/getUserInstitutionDetails");
+        store.dispatch("institution/getUserInstitutionLocationDetails");
       }
     });
 

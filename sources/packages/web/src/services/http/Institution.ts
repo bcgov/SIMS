@@ -4,6 +4,7 @@ import {
   InstitutionDetailDto,
   UpdateInstitutionDto,
   InstitutionUserResDto,
+  InstitutionUserAndAuthDetails,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -80,6 +81,21 @@ export class InstitutionApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return resp.data as InstitutionUserTypeAndRoleResponseDto;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getMyInstitutionDetails(): Promise<
+    InstitutionUserAndAuthDetails
+  > {
+    try {
+      const res = await this.apiClient.get(
+        `institution/my-details`,
+        this.addAuthHeader(),
+      );
+      return res?.data as InstitutionUserAndAuthDetails;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
