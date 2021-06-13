@@ -1,7 +1,6 @@
 import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
-  UserLocationDto,
 } from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -39,19 +38,6 @@ export class UserApi extends HttpBaseClient {
         headers || this.addAuthHeader(),
       );
       return response.data as BCeIDAccountsDto;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async allUserLocationsApi(): Promise<UserLocationDto[]> {
-    try {
-      const response = await this.apiClient.get(
-        "users/locations",
-        this.addAuthHeader(),
-      );
-      return response.data as UserLocationDto[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;

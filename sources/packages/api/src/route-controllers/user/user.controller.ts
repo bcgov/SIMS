@@ -106,16 +106,6 @@ export class UserController extends BaseController {
     };
   }
 
-  @Get("locations")
-  async getAllUserLocations(
-    @UserToken() userToken: IUserToken,
-  ): Promise<UserLocationDto[]> {
-    // get all User locations.
-    return this.institutionLocationService.getAllUserLocations(
-      userToken.userName,
-    );
-  }
-
   @AllowInactiveUser()
   @Get("/check-active-user")
   async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {

@@ -2,8 +2,8 @@ import {
   InstitutionlocationData,
   InstitutionLocationsDetails,
 } from "./AddInstitutionLocation";
-
 import { InstitutionDto } from "./CreateInstitutionDto";
+import { InstitutionUserAuthRolesAndLocation } from "./InstitutionUserTypeAndRoleResponseDto";
 export interface InstitutionUserResDto {
   id: number;
   user: InstitutionUserDetails;
@@ -91,4 +91,13 @@ export interface InstitutionUserAuthDetails {
   location?: InstitutionUserRoleLocation[];
   userGuid?: string;
   userId?: string;
+}
+
+export interface InstitutionUserAuthorizationsDetails {
+  institutionId: number;
+  authorizations: InstitutionUserAuthRolesAndLocation[];
+}
+export interface InstitutionUserAndAuthDetails {
+  user: InstitutionUserDetails;
+  authorizations: InstitutionUserAuthorizationsDetails;
 }
