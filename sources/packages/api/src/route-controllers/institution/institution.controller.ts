@@ -7,7 +7,12 @@ import {
   UnprocessableEntityException,
   Param,
 } from "@nestjs/common";
-import { BCeIDService, InstitutionService, UserService } from "../../services";
+import {
+  BCeIDService,
+  InstitutionService,
+  UserService,
+  InstitutionLocationService,
+} from "../../services";
 import {
   CreateInstitutionDto,
   InstitutionDetailDto,
@@ -20,6 +25,7 @@ import {
   InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthorizations,
+  InstitutionUserAndAuthDetails,
 } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import {
@@ -32,7 +38,7 @@ import {
   IsInstitutionAdmin,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-
+import { InstitutionLocationsDetailsDto } from "../institution-locations/models/institution-location.dto";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -40,6 +46,7 @@ export class InstitutionController extends BaseController {
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,
+    private readonly locationService: InstitutionLocationService,
   ) {
     super();
   }
@@ -156,11 +163,12 @@ export class InstitutionController extends BaseController {
     }
 
     // Create the user user and the related records.
-    const createdInstitutionUser = await this.institutionService.createInstitutionUser(
-      institution.id,
-      bceidUserAccount,
-      payload,
-    );
+    const createdInstitutionUser =
+      await this.institutionService.createInstitutionUser(
+        institution.id,
+        bceidUserAccount,
+        payload,
+      );
 
     return createdInstitutionUser.id;
   }
@@ -175,9 +183,8 @@ export class InstitutionController extends BaseController {
     @Param("userName") userName: string,
   ): Promise<InstitutionLocationUserAuthDto> {
     // Get institutionUser
-    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
-      userName,
-    );
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
     // disabled users details can't be edited
     if (!institutionUser.user.isActive) {
       throw new UnprocessableEntityException("Not an Active User.");
@@ -210,9 +217,8 @@ export class InstitutionController extends BaseController {
     @Body() payload: InstitutionUserPermissionDto,
   ): Promise<void> {
     // Check its a active user
-    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
-      userName,
-    );
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
     if (!institutionUser) {
       throw new UnprocessableEntityException(
         "user does not exist in the system.",
@@ -246,9 +252,8 @@ export class InstitutionController extends BaseController {
     // TODO: Check if the user belongs to the institution.
     // We can pass the institution id to getInstitutionUserByUserName to ensure it.
     // The institution id is present on token.
-    const institutionUser = await this.institutionService.getInstitutionUserByUserName(
-      userName,
-    );
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(userName);
     if (!institutionUser) {
       throw new UnprocessableEntityException(
         "user does not exist in the system.",
@@ -258,5 +263,53 @@ export class InstitutionController extends BaseController {
       institutionUser.user.id,
       body.isActive,
     );
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @Get("/my-details")
+  async getMyDetails(
+    @UserToken() token: IInstitutionUserToken,
+  ): Promise<InstitutionUserAndAuthDetails> {
+    // Get institutionUser
+    const institutionUser =
+      await this.institutionService.getInstitutionUserByUserName(
+        token.userName,
+      );
+    const user = {
+      user: {
+        firstName: institutionUser.user?.firstName,
+        lastName: institutionUser.user?.lastName,
+        userName: token.userName ?? institutionUser.user?.userName,
+        isActive: institutionUser.user?.isActive,
+        isAdmin: token.authorizations.isAdmin,
+        id: institutionUser.user?.id,
+        email: token.email ?? institutionUser.user?.email,
+      },
+    };
+    const LocationAuth = {
+      authorizations: token.authorizations,
+    };
+
+    return {
+      ...user,
+      ...LocationAuth,
+    };
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @Get("/my-locations")
+  async getMyInstitutionLocations(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionLocationsDetailsDto[]> {
+    // get all institution locations that user has access too.
+    if (userToken.authorizations.isAdmin()) {
+      return await this.locationService.getAllInstitutionlocations(
+        userToken?.authorizations?.institutionId,
+      );
+    } else {
+      return await this.locationService.getMyInstitutionlocations(
+        userToken.authorizations.getLocationsIds(),
+      );
+    }
   }
 }

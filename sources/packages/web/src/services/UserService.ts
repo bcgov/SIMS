@@ -2,7 +2,6 @@ import ApiClient from "./http/ApiClient";
 import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
-  UserLocationDto,
 } from "../types/contracts/UserContract";
 
 export class UserService {
@@ -33,10 +32,6 @@ export class UserService {
     } catch (excp) {
       return null;
     }
-  }
-
-  async getAllUserLocations(): Promise<UserLocationDto[]> {
-    return ApiClient.User.allUserLocationsApi();
   }
 
   async checkActiveUser(authHeader?: any): Promise<boolean> {
