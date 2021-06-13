@@ -22,7 +22,12 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-
+    // const userLocationList = computed({
+    //   get: () => store.state.institution.myInstitutionLocationsState,
+    //   set: () => {
+    //     store.dispatch("institution/getUserInstitutionLocationDetails");
+    //   },
+    // });
     const userLocationList = computed(
       () => store.state.institution.myInstitutionLocationsState
     );

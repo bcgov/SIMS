@@ -160,4 +160,5 @@ export class InstitutionLocationsController extends BaseController {
       );
     return Institutionlocations;
   }
+
 }

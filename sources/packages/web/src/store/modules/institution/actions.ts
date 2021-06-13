@@ -4,7 +4,7 @@ import {
   InstitutionLocationState,
   RootState,
   InstitutionUserAndAuthDetails,
-  InstitutionLocationsDetails,
+  InstitutionLocationsDetails
 } from "@/types";
 
 export const actions: ActionTree<InstitutionLocationState, RootState> = {
@@ -26,17 +26,12 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     });
   },
 
-  getUserInstitutionLocationDetails(
-    context,
-  ): Promise<InstitutionLocationsDetails> {
+  getUserInstitutionLocationDetails(context): Promise<InstitutionLocationsDetails> {
     return new Promise((resolve, reject) => {
       InstitutionService.shared
         .getMyInstitutionLocationsDetails()
         .then(resultComment => {
-          context.commit(
-            "setmyInstitutionLocationsDetailsState",
-            resultComment,
-          );
+          context.commit("setmyInstitutionLocationsDetailsState", resultComment);
           resolve(resultComment);
         })
         .catch(error => {
