@@ -7,8 +7,6 @@ import {
 } from "@/types";
 
 export const mutations: MutationTree<InstitutionLocationState> = {
-
-
   setmyInstitutionAndUserDetailsState(
     state: InstitutionLocationState,
     myInstitutionAndUserDetailsState: InstitutionUserAndAuthDetails,

@@ -10,10 +10,8 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewLocation()">
+              <v-icon left> mdi-map-marker-plus </v-icon>
               Add New Location
-              <v-icon right>
-                mdi-map-marker-plus
-              </v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -43,9 +41,7 @@
             </v-col>
             <v-col cols="2">
               <v-btn plain @click="getLocation(item.id)">
-                <v-icon right class="mr-2">
-                  mdi-cog-outline
-                </v-icon>
+                <v-icon right class="mr-2"> mdi-cog-outline </v-icon>
                 Edit
               </v-btn>
             </v-col>
@@ -71,34 +67,16 @@
             <v-col>
               <span class="pb-2"><b> Primary Contact </b></span><br />
               <span class="mt-2">
-                {{
-                  item.institution.institutionPrimaryContact
-                    .primaryContactFirstName
-                }}
-                {{
-                  item.institution.institutionPrimaryContact
-                    .primaryContactLastName
-                }}
+                {{ item.institution.institutionPrimaryContact.primaryContactFirstName }}
+                {{ item.institution.institutionPrimaryContact.primaryContactLastName }}
                 <br />
               </span>
-              <span
-                v-if="
-                  item.institution.institutionPrimaryContact.primaryContactPhone
-                "
-              >
-                {{
-                  item.institution.institutionPrimaryContact.primaryContactPhone
-                }}
+              <span v-if="item.institution.institutionPrimaryContact.primaryContactPhone">
+                {{ item.institution.institutionPrimaryContact.primaryContactPhone }}
                 <br />
               </span>
-              <span
-                v-if="
-                  item.institution.institutionPrimaryContact.primaryContactEmail
-                "
-              >
-                {{
-                  item.institution.institutionPrimaryContact.primaryContactEmail
-                }}
+              <span v-if="item.institution.institutionPrimaryContact.primaryContactEmail">
+                {{ item.institution.institutionPrimaryContact.primaryContactEmail }}
                 <br />
               </span>
             </v-col>

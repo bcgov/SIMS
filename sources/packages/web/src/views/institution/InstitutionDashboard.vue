@@ -5,14 +5,7 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
-
-export default {
-  setup() {
-    const store = useStore();
-    return { store };
-  },
-};
+export default {};
 </script>
 
 <style></style>
