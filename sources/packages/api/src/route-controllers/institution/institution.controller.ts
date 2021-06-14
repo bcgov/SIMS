@@ -25,7 +25,8 @@ import {
   InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthorizations,
-  InstitutionUserAndAuthDetails,
+  InstitutionUserAndAuthDetailsDto,
+  InstitutionUserAuth,
 } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import {
@@ -39,6 +40,9 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocationsDetailsDto } from "../institution-locations/models/institution-location.dto";
+import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
+import { InstitutionLocation } from "../../database/entities/institution-location.model";
+
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -268,7 +272,7 @@ export class InstitutionController extends BaseController {
   @Get("/my-details")
   async getMyDetails(
     @UserToken() token: IInstitutionUserToken,
-  ): Promise<InstitutionUserAndAuthDetails> {
+  ): Promise<InstitutionUserAndAuthDetailsDto> {
     // Get logged in user and location details with auth
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(
@@ -278,15 +282,24 @@ export class InstitutionController extends BaseController {
       user: {
         firstName: institutionUser.user?.firstName,
         lastName: institutionUser.user?.lastName,
-        userName: token.userName ?? institutionUser.user?.userName,
         isActive: institutionUser.user?.isActive,
         isAdmin: token.authorizations.isAdmin,
-        id: institutionUser.user?.id,
-        email: token.email ?? institutionUser.user?.email,
+        email: institutionUser.user?.email,
       },
     };
     const LocationAuth = {
-      authorizations: token.authorizations,
+      authorizations: {
+        institutionId: token.authorizations.institutionId,
+        authorizations: token.authorizations.authorizations.map(
+          (el: Authorizations) => {
+            return {
+              locationId: el.locationId,
+              userType: el.userType,
+              userRole: el.userRole,
+            };
+          },
+        ),
+      } as InstitutionUserAuth,
     };
 
     return {
@@ -300,14 +313,27 @@ export class InstitutionController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations that user has access too.
-    if (userToken.authorizations.isAdmin()) {
-      return this.locationService.getAllInstitutionlocations(
-        userToken?.authorizations?.institutionId,
-      );
-    } else {
-      return this.locationService.getMyInstitutionlocations(
-        userToken.authorizations.getLocationsIds(),
-      );
-    }
+    const InstitutionLocation: InstitutionLocation[] =
+      userToken.authorizations.isAdmin()
+        ? await this.locationService.getAllInstitutionlocations(
+            userToken?.authorizations?.institutionId,
+          )
+        : await this.locationService.getMyInstitutionlocations(
+            userToken.authorizations.getLocationsIds(),
+          );
+    return InstitutionLocation.map((el: InstitutionLocation) => {
+      return {
+        id: el.id,
+        name: el.name,
+        address: {
+          addressLine1: el.data.address?.addressLine1,
+          addressLine2: el.data.address?.addressLine2,
+          province: el.data.address?.province,
+          country: el.data.address?.country,
+          city: el.data.address?.city,
+          postalCode: el.data.address?.postalCode,
+        },
+      } as InstitutionLocationsDetailsDto;
+    });
   }
 }

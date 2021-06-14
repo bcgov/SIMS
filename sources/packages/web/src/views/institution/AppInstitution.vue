@@ -55,8 +55,6 @@ export default {
       }
       if (isAuthenticated.value) {
         store.dispatch("institution/initialize");
-        store.dispatch("institution/getUserInstitutionDetails");
-        store.dispatch("institution/getUserInstitutionLocationDetails");
       }
     });
 

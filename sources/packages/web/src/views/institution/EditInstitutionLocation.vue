@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
@@ -29,16 +30,15 @@ export default {
   },
   setup(props: any) {
     // Hooks
+    const store = useStore();
     const initialData = ref({});
     const toast = useToast();
     const router = useRouter();
     const submitted = async (data: Institutionlocation) => {
       try {
-        await InstitutionService.shared.updateInstitutionLocation(
-          props.locationId,
-          data,
-        );
+        await InstitutionService.shared.updateInstitutionLocation(props.locationId, data);
         router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
+        store.dispatch("institution/getUserInstitutionLocationDetails");
         toast.add({
           severity: "success",
           summary: `Your location information for ${data.locationName} have been updated`,
@@ -56,7 +56,7 @@ export default {
     };
     onMounted(async () => {
       const detail: InstitutionLocationsDetails = await InstitutionService.shared.getInstitutionLocation(
-        props.locationId,
+        props.locationId
       );
       initialData.value = {
         address1: detail.data.address.addressLine1,

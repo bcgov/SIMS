@@ -3,8 +3,6 @@ import {
   InstitutionLocation,
   InstitutionUserTypeAndRole,
 } from "../../../database/entities";
-import { InstitutionUserAuthorizations as InstitutionUserAuth } from "../../../services/institution-user-auth/institution-user-auth.models";
-
 export interface InstitutionUserRespDto {
   id: number;
   user: Pick<
@@ -32,10 +30,15 @@ export interface InstitutionLocationUserAuthDto {
   user: Pick<User, "firstName" | "lastName" | "userName" | "isActive" | "id">;
 }
 
-export interface InstitutionUserAndAuthDetails {
+export interface InstitutionUserAuth {
+  institutionId: number;
+  authorizations: {
+    locationId?: number;
+    userType: string;
+    userRole?: string;
+  }[];
+}
+export interface InstitutionUserAndAuthDetailsDto {
   authorizations: InstitutionUserAuth;
-  user: Pick<
-    User,
-    "firstName" | "lastName" | "userName" | "isActive" | "id" | "email"
-  >;
+  user: Pick<User, "firstName" | "lastName" | "isActive" | "email">;
 }

@@ -3,20 +3,20 @@ import { GetterTree } from "vuex";
 import {
   InstitutionLocationState,
   RootState,
-  InstitutionUserAndAuthDetails,
-  InstitutionLocationsDetails,
+  InstitutionUserAndAuthDetailsForStore,
+  InstitutionLocationsDetailsForStore,
 } from "@/types";
 
 export const getters: GetterTree<InstitutionLocationState, RootState> = {
   myInstitutionDetails(
     state: InstitutionLocationState,
-  ): InstitutionUserAndAuthDetails {
+  ): InstitutionUserAndAuthDetailsForStore {
     const { myInstitutionAndUserDetailsState } = state;
     return myInstitutionAndUserDetailsState;
   },
   myInstitutionLocations(
     state: InstitutionLocationState,
-  ): InstitutionLocationsDetails {
+  ): InstitutionLocationsDetailsForStore {
     const { myInstitutionLocationsState } = state;
     return myInstitutionLocationsState;
   },

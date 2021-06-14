@@ -25,6 +25,7 @@ import {
   AllowAuthorizedParty,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { InstitutionLocation } from "../../database/entities/institution-location.model";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -131,9 +132,38 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
     // get all institution locations.
-    return this.locationService.getAllInstitutionlocations(
-      institutionDetails.id,
-    );
+    const InstitutionLocation =
+      await this.locationService.getAllInstitutionlocations(
+        institutionDetails.id,
+      );
+    return InstitutionLocation.map((el: InstitutionLocation) => {
+      return {
+        id: el.id,
+        name: el.name,
+        data: {
+          address: {
+            addressLine1: el.data.address?.addressLine1,
+            addressLine2: el.data.address?.addressLine2,
+            province: el.data.address?.province,
+            country: el.data.address?.country,
+            city: el.data.address?.city,
+            postalCode: el.data.address?.postalCode,
+          },
+        },
+        institution: {
+          institutionPrimaryContact: {
+            primaryContactEmail:
+              el.institution.institutionPrimaryContact.primaryContactEmail,
+            primaryContactFirstName:
+              el.institution.institutionPrimaryContact.primaryContactFirstName,
+            primaryContactLastName:
+              el.institution.institutionPrimaryContact.primaryContactLastName,
+            primaryContactPhone:
+              el.institution.institutionPrimaryContact.primaryContactPhone,
+          },
+        },
+      } as InstitutionLocationsDetailsDto;
+    });
   }
 
   @HasLocationAccess("locationId")
@@ -141,7 +171,7 @@ export class InstitutionLocationsController extends BaseController {
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<InstitutionLocationsDetailsDto> {
+  ): Promise<InstitutionLocation> {
     //To retrive institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);

@@ -28,7 +28,7 @@ export default {
     );
     const items = ref<MenuModel[]>([]);
 
-    const getuserLocationList = async () => {
+    const getuserLocationList = () => {
       items.value = [
         {
           label: "Dashboard",
@@ -95,16 +95,17 @@ export default {
       () => userLocationList.value,
       async () => {
         // get user details
-        await getuserLocationList();
+        getuserLocationList();
       }
     );
-    onMounted(async () => {
+    onMounted(() => {
       // get user details
-      await getuserLocationList();
+      if (Array.isArray(userLocationList.value)) {
+        getuserLocationList();
+      }
     });
     return {
       items,
-      getuserLocationList,
     };
   },
 };

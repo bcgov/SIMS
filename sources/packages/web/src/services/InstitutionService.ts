@@ -15,7 +15,6 @@ import {
   InstitutionUserRoleLocation,
   UserAuth,
   InstitutionUserWithUserType,
-  InstitutionUserAndAuthDetails,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -273,15 +272,11 @@ export class InstitutionService {
     } as InstitutionUserAuthDetails;
   }
 
-  public async getMyInstitutionDetails(): Promise<
-    InstitutionUserAndAuthDetails
-  > {
+  public async getMyInstitutionDetails() {
     return ApiClient.Institution.getMyInstitutionDetails();
   }
 
-  public async getMyInstitutionLocationsDetails(): Promise<
-    InstitutionLocationsDetails
-  > {
+  public async getMyInstitutionLocationsDetails() {
     return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
   }
 }

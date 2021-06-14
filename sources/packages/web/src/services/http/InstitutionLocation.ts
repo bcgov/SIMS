@@ -4,6 +4,7 @@ import {
   InstitutionLocationsDetails,
   InstitutionUserDto,
   InstitutionLocationUserAuthDto,
+  InstitutionLocationsDetailsForStore,
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -134,14 +135,14 @@ export class InstitutionLocationApi extends HttpBaseClient {
   }
 
   public async getMyInstitutionLocationsDetails(): Promise<
-    InstitutionLocationsDetails
+    InstitutionLocationsDetailsForStore
   > {
     try {
       const res = await this.apiClient.get(
         `institution/my-locations`,
         this.addAuthHeader(),
       );
-      return res?.data as InstitutionLocationsDetails;
+      return res?.data as InstitutionLocationsDetailsForStore;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

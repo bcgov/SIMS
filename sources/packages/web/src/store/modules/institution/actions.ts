@@ -1,47 +1,20 @@
 import { ActionTree } from "vuex";
 import { InstitutionService } from "@/services/InstitutionService";
-import {
-  InstitutionLocationState,
-  RootState,
-  InstitutionUserAndAuthDetails,
-  InstitutionLocationsDetails,
-} from "@/types";
+import { InstitutionLocationState, RootState } from "@/types";
 
 export const actions: ActionTree<InstitutionLocationState, RootState> = {
-  initialize(): boolean {
-    console.log("Initializing the institution store...");
+  initialize(context): boolean {
+    context.dispatch("getUserInstitutionDetails");
+    context.dispatch("getUserInstitutionLocationDetails");
     return true;
   },
-  getUserInstitutionDetails(context): Promise<InstitutionUserAndAuthDetails> {
-    return new Promise((resolve, reject) => {
-      InstitutionService.shared
-        .getMyInstitutionDetails()
-        .then(resultComment => {
-          context.commit("setmyInstitutionAndUserDetailsState", resultComment);
-          resolve(resultComment);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+  async getUserInstitutionDetails(context): Promise<void> {
+    const resultComment = await InstitutionService.shared.getMyInstitutionDetails();
+    context.commit("setMyInstitutionAndUserDetailsState", resultComment);
   },
 
-  getUserInstitutionLocationDetails(
-    context,
-  ): Promise<InstitutionLocationsDetails> {
-    return new Promise((resolve, reject) => {
-      InstitutionService.shared
-        .getMyInstitutionLocationsDetails()
-        .then(resultComment => {
-          context.commit(
-            "setmyInstitutionLocationsDetailsState",
-            resultComment,
-          );
-          resolve(resultComment);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+  async getUserInstitutionLocationDetails(context): Promise<void> {
+    const resultComment = await InstitutionService.shared.getMyInstitutionLocationsDetails();
+    context.commit("setMyInstitutionLocationsDetailsState", resultComment);
   },
 };

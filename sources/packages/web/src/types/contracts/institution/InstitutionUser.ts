@@ -97,7 +97,24 @@ export interface InstitutionUserAuthorizationsDetails {
   institutionId: number;
   authorizations: InstitutionUserAuthRolesAndLocation[];
 }
-export interface InstitutionUserAndAuthDetails {
-  user: InstitutionUserDetails;
+export interface InstitutionUserAndAuthDetailsForStore {
+  user: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    isActive: boolean;
+  };
   authorizations: InstitutionUserAuthorizationsDetails;
+}
+export interface InstitutionLocationsDetailsForStore {
+  id: number;
+  name: string;
+  address: {
+    addressLine1: string;
+    addressLine2?: string;
+    province: string;
+    country: string;
+    city: string;
+    postalCode: string;
+  };
 }

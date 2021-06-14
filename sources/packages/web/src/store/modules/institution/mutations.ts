@@ -2,21 +2,21 @@ import { MutationTree } from "vuex";
 
 import {
   InstitutionLocationState,
-  InstitutionUserAndAuthDetails,
-  InstitutionLocationsDetails,
+  InstitutionUserAndAuthDetailsForStore,
+  InstitutionLocationsDetailsForStore,
 } from "@/types";
 
 export const mutations: MutationTree<InstitutionLocationState> = {
-  setmyInstitutionAndUserDetailsState(
+  setMyInstitutionAndUserDetailsState(
     state: InstitutionLocationState,
-    myInstitutionAndUserDetailsState: InstitutionUserAndAuthDetails,
+    myInstitutionAndUserDetailsState: InstitutionUserAndAuthDetailsForStore,
   ) {
     state.myInstitutionAndUserDetailsState = myInstitutionAndUserDetailsState;
   },
 
-  setmyInstitutionLocationsDetailsState(
+  setMyInstitutionLocationsDetailsState(
     state: InstitutionLocationState,
-    myInstitutionLocationsState: InstitutionLocationsDetails,
+    myInstitutionLocationsState: InstitutionLocationsDetailsForStore,
   ) {
     state.myInstitutionLocationsState = myInstitutionLocationsState;
   },

@@ -4,10 +4,7 @@ import { InstitutionLocation } from "../../database/entities/institution-locatio
 import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionService } from "..";
-import {
-  InstitutionLocationsDetailsDto,
-  InstitutionLocationTypeDto,
-} from "../../route-controllers/institution-locations/models/institution-location.dto";
+import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
@@ -77,7 +74,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
   async getAllInstitutionlocations(
     institutionId: number,
-  ): Promise<InstitutionLocationsDetailsDto[]> {
+  ): Promise<InstitutionLocation[]> {
     return this.repo
       .createQueryBuilder("institution_location")
       .select([
@@ -94,7 +91,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getInstitutionLocation(
     institutionId: number,
     locationId: number,
-  ): Promise<InstitutionLocationsDetailsDto> {
+  ): Promise<InstitutionLocation> {
     return this.repo
       .createQueryBuilder("institution_location")
       .select([
@@ -113,7 +110,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
   async getMyInstitutionlocations(
     locationIds: number[],
-  ): Promise<InstitutionLocationsDetailsDto[]> {
+  ): Promise<InstitutionLocation[]> {
     return this.repo.findByIds(locationIds);
   }
 }
