@@ -1,17 +1,12 @@
-import {
-  Injectable,
-  Inject,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, UpdateResult } from "typeorm";
-import { UserInfo, ValidatedInstitutionLocation } from "../../types";
+import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionService } from "..";
 import {
   InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
-  UserLocationDto,
 } from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {

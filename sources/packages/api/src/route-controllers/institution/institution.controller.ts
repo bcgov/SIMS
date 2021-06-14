@@ -301,11 +301,11 @@ export class InstitutionController extends BaseController {
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations that user has access too.
     if (userToken.authorizations.isAdmin()) {
-      return await this.locationService.getAllInstitutionlocations(
+      return this.locationService.getAllInstitutionlocations(
         userToken?.authorizations?.institutionId,
       );
     } else {
-      return await this.locationService.getMyInstitutionlocations(
+      return this.locationService.getMyInstitutionlocations(
         userToken.authorizations.getLocationsIds(),
       );
     }

@@ -10,7 +10,6 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
-import { UserLocationDto } from "../institution-locations/models/institution-location.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
 

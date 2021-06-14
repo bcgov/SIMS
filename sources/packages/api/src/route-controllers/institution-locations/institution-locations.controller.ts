@@ -131,11 +131,9 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
     // get all institution locations.
-    const Institutionlocations =
-      await this.locationService.getAllInstitutionlocations(
-        institutionDetails.id,
-      );
-    return Institutionlocations;
+    return this.locationService.getAllInstitutionlocations(
+      institutionDetails.id,
+    );
   }
 
   @HasLocationAccess("locationId")
@@ -153,11 +151,9 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
     // get all institution locations.
-    const Institutionlocations =
-      await this.locationService.getInstitutionLocation(
-        institutionDetails.id,
-        locationId,
-      );
-    return Institutionlocations;
+    return this.locationService.getInstitutionLocation(
+      institutionDetails.id,
+      locationId,
+    );
   }
 }
