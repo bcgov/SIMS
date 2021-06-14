@@ -17,6 +17,19 @@
             </v-btn>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="8">
+            <h2 class="color-blue">Offering</h2>
+          </v-col>
+          <v-col cols="4">
+            <v-btn class="float-right" @click="goToAddNewOffering()">
+              <v-icon left>
+                mdi-open-in-new
+              </v-icon>
+              Create New Offering
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </v-sheet>
   </v-container>
@@ -45,8 +58,14 @@ export default {
         params: { locationId: props.locationId },
       });
     };
+    const goToAddNewOffering = () => {
+      router.push({
+        name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+        params: { locationId: props.locationId, programId: 1 },
+      });
+    };
 
-    return { goToAddNewProgram };
+    return { goToAddNewProgram, goToAddNewOffering };
   },
 };
 </script>
