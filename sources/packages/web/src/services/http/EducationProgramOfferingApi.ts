@@ -1,10 +1,11 @@
 import HttpBaseClient from "./common/HttpBaseClient";
+import { Offering } from "../../types/contracts/OfferingContact";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    createProgramOfferingDto: any,
+    createProgramOfferingDto: Offering,
   ): Promise<void> {
     try {
       await this.apiClient.post(

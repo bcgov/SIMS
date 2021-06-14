@@ -77,7 +77,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             props: true,
           },
           {
-            path: `${AppRoutes.LocationOfferings}/:locationId/education-program/:programId`,
+            path: `${AppRoutes.LocationOfferings}`,
             name: InstitutionRoutesConst.LOCATION_OFFERINGS,
             components: {
               default: LocationPrograms,

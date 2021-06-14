@@ -1,4 +1,5 @@
 import ApiClient from "./http/ApiClient";
+import { Offering } from "../types/contracts/OfferingContact";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -11,7 +12,7 @@ export class EducationProgramOfferingService {
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    data: any,
+    data: Offering,
   ): Promise<void> {
     await ApiClient.EducationProgramOffering.createProgramOffering(
       locationId,
