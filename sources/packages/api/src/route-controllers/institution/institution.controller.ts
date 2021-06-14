@@ -265,12 +265,11 @@ export class InstitutionController extends BaseController {
     );
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("/my-details")
   async getMyDetails(
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionUserAndAuthDetails> {
-    // Get institutionUser
+    // Get logged in user and location details with auth
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(
         token.userName,
@@ -296,7 +295,6 @@ export class InstitutionController extends BaseController {
     };
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("/my-locations")
   async getMyInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
