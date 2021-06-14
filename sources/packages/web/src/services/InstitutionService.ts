@@ -276,7 +276,7 @@ export class InstitutionService {
   public async getMyInstitutionDetails(): Promise<
     InstitutionUserAndAuthDetails
   > {
-    return await ApiClient.Institution.getMyInstitutionDetails();
+    return ApiClient.Institution.getMyInstitutionDetails();
   }
 
   public async getMyInstitutionLocationsDetails(): Promise<
