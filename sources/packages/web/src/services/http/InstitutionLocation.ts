@@ -137,11 +137,11 @@ export class InstitutionLocationApi extends HttpBaseClient {
     InstitutionLocationsDetails
   > {
     try {
-      const res =  await this.apiClient.get(
+      const res = await this.apiClient.get(
         `institution/my-locations`,
         this.addAuthHeader(),
       );
-      return res?.data as InstitutionLocationsDetails
+      return res?.data as InstitutionLocationsDetails;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
