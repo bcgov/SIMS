@@ -16,7 +16,7 @@
               </v-icon>
               Edit Program
             </v-btn>
-            <v-btn class="float-right" @click="goToCreateNewOffering()">
+            <v-btn class="float-right" @click="goToAddNewOffering()">
               <v-icon left>
                 mdi-open-in-new
               </v-icon>
@@ -54,14 +54,14 @@ export default {
       });
     };
 
-    const goToCreateNewOffering = () => {
+    const goToAddNewOffering = () => {
       router.push({
-        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-        params: { programId: props.programId, locationId: props.locationId },
+        name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+        params: { locationId: props.locationId, programId: 1 },
       });
     };
 
-    return { goToEditProgram, goToCreateNewOffering };
+    return { goToEditProgram, goToAddNewOffering };
   },
 };
 </script>

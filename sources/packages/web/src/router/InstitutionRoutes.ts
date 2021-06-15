@@ -171,6 +171,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
+        props: true,
       },
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
