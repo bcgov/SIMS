@@ -132,11 +132,11 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
     // get all institution locations.
-    const InstitutionLocation =
+    const InstitutionLocationData =
       await this.locationService.getAllInstitutionlocations(
         institutionDetails.id,
       );
-    return InstitutionLocation.map((el: InstitutionLocation) => {
+    return InstitutionLocationData.map((el: InstitutionLocation) => {
       return {
         id: el.id,
         name: el.name,

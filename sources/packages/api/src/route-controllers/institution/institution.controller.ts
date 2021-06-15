@@ -313,7 +313,7 @@ export class InstitutionController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations that user has access too.
-    const InstitutionLocation: InstitutionLocation[] =
+    const InstitutionLocationData: InstitutionLocation[] =
       userToken.authorizations.isAdmin()
         ? await this.locationService.getAllInstitutionlocations(
             userToken?.authorizations?.institutionId,
@@ -321,7 +321,7 @@ export class InstitutionController extends BaseController {
         : await this.locationService.getMyInstitutionlocations(
             userToken.authorizations.getLocationsIds(),
           );
-    return InstitutionLocation.map((el: InstitutionLocation) => {
+    return InstitutionLocationData.map((el: InstitutionLocation) => {
       return {
         id: el.id,
         name: el.name,
