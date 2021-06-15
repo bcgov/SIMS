@@ -1,11 +1,11 @@
 <template>
-  <Menu :model="items" />
+  <PanelMenu :model="items" />
 </template>
 <script lang="ts">
-import Menu from "primevue/panelmenu";
+import PanelMenu from "primevue/panelmenu";
 import { useRouter } from "vue-router";
-import { UserService } from "../../../../services/UserService";
-import { ref, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 interface MenuModel {
@@ -17,27 +17,31 @@ interface MenuModel {
 
 export default {
   components: {
-    Menu,
+    PanelMenu,
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
-    const items = ref<MenuModel[]>([
-      {
-        label: "Dashboard",
-        icon: "pi pi-home",
-      },
-      {
-        label: "Notifications",
-        icon: "pi pi-bell",
-      },
-      {
-        label: "LOCATIONS",
-        icon: "pi pi-globe",
-      },
-    ]);
-    const getuserLocationList = async () => {
-      const userLocationList = await UserService.shared.getAllUserLocations();
-      for (const data of userLocationList) {
+
+    const userLocationList = computed(() => store.state.institution.locationState);
+    const items = ref<MenuModel[]>([]);
+
+    const getuserLocationList = () => {
+      items.value = [
+        {
+          label: "Dashboard",
+          icon: "pi pi-home",
+        },
+        {
+          label: "Notifications",
+          icon: "pi pi-bell",
+        },
+        {
+          label: "LOCATIONS",
+          icon: "pi pi-globe",
+        },
+      ];
+      for (const data of userLocationList.value) {
         items.value.push({
           label: data.name,
           icon: "pi pi-map-marker",
@@ -85,10 +89,23 @@ export default {
         });
       }
     };
-    onMounted(getuserLocationList);
+    watch(
+      () => userLocationList.value,
+      () => {
+        // get user details
+        getuserLocationList();
+      }
+    );
+    onMounted(() => {
+      // get user details
+      if (Array.isArray(userLocationList.value)) {
+        getuserLocationList();
+      }
+    });
     return {
       items,
-      getuserLocationList,
+      store,
+      userLocationList,
     };
   },
 };

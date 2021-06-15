@@ -9,7 +9,7 @@ import {
 export class InstitutionUserAuthorizations {
   constructor(
     public readonly institutionId: number = 0,
-    private readonly authorizations: Authorizations[] = [],
+    public readonly authorizations: Authorizations[] = [],
   ) {}
 
   /**

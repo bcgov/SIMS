@@ -13,3 +13,4 @@ export * from "./contracts/institution/InstitutionUser";
 export * from "./contracts/institution/InstitutionUserTypeAndRoleResponseDto";
 export * from "./contracts/institution/EducationProgramDto";
 export * from "./contracts/OfferingContact";
+export * from "./StoreState";

@@ -271,4 +271,12 @@ export class InstitutionService {
         : undefined,
     } as InstitutionUserAuthDetails;
   }
+
+  public async getMyInstitutionDetails() {
+    return ApiClient.Institution.getMyInstitutionDetails();
+  }
+
+  public async getMyInstitutionLocationsDetails() {
+    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
+  }
 }

@@ -1,16 +1,14 @@
 <template>
   <Card class="p-m-4">
     <template #content>
-      <formio
-        formName="institutionlocationcreation"
-        @submitted="submitted"
-      ></formio>
+      <formio formName="institutionlocationcreation" @submitted="submitted"></formio>
     </template>
   </Card>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { Institutionlocation } from "../../types";
@@ -28,6 +26,7 @@ export default {
   },
   setup(props: any) {
     // Hooks
+    const store = useStore();
     const toast = useToast();
     const router = useRouter();
     const submitted = async (data: Institutionlocation) => {
@@ -35,6 +34,7 @@ export default {
         try {
           await InstitutionService.shared.createInstitutionLocation(data);
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
+          store.dispatch("institution/getUserInstitutionLocationDetails");
           toast.add({
             severity: "success",
             summary: "Created!",

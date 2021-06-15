@@ -43,3 +43,16 @@ export interface UserLocationDto {
   id: number;
   name: string;
 }
+
+export interface InstitutionLocationsDetailsDto {
+  id: number;
+  name: string;
+  address: {
+    addressLine1: string;
+    addressLine2?: string;
+    province: string;
+    country: string;
+    city: string;
+    postalCode: string;
+  };
+}
