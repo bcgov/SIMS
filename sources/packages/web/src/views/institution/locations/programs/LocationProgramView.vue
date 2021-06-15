@@ -57,7 +57,7 @@ export default {
     const goToAddNewOffering = () => {
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
-        params: { locationId: props.locationId, programId: 1 },
+        params: { locationId: props.locationId, programId: props.programId },
       });
     };
 
