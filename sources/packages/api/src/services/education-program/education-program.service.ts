@@ -1,8 +1,15 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { EducationProgram, Institution } from "../../database/entities";
+import {
+  EducationProgram,
+  EducationProgramOffering,
+  Institution,
+} from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { CreateEducationProgram } from "./education-program.service.models";
+import {
+  CreateEducationProgram,
+  EducationProgramsSummary,
+} from "./education-program.service.models";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -49,5 +56,53 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.approvalStatus = educationProgram.approvalStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
     return this.repo.save(program);
+  }
+
+  /**
+   * Gets all the programs that are associated with an institution
+   * alongside with the total of offerings on a particular location.
+   * @param institutionId Id of the institution.
+   * @param locationId Id of the location.
+   * @returns summary for location
+   */
+  async getSummaryForLocation(
+    institutionId: number,
+    locationId: number,
+  ): Promise<EducationProgramsSummary[]> {
+    const summaryResult = await this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id as id",
+        "programs.name as name",
+        "programs.cipCode as cipCode",
+        "programs.credentialType as credentialType",
+        "programs.credentialTypeOther as credentialTypeOther",
+        "programs.approvalStatus as approvalStatus",
+      ])
+      .addSelect(
+        (query) =>
+          query
+            .select("COUNT(*)")
+            .from(EducationProgramOffering, "offerings")
+            .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.institutionLocation.id = :locationId", {
+              locationId,
+            }),
+        "totalofferings",
+      )
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .getRawMany();
+
+    return summaryResult.map((summary) => {
+      const summaryItem = new EducationProgramsSummary();
+      summaryItem.id = summary.id;
+      summaryItem.name = summary.name;
+      summaryItem.cipCode = summary.cipcode;
+      summaryItem.credentialType = summary.credentialtype;
+      summaryItem.credentialTypeOther = summary.credentialtypeother;
+      summaryItem.approvalStatus = summary.approvalstatus;
+      summaryItem.totalOfferings = summary.totalofferings;
+      return summaryItem;
+    });
   }
 }

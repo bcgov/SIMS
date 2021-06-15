@@ -1,32 +1,26 @@
 <template>
   <v-container>
-    <h5 class="color-grey">{{ locationName }}</h5>
-    <h2>Add new program</h2>
+    <h5 class="color-grey">View Program</h5>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
         <v-row>
           <v-col cols="8">
-            <h2 class="color-blue">Programs</h2>
+            <h2 class="color-blue">
+              Place holder to display the program and offerings
+            </h2>
           </v-col>
           <v-col cols="4">
-            <v-btn class="float-right" @click="goToAddNewProgram()">
+            <v-btn class="float-right" @click="goToEditProgram()">
               <v-icon left>
                 mdi-open-in-new
               </v-icon>
-              Create New Program
+              Edit Program
             </v-btn>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="8">
-            <h2 class="color-blue">Offering</h2>
-          </v-col>
-          <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewOffering()">
               <v-icon left>
                 mdi-open-in-new
               </v-icon>
-              Create New Offering
+              Create new Offering
             </v-btn>
           </v-col>
         </v-row>
@@ -37,35 +31,37 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 
 export default {
   props: {
-    locationId: {
+    programId: {
       type: Number,
       required: true,
     },
-    locationName: {
-      type: String,
+    locationId: {
+      type: Number,
       required: true,
     },
   },
   setup(props: any) {
     const router = useRouter();
-    const goToAddNewProgram = () => {
+
+    const goToEditProgram = () => {
       router.push({
-        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        params: { locationId: props.locationId },
-      });
-    };
-    const goToAddNewOffering = () => {
-      router.push({
-        name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
-        params: { locationId: props.locationId, programId: 1 },
+        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
+        params: { programId: props.programId, locationId: props.locationId },
       });
     };
 
-    return { goToAddNewProgram, goToAddNewOffering };
+    const goToAddNewOffering = () => {
+      router.push({
+        name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+        params: { locationId: props.locationId, programId: props.programId },
+      });
+    };
+
+    return { goToEditProgram, goToAddNewOffering };
   },
 };
 </script>

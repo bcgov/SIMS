@@ -27,3 +27,20 @@ export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
   deliveredOnline: boolean;
 }
+
+export class EducationProgramsSummary {
+  id: number;
+  name: string;
+  cipCode: string;
+  credentialType: string;
+  credentialTypeOther: string;
+  approvalStatus: string;
+  totalOfferings: number;
+  get credentialTypeToDisplay(): string {
+    if (this.credentialType?.toLowerCase() === "other") {
+      return this.credentialTypeOther;
+    }
+
+    return this.credentialType;
+  }
+}
