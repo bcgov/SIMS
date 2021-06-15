@@ -27,3 +27,13 @@ export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
   deliveredOnline: boolean;
 }
+
+export interface EducationProgramsSummary {
+  id: number;
+  name: string;
+  cipCode: string;
+  credentialType: string;
+  credentialTypeOther: string;
+  approvalStatus: string;
+  totalOfferings: number;
+}

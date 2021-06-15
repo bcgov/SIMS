@@ -23,6 +23,7 @@ import Calendar from "primevue/calendar";
 import Dropdown from "primevue/dropdown";
 import InputNumber from "primevue/inputnumber";
 import ProgressSpinner from "primevue/progressspinner";
+import Chip from "primevue/chip";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 
@@ -49,5 +50,6 @@ AppConfigService.shared.init().then(() => {
     .component("Dropdown", Dropdown)
     .component("InputNumber", InputNumber)
     .component("ProgressSpinner", ProgressSpinner)
+    .component("Chip", Chip)
     .mount("#app");
 });

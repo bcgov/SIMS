@@ -22,6 +22,7 @@ import Institution from "../views/institution/Institution.vue";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 import LocationProgramAddEdit from "../views/institution/LocationProgramAddEdit.vue";
+import LocationProgramView from "../views/institution/LocationProgramView.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -145,8 +146,20 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: { editMode: false },
       },
       {
+        path: AppRoutes.LocationProgramsView,
+        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
+        component: LocationProgramView,
+        props: true,
+      },
+      {
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+        component: LocationProgramAddEdit,
+        props: true,
+      },
+      {
+        path: AppRoutes.LocationProgramsEdit,
+        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
         props: true,
       },

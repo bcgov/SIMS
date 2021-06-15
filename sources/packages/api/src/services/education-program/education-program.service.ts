@@ -1,8 +1,15 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { EducationProgram, Institution } from "../../database/entities";
+import {
+  EducationProgram,
+  EducationProgramOffering,
+  Institution,
+} from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { CreateEducationProgram } from "./education-program.service.models";
+import {
+  CreateEducationProgram,
+  EducationProgramsSummary,
+} from "./education-program.service.models";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -49,5 +56,42 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.approvalStatus = educationProgram.approvalStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
     return this.repo.save(program);
+  }
+
+  async getEducationProgramsSummary(
+    institutionId: number,
+  ): Promise<EducationProgramsSummary[]> {
+    const summaryResult = await this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id as id",
+        "programs.name as name",
+        "programs.cipCode as cipCode",
+        "programs.credentialType as credentialType",
+        "programs.credentialTypeOther as credentialTypeOther",
+        "programs.approvalStatus as approvalStatus",
+      ])
+      .addSelect(
+        (query) =>
+          query
+            .select("COUNT(*)")
+            .from(EducationProgramOffering, "offerings")
+            .where("offerings.educationProgram.id = programs.id"),
+        "totalOfferings",
+      )
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .getRawMany();
+
+    console.log(summaryResult);
+
+    return summaryResult.map((summary) => ({
+      id: summary.id,
+      name: summary.name,
+      cipCode: summary.cipcode,
+      credentialType: summary.credentialtype,
+      credentialTypeOther: summary.credentialtypeother,
+      approvalStatus: summary.approvalstatus,
+      totalOfferings: summary.totalOfferings,
+    }));
   }
 }

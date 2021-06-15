@@ -27,6 +27,7 @@ export const InstitutionRoutesConst = {
   MANAGE_USERS: Symbol(),
   LOCATION_PROGRAMS: Symbol(),
   ADD_LOCATION_PROGRAMS: Symbol(),
+  EDIT_LOCATION_PROGRAMS: Symbol(),
   LOCATION_STUDENTS: Symbol(),
   LOCATION_USERS: Symbol(),
   DISABLED_LOGIN: Symbol(),

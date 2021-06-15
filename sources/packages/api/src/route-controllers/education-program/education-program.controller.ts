@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
@@ -11,6 +12,7 @@ import { CreateEducationProgramDto } from "./models/create-education-program.dto
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { CreateEducationProgram } from "../../services/education-program/education-program.service.models";
+import { SummaryEducationProgramDto } from "./models/summary-education-program.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/education-program")
@@ -19,6 +21,25 @@ export class EducationProgramController {
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
   ) {}
+
+  @Get()
+  async getAll(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<SummaryEducationProgramDto[]> {
+    const programs = await this.programService.getEducationProgramsSummary(
+      userToken.authorizations.institutionId,
+    );
+
+    return programs.map((program) => ({
+      id: program.id,
+      name: program.name,
+      credentialType: program.credentialType,
+      credentialTypeOther: program.credentialTypeOther,
+      cipCode: program.cipCode,
+      totalOfferings: program.totalOfferings,
+      approvalStatus: program.approvalStatus,
+    }));
+  }
 
   @Post()
   async create(
