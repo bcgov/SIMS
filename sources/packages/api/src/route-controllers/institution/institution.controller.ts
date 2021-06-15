@@ -274,20 +274,17 @@ export class InstitutionController extends BaseController {
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionUserAndAuthDetailsDto> {
     // Get logged in user and location details with auth
-    const institutionUser =
-      await this.institutionService.getInstitutionUserByUserName(
-        token.userName,
-      );
+    const userDetails = await this.userService.getUser(token.userName);
     const user = {
       user: {
-        firstName: institutionUser.user?.firstName,
-        lastName: institutionUser.user?.lastName,
-        isActive: institutionUser.user?.isActive,
+        firstName: userDetails?.firstName,
+        lastName: userDetails?.lastName,
+        isActive: userDetails?.isActive,
         isAdmin: token.authorizations.isAdmin,
-        email: institutionUser.user?.email,
+        email: userDetails?.email,
       },
     };
-    const LocationAuth = {
+    const locationAuth = {
       authorizations: {
         institutionId: token.authorizations.institutionId,
         authorizations: token.authorizations.authorizations.map(
@@ -304,7 +301,7 @@ export class InstitutionController extends BaseController {
 
     return {
       ...user,
-      ...LocationAuth,
+      ...locationAuth,
     };
   }
 

@@ -1,6 +1,7 @@
 import {
-  InstitutionUserAndAuthDetailsForStore,
-  InstitutionLocationsDetailsForStore,
+  UserStateForStore,
+  AuthorizationsForStore,
+  LocationStateForStore,
 } from "@/types";
 
 export interface RootState {
@@ -8,6 +9,7 @@ export interface RootState {
 }
 
 export interface InstitutionLocationState {
-  myInstitutionAndUserDetailsState: InstitutionUserAndAuthDetailsForStore;
-  myInstitutionLocationsState: InstitutionLocationsDetailsForStore;
+  locationState: LocationStateForStore[];
+  userState: UserStateForStore;
+  authorizationsState: AuthorizationsForStore;
 }

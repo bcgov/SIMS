@@ -3,21 +3,28 @@ import { GetterTree } from "vuex";
 import {
   InstitutionLocationState,
   RootState,
-  InstitutionUserAndAuthDetailsForStore,
-  InstitutionLocationsDetailsForStore,
+  UserStateForStore,
+  LocationStateForStore,
+  AuthorizationsForStore,
 } from "@/types";
 
 export const getters: GetterTree<InstitutionLocationState, RootState> = {
-  myInstitutionDetails(
-    state: InstitutionLocationState,
-  ): InstitutionUserAndAuthDetailsForStore {
-    const { myInstitutionAndUserDetailsState } = state;
-    return myInstitutionAndUserDetailsState;
+  myDetails(state: InstitutionLocationState): UserStateForStore {
+    const { userState } = state;
+    return userState;
   },
+
+  myAuthorizationDetails(
+    state: InstitutionLocationState,
+  ): AuthorizationsForStore {
+    const { authorizationsState } = state;
+    return authorizationsState;
+  },
+
   myInstitutionLocations(
     state: InstitutionLocationState,
-  ): InstitutionLocationsDetailsForStore {
-    const { myInstitutionLocationsState } = state;
-    return myInstitutionLocationsState;
+  ): LocationStateForStore[] {
+    const { locationState } = state;
+    return locationState;
   },
 };

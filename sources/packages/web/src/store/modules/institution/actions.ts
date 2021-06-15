@@ -8,9 +8,11 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     context.dispatch("getUserInstitutionLocationDetails");
     return true;
   },
+
   async getUserInstitutionDetails(context): Promise<void> {
     const resultComment = await InstitutionService.shared.getMyInstitutionDetails();
-    context.commit("setMyInstitutionAndUserDetailsState", resultComment);
+    context.commit("setMyDetailsState", resultComment?.user);
+    context.commit("setMyAuthorizationState", resultComment?.authorizations);
   },
 
   async getUserInstitutionLocationDetails(context): Promise<void> {

@@ -5,7 +5,7 @@
 import PanelMenu from "primevue/panelmenu";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref, onMounted, computed, watch } from "vue";
+import { computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 interface MenuModel {
@@ -22,14 +22,8 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-
-    const userLocationList = computed(
-      () => store.state.institution.myInstitutionLocationsState
-    );
-    const items = ref<MenuModel[]>([]);
-
-    const getuserLocationList = () => {
-      items.value = [
+    const items = computed(() => {
+      const menuItems: MenuModel[] = [
         {
           label: "Dashboard",
           icon: "pi pi-home",
@@ -43,8 +37,8 @@ export default {
           icon: "pi pi-globe",
         },
       ];
-      for (const data of userLocationList.value) {
-        items.value.push({
+      for (const data of store.state.institution.locationState) {
+        menuItems.push({
           label: data.name,
           icon: "pi pi-map-marker",
           items: [
@@ -90,19 +84,7 @@ export default {
           ],
         });
       }
-    };
-    watch(
-      () => userLocationList.value,
-      async () => {
-        // get user details
-        getuserLocationList();
-      }
-    );
-    onMounted(() => {
-      // get user details
-      if (Array.isArray(userLocationList.value)) {
-        getuserLocationList();
-      }
+      return menuItems;
     });
     return {
       items,
