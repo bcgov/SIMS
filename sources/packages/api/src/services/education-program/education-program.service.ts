@@ -77,21 +77,21 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             .select("COUNT(*)")
             .from(EducationProgramOffering, "offerings")
             .where("offerings.educationProgram.id = programs.id"),
-        "totalOfferings",
+        "totalofferings",
       )
       .where("programs.institution.id = :institutionId", { institutionId })
       .getRawMany();
 
-    console.log(summaryResult);
-
-    return summaryResult.map((summary) => ({
-      id: summary.id,
-      name: summary.name,
-      cipCode: summary.cipcode,
-      credentialType: summary.credentialtype,
-      credentialTypeOther: summary.credentialtypeother,
-      approvalStatus: summary.approvalstatus,
-      totalOfferings: summary.totalOfferings,
-    }));
+    return summaryResult.map((summary) => {
+      const summaryItem = new EducationProgramsSummary();
+      summaryItem.id = summary.id;
+      summaryItem.name = summary.name;
+      summaryItem.cipCode = summary.cipcode;
+      summaryItem.credentialType = summary.credentialtype;
+      summaryItem.credentialTypeOther = summary.credentialtypeother;
+      summaryItem.approvalStatus = summary.approvalstatus;
+      summaryItem.totalOfferings = summary.totalofferings;
+      return summaryItem;
+    });
   }
 }

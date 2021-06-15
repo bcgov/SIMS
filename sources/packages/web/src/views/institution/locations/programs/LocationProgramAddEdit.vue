@@ -1,17 +1,26 @@
 <template>
-  <Card class="p-m-4">
-    <template #content>
-      <formio formName="educationprogram" @submitted="submitted"></formio>
+  <v-container>
+    <!-- TODO: Remove v-if once edit is developed. -->
+    <h5 v-if="programId" class="color-grey">
+      Edit Program ID {{ programId }} - TO BE DEVELOPED
+    </h5>
+    <template v-else>
+      <h5 class="color-grey">Create New Program</h5>
+      <v-sheet elevation="1" class="mx-auto">
+        <v-container>
+          <formio formName="educationprogram" @submitted="submitted"></formio>
+        </v-container>
+      </v-sheet>
     </template>
-  </Card>
+  </v-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
-import formio from "../../components/generic/formio.vue";
-import { EducationProgramService } from "../../services/EducationProgramService";
-import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import formio from "../../../../components/generic/formio.vue";
+import { EducationProgramService } from "../../../../services/EducationProgramService";
+import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 
 export default {
   components: { formio },
@@ -19,6 +28,10 @@ export default {
     locationId: {
       type: Number,
       required: true,
+    },
+    programId: {
+      type: Number,
+      required: false,
     },
   },
   setup(props: any) {

@@ -28,7 +28,7 @@ export interface ProgramDeliveryTypes {
   deliveredOnline: boolean;
 }
 
-export interface EducationProgramsSummary {
+export class EducationProgramsSummary {
   id: number;
   name: string;
   cipCode: string;
@@ -36,4 +36,11 @@ export interface EducationProgramsSummary {
   credentialTypeOther: string;
   approvalStatus: string;
   totalOfferings: number;
+  get credentialTypeToDisplay(): string {
+    if (this.credentialType?.toLowerCase() === "other") {
+      return this.credentialTypeOther;
+    }
+
+    return this.credentialType;
+  }
 }

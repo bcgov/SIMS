@@ -18,7 +18,7 @@ export class EducationProgramApi extends HttpBaseClient {
   public async getPrograms(): Promise<SummaryEducationProgramDto[]> {
     try {
       const response = await this.apiClient.get(
-        "institution/education-program",
+        "institution/education-program/summary",
         this.addAuthHeader(),
       );
       return response.data as SummaryEducationProgramDto[];

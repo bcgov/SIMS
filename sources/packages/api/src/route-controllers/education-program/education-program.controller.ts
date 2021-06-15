@@ -22,7 +22,7 @@ export class EducationProgramController {
     private readonly formService: FormService,
   ) {}
 
-  @Get()
+  @Get("summary")
   async getAll(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SummaryEducationProgramDto[]> {
@@ -33,8 +33,7 @@ export class EducationProgramController {
     return programs.map((program) => ({
       id: program.id,
       name: program.name,
-      credentialType: program.credentialType,
-      credentialTypeOther: program.credentialTypeOther,
+      credentialType: program.credentialTypeToDisplay,
       cipCode: program.cipCode,
       totalOfferings: program.totalOfferings,
       approvalStatus: program.approvalStatus,

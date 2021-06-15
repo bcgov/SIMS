@@ -16,7 +16,7 @@
             </v-btn>
           </v-col>
         </v-row>
-        <DataTable :value="programs">
+        <DataTable :autoLayout="true" :value="programs">
           <Column field="cipCode" header="CIP" :sortable="true"></Column>
           <Column field="name" header="Program Name" :sortable="true"></Column>
           <Column field="credentialType" header="Credential" :sortable="true">
@@ -39,7 +39,7 @@
           ></Column>
           <Column>
             <template #body="slotProps">
-              <v-btn outlined @click="goToProgram(slotProps.data.id)"
+              <v-btn outlined @click="goToViewProgram(slotProps.data.id)"
                 >View</v-btn
               >
             </template>
@@ -52,9 +52,9 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { EducationProgramService } from "../../services/EducationProgramService";
-import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
-import { SummaryEducationProgramDto } from "../../types";
+import { EducationProgramService } from "../../../../services/EducationProgramService";
+import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
+import { SummaryEducationProgramDto } from "../../../../types";
 import { onMounted, ref } from "vue";
 
 export default {
@@ -83,14 +83,14 @@ export default {
       });
     };
 
-    const goToProgram = (programId: number) => {
+    const goToViewProgram = (programId: number) => {
       router.push({
-        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        params: { locationId: props.locationId },
+        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        params: { programId, locationId: props.locationId },
       });
     };
 
-    return { programs, goToAddNewProgram, goToProgram };
+    return { programs, goToAddNewProgram, goToViewProgram };
   },
 };
 </script>
