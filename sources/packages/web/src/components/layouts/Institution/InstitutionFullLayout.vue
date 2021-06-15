@@ -8,7 +8,7 @@
     container with main, when vuetify3 stable
       version is relased -->
     <v-container fluid>
-      <router-view :key="$route.fullPath"></router-view>
+      <router-view></router-view>
     </v-container>
   </v-app>
 </template>

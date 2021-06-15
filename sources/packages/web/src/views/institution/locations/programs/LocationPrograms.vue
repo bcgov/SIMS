@@ -55,7 +55,7 @@ import { useRouter } from "vue-router";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 import { SummaryEducationProgramDto } from "../../../../types";
-import { onMounted, ref } from "vue";
+import { ref, watch } from "vue";
 
 export default {
   props: {
@@ -72,11 +72,14 @@ export default {
     const router = useRouter();
     const programs = ref([] as SummaryEducationProgramDto[]);
 
-    onMounted(async () => {
-      programs.value = await EducationProgramService.shared.getLocationProgramsSummary(
-        props.locationId,
-      );
-    });
+    watch(
+      () => props.locationId,
+      async () => {
+        programs.value = await EducationProgramService.shared.getLocationProgramsSummary(
+          props.locationId,
+        );
+      },
+    );
 
     const goToAddNewProgram = () => {
       router.push({
