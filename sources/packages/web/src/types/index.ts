@@ -12,3 +12,4 @@ export * from "./contracts/institution/AddInstitutionLocation";
 export * from "./contracts/institution/InstitutionUser";
 export * from "./contracts/institution/InstitutionUserTypeAndRoleResponseDto";
 export * from "./contracts/institution/EducationProgramDto";
+export * from "./contracts/OfferingContact";

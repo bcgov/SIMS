@@ -7,6 +7,7 @@ import { WorkflowApi } from "./WorkflowApi";
 import { ApplicationApi } from "./ApplicationApi";
 import { InstitutionLocationApi } from "./InstitutionLocation";
 import { EducationProgramApi } from "./EducationProgramApi";
+import { EducationProgramOfferingApi } from "./EducationProgramOfferingApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -18,6 +19,7 @@ const ApiClient = {
   Application: new ApplicationApi(),
   InstitutionLocation: new InstitutionLocationApi(),
   EducationProgram: new EducationProgramApi(),
+  EducationProgramOffering: new EducationProgramOfferingApi(),
 };
 
 export default ApiClient;
