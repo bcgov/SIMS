@@ -2,12 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  HasLocationAccess,
+  UserToken,
+} from "../../auth/decorators";
 import { CreateEducationProgramDto } from "./models/create-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
@@ -22,12 +27,15 @@ export class EducationProgramController {
     private readonly formService: FormService,
   ) {}
 
-  @Get("summary")
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/summary")
   async getAll(
+    @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SummaryEducationProgramDto[]> {
-    const programs = await this.programService.getEducationProgramsSummary(
+    const programs = await this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
+      locationId,
     );
 
     return programs.map((program) => ({

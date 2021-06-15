@@ -13,7 +13,9 @@ export class EducationProgramService {
     await ApiClient.EducationProgram.createProgram(data);
   }
 
-  public async getPrograms(): Promise<SummaryEducationProgramDto[]> {
-    return ApiClient.EducationProgram.getPrograms();
+  public async getLocationProgramsSummary(
+    locationId: number,
+  ): Promise<SummaryEducationProgramDto[]> {
+    return ApiClient.EducationProgram.getLocationProgramsSummary(locationId);
   }
 }

@@ -73,7 +73,9 @@ export default {
     const programs = ref([] as SummaryEducationProgramDto[]);
 
     onMounted(async () => {
-      programs.value = await EducationProgramService.shared.getPrograms();
+      programs.value = await EducationProgramService.shared.getLocationProgramsSummary(
+        props.locationId,
+      );
     });
 
     const goToAddNewProgram = () => {

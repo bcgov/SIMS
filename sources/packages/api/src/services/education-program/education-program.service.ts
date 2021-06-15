@@ -58,8 +58,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     return this.repo.save(program);
   }
 
-  async getEducationProgramsSummary(
+  /**
+   * Gets all the programs that are associated with an institution
+   * alongside with the total of offerings on a particular location.
+   * @param institutionId Id of the institution.
+   * @param locationId Id of the location.
+   * @returns summary for location
+   */
+  async getSummaryForLocation(
     institutionId: number,
+    locationId: number,
   ): Promise<EducationProgramsSummary[]> {
     const summaryResult = await this.repo
       .createQueryBuilder("programs")
@@ -76,7 +84,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           query
             .select("COUNT(*)")
             .from(EducationProgramOffering, "offerings")
-            .where("offerings.educationProgram.id = programs.id"),
+            .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.institutionLocation.id = :locationId", {
+              locationId,
+            }),
         "totalofferings",
       )
       .where("programs.institution.id = :institutionId", { institutionId })
