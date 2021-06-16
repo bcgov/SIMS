@@ -53,46 +53,49 @@
             <p>{{ educationProgram.sabcCode }}</p>
           </v-col>
         </v-row>
+        <v-divider></v-divider>
+        <v-row>
+          <v-col cols="8">
+            <h2 class="color-blue">Offerings</h2>
+          </v-col>
+          <v-col cols="4">
+            <v-btn class="float-right" @click="goToAddNewOffering()">
+              <v-icon left>
+                mdi-open-in-new
+              </v-icon>
+              Add Another Offering
+            </v-btn>
+          </v-col>
+        </v-row>
+        <DataTable :autoLayout="true" :value="offerings">
+          <Column field="name" header="Name" :sortable="true"></Column>
+          <Column
+            field="studyDates"
+            header="Study Dates"
+            :sortable="true"
+          ></Column>
+          <Column
+            field="offeringDelivered"
+            header="Study Delivery"
+            :sortable="true"
+          ></Column>
+          <Column>
+            <template #body="slotProps">
+              <v-btn plain @click="goToEditOffering(slotProps.data.id)">
+                <v-icon left> mdi-open-in-new </v-icon>
+                Edit
+              </v-btn>
+            </template>
+          </Column>
+        </DataTable>
       </v-container>
     </v-sheet>
-  </v-container>
-  <v-container>
-    <v-row>
-      <v-col cols="8">
-        <h2 class="color-blue">Offerings</h2>
-      </v-col>
-      <v-col cols="4">
-        <v-btn class="float-right" @click="goToAddNewOffering()">
-          <v-icon left>
-            mdi-open-in-new
-          </v-icon>
-          Create New Offering
-        </v-btn>
-      </v-col>
-    </v-row>
-    <DataTable :autoLayout="true" :value="offerings">
-      <Column field="name" header="Name" :sortable="true"></Column>
-      <Column field="studyDates" header="Study Dates" :sortable="true"></Column>
-      <Column
-        field="offeringDelivered"
-        header="Study Delivery"
-        :sortable="true"
-      ></Column>
-      <Column>
-        <template #body="slotProps">
-          <v-btn plain @click="goToEditOffering(slotProps.data.id)">
-            <v-icon right class="mr-2"> mdi-cog-outline </v-icon>
-            Edit
-          </v-btn>
-        </template>
-      </Column>
-    </DataTable>
   </v-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { EducationProgramOfferingService } from "../../../../services/EducationProgramOfferingService";
@@ -111,8 +114,8 @@ export default {
       type: Number,
       required: true,
     },
-    offeringId: {
-      type: Number,
+    locationName: {
+      type: String,
       required: true,
     },
   },
@@ -120,7 +123,13 @@ export default {
     const router = useRouter();
 
     const goBack = () => {
-      router.go(-1);
+      router.push({
+        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+        params: {
+          locationId: props.locationId,
+          locationName: props.locationName,
+        },
+      });
     };
 
     const goToEditProgram = () => {
@@ -141,7 +150,7 @@ export default {
       router.push({
         name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
         params: {
-          offeringId,
+          offeringId: offeringId,
           programId: props.programId,
           locationId: props.locationId,
         },
