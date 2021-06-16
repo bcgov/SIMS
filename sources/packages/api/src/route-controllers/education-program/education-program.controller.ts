@@ -56,7 +56,7 @@ export class EducationProgramController {
     @Param("id") id: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramDto> {
-    const program = await this.programService.getProgram(
+    const program = await this.programService.getInstitutionProgram(
       id,
       userToken.authorizations.institutionId,
     );
@@ -108,9 +108,9 @@ export class EducationProgramController {
     @Param("id") id: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
-    // TODO: Check if the program belongs to the institution
-    // that the user has access to.
-    const program = await this.programService.getProgram(
+    // Ensures that the user has access to the institution
+    // associated with the program id being updated.
+    const program = await this.programService.getInstitutionProgram(
       id,
       userToken.authorizations.institutionId,
     );
@@ -122,6 +122,13 @@ export class EducationProgramController {
     await this.saveProgram(userToken, payload, id);
   }
 
+  /**
+   * Saves program (insert/update).
+   * @param userToken User token from request.
+   * @param payload Payload with data to be persisted.
+   * @param [programId] If provided will update the record, otherwise will insert a new one.
+   * @returns program
+   */
   private async saveProgram(
     userToken: IInstitutionUserToken,
     payload: EducationProgramDto,

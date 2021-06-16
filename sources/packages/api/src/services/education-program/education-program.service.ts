@@ -17,7 +17,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     super(connection.getRepository(EducationProgram));
   }
 
-  async getProgram(
+  /**
+   * Gets a program and ensure that this program belongs
+   * to the expected institution including the institution
+   * id in the query.
+   * @param programId Program id.
+   * @param institutionId Expected intitution id.
+   * @returns program
+   */
+  async getInstitutionProgram(
     programId: number,
     institutionId: number,
   ): Promise<EducationProgram> {
