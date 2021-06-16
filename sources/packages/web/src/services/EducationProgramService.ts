@@ -1,4 +1,4 @@
-import { SummaryEducationProgramDto } from "../types";
+import { EducationProgramDto, SummaryEducationProgramDto } from "../types";
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
@@ -13,11 +13,14 @@ export class EducationProgramService {
     return await ApiClient.EducationProgram.getProgram(programId);
   }
 
-  public async createProgram(data: any): Promise<void> {
+  public async createProgram(data: EducationProgramDto): Promise<void> {
     await ApiClient.EducationProgram.createProgram(data);
   }
 
-  public async updateProgram(programId: number, data: any): Promise<void> {
+  public async updateProgram(
+    programId: number,
+    data: EducationProgramDto,
+  ): Promise<void> {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }
 
