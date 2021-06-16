@@ -6,7 +6,10 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { CreateEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/create-education-program-offering.dto";
+import {
+  EducationProgramOfferingDto,
+  CreateEducationProgramOfferingDto,
+} from "../../route-controllers/education-program-offering/models/create-education-program-offering.dto";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -54,5 +57,39 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       id: locationId,
     } as InstitutionLocation;
     return this.repo.save(programOffering);
+  }
+
+  /**
+   * This is to fetch all the Education Offering
+   * that are associated with the Location and Program
+   * @param locationId
+   * @param programId
+   * @returns
+   */
+  async getAllEducationProgramOffering(
+    locationId: number,
+    programId: number,
+  ): Promise<EducationProgramOfferingDto[]> {
+    return this.repo
+      .createQueryBuilder("education_programs_offerings")
+      .select([
+        "education_programs_offerings.id",
+        "education_programs_offerings.name",
+        "education_programs_offerings.studyStartDate",
+        "education_programs_offerings.offeringDelivered",
+      ])
+      .leftJoin(
+        "education_programs_offerings.educationProgram",
+        "educationProgram",
+      )
+      .leftJoin(
+        "education_programs_offerings.institutionLocation",
+        "institutionLocation",
+      )
+      .where(
+        "educationProgram.id = :programId and institutionLocation.id = :locationId",
+        { programId: programId, locationId: locationId },
+      )
+      .getMany();
   }
 }

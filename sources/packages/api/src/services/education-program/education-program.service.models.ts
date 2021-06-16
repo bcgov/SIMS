@@ -44,3 +44,21 @@ export class EducationProgramsSummary {
     return this.credentialType;
   }
 }
+
+export class EducationProgramModel {
+  id: number;
+  name: string;
+  description: string;
+  credentialType: string;
+  credentialTypeOther: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  approvalStatus: string;
+  get credentialTypeToDisplay(): string {
+    if (this.credentialType?.toLowerCase() === "other") {
+      return this.credentialTypeOther;
+    }
+    return this.credentialType;
+  }
+}

@@ -1,4 +1,4 @@
-import { SummaryEducationProgramDto } from "../types";
+import { SummaryEducationProgramDto, EducationProgramDto } from "../types";
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
@@ -17,5 +17,11 @@ export class EducationProgramService {
     locationId: number,
   ): Promise<SummaryEducationProgramDto[]> {
     return ApiClient.EducationProgram.getLocationProgramsSummary(locationId);
+  }
+
+  public async getEducationProgram(
+    programId: number,
+  ): Promise<EducationProgramDto> {
+    return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 }

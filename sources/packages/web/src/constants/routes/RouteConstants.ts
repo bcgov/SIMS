@@ -31,6 +31,7 @@ export const InstitutionRoutesConst = {
   LOCATION_PROGRAMS: Symbol(),
   LOCATION_OFFERINGS: Symbol(),
   ADD_LOCATION_OFFERINGS: Symbol(),
+  EDIT_LOCATION_OFFERINGS: Symbol(),
   LOCATION_STUDENTS: Symbol(),
   LOCATION_USERS: Symbol(),
   DISABLED_LOGIN: Symbol(),

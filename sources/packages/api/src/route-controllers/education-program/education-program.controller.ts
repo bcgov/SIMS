@@ -17,7 +17,10 @@ import { CreateEducationProgramDto } from "./models/create-education-program.dto
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { CreateEducationProgram } from "../../services/education-program/education-program.service.models";
-import { SummaryEducationProgramDto } from "./models/summary-education-program.dto";
+import {
+  SummaryEducationProgramDto,
+  EducationProgramDto,
+} from "./models/summary-education-program.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/education-program")
@@ -46,6 +49,26 @@ export class EducationProgramController {
       totalOfferings: program.totalOfferings,
       approvalStatus: program.approvalStatus,
     }));
+  }
+
+  @Get(":programId")
+  async get(
+    @Param("programId") programId: number,
+  ): Promise<EducationProgramDto> {
+    const educationProgram = await this.programService.getLocationPrograms(
+      programId,
+    );
+
+    return {
+      id: educationProgram.id,
+      name: educationProgram.name,
+      description: educationProgram.description,
+      credentialType: educationProgram.credentialTypeToDisplay,
+      cipCode: educationProgram.cipCode,
+      nocCode: educationProgram.nocCode,
+      sabcCode: educationProgram.sabcCode,
+      approvalStatus: educationProgram.approvalStatus,
+    };
   }
 
   @Post()

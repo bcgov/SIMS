@@ -9,6 +9,7 @@ import { Connection } from "typeorm";
 import {
   CreateEducationProgram,
   EducationProgramsSummary,
+  EducationProgramModel,
 } from "./education-program.service.models";
 
 @Injectable()
@@ -104,5 +105,40 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.totalOfferings = summary.totalofferings;
       return summaryItem;
     });
+  }
+
+  /**
+   * Gets the program with respect to the programId
+   * @param programId Id of the Program.
+   * @returns summary for location
+   */
+  async getLocationPrograms(programId: number): Promise<EducationProgramModel> {
+    const educationProgram = await this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.description",
+        "programs.credentialType",
+        "programs.credentialTypeOther",
+        "programs.cipCode",
+        "programs.nocCode",
+        "programs.sabcCode",
+        "programs.approvalStatus as approvalStatus",
+      ])
+      .where("programs.id = :id", { id: programId })
+      .getOne();
+
+    const summaryItem = new EducationProgramModel();
+    summaryItem.id = educationProgram.id;
+    summaryItem.name = educationProgram.name;
+    summaryItem.description = educationProgram.description;
+    summaryItem.credentialType = educationProgram.credentialType;
+    summaryItem.credentialTypeOther = educationProgram.credentialTypeOther;
+    summaryItem.cipCode = educationProgram.cipCode;
+    summaryItem.nocCode = educationProgram.nocCode;
+    summaryItem.sabcCode = educationProgram.sabcCode;
+    summaryItem.approvalStatus = educationProgram.approvalStatus;
+    return summaryItem;
   }
 }

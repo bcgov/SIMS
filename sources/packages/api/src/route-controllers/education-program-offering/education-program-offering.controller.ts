@@ -1,7 +1,17 @@
-import { Body, Controller, Post, Param } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Post,
+  Param,
+  Get,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
-import { CreateEducationProgramOfferingDto } from "./models/create-education-program-offering.dto";
+import {
+  CreateEducationProgramOfferingDto,
+  EducationProgramOfferingDto,
+} from "./models/create-education-program-offering.dto";
 import { EducationProgramOfferingService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -24,5 +34,24 @@ export class EducationProgramOfferingController {
       payload,
     );
     return createdProgramOffering.id;
+  }
+
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/education-program/:programId")
+  async getAllEducationProgramOffering(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+  ): Promise<EducationProgramOfferingDto[]> {
+    //To retrive Education program offering corresponding to ProgramId and LocationId
+    const programOferingList = await this.programOfferingService.getAllEducationProgramOffering(
+      locationId,
+      programId,
+    );
+    if (!programOferingList) {
+      throw new UnprocessableEntityException(
+        "Not able to find a Education Program Offering associated with the current Education Program and Location.",
+      );
+    }
+    return programOferingList;
   }
 }

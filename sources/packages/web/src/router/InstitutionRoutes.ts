@@ -179,6 +179,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: LocationProgramOffering,
         props: true,
       },
+      {
+        path: AppRoutes.LocationOfferingsEdit,
+        name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
+        component: LocationProgramOffering,
+        props: true,
+      },
     ],
     beforeEnter: (to, from, next) => {
       AppConfigService.shared
