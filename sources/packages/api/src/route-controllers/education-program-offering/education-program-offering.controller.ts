@@ -52,6 +52,11 @@ export class EducationProgramOfferingController {
         "Not able to find a Education Program Offering associated with the current Education Program and Location.",
       );
     }
-    return programOferingList;
+    return programOferingList.map((offering) => ({
+      id: offering.id,
+      name: offering.name,
+      studyDates: offering.studyDates,
+      offeringDelivered: offering.offeringDelivered,
+    }));
   }
 }

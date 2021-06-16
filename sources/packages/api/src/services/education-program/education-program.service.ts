@@ -124,7 +124,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.cipCode",
         "programs.nocCode",
         "programs.sabcCode",
-        "programs.approvalStatus as approvalStatus",
+        "programs.approvalStatus",
       ])
       .where("programs.id = :id", { id: programId })
       .getOne();

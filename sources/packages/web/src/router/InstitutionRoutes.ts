@@ -78,6 +78,42 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             props: true,
           },
           {
+            path: AppRoutes.LocationProgramsView,
+            name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+            components: {
+              default: LocationProgramView,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: AppRoutes.LocationProgramsEdit,
+            name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
+            components: {
+              default: LocationProgramAddEdit,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: AppRoutes.LocationProgramsOfferingsCreate,
+            name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+            components: {
+              default: LocationProgramOffering,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
+            path: AppRoutes.LocationOfferingsEdit,
+            name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
+            components: {
+              default: LocationProgramOffering,
+              sidebar: InstitutionHomeSideBar,
+            },
+            props: true,
+          },
+          {
             path: `${AppRoutes.LocationOfferings}`,
             name: InstitutionRoutesConst.LOCATION_OFFERINGS,
             components: {
@@ -156,33 +192,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: { editMode: false },
       },
       {
-        path: AppRoutes.LocationProgramsView,
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        component: LocationProgramView,
-        props: true,
-      },
-      {
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
-        props: true,
-      },
-      {
-        path: AppRoutes.LocationProgramsEdit,
-        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-        component: LocationProgramAddEdit,
-        props: true,
-      },
-      {
-        path: AppRoutes.LocationProgramsOfferingsCreate,
-        name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
-        component: LocationProgramOffering,
-        props: true,
-      },
-      {
-        path: AppRoutes.LocationOfferingsEdit,
-        name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
-        component: LocationProgramOffering,
         props: true,
       },
     ],

@@ -1,19 +1,56 @@
 <template>
   <v-container>
-    <h5 class="color-grey">View Program</h5>
+    <h5 class="color-grey"><a @click="goBack()">&#60;- Back to Programs</a></h5>
+    <h4>View Program</h4>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
         <v-row>
           <v-col cols="8">
-            <h2 class="color-blue"></h2>
+            <h2 class="color-blue">{{ educationProgram.name }}</h2>
           </v-col>
           <v-col cols="4">
-            <v-btn class="float-right" @click="goToEditProgram()">
-              <v-icon left>
-                mdi-open-in-new
-              </v-icon>
+            <v-btn class="float-right" outlined @click="goToEditProgram()">
+              <v-icon left> mdi-open-in-new </v-icon>
               Edit Program
             </v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="5">
+            <h6>Description</h6>
+            <br />
+            <p>{{ educationProgram.name }}</p>
+          </v-col>
+          <v-col cols="4"
+            ><h6>Credential Type</h6>
+            <br />
+            <p>{{ educationProgram.credentialType }}</p>
+          </v-col>
+          <v-col cols="2"
+            ><h6>Status</h6>
+            <br />
+            <Chip
+              :label="educationProgram.approvalStatus"
+              class="p-mr-2 p-mb-2 bg-success text-white p-text-uppercase"
+              >{{ educationProgram.approvalStatus }}</Chip
+            >
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="5">
+            <h6>Classification of Instructional Programs (CIP)</h6>
+            <br />
+            <p>{{ educationProgram.cipCode }}</p>
+          </v-col>
+          <v-col cols="4"
+            ><h6>National Occupational Classification (NOC)</h6>
+            <br />
+            <p>{{ educationProgram.nocCode }}</p>
+          </v-col>
+          <v-col cols="3"
+            ><h6>SABC Code</h6>
+            <br />
+            <p>{{ educationProgram.sabcCode }}</p>
           </v-col>
         </v-row>
       </v-container>
@@ -35,11 +72,7 @@
     </v-row>
     <DataTable :autoLayout="true" :value="offerings">
       <Column field="name" header="Name" :sortable="true"></Column>
-      <Column
-        field="studyStartDate"
-        header="Study Dates"
-        :sortable="true"
-      ></Column>
+      <Column field="studyDates" header="Study Dates" :sortable="true"></Column>
       <Column
         field="offeringDelivered"
         header="Study Delivery"
@@ -47,9 +80,10 @@
       ></Column>
       <Column>
         <template #body="slotProps">
-          <v-btn outlined @click="goToEditOffering(slotProps.data.id)"
-            >Edit</v-btn
-          >
+          <v-btn plain @click="goToEditOffering(slotProps.data.id)">
+            <v-icon right class="mr-2"> mdi-cog-outline </v-icon>
+            Edit
+          </v-btn>
         </template>
       </Column>
     </DataTable>
@@ -62,7 +96,10 @@ import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { EducationProgramOfferingService } from "../../../../services/EducationProgramOfferingService";
-import { EducationProgramOfferingDto } from "../../../../types";
+import {
+  EducationProgramOfferingDto,
+  EducationProgramDto,
+} from "../../../../types";
 
 export default {
   props: {
@@ -81,6 +118,10 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+
+    const goBack = () => {
+      router.go(-1);
+    };
 
     const goToEditProgram = () => {
       router.push({
@@ -108,7 +149,7 @@ export default {
     };
 
     const offerings = ref([] as EducationProgramOfferingDto[]);
-    const educationProgram = ref();
+    const educationProgram = ref({} as EducationProgramDto);
     const getEducationProgramAndOffering = async () => {
       offerings.value = await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
         props.locationId,
@@ -122,6 +163,7 @@ export default {
     onMounted(getEducationProgramAndOffering);
 
     return {
+      goBack,
       goToEditProgram,
       goToAddNewOffering,
       educationProgram,

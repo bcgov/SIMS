@@ -1,6 +1,6 @@
 export interface EducationProgramOfferingDto {
   id: number;
   name: string;
-  studyStartDate: Date;
+  studyDates: string;
   offeringDelivered: string;
 }

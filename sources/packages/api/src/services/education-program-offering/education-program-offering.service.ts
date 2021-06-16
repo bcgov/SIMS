@@ -6,10 +6,8 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import {
-  EducationProgramOfferingDto,
-  CreateEducationProgramOfferingDto,
-} from "../../route-controllers/education-program-offering/models/create-education-program-offering.dto";
+import { CreateEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/create-education-program-offering.dto";
+import { EducationProgramOfferingModel } from "./education-program-offering.service.models";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -69,13 +67,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
-    return this.repo
+  ): Promise<EducationProgramOfferingModel[]> {
+    const educationProgramOfferingResult = await this.repo
       .createQueryBuilder("education_programs_offerings")
       .select([
         "education_programs_offerings.id",
         "education_programs_offerings.name",
         "education_programs_offerings.studyStartDate",
+        "education_programs_offerings.studyEndDate",
         "education_programs_offerings.offeringDelivered",
       ])
       .leftJoin(
@@ -91,5 +90,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         { programId: programId, locationId: locationId },
       )
       .getMany();
+
+    return educationProgramOfferingResult.map((educationProgramOffering) => {
+      const item = new EducationProgramOfferingModel();
+      item.id = educationProgramOffering.id;
+      item.name = educationProgramOffering.name;
+      item.studyStartDate = educationProgramOffering.studyStartDate;
+      item.studyEndDate = educationProgramOffering.studyEndDate;
+      item.offeringDelivered = educationProgramOffering.offeringDelivered;
+      return item;
+    });
   }
 }

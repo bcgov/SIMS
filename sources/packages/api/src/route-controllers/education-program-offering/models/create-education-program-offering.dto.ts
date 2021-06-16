@@ -16,9 +16,9 @@ export interface CreateEducationProgramOfferingDto {
   tuitionRemittanceRequested: string;
 }
 
-export interface EducationProgramOfferingDto {
+export class EducationProgramOfferingDto {
   id: number;
   name: string;
-  studyStartDate: Date;
+  studyDates: string;
   offeringDelivered: string;
 }
