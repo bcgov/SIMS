@@ -1,8 +1,8 @@
-import { EducationProgramDto, SummaryEducationProgramDto } from "../../types";
+import { SummaryEducationProgramDto } from "../../types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class EducationProgramApi extends HttpBaseClient {
-  public async getProgram(programId: number): Promise<void> {
+  public async getProgram(programId: number): Promise<any> {
     try {
       const response = await this.apiClient.get(
         `institution/education-program/${programId}`,
@@ -15,9 +15,7 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
-  public async createProgram(
-    createProgramDto: EducationProgramDto,
-  ): Promise<void> {
+  public async createProgram(createProgramDto: any): Promise<void> {
     try {
       await this.apiClient.post(
         "institution/education-program",
@@ -32,7 +30,7 @@ export class EducationProgramApi extends HttpBaseClient {
 
   public async updateProgram(
     programId: number,
-    updateProgramDto: EducationProgramDto,
+    updateProgramDto: any,
   ): Promise<void> {
     try {
       await this.apiClient.put(
