@@ -22,13 +22,39 @@ export default {
   },
   setup(props: any, context: SetupContext) {
     const formioContainerRef = ref(null);
-    const hideSpinner = ref(false);
+    // Wait to show the spinner when there is an API call.
+    const hideSpinner = ref(true);
 
     onMounted(async () => {
-      // Use SIMS API as a proxy to retrieve the form definition from formio.
-      const formDefinition = await ApiClient.DynamicForms.getFormDefinition(
-        props.formName,
-      );
+      let cachedFormDefinition: string | null = null;
+      try {
+        // Try to load the definition from the session storage.
+        cachedFormDefinition = sessionStorage.getItem(props.formName);
+      } catch {
+        // No action needed. In case of failure it will load the form from the server
+        // in the same way as it is the first time load.
+      }
+
+      let formDefinition: any;
+      if (cachedFormDefinition) {
+        formDefinition = JSON.parse(cachedFormDefinition);
+      } else {
+        hideSpinner.value = false;
+        // Use SIMS API as a proxy to retrieve the form definition from formio.
+        formDefinition = await ApiClient.DynamicForms.getFormDefinition(
+          props.formName,
+        );
+
+        try {
+          sessionStorage.setItem(
+            props.formName,
+            JSON.stringify(formDefinition),
+          );
+        } catch {
+          // No action needed. In case of failure it will load the form from the server
+          // in the same way as it is the first time load.
+        }
+      }
 
       const form = await Formio.createForm(
         formioContainerRef.value,
