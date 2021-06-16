@@ -1,4 +1,5 @@
-export interface CreateEducationProgram {
+export interface SaveEducationProgram {
+  id?: number;
   institutionId: number;
   name: string;
   description: string;

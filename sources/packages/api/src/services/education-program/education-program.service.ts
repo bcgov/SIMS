@@ -7,7 +7,7 @@ import {
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import {
-  CreateEducationProgram,
+  SaveEducationProgram,
   EducationProgramsSummary,
 } from "./education-program.service.models";
 
@@ -17,16 +17,28 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     super(connection.getRepository(EducationProgram));
   }
 
+  async getProgram(
+    programId: number,
+    institutionId: number,
+  ): Promise<EducationProgram> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .where("programs.id = :programId", { programId })
+      .andWhere("programs.institution.id = :institutionId", { institutionId })
+      .getOne();
+  }
+
   /**
-   * Creates a new education program at institution level
+   * Insert/update an education program at institution level
    * that will be available for all locations.
-   * @param educationProgram Information used to create the program.
-   * @returns Education program created.
+   * @param educationProgram Information used to save the program.
+   * @returns Education program created/updated.
    */
-  async createEducationProgram(
-    educationProgram: CreateEducationProgram,
+  async saveEducationProgram(
+    educationProgram: SaveEducationProgram,
   ): Promise<EducationProgram> {
     const program = new EducationProgram();
+    program.id = educationProgram.id;
     program.name = educationProgram.name;
     program.description = educationProgram.description;
     program.credentialType = educationProgram.credentialType;
