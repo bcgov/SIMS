@@ -1,4 +1,4 @@
-export interface CreateEducationProgramDto {
+export interface EducationProgramDto {
   name: string;
   description: string;
   credentialType: string;
