@@ -12,13 +12,15 @@ import {
   CreateEducationProgramOfferingDto,
   EducationProgramOfferingDto,
 } from "./models/create-education-program-offering.dto";
-import { EducationProgramOfferingService } from "../../services";
+import { FormNames } from "../../services/form/constants";
+import { EducationProgramOfferingService, FormService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
+    private readonly formService: FormService,
   ) {}
 
   @HasLocationAccess("locationId")
@@ -28,6 +30,17 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<number> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.EducationProgramOffering,
+      payload,
+    );
+
+    if (!submissionResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to a create a program offering due to an invalid request.",
+      );
+    }
+
     const createdProgramOffering = await this.programOfferingService.createEducationProgramOffering(
       locationId,
       programId,
