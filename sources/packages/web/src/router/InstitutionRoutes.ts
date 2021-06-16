@@ -23,6 +23,7 @@ import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 import LocationProgramAddEdit from "../views/institution/LocationProgramAddEdit.vue";
 import LocationProgramOffering from "../views/institution/LocationProgramOffering.vue";
+import { InstitutionRouteUserType } from "@/types/contracts/InstitutionRouteMeta";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -66,6 +67,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: InstitutionDashboard,
               sidebar: InstitutionHomeSideBar,
             },
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION
+            },
           },
           {
             path: `${AppRoutes.LocationPrograms}/:locationId`,
@@ -75,6 +80,15 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [
+                InstitutionRouteUserType.ADMIN,
+                InstitutionRouteUserType.LOCATION_MANAGER,
+                InstitutionRouteUserType.USER,
+              ],
+            },
           },
           {
             path: `${AppRoutes.LocationOfferings}`,
@@ -84,6 +98,15 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [
+                InstitutionRouteUserType.ADMIN,
+                InstitutionRouteUserType.LOCATION_MANAGER,
+                InstitutionRouteUserType.USER,
+              ],
+            },
           },
           {
             path: `${AppRoutes.LocationApplications}/:locationId`,
@@ -102,6 +125,14 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [
+                InstitutionRouteUserType.ADMIN,
+                InstitutionRouteUserType.LOCATION_MANAGER,
+              ],
+            },
           },
           {
             path: AppRoutes.InstitutionManageLocations,
@@ -109,6 +140,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             components: {
               default: ManageLocation,
               sidebar: ManageInstitutionSideBar,
+            },
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionRouteUserType.ADMIN],
             },
           },
           {
@@ -118,6 +154,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: ManageDesgination,
               sidebar: ManageInstitutionSideBar,
             },
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionRouteUserType.ADMIN],
+            },
           },
           {
             path: AppRoutes.InstitutionProfileEdit,
@@ -125,6 +166,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             components: {
               default: InstitutionProfile,
               sidebar: ManageInstitutionSideBar,
+            },
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionRouteUserType.ADMIN],
             },
           },
           {
@@ -134,6 +180,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: InstitutionUserDetails,
               sidebar: ManageInstitutionSideBar,
             },
+            meta: {
+              requiresAuth: true,
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionRouteUserType.ADMIN],
+            },
           },
         ],
       },
@@ -141,30 +192,63 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.AddInstitutionLocation,
         name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION,
         component: AddInstitutionLocation,
+        meta: {
+          requiresAuth: true,
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionRouteUserType.ADMIN],
+        },
       },
       {
         path: `${AppRoutes.EditInstitutionLocation}/:locationId`,
         name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
         component: EditInstitutionLocation,
         props: true,
+        meta: {
+          requiresAuth: true,
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionRouteUserType.ADMIN],
+        },
       },
       {
         path: AppRoutes.InstitutionProfile,
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         component: InstitutionProfile,
         props: { editMode: false },
+        meta: {
+          requiresAuth: true,
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionRouteUserType.ADMIN],
+        },
       },
       {
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
         props: true,
+        meta: {
+          requiresAuth: true,
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [
+            InstitutionRouteUserType.ADMIN,
+            InstitutionRouteUserType.LOCATION_MANAGER,
+            InstitutionRouteUserType.USER,
+          ],
+        },
       },
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
         component: LocationProgramOffering,
         props: true,
+        meta: {
+          requiresAuth: true,
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [
+            InstitutionRouteUserType.ADMIN,
+            InstitutionRouteUserType.LOCATION_MANAGER,
+            InstitutionRouteUserType.USER,
+          ],
+        },
       },
     ],
     beforeEnter: (to, from, next) => {

@@ -108,6 +108,7 @@ export interface UserStateForStore {
     firstName: string;
     lastName: string;
     isActive: boolean;
+    isAdmin: boolean
   };
 }
 export interface AuthorizationsForStore {
@@ -131,6 +132,7 @@ export interface InstitutionUserAndAuthDetailsForStore {
     firstName: string;
     lastName: string;
     isActive: boolean;
+    isAdmin: boolean;
   };
   authorizations: InstitutionUserAuthorizationsDetails;
 }

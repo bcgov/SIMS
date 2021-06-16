@@ -31,6 +31,11 @@ export default {
         {
           label: "Dashboard",
           icon: "pi pi-home",
+          command: () => {
+            router.push({
+              name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+            });
+          },
         },
         {
           label: "Notifications",

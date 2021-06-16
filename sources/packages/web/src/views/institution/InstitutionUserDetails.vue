@@ -31,7 +31,7 @@
             />
           </v-col>
         </v-row>
-        <DataTable autoLayout="true" :value="users">
+        <DataTable :autoLayout="true" :value="users">
           <Column field="displayName" header="Name"></Column>
           <Column field="email" header="Email"></Column>
           <Column field="userType" header="User Type"></Column>

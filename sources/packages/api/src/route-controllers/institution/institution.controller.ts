@@ -280,7 +280,7 @@ export class InstitutionController extends BaseController {
         firstName: userDetails?.firstName,
         lastName: userDetails?.lastName,
         isActive: userDetails?.isActive,
-        isAdmin: token.authorizations.isAdmin,
+        isAdmin: token.authorizations.isAdmin(),
         email: userDetails?.email,
       },
     };
