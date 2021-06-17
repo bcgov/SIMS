@@ -25,27 +25,25 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     if (isAuthenticated) {
       // MANAGE INSTITUTION ROUTES
-      if (to.meta?.clientType === ClientIdType.INSTITUTION) {
-        if (to.meta?.userTypes) {
-          if (
-            UserAuthorizationService.shared.isUserTypeAllowed(
-              to.meta.userTypes,
-              to.params,
-              to.meta.checkAllowedLocation ?? {},
-            )
-          ) {
-            next();
-          } else {
-            // UNAUTHORIZED USER
-            next({
-              name: SharedRouteConst.FORBIDDEN_USER,
-            });
-          }
-        } else {
+      if (
+        to.meta?.clientType === ClientIdType.INSTITUTION &&
+        to.meta?.userTypes
+      ) {
+        if (
+          UserAuthorizationService.shared.isUserTypeAllowed(
+            to.meta.userTypes,
+            to.params,
+            to.meta.checkAllowedLocation,
+          )
+        ) {
           next();
+        } else {
+          // UNAUTHORIZED USER
+          next({
+            name: SharedRouteConst.FORBIDDEN_USER,
+          });
         }
       } else {
-        // All router other than ClientIdType.INSTITUTION comes here
         next();
       }
     } else {
