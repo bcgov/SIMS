@@ -1,0 +1,1 @@
+export const EXTENDED_DATE_FORMAT = "MMMM, D YYYY";
