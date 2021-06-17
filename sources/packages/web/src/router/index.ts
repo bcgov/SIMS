@@ -21,7 +21,7 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
+  if (to.meta.requiresAuth !== false) {
     if (AppConfigService.shared.authService) {
       // MANAGE INSTITUTION ROUTES
       if (

@@ -21,60 +21,57 @@ export class UserAuthorizationService {
 
     if (isInstitutionAdmin) {
       return allowedTypeList.some(type => type === InstitutionUserTypes.admin);
-    } else {
-      if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
-        return checkAllowedLocation?.userTypes.some(type => {
-          /* Check is user a location Manager and the 
+    }
+
+    if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
+      return checkAllowedLocation?.userTypes.some(type => {
+        /* Check is user a location Manager and the 
             location Manager has access to the requested page and  
             check location Manager has access to the locationId 
           */
-          if (
-            this.checkUserTypeIsAllowedForLocation(
-              type,
-              InstitutionUserTypes.locationManager,
-              urlParams.locationId,
-            )
+        if (
+          this.checkUserTypeIsAllowedForLocation(
+            type,
+            InstitutionUserTypes.locationManager,
+            urlParams.locationId,
           )
-            return true;
+        )
+          return true;
 
-          /* Check is user a user and the 
+        /* Check is user a user and the 
             User has access to the requested page and  
             check User has access to the locationId
           */
-          if (
-            this.checkUserTypeIsAllowedForLocation(
-              type,
-              InstitutionUserTypes.user,
-              urlParams.locationId,
-            )
+        if (
+          this.checkUserTypeIsAllowedForLocation(
+            type,
+            InstitutionUserTypes.user,
+            urlParams.locationId,
           )
-            return true;
+        )
+          return true;
 
-          return false;
-        });
-      } else {
-        return allowedTypeList.some(type => {
-          /* Check is user a location Manager and the 
+        return false;
+      });
+    }
+
+    return allowedTypeList.some(type => {
+      /* Check is user a location Manager and the 
           location Manager has access to the requested page
         */
-          if (
-            this.checkUserTypeIsAllowed(
-              type,
-              InstitutionUserTypes.locationManager,
-            )
-          )
-            return true;
+      if (
+        this.checkUserTypeIsAllowed(type, InstitutionUserTypes.locationManager)
+      )
+        return true;
 
-          /* Check is user a user and the 
+      /* Check is user a user and the 
             User has access to the requested page
           */
-          if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
-            return true;
+      if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
+        return true;
 
-          return false;
-        });
-      }
-    }
+      return false;
+    });
   }
 
   public checkUserTypeIsAllowed(allowedUserType: string, userType: string) {

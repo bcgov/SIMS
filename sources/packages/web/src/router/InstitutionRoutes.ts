@@ -36,6 +36,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.Login,
         name: InstitutionRoutesConst.LOGIN,
         component: Login,
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
+        },
       },
       {
         path: AppRoutes.LoginWithBusinessBCeID,
@@ -45,6 +49,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           showBasicBCeIDMessage: true,
           showDisabledUserMessage: false,
         },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
+        },
       },
       {
         path: AppRoutes.DisabledUser,
@@ -53,6 +61,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: {
           showBasicBCeIDMessage: false,
           showDisabledUserMessage: true,
+        },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
         },
       },
       {
@@ -69,7 +81,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
             },
           },
@@ -82,7 +93,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
             props: true,
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
               checkAllowedLocation: {
@@ -102,7 +112,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
             props: true,
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
               checkAllowedLocation: {
@@ -122,7 +131,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
             props: true,
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
               checkAllowedLocation: {
@@ -142,7 +150,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
             props: true,
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
               checkAllowedLocation: {
@@ -158,7 +165,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: ManageInstitutionSideBar,
             },
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
             },
@@ -171,7 +177,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: ManageInstitutionSideBar,
             },
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
             },
@@ -184,7 +189,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: ManageInstitutionSideBar,
             },
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
             },
@@ -197,7 +201,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: ManageInstitutionSideBar,
             },
             meta: {
-              requiresAuth: true,
               clientType: ClientIdType.INSTITUTION,
               userTypes: [InstitutionUserTypes.admin],
             },
@@ -209,7 +212,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION,
         component: AddInstitutionLocation,
         meta: {
-          requiresAuth: true,
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
         },
@@ -220,7 +222,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: EditInstitutionLocation,
         props: true,
         meta: {
-          requiresAuth: true,
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
         },
@@ -231,7 +232,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: InstitutionProfile,
         props: { editMode: false },
         meta: {
-          requiresAuth: true,
           clientType: ClientIdType.INSTITUTION,
         },
       },
@@ -247,7 +247,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: LocationProgramAddEdit,
         props: true,
         meta: {
-          requiresAuth: true,
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
           checkAllowedLocation: {
@@ -267,7 +266,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: LocationProgramOffering,
         props: true,
         meta: {
-          requiresAuth: true,
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
           checkAllowedLocation: {

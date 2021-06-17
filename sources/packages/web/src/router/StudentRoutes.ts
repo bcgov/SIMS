@@ -33,6 +33,10 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "login",
         name: StudentRoutesConst.LOGIN,
         component: Login,
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.STUDENT,
+        },
         beforeEnter: (to, from, next) => {
           // Check Auth service is available or not
           if (AppConfigService.shared.authService) {
