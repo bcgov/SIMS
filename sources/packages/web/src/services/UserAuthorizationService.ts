@@ -34,24 +34,29 @@ export class UserAuthorizationService {
             check location Manager has access to the locationId 
           */
           if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-            if (institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType ===
-                  InstitutionUserTypes.locationManager &&
-                authDetails?.locationId === Number(urlParams?.locationId),
-            )) return true
-            
+            if (
+              institutionUserTypes.some(
+                authDetails =>
+                  authDetails?.userType ===
+                    InstitutionUserTypes.locationManager &&
+                  authDetails?.locationId === Number(urlParams?.locationId),
+              )
+            )
+              return true;
           }
           /* Check is user a user and the 
             User has access to the requested page and  
             check User has access to the locationId
           */
           if (type === InstitutionRouteUserType.USER) {
-            if (institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType === InstitutionUserTypes.user &&
-                authDetails?.locationId === Number(urlParams?.locationId),
-            )) return true
+            if (
+              institutionUserTypes.some(
+                authDetails =>
+                  authDetails?.userType === InstitutionUserTypes.user &&
+                  authDetails?.locationId === Number(urlParams?.locationId),
+              )
+            )
+              return true;
           }
           return false;
         });
@@ -61,20 +66,27 @@ export class UserAuthorizationService {
           location Manager has access to the requested page
         */
           if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-            if (institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType === InstitutionUserTypes.locationManager,
-            )) return true
+            if (
+              institutionUserTypes.some(
+                authDetails =>
+                  authDetails?.userType ===
+                  InstitutionUserTypes.locationManager,
+              )
+            )
+              return true;
           }
           /* Check is user a user and the 
             User has access to the requested page
           */
-          if (type === InstitutionRouteUserType.USER) {
-            if(institutionUserTypes.some(
+          if (
+            type === InstitutionRouteUserType.USER &&
+            institutionUserTypes.some(
               authDetails =>
                 authDetails?.userType === InstitutionUserTypes.user,
-            )) return true
-          }
+            )
+          )
+            return true;
+
           return false;
         });
       }
