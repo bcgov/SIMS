@@ -7,6 +7,7 @@ import {
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import { CreateEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/create-education-program-offering.dto";
+import { EducationProgramOfferingModel } from "./education-program-offering.service.models";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -54,5 +55,44 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       id: locationId,
     } as InstitutionLocation;
     return this.repo.save(programOffering);
+  }
+
+  /**
+   * This is to fetch all the Education Offering
+   * that are associated with the Location and Program
+   * @param locationId
+   * @param programId
+   * @returns
+   */
+  async getAllEducationProgramOffering(
+    locationId: number,
+    programId: number,
+  ): Promise<EducationProgramOfferingModel[]> {
+    const educationProgramOfferingResult = await this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.offeringDelivered",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .where(
+        "educationProgram.id = :programId and institutionLocation.id = :locationId",
+        { programId: programId, locationId: locationId },
+      )
+      .getMany();
+
+    return educationProgramOfferingResult.map((educationProgramOffering) => {
+      const item = new EducationProgramOfferingModel();
+      item.id = educationProgramOffering.id;
+      item.name = educationProgramOffering.name;
+      item.studyStartDate = educationProgramOffering.studyStartDate;
+      item.studyEndDate = educationProgramOffering.studyEndDate;
+      item.offeringDelivered = educationProgramOffering.offeringDelivered;
+      return item;
+    });
   }
 }

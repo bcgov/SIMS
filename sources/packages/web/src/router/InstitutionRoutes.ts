@@ -23,7 +23,7 @@ import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
-import LocationProgramOffering from "../views/institution/LocationProgramOffering.vue";
+import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
@@ -104,10 +104,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: `${AppRoutes.LocationOfferings}`,
-            name: InstitutionRoutesConst.LOCATION_OFFERINGS,
+            path: AppRoutes.LocationProgramsView,
+            name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
             components: {
-              default: LocationPrograms,
+              default: LocationProgramView,
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
@@ -286,6 +286,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+        component: LocationProgramOffering,
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.LocationOfferingsEdit,
+        name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
         component: LocationProgramOffering,
         props: true,
         meta: {
