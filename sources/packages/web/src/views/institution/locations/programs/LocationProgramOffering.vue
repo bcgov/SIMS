@@ -12,9 +12,9 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
-import formio from "../../components/generic/formio.vue";
-import { EducationProgramOfferingService } from "../../services/EducationProgramOfferingService";
-import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import formio from "../../../../components/generic/formio.vue";
+import { EducationProgramOfferingService } from "../../../../services/EducationProgramOfferingService";
+import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 
 export default {
   components: { formio },
@@ -39,7 +39,7 @@ export default {
           data,
         );
         router.push({
-          name: InstitutionRoutesConst.LOCATION_OFFERINGS,
+          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
         });
         toast.add({
           severity: "success",

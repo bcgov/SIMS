@@ -15,3 +15,10 @@ export interface CreateEducationProgramOfferingDto {
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
 }
+
+export class EducationProgramOfferingDto {
+  id: number;
+  name: string;
+  studyDates: string;
+  offeringDelivered: string;
+}

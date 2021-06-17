@@ -1,3 +1,5 @@
+import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+
 export interface SaveEducationProgram {
   id?: number;
   institutionId: number;
@@ -38,10 +40,27 @@ export class EducationProgramsSummary {
   approvalStatus: string;
   totalOfferings: number;
   get credentialTypeToDisplay(): string {
-    if (this.credentialType?.toLowerCase() === "other") {
-      return this.credentialTypeOther;
-    }
+    return credentialTypeToDisplay(
+      this.credentialType,
+      this.credentialTypeOther,
+    );
+  }
+}
 
-    return this.credentialType;
+export class EducationProgramModel {
+  id: number;
+  name: string;
+  description: string;
+  credentialType: string;
+  credentialTypeOther: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  approvalStatus: string;
+  get credentialTypeToDisplay(): string {
+    return credentialTypeToDisplay(
+      this.credentialType,
+      this.credentialTypeOther,
+    );
   }
 }

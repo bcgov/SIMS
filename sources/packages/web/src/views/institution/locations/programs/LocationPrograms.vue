@@ -91,7 +91,11 @@ export default {
     const goToViewProgram = (programId: number) => {
       router.push({
         name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        params: { programId, locationId: props.locationId },
+        params: {
+          programId,
+          locationId: props.locationId,
+          locationName: props.locationName,
+        },
       });
     };
 
