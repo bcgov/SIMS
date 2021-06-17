@@ -34,29 +34,24 @@ export class UserAuthorizationService {
             check location Manager has access to the locationId 
           */
           if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-            const allowManger = institutionUserTypes.some(
+            if (institutionUserTypes.some(
               authDetails =>
                 authDetails?.userType ===
                   InstitutionUserTypes.locationManager &&
                 authDetails?.locationId === Number(urlParams?.locationId),
-            );
-            if (allowManger) {
-              return allowManger;
-            }
+            )) return true
+            
           }
           /* Check is user a user and the 
             User has access to the requested page and  
             check User has access to the locationId
           */
           if (type === InstitutionRouteUserType.USER) {
-            const allowUser = institutionUserTypes.some(
+            if (institutionUserTypes.some(
               authDetails =>
                 authDetails?.userType === InstitutionUserTypes.user &&
                 authDetails?.locationId === Number(urlParams?.locationId),
-            );
-            if (allowUser) {
-              return allowUser;
-            }
+            )) return true
           }
           return false;
         });
@@ -66,25 +61,19 @@ export class UserAuthorizationService {
           location Manager has access to the requested page
         */
           if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-            const isManger = institutionUserTypes.some(
+            if (institutionUserTypes.some(
               authDetails =>
                 authDetails?.userType === InstitutionUserTypes.locationManager,
-            );
-            if (isManger) {
-              return isManger;
-            }
+            )) return true
           }
           /* Check is user a user and the 
             User has access to the requested page
           */
           if (type === InstitutionRouteUserType.USER) {
-            const isUser = institutionUserTypes.some(
+            if(institutionUserTypes.some(
               authDetails =>
                 authDetails?.userType === InstitutionUserTypes.user,
-            );
-            if (isUser) {
-              return isUser;
-            }
+            )) return true
           }
           return false;
         });
