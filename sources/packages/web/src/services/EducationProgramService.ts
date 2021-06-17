@@ -21,9 +21,7 @@ export class EducationProgramService {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }
 
-  public async getLocationProgramsSummary(
-    locationId: number,
-  ): Promise<SummaryEducationProgramDto[]> {
+  public async getLocationProgramsSummary(locationId: number): Promise<any> {
     return ApiClient.EducationProgram.getLocationProgramsSummary(locationId);
   }
 

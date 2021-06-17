@@ -7,7 +7,7 @@ export class SummaryEducationProgramDto {
   approvalStatus: string;
 }
 
-export interface EducationProgramDto {
+export interface SubsetEducationProgramDto {
   id: number;
   name: string;
   description: string;

@@ -132,7 +132,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param programId Id of the Program.
    * @returns summary for location
    */
-  async getLocationPrograms(programId: number): Promise<EducationProgramModel> {
+  async getLocationPrograms(
+    programId: number,
+    institutionId: number,
+  ): Promise<EducationProgramModel> {
     const educationProgram = await this.repo
       .createQueryBuilder("programs")
       .select([
@@ -147,6 +150,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.approvalStatus",
       ])
       .where("programs.id = :id", { id: programId })
+      .andWhere("programs.institution.id = :institutionId", { institutionId })
       .getOne();
 
     const summaryItem = new EducationProgramModel();

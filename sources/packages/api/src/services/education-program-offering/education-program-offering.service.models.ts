@@ -1,3 +1,4 @@
+import * as dayjs from "dayjs";
 export class EducationProgramOfferingModel {
   id: number;
   name: string;
@@ -8,7 +9,9 @@ export class EducationProgramOfferingModel {
     if (this.studyStartDate === null) {
       return "No program dates";
     } else {
-      return `${this.studyStartDate.toLocaleDateString()} - ${this.studyEndDate.toLocaleDateString()}`;
+      return `${dayjs(this.studyStartDate).format("MMMM, D YYYY")} - ${dayjs(
+        this.studyEndDate,
+      ).format("MMMM, D YYYY")}`;
     }
   }
 }

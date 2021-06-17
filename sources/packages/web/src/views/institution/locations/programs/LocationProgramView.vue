@@ -1,6 +1,10 @@
 <template>
   <v-container>
-    <h5 class="color-grey"><a @click="goBack()">&#60;- Back to Programs</a></h5>
+    <h5 class="color-grey">
+      <a @click="goBack()">
+        <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
+      >
+    </h5>
     <h4>View Program</h4>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
@@ -160,13 +164,19 @@ export default {
     const offerings = ref([] as EducationProgramOfferingDto[]);
     const educationProgram = ref({} as EducationProgramDto);
     const getEducationProgramAndOffering = async () => {
-      offerings.value = await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
+      const offeringsRequest = EducationProgramOfferingService.shared.getAllEducationProgramOffering(
         props.locationId,
         props.programId,
       );
-      educationProgram.value = await EducationProgramService.shared.getEducationProgram(
+      const educationProgramRequest = EducationProgramService.shared.getEducationProgram(
         props.programId,
       );
+      const [offeringsValue, educationProgramValue] = await Promise.all([
+        offeringsRequest,
+        educationProgramRequest,
+      ]);
+      offerings.value = offeringsValue;
+      educationProgram.value = educationProgramValue;
     };
 
     onMounted(getEducationProgramAndOffering);

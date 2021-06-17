@@ -19,7 +19,10 @@ import { EducationProgramDto } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
-import { SummaryEducationProgramDto } from "./models/summary-education-program.dto";
+import {
+  SummaryEducationProgramDto,
+  SubsetEducationProgramDto,
+} from "./models/summary-education-program.dto";
 import { EducationProgram } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -155,5 +158,33 @@ export class EducationProgramController {
       id: programId,
     };
     return this.programService.saveEducationProgram(saveProgramPaylod);
+  }
+
+  /**
+   * This retuns only the subset of the EducationProgram to get
+   * the complete EducationProgram DTO use the @Get(":id") method
+   * @param programId
+   * @returns
+   */
+  @Get("/program/:programId")
+  async get(
+    @Param("programId") programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<SubsetEducationProgramDto> {
+    const educationProgram = await this.programService.getLocationPrograms(
+      programId,
+      userToken.authorizations.institutionId,
+    );
+
+    return {
+      id: educationProgram.id,
+      name: educationProgram.name,
+      description: educationProgram.description,
+      credentialType: educationProgram.credentialTypeToDisplay,
+      cipCode: educationProgram.cipCode,
+      nocCode: educationProgram.nocCode,
+      sabcCode: educationProgram.sabcCode,
+      approvalStatus: educationProgram.approvalStatus,
+    };
   }
 }

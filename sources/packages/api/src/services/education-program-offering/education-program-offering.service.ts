@@ -69,22 +69,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
   ): Promise<EducationProgramOfferingModel[]> {
     const educationProgramOfferingResult = await this.repo
-      .createQueryBuilder("education_programs_offerings")
+      .createQueryBuilder("offerings")
       .select([
-        "education_programs_offerings.id",
-        "education_programs_offerings.name",
-        "education_programs_offerings.studyStartDate",
-        "education_programs_offerings.studyEndDate",
-        "education_programs_offerings.offeringDelivered",
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.offeringDelivered",
       ])
-      .leftJoin(
-        "education_programs_offerings.educationProgram",
-        "educationProgram",
-      )
-      .leftJoin(
-        "education_programs_offerings.institutionLocation",
-        "institutionLocation",
-      )
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
       .where(
         "educationProgram.id = :programId and institutionLocation.id = :locationId",
         { programId: programId, locationId: locationId },
