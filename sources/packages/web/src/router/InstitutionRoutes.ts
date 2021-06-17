@@ -240,6 +240,16 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
         component: LocationProgramView,
         props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
       },
       {
         path: AppRoutes.LocationProgramsCreate,
@@ -250,7 +260,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
           checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.locationManager],
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
           },
         },
       },
@@ -259,6 +272,16 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
         props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
       },
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
@@ -269,7 +292,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
           checkAllowedLocation: {
-            userTypes: [InstitutionUserTypes.locationManager],
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
           },
         },
       },
