@@ -51,7 +51,9 @@
           ></Column>
           <Column field="" header="Actions"
             ><template #body="slotProps">
-              <span v-if="slotProps.data.userName !== logginedUserDetails?.userName">
+              <span
+                v-if="slotProps.data.userName !== logginedUserDetails?.userName"
+              >
                 <v-btn plain>
                   <v-icon
                     v-if="slotProps.data.isActive"
@@ -72,7 +74,9 @@
                 </v-btn>
                 <InputSwitch
                   v-model="slotProps.data.isActive"
-                  v-tooltip="slotProps.data.isActive ? 'Disable User' : 'Enable User'"
+                  v-tooltip="
+                    slotProps.data.isActive ? 'Disable User' : 'Enable User'
+                  "
                   @change="updateUserStatus(slotProps.data)"
                 />
               </span>
@@ -92,7 +96,6 @@ import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionUserViewModel, ApplicationToken } from "../../types";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import Chip from "primevue/chip";
 import InputSwitch from "primevue/inputswitch";
 import Tooltip from "primevue/tooltip";
 import { useToast } from "primevue/usetoast";
@@ -104,7 +107,6 @@ export default {
     Column,
     AddInstitutionUser,
     EditInstitutionUser,
-    Chip,
     InputSwitch,
   },
   directives: {
@@ -113,7 +115,7 @@ export default {
   setup() {
     const toast = useToast();
     const logginedUserDetails = ref(
-      AppConfigService.shared.authService?.tokenParsed as ApplicationToken
+      AppConfigService.shared.authService?.tokenParsed as ApplicationToken,
     );
     const showAddUser = ref(false);
     const showEditUser = ref(false);
@@ -142,7 +144,7 @@ export default {
       try {
         await InstitutionService.shared.updateUserStatus(
           userDetails.userName,
-          userDetails.isActive
+          userDetails.isActive,
         );
         await getAllInstitutionUsers();
         toast.add({
@@ -169,7 +171,7 @@ export default {
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
       userType.value = userRoleType.value?.userTypes
         ? userRoleType.value.userTypes.map((el: string) =>
-            el !== "admin" ? { name: el, code: el } : null
+            el !== "admin" ? { name: el, code: el } : null,
           )
         : [];
     });

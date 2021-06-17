@@ -97,11 +97,6 @@ export interface InstitutionUserAuthRolesAndLocation {
   userRole?: string;
   userType: string;
 }
-
-// export interface InstitutionUserAuthorizationsDetails {
-//   institutionId: number;
-//   authorizations: InstitutionUserAuthRolesAndLocation[];
-// }
 export interface UserStateForStore {
   user: {
     email: string;

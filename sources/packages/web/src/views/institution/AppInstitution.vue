@@ -26,7 +26,7 @@ export default {
     const isAuthReady = ref(false);
     const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true
+      () => AppConfigService.shared.authService?.authenticated === true,
     );
     // Mounding hook
     onMounted(async () => {

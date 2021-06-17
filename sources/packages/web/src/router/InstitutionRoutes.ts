@@ -3,7 +3,7 @@ import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue"
 import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
-import LocationPrograms from "../views/institution/LocationPrograms.vue";
+import LocationPrograms from "../views/institution/locations/programs/LocationPrograms.vue";
 import LocationUsers from "../views/institution/LocationUsers.vue";
 import LocationApplications from "../views/institution/LocationApplications.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
@@ -21,7 +21,8 @@ import { AuthStatus, AppRoutes } from "../types";
 import Institution from "../views/institution/Institution.vue";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
-import LocationProgramAddEdit from "../views/institution/LocationProgramAddEdit.vue";
+import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
+import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "../views/institution/LocationProgramOffering.vue";
 import { InstitutionRouteUserType } from "@/types/contracts/InstitutionRouteMeta";
 
@@ -73,7 +74,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: `${AppRoutes.LocationPrograms}/:locationId`,
+            path: AppRoutes.LocationPrograms,
             name: InstitutionRoutesConst.LOCATION_PROGRAMS,
             components: {
               default: LocationPrograms,
@@ -235,6 +236,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.LocationProgramsView,
+        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        component: LocationProgramView,
+        props: true,
+      },
+      {
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
@@ -247,6 +254,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             userTypes: [InstitutionRouteUserType.LOCATION_MANAGER],
           },
         },
+      },
+      {
+        path: AppRoutes.LocationProgramsEdit,
+        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
+        component: LocationProgramAddEdit,
+        props: true,
       },
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
