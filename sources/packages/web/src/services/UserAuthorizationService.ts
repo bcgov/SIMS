@@ -1,8 +1,5 @@
 import store from "@/store";
-import {
-  InstitutionRouteUserType,
-  InstitutionUserTypes,
-} from "@/types/contracts/InstitutionRouteMeta";
+import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 export class UserAuthorizationService {
   private static instance: UserAuthorizationService;
@@ -23,9 +20,7 @@ export class UserAuthorizationService {
     Admin users has access to the requested page*/
 
     if (isInstitutionAdmin) {
-      return allowedTypeList.some(
-        type => type === InstitutionRouteUserType.ADMIN,
-      );
+      return allowedTypeList.some(type => type === InstitutionUserTypes.admin);
     } else {
       if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
         return checkAllowedLocation?.userTypes.some(type => {
@@ -36,7 +31,6 @@ export class UserAuthorizationService {
           if (
             this.checkUserTypeIsAllowedForLocation(
               type,
-              InstitutionRouteUserType.LOCATION_MANAGER,
               InstitutionUserTypes.locationManager,
               urlParams.locationId,
             )
@@ -50,7 +44,6 @@ export class UserAuthorizationService {
           if (
             this.checkUserTypeIsAllowedForLocation(
               type,
-              InstitutionRouteUserType.USER,
               InstitutionUserTypes.user,
               urlParams.locationId,
             )
@@ -67,7 +60,6 @@ export class UserAuthorizationService {
           if (
             this.checkUserTypeIsAllowed(
               type,
-              InstitutionRouteUserType.LOCATION_MANAGER,
               InstitutionUserTypes.locationManager,
             )
           )
@@ -76,13 +68,7 @@ export class UserAuthorizationService {
           /* Check is user a user and the 
             User has access to the requested page
           */
-          if (
-            this.checkUserTypeIsAllowed(
-              type,
-              InstitutionRouteUserType.USER,
-              InstitutionUserTypes.user,
-            )
-          )
+          if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
             return true;
 
           return false;
@@ -90,35 +76,30 @@ export class UserAuthorizationService {
       }
     }
   }
-  // this.checkUserTypeIsAllowed(type, InstitutionRouteUserType.USER, urlParams?.locationId)
-  public checkUserTypeIsAllowed(
-    allowedUserType: string,
-    checkUserTypeFromRouter: string,
-    usersUserType: string,
-  ) {
+
+  public checkUserTypeIsAllowed(allowedUserType: string, userType: string) {
     const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
       store.getters["institution/myAuthorizationDetails"].authorizations;
     return (
-      allowedUserType === checkUserTypeFromRouter &&
+      allowedUserType === userType &&
       institutionUserTypes.some(
-        authDetails => authDetails?.userType === usersUserType,
+        authDetails => authDetails?.userType === userType,
       )
     );
   }
 
   public checkUserTypeIsAllowedForLocation(
     allowedUserType: string,
-    checkUserTypeFromRouter: string,
-    usersUserType: string,
+    userType: string,
     locationId?: string,
   ) {
     const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
       store.getters["institution/myAuthorizationDetails"].authorizations;
     return (
-      allowedUserType === checkUserTypeFromRouter &&
+      allowedUserType === userType &&
       institutionUserTypes.some(
         authDetails =>
-          authDetails?.userType === usersUserType &&
+          authDetails?.userType === userType &&
           authDetails?.locationId === Number(locationId),
       )
     );

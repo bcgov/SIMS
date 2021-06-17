@@ -231,13 +231,7 @@ export class InstitutionController extends BaseController {
     // Check its a active user
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
-    if (!institutionUser) {
-      throw new UnprocessableEntityException(
-        "user does not exist in the system.",
-      );
-    } else if (!institutionUser.user.isActive) {
-      throw new UnprocessableEntityException("Not an Active User.");
-    }
+
     // checking if user belong to logged-in users institution
     if (institutionUser.institution.id !== token.authorizations.institutionId) {
       throw new UnprocessableEntityException(
@@ -271,11 +265,7 @@ export class InstitutionController extends BaseController {
     // Check  user exists or not
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
-    if (!institutionUser) {
-      throw new UnprocessableEntityException(
-        "user does not exist in the system.",
-      );
-    }
+
     // checking if user belong to logged-in users institution
     if (institutionUser.institution.id !== token.authorizations.institutionId) {
       throw new UnprocessableEntityException(

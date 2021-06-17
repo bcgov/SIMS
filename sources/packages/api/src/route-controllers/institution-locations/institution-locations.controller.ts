@@ -120,20 +120,12 @@ export class InstitutionLocationsController extends BaseController {
   @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
-    //To retrive institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find a institution associated with the current user name.",
-      );
-    }
     // get all institution locations.
     const InstitutionLocationData =
       await this.locationService.getAllInstitutionLocations(
-        institutionDetails.id,
+        userToken.authorizations.institutionId,
       );
     return InstitutionLocationData.map((el: InstitutionLocation) => {
       return {
