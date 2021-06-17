@@ -33,31 +33,31 @@ export class UserAuthorizationService {
             location Manager has access to the requested page and  
             check location Manager has access to the locationId 
           */
-          if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-            if (
-              institutionUserTypes.some(
-                authDetails =>
-                  authDetails?.userType ===
-                    InstitutionUserTypes.locationManager &&
-                  authDetails?.locationId === Number(urlParams?.locationId),
-              )
+          if (
+            type === InstitutionRouteUserType.LOCATION_MANAGER &&
+            institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType ===
+                  InstitutionUserTypes.locationManager &&
+                authDetails?.locationId === Number(urlParams?.locationId),
             )
-              return true;
-          }
+          )
+            return true;
+
           /* Check is user a user and the 
             User has access to the requested page and  
             check User has access to the locationId
           */
-          if (type === InstitutionRouteUserType.USER) {
-            if (
-              institutionUserTypes.some(
-                authDetails =>
-                  authDetails?.userType === InstitutionUserTypes.user &&
-                  authDetails?.locationId === Number(urlParams?.locationId),
-              )
+          if (
+            type === InstitutionRouteUserType.USER &&
+            institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType === InstitutionUserTypes.user &&
+                authDetails?.locationId === Number(urlParams?.locationId),
             )
-              return true;
-          }
+          )
+            return true;
+
           return false;
         });
       } else {
@@ -65,16 +65,15 @@ export class UserAuthorizationService {
           /* Check is user a location Manager and the 
           location Manager has access to the requested page
         */
-          if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-            if (
-              institutionUserTypes.some(
-                authDetails =>
-                  authDetails?.userType ===
-                  InstitutionUserTypes.locationManager,
-              )
+          if (
+            type === InstitutionRouteUserType.LOCATION_MANAGER &&
+            institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType === InstitutionUserTypes.locationManager,
             )
-              return true;
-          }
+          )
+            return true;
+
           /* Check is user a user and the 
             User has access to the requested page
           */
