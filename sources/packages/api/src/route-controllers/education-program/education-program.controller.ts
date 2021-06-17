@@ -105,7 +105,7 @@ export class EducationProgramController {
     return newProgram.id;
   }
 
-  @Put(":id")
+  @Put(":id/summary")
   async update(
     @Body() payload: EducationProgramDto,
     @Param("id") id: number,
@@ -166,7 +166,7 @@ export class EducationProgramController {
    * @param programId
    * @returns
    */
-  @Get("/program/:programId")
+  @Get(":programId")
   async get(
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
