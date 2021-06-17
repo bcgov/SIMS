@@ -91,7 +91,6 @@ export class InstitutionLocationsController extends BaseController {
   }
 
   @IsInstitutionAdmin()
-  @HasLocationAccess("locationId")
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
