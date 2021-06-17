@@ -1,6 +1,6 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  Institutionlocation,
+  InstitutionLocation,
   InstitutionLocationsDetails,
   InstitutionUserDto,
   InstitutionLocationUserAuthDto,
@@ -8,7 +8,7 @@ import {
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
-    createInstitutionLocationDto: Institutionlocation,
+    createInstitutionLocationDto: InstitutionLocation,
   ): Promise<void> {
     try {
       await this.apiClient.post(
@@ -24,7 +24,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async updateInstitutionLocation(
     locationId: number,
-    updateInstitutionLocationDto: Institutionlocation,
+    updateInstitutionLocationDto: InstitutionLocation,
   ): Promise<void> {
     try {
       await this.apiClient.patch(

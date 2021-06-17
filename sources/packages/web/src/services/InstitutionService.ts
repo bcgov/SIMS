@@ -5,7 +5,7 @@ import {
   InstitutionDetailDto,
   InstitutionProfileState,
   UpdateInstitutionDto,
-  Institutionlocation,
+  InstitutionLocation,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
   InstitutionUserResDto,
@@ -98,17 +98,17 @@ export class InstitutionService {
     return ApiClient.Institution.sync();
   }
 
-  public async createInstitutionLocation(data: Institutionlocation) {
+  public async createInstitutionLocation(data: InstitutionLocation) {
     await ApiClient.InstitutionLocation.createInstitutionLocation(data);
   }
 
   public async updateInstitutionLocation(
     locationId: number,
-    institutionlocation: Institutionlocation,
+    institutionLocation: InstitutionLocation,
   ) {
     await ApiClient.InstitutionLocation.updateInstitutionLocation(
       locationId,
-      institutionlocation,
+      institutionLocation,
     );
   }
 

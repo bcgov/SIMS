@@ -1,9 +1,6 @@
 <template>
   <div>
-    <NavBar
-      title="INSTITUTION APPLICATION"
-      :clientType="ClientIdType.INSTITUTION"
-    >
+    <NavBar title="INSTITUTION APPLICATION" :clientType="ClientIdType.INSTITUTION">
       <template #end>
         <Button
           v-if="isAuthenticated"
@@ -18,7 +15,7 @@
           "
         />
         <Button
-          v-if="isAuthenticated"
+          v-if="isAuthenticated && isAdmin"
           label="Manage Institution"
           icon="pi pi-fw pi-map-marker"
           class="p-button-text"
@@ -35,9 +32,11 @@
 </template>
 
 <script lang="ts">
+import { useStore } from "vuex";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../../../types/contracts/ConfigContract";
 import NavBar from "../../../../components/partial-view/student/NavBar.vue";
+import { computed } from "vue";
 
 export default {
   components: {
@@ -50,9 +49,12 @@ export default {
     },
   },
   setup() {
+    const store = useStore();
+    const isAdmin = computed(() => store.state.institution.userState?.isAdmin);
     return {
       InstitutionRoutesConst,
       ClientIdType,
+      isAdmin,
     };
   },
 };
