@@ -34,12 +34,11 @@ export class UserAuthorizationService {
             check location Manager has access to the locationId 
           */
           if (
-            type === InstitutionRouteUserType.LOCATION_MANAGER &&
-            institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType ===
-                  InstitutionUserTypes.locationManager &&
-                authDetails?.locationId === Number(urlParams?.locationId),
+            this.checkUserTypeIsAllowedForLocation(
+              type,
+              InstitutionRouteUserType.LOCATION_MANAGER,
+              InstitutionUserTypes.locationManager,
+              urlParams.locationId,
             )
           )
             return true;
@@ -49,11 +48,11 @@ export class UserAuthorizationService {
             check User has access to the locationId
           */
           if (
-            type === InstitutionRouteUserType.USER &&
-            institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType === InstitutionUserTypes.user &&
-                authDetails?.locationId === Number(urlParams?.locationId),
+            this.checkUserTypeIsAllowedForLocation(
+              type,
+              InstitutionRouteUserType.USER,
+              InstitutionUserTypes.user,
+              urlParams.locationId,
             )
           )
             return true;
@@ -66,10 +65,10 @@ export class UserAuthorizationService {
           location Manager has access to the requested page
         */
           if (
-            type === InstitutionRouteUserType.LOCATION_MANAGER &&
-            institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType === InstitutionUserTypes.locationManager,
+            this.checkUserTypeIsAllowed(
+              type,
+              InstitutionRouteUserType.LOCATION_MANAGER,
+              InstitutionUserTypes.locationManager,
             )
           )
             return true;
@@ -78,10 +77,10 @@ export class UserAuthorizationService {
             User has access to the requested page
           */
           if (
-            type === InstitutionRouteUserType.USER &&
-            institutionUserTypes.some(
-              authDetails =>
-                authDetails?.userType === InstitutionUserTypes.user,
+            this.checkUserTypeIsAllowed(
+              type,
+              InstitutionRouteUserType.USER,
+              InstitutionUserTypes.user,
             )
           )
             return true;
@@ -90,5 +89,38 @@ export class UserAuthorizationService {
         });
       }
     }
+  }
+  // this.checkUserTypeIsAllowed(type, InstitutionRouteUserType.USER, urlParams?.locationId)
+  public checkUserTypeIsAllowed(
+    allowedUserType: string,
+    checkUserTypeFromRouter: string,
+    usersUserType: string,
+  ) {
+    const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
+      store.getters["institution/myAuthorizationDetails"].authorizations;
+    return (
+      allowedUserType === checkUserTypeFromRouter &&
+      institutionUserTypes.some(
+        authDetails => authDetails?.userType === usersUserType,
+      )
+    );
+  }
+
+  public checkUserTypeIsAllowedForLocation(
+    allowedUserType: string,
+    checkUserTypeFromRouter: string,
+    usersUserType: string,
+    locationId?: string,
+  ) {
+    const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
+      store.getters["institution/myAuthorizationDetails"].authorizations;
+    return (
+      allowedUserType === checkUserTypeFromRouter &&
+      institutionUserTypes.some(
+        authDetails =>
+          authDetails?.userType === usersUserType &&
+          authDetails?.locationId === Number(locationId),
+      )
+    );
   }
 }
