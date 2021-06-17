@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
-import { JwtModule } from "@nestjs/jwt";
+import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { InstitutionUserAuthService, UserService } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
@@ -13,13 +13,13 @@ import {
   ActiveUserGuard,
 } from "./guards";
 import { RolesGuard } from "./roles.guard";
+
+const jwtModule = JwtModule.register({
+  publicKey: KeycloakConfig.PEM_PublicKey,
+});
+
 @Module({
-  imports: [
-    PassportModule,
-    JwtModule.register({
-      publicKey: KeycloakConfig.PEM_PublicKey,
-    }),
-  ],
+  imports: [PassportModule, jwtModule],
   providers: [
     UserService,
     InstitutionUserAuthService,
@@ -50,5 +50,6 @@ import { RolesGuard } from "./roles.guard";
       useClass: InstitutionLocationGuard,
     },
   ],
+  exports: [jwtModule],
 })
 export class AuthModule {}
