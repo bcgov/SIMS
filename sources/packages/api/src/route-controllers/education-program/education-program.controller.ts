@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
+  Put,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -13,14 +15,12 @@ import {
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import { CreateEducationProgramDto } from "./models/create-education-program.dto";
+import { EducationProgramDto } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
-import { CreateEducationProgram } from "../../services/education-program/education-program.service.models";
-import {
-  SummaryEducationProgramDto,
-  EducationProgramDto,
-} from "./models/summary-education-program.dto";
+import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
+import { SummaryEducationProgramDto } from "./models/summary-education-program.dto";
+import { EducationProgram } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/education-program")
@@ -32,7 +32,7 @@ export class EducationProgramController {
 
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
-  async getAll(
+  async getSummary(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SummaryEducationProgramDto[]> {
@@ -51,31 +51,89 @@ export class EducationProgramController {
     }));
   }
 
-  @Get(":programId")
-  async get(
-    @Param("programId") programId: number,
+  @Get(":id")
+  async getProgram(
+    @Param("id") id: number,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramDto> {
-    const educationProgram = await this.programService.getLocationPrograms(
-      programId,
+    const program = await this.programService.getInstitutionProgram(
+      id,
+      userToken.authorizations.institutionId,
     );
 
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+
     return {
-      id: educationProgram.id,
-      name: educationProgram.name,
-      description: educationProgram.description,
-      credentialType: educationProgram.credentialTypeToDisplay,
-      cipCode: educationProgram.cipCode,
-      nocCode: educationProgram.nocCode,
-      sabcCode: educationProgram.sabcCode,
-      approvalStatus: educationProgram.approvalStatus,
+      name: program.name,
+      description: program.description,
+      credentialType: program.credentialType,
+      credentialTypeOther: program.credentialTypeOther,
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      regulatoryBody: program.regulatoryBody,
+      programDeliveryTypes: {
+        deliveredOnSite: program.deliveredOnSite,
+        deliveredOnline: program.deliveredOnline,
+      },
+      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+      earnAcademicCreditsOtherInstitution:
+        program.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: program.courseLoadCalculation,
+      averageHoursStudy: program.averageHoursStudy,
+      completionYears: program.completionYears,
+      admissionRequirement: program.admissionRequirement,
+      hasMinimunAge: program.hasMinimunAge,
+      eslEligibility: program.eslEligibility,
+      hasJointInstitution: program.hasJointInstitution,
+      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
     };
   }
 
   @Post()
   async create(
-    @Body() payload: CreateEducationProgramDto,
+    @Body() payload: EducationProgramDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
+    const newProgram = await this.saveProgram(userToken, payload);
+    return newProgram.id;
+  }
+
+  @Put(":id")
+  async update(
+    @Body() payload: EducationProgramDto,
+    @Param("id") id: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<void> {
+    // Ensures that the user has access to the institution
+    // associated with the program id being updated.
+    const program = await this.programService.getInstitutionProgram(
+      id,
+      userToken.authorizations.institutionId,
+    );
+
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+
+    await this.saveProgram(userToken, payload, id);
+  }
+
+  /**
+   * Saves program (insert/update).
+   * @param userToken User token from request.
+   * @param payload Payload with data to be persisted.
+   * @param [programId] If provided will update the record, otherwise will insert a new one.
+   * @returns program
+   */
+  private async saveProgram(
+    userToken: IInstitutionUserToken,
+    payload: EducationProgramDto,
+    programId?: number,
+  ): Promise<EducationProgram> {
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.Educationprogram,
       payload,
@@ -83,21 +141,19 @@ export class EducationProgramController {
 
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
-        "Not able to a create a program due to an invalid request.",
+        "Not able to a save the program due to an invalid request.",
       );
     }
 
     // The payload returned from form.io contains the approvalStatus as
     // a calculated server value. If the approvalStatus value is sent
     // from the client form it will be overrided by the server calculated one.
-    const createProgramPaylod: CreateEducationProgram = {
+    const saveProgramPaylod: SaveEducationProgram = {
       ...submissionResult.data.data,
       programDeliveryTypes: submissionResult.data.data.programDeliveryTypes,
       institutionId: userToken.authorizations.institutionId,
+      id: programId,
     };
-    const createdProgram = await this.programService.createEducationProgram(
-      createProgramPaylod,
-    );
-    return createdProgram.id;
+    return this.programService.saveEducationProgram(saveProgramPaylod);
   }
 }
