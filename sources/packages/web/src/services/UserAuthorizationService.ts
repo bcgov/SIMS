@@ -14,39 +14,81 @@ export class UserAuthorizationService {
     return this.instance || (this.instance = new this());
   }
 
-  public isUserTypeAllowed(allowedTypeList: string[], urlParams?:{locationId?:string}) {
-    console.log(urlParams,'++++++urlParams======NumberNumber', Number(urlParams?.locationId ?? 0))
-    console.log(this.institutionUserTypes,'++++++++this.institutionUserTypesthis.institutionUserTypes')
+  public isUserTypeAllowed(
+    allowedTypeList: string[],
+    urlParams?: { locationId?: string },
+    checkAllowedLocation?: { userTypes?: string[] },
+  ) {
+    /* Check is user is Institution Admin and Institution 
+    Admin users has access to the requested page*/
+
     if (this.isInstitutionAdmin) {
       return allowedTypeList.some(
         type => type === InstitutionRouteUserType.ADMIN,
       );
     } else {
-      return allowedTypeList.some(type => {
-        if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
-          const isManger = this.institutionUserTypes.some(
-            authDetails =>
-              
-                //  {
-                //    const locationId = urlParams?.locationId ? Number(urlParams?.locationId) : 0
-                //    console.log(locationId,'+++++++++++++++locationIdlocationId')
-                //    return }
-                   authDetails?.userType === InstitutionUserTypes.locationManager,
-          );
-          if (isManger) {
-            return isManger;
+      if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
+        return checkAllowedLocation?.userTypes.some(type => {
+          /* Check is user is location Manager and the 
+            location Manager has access to the requested page and  
+            check location Manager has access to the locationId 
+          */
+          if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
+            const allowManger = this.institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType ===
+                  InstitutionUserTypes.locationManager &&
+                authDetails?.locationId === Number(urlParams?.locationId),
+            );
+            if (allowManger) {
+              return allowManger;
+            }
           }
-        }
-        if (type === InstitutionRouteUserType.USER) {
-          const isUser = this.institutionUserTypes.some(
-            authDetails => authDetails?.userType === InstitutionUserTypes.user,
-          );
-          if (isUser) {
-            return isUser;
+          /* Check is user is user and the 
+            User has access to the requested page and  
+            check User has access to the locationId
+          */
+          if (type === InstitutionRouteUserType.USER) {
+            const allowUser = this.institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType === InstitutionUserTypes.user &&
+                authDetails?.locationId === Number(urlParams?.locationId),
+            );
+            if (allowUser) {
+              return allowUser;
+            }
           }
-        }
-        return false;
-      });
+          return false;
+        });
+      } else {
+        return allowedTypeList.some(type => {
+          /* Check is user is location Manager and the 
+          location Manager has access to the requested page
+        */
+          if (type === InstitutionRouteUserType.LOCATION_MANAGER) {
+            const isManger = this.institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType === InstitutionUserTypes.locationManager,
+            );
+            if (isManger) {
+              return isManger;
+            }
+          }
+          /* Check is user is user and the 
+            User has access to the requested page
+          */
+          if (type === InstitutionRouteUserType.USER) {
+            const isUser = this.institutionUserTypes.some(
+              authDetails =>
+                authDetails?.userType === InstitutionUserTypes.user,
+            );
+            if (isUser) {
+              return isUser;
+            }
+          }
+          return false;
+        });
+      }
     }
   }
 }

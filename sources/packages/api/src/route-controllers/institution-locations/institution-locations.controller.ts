@@ -57,7 +57,7 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
 
-    //To retrive institution id
+    //To retrieve institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
@@ -67,29 +67,30 @@ export class InstitutionLocationsController extends BaseController {
     }
 
     // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionlocation =
-      await this.locationService.createtLocation(
+    const createdInstitutionLocation =
+      await this.locationService.createLocation(
         institutionDetails.id,
         dryRunSubmissionResult.data,
       );
 
-    // Save a form to formio to handle the location approval.
+    // Save a form to formIO to handle the location approval.
     const submissionResult = await this.formService.submission(
-      "institutionlocation",
+      "institutionLocation",
       payload,
     );
 
     // Create an application entry on FormFlow.ai, using the
-    // previously created form definition on formio.
+    // previously created form definition on formIO.
     await this.formsFlowService.createApplication({
       formId: submissionResult.formId,
       formUrl: submissionResult.absolutePath,
       submissionId: submissionResult.submissionId,
     });
 
-    return createdInstitutionlocation.id;
+    return createdInstitutionLocation.id;
   }
 
+  @IsInstitutionAdmin()
   @HasLocationAccess("locationId")
   @Patch(":locationId")
   async update(
@@ -97,7 +98,7 @@ export class InstitutionLocationsController extends BaseController {
     @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
-    //To retrive institution id
+    //To retrieve institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
@@ -116,13 +117,11 @@ export class InstitutionLocationsController extends BaseController {
     return updateResult.affected;
   }
 
+  @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
-    // TODO: Change to return only the locations that the user has access.
-    // It is currently returning all the locations for the inistitution.
-
     //To retrive institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
@@ -133,7 +132,7 @@ export class InstitutionLocationsController extends BaseController {
     }
     // get all institution locations.
     const InstitutionLocationData =
-      await this.locationService.getAllInstitutionlocations(
+      await this.locationService.getAllInstitutionLocations(
         institutionDetails.id,
       );
     return InstitutionLocationData.map((el: InstitutionLocation) => {

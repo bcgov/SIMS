@@ -1,5 +1,5 @@
 import {
-  InstitutionlocationData,
+  InstitutionLocationData,
   InstitutionLocationsDetails,
 } from "./AddInstitutionLocation";
 import { InstitutionDto } from "./CreateInstitutionDto";
@@ -39,7 +39,7 @@ export interface InstitutionAuthType {
 export interface InstitutionAuth {
   id?: number;
   authType?: InstitutionAuthType;
-  location?: InstitutionlocationData;
+  location?: InstitutionLocationData;
 }
 
 export interface InstitutionUserDetails {
@@ -98,21 +98,22 @@ export interface InstitutionUserAuthRolesAndLocation {
   userType: string;
 }
 
-export interface InstitutionUserAuthorizationsDetails {
-  institutionId: number;
-  authorizations: InstitutionUserAuthRolesAndLocation[];
-}
+// export interface InstitutionUserAuthorizationsDetails {
+//   institutionId: number;
+//   authorizations: InstitutionUserAuthRolesAndLocation[];
+// }
 export interface UserStateForStore {
   user: {
     email: string;
     firstName: string;
     lastName: string;
     isActive: boolean;
-    isAdmin: boolean
+    isAdmin: boolean;
   };
 }
 export interface AuthorizationsForStore {
-  authorizations: InstitutionUserAuthorizationsDetails;
+  institutionId: number;
+  authorizations: InstitutionUserAuthRolesAndLocation[];
 }
 export interface LocationStateForStore {
   id: number;
@@ -134,5 +135,5 @@ export interface InstitutionUserAndAuthDetailsForStore {
     isActive: boolean;
     isAdmin: boolean;
   };
-  authorizations: InstitutionUserAuthorizationsDetails;
+  authorizations: AuthorizationsForStore;
 }
