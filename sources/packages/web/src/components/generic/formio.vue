@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { Formio } from "formiojs";
 import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
@@ -24,6 +24,7 @@ export default {
     const formioContainerRef = ref(null);
     // Wait to show the spinner when there is an API call.
     const hideSpinner = ref(true);
+    let form: any;
 
     onMounted(async () => {
       let cachedFormDefinition: string | null = null;
@@ -56,7 +57,7 @@ export default {
         }
       }
 
-      const form = await Formio.createForm(
+      form = await Formio.createForm(
         formioContainerRef.value,
         formDefinition.data,
       );
@@ -80,6 +81,17 @@ export default {
         context.emit("submitted", submision.data);
       });
     });
+
+    watch(
+      () => props.data,
+      () => {
+        if (form && props.data) {
+          form.submission = {
+            data: props.data,
+          };
+        }
+      },
+    );
 
     return { formioContainerRef, hideSpinner };
   },
