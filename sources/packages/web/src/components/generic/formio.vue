@@ -8,7 +8,6 @@ import { onMounted, ref, watch } from "vue";
 import { Formio } from "formiojs";
 import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
-import { prop } from "vue-class-component";
 
 export default {
   emits: ["submitted", "loaded", "changed"],
