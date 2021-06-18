@@ -31,4 +31,30 @@ export class EducationProgramOfferingService {
       programId,
     );
   }
+
+  public async getProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<Offering> {
+    return ApiClient.EducationProgramOffering.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+    );
+  }
+
+  public async updateProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    data: Offering,
+  ): Promise<void> {
+    return ApiClient.EducationProgramOffering.updateProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+      data,
+    );
+  }
 }
