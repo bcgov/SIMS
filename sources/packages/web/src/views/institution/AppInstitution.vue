@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { ref, onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
@@ -15,14 +14,12 @@ import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
-import "@/store";
 
 export default {
   components: {
     CommonLayout,
   },
   setup() {
-    const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
