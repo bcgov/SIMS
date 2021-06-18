@@ -5,8 +5,11 @@ import {
   InstitutionLocation,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
-import { CreateEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
+import { Connection, UpdateResult } from "typeorm";
+import {
+  CreateEducationProgramOfferingDto,
+  UpdateEducationProgramOfferingDto,
+} from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
@@ -113,7 +116,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     offeringId: number,
   ): Promise<ProgramOfferingModel> {
-    const educationProgramOffering = await this.repo
+    return this.repo
       .createQueryBuilder("offerings")
       .select([
         "offerings.id",
@@ -144,7 +147,48 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
       )
       .getOne();
+  }
 
-    return educationProgramOffering;
+  /**
+   * Creates a new education program offering at program level
+   * @param locationId location id to associate the new program offering.
+   * @param programId program id to associate the new program offering.
+   * @param educationProgramOffering Information used to create the program offering.
+   * @returns Education program offering created.
+   */
+  async updateEducationProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    educationProgramOffering: UpdateEducationProgramOfferingDto,
+  ): Promise<UpdateResult> {
+    const programOffering = new EducationProgramOffering();
+    programOffering.name = educationProgramOffering.name;
+    programOffering.studyStartDate = educationProgramOffering.studyStartDate;
+    programOffering.studyEndDate = educationProgramOffering.studyEndDate;
+    programOffering.breakStartDate = educationProgramOffering.breakStartDate;
+    programOffering.breakEndDate = educationProgramOffering.breakEndDate;
+    programOffering.actualTuitionCosts =
+      educationProgramOffering.actualTuitionCosts;
+    programOffering.programRelatedCosts =
+      educationProgramOffering.programRelatedCosts;
+    programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
+    programOffering.exceptionalExpenses =
+      educationProgramOffering.exceptionalExpenses;
+    programOffering.tuitionRemittanceRequestedAmount =
+      educationProgramOffering.tuitionRemittanceRequestedAmount;
+    programOffering.offeringDelivered =
+      educationProgramOffering.offeringDelivered;
+    programOffering.lacksStudyDates = educationProgramOffering.lacksStudyDates;
+    programOffering.lacksStudyBreaks =
+      educationProgramOffering.lacksStudyBreaks;
+    programOffering.lacksFixedCosts = educationProgramOffering.lacksFixedCosts;
+    programOffering.tuitionRemittanceRequested =
+      educationProgramOffering.tuitionRemittanceRequested;
+    programOffering.educationProgram = { id: programId } as EducationProgram;
+    programOffering.institutionLocation = {
+      id: locationId,
+    } as InstitutionLocation;
+    return this.repo.update(offeringId, programOffering);
   }
 }

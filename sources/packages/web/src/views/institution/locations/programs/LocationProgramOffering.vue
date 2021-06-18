@@ -67,12 +67,21 @@ export default {
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
         });
-        toast.add({
-          severity: "success",
-          summary: "Created!",
-          detail: "Education Offering created successfully!",
-          life: 5000,
-        });
+        if (props.offeringId) {
+          toast.add({
+            severity: "success",
+            summary: "Updated!",
+            detail: "Education Offering updated successfully!",
+            life: 5000,
+          });
+        } else {
+          toast.add({
+            severity: "success",
+            summary: "Created!",
+            detail: "Education Offering created successfully!",
+            life: 5000,
+          });
+        }
       } catch (excp) {
         toast.add({
           severity: "error",

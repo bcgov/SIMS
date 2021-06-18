@@ -13,6 +13,7 @@ import {
   CreateEducationProgramOfferingDto,
   EducationProgramOfferingDto,
   ProgramOfferingDto,
+  UpdateEducationProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import { EducationProgramOfferingService, FormService } from "../../services";
@@ -94,5 +95,35 @@ export class EducationProgramOfferingController {
       );
     }
     return offering;
+  }
+
+  @HasLocationAccess("locationId")
+  @Patch(
+    "location/:locationId/education-program/:programId/offering/:offeringId",
+  )
+  async updateProgramOffering(
+    @Body() payload: UpdateEducationProgramOfferingDto,
+    @Param("locationId") locationId: number,
+    @Param("programId") programId?: number,
+    @Param("offeringId") offeringId?: number,
+  ): Promise<number> {
+    const updatingResult = await this.formService.dryRunSubmission(
+      FormNames.EducationProgramOffering,
+      payload,
+    );
+
+    if (!updatingResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to a update a program offering due to an invalid request.",
+      );
+    }
+
+    const updateProgramOffering = await this.programOfferingService.updateEducationProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+      payload,
+    );
+    return updateProgramOffering.affected;
   }
 }
