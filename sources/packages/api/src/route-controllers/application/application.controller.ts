@@ -7,7 +7,11 @@ import {
   Param,
   Post,
 } from "@nestjs/common";
-import { ApplicationService, FormService } from "../../services";
+import {
+  ApplicationService,
+  FormService,
+  WorkflowActionsService,
+} from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
@@ -23,6 +27,7 @@ export class ApplicationController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
+    private readonly workflow: WorkflowActionsService,
   ) {
     super();
   }
@@ -66,6 +71,11 @@ export class ApplicationController extends BaseController {
       userToken,
       submissionResult.data,
     );
+
+    const workflowResult = await this.workflow.startApplicationAssessment(
+      createdApplication.id,
+    );
+    console.log(workflowResult);
 
     return createdApplication.id;
   }

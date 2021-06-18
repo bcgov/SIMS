@@ -2,17 +2,17 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "../config/config.service";
 import { ServiceAccountService } from "../service-account/service-account.service";
-import { RuleEngineService } from "./rule-engine.service";
+import { WorkflowService } from "./workflow.service";
 
-describe("RuleEngineService", () => {
-  let service: RuleEngineService;
+describe("WorkflowService", () => {
+  let service: WorkflowService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RuleEngineService, ConfigService, ServiceAccountService],
+      providers: [WorkflowService, ConfigService, ServiceAccountService],
     }).compile();
 
-    service = module.get<RuleEngineService>(RuleEngineService);
+    service = module.get<WorkflowService>(WorkflowService);
   });
 
   it("should be defined", () => {

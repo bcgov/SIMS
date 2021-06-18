@@ -13,6 +13,7 @@ import {
   InstitutionUserAuthService,
   EducationProgramService,
   EducationProgramOfferingService,
+  WorkflowActionsService,
 } from "./services";
 import {
   UserController,
@@ -26,19 +27,19 @@ import {
   CRAIntegrationController,
   EducationProgramController,
   EducationProgramOfferingController,
+  ApplicationSystemController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import {
-  RuleEngineService,
+  WorkflowService,
   FormService,
   ServiceAccountService,
   InstitutionLocationService,
   FormsFlowService,
   KeycloakService,
 } from "./services";
-
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule, CraIntegrationModule],
   controllers: [
@@ -54,6 +55,7 @@ import {
     CRAIntegrationController,
     EducationProgramController,
     EducationProgramOfferingController,
+    ApplicationSystemController,
   ],
   providers: [
     AppService,
@@ -64,7 +66,8 @@ import {
     ArchiveDbService,
     BCeIDServiceProvider,
     ServiceAccountService,
-    RuleEngineService,
+    WorkflowService,
+    WorkflowActionsService,
     FormService,
     ApplicationService,
     InstitutionLocationService,

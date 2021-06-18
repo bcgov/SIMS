@@ -2,8 +2,7 @@ import { Connection, Repository } from "typeorm";
 import { BaseModel } from "./entities/base.model";
 import { RecordDataModel } from "./entities/record.model";
 
-
-export class DataModelService<DataModel extends BaseModel>  {
+export class DataModelService<DataModel extends BaseModel> {
   static getRepo<DataModel>(
     connection: Connection,
     entity: Function,
@@ -12,7 +11,7 @@ export class DataModelService<DataModel extends BaseModel>  {
   }
 
   constructor(protected repo: Repository<DataModel>) {}
-  
+
   create(): DataModel {
     return this.repo.create() as DataModel;
   }
@@ -25,8 +24,13 @@ export class DataModelService<DataModel extends BaseModel>  {
     return this.repo.remove([object]);
   }
 
-  async findById(id: number) {
-    return this.repo.findByIds([id]);
+  async findById(id: number): Promise<DataModel> {
+    const result = await this.repo.findByIds([id]);
+    if (result?.length === 1) {
+      return result[0];
+    }
+
+    return null;
   }
 }
 
