@@ -15,6 +15,8 @@ import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
+import "@/store";
+
 export default {
   components: {
     CommonLayout,
@@ -26,7 +28,7 @@ export default {
     const isAuthReady = ref(false);
     const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true,
+      () => AppConfigService.shared.authService?.authenticated === true
     );
     // Mounding hook
     onMounted(async () => {
@@ -52,9 +54,6 @@ export default {
             name: InstitutionRoutesConst.INSTITUTION_PROFILE,
           });
         }
-      }
-      if (isAuthenticated.value) {
-        store.dispatch("institution/initialize");
       }
     });
 

@@ -87,13 +87,13 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getMyInstitutionDetails(): Promise<
+  public async getMyInstitutionDetails(header?:any): Promise<
     InstitutionUserAndAuthDetailsForStore
   > {
     try {
       const res = await this.apiClient.get(
         `institution/my-details`,
-        this.addAuthHeader(),
+        header || this.addAuthHeader(),
       );
       return res?.data as InstitutionUserAndAuthDetailsForStore;
     } catch (error) {

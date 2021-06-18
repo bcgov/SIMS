@@ -134,13 +134,13 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
-  public async getMyInstitutionLocationsDetails(): Promise<
-    LocationStateForStore
-  > {
+  public async getMyInstitutionLocationsDetails(
+    header?: any,
+  ): Promise<LocationStateForStore> {
     try {
       const res = await this.apiClient.get(
         `institution/my-locations`,
-        this.addAuthHeader(),
+        header || this.addAuthHeader(),
       );
       return res?.data as LocationStateForStore;
     } catch (error) {
