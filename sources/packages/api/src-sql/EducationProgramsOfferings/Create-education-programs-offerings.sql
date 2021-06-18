@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS education_programs_offerings(
   exceptional_expenses INT NULL, 
   tuition_remittance_requested_amount INT NULL,
   offering_delivered VARCHAR(50) NULL, 
-  lacks_study_dates BIT NOT NULL,
-  lacks_study_breaks BIT NOT NULL,
-  lacks_fixed_costs BIT NOT NULL,
+  lacks_study_dates BOOLEAN NOT NULL,
+  lacks_study_breaks BOOLEAN NOT NULL,
+  lacks_fixed_costs BOOLEAN NOT NULL,
   tuition_remittance_requested VARCHAR(50) NOT NULL,
   
   -- Reference Columns

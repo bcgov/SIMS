@@ -24,6 +24,7 @@ import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/Ho
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
+import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -35,6 +36,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.Login,
         name: InstitutionRoutesConst.LOGIN,
         component: Login,
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
+        },
       },
       {
         path: AppRoutes.LoginWithBusinessBCeID,
@@ -44,6 +49,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           showBasicBCeIDMessage: true,
           showDisabledUserMessage: false,
         },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
+        },
       },
       {
         path: AppRoutes.DisabledUser,
@@ -52,6 +61,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: {
           showBasicBCeIDMessage: false,
           showDisabledUserMessage: true,
+        },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
         },
       },
       {
@@ -67,6 +80,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: InstitutionDashboard,
               sidebar: InstitutionHomeSideBar,
             },
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+            },
           },
           {
             path: AppRoutes.LocationPrograms,
@@ -76,6 +92,16 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
+              checkAllowedLocation: {
+                userTypes: [
+                  InstitutionUserTypes.locationManager,
+                  InstitutionUserTypes.user,
+                ],
+              },
+            },
           },
           {
             path: AppRoutes.LocationProgramsView,
@@ -85,6 +111,16 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
+              checkAllowedLocation: {
+                userTypes: [
+                  InstitutionUserTypes.locationManager,
+                  InstitutionUserTypes.user,
+                ],
+              },
+            },
           },
           {
             path: `${AppRoutes.LocationApplications}/:locationId`,
@@ -94,6 +130,16 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
+              checkAllowedLocation: {
+                userTypes: [
+                  InstitutionUserTypes.locationManager,
+                  InstitutionUserTypes.user,
+                ],
+              },
+            },
           },
           {
             path: `${AppRoutes.LocationUsers}/:locationId`,
@@ -103,6 +149,13 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               sidebar: InstitutionHomeSideBar,
             },
             props: true,
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
+              checkAllowedLocation: {
+                userTypes: [InstitutionUserTypes.locationManager],
+              },
+            },
           },
           {
             path: AppRoutes.InstitutionManageLocations,
@@ -110,6 +163,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             components: {
               default: ManageLocation,
               sidebar: ManageInstitutionSideBar,
+            },
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
             },
           },
           {
@@ -119,6 +176,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: ManageDesgination,
               sidebar: ManageInstitutionSideBar,
             },
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
+            },
           },
           {
             path: AppRoutes.InstitutionProfileEdit,
@@ -126,6 +187,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             components: {
               default: InstitutionProfile,
               sidebar: ManageInstitutionSideBar,
+            },
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
             },
           },
           {
@@ -135,6 +200,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               default: InstitutionUserDetails,
               sidebar: ManageInstitutionSideBar,
             },
+            meta: {
+              clientType: ClientIdType.INSTITUTION,
+              userTypes: [InstitutionUserTypes.admin],
+            },
           },
         ],
       },
@@ -142,36 +211,109 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.AddInstitutionLocation,
         name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION,
         component: AddInstitutionLocation,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+        },
       },
       {
         path: `${AppRoutes.EditInstitutionLocation}/:locationId`,
         name: InstitutionRoutesConst.EDIT_INSTITUTION_LOCATION,
         component: EditInstitutionLocation,
         props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+        },
       },
       {
         path: AppRoutes.InstitutionProfile,
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         component: InstitutionProfile,
         props: { editMode: false },
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+        },
+      },
+      {
+        path: AppRoutes.LocationProgramsView,
+        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        component: LocationProgramView,
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
       },
       {
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
         props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
       },
       {
         path: AppRoutes.LocationProgramsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
         props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
       },
       {
         path: AppRoutes.LocationProgramsOfferingsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
         component: LocationProgramOffering,
         props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.LocationOfferingsEdit,
+        name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
+        component: LocationProgramOffering,
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
       },
       {
         path: AppRoutes.LocationOfferingsEdit,

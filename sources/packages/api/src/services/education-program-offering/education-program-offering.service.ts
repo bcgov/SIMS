@@ -6,8 +6,11 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { CreateEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/create-education-program-offering.dto";
-import { EducationProgramOfferingModel } from "./education-program-offering.service.models";
+import { CreateEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
+import {
+  EducationProgramOfferingModel,
+  ProgramOfferingModel,
+} from "./education-program-offering.service.models";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -94,5 +97,54 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       item.offeringDelivered = educationProgramOffering.offeringDelivered;
       return item;
     });
+  }
+
+  /**
+   * This is to fetch the Education Offering
+   * that are associated with the Location, Program
+   * and offering
+   * @param locationId
+   * @param programId
+   * @param offeringId
+   * @returns
+   */
+  async getProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<ProgramOfferingModel> {
+    const educationProgramOffering = await this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.breakStartDate",
+        "offerings.breakEndDate",
+        "offerings.actualTuitionCosts",
+        "offerings.programRelatedCosts",
+        "offerings.mandatoryFees",
+        "offerings.exceptionalExpenses",
+        "offerings.tuitionRemittanceRequestedAmount",
+        "offerings.offeringDelivered",
+        "offerings.lacksStudyDates",
+        "offerings.lacksStudyBreaks",
+        "offerings.lacksFixedCosts",
+        "offerings.tuitionRemittanceRequested",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .where(
+        "offerings.id= :offeringId and educationProgram.id = :programId and institutionLocation.id = :locationId",
+        {
+          offeringId: offeringId,
+          programId: programId,
+          locationId: locationId,
+        },
+      )
+      .getOne();
+
+    return educationProgramOffering;
   }
 }

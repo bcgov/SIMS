@@ -40,5 +40,11 @@ export interface InstitutionUserAuth {
 }
 export interface InstitutionUserAndAuthDetailsDto {
   authorizations: InstitutionUserAuth;
-  user: Pick<User, "firstName" | "lastName" | "isActive" | "email">;
+  user: {
+    isAdmin: boolean;
+    firstName: string;
+    lastName: string;
+    isActive: boolean;
+    email: string;
+  };
 }

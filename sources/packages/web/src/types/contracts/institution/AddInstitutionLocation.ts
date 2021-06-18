@@ -6,10 +6,10 @@ export interface InstitutionAddress {
   postalZipCode: string;
   provinceState: string;
 }
-export interface Institutionlocation extends InstitutionAddress {
+export interface InstitutionLocation extends InstitutionAddress {
   locationName: string;
 }
-export interface InstitutionlocationData {
+export interface InstitutionLocationData {
   id?: number;
   name: string;
   data: InstitutionAddress;

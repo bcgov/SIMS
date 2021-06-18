@@ -25,7 +25,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return await this.repo.findOne(id);
   }
 
-  async createtLocation(
+  async createLocation(
     institution_id: number,
     data: ValidatedInstitutionLocation,
   ): Promise<any> {
@@ -72,7 +72,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return await this.repo.update(locationId, updateLocation);
   }
 
-  async getAllInstitutionlocations(
+  async getAllInstitutionLocations(
     institutionId: number,
   ): Promise<InstitutionLocation[]> {
     return this.repo
@@ -108,7 +108,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getOne();
   }
 
-  async getMyInstitutionlocations(
+  async getMyInstitutionLocations(
     locationIds: number[],
   ): Promise<InstitutionLocation[]> {
     return this.repo.findByIds(locationIds);

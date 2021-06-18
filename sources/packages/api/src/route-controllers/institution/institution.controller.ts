@@ -177,11 +177,17 @@ export class InstitutionController extends BaseController {
     return createdInstitutionUser.id;
   }
 
+  /* Since, below API is called by only Admin user, IsInstitutionAdmin 
+    decorator is added, in future, if the API is shared, remove this decorator */
+  @IsInstitutionAdmin()
   @Get("/user-types-roles")
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
     return this.institutionService.getUserTypesAndRoles();
   }
 
+  /* Since, below API is called by only Admin user, IsInstitutionAdmin 
+    decorator is added, in future, if the API is shared, remove this decorator */
+  @IsInstitutionAdmin()
   @Get("/user/:userName")
   async getInstitutionLocationByUserName(
     @Param("userName") userName: string,
@@ -215,20 +221,22 @@ export class InstitutionController extends BaseController {
     } as InstitutionLocationUserAuthDto;
   }
 
+  @IsInstitutionAdmin()
   @Patch("/user/:userName")
   async UpdateInstitutionUserWithAuth(
+    @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
     @Body() payload: InstitutionUserPermissionDto,
   ): Promise<void> {
     // Check its a active user
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
-    if (!institutionUser) {
+
+    // checking if user belong to logged-in users institution
+    if (institutionUser.institution.id !== token.authorizations.institutionId) {
       throw new UnprocessableEntityException(
-        "user does not exist in the system.",
+        "user does not belong to your institution.",
       );
-    } else if (!institutionUser.user.isActive) {
-      throw new UnprocessableEntityException("Not an Active User.");
     }
     // Get institution
     const institution = await this.institutionService.getInstituteByUserName(
@@ -247,20 +255,21 @@ export class InstitutionController extends BaseController {
     );
   }
 
+  @IsInstitutionAdmin()
   @Patch("user-status/:userName")
   async updateUserStatus(
+    @UserToken() token: IInstitutionUserToken,
     @Param("userName") userName: string,
     @Body() body: UserDto,
   ): Promise<void> {
     // Check  user exists or not
-    // TODO: Check if the user belongs to the institution.
-    // We can pass the institution id to getInstitutionUserByUserName to ensure it.
-    // The institution id is present on token.
     const institutionUser =
       await this.institutionService.getInstitutionUserByUserName(userName);
-    if (!institutionUser) {
+
+    // checking if user belong to logged-in users institution
+    if (institutionUser.institution.id !== token.authorizations.institutionId) {
       throw new UnprocessableEntityException(
-        "user does not exist in the system.",
+        "user does not belong to your institution.",
       );
     }
     await this.userService.updateUserStatus(
@@ -280,7 +289,7 @@ export class InstitutionController extends BaseController {
         firstName: userDetails?.firstName,
         lastName: userDetails?.lastName,
         isActive: userDetails?.isActive,
-        isAdmin: token.authorizations.isAdmin,
+        isAdmin: token.authorizations.isAdmin(),
         email: userDetails?.email,
       },
     };
@@ -312,10 +321,10 @@ export class InstitutionController extends BaseController {
     // get all institution locations that user has access too.
     const InstitutionLocationData: InstitutionLocation[] =
       userToken.authorizations.isAdmin()
-        ? await this.locationService.getAllInstitutionlocations(
+        ? await this.locationService.getAllInstitutionLocations(
             userToken?.authorizations?.institutionId,
           )
-        : await this.locationService.getMyInstitutionlocations(
+        : await this.locationService.getMyInstitutionLocations(
             userToken.authorizations.getLocationsIds(),
           );
     return InstitutionLocationData.map((el: InstitutionLocation) => {

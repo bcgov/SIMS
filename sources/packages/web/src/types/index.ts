@@ -15,3 +15,5 @@ export * from "./contracts/institution/EducationProgramDto";
 export * from "./contracts/institution/EducationProgramOfferingDto";
 export * from "./contracts/OfferingContact";
 export * from "./StoreState";
+export * from "./contracts/InstituteContract";
+export * from "./contracts/InstitutionRouteMeta";

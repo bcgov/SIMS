@@ -1,5 +1,7 @@
 import * as dayjs from "dayjs";
 import { EXTENDED_DATE_FORMAT } from "../../utilities/constants";
+import { bitToBoolean } from "../../utilities/bit-boolean-util";
+
 export class EducationProgramOfferingModel {
   id: number;
   name: string;
@@ -15,4 +17,23 @@ export class EducationProgramOfferingModel {
       )} - ${dayjs(this.studyEndDate).format(EXTENDED_DATE_FORMAT)}`;
     }
   }
+}
+
+export interface ProgramOfferingModel {
+  id: number;
+  name: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  breakStartDate: Date;
+  breakEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  tuitionRemittanceRequestedAmount: number;
+  offeringDelivered: string;
+  lacksStudyDates: boolean;
+  lacksStudyBreaks: boolean;
+  lacksFixedCosts: boolean;
+  tuitionRemittanceRequested: string;
 }

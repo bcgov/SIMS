@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Patch,
   Param,
   Get,
   UnprocessableEntityException,
@@ -11,7 +12,8 @@ import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import {
   CreateEducationProgramOfferingDto,
   EducationProgramOfferingDto,
-} from "./models/create-education-program-offering.dto";
+  ProgramOfferingDto,
+} from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import { EducationProgramOfferingService, FormService } from "../../services";
 
@@ -71,5 +73,26 @@ export class EducationProgramOfferingController {
       studyDates: offering.studyDates,
       offeringDelivered: offering.offeringDelivered,
     }));
+  }
+
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/education-program/:programId/offering/:offeringId")
+  async getProgramOffering(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    //To retrive Education program offering corresponding to ProgramId and LocationId
+    const offering = await this.programOfferingService.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+    );
+    if (!offering) {
+      throw new UnprocessableEntityException(
+        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+      );
+    }
+    return offering;
   }
 }

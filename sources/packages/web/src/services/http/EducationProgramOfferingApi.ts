@@ -35,4 +35,39 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async getProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<Offering> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
+        this.addAuthHeader(),
+      );
+      return response.data as Offering;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    updateProgramOfferingDto: Offering,
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
+        updateProgramOfferingDto,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }
