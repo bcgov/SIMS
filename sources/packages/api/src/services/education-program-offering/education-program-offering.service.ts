@@ -135,14 +135,15 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
-      .where(
-        "offerings.id= :offeringId and educationProgram.id = :programId and institutionLocation.id = :locationId",
-        {
-          offeringId: offeringId,
-          programId: programId,
-          locationId: locationId,
-        },
-      )
+      .andWhere("offerings.id= :offeringId", {
+        offeringId: offeringId,
+      })
+      .andWhere("educationProgram.id = :programId", {
+        programId: programId,
+      })
+      .andWhere("institutionLocation.id = :locationId", {
+        locationId: locationId,
+      })
       .getOne();
   }
 

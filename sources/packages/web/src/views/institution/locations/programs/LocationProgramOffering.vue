@@ -57,17 +57,6 @@ export default {
             props.offeringId,
             data,
           );
-        } else {
-          await EducationProgramOfferingService.shared.createProgramOffering(
-            props.locationId,
-            props.programId,
-            data,
-          );
-        }
-        router.push({
-          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        });
-        if (props.offeringId) {
           toast.add({
             severity: "success",
             summary: "Updated!",
@@ -75,6 +64,11 @@ export default {
             life: 5000,
           });
         } else {
+          await EducationProgramOfferingService.shared.createProgramOffering(
+            props.locationId,
+            props.programId,
+            data,
+          );
           toast.add({
             severity: "success",
             summary: "Created!",
@@ -82,6 +76,9 @@ export default {
             life: 5000,
           });
         }
+        router.push({
+          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        });
       } catch (excp) {
         toast.add({
           severity: "error",

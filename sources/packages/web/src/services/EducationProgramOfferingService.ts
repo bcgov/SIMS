@@ -1,5 +1,5 @@
 import ApiClient from "./http/ApiClient";
-import { Offering } from "../types/contracts/OfferingContact";
+import { OfferingDTO } from "../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto } from "../types";
 
 export class EducationProgramOfferingService {
@@ -13,7 +13,7 @@ export class EducationProgramOfferingService {
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    data: Offering,
+    data: OfferingDTO,
   ): Promise<void> {
     await ApiClient.EducationProgramOffering.createProgramOffering(
       locationId,
@@ -36,7 +36,7 @@ export class EducationProgramOfferingService {
     locationId: number,
     programId: number,
     offeringId: number,
-  ): Promise<Offering> {
+  ): Promise<OfferingDTO> {
     return ApiClient.EducationProgramOffering.getProgramOffering(
       locationId,
       programId,
@@ -48,7 +48,7 @@ export class EducationProgramOfferingService {
     locationId: number,
     programId: number,
     offeringId: number,
-    data: Offering,
+    data: OfferingDTO,
   ): Promise<void> {
     return ApiClient.EducationProgramOffering.updateProgramOffering(
       locationId,

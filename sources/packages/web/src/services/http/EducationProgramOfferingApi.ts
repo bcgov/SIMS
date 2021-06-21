@@ -1,12 +1,12 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { Offering } from "../../types/contracts/OfferingContact";
+import { OfferingDTO } from "../../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto } from "../../types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    createProgramOfferingDto: Offering,
+    createProgramOfferingDto: OfferingDTO,
   ): Promise<void> {
     try {
       await this.apiClient.post(
@@ -40,13 +40,13 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     locationId: number,
     programId: number,
     offeringId: number,
-  ): Promise<Offering> {
+  ): Promise<OfferingDTO> {
     try {
       const response = await this.apiClient.get(
         `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
         this.addAuthHeader(),
       );
-      return response.data as Offering;
+      return response.data as OfferingDTO;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -57,7 +57,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     locationId: number,
     programId: number,
     offeringId: number,
-    updateProgramOfferingDto: Offering,
+    updateProgramOfferingDto: OfferingDTO,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
