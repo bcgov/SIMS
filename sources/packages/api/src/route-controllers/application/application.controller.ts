@@ -72,9 +72,7 @@ export class ApplicationController extends BaseController {
       submissionResult.data,
     );
 
-    const workflowResult = await this.workflow.startApplicationAssessment(
-      createdApplication.id,
-    );
+    await this.workflow.startApplicationAssessment(createdApplication.id);
 
     return createdApplication.id;
   }
