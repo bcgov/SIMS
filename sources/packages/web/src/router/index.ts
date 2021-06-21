@@ -46,9 +46,7 @@ router.beforeEach((to, from, next) => {
         next();
       }
     } else {
-      next({
-        name: InstitutionRoutesConst.LOGIN,
-      });
+      next();
     }
   } else {
     next();
