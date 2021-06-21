@@ -1,20 +1,20 @@
 <template>
-  <div class="center-container">
-    <div class="p-card p-m-4 application-container">
+  <v-container class="center-container application-container">
+    <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="fulltimeapplication"
+          formName="SFAA2022-23"
           :data="initialData"
           @submitted="submitted"
         ></formio>
       </div>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
 import formio from "../../../components/generic/formio.vue";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
 export default {
@@ -58,13 +58,19 @@ export default {
         const address = studentInfo.contact;
         const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
 
+        console.log("On Mounted Init");
+        console.log(initialData.value);
         initialData.value = {
-          studentFullName: `${studentInfo.firstName} ${studentInfo.lastName}`,
+          studentGivenNames: studentInfo.firstName,
+          studentLastName: studentInfo.lastName,
           studentGender: studentInfo.gender,
           studentDateOfBirth: studentInfo.birthDateFormatted,
           studentPhoneNumber: studentInfo.contact.phone,
           studentHomeAddress: formattedAddress,
+          studentEmail: studentInfo.email,
         };
+        console.log(initialData.value);
+        console.log("On Mounted End");
       }
     });
 
@@ -108,7 +114,7 @@ export default {
 }
 
 .application-container {
-  max-width: 900px;
+  max-width: 1400px;
 }
 
 .img-background {
