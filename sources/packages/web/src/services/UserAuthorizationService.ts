@@ -61,9 +61,12 @@ export class UserAuthorizationService {
               check Admin has access to the locationId
             */
           if (
-            isInstitutionAdmin &&
-            type === InstitutionUserTypes.admin &&
-            this.checkAdminAllowedForLocation(urlParams.locationId)
+            this.checkAdminAllowedForLocation(
+              isInstitutionAdmin,
+              type,
+              InstitutionUserTypes.admin,
+              urlParams.locationId,
+            )
           )
             return true;
 
@@ -125,12 +128,20 @@ export class UserAuthorizationService {
     );
   }
 
-  public checkAdminAllowedForLocation(locationId?: string) {
-    const adminAllowedLocations: LocationStateForStore[] =
-      store.getters["institution/myInstitutionLocations"];
+  public checkAdminAllowedForLocation(
+    isInstitutionAdmin: any,
+    allowedUserType: string,
+    userType: string,
+    locationId?: string,
+  ) {
+    if (isInstitutionAdmin && allowedUserType === userType) {
+      const adminAllowedLocations: LocationStateForStore[] =
+        store.getters["institution/myInstitutionLocations"];
 
-    return adminAllowedLocations.some(
-      locationDetails => locationDetails?.id === Number(locationId),
-    );
+      return adminAllowedLocations.some(
+        locationDetails => locationDetails?.id === Number(locationId),
+      );
+    }
+    return false;
   }
 }
