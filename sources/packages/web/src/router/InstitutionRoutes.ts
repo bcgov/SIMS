@@ -82,6 +82,11 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
             meta: {
               clientType: ClientIdType.INSTITUTION,
+              userTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.locationManager,
+                InstitutionUserTypes.user,
+              ],
             },
           },
           {
