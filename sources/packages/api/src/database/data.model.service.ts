@@ -24,7 +24,12 @@ export class DataModelService<DataModel extends BaseModel> {
     return this.repo.remove([object]);
   }
 
-  async findById(id: number): Promise<DataModel> {
+  /**
+   * Tries to find an entity by its id.
+   * @param id entity id to be find.
+   * @returns Entity found, otherwise null.
+   */
+  async findById(id: number): Promise<DataModel | null> {
     const result = await this.repo.findByIds([id]);
     if (result?.length === 1) {
       return result[0];
