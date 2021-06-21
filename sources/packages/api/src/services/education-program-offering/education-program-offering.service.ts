@@ -6,10 +6,7 @@ import {
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
-import {
-  CreateEducationProgramOfferingDto,
-  UpdateEducationProgramOfferingDto,
-} from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
+import { SaveEducationProgramOfferingDto } from "../../route-controllers/education-program-offering/models/education-program-offering.dto";
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
@@ -31,7 +28,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async createEducationProgramOffering(
     locationId: number,
     programId: number,
-    educationProgramOffering: CreateEducationProgramOfferingDto,
+    educationProgramOffering: SaveEducationProgramOfferingDto,
   ): Promise<EducationProgramOffering> {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.name;
@@ -160,7 +157,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     locationId: number,
     programId: number,
     offeringId: number,
-    educationProgramOffering: UpdateEducationProgramOfferingDto,
+    educationProgramOffering: SaveEducationProgramOfferingDto,
   ): Promise<UpdateResult> {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.name;

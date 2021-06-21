@@ -10,10 +10,9 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import {
-  CreateEducationProgramOfferingDto,
+  SaveEducationProgramOfferingDto,
   EducationProgramOfferingDto,
   ProgramOfferingDto,
-  UpdateEducationProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import { EducationProgramOfferingService, FormService } from "../../services";
@@ -29,7 +28,7 @@ export class EducationProgramOfferingController {
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
-    @Body() payload: CreateEducationProgramOfferingDto,
+    @Body() payload: SaveEducationProgramOfferingDto,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<number> {
@@ -102,7 +101,7 @@ export class EducationProgramOfferingController {
     "location/:locationId/education-program/:programId/offering/:offeringId",
   )
   async updateProgramOffering(
-    @Body() payload: UpdateEducationProgramOfferingDto,
+    @Body() payload: SaveEducationProgramOfferingDto,
     @Param("locationId") locationId: number,
     @Param("programId") programId?: number,
     @Param("offeringId") offeringId?: number,
