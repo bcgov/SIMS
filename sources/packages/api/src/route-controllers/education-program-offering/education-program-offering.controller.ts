@@ -93,7 +93,25 @@ export class EducationProgramOfferingController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return offering;
+    return {
+      id: offering.id,
+      name: offering.name,
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      breakStartDate: offering.breakStartDate,
+      breakEndDate: offering.breakEndDate,
+      actualTuitionCosts: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionalExpenses: offering.exceptionalExpenses,
+      tuitionRemittanceRequestedAmount:
+        offering.tuitionRemittanceRequestedAmount,
+      offeringDelivered: offering.offeringDelivered,
+      lacksStudyDates: offering.lacksStudyDates,
+      lacksStudyBreaks: offering.lacksStudyBreaks,
+      lacksFixedCosts: offering.lacksFixedCosts,
+      tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
+    };
   }
 
   @HasLocationAccess("locationId")
