@@ -230,7 +230,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: true,
         meta: {
           clientType: ClientIdType.INSTITUTION,
-          userTypes: [InstitutionUserTypes.admin],
+          checkAllowedLocation: {
+            userTypes: [InstitutionUserTypes.admin],
+          },
         },
       },
       {
@@ -251,9 +253,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.INSTITUTION,
           checkAllowedLocation: {
             userTypes: [
+              InstitutionUserTypes.admin,
               InstitutionUserTypes.locationManager,
               InstitutionUserTypes.user,
-              InstitutionUserTypes.admin,
             ],
           },
         },
