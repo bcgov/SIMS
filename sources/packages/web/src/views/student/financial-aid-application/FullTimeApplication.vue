@@ -58,8 +58,6 @@ export default {
         const address = studentInfo.contact;
         const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
 
-        console.log("On Mounted Init");
-        console.log(initialData.value);
         initialData.value = {
           studentGivenNames: studentInfo.firstName,
           studentLastName: studentInfo.lastName,
@@ -69,8 +67,6 @@ export default {
           studentHomeAddress: formattedAddress,
           studentEmail: studentInfo.email,
         };
-        console.log(initialData.value);
-        console.log("On Mounted End");
       }
     });
 
