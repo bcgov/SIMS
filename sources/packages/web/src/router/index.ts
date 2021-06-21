@@ -3,10 +3,7 @@ import { studentRoutes } from "./StudentRoutes";
 import { institutionRoutes } from "./InstitutionRoutes";
 import { sharedRoutes } from "./SharedRoutes";
 import { AppConfigService } from "../services/AppConfigService";
-import {
-  InstitutionRoutesConst,
-  SharedRouteConst,
-} from "../constants/routes/RouteConstants";
+import { SharedRouteConst } from "../constants/routes/RouteConstants";
 import { UserAuthorizationService } from "@/services/UserAuthorizationService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
@@ -46,9 +43,7 @@ router.beforeEach((to, from, next) => {
         next();
       }
     } else {
-      next({
-        name: InstitutionRoutesConst.LOGIN,
-      });
+      next();
     }
   } else {
     next();

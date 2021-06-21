@@ -28,6 +28,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "student-dashboard",
         name: StudentRoutesConst.STUDENT_DASHBOARD,
         component: StudentDashboard,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
       },
       {
         path: "login",
@@ -63,17 +66,26 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_PROFILE,
         component: StudentProfile,
         props: { editMode: false },
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
       },
       {
         path: "student-profile/edit",
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
         component: StudentProfile,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
       },
       {
         path: "application-form/:id?",
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
         component: DynamicStudentApp,
         props: true,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
       },
       {
         path: "application",
@@ -84,21 +96,33 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             path: "personal-info",
             name: StudentRoutesConst.PERSONAL_INFO,
             component: PersonalInfoQuestionnaire,
+            meta: {
+              clientType: ClientIdType.STUDENT,
+            },
           },
           {
             path: "select-program",
             name: StudentRoutesConst.SELECT_PROGRAM,
             component: SelectProgram,
+            meta: {
+              clientType: ClientIdType.STUDENT,
+            },
           },
           {
             path: "financial-info",
             name: StudentRoutesConst.FINANCIAL_INFO,
             component: FinancialInfo,
+            meta: {
+              clientType: ClientIdType.STUDENT,
+            },
           },
           {
             path: "confirm-submission",
             name: StudentRoutesConst.CONFIRM_SUBMISSION,
             component: ConfirmSubmission,
+            meta: {
+              clientType: ClientIdType.STUDENT,
+            },
           },
         ], //Children under /Student/FinancialAidApplication
       },
