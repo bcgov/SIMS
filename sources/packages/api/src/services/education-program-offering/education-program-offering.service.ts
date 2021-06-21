@@ -30,33 +30,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     educationProgramOffering: SaveEducationProgramOfferingDto,
   ): Promise<EducationProgramOffering> {
-    const programOffering = new EducationProgramOffering();
-    programOffering.name = educationProgramOffering.name;
-    programOffering.studyStartDate = educationProgramOffering.studyStartDate;
-    programOffering.studyEndDate = educationProgramOffering.studyEndDate;
-    programOffering.breakStartDate = educationProgramOffering.breakStartDate;
-    programOffering.breakEndDate = educationProgramOffering.breakEndDate;
-    programOffering.actualTuitionCosts =
-      educationProgramOffering.actualTuitionCosts;
-    programOffering.programRelatedCosts =
-      educationProgramOffering.programRelatedCosts;
-    programOffering.mandatoryFees = educationProgramOffering.mandatoryFees;
-    programOffering.exceptionalExpenses =
-      educationProgramOffering.exceptionalExpenses;
-    programOffering.tuitionRemittanceRequestedAmount =
-      educationProgramOffering.tuitionRemittanceRequestedAmount;
-    programOffering.offeringDelivered =
-      educationProgramOffering.offeringDelivered;
-    programOffering.lacksStudyDates = educationProgramOffering.lacksStudyDates;
-    programOffering.lacksStudyBreaks =
-      educationProgramOffering.lacksStudyBreaks;
-    programOffering.lacksFixedCosts = educationProgramOffering.lacksFixedCosts;
-    programOffering.tuitionRemittanceRequested =
-      educationProgramOffering.tuitionRemittanceRequested;
-    programOffering.educationProgram = { id: programId } as EducationProgram;
-    programOffering.institutionLocation = {
-      id: locationId,
-    } as InstitutionLocation;
+    const programOffering = await this.populateProgramOffering(
+      locationId,
+      programId,
+      educationProgramOffering,
+    );
     return this.repo.save(programOffering);
   }
 
@@ -160,6 +138,19 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringId: number,
     educationProgramOffering: SaveEducationProgramOfferingDto,
   ): Promise<UpdateResult> {
+    const programOffering = await this.populateProgramOffering(
+      locationId,
+      programId,
+      educationProgramOffering,
+    );
+    return this.repo.update(offeringId, programOffering);
+  }
+
+  async populateProgramOffering(
+    locationId: number,
+    programId: number,
+    educationProgramOffering: SaveEducationProgramOfferingDto,
+  ): Promise<EducationProgramOffering> {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.name;
     programOffering.studyStartDate = educationProgramOffering.studyStartDate;
@@ -187,6 +178,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.institutionLocation = {
       id: locationId,
     } as InstitutionLocation;
-    return this.repo.update(offeringId, programOffering);
+    return programOffering;
   }
 }
