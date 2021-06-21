@@ -13,70 +13,80 @@ export class UserAuthorizationService {
     urlParams?: { locationId?: string },
     checkAllowedLocation?: { userTypes?: string[] },
   ) {
-    const isInstitutionAdmin = store.getters["institution/myDetails"]?.isAdmin;
-    const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
-      store.getters["institution/myAuthorizationDetails"].authorizations;
-    /* Check is user a Institution Admin and Institution 
-    Admin users has access to the requested page*/
+    try {
+      const isInstitutionAdmin =
+        store.getters["institution/myDetails"]?.isAdmin;
 
-    if (isInstitutionAdmin) {
-      return allowedTypeList.some(type => type === InstitutionUserTypes.admin);
-    }
+      /* Check is user a Institution Admin and Institution 
+      Admin users has access to the requested page*/
 
-    if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
-      return checkAllowedLocation?.userTypes.some(type => {
+      if (isInstitutionAdmin) {
+        return allowedTypeList.some(
+          type => type === InstitutionUserTypes.admin,
+        );
+      }
+
+      if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
+        return checkAllowedLocation?.userTypes.some(type => {
+          /* Check is user a location Manager and the 
+              location Manager has access to the requested page and  
+              check location Manager has access to the locationId 
+            */
+          if (
+            this.checkUserTypeIsAllowedForLocation(
+              type,
+              InstitutionUserTypes.locationManager,
+              urlParams.locationId,
+            )
+          )
+            return true;
+
+          /* Check is user a user and the 
+              User has access to the requested page and  
+              check User has access to the locationId
+            */
+          if (
+            this.checkUserTypeIsAllowedForLocation(
+              type,
+              InstitutionUserTypes.user,
+              urlParams.locationId,
+            )
+          )
+            return true;
+
+          return false;
+        });
+      }
+
+      return allowedTypeList.some(type => {
         /* Check is user a location Manager and the 
-            location Manager has access to the requested page and  
-            check location Manager has access to the locationId 
+            location Manager has access to the requested page
           */
         if (
-          this.checkUserTypeIsAllowedForLocation(
+          this.checkUserTypeIsAllowed(
             type,
             InstitutionUserTypes.locationManager,
-            urlParams.locationId,
           )
         )
           return true;
 
         /* Check is user a user and the 
-            User has access to the requested page and  
-            check User has access to the locationId
-          */
-        if (
-          this.checkUserTypeIsAllowedForLocation(
-            type,
-            InstitutionUserTypes.user,
-            urlParams.locationId,
-          )
-        )
+              User has access to the requested page
+            */
+        if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
           return true;
 
         return false;
       });
-    }
-
-    return allowedTypeList.some(type => {
-      /* Check is user a location Manager and the 
-          location Manager has access to the requested page
-        */
-      if (
-        this.checkUserTypeIsAllowed(type, InstitutionUserTypes.locationManager)
-      )
-        return true;
-
-      /* Check is user a user and the 
-            User has access to the requested page
-          */
-      if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
-        return true;
-
+    } catch (error) {
       return false;
-    });
+    }
   }
 
   public checkUserTypeIsAllowed(allowedUserType: string, userType: string) {
     const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
       store.getters["institution/myAuthorizationDetails"].authorizations;
+
     return (
       allowedUserType === userType &&
       institutionUserTypes.some(
@@ -92,6 +102,7 @@ export class UserAuthorizationService {
   ) {
     const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
       store.getters["institution/myAuthorizationDetails"].authorizations;
+
     return (
       allowedUserType === userType &&
       institutionUserTypes.some(

@@ -272,11 +272,11 @@ export class InstitutionService {
     } as InstitutionUserAuthDetails;
   }
 
-  public async getMyInstitutionDetails() {
-    return ApiClient.Institution.getMyInstitutionDetails();
+  public async getMyInstitutionDetails(authHeader?: any) {
+    return ApiClient.Institution.getMyInstitutionDetails(authHeader);
   }
 
-  public async getMyInstitutionLocationsDetails() {
-    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails();
+  public async getMyInstitutionLocationsDetails(authHeader?:any) {
+    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails(authHeader);
   }
 }

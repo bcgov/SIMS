@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { ref, onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
@@ -15,18 +14,18 @@ import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
+
 export default {
   components: {
     CommonLayout,
   },
   setup() {
-    const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
     const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true,
+      () => AppConfigService.shared.authService?.authenticated === true
     );
     // Mounding hook
     onMounted(async () => {
@@ -52,9 +51,6 @@ export default {
             name: InstitutionRoutesConst.INSTITUTION_PROFILE,
           });
         }
-      }
-      if (isAuthenticated.value) {
-        store.dispatch("institution/initialize");
       }
     });
 
