@@ -60,10 +60,12 @@ export class UserAuthorizationService {
               Admin has access to the requested page and  
               check Admin has access to the locationId
             */
-          if (isInstitutionAdmin && type === InstitutionUserTypes.admin) {
-            if (this.checkAdminAllowedForLocation(urlParams.locationId))
-              return true;
-          }
+          if (
+            isInstitutionAdmin &&
+            type === InstitutionUserTypes.admin &&
+            this.checkAdminAllowedForLocation(urlParams.locationId)
+          )
+            return true;
 
           return false;
         });
