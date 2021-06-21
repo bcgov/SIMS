@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { WorkflowConfig } from "../../types";
 import { ConfigService } from "../config/config.service";
 import axios from "axios";
