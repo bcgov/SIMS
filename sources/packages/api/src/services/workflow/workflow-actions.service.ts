@@ -21,7 +21,7 @@ export class WorkflowActionsService {
       });
     } catch (error) {
       throw new Error(
-        `Error while starting application assessment workflow: ${workflowName}`,
+        `Error while starting application assessment workflow: ${workflowName}, error: ${error}`,
       );
     }
   }

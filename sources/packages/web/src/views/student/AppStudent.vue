@@ -50,8 +50,6 @@ export default {
       isAuthReady.value = true;
       const auth = AppConfigService.shared.authService?.authenticated ?? false;
 
-      console.log(AppConfigService.shared.authService);
-
       if (!auth) {
         router.push({
           name: StudentRoutesConst.LOGIN,
