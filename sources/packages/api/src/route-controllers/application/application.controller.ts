@@ -57,7 +57,7 @@ export class ApplicationController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
     const submissionResult = await this.formService.dryRunSubmission(
-      "SFAA2022-23",
+      "sfaa2022-23",
       payload.data,
     );
 
@@ -72,7 +72,10 @@ export class ApplicationController extends BaseController {
       submissionResult.data,
     );
 
-    await this.workflow.startApplicationAssessment(createdApplication.id);
+    await this.workflow.startApplicationAssessment(
+      submissionResult.data.data.workflowName,
+      createdApplication.id,
+    );
 
     return createdApplication.id;
   }

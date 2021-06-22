@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { WorkflowService } from "..";
-import { WorkflowsNames } from "./constants";
 import { WorkflowStartResult } from "./workflow.models";
 
 @Injectable()
@@ -8,15 +7,22 @@ export class WorkflowActionsService {
   constructor(private readonly workflowService: WorkflowService) {}
 
   async startApplicationAssessment(
+    workflowName: string,
     applicationId: number,
   ): Promise<WorkflowStartResult> {
-    return this.workflowService.start(WorkflowsNames.assessmentGateway, {
-      variables: {
-        applicationId: {
-          value: applicationId,
-          type: "integer",
+    try {
+      return this.workflowService.start(workflowName, {
+        variables: {
+          applicationId: {
+            value: applicationId,
+            type: "integer",
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw new Error(
+        `Error while starting application assessment workflow: ${workflowName}`,
+      );
+    }
   }
 }
