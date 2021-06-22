@@ -1,12 +1,12 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { Offering } from "../../types/contracts/OfferingContact";
+import { OfferingDTO } from "../../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto } from "../../types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   public async createProgramOffering(
     locationId: number,
     programId: number,
-    createProgramOfferingDto: Offering,
+    createProgramOfferingDto: OfferingDTO,
   ): Promise<void> {
     try {
       await this.apiClient.post(
@@ -30,6 +30,41 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as EducationProgramOfferingDto[];
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
+        this.addAuthHeader(),
+      );
+      return response.data as OfferingDTO;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateProgramOffering(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+    updateProgramOfferingDto: OfferingDTO,
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}`,
+        updateProgramOfferingDto,
+        this.addAuthHeader(),
+      );
     } catch (error) {
       this.handleRequestError(error);
       throw error;

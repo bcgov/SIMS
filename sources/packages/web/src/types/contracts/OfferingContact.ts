@@ -1,4 +1,4 @@
-export interface Offering {
+export interface OfferingDTO {
   name: string;
   studyStartDate?: Date;
   studyEndDate?: Date;

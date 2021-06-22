@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Patch,
   Param,
   Get,
   UnprocessableEntityException,
@@ -9,9 +10,10 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
 import {
-  CreateEducationProgramOfferingDto,
+  SaveEducationProgramOfferingDto,
   EducationProgramOfferingDto,
-} from "./models/create-education-program-offering.dto";
+  ProgramOfferingDto,
+} from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import { EducationProgramOfferingService, FormService } from "../../services";
 
@@ -26,7 +28,7 @@ export class EducationProgramOfferingController {
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
-    @Body() payload: CreateEducationProgramOfferingDto,
+    @Body() payload: SaveEducationProgramOfferingDto,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<number> {
@@ -71,5 +73,74 @@ export class EducationProgramOfferingController {
       studyDates: offering.studyDates,
       offeringDelivered: offering.offeringDelivered,
     }));
+  }
+
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/education-program/:programId/offering/:offeringId")
+  async getProgramOffering(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    //To retrive Education program offering corresponding to ProgramId and LocationId
+    const offering = await this.programOfferingService.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+    );
+    if (!offering) {
+      throw new UnprocessableEntityException(
+        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+      );
+    }
+    return {
+      id: offering.id,
+      name: offering.name,
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      breakStartDate: offering.breakStartDate,
+      breakEndDate: offering.breakEndDate,
+      actualTuitionCosts: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionalExpenses: offering.exceptionalExpenses,
+      tuitionRemittanceRequestedAmount:
+        offering.tuitionRemittanceRequestedAmount,
+      offeringDelivered: offering.offeringDelivered,
+      lacksStudyDates: offering.lacksStudyDates,
+      lacksStudyBreaks: offering.lacksStudyBreaks,
+      lacksFixedCosts: offering.lacksFixedCosts,
+      tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
+    };
+  }
+
+  @HasLocationAccess("locationId")
+  @Patch(
+    "location/:locationId/education-program/:programId/offering/:offeringId",
+  )
+  async updateProgramOffering(
+    @Body() payload: SaveEducationProgramOfferingDto,
+    @Param("locationId") locationId: number,
+    @Param("programId") programId?: number,
+    @Param("offeringId") offeringId?: number,
+  ): Promise<number> {
+    const updatingResult = await this.formService.dryRunSubmission(
+      FormNames.EducationProgramOffering,
+      payload,
+    );
+
+    if (!updatingResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to a update a program offering due to an invalid request.",
+      );
+    }
+
+    const updateProgramOffering = await this.programOfferingService.updateEducationProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+      payload,
+    );
+    return updateProgramOffering.affected;
   }
 }
