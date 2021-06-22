@@ -1,6 +1,9 @@
 import store from "@/store";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
-import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
+import {
+  InstitutionUserAuthRolesAndLocation,
+  LocationStateForStore,
+} from "@/types/contracts/institution/InstitutionUser";
 export class UserAuthorizationService {
   private static instance: UserAuthorizationService;
 
@@ -14,52 +17,27 @@ export class UserAuthorizationService {
     checkAllowedLocation?: { userTypes?: string[] },
   ) {
     try {
-      const isInstitutionAdmin =
-        store.getters["institution/myDetails"]?.isAdmin;
+      const isInstitutionAdmin: boolean =
+        store.getters["institution/myDetails"]?.isAdmin ?? false;
 
-      /* Check is user a Institution Admin and Institution 
+      /* Check if user a Institution Admin and Institution 
       Admin users has access to the requested page*/
-
-      if (isInstitutionAdmin) {
+      if (allowedTypeList && isInstitutionAdmin) {
         return allowedTypeList.some(
           type => type === InstitutionUserTypes.admin,
         );
       }
 
       if (checkAllowedLocation?.userTypes && urlParams?.locationId) {
-        return checkAllowedLocation?.userTypes.some(type => {
-          /* Check is user a location Manager and the 
-              location Manager has access to the requested page and  
-              check location Manager has access to the locationId 
-            */
-          if (
-            this.checkUserTypeIsAllowedForLocation(
-              type,
-              InstitutionUserTypes.locationManager,
-              urlParams.locationId,
-            )
-          )
-            return true;
-
-          /* Check is user a user and the 
-              User has access to the requested page and  
-              check User has access to the locationId
-            */
-          if (
-            this.checkUserTypeIsAllowedForLocation(
-              type,
-              InstitutionUserTypes.user,
-              urlParams.locationId,
-            )
-          )
-            return true;
-
-          return false;
-        });
+        return this.checkAllowedLocationForUser(
+          isInstitutionAdmin,
+          checkAllowedLocation?.userTypes,
+          urlParams?.locationId,
+        );
       }
 
       return allowedTypeList.some(type => {
-        /* Check is user a location Manager and the 
+        /* Check if user a location Manager and the 
             location Manager has access to the requested page
           */
         if (
@@ -70,7 +48,7 @@ export class UserAuthorizationService {
         )
           return true;
 
-        /* Check is user a user and the 
+        /* Check if user a user and the 
               User has access to the requested page
             */
         if (this.checkUserTypeIsAllowed(type, InstitutionUserTypes.user))
@@ -100,16 +78,85 @@ export class UserAuthorizationService {
     userType: string,
     locationId?: string,
   ) {
-    const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
-      store.getters["institution/myAuthorizationDetails"].authorizations;
+    if (locationId) {
+      const institutionUserTypes: InstitutionUserAuthRolesAndLocation[] =
+        store.getters["institution/myAuthorizationDetails"].authorizations;
+      return (
+        allowedUserType === userType &&
+        institutionUserTypes.some(
+          authDetails =>
+            authDetails?.userType === userType &&
+            authDetails?.locationId === Number(locationId),
+        )
+      );
+    }
+    return false;
+  }
 
-    return (
-      allowedUserType === userType &&
-      institutionUserTypes.some(
-        authDetails =>
-          authDetails?.userType === userType &&
-          authDetails?.locationId === Number(locationId),
+  public checkAdminAllowedForLocation(
+    isInstitutionAdmin: boolean,
+    allowedUserType: string,
+    userType: string,
+    locationId?: string,
+  ) {
+    if (isInstitutionAdmin && allowedUserType === userType && locationId) {
+      const adminAllowedLocations: LocationStateForStore[] =
+        store.getters["institution/myInstitutionLocations"];
+
+      return adminAllowedLocations.some(
+        locationDetails => locationDetails?.id === Number(locationId),
+      );
+    }
+    return false;
+  }
+
+  public checkAllowedLocationForUser(
+    isInstitutionAdmin: boolean,
+    checkAllowedLocationUserTypes?: string[],
+    urlParamsLocationId?: string,
+  ) {
+    return checkAllowedLocationUserTypes?.some(type => {
+      /* Check if user a location Manager and the 
+          location Manager has access to the requested page and  
+          check location Manager has access to the locationId 
+        */
+      if (
+        this.checkUserTypeIsAllowedForLocation(
+          type,
+          InstitutionUserTypes.locationManager,
+          urlParamsLocationId,
+        )
       )
-    );
+        return true;
+
+      /* Check if user a user and the 
+          User has access to the requested page and  
+          check User has access to the locationId
+        */
+      if (
+        this.checkUserTypeIsAllowedForLocation(
+          type,
+          InstitutionUserTypes.user,
+          urlParamsLocationId,
+        )
+      )
+        return true;
+
+      /* Check if user a admin and the 
+          Admin has access to the requested page and  
+          check Admin has access to the locationId
+        */
+      if (
+        this.checkAdminAllowedForLocation(
+          isInstitutionAdmin,
+          type,
+          InstitutionUserTypes.admin,
+          urlParamsLocationId,
+        )
+      )
+        return true;
+
+      return false;
+    });
   }
 }
