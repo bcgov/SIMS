@@ -11,7 +11,7 @@ export class WorkflowActionsService {
     applicationId: number,
   ): Promise<WorkflowStartResult> {
     try {
-      return this.workflowService.start(workflowName, {
+      return await this.workflowService.start(workflowName, {
         variables: {
           applicationId: {
             value: applicationId,
