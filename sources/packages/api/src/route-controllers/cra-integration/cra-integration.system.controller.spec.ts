@@ -10,7 +10,7 @@ import {
   StudentService,
 } from "../../services";
 import { DatabaseModule } from "../../database/database.module";
-import { CRAIntegrationController } from "./cra-integration.controller";
+import { CRAIntegrationController } from "./cra-integration.system.controller";
 
 describe("CRAIntegrationController", () => {
   let controller: CRAIntegrationController;

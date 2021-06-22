@@ -8,7 +8,7 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
-@Controller("cra-integration")
+@Controller("system-access/cra-integration")
 export class CRAIntegrationController {
   constructor(private readonly cra: CRAPersonalVerificationService) {}
 

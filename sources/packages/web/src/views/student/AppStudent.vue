@@ -8,7 +8,9 @@
           icon="pi pi-fw pi-user"
           class="p-button-text"
           style="color: white"
-          @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+          @click="
+            $router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })
+          "
         />
       </template>
     </NavBar>
@@ -39,7 +41,7 @@ export default {
     const clientType = ref(ClientIdType.STUDENT);
 
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true
+      () => AppConfigService.shared.authService?.authenticated === true,
     );
 
     // Mounding hook
@@ -47,6 +49,7 @@ export default {
       await AppConfigService.shared.initAuthService(ClientIdType.STUDENT);
       isAuthReady.value = true;
       const auth = AppConfigService.shared.authService?.authenticated ?? false;
+
       if (!auth) {
         router.push({
           name: StudentRoutesConst.LOGIN,

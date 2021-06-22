@@ -7,7 +7,11 @@ import {
   Param,
   Post,
 } from "@nestjs/common";
-import { ApplicationService, FormService } from "../../services";
+import {
+  ApplicationService,
+  FormService,
+  WorkflowActionsService,
+} from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
@@ -23,6 +27,7 @@ export class ApplicationController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
+    private readonly workflow: WorkflowActionsService,
   ) {
     super();
   }
@@ -52,7 +57,7 @@ export class ApplicationController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
     const submissionResult = await this.formService.dryRunSubmission(
-      "fulltimeapplication",
+      "sfaa2022-23",
       payload.data,
     );
 
@@ -65,6 +70,11 @@ export class ApplicationController extends BaseController {
     const createdApplication = await this.applicationService.createApplication(
       userToken,
       submissionResult.data,
+    );
+
+    await this.workflow.startApplicationAssessment(
+      submissionResult.data.data.workflowName,
+      createdApplication.id,
     );
 
     return createdApplication.id;
