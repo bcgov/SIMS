@@ -1,7 +1,38 @@
 <template>
-  <v-app>
-    <CommonLayout v-if="isAuthReady" :isAuthenticated="isAuthenticated" />
-  </v-app>
+  <v-app-bar dense flat app>
+    <v-img
+      left
+      height="40px"
+      alt="logo"
+      src="../../assets/images/bc_institution_logo.svg"
+    />
+    <v-spacer></v-spacer>
+    <v-btn
+      text
+      @click="
+        $router.push({
+          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+        })
+      "
+      >Home</v-btn
+    >
+    <v-btn
+      class="mr-3"
+      text
+      @click="
+        $router.push({
+          name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+        })
+      "
+      >Manage Institution</v-btn
+    >
+  </v-app-bar>
+  <router-view name="sidebar"></router-view>
+  <v-main style="background: #F2F2F2">
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-main>
 </template>
 
 <script lang="ts">
@@ -13,19 +44,16 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
-import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
 
 export default {
-  components: {
-    CommonLayout,
-  },
+  components: {},
   setup() {
     const router = useRouter();
     const route = useRoute();
     const isAuthReady = ref(false);
     const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true
+      () => AppConfigService.shared.authService?.authenticated === true,
     );
     // Mounding hook
     onMounted(async () => {

@@ -27,7 +27,7 @@
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
-    "vuetify": "^3.0.0-alpha.0",
+    "vuetify": "^3.0.0-alpha.6",
     "vuex": "^4.0.1",
     "vuex-class": "^0.3.2",
     "yup": "^0.32.9"

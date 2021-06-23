@@ -1,10 +1,7 @@
 <template>
   <v-app>
-    <!-- TODO: Find a proper solution of position styling-->
-    <v-main style="position: auto">
-      <Toast />
-      <router-view></router-view>
-    </v-main>
+    <Toast />
+    <router-view></router-view>
   </v-app>
 </template>
 

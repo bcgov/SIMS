@@ -10,7 +10,7 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="openNewUserModal()">
-              <v-icon left> mdi-plus-circle </v-icon>
+              <v-icon size="25" left> mdi-plus-circle </v-icon>
               Add New User
             </v-btn>
             <!-- Add user -->
