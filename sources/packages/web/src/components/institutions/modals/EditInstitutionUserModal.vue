@@ -14,7 +14,9 @@
         <form>
           <v-row>
             <v-col>
-              <span class="form-text text-muted mb-2"><strong>User Name</strong></span>
+              <span class="form-text text-muted mb-2"
+                ><strong>User Name</strong></span
+              >
               <span class="form-text text-muted mb-2">
                 {{ userData?.user?.firstName }} {{ userData?.user?.lastName }}
               </span>
@@ -23,7 +25,8 @@
               <span class="form-text text-muted mb-2">
                 <strong>Is this User an Admin?</strong><br />
                 <strong>
-                  Selected:<span v-if="isAdmin"> Yes </span><span v-else> No </span>
+                  Selected:<span v-if="isAdmin"> Yes </span
+                  ><span v-else> No </span>
                 </strong>
               </span>
               <InputSwitch v-model="isAdmin" />
@@ -32,10 +35,11 @@
           <span v-if="!isAdmin">
             <v-divider></v-divider>
             <h4 class="color-blue">Location Based Access</h4>
-            <v-row v-if="institutionLocationList && !institutionLocationList.length"
+            <v-row
+              v-if="institutionLocationList && !institutionLocationList.length"
               ><Message :closable="false"
-                >Institution locations need to be added first inorder to add a non-admin
-                users to institution</Message
+                >Institution locations need to be added first inorder to add a
+                non-admin users to institution</Message
               >
             </v-row>
             <span v-else>
@@ -80,7 +84,7 @@
       <v-btn color="primary" outlined @click="closeEditUser()"> Cancel </v-btn>
       <v-btn color="primary" @click="submitEditUser()">
         Save Changes
-        <v-icon right>mdi-account </v-icon>
+        <v-icon size="25" right>mdi-account </v-icon>
       </v-btn>
     </template>
   </Dialog>
@@ -94,7 +98,10 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToast } from "primevue/usetoast";
-import { InstitutionLocationUserAuthDto, InstitutionUserAuthDetails } from "@/types";
+import {
+  InstitutionLocationUserAuthDto,
+  InstitutionUserAuthDetails,
+} from "@/types";
 
 export default {
   components: { Dialog, Dropdown, InputSwitch },
@@ -130,7 +137,7 @@ export default {
     };
     const checkIsAdmin = () => {
       isAdmin.value = userData.value?.authorizations?.some(
-        (el: any) => el?.authType?.type == "admin"
+        (el: any) => el?.authType?.type == "admin",
       );
     };
     const getAndSetAllLocations = async () => {
@@ -168,7 +175,7 @@ export default {
     const getInstitutionUserDetails = async () => {
       try {
         const respUser = await InstitutionService.shared.getInstitutionLocationUserDetails(
-          props.institutionUserName
+          props.institutionUserName,
         );
         userData.value = respUser;
       } catch (error) {
@@ -186,16 +193,18 @@ export default {
       payLoad.value = await InstitutionService.shared.prepareEditUserPayload(
         props.institutionUserName,
         isAdmin.value,
-        institutionLocationList.value
+        institutionLocationList.value,
       );
       if (
-        (payLoad.value && payLoad.value?.location && payLoad.value?.location?.length) ||
+        (payLoad.value &&
+          payLoad.value?.location &&
+          payLoad.value?.location?.length) ||
         isAdmin.value
       ) {
         try {
           await InstitutionService.shared.updateUser(
             props.institutionUserName as string,
-            payLoad.value
+            payLoad.value,
           );
           toast.add({
             severity: "success",
@@ -226,7 +235,7 @@ export default {
         await getInstitutionUserDetails();
         await getAndSetAllLocations();
         checkIsAdmin();
-      }
+      },
     );
     return {
       institutionLocationList,

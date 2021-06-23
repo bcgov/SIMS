@@ -56,6 +56,7 @@
               >
                 <v-btn plain>
                   <v-icon
+                    size="25"
                     v-if="slotProps.data.isActive"
                     right
                     class="mr-2"
@@ -64,6 +65,7 @@
                   >
                     mdi-pencil </v-icon
                   ><v-icon
+                    size="25"
                     v-else
                     right
                     class="mr-2"

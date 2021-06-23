@@ -23,7 +23,7 @@
           <v-row>
             <v-col cols="10">
               <h4>
-                <v-icon>mdi-map-marker-radius</v-icon>
+                <v-icon size="25">mdi-map-marker-radius</v-icon>
                 {{ item.name }}
                 <!-- TODO: Replace v-badge with vuetify2 equavalent v-chip with icon once veutify3 is released-->
                 <v-badge

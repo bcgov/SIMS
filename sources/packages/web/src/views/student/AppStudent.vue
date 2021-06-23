@@ -1,28 +1,42 @@
 <template>
-  <div>
-    <NavBar title="Student Aid" :clientType="clientType" v-if="isAuthReady">
-      <template #end>
-        <Button
-          v-if="isAuthenticated"
-          label="Student Profile"
-          icon="pi pi-fw pi-user"
-          class="p-button-text"
-          style="color: white"
-          @click="
-            $router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })
-          "
-        />
-      </template>
-    </NavBar>
-    <router-view v-if="isAuthReady" :key="$route.fullPath" />
-  </div>
+  <v-app-bar dense flat app>
+    <v-img
+      height="40px"
+      alt="logo"
+      src="../../assets/images/bc_student_logo.svg"
+    />
+    <v-spacer></v-spacer>
+    <v-btn
+      v-if="isAuthenticated"
+      text
+      @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+      >Applications</v-btn
+    >
+    <v-btn
+      v-if="isAuthenticated"
+      text
+      @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+      >Notifications</v-btn
+    >
+    <v-btn
+      v-if="isAuthenticated"
+      text
+      @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+      >Profile</v-btn
+    >
+    <v-btn v-if="isAuthenticated" text @click="logoff">Log off</v-btn>
+  </v-app-bar>
+  <router-view name="sidebar"></router-view>
+  <v-main class="body-background">
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-main>
 </template>
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted, computed } from "vue";
-
-import NavBar from "../../components/partial-view/student/NavBar.vue";
+import { onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
@@ -31,15 +45,10 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { AppRoutes } from "../../types";
 
 export default {
-  components: {
-    NavBar,
-  },
+  components: {},
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const isAuthReady = ref(false);
-    const clientType = ref(ClientIdType.STUDENT);
-
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
@@ -47,7 +56,6 @@ export default {
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.STUDENT);
-      isAuthReady.value = true;
       const auth = AppConfigService.shared.authService?.authenticated ?? false;
 
       if (!auth) {
@@ -77,14 +85,22 @@ export default {
         }
       }
     });
+
+    const logoff = () => {
+      AppConfigService.shared.logout(ClientIdType.STUDENT);
+    };
+
     return {
-      isAuthReady,
+      logoff,
       isAuthenticated,
       StudentRoutesConst,
-      clientType,
     };
   },
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.body-background {
+  background: #f2f2f2;
+}
+</style>

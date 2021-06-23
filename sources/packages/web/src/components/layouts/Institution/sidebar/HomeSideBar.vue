@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app style="background: #F2F2F2">
+  <v-navigation-drawer app class="body-background">
     <v-list dense nav>
       <v-list-item
         v-for="item in items"

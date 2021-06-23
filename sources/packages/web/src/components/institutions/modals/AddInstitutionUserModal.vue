@@ -15,7 +15,9 @@
           <p><strong>Select a user to add to the locations below.</strong></p>
           <v-row
             ><v-col>
-              <span class="form-text text-muted mb-2"> <strong>User Name </strong></span>
+              <span class="form-text text-muted mb-2">
+                <strong>User Name </strong></span
+              >
               <Dropdown
                 v-model="selectUser"
                 :options="usersList"
@@ -43,8 +45,8 @@
             <h4 class="color-blue">Location Based Access</h4>
             <v-row v-if="!institutionLocationList.length">
               <Message :closable="false"
-                >Institution locations need to be added first inorder to add a non-admin
-                users to institution</Message
+                >Institution locations need to be added first inorder to add a
+                non-admin users to institution</Message
               >
             </v-row>
             <span v-else>
@@ -89,8 +91,8 @@
     <template #footer>
       <v-btn color="primary" outlined @click="closeAddUser()"> Cancel </v-btn>
       <v-btn color="primary" @click="submitAddUser()">
+        <v-icon size="25">mdi-account</v-icon>
         Add User
-        <v-icon right>mdi-account </v-icon>
       </v-btn>
     </template>
   </Dialog>
@@ -150,11 +152,13 @@ export default {
       payLoad.value = await InstitutionService.shared.prepareAddUserPayload(
         isAdmin.value,
         selectUser.value,
-        institutionLocationList.value
+        institutionLocationList.value,
       );
       if (
         selectUser?.value?.code &&
-        ((payLoad.value && payLoad.value?.location && payLoad.value?.location?.length) ||
+        ((payLoad.value &&
+          payLoad.value?.location &&
+          payLoad.value?.location?.length) ||
           isAdmin.value)
       ) {
         try {

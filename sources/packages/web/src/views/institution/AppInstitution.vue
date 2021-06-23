@@ -31,7 +31,7 @@
     <v-btn v-if="isAuthenticated" text @click="logoff">Log off</v-btn>
   </v-app-bar>
   <router-view name="sidebar"></router-view>
-  <v-main style="background: #F2F2F2">
+  <v-main class="body-background">
     <v-container fluid>
       <router-view></router-view>
     </v-container>
@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted, computed } from "vue";
+import { onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
@@ -48,6 +48,7 @@ import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import { useStore } from "vuex";
+import "@/assets/css/institution.css";
 
 export default {
   components: {},
@@ -98,3 +99,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.body-background {
+  background: #f2f2f2;
+}
+</style>
