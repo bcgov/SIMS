@@ -8,6 +8,7 @@
     />
     <v-spacer></v-spacer>
     <v-btn
+      v-if="isAuthenticated"
       text
       @click="
         $router.push({
@@ -17,7 +18,7 @@
       >Home</v-btn
     >
     <v-btn
-      class="mr-3"
+      v-if="isAuthenticated && isAdmin"
       text
       @click="
         $router.push({
@@ -26,6 +27,8 @@
       "
       >Manage Institution</v-btn
     >
+
+    <v-btn v-if="isAuthenticated" text @click="logoff">Log off</v-btn>
   </v-app-bar>
   <router-view name="sidebar"></router-view>
   <v-main style="background: #F2F2F2">
@@ -44,21 +47,21 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
+import { useStore } from "vuex";
 
 export default {
   components: {},
   setup() {
+    const store = useStore();
     const router = useRouter();
     const route = useRoute();
-    const isAuthReady = ref(false);
-    const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
+    const isAdmin = computed(() => store.state.institution.userState?.isAdmin);
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
-      isAuthReady.value = true;
       const auth = AppConfigService.shared.authService?.authenticated ?? false;
       if (!auth) {
         router.push({
@@ -82,11 +85,15 @@ export default {
       }
     });
 
+    const logoff = () => {
+      AppConfigService.shared.logout(ClientIdType.INSTITUTION);
+    };
+
     return {
-      isAuthReady,
+      isAdmin,
       isAuthenticated,
+      logoff,
       InstitutionRoutesConst,
-      clientType,
     };
   },
 };
