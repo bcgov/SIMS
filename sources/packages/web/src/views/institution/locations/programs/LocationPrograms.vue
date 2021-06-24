@@ -9,7 +9,7 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewProgram()">
-              <v-icon left>
+              <v-icon size="25" left>
                 mdi-open-in-new
               </v-icon>
               Create New Program
