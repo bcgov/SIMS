@@ -8,7 +8,9 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "../views/student/financial-aid-application/FullTimeApplication.vue";
+import Applications from "../views/student/financial-aid-application/Applications.vue";
 import StudentProfile from "../views/student/StudentProfile.vue";
+import Notifications from "../views/student/Notifications.vue";
 
 import {
   StudentRoutesConst,
@@ -83,6 +85,22 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
         component: DynamicStudentApp,
         props: true,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
+        path: "applications",
+        name: StudentRoutesConst.APPLICATIONS,
+        component: Applications,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
+        path: "notifications",
+        name: StudentRoutesConst.NOTIFICATIONS,
+        component: Notifications,
         meta: {
           clientType: ClientIdType.STUDENT,
         },

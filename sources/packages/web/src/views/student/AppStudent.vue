@@ -9,13 +9,13 @@
     <v-btn
       v-if="isAuthenticated"
       text
-      @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+      @click="$router.push({ name: StudentRoutesConst.APPLICATIONS })"
       >Applications</v-btn
     >
     <v-btn
       v-if="isAuthenticated"
       text
-      @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+      @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
       >Notifications</v-btn
     >
     <v-btn

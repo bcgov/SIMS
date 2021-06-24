@@ -6,11 +6,13 @@ export const StudentRoutesConst = {
   STUDENT_PROFILE: Symbol(),
   STUDENT_PROFILE_EDIT: Symbol(),
   FINANCIAL_AID_APPLICATION: Symbol(),
+  APPLICATIONS: Symbol(),
   PERSONAL_INFO: Symbol(),
   SELECT_PROGRAM: Symbol(),
   FINANCIAL_INFO: Symbol(),
   CONFIRM_SUBMISSION: Symbol(),
   DYNAMIC_FINANCIAL_APP_FORM: Symbol(),
+  NOTIFICATIONS: Symbol(),
 };
 export const InstitutionRoutesConst = {
   //Institution
