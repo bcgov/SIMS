@@ -1,32 +1,28 @@
 <template>
-  <Card class="p-m-4">
-    <template #title>
-      Login
-    </template>
-    <template #content>
-      <div>
-        <h1>Welcome to Student Aid Portal</h1>
-        <h4>
-          We are using BCSC for authentication. Please click on Login/Register
-          buttons below to start your sign in/sign up.
-        </h4>
-      </div>
-    </template>
-    <template #footer>
-      <Button
-        label="Login"
-        icon="pi pi-check"
-        class="p-mr-2"
-        @click="login"
-      ></Button>
-      <Button
-        label="Register"
-        icon="pi pi-user"
-        class="p-button-info"
-        @click="login"
-      ></Button>
-    </template>
-  </Card>
+  <v-card elevation="2" class="mx-auto" max-width="690px" outlined>
+    <v-card-header>
+      <v-card-header-text>
+        <v-card-title class="my-6 bold-text" style="font-size: 27px;"
+          >Welcome to StudentAid BC</v-card-title
+        >
+        <v-card-subtitle>Welcome text goes here…</v-card-subtitle>
+      </v-card-header-text>
+    </v-card-header>
+    <v-card-text
+      >We are using BCSC for authentication. Please click on Login/Register
+      buttons below to start your sign in/sign up.</v-card-text
+    >
+    <v-card-actions>
+      <v-row justify="center" class="m-3">
+        <v-btn justify-center color="primary" @click="login">
+          Login with BCSC
+        </v-btn>
+        <v-btn color="primary" @click="login">
+          Sign Up with BCSC
+        </v-btn>
+      </v-row>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script lang="ts">
