@@ -116,7 +116,7 @@ export default {
       });
     };
 
-    const togleUserMenu = () => {
+    const togleUserMenu = (event: any) => {
       userOptionsMenuRef.value.toggle(event);
     };
 

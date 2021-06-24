@@ -1,4 +1,5 @@
 import "./assets/css/BCSans.css";
+import "./assets/css/base.css";
 import "primevue/resources/themes/md-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
