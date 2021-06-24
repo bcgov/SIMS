@@ -18,11 +18,11 @@
         v-for="location in locationsMenu"
         :key="location.label"
         @click="location.command"
-        ><v-list-item-icon>
-          <v-icon>{{ location.icon }}</v-icon>
-        </v-list-item-icon>
+      >
         <v-list-item-content>
-          <v-list-item-title>{{ location.label }}</v-list-item-title>
+          <v-list-item-title
+            ><v-icon>{{ location.icon }}</v-icon> {{ location.label }}</v-list-item-title
+          >
           <v-list-item
             v-for="locationItem in location?.items"
             :key="locationItem"
