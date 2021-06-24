@@ -1,6 +1,7 @@
 <template>
   <v-app-bar dense flat app>
     <v-img
+      max-width="311px"
       height="40px"
       alt="logo"
       src="../../assets/images/bc_student_logo.svg"
