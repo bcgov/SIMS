@@ -1,10 +1,12 @@
 <template>
   <v-app-bar dense flat app>
     <v-img
+      class="ml-5"
       max-width="311px"
       height="40px"
       alt="logo"
       src="../../assets/images/bc_student_logo.svg"
+      @click="logoClick"
     />
     <v-spacer></v-spacer>
     <v-btn
@@ -87,12 +89,22 @@ export default {
       }
     });
 
+    const logoClick = () => {
+      const routeName = isAuthenticated.value
+        ? StudentRoutesConst.STUDENT_DASHBOARD
+        : StudentRoutesConst.LOGIN;
+      router.push({
+        name: routeName,
+      });
+    };
+
     const logoff = () => {
       AppConfigService.shared.logout(ClientIdType.STUDENT);
     };
 
     return {
       logoff,
+      logoClick,
       isAuthenticated,
       StudentRoutesConst,
     };

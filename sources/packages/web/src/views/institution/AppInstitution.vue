@@ -1,6 +1,7 @@
 <template>
   <v-app-bar dense flat app>
     <v-img
+      class="ml-5"
       max-width="379px"
       height="40px"
       alt="logo"
