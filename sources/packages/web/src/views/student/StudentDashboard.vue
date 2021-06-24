@@ -8,13 +8,16 @@
     </template>
     <template #content> Please start your Financial Aid application </template>
     <template #footer>
-      <Button
-        label="Start Application"
+      <v-btn
+        color="primary"
         class="p-button-raised"
         @click="
           $router.push({ name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM })
         "
-      />
+      >
+        <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
+        Start New Application
+      </v-btn>
     </template>
   </Card>
 </template>

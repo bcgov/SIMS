@@ -18,7 +18,6 @@ import Login from "../views/institution/Login.vue";
 import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
-import Institution from "../views/institution/Institution.vue";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
@@ -68,151 +67,143 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "",
-        redirect: `${AppRoutes.InstitutionRoot}/${AppRoutes.InstitutionDashboard}`,
+        path: AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-        component: Institution,
-        children: [
-          {
-            path: AppRoutes.InstitutionDashboard,
-            name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-            components: {
-              default: InstitutionDashboard,
-              sidebar: InstitutionHomeSideBar,
-            },
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              userTypes: [
-                InstitutionUserTypes.admin,
-                InstitutionUserTypes.locationManager,
-                InstitutionUserTypes.user,
-              ],
-            },
+        components: {
+          default: InstitutionDashboard,
+          sidebar: InstitutionHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.locationManager,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.LocationPrograms,
+        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+        components: {
+          default: LocationPrograms,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
           },
-          {
-            path: AppRoutes.LocationPrograms,
-            name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-            components: {
-              default: LocationPrograms,
-              sidebar: InstitutionHomeSideBar,
-            },
-            props: true,
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              checkAllowedLocation: {
-                userTypes: [
-                  InstitutionUserTypes.admin,
-                  InstitutionUserTypes.locationManager,
-                  InstitutionUserTypes.user,
-                ],
-              },
-            },
+        },
+      },
+      {
+        path: AppRoutes.LocationProgramsView,
+        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        components: {
+          default: LocationProgramView,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
           },
-          {
-            path: AppRoutes.LocationProgramsView,
-            name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-            components: {
-              default: LocationProgramView,
-              sidebar: InstitutionHomeSideBar,
-            },
-            props: true,
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              checkAllowedLocation: {
-                userTypes: [
-                  InstitutionUserTypes.admin,
-                  InstitutionUserTypes.locationManager,
-                  InstitutionUserTypes.user,
-                ],
-              },
-            },
+        },
+      },
+      {
+        path: `${AppRoutes.LocationApplications}/:locationId`,
+        name: InstitutionRoutesConst.LOCATION_STUDENTS,
+        components: {
+          default: LocationApplications,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
           },
-          {
-            path: `${AppRoutes.LocationApplications}/:locationId`,
-            name: InstitutionRoutesConst.LOCATION_STUDENTS,
-            components: {
-              default: LocationApplications,
-              sidebar: InstitutionHomeSideBar,
-            },
-            props: true,
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              checkAllowedLocation: {
-                userTypes: [
-                  InstitutionUserTypes.admin,
-                  InstitutionUserTypes.locationManager,
-                  InstitutionUserTypes.user,
-                ],
-              },
-            },
+        },
+      },
+      {
+        path: `${AppRoutes.LocationUsers}/:locationId`,
+        name: InstitutionRoutesConst.LOCATION_USERS,
+        components: {
+          default: LocationUsers,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.admin,
+            ],
           },
-          {
-            path: `${AppRoutes.LocationUsers}/:locationId`,
-            name: InstitutionRoutesConst.LOCATION_USERS,
-            components: {
-              default: LocationUsers,
-              sidebar: InstitutionHomeSideBar,
-            },
-            props: true,
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              checkAllowedLocation: {
-                userTypes: [
-                  InstitutionUserTypes.locationManager,
-                  InstitutionUserTypes.admin,
-                ],
-              },
-            },
-          },
-          {
-            path: AppRoutes.InstitutionManageLocations,
-            name: InstitutionRoutesConst.MANAGE_LOCATIONS,
-            components: {
-              default: ManageLocation,
-              sidebar: ManageInstitutionSideBar,
-            },
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              userTypes: [InstitutionUserTypes.admin],
-            },
-          },
-          {
-            path: AppRoutes.ManageInstitutionDesignation,
-            name: InstitutionRoutesConst.MANAGE_DESGINATION,
-            components: {
-              default: ManageDesgination,
-              sidebar: ManageInstitutionSideBar,
-            },
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              userTypes: [InstitutionUserTypes.admin],
-            },
-          },
-          {
-            path: AppRoutes.InstitutionProfileEdit,
-            name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
-            components: {
-              default: InstitutionProfile,
-              sidebar: ManageInstitutionSideBar,
-            },
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              userTypes: [InstitutionUserTypes.admin],
-            },
-          },
-          {
-            path: AppRoutes.InstitutionManageUsers,
-            name: InstitutionRoutesConst.MANAGE_USERS,
-            components: {
-              default: InstitutionUserDetails,
-              sidebar: ManageInstitutionSideBar,
-            },
-            meta: {
-              clientType: ClientIdType.INSTITUTION,
-              userTypes: [InstitutionUserTypes.admin],
-            },
-          },
-        ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageLocations,
+        name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+        components: {
+          default: ManageLocation,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+        },
+      },
+      {
+        path: AppRoutes.ManageInstitutionDesignation,
+        name: InstitutionRoutesConst.MANAGE_DESGINATION,
+        components: {
+          default: ManageDesgination,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionProfileEdit,
+        name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,
+        components: {
+          default: InstitutionProfile,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageUsers,
+        name: InstitutionRoutesConst.MANAGE_USERS,
+        components: {
+          default: InstitutionUserDetails,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          userTypes: [InstitutionUserTypes.admin],
+        },
       },
       {
         path: AppRoutes.AddInstitutionLocation,

@@ -1,3 +1,5 @@
+import "./assets/css/BCSans.css";
+import "./assets/css/base.css";
 import "primevue/resources/themes/md-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
@@ -9,6 +11,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import PrimeVue from "primevue/config";
+import Menu from "primevue/menu";
 import Menubar from "primevue/menubar";
 import InputText from "primevue/inputtext";
 import DataTable from "primevue/datatable";
@@ -38,6 +41,7 @@ AppConfigService.shared.init().then(() => {
     .use(PrimeVue)
     .use(ToastService)
     .component("Toast", Toast)
+    .component("Menu", Menu)
     .component("Menubar", Menubar)
     .component("Card", Card)
     .component("Button", Button)

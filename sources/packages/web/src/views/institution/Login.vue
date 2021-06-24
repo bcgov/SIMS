@@ -1,40 +1,39 @@
 <template>
-  <Card class="p-m-4">
-    <template #title> Institutional Login </template>
-    <template #content>
-      <div>
-        <h1>Welcome to StudentAid BC</h1>
-        <h4>
-          We are using BCeID for Authentication. Please click on Login/Register buttons
-          below to start your sign in/sign up with your Business BCeID.
-        </h4>
-      </div>
-      <Message severity="error" v-if="basicBCeID">
-        No such Business account has been found with BCeID. Please login with your
-        Business BCeId
-      </Message>
-
-      <Message severity="error" v-if="disabledUser">
-        Disabled User - you dont have access to the system. Please contact Administrator
-        for more informations.
-      </Message>
-    </template>
-
-    <template #footer>
-      <Button
-        label="Login with Business BCeID"
-        icon="pi pi-check"
-        class="p-mr-2"
-        @click="login"
-      ></Button>
-      <Button
-        label="Sign Up for Business BCeID"
-        icon="pi pi-user"
-        class="p-button-info"
-        @click="login"
-      ></Button>
-    </template>
-  </Card>
+  <v-card elevation="2" class="mx-auto mt-15" max-width="690px" outlined>
+    <v-card-header>
+      <v-card-header-text>
+        <v-card-title class="my-6 bold-text" style="font-size: 27px;"
+          >Welcome to StudentAid BC</v-card-title
+        >
+        <v-card-subtitle>Welcome text goes here…</v-card-subtitle>
+      </v-card-header-text>
+    </v-card-header>
+    <v-card-text
+      >We are using BCeID for Authentication. Please click on Login/Register
+      buttons below to start your sign in/sign up with your Business
+      BCeID.</v-card-text
+    >
+    <v-card-actions>
+      <v-row justify="center" class="m-3">
+        <v-btn color="primary" @click="login">
+          <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
+          Login with BCSC
+        </v-btn>
+        <v-btn color="primary" @click="login">
+          <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
+          Sign Up with BCSC
+        </v-btn>
+      </v-row>
+    </v-card-actions>
+    <Message severity="error" class="mx-2" v-if="basicBCeID">
+      No such Business account has been found with BCeID. Please login with your
+      Business BCeId
+    </Message>
+    <Message severity="error" class="mx-2" v-if="disabledUser">
+      Disabled User - you dont have access to the system. Please contact
+      Administrator for more informations.
+    </Message>
+  </v-card>
 </template>
 
 <script lang="ts">

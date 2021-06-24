@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h5 class="color-grey">Manage Institution Locations</h5>
+    <h5 class="text-muted">Manage Institution Locations</h5>
     <h2>Location Summary</h2>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
@@ -10,8 +10,8 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewLocation()">
-              <v-icon left> mdi-map-marker-plus </v-icon>
-              Add New Location
+              <v-icon :size="25" left>mdi-map-marker-plus</v-icon>Add New
+              Location
             </v-btn>
           </v-col>
         </v-row>
@@ -23,7 +23,7 @@
           <v-row>
             <v-col cols="10">
               <h4>
-                <v-icon>mdi-map-marker-radius</v-icon>
+                <v-icon size="25">mdi-map-marker-radius</v-icon>
                 {{ item.name }}
                 <!-- TODO: Replace v-badge with vuetify2 equavalent v-chip with icon once veutify3 is released-->
                 <v-badge
@@ -34,14 +34,14 @@
                   text-color="white"
                 >
                   <template v-slot:default>
-                    <v-icon>mdi-map-markers-radius</v-icon>
+                    <v-icon :size="25">mdi-map-markers-radius</v-icon>
                   </template>
                 </v-badge>
               </h4>
             </v-col>
             <v-col cols="2">
               <v-btn plain @click="getLocation(item.id)">
-                <v-icon right class="mr-2"> mdi-cog-outline </v-icon>
+                <v-icon :size="25" right class="mr-2"> mdi-cog-outline </v-icon>
                 Edit
               </v-btn>
             </v-col>
@@ -67,16 +67,34 @@
             <v-col>
               <span class="pb-2"><b> Primary Contact </b></span><br />
               <span class="mt-2">
-                {{ item.institution.institutionPrimaryContact.primaryContactFirstName }}
-                {{ item.institution.institutionPrimaryContact.primaryContactLastName }}
+                {{
+                  item.institution.institutionPrimaryContact
+                    .primaryContactFirstName
+                }}
+                {{
+                  item.institution.institutionPrimaryContact
+                    .primaryContactLastName
+                }}
                 <br />
               </span>
-              <span v-if="item.institution.institutionPrimaryContact.primaryContactPhone">
-                {{ item.institution.institutionPrimaryContact.primaryContactPhone }}
+              <span
+                v-if="
+                  item.institution.institutionPrimaryContact.primaryContactPhone
+                "
+              >
+                {{
+                  item.institution.institutionPrimaryContact.primaryContactPhone
+                }}
                 <br />
               </span>
-              <span v-if="item.institution.institutionPrimaryContact.primaryContactEmail">
-                {{ item.institution.institutionPrimaryContact.primaryContactEmail }}
+              <span
+                v-if="
+                  item.institution.institutionPrimaryContact.primaryContactEmail
+                "
+              >
+                {{
+                  item.institution.institutionPrimaryContact.primaryContactEmail
+                }}
                 <br />
               </span>
             </v-col>

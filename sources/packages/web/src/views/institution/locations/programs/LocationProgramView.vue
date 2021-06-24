@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h5 class="color-grey">
+    <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
       >
@@ -14,7 +14,7 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" outlined @click="goToEditProgram()">
-              <v-icon left> mdi-open-in-new </v-icon>
+              <v-icon size="25" left> mdi-open-in-new </v-icon>
               Edit Program
             </v-btn>
           </v-col>
@@ -64,7 +64,7 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewOffering()">
-              <v-icon left>
+              <v-icon size="25" left>
                 mdi-open-in-new
               </v-icon>
               Add Another Offering
@@ -86,7 +86,7 @@
           <Column>
             <template #body="slotProps">
               <v-btn plain @click="goToEditOffering(slotProps.data.id)">
-                <v-icon left> mdi-open-in-new </v-icon>
+                <v-icon size="25" left> mdi-open-in-new </v-icon>
                 Edit
               </v-btn>
             </template>

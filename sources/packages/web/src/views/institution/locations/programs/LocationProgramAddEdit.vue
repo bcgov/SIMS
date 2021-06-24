@@ -1,19 +1,17 @@
 <template>
-  <v-container>
-    <h5 class="color-grey">
-      <span v-if="programId">Edit Program</span>
-      <span v-else>Create New Program</span>
-    </h5>
-    <v-sheet elevation="1" class="mx-auto">
-      <v-container>
-        <formio
-          formName="educationprogram"
-          :data="initialData"
-          @submitted="submitted"
-        ></formio>
-      </v-container>
-    </v-sheet>
-  </v-container>
+  <h5 class="text-muted">
+    <span v-if="programId">Edit Program</span>
+    <span v-else>Create New Program</span>
+  </h5>
+  <v-sheet elevation="1" class="mx-auto">
+    <v-container>
+      <formio
+        formName="educationprogram"
+        :data="initialData"
+        @submitted="submitted"
+      ></formio>
+    </v-container>
+  </v-sheet>
 </template>
 
 <script lang="ts">

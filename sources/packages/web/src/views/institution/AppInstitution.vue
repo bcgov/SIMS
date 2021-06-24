@@ -1,36 +1,69 @@
 <template>
-  <v-app>
-    <CommonLayout v-if="isAuthReady" :isAuthenticated="isAuthenticated" />
-  </v-app>
+  <v-app-bar dense flat app>
+    <v-img
+      class="ml-5"
+      max-width="379px"
+      height="40px"
+      alt="logo"
+      src="../../assets/images/bc_institution_logo.svg"
+    />
+    <v-spacer></v-spacer>
+    <v-btn
+      v-if="isAuthenticated"
+      text
+      @click="
+        $router.push({
+          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+        })
+      "
+      >Home</v-btn
+    >
+    <v-btn
+      v-if="isAuthenticated && isAdmin"
+      text
+      @click="
+        $router.push({
+          name: InstitutionRoutesConst.MANAGE_LOCATIONS,
+        })
+      "
+      >Manage Institution</v-btn
+    >
+
+    <v-btn v-if="isAuthenticated" text @click="logoff">Log off</v-btn>
+  </v-app-bar>
+  <router-view name="sidebar"></router-view>
+  <v-main class="body-background">
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-main>
 </template>
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted, computed } from "vue";
+import { onMounted, computed } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
-import CommonLayout from "../../components/layouts/Institution/CommonLayout.vue";
+import { useStore } from "vuex";
+import "@/assets/css/institution.css";
 
 export default {
-  components: {
-    CommonLayout,
-  },
+  components: {},
   setup() {
+    const store = useStore();
     const router = useRouter();
     const route = useRoute();
-    const isAuthReady = ref(false);
-    const clientType = ref(ClientIdType.INSTITUTION);
     const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true
+      () => AppConfigService.shared.authService?.authenticated === true,
     );
+    const isAdmin = computed(() => store.state.institution.userState?.isAdmin);
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
-      isAuthReady.value = true;
       const auth = AppConfigService.shared.authService?.authenticated ?? false;
       if (!auth) {
         router.push({
@@ -54,12 +87,21 @@ export default {
       }
     });
 
+    const logoff = () => {
+      AppConfigService.shared.logout(ClientIdType.INSTITUTION);
+    };
+
     return {
-      isAuthReady,
+      isAdmin,
       isAuthenticated,
+      logoff,
       InstitutionRoutesConst,
-      clientType,
     };
   },
 };
 </script>
+<style lang="scss" scoped>
+.body-background {
+  background: #f2f2f2;
+}
+</style>

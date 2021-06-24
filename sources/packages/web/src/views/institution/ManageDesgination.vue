@@ -1,11 +1,11 @@
 <template>
   <v-container>
-    <h5 class="color-grey">Manage Desgination</h5>
+    <h5 class="text-muted">Manage Desgination</h5>
     <h2>Desgination In Progress</h2>
   </v-container>
 </template>
 
 <script lang="ts">
-export default {}
+export default {};
 </script>
 <style></style>

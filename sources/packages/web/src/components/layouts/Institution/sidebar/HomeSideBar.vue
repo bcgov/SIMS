@@ -1,8 +1,53 @@
 <template>
-  <PanelMenu :model="items" />
+  <v-navigation-drawer app class="body-background">
+    <v-list dense nav>
+      <v-list-item
+        v-for="item in items"
+        :key="item.label"
+        @click="item.command"
+      >
+        <v-list-item-icon>
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ item.label }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="spaced-text text-muted"
+            >LOCATIONS</v-list-item-title
+          >
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item
+        v-for="location in locationsMenu"
+        :key="location.label"
+        @click="location.command"
+      >
+        <v-list-item-content>
+          <v-list-item-title
+            ><v-icon>{{ location.icon }}</v-icon>
+            {{ location.label }}</v-list-item-title
+          >
+          <v-list-item
+            v-for="locationItem in location?.items"
+            :key="locationItem"
+            @click="locationItem.command"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ locationItem.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ locationItem.label }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 <script lang="ts">
-import PanelMenu from "primevue/panelmenu";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, onMounted, computed, watch } from "vue";
@@ -18,24 +63,25 @@ interface MenuModel {
 }
 
 export default {
-  components: {
-    PanelMenu,
-  },
+  components: {},
   setup() {
     const store = useStore();
     const router = useRouter();
-    const userLocationList = computed(() => store.state.institution.locationState);
+    const userLocationList = computed(
+      () => store.state.institution.locationState,
+    );
     const isAdmin = computed(() => store.state.institution.userState?.isAdmin);
     const userAuth = computed(
-      () => store.state.institution.authorizationsState?.authorizations
+      () => store.state.institution.authorizationsState?.authorizations,
     );
     const items = ref<MenuModel[]>([]);
+    const locationsMenu = ref<MenuModel[]>([]);
 
     const getuserLocationList = () => {
       items.value = [
         {
           label: "Dashboard",
-          icon: "pi pi-home",
+          icon: "mdi-home-outline",
           command: () => {
             router.push({
               name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
@@ -44,26 +90,23 @@ export default {
         },
         {
           label: "Notifications",
-          icon: "pi pi-bell",
-        },
-        {
-          label: "LOCATIONS",
-          icon: "pi pi-globe",
+          icon: "mdi-bell-outline",
         },
       ];
       for (const data of userLocationList.value) {
-        const locationsMenu =
+        const locationMenu =
           isAdmin.value ||
           userAuth.value?.some(
-            (el: InstitutionUserAuthRolesAndLocation) => el?.locationId === data?.id
+            (el: InstitutionUserAuthRolesAndLocation) =>
+              el?.locationId === data?.id,
           )
             ? {
                 label: data.name,
-                icon: "pi pi-map-marker",
+                icon: "mdi-map-marker-outline",
                 items: [
                   {
                     label: "Programs",
-                    icon: "pi pi-book",
+                    icon: "mdi-account-details-outline",
                     command: () => {
                       router.push({
                         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -76,7 +119,7 @@ export default {
                   },
                   {
                     label: "Applications",
-                    icon: "pi pi-id-card",
+                    icon: "mdi-account-tie-outline",
                     command: () => {
                       router.push({
                         name: InstitutionRoutesConst.LOCATION_STUDENTS,
@@ -95,11 +138,11 @@ export default {
           userAuth.value?.some(
             (el: InstitutionUserAuthRolesAndLocation) =>
               el?.locationId === data?.id &&
-              el?.userType === InstitutionUserTypes.locationManager
+              el?.userType === InstitutionUserTypes.locationManager,
           )
             ? {
                 label: "Users",
-                icon: "pi pi-users",
+                icon: "mdi-account-multiple-outline",
                 command: () => {
                   router.push({
                     name: InstitutionRoutesConst.LOCATION_USERS,
@@ -112,9 +155,9 @@ export default {
               }
             : undefined;
 
-        if (locationsMenu) {
-          if (locationUserMenu) locationsMenu?.items?.push(locationUserMenu);
-          items.value.push(locationsMenu);
+        if (locationMenu) {
+          if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
+          locationsMenu.value.push(locationMenu);
         }
       }
     };
@@ -123,16 +166,18 @@ export default {
       () => {
         // get user details
         getuserLocationList();
-      }
+      },
     );
     onMounted(() => {
       // get user details
       getuserLocationList();
     });
+
     return {
       items,
       store,
       userLocationList,
+      locationsMenu,
     };
   },
 };
