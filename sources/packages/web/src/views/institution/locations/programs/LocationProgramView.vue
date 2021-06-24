@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h5 class="color-grey">
+    <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
       >

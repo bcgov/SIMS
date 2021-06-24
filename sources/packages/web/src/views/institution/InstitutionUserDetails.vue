@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h5 class="color-grey">Manage Users</h5>
+    <h5 class="text-muted">Manage Users</h5>
     <h2>User Summary</h2>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
@@ -51,9 +51,7 @@
           ></Column>
           <Column field="" header="Actions"
             ><template #body="slotProps">
-              <span
-                v-if="slotProps.data.userName !== logginedUserDetails?.userName"
-              >
+              <span v-if="slotProps.data.userName !== logginedUserDetails?.userName">
                 <v-btn plain>
                   <v-icon
                     size="25"
@@ -76,9 +74,7 @@
                 </v-btn>
                 <InputSwitch
                   v-model="slotProps.data.isActive"
-                  v-tooltip="
-                    slotProps.data.isActive ? 'Disable User' : 'Enable User'
-                  "
+                  v-tooltip="slotProps.data.isActive ? 'Disable User' : 'Enable User'"
                   @change="updateUserStatus(slotProps.data)"
                 />
               </span>
@@ -117,7 +113,7 @@ export default {
   setup() {
     const toast = useToast();
     const logginedUserDetails = ref(
-      AppConfigService.shared.authService?.tokenParsed as ApplicationToken,
+      AppConfigService.shared.authService?.tokenParsed as ApplicationToken
     );
     const showAddUser = ref(false);
     const showEditUser = ref(false);
@@ -146,7 +142,7 @@ export default {
       try {
         await InstitutionService.shared.updateUserStatus(
           userDetails.userName,
-          userDetails.isActive,
+          userDetails.isActive
         );
         await getAllInstitutionUsers();
         toast.add({
@@ -173,7 +169,7 @@ export default {
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
       userType.value = userRoleType.value?.userTypes
         ? userRoleType.value.userTypes.map((el: string) =>
-            el !== "admin" ? { name: el, code: el } : null,
+            el !== "admin" ? { name: el, code: el } : null
           )
         : [];
     });

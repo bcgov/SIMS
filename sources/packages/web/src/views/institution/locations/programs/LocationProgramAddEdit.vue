@@ -1,5 +1,5 @@
 <template>
-  <h5 class="color-grey">
+  <h5 class="text-muted">
     <span v-if="programId">Edit Program</span>
     <span v-else>Create New Program</span>
   </h5>

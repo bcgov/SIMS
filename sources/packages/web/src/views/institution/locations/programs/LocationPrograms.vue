@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h5 class="color-grey">{{ locationName }}</h5>
+    <h5 class="text-muted">{{ locationName }}</h5>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
         <v-row>
