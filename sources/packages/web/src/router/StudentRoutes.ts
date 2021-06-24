@@ -11,6 +11,7 @@ import DynamicStudentApp from "../views/student/financial-aid-application/FullTi
 import Applications from "../views/student/financial-aid-application/Applications.vue";
 import StudentProfile from "../views/student/StudentProfile.vue";
 import Notifications from "../views/student/Notifications.vue";
+import NotificationsSettings from "../views/student/NotificationsSettings.vue";
 
 import {
   StudentRoutesConst,
@@ -101,6 +102,14 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "notifications",
         name: StudentRoutesConst.NOTIFICATIONS,
         component: Notifications,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
+        path: "notifications/settings",
+        name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
+        component: NotificationsSettings,
         meta: {
           clientType: ClientIdType.STUDENT,
         },

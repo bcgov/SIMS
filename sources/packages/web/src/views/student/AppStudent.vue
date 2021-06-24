@@ -1,5 +1,7 @@
 <template>
-  <v-app-bar dense flat app>
+  <!-- Adding overflow:visible to allow the use of the Prime Vue
+  floating menu while Veutify component is not ready.  -->
+  <v-app-bar dense flat app style="overflow:visible">
     <v-img
       class="ml-5"
       max-width="311px"
@@ -27,7 +29,21 @@
       @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
       >Profile</v-btn
     >
-    <v-btn v-if="isAuthenticated" text @click="logoff">Log off</v-btn>
+    <v-btn
+      v-if="isAuthenticated"
+      class="mr-5"
+      icon="mdi-account"
+      outlined
+      elevation="1"
+      color="grey"
+      @click="togleUserMenu"
+    ></v-btn>
+    <Menu
+      v-if="isAuthenticated"
+      ref="userOptionsMenuRef"
+      :model="userMenuItems"
+      :popup="true"
+    />
   </v-app-bar>
   <router-view name="sidebar"></router-view>
   <v-main class="body-background">
@@ -39,7 +55,7 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
@@ -52,6 +68,8 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const userOptionsMenuRef = ref();
+    const userMenuItems = ref({});
     const isAuthenticated = computed(
       () => AppConfigService.shared.authService?.authenticated === true,
     );
@@ -98,15 +116,36 @@ export default {
       });
     };
 
-    const logoff = () => {
-      AppConfigService.shared.logout(ClientIdType.STUDENT);
+    const togleUserMenu = () => {
+      userOptionsMenuRef.value.toggle(event);
     };
 
+    userMenuItems.value = [
+      {
+        label: "Notifications Settings",
+        icon: "pi pi-bell",
+        command: () => {
+          router.push({
+            name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
+          });
+        },
+      },
+      {
+        label: "Log off",
+        icon: "pi pi-power-off",
+        command: () => {
+          AppConfigService.shared.logout(ClientIdType.STUDENT);
+        },
+      },
+    ];
+
     return {
-      logoff,
       logoClick,
+      userMenuItems,
       isAuthenticated,
       StudentRoutesConst,
+      userOptionsMenuRef,
+      togleUserMenu,
     };
   },
 };
