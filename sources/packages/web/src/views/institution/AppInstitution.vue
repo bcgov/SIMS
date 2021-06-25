@@ -41,26 +41,23 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { onMounted, computed } from "vue";
+import { onMounted } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { UserService } from "../../services/UserService";
 import { AppRoutes } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
-import { useStore } from "vuex";
+import { useInstitutionAuth } from "../../composables/institution/useInstitutionAuth";
 import "@/assets/css/institution.css";
 
 export default {
   components: {},
   setup() {
-    const store = useStore();
     const router = useRouter();
     const route = useRoute();
-    const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true,
-    );
-    const isAdmin = computed(() => store.state.institution.userState?.isAdmin);
+    const { isAdmin, isAuthenticated } = useInstitutionAuth();
+
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);

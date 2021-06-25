@@ -3,7 +3,7 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="fullTimeApplication"
+          formName="sfaa2022-23"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
@@ -16,11 +16,11 @@
 
 <script lang="ts">
 import formio from "../../../components/generic/formio.vue";
-import { Utils } from "formiojs";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
-import { InstitutionService } from "../../../services/InstitutionService";
 import ApiClient from "../../../services/http/ApiClient";
+import { useFormioDataLoader } from "../../../composables/useFormioDataLoader";
+
 export default {
   components: {
     formio,
@@ -33,7 +33,7 @@ export default {
   },
   setup(props: any) {
     const initialData = ref({});
-
+    const formioDataLoader = useFormioDataLoader();
     const submitted = async (args: any) => {
       if (props.id) {
         // TODO: Define how the update will happen.
@@ -75,22 +75,24 @@ export default {
       }
     });
 
+    const LOCATIONS_DROPDOWN_KEY = "selectedInstitution";
+    const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
+
     const formLoaded = async (form: any) => {
-      const selectedInstitution = Utils.getComponent(
-        form.components,
-        "selectedInstitution",
-        true,
+      await formioDataLoader.loadLocationsDropdown(
+        form,
+        LOCATIONS_DROPDOWN_KEY,
       );
-      // Get all locations.
-      const locations = await InstitutionService.shared.getLocationsOptionsList();
-      selectedInstitution.component.data.values = locations.map(location => ({
-        value: location.id,
-        label: location.description,
-      }));
     };
 
     const formChanged = async (form: any, event: any) => {
-      console.log(event);
+      if (event.changed.component.key === LOCATIONS_DROPDOWN_KEY) {
+        await formioDataLoader.loadProgramsForLocationDropdown(
+          form,
+          +event.changed.value,
+          PROGRAMS_DROPDOWN_KEY,
+        );
+      }
     };
 
     return { initialData, formLoaded, formChanged, submitted };

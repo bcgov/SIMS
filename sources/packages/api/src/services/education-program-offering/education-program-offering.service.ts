@@ -180,4 +180,19 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     } as InstitutionLocation;
     return programOffering;
   }
+
+  async filterProgramsByOfferings(
+    locationId: number,
+  ): Promise<Partial<EducationProgram[]>> {
+    const offerings = await this.repo
+      .createQueryBuilder("offerings")
+      .innerJoinAndSelect("educationProgram", "programs")
+      .select()
+      .where("offerings.institutionLocation.id = :locationId", {
+        locationId,
+      })
+      .getMany();
+
+    return offerings.map((offering) => offering.educationProgram);
+  }
 }

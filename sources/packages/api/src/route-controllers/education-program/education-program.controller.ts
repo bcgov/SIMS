@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -16,7 +17,11 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { EducationProgramDto } from "./models/save-education-program.dto";
-import { EducationProgramService, FormService } from "../../services";
+import {
+  EducationProgramOfferingService,
+  EducationProgramService,
+  FormService,
+} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import {
@@ -24,15 +29,17 @@ import {
   SubsetEducationProgramDto,
 } from "./models/summary-education-program.dto";
 import { EducationProgram } from "../../database/entities";
+import { OptionItem } from "../../types";
 
-@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/education-program")
 export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
+    private readonly offeringsService: EducationProgramOfferingService,
     private readonly formService: FormService,
   ) {}
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
   async getSummary(
@@ -54,6 +61,7 @@ export class EducationProgramController {
     }));
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":id")
   async getProgram(
     @Param("id") id: number,
@@ -96,6 +104,7 @@ export class EducationProgramController {
     };
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Post()
   async create(
     @Body() payload: EducationProgramDto,
@@ -105,6 +114,7 @@ export class EducationProgramController {
     return newProgram.id;
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Put(":id")
   async update(
     @Body() payload: EducationProgramDto,
@@ -166,6 +176,7 @@ export class EducationProgramController {
    * @param programId
    * @returns
    */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":programId/summary")
   async get(
     @Param("programId") programId: number,
@@ -186,5 +197,20 @@ export class EducationProgramController {
       sabcCode: educationProgram.sabcCode,
       approvalStatus: educationProgram.approvalStatus,
     };
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get("location/:locationId/option-list")
+  async getLocationProgramsOptionList(
+    @Param("locationId") locationId: number,
+  ): Promise<OptionItem[]> {
+    const programs = await this.programService.getProgramsForLocation(
+      locationId,
+    );
+
+    return programs.map((program) => ({
+      id: program.id,
+      description: program.name,
+    }));
   }
 }

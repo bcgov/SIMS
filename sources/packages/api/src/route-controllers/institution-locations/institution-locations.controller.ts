@@ -12,7 +12,6 @@ import { InstitutionLocationService, FormService } from "../../services";
 import {
   InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
-  OptionItemDto,
 } from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import {
@@ -29,6 +28,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { OptionItem } from "../../types";
 
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
@@ -163,7 +163,7 @@ export class InstitutionLocationsController extends BaseController {
 
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("options-list")
-  async getOptionsList(): Promise<OptionItemDto[]> {
+  async getOptionsList(): Promise<OptionItem[]> {
     const locations = await this.locationService.getLocations();
     return locations.map((location) => ({
       id: location.id,
