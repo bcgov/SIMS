@@ -34,8 +34,8 @@ ENV NPM_PACKAGES=/.npm-packages \
 RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 
 # Include details of the required dependencies
-COPY ./package.json $NPM_PACKAGES/
-COPY ./package-lock.json $NPM_PACKAGES/
+COPY package.json $NPM_PACKAGES/
+COPY package-lock.json $NPM_PACKAGES/
 
 # Use "Continuous Integration" to install as-is from package-lock.json
 RUN npm ci --prefix=$NPM_PACKAGES
