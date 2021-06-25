@@ -18,12 +18,7 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/
-RUN ls -lrt /tmp/
-RUN cp -r /tmp/forms-flow-forms/. /forms/
-
-RUN ls -lrt
-RUN pwd
+RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /forms/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -34,8 +29,8 @@ ENV NPM_PACKAGES=/.npm-packages \
 RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 
 # Include details of the required dependencies
-RUN cp package.json $NPM_PACKAGES/package.json
-RUN cp package-lock.json $NPM_PACKAGES/package-lock.json
+COPY ./forms-flow-forms/package.json $NPM_PACKAGES/
+COPY ./forms-flow-forms/package-lock.json $NPM_PACKAGES/
 
 # Use "Continuous Integration" to install as-is from package-lock.json
 RUN npm ci --prefix=$NPM_PACKAGES
@@ -49,6 +44,8 @@ RUN ln -sf $NPM_PACKAGES/node_modules node_modules
 #   DEBUG=formio:db (see index.js for more)
 #   DEBUG=formio:*
 ENV DEBUG=""
+
+#RUN cp /forms/forms-flow-forms/ /forms-flow-forms/app/
 
 RUN set -x \
   && chmod -R 777 /forms/
