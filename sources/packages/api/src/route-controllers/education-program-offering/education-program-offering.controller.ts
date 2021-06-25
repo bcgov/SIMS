@@ -16,8 +16,8 @@ import {
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import { EducationProgramOfferingService, FormService } from "../../services";
+import { OptionItem } from "../../types";
 
-@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
   constructor(
@@ -25,6 +25,7 @@ export class EducationProgramOfferingController {
     private readonly formService: FormService,
   ) {}
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Post("location/:locationId/education-program/:programId")
   async create(
@@ -51,6 +52,7 @@ export class EducationProgramOfferingController {
     return createdProgramOffering.id;
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/education-program/:programId")
   async getAllEducationProgramOffering(
@@ -75,6 +77,7 @@ export class EducationProgramOfferingController {
     }));
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/education-program/:programId/offering/:offeringId")
   async getProgramOffering(
@@ -114,6 +117,7 @@ export class EducationProgramOfferingController {
     };
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Patch(
     "location/:locationId/education-program/:programId/offering/:offeringId",
@@ -142,5 +146,22 @@ export class EducationProgramOfferingController {
       payload,
     );
     return updateProgramOffering.affected;
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get("location/:locationId/education-program/:programId/option-list")
+  async getProgramOfferingsForLocation(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+  ): Promise<OptionItem[]> {
+    const offerings = await this.programOfferingService.getProgramOfferingsForLocation(
+      locationId,
+      programId,
+    );
+
+    return offerings.map((offering) => ({
+      id: offering.id,
+      description: offering.name,
+    }));
   }
 }

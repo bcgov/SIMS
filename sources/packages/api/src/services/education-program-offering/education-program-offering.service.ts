@@ -181,18 +181,24 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return programOffering;
   }
 
-  async filterProgramsByOfferings(
+  /**
+   * Gets program offerings for location.
+   * @param programId program id to be filter.
+   * @param locationId location id to filter.
+   * @returns program offerings for location.
+   */
+  async getProgramOfferingsForLocation(
     locationId: number,
-  ): Promise<Partial<EducationProgram[]>> {
-    const offerings = await this.repo
+    programId: number,
+  ): Promise<Partial<EducationProgramOffering>[]> {
+    return this.repo
       .createQueryBuilder("offerings")
-      .innerJoinAndSelect("educationProgram", "programs")
-      .select()
-      .where("offerings.institutionLocation.id = :locationId", {
+      .select("offerings.id")
+      .addSelect("offerings.name")
+      .where("offerings.educationProgram.id = :programId", { programId })
+      .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
       })
       .getMany();
-
-    return offerings.map((offering) => offering.educationProgram);
   }
 }

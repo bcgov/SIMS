@@ -1,6 +1,6 @@
 import ApiClient from "./http/ApiClient";
 import { OfferingDTO } from "../types/contracts/OfferingContact";
-import { EducationProgramOfferingDto } from "../types";
+import { EducationProgramOfferingDto, OptionItemDto } from "../types";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -55,6 +55,16 @@ export class EducationProgramOfferingService {
       programId,
       offeringId,
       data,
+    );
+  }
+
+  public async getProgramOfferingsForLocation(
+    locationId: number,
+    programId: number,
+  ): Promise<OptionItemDto[]> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
+      locationId,
+      programId,
     );
   }
 }

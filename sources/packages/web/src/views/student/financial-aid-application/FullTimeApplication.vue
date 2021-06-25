@@ -19,7 +19,7 @@ import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
-import { useFormioDataLoader } from "../../../composables/useFormioDataLoader";
+import { useFormioDropdownLoader, useFormioUtils } from "../../../composables";
 
 export default {
   components: {
@@ -33,7 +33,8 @@ export default {
   },
   setup(props: any) {
     const initialData = ref({});
-    const formioDataLoader = useFormioDataLoader();
+    const formioUtils = useFormioUtils();
+    const formioDataLoader = useFormioDropdownLoader();
     const submitted = async (args: any) => {
       if (props.id) {
         // TODO: Define how the update will happen.
@@ -77,20 +78,31 @@ export default {
 
     const LOCATIONS_DROPDOWN_KEY = "selectedInstitution";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
+    const OFFERINGS_DROPDOWN_KEY = "offeringIWillBeAttending";
 
     const formLoaded = async (form: any) => {
-      await formioDataLoader.loadLocationsDropdown(
-        form,
-        LOCATIONS_DROPDOWN_KEY,
-      );
+      await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
     };
 
     const formChanged = async (form: any, event: any) => {
       if (event.changed.component.key === LOCATIONS_DROPDOWN_KEY) {
-        await formioDataLoader.loadProgramsForLocationDropdown(
+        await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
           PROGRAMS_DROPDOWN_KEY,
+        );
+      }
+
+      if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
+        const locationId = +formioUtils.getComponentValue(
+          form,
+          LOCATIONS_DROPDOWN_KEY,
+        );
+        await formioDataLoader.loadOfferingsForLocation(
+          form,
+          +event.changed.value,
+          locationId,
+          OFFERINGS_DROPDOWN_KEY,
         );
       }
     };
