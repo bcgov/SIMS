@@ -20,7 +20,7 @@ RUN apk update && \
 # Clone code
 RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/
 RUN ls -lrt /tmp/
-RUN cp -r /tmp/forms-flow-forms/ /forms/
+RUN cp -r /tmp/forms-flow-forms/. /forms/
 
 RUN ls -lrt
 RUN pwd
