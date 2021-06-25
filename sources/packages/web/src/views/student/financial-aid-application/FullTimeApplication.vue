@@ -3,8 +3,10 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="SFAA2022-23"
+          formName="fullTimeApplication"
           :data="initialData"
+          @loaded="formLoaded"
+          @changed="formChanged"
           @submitted="submitted"
         ></formio>
       </div>
@@ -14,8 +16,10 @@
 
 <script lang="ts">
 import formio from "../../../components/generic/formio.vue";
+import { Utils } from "formiojs";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
+import { InstitutionService } from "../../../services/InstitutionService";
 import ApiClient from "../../../services/http/ApiClient";
 export default {
   components: {
@@ -37,7 +41,8 @@ export default {
       }
 
       try {
-        await ApiClient.Application.createApplication(args);
+        //await ApiClient.Application.createApplication(args);
+        console.log(args);
       } catch (error) {
         console.error(error);
       }
@@ -70,7 +75,25 @@ export default {
       }
     });
 
-    return { initialData, submitted };
+    const formLoaded = async (form: any) => {
+      const selectedInstitution = Utils.getComponent(
+        form.components,
+        "selectedInstitution",
+        true,
+      );
+      // Get all locations.
+      const locations = await InstitutionService.shared.getLocationsOptionsList();
+      selectedInstitution.component.data.values = locations.map(location => ({
+        value: location.id,
+        label: location.description,
+      }));
+    };
+
+    const formChanged = async (form: any, event: any) => {
+      console.log(event);
+    };
+
+    return { initialData, formLoaded, formChanged, submitted };
   },
 };
 </script>

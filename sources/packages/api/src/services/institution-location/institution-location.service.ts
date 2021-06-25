@@ -88,6 +88,13 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .getMany();
   }
 
+  async getLocations(): Promise<Partial<InstitutionLocation>[]> {
+    return this.repo
+      .createQueryBuilder("location")
+      .select(["location.id", "location.name"])
+      .getMany();
+  }
+
   async getInstitutionLocation(
     institutionId: number,
     locationId: number,

@@ -56,3 +56,8 @@ export interface InstitutionLocationsDetailsDto {
     postalCode: string;
   };
 }
+
+export interface OptionItemDto {
+  id: number;
+  description: string;
+}

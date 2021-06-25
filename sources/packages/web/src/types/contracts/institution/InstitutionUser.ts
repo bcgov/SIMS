@@ -1,7 +1,7 @@
 import {
   InstitutionLocationData,
   InstitutionLocationsDetails,
-} from "./AddInstitutionLocation";
+} from "./InstitutionLocation";
 import { InstitutionDto } from "./CreateInstitutionDto";
 export interface InstitutionUserResDto {
   id: number;
