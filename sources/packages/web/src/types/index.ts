@@ -17,3 +17,4 @@ export * from "./contracts/OfferingContact";
 export * from "./StoreState";
 export * from "./contracts/InstituteContract";
 export * from "./contracts/InstitutionRouteMeta";
+export * from "./contracts/OptionItemDto";

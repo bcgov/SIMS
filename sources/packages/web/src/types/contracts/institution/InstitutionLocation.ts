@@ -36,8 +36,3 @@ export interface InstitutionLocationsDetails {
     };
   };
 }
-
-export interface OptionItemDto {
-  id: number;
-  description: string;
-}

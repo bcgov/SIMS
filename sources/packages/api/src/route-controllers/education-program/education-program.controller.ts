@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -35,7 +34,6 @@ import { OptionItem } from "../../types";
 export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
-    private readonly offeringsService: EducationProgramOfferingService,
     private readonly formService: FormService,
   ) {}
 

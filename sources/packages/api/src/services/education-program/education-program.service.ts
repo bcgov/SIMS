@@ -11,7 +11,7 @@ import {
   EducationProgramsSummary,
   EducationProgramModel,
 } from "./education-program.service.models";
-import { OptionItem } from "../../types";
+import { ApprovalStatus } from "./constants";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -187,7 +187,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     return this.repo
       .createQueryBuilder("programs")
-      .where(`exists(${offeringExistsQuery.getQuery()})`)
+      .where("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
+      .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")
       .setParameter("locationId", locationId)

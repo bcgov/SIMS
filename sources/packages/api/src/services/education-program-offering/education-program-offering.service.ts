@@ -11,6 +11,7 @@ import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
 } from "./education-program-offering.service.models";
+import { ApprovalStatus } from "../education-program/constants";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -193,9 +194,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   ): Promise<Partial<EducationProgramOffering>[]> {
     return this.repo
       .createQueryBuilder("offerings")
+      .innerJoin("offerings.educationProgram", "programs")
       .select("offerings.id")
       .addSelect("offerings.name")
       .where("offerings.educationProgram.id = :programId", { programId })
+      .andWhere("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
       })
