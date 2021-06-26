@@ -19,9 +19,7 @@ define BUILD_TAG
 "$(BUILD_REF)-${BUILD_ID}"
 endef
 
-define BUILD_TEMPLATE_PATH
-"openshift/docker-build.yml"
-endef
+forms-flow-forms
 
 define API
 "api-$(APP_NAME)"
@@ -43,6 +41,23 @@ define DB_NAME
 "SIMSDB"
 endef
 
+define FORM_AI_BUILD_TEMPLATE_PATH
+"openshift/formsai-build.yml"
+endef
+
+define FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH
+"openshift/formsai-forms-deploy.yml"
+endef
+
+define FORMIO_FORMS_NAME
+"forms-flow-forms"
+endef
+
+
+define FORMIO_FORMS_CONTEXT_DIR
+"devops/forms-flow-ai/forms-flow-forms"
+endef
+
 define rollout_and_wait
 @oc -n $(NAMESPACE) rollout status $1
 endef
@@ -56,6 +71,7 @@ oc-deploy-api: | print-status deploy-api
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
+oc-build-forms-flow-forms: | print-status build-forms-flow-forms
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -182,3 +198,20 @@ deploy-web:
 	@echo "+\n++ Deploying Web with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(Web) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(Web):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(Web))
+
+build-forms-flow-forms:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(FORMIO_FORMS_CONTEXT_DIR)"
+	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
+	@echo "+\n++ BUILDING ${FORMIO_FORMS_NAME}"
+	@echo "+\n++ BUILDING ${FORMIO_FORMS_NAME} DIR: $(FORMIO_FORMS_CONTEXT_DIR) DEPLOYFILE:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=${FORMIO_FORMS_NAME} -p SOURCE_REPOSITORY_REF="feature/#157CICD" -p SOURCE_CONTEXT_DIR=$(FORMIO_FORMS_CONTEXT_DIR)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/${FORMIO_FORMS_NAME} --wait
+
+deploy-forms-flow-forms:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(FORMIO_FORMS_NAME):latest" -p REPLICAS=2 | oc -n 0c27fb-test apply -f -
+	$(call rollout_and_wait,dc/$(FORMIO_FORMS_NAME))
