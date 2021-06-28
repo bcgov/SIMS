@@ -58,6 +58,8 @@ export default {
     const route = useRoute();
     const { isAdmin, isAuthenticated } = useInstitutionAuth();
 
+    console.log(AppConfigService.shared.authService?.token);
+
     // Mounding hook
     onMounted(async () => {
       await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);

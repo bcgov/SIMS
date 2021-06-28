@@ -16,11 +16,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { EducationProgramDto } from "./models/save-education-program.dto";
-import {
-  EducationProgramOfferingService,
-  EducationProgramService,
-  FormService,
-} from "../../services";
+import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import {
@@ -198,7 +194,7 @@ export class EducationProgramController {
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/option-list")
+  @Get("location/:locationId/options-list")
   async getLocationProgramsOptionList(
     @Param("locationId") locationId: number,
   ): Promise<OptionItem[]> {

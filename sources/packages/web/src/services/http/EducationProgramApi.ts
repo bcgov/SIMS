@@ -83,7 +83,7 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/education-program/location/${locationId}/option-list`,
+        `institution/education-program/location/${locationId}/options-list`,
         this.addAuthHeader(),
       );
       return response.data;

@@ -149,7 +149,7 @@ export class EducationProgramOfferingController {
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/education-program/:programId/option-list")
+  @Get("location/:locationId/education-program/:programId/options-list")
   async getProgramOfferingsForLocation(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,

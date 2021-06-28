@@ -59,8 +59,6 @@ export function useFormioDropdownLoader() {
     locationId: number,
     dropdownName: string,
   ) => {
-    console.log(programId);
-    console.log(locationId);
     return loadDropdown(
       form,
       dropdownName,
