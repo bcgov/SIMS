@@ -20,8 +20,6 @@ RUN npm run build
 FROM docker-remote.artifacts.developer.gov.bc.ca/nginx:1.17 as production-stage
 RUN mkdir /nginx
 COPY --from=build-stage /web/build /usr/share/nginx/html
-RUN ls -lrt 
-RUN ls -lrt /web/
-RUN cp nginx.conf /etc/nginx/nginx.conf
+COPY --from=build-stage /web/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080:8080
 CMD ["nginx", "-g", "daemon off;"]
