@@ -18,9 +18,8 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/
-RUN cp -r /tmp/forms-flow-forms/. /forms/
-RUN rm -rf /tmp
+RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/forms-flow-ai/
+RUN cp -r /tmp/forms-flow-ai/forms-flow-forms/. /forms/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime

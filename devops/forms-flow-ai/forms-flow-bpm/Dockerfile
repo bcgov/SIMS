@@ -5,12 +5,11 @@ FROM docker-remote.artifacts.developer.gov.bc.ca/maven:3.6.1-jdk-11-slim AS MAVE
 
 # set working directory
 WORKDIR /bpm/
-RUN rm -rf /tmp
+
 RUN apt-get update \
   && apt-get install -y git
-RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/
-RUN cp -r /tmp/forms-flow-bpm/. /bpm/
-RUN rm -rf /tmp
+RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/forms-flow-ai/
+RUN cp -r /tmp/forms-flow-ai/forms-flow-bpm/. /bpm/
 
 # This allows Docker to cache most of the maven dependencies
 RUN mvn -s /usr/share/maven/ref/settings-docker.xml dependency:resolve-plugins dependency:resolve dependency:go-offline -B
