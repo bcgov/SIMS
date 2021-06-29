@@ -19,8 +19,6 @@ define BUILD_TAG
 "$(BUILD_REF)-${BUILD_ID}"
 endef
 
-forms-flow-forms
-
 define API
 "api-$(APP_NAME)"
 endef
@@ -42,20 +40,43 @@ define DB_NAME
 endef
 
 define FORM_AI_BUILD_TEMPLATE_PATH
-"openshift/formsai-build.yml"
+"openshift/forms-flow-ai/build.yml"
 endef
 
 define FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH
-"openshift/formsai-forms-deploy.yml"
+"openshift/forms-flow-ai/forms-deploy.yml"
 endef
 
 define FORMIO_FORMS_NAME
 "forms-flow-forms"
 endef
 
+define FORMIO_BPM_NAME
+"forms-flow-bpm"
+endef
 
-define FORMIO_FORMS_CONTEXT_DIR
-"devops/forms-flow-ai/forms-flow-forms"
+define FORMIO_API_NAME
+"forms-flow-api"
+endef
+
+define FORMIO_WEB_NAME
+"forms-flow-web"
+endef
+
+define FORMIO_SOURCE_REPO_URL
+"https://github.com/AOT-Technologies/forms-flow-ai.git"
+endef
+
+define FORMIO_SOURCE_REPO_BRANCH
+"master"
+endef
+
+define SOURCE_REPOSITORY_REF
+"157CICD"
+endef
+
+define SOURCE_CONTEXT_DIR
+"devops/forms-flow-ai/"
 endef
 
 define rollout_and_wait
@@ -72,6 +93,13 @@ oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
 oc-build-forms-flow-forms: | print-status build-forms-flow-forms
+oc-deploy-forms-flow-forms: | print-status deploy-forms-flow-forms
+oc-build-forms-flow-bpm: | print-status build-forms-flow-bpm
+oc-deploy-forms-flow-bpm: | print-status deploy-forms-flow-bpm
+oc-build-forms-flow-api: | print-status build-forms-flow-api
+oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
+oc-build-forms-flow-web: | print-status build-forms-flow-web
+oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -201,17 +229,53 @@ deploy-web:
 
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(FORMIO_FORMS_CONTEXT_DIR)"
+	test -n "$(FORMIO_FORMS_NAME)"
+	test -n "$(SOURCE_REPOSITORY_REF)"
+	test -n "$(BUILD_TAG)"
+	test -n "$(SOURCE_CONTEXT_DIR)"
 	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
 	@echo "+\n++ BUILDING ${FORMIO_FORMS_NAME}"
-	@echo "+\n++ BUILDING ${FORMIO_FORMS_NAME} DIR: $(FORMIO_FORMS_CONTEXT_DIR) DEPLOYFILE:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=${FORMIO_FORMS_NAME} -p SOURCE_REPOSITORY_REF="feature/#157CICD" -p SOURCE_CONTEXT_DIR=$(FORMIO_FORMS_CONTEXT_DIR)| oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/${FORMIO_FORMS_NAME} --wait
+	@echo "+\n++ BUILDING ${FORMIO_FORMS_NAME} DIR: $(SOURCE_CONTEXT_DIR)$(FORMIO_FORMS_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH) BUILD_TAG:$(BUILD_TAG)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMIO_FORMS_NAME) TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_BRANCH=$(FORMIO_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMIO_FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMIO_FORMS_NAME) --wait
 
 deploy-forms-flow-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(FORMIO_FORMS_NAME):latest" -p REPLICAS=2 | oc -n 0c27fb-test apply -f -
+	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p FFA_FORMS_URL="dev-aest-ffa-forms.apps.silver.devops.gov.bc.ca" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_FORMS_NAME))
+
+build-forms-flow-bpm:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(FORMIO_BPM_NAME)"
+	test -n "$(SOURCE_REPOSITORY_REF)"
+	test -n "$(SOURCE_CONTEXT_DIR)"
+	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
+	@echo "+\n++ BUILDING ${FORMIO_BPM_NAME}"
+	@echo "+\n++ BUILDING ${FORMIO_BPM_NAME} DIR: $(SOURCE_CONTEXT_DIR)$(FORMIO_BPM_NAME) BuildFILE:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMIO_BPM_NAME) TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_BRANCH=$(FORMIO_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMIO_BPM_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMIO_BPM_NAME) --wait
+
+build-forms-flow-api:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(FORMIO_API_NAME)"
+	test -n "$(SOURCE_REPOSITORY_REF)"
+	test -n "$(SOURCE_CONTEXT_DIR)"
+	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
+	@echo "+\n++ BUILDING ${FORMIO_API_NAME}"
+	@echo "+\n++ BUILDING ${FORMIO_API_NAME} DIR: $(SOURCE_CONTEXT_DIR)$(FORMIO_API_NAME) BuildFILE:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMIO_API_NAME) TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_BRANCH=$(FORMIO_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMIO_API_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMIO_API_NAME) --wait
+
+build-forms-flow-web:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(FORMIO_WEB_NAME)"
+	test -n "$(SOURCE_REPOSITORY_REF)"
+	test -n "$(SOURCE_CONTEXT_DIR)"
+	test -n "$(FORM_AI_BUILD_TEMPLATE_PATH)"
+	@echo "+\n++ BUILDING ${FORMIO_WEB_NAME}"
+	@echo "+\n++ BUILDING ${FORMIO_WEB_NAME} DIR: $(SOURCE_CONTEXT_DIR)$(FORMIO_WEB_NAME) BuildFILE:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMIO_WEB_NAME) TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_BRANCH=$(FORMIO_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMIO_WEB_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMIO_WEB_NAME) --wait
