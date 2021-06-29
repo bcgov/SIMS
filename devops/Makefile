@@ -108,6 +108,7 @@ oc-build-forms-flow-api: | print-status build-forms-flow-api
 oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
 oc-build-forms-flow-web: | print-status build-forms-flow-web
 oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
+oc-deploy-ha-mongo: | print-status deploy-ha-mongo
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -237,7 +238,7 @@ deploy-web:
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file==$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f - --ignoreunknownparams
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file==$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
 
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"
