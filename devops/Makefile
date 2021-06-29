@@ -39,6 +39,14 @@ define DB_NAME
 "SIMSDB"
 endef
 
+define HAMONGO_DB_TEMPLATE_PATH
+"openshift/forms-flow-ai/database/mongo-ha.yml"
+endef
+
+define HAMONGO_DB_PARAM_PATH
+"openshift/forms-flow-ai/database/mongo-ha-param.yml"
+endef
+
 define FORM_AI_BUILD_TEMPLATE_PATH
 "openshift/forms-flow-ai/build.yml"
 endef
@@ -226,6 +234,10 @@ deploy-web:
 	@echo "+\n++ Deploying Web with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(Web) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(Web):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(Web))
+
+deploy-ha-mongo:
+	test -n "$(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file==$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f - --ignoreunknownparams
 
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"
