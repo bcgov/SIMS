@@ -47,12 +47,40 @@ define HAMONGO_DB_PARAM_PATH
 "openshift/forms-flow-ai/database/mongo-ha-param.yml"
 endef
 
+define SECRETS_PATRONI_DB_TEMPLATE_PATH
+"openshift/forms-flow-ai/secrets/ffa-patroni-secrets.yml"
+endef
+
+define CREATE_FFA_DB_TEMPLATE_PATH
+"openshift/forms-flow-ai/database/create-ffa-db.yml"
+endef
+
+define FFA_BPM_DB_NAME
+"FFA_BPM_DB"
+endef
+
+define FFA_API_DB_NAME
+"FFA_API_DB"
+endef
+
+define SECRETS_TEMPLATE_PATH
+"openshift/forms-flow-ai/secrets/secrets.yml"
+endef
+
+define SECRETS_PARAM_PATH
+"openshift/forms-flow-ai/secrets/secrets-param.yml"
+endef
+
 define FORM_AI_BUILD_TEMPLATE_PATH
 "openshift/forms-flow-ai/build.yml"
 endef
 
 define FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH
 "openshift/forms-flow-ai/forms-deploy.yml"
+endef
+
+define FORM_AI_FORMS_URL
+"$(HOST_PREFIX)aest-ffa-forms.$(DOMAIN)"
 endef
 
 define FORMIO_FORMS_NAME
@@ -109,6 +137,10 @@ oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
 oc-build-forms-flow-web: | print-status build-forms-flow-web
 oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
 oc-deploy-ha-mongo: | print-status deploy-ha-mongo
+oc-deploy-forms-flow-db-secrets: | print-status deploy-forms-flow-db-secrets
+oc-create-ffa-bpm-db: | print-status create-ffa-bpm-db
+oc-create-ffa-api-db: | print-status create-ffa-api-db
+oc-deploy-forms-flow-secrets: | print-status deploy-forms-flow-secrets
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -236,10 +268,6 @@ deploy-web:
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(Web) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(Web):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(Web))
 
-deploy-ha-mongo:
-	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
-
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(FORMIO_FORMS_NAME)"
@@ -251,14 +279,6 @@ build-forms-flow-forms:
 	@echo "+\n++ BUILDING ${FORMIO_FORMS_NAME} DIR: $(SOURCE_CONTEXT_DIR)$(FORMIO_FORMS_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH) BUILD_TAG:$(BUILD_TAG)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMIO_FORMS_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_BRANCH=$(FORMIO_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMIO_FORMS_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMIO_FORMS_NAME) --wait
-
-deploy-forms-flow-forms:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p FFA_FORMS_URL="dev-aest-ffa-forms.apps.silver.devops.gov.bc.ca" | oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMIO_FORMS_NAME))
 
 build-forms-flow-bpm:
 	test -n "$(BUILD_NAMESPACE)"
@@ -292,3 +312,34 @@ build-forms-flow-web:
 	@echo "+\n++ BUILDING ${FORMIO_WEB_NAME} DIR: $(SOURCE_CONTEXT_DIR)$(FORMIO_WEB_NAME) BuildFile:$(FORM_AI_BUILD_TEMPLATE_PATH)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f $(FORM_AI_BUILD_TEMPLATE_PATH) -p NAME=$(FORMIO_WEB_NAME) -p TAG=$(BUILD_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_BRANCH=$(FORMIO_SOURCE_REPO_BRANCH) -p SOURCE_REPOSITORY_REF=$(SOURCE_REPOSITORY_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)$(FORMIO_WEB_NAME)| oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMIO_WEB_NAME) --wait
+
+deploy-ha-mongo:
+	test -n "$(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+
+deploy-forms-flow-db-secrets:
+	test -n "$(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f $(SECRETS_PATRONI_DB_TEMPLATE_PATH) | oc -n $(NAMESPACE) apply -f -
+
+create-ffa-bpm-db:
+	test -n $(NAMESPACE)
+	@echo "+\n++ Creating DB (FFA_BPM_DB) in $(NAMESPACE) patroni db cluster"
+	@oc -n $(NAMESPACE) process -f $(CREATE_FFA_DB_TEMPLATE_PATH) -p DB_NAME=$(FFA_BPM_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=bpm | oc -n $(NAMESPACE) apply -f -
+
+create-ffa-api-db:
+	test -n $(NAMESPACE)
+	@echo "+\n++ Creating DB (FFA_API_DB) in $(NAMESPACE) patroni db cluster"
+	@oc -n $(NAMESPACE) process -f $(CREATE_FFA_DB_TEMPLATE_PATH) -p DB_NAME=$(FFA_API_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=api | oc -n $(NAMESPACE) apply -f -
+
+deploy-forms-flow-secrets:
+	test -n "$(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f $(SECRETS_TEMPLATE_PATH) --param-file=$(SECRETS_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+
+deploy-forms-flow-forms:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(HOST_PREFIX)"
+	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p FFA_FORMS_URL=$(FORM_AI_FORMS_URL) | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(FORMIO_FORMS_NAME))

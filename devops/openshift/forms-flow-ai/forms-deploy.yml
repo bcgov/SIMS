@@ -51,7 +51,7 @@ objects:
                     secretKeyRef:
                       key: formio_root_password
                       name: ${FORMIO_SECRET}
-              image: ${IMAGE_NAMESPACE}/${NAME}:${TAG_NAME}
+              image: ${NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:
                 - containerPort: 3001
@@ -99,8 +99,8 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              namespace: "${IMAGE_NAMESPACE}"
-              name: "${NAME}:${TAG_NAME}"
+              namespace: "${NAMESPACE}"
+              name: "${NAME}:${IMAGE_STREAM_TAG}"
           type: ImageChange
     status: {}
 
@@ -149,13 +149,12 @@ parameters:
       server instance.
     required: true
     value: forms-flow-forms
-  - name: IMAGE_NAMESPACE
+  - name: NAMESPACE
     displayName: Image Namespace
     required: true
     description:
       The namespace of the OpenShift project containing the imagestream for
       the application.
-    value: nzpnbz-tools
   - name: FORMIO_SECRET
     description: Secrets are referred from this.
     required: true
@@ -164,7 +163,7 @@ parameters:
     displayName: FFA_FORMS_URL
     required: true
     description: Forms Flow AI Forms URL
-  - name: TAG_NAME
+  - name: IMAGE_STREAM_TAG
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true
@@ -189,14 +188,3 @@ parameters:
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
     value: 2Gi
-  - name: FORMIO_ADMIN_EMAIL
-    displayName: Formio admin email
-    description: Formio needs an email login
-    required: true
-    value: admin@example.com
-  - name: FORMIO_ADMIN_PASSWORD
-    displayName: Formio default password
-    description: Formio needs a default password to login
-    generate: expression
-    from: "[a-zA-Z0-9]{16}"
-    required: true

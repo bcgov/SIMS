@@ -105,7 +105,7 @@ objects:
                     secretKeyRef:
                       key: WEB_API_BASE_URL
                       name: ${FORMIO_SECRET}
-              image: ${IMAGE_NAMESPACE}/${NAME}:${TAG_NAME}
+              image: ${NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
           ports:
             - containerPort: 5000
@@ -122,8 +122,8 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              namespace: "${IMAGE_NAMESPACE}"
-              name: "${NAME}:${TAG_NAME}"
+              namespace: "${NAMESPACE}"
+              name: "${NAME}:${IMAGE_STREAM_TAG}"
           type: ImageChange
     status: {}
 
@@ -163,7 +163,7 @@ parameters:
       server instance.
     required: true
     value: forms-flow-api
-  - name: IMAGE_NAMESPACE
+  - name: NAMESPACE
     displayName: Image Namespace
     required: true
     description:
@@ -174,7 +174,7 @@ parameters:
     description: Secrets are referred from this.
     required: true
     value: forms-flow-ai
-  - name: TAG_NAME
+  - name: IMAGE_STREAM_TAG
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true

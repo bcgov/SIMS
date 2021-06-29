@@ -88,7 +88,7 @@ objects:
         spec:
           containers:
             - env:
-              image: docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${NAME}:${TAG_NAME}
+              image: docker-registry.default.svc:5000/${NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:
                 - containerPort: 8080
@@ -120,8 +120,8 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              namespace: "${IMAGE_NAMESPACE}"
-              name: "${NAME}:${TAG_NAME}"
+              namespace: "${NAMESPACE}"
+              name: "${NAME}:${IMAGE_STREAM_TAG}"
           type: ImageChange
     status: {}
 
@@ -172,14 +172,14 @@ parameters:
       server instance.
     required: true
     value: forms-flow-web
-  - name: IMAGE_NAMESPACE
+  - name: NAMESPACE
     displayName: Image Namespace
     required: true
     description:
       The namespace of the OpenShift project containing the imagestream for
       the application.
     value: ""
-  - name: TAG_NAME
+  - name: IMAGE_STREAM_TAG
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod
     required: true
