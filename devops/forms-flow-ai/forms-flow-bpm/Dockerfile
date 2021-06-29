@@ -10,7 +10,7 @@ RUN apt-get update \
   && apt-get install -y git
 RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/forms-flow-ai/
 RUN cp -r /tmp/forms-flow-ai/forms-flow-bpm/. /bpm/
-RUN cp /bpm/pom-docker.xml /tmp/pom.xml
+RUN cp /bpm/pom-docker.xml /bpm/pom.xml
 RUN cp /bpm/settings-docker.xml /usr/share/maven/ref/
 
 # This allows Docker to cache most of the maven dependencies
