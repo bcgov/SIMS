@@ -38,11 +38,11 @@ objects:
       strategy:
         dockerStrategy:
           dockerfilePath: Dockerfile
-        env:
-          - name: FORMIO_SOURCE_REPO_URL
-            value: "${FORMIO_SOURCE_REPO_URL}"
-          - name: FORMIO_SOURCE_REPO_BRANCH
-            value: "${FORMIO_SOURCE_REPO_BRANCH}"
+          env:
+            - name: FORMIO_SOURCE_REPO_URL
+              value: "${FORMIO_SOURCE_REPO_URL}"
+            - name: FORMIO_SOURCE_REPO_BRANCH
+              value: "${FORMIO_SOURCE_REPO_BRANCH}"
         type: Docker
 parameters:
   - name: NAME
