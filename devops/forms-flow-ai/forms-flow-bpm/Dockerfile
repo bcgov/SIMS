@@ -33,5 +33,5 @@ RUN mkdir -p /app
 COPY --from=MAVEN_TOOL_CHAIN /bpm/target/camunda-bpm-identity-keycloak-examples-sso-kubernetes*.jar ./app
 RUN chmod a+rwx -R /app
 WORKDIR /app
-VOLUME /tmp
+VOLUME /bpm
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app/camunda-bpm-identity-keycloak-examples-sso-kubernetes.jar"]
