@@ -238,7 +238,7 @@ deploy-web:
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file==$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
 
 build-forms-flow-forms:
 	test -n "$(BUILD_NAMESPACE)"
