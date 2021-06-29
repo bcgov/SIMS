@@ -80,7 +80,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         `institution/offering/location/${locationId}/education-program/${programId}/options-list`,
         this.addAuthHeader(),
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

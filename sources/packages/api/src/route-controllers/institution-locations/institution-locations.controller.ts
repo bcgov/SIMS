@@ -74,20 +74,6 @@ export class InstitutionLocationsController extends BaseController {
       dryRunSubmissionResult.data,
     );
 
-    // Save a form to formIO to handle the location approval.
-    const submissionResult = await this.formService.submission(
-      "institutionLocation",
-      payload,
-    );
-
-    // Create an application entry on FormFlow.ai, using the
-    // previously created form definition on formIO.
-    await this.formsFlowService.createApplication({
-      formId: submissionResult.formId,
-      formUrl: submissionResult.absolutePath,
-      submissionId: submissionResult.submissionId,
-    });
-
     return createdInstitutionLocation.id;
   }
 

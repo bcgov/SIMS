@@ -204,6 +204,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
       })
+      .orderBy("offerings.name")
       .getMany();
   }
 }

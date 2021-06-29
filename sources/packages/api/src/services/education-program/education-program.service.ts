@@ -194,6 +194,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .select("programs.id")
       .addSelect("programs.name")
       .setParameter("locationId", locationId)
+      .orderBy("programs.name")
       .getMany();
   }
 }

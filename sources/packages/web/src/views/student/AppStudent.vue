@@ -62,6 +62,7 @@ import { StudentService } from "../../services/StudentService";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { AppRoutes } from "../../types";
+import { useAuth } from "@/composables";
 
 export default {
   components: {},
@@ -70,9 +71,7 @@ export default {
     const route = useRoute();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
-    const isAuthenticated = computed(
-      () => AppConfigService.shared.authService?.authenticated === true,
-    );
+    const { isAuthenticated } = useAuth();
 
     // Mounding hook
     onMounted(async () => {

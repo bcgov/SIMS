@@ -1,8 +1,8 @@
-import { Utils } from "formiojs";
 import { InstitutionService } from "../services/InstitutionService";
 import { EducationProgramService } from "../services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { OptionItemDto } from "../types";
+import { useFormioUtils } from ".";
 
 /**
  * Common methods to load dropdowns(selects) data on Form.IO that could
@@ -10,17 +10,14 @@ import { OptionItemDto } from "../types";
  * @returns Methods to help loading the data into Form.IO forms.
  */
 export function useFormioDropdownLoader() {
+  const formioUtils = useFormioUtils();
   const loadDropdown = async (
     form: any,
     dropdownName: string,
     loadMethod: Promise<OptionItemDto[]>,
   ) => {
     // Find the dropdown to be populated with the locations.
-    const locationsDropdown = Utils.getComponent(
-      form.components,
-      dropdownName,
-      true,
-    );
+    const locationsDropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
     locationsDropdown.component.data.values = optionsItems.map(item => ({
       value: item.id,

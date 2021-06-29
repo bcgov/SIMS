@@ -93,6 +93,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .createQueryBuilder("location")
       .select("location.id")
       .addSelect("location.name")
+      .orderBy("location.name")
       .getMany();
   }
 

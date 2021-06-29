@@ -3,7 +3,7 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="sfaa2022-23-test-andrew"
+          formName="sfaa2022-23"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
@@ -42,8 +42,7 @@ export default {
       }
 
       try {
-        //await ApiClient.Application.createApplication(args);
-        console.log(args);
+        await ApiClient.Application.createApplication(args);
       } catch (error) {
         console.error(error);
       }
