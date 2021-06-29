@@ -193,6 +193,12 @@ export class EducationProgramController {
     };
   }
 
+  /**
+   * Get a key/value pair list of all programs that have
+   * at least one offering for the particular location.
+   * @param locationId location id.
+   * @returns key/value pair list of programs.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/options-list")
   async getLocationProgramsOptionList(

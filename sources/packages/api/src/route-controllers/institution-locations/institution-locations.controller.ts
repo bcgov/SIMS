@@ -145,6 +145,11 @@ export class InstitutionLocationsController extends BaseController {
     });
   }
 
+  /**
+   * Get a key/value pair list of all locations
+   * from all institution available.
+   * @returns key/value pair list of all locations.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("options-list")
   async getOptionsList(): Promise<OptionItem[]> {

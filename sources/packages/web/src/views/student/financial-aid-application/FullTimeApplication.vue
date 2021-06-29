@@ -3,7 +3,7 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="sfaa2022-23"
+          formName="SFAA2022-23"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
@@ -75,7 +75,8 @@ export default {
       }
     });
 
-    const LOCATIONS_DROPDOWN_KEY = "selectedInstitution";
+    // Components names on Form.IO definition that will be manipulated.
+    const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "offeringIWillBeAttending";
 
