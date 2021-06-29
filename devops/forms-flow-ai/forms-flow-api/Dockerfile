@@ -1,7 +1,6 @@
 FROM docker-remote.artifacts.developer.gov.bc.ca/python:3.8
 
-RUN apt-get update \
-  && apt-get install -y git 
+RUN apt-get update && apt-get install -y git 
 
 # set working directory
 WORKDIR /api/
