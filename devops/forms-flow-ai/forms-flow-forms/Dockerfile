@@ -19,8 +19,8 @@ RUN apk update && \
 
 # Clone code
 RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/
-
 RUN cp -r /tmp/forms-flow-forms/. /forms/
+RUN rm -rf /tmp
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
