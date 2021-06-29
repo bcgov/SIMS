@@ -1,8 +1,4 @@
-import {
-  SummaryEducationProgramDto,
-  EducationProgramDto,
-  OptionItemDto,
-} from "../types";
+import { EducationProgramDto, OptionItemDto } from "../types";
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {

@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { onMounted, computed, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
