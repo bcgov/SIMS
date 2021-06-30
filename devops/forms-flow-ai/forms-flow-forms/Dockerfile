@@ -6,9 +6,6 @@
 # hub.docker.com/r/_/node/
 FROM docker-remote.artifacts.developer.gov.bc.ca/node:12.2.0-alpine
 
-# set working directory
-WORKDIR /forms
-
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
@@ -20,6 +17,8 @@ RUN apk update && \
 # Clone code
 RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/forms-flow-ai/
 RUN cp -r /tmp/forms-flow-ai/forms-flow-forms/. /forms/
+
+WORKDIR /forms
 
 ENV PATH /forms/node_modules/.bin:$PATH
 
