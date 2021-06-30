@@ -33,7 +33,7 @@ parameters:
   - name: MONGODB_REPLICAS
     description: Number of MongoDB replica pods
     displayName: MongoDB Replicas
-    value: "3"
+    value: "2"
     required: true
   - name: MONGODB_PASSWORD
     displayName: "MongoDB Connection Password"
