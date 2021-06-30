@@ -54,6 +54,7 @@ import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+import { useInstitutionAuth } from "../../../../composables/institution/useInstitutionAuth";
 
 interface MenuModel {
   label: string;
@@ -67,13 +68,11 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const { isAdmin, userAuth } = useInstitutionAuth();
     const userLocationList = computed(
       () => store.state.institution.locationState,
     );
-    const isAdmin = computed(() => store.state.institution.userState?.isAdmin);
-    const userAuth = computed(
-      () => store.state.institution.authorizationsState?.authorizations,
-    );
+
     const items = ref<MenuModel[]>([]);
     const locationsMenu = ref<MenuModel[]>([]);
 

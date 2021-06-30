@@ -5,17 +5,20 @@ import {
   Institution,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { Connection, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
   EducationProgramModel,
 } from "./education-program.service.models";
+import { ApprovalStatus } from "./constants";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
+  private readonly offeringsRepo: Repository<EducationProgramOffering>;
   constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(EducationProgram));
+    this.offeringsRepo = connection.getRepository(EducationProgramOffering);
   }
 
   /**
@@ -164,5 +167,34 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     summaryItem.sabcCode = educationProgram.sabcCode;
     summaryItem.approvalStatus = educationProgram.approvalStatus;
     return summaryItem;
+  }
+
+  /**
+   * Get programs that have at least one offering
+   * for a particular location.
+   * @param locationId id of the location that should have the
+   * offering associated with.
+   * @returns programs with offerings under the specified location.
+   */
+  async getProgramsForLocation(
+    locationId: number,
+  ): Promise<Partial<EducationProgram>[]> {
+    const offeringExistsQuery = this.offeringsRepo
+      .createQueryBuilder("offerings")
+      .where("offerings.educationProgram.id = programs.id")
+      .andWhere("offerings.institutionLocation.id = :locationId")
+      .select("1");
+
+    return this.repo
+      .createQueryBuilder("programs")
+      .where("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
+      .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
+      .select("programs.id")
+      .addSelect("programs.name")
+      .setParameter("locationId", locationId)
+      .orderBy("programs.name")
+      .getMany();
   }
 }

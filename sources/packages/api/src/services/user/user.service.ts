@@ -37,7 +37,7 @@ export class UserService extends DataModelService<User> {
     }
 
     return {
-      id: user.id,
+      id: user.user_id,
       isActive: user.is_active,
     };
   }

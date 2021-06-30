@@ -15,6 +15,7 @@ import {
   InstitutionUserRoleLocation,
   UserAuth,
   InstitutionUserWithUserType,
+  OptionItemDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -276,7 +277,13 @@ export class InstitutionService {
     return ApiClient.Institution.getMyInstitutionDetails(authHeader);
   }
 
-  public async getMyInstitutionLocationsDetails(authHeader?:any) {
-    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails(authHeader);
+  public async getMyInstitutionLocationsDetails(authHeader?: any) {
+    return ApiClient.InstitutionLocation.getMyInstitutionLocationsDetails(
+      authHeader,
+    );
+  }
+
+  public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
+    return ApiClient.InstitutionLocation.getOptionsList();
   }
 }

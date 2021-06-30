@@ -5,6 +5,8 @@
         <formio
           formName="SFAA2022-23"
           :data="initialData"
+          @loaded="formLoaded"
+          @changed="formChanged"
           @submitted="submitted"
         ></formio>
       </div>
@@ -17,6 +19,8 @@ import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
+import { useFormioDropdownLoader, useFormioUtils } from "../../../composables";
+
 export default {
   components: {
     formio,
@@ -29,7 +33,8 @@ export default {
   },
   setup(props: any) {
     const initialData = ref({});
-
+    const formioUtils = useFormioUtils();
+    const formioDataLoader = useFormioDropdownLoader();
     const submitted = async (args: any) => {
       if (props.id) {
         // TODO: Define how the update will happen.
@@ -70,7 +75,39 @@ export default {
       }
     });
 
-    return { initialData, submitted };
+    // Components names on Form.IO definition that will be manipulated.
+    const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
+    const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
+    const OFFERINGS_DROPDOWN_KEY = "offeringIWillBeAttending";
+
+    const formLoaded = async (form: any) => {
+      await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
+    };
+
+    const formChanged = async (form: any, event: any) => {
+      if (event.changed.component.key === LOCATIONS_DROPDOWN_KEY) {
+        await formioDataLoader.loadProgramsForLocation(
+          form,
+          +event.changed.value,
+          PROGRAMS_DROPDOWN_KEY,
+        );
+      }
+
+      if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
+        const locationId = +formioUtils.getComponentValue(
+          form,
+          LOCATIONS_DROPDOWN_KEY,
+        );
+        await formioDataLoader.loadOfferingsForLocation(
+          form,
+          +event.changed.value,
+          locationId,
+          OFFERINGS_DROPDOWN_KEY,
+        );
+      }
+    };
+
+    return { initialData, formLoaded, formChanged, submitted };
   },
 };
 </script>
