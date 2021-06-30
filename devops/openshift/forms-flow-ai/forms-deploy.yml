@@ -51,7 +51,7 @@ objects:
                     secretKeyRef:
                       key: formio_root_password
                       name: ${FORMIO_SECRET}
-              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}
+              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:
                 - containerPort: 3001

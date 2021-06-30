@@ -4,7 +4,7 @@
 FROM docker-remote.artifacts.developer.gov.bc.ca/maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
 
 # set working directory
-WORKDIR /bpm/
+WORKDIR /bpm
 
 RUN apt-get update \
   && apt-get install -y git
