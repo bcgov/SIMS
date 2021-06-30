@@ -141,7 +141,10 @@ objects:
                       key: formio_root_password
                       name: ${FORMIO_SECRET}
                 - name: CAMUNDA_JDBC_USER
-                  value: ${CAMUNDA_JDBC_USER}
+                  vvalueFrom:
+                    secretKeyRef:
+                      key: db_username
+                      name: ${FORMIO_SECRET}
                 - name: CAMUNDA_HIKARI_VALID_TIMEOUT
                   value: ${CAMUNDA_HIKARI_VALID_TIMEOUT}
                 - name: CAMUNDA_JOB_WAIT_TIME_MILLIS
@@ -249,7 +252,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${NAME}:${IMAGE_STREAM_TAG}
-              namespace: ${NAMESPACE}
+              namespace: ${TOOLS_NAMESPACE}
           type: ImageChange
 
 parameters:
@@ -265,7 +268,7 @@ parameters:
     description: The image tag to pull for the deployment.
     required: true
     value: ""
-  - name: NAMESPACE
+  - name: TOOLS_NAMESPACE
     description: The location for your image streams (Tools Workspace).
     required: true
     value: ""
@@ -293,9 +296,6 @@ parameters:
     description: CAMUNDA_JDBC_DRIVER
     required: true
     value: "org.postgresql.Driver"
-  - name: CAMUNDA_JDBC_USER
-    description: CAMUNDA_JDBC_USER
-    required: true
   - name: CAMUNDA_HIKARI_VALID_TIMEOUT
     description: CAMUNDA_HIKARI_VALID_TIMEOUT
     required: true

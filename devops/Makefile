@@ -10,7 +10,7 @@ export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), apps.silver.devops.gov.bc.ca)
-export HOST_PREFIX := $(or $(HOST_PREFIX), dev-)
+export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest.gov.bc.ca/clp-cgi/logoff.cgi)
@@ -81,6 +81,14 @@ endef
 
 define FORM_AI_FORMS_URL
 "$(HOST_PREFIX)aest-ffa-forms.$(DOMAIN)"
+endef
+
+define FORM_AI_BPM_DEPLOY_TEMPLATE_PATH
+"openshift/forms-flow-ai/bpm-deploy.yml"
+endef
+
+define FORM_AI_BPM_URL
+"$(HOST_PREFIX)aest-ffa-bpm.$(DOMAIN)"
 endef
 
 define FORMIO_FORMS_NAME
@@ -341,5 +349,14 @@ deploy-forms-flow-forms:
 	test -n "$(BUILD_REF)"
 	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
-	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p FFA_FORMS_URL=$(FORM_AI_FORMS_URL) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f ${FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_FORMS_NAME) -p FFA_FORMS_URL=$(FORM_AI_FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_FORMS_NAME))
+
+deploy-forms-flow-bpm:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(HOST_PREFIX)"
+	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f ${FORM_AI_BPM_DEPLOY_TEMPLATE_PATH} -p NAME=$(FORMIO_BPM_NAME) -p CAMUNDA_URL=$(FORM_AI_BPM_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(FORMIO_BPM_NAME))

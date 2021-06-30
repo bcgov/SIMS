@@ -7,7 +7,7 @@
 FROM docker-remote.artifacts.developer.gov.bc.ca/node:12.2.0-alpine
 
 # set working directory
-WORKDIR /forms/
+WORKDIR /forms
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)

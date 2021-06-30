@@ -2,7 +2,7 @@
 FROM docker-remote.artifacts.developer.gov.bc.ca/node:12.4.0-alpine as build-stage
 
 # set working directory
-WORKDIR /web/
+WORKDIR /web
 
 # add `/web/node_modules/.bin` to $PATH
 ENV PATH /web/node_modules/.bin:$PATH

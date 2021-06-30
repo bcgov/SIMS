@@ -51,7 +51,7 @@ objects:
                     secretKeyRef:
                       key: formio_root_password
                       name: ${FORMIO_SECRET}
-              image: ${NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
+              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}
               name: ${NAME}
               ports:
                 - containerPort: 3001
@@ -99,7 +99,7 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              namespace: "${NAMESPACE}"
+              namespace: "${TOOLS_NAMESPACE}"
               name: "${NAME}:${IMAGE_STREAM_TAG}"
           type: ImageChange
     status: {}
@@ -149,11 +149,11 @@ parameters:
       server instance.
     required: true
     value: forms-flow-forms
-  - name: NAMESPACE
-    displayName: Image Namespace
+  - name: TOOLS_NAMESPACE
+    displayName: Image TOOLS_NAMESPACE
     required: true
     description:
-      The namespace of the OpenShift project containing the imagestream for
+      The TOOLS_NAMESPACE of the OpenShift project containing the imagestream for
       the application.
   - name: FORMIO_SECRET
     description: Secrets are referred from this.
@@ -163,6 +163,8 @@ parameters:
     displayName: FFA_FORMS_URL
     required: true
     description: Forms Flow AI Forms URL
+  - name: IMAGE_REGISTRY
+    value: image-registry.openshift-image-registry.svc:5000
   - name: IMAGE_STREAM_TAG
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod

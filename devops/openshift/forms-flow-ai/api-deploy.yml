@@ -105,7 +105,7 @@ objects:
                     secretKeyRef:
                       key: WEB_API_BASE_URL
                       name: ${FORMIO_SECRET}
-              image: ${NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
+              image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
           ports:
             - containerPort: 5000
@@ -122,7 +122,7 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              namespace: "${NAMESPACE}"
+              namespace: "${TOOLS_NAMESPACE}"
               name: "${NAME}:${IMAGE_STREAM_TAG}"
           type: ImageChange
     status: {}
@@ -163,11 +163,11 @@ parameters:
       server instance.
     required: true
     value: forms-flow-api
-  - name: NAMESPACE
-    displayName: Image Namespace
+  - name: TOOLS_NAMESPACE
+    displayName: Image TOOLS_NAMESPACE
     required: true
     description:
-      The namespace of the OpenShift project containing the imagestream for
+      The TOOLS_NAMESPACE of the OpenShift project containing the imagestream for
       the application.
     value: ""
   - name: FORMIO_SECRET
