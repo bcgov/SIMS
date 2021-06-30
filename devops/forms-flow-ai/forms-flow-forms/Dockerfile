@@ -30,10 +30,10 @@ RUN npm install
 #   DEBUG=formio:*
 ENV DEBUG=""
 
-COPY . /forms-flow-forms/app/
+COPY . /forms/
 
 RUN set -x \
-  && chmod -R 777 /forms-flow-forms/app/
+  && chmod -R 777 /forms/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
