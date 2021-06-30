@@ -36,7 +36,10 @@ objects:
           containers:
             - env:
                 - name: FORMSFLOW_API_CORS_ORIGINS
-                  value: ${FORMSFLOW_API_CORS_ORIGINS}
+                  alueFrom:
+                    secretKeyRef:
+                      key: FORMSFLOW_API_CORS_ORIGINS
+                      name: ${FORMIO_SECRET}
                 - name: MONGODB_URI
                   valueFrom:
                     secretKeyRef:
@@ -205,7 +208,3 @@ parameters:
     displayName: WEBAPI_URL
     description: Route to access FFA WEB API
     required: true
-  - name: FORMSFLOW_API_CORS_ORIGINS
-    displayName: FORMSFLOW_API_CORS_ORIGINS
-    description: API CORS origin
-    value: "*"

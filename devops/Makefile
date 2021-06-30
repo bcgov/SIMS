@@ -39,6 +39,22 @@ define DB_NAME
 "SIMSDB"
 endef
 
+define FORMIO_FORMS_NAME
+"forms-flow-forms"
+endef
+
+define FORMIO_BPM_NAME
+"forms-flow-bpm"
+endef
+
+define FORMIO_API_NAME
+"forms-flow-api"
+endef
+
+define FORMIO_WEB_NAME
+"forms-flow-web"
+endef
+
 define HAMONGO_DB_TEMPLATE_PATH
 "openshift/forms-flow-ai/database/mongo-ha.yml"
 endef
@@ -99,20 +115,16 @@ define FORM_AI_API_URL
 "$(HOST_PREFIX)aest-ffa-api.$(DOMAIN)"
 endef
 
-define FORMIO_FORMS_NAME
-"forms-flow-forms"
+define FORM_AI_WEB_DEPLOY_TEMPLATE_PATH
+"openshift/forms-flow-ai/web-deploy.yml"
 endef
 
-define FORMIO_BPM_NAME
-"forms-flow-bpm"
+define FORM_AI_WEB_URL
+"$(HOST_PREFIX)aest-ffa-serviceflow.$(DOMAIN)"
 endef
 
-define FORMIO_API_NAME
-"forms-flow-api"
-endef
-
-define FORMIO_WEB_NAME
-"forms-flow-web"
+define WEB_PARAM_PATH
+"openshift/forms-flow-ai/web-config.yml"
 endef
 
 define FORMIO_SOURCE_REPO_URL
@@ -144,19 +156,22 @@ oc-deploy-api: | print-status deploy-api
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
+
 oc-build-forms-flow-forms: | print-status build-forms-flow-forms
-oc-deploy-forms-flow-forms: | print-status deploy-forms-flow-forms
 oc-build-forms-flow-bpm: | print-status build-forms-flow-bpm
-oc-deploy-forms-flow-bpm: | print-status deploy-forms-flow-bpm
 oc-build-forms-flow-api: | print-status build-forms-flow-api
-oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
 oc-build-forms-flow-web: | print-status build-forms-flow-web
-oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
+
 oc-deploy-ha-mongo: | print-status deploy-ha-mongo
 oc-deploy-forms-flow-db-secrets: | print-status deploy-forms-flow-db-secrets
 oc-create-ffa-bpm-db: | print-status create-ffa-bpm-db
 oc-create-ffa-api-db: | print-status create-ffa-api-db
 oc-deploy-forms-flow-secrets: | print-status deploy-forms-flow-secrets
+
+oc-deploy-forms-flow-forms: | print-status deploy-forms-flow-forms
+oc-deploy-forms-flow-bpm: | print-status deploy-forms-flow-bpm
+oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
+oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -377,3 +392,12 @@ deploy-forms-flow-api:
 	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_API_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMIO_API_NAME) -p WEBAPI_URL=$(FORM_AI_API_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_API_NAME))
+
+deploy-forms-flow-web:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(HOST_PREFIX)"
+	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f $(FORM_AI_WEB_DEPLOY_TEMPLATE_PATH) --param-file=$(WEB_PARAM_PATH) -p NAME=$(FORMIO_WEB_NAME) -p FFAWEB_URL=$(FORM_AI_WEB_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(FORMIO_WEB_NAME))

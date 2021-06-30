@@ -44,8 +44,6 @@ objects:
             "REACT_APP_KEYCLOAK_CLIENT": "forms-flow-web",
             "REACT_APP_WEB_BASE_URL": "${REACT_APP_WEB_BASE_URL}",
             "REACT_APP_ANONYMOUS_ID": "${REACT_APP_ANONYMOUS_ID}",
-            "REACT_APP_INSIGHT_API_BASE": "${REACT_APP_INSIGHT_API_BASE}",
-            "REACT_APP_INSIGHTS_API_KEY": "{REACT_APP_INSIGHTS_API_KEY}",
             "REACT_APP_WEBSOCKET_ENCRYPT_KEY": "{REACT_APP_WEBSOCKET_ENCRYPT_KEY}",
             "REACT_APP_KEYCLOAK_URL_REALM": "${REALM}",
             "REACT_APP_KEYCLOAK_URL": "${REACT_APP_KEYCLOAK_URL}",
@@ -188,12 +186,12 @@ parameters:
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.
     required: true
-    value: 100m
+    value: 250m
   - name: CPU_LIMIT
     displayName: Resources CPU Limit
     description: The resources CPU limit (in cores) for this build.
     required: true
-    value: 750m
+    value: 500m
   - name: MEMORY_REQUEST
     displayName: Resources Memory Request
     description: The resources Memory request (in Mi, Gi, etc) for this build.
@@ -203,7 +201,7 @@ parameters:
     displayName: Resources Memory Limit
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
-    value: 2Gi
+    value: 1Gi
   - name: KC_MOUNT_PATH
     displayName: Mount config directory.
     description: The path to where the app config directory will get mounted.
@@ -253,14 +251,6 @@ parameters:
   - name: REACT_APP_API_SERVER_URL
     displayName: REACT_APP_API_SERVER_URL
     description: Route to access Forms Flow AI Web site
-    required: true
-  - name: REACT_APP_INSIGHT_API_BASE
-    displayName: REACT_APP_INSIGHT_API_BASE
-    description:
-    required: true
-  - name: REACT_APP_INSIGHTS_API_KEY
-    displayName: REACT_APP_INSIGHTS_API_KEY
-    description:
     required: true
   - name: REACT_APP_WEBSOCKET_ENCRYPT_KEY
     displayName: REACT_APP_WEBSOCKET_ENCRYPT_KEY
