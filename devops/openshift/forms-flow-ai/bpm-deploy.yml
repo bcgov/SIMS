@@ -3,13 +3,6 @@ kind: Template
 metadata:
   name: forms-flow-bpm
 objects:
-  - apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      labels:
-        app: ${NAME}
-      name: ${NAME}-mail-config
-
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
@@ -114,8 +107,6 @@ objects:
                       name: ${FORMIO_SECRET}
                 - name: DEBUG
                   value: "False"
-                - name: MAIL_CONFIG
-                  value: /app/mail-config.properties
                 - name: TZ
                   value: UTC
                 - name: CAMUNDA_MAX_POOLSIZE
@@ -217,31 +208,19 @@ objects:
                 successThreshold: 1
                 timeoutSeconds: 3
               resources:
-                limits:
-                  cpu: 3
-                  memory: 5Gi
                 requests:
-                  cpu: 1
-                  memory: 2Gi
+                  cpu: "${CPU_REQUEST}"
+                  memory: "${MEMORY_REQUEST}"
+                limits:
+                  cpu: "${CPU_LIMIT}"
+                  memory: "${MEMORY_LIMIT}"
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
-              volumeMounts:
-                - mountPath: /app/mail-config.properties
-                  name: ${NAME}-mail-config
-                  subPath: mail-config.properties
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           schedulerName: default-scheduler
           securityContext: {}
           terminationGracePeriodSeconds: 30
-          volumes:
-            - configMap:
-                defaultMode: 420
-                items:
-                  - key: mail-config.properties
-                    path: mail-config.properties
-                name: ${NAME}-mail-config
-              name: ${NAME}-mail-config
       test: false
       triggers:
         - type: ConfigChange
@@ -349,3 +328,23 @@ parameters:
   - name: WEBSOCKET_SECURITY_ORIGIN
     description: WEBSOCKET_SECURITY_ORIGIN
     value: ""
+  - name: CPU_REQUEST
+    displayName: Resources CPU Request
+    description: The resources CPU request (in cores) for this build.
+    required: true
+    value: 250m
+  - name: CPU_LIMIT
+    displayName: Resources CPU Limit
+    description: The resources CPU limit (in cores) for this build.
+    required: true
+    value: 500m
+  - name: MEMORY_REQUEST
+    displayName: Resources Memory Request
+    description: The resources Memory request (in Mi, Gi, etc) for this build.
+    required: true
+    value: 100Mi
+  - name: MEMORY_LIMIT
+    displayName: Resources Memory Limit
+    description: The resources Memory limit (in Mi, Gi, etc) for this build.
+    required: true
+    value: 1Gi
