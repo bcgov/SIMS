@@ -91,6 +91,14 @@ define FORM_AI_BPM_URL
 "$(HOST_PREFIX)aest-ffa-bpm.$(DOMAIN)"
 endef
 
+define FORM_AI_API_DEPLOY_TEMPLATE_PATH
+"openshift/forms-flow-ai/api-deploy.yml"
+endef
+
+define FORM_AI_API_URL
+"$(HOST_PREFIX)aest-ffa-api.$(DOMAIN)"
+endef
+
 define FORMIO_FORMS_NAME
 "forms-flow-forms"
 endef
@@ -357,6 +365,15 @@ deploy-forms-flow-bpm:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(HOST_PREFIX)"
-	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying forms-flow-bpm with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_BPM_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMIO_BPM_NAME) -p CAMUNDA_URL=$(FORM_AI_BPM_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_BPM_NAME))
+
+deploy-forms-flow-api:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(HOST_PREFIX)"
+	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
+	@oc -n $(NAMESPACE) process -f $(FORM_AI_API_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMIO_API_NAME) -p WEBAPI_URL=$(FORM_AI_API_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,dc/$(FORMIO_API_NAME))

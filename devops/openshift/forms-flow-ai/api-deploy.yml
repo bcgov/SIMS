@@ -35,6 +35,8 @@ objects:
         spec:
           containers:
             - env:
+                - name: FORMSFLOW_API_CORS_ORIGINS
+                  value: ${FORMSFLOW_API_CORS_ORIGINS}
                 - name: MONGODB_URI
                   valueFrom:
                     secretKeyRef:
@@ -183,12 +185,12 @@ parameters:
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.
     required: true
-    value: 100m
+    value: 250m
   - name: CPU_LIMIT
     displayName: Resources CPU Limit
     description: The resources CPU limit (in cores) for this build.
     required: true
-    value: 750m
+    value: 500m
   - name: MEMORY_REQUEST
     displayName: Resources Memory Request
     description: The resources Memory request (in Mi, Gi, etc) for this build.
@@ -198,23 +200,12 @@ parameters:
     displayName: Resources Memory Limit
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
-    value: 2Gi
-  - name: KEYCLOAK_REALM
-    displayName: KEYCLOAK_REALM
-    description: KEYCLOAK_REALM
-    required: true
-  - name: KEYCLOAK_URL
-    description: The URL used to connnect to the OIDC provider.
-    required: true
+    value: 1Gi
   - name: WEBAPI_URL
     displayName: WEBAPI_URL
     description: Route to access FFA WEB API
     required: true
-  - name: PATRONI_USERNAME
-    displayName: PATRONI_USERNAME
-    description: PATRONI_USERNAME
-    required: true
-  - name: PATRONI_PASSWORD
-    displayName: PATRONI_PASSWORD
-    description: PATRONI_PASSWORD
-    required: true
+  - name: FORMSFLOW_API_CORS_ORIGINS
+    displayName: FORMSFLOW_API_CORS_ORIGINS
+    description: API CORS origin
+    value: "*"
