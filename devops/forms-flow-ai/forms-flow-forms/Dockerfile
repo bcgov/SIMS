@@ -6,6 +6,8 @@
 # hub.docker.com/r/_/node/
 FROM docker-remote.artifacts.developer.gov.bc.ca/node:12.2.0-alpine
 
+WORKDIR /forms-flow-forms/app
+
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
 RUN apk update && \
@@ -15,10 +17,11 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/forms-flow-ai/
-RUN cp -r /tmp/forms-flow-ai/forms-flow-forms/. /forms/
+RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /forms/
 
-WORKDIR /forms
+## Include details of the required dependencies
+RUN cp /forms/forms-flow-forms/package-lock.json /forms-flow-forms/app/package-lock.json
+RUN cp /forms/forms-flow-forms/package.json /forms-flow-forms/app/package.json
 
 ENV PATH /forms/node_modules/.bin:$PATH
 
@@ -29,10 +32,10 @@ RUN npm install
 #   DEBUG=formio:*
 ENV DEBUG=""
 
-COPY . /forms/
+COPY . /forms-flow-forms/app/
 
 RUN set -x \
-  && chmod -R 777 /forms/
+  && chmod -R 777 /forms-flow-forms/app/
 
 # This will initialize the application based on
 # some questions to the user (login email, password, etc.)
