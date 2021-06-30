@@ -173,6 +173,14 @@ oc-deploy-forms-flow-bpm: | print-status deploy-forms-flow-bpm
 oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
 oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
 
+oc-build-forms-flow-ai: | print-status build-forms-flow-forms build-forms-flow-bpm build-forms-flow-api build-forms-flow-web
+
+oc-forms-flow-ai-db: | print-status oc-deploy-forms-flow-db-secrets oc-create-ffa-bpm-db oc-create-ffa-api-db
+
+oc-forms-flow-ai-secrets: | print-status oc-deploy-forms-flow-secrets
+
+oc-deploy-forms-flow-ai: | print-status deploy-forms-flow-forms deploy-forms-flow-bpm deploy-forms-flow-api deploy-forms-flow-web
+
 print-status:
 	@echo " +---------------------------------------------------------+ "
 	@echo " | Current Settings                                        | "
