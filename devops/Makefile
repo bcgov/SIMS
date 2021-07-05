@@ -192,7 +192,8 @@ database-backup-build:
 	test -n "$(BACKUP_APP_NAME)"
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
-		-p NAME=$(BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=v1 | oc -n $(BUILD_NAMESPACE) create -f -
+		-p NAME=$(BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
+		-p BASE_IMAGE_FOR_BUILD=artifacts.developer.gov.bc.ca/docker-remote/centos/postgresql-12-centos7:20200917-804ef01 | oc -n $(BUILD_NAMESPACE) create -f -
 
 database-backup-build-delete:
 	test -n "$(NAMESPACE)"
@@ -229,6 +230,10 @@ database-backup-deploy:
   	-p ENVIRONMENT_NAME=$(NAMESPACE) \
 		-p CONFIG_MAP_NAME=$(BACKUP_APP_NAME)-conf \
 		-p VERIFICATION_VOLUME_NAME=$(BACKUP_APP_NAME)-verification-pvc \
+		-p DATABASE_SERVER_NAME=PATRONI_MASTER \
+		-p DATABASE_SECRET_NAME=patroni-creds \
+		-p DATABASE_SECRET_USER_KEY_NAME=superuser-username \
+		-p DATABASE_SECRET_PASSWORD_KEY_NAME=superuser-password \
   	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) DB Backups' | oc -n $(NAMESPACE) create -f -
 
 database-backup-deploy-delete:
