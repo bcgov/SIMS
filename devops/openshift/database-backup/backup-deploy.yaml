@@ -30,7 +30,6 @@ objects:
         matchLabels:
           backup: "true"
           env: ${TAG_NAME}
-
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:

@@ -28,6 +28,8 @@ objects:
       strategy:
         type: Docker
         dockerStrategy:
+          pullSecret:
+            name: artifactory-secret-credential
           from:
             kind: DockerImage
             name: ${BASE_IMAGE_FOR_BUILD}
@@ -71,4 +73,4 @@ parameters:
     displayName: FROM Image Tag
     description: Base image to build from.  Docker creds or Artificatory setup may be needed to alleviate docker rate-limiting
     required: true
-    value: docker.io/centos/postgresql-12-centos7:20200917-804ef01
+    value: artifacts.developer.gov.bc.ca/docker-remote/centos/postgresql-12-centos7:20200917-804ef01
