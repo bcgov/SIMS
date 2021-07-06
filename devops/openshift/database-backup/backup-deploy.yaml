@@ -103,6 +103,7 @@ objects:
         app: ${APP_NAME}
         role: ${ROLE}
         env: ${TAG_NAME}
+        app.kubernetes.io/part-of: ${GROUP_LABEL}
     spec:
       strategy:
         type: Recreate
@@ -449,3 +450,8 @@ parameters:
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
     value: 0Mi
+  - name: GROUP_LABEL
+    displayName: Group label
+    description: Group label for backup structure.
+    required: true
+    value: DB_Backups

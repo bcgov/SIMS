@@ -14,7 +14,9 @@ export HOST_PREFIX := $(or $(HOST_PREFIX), dev-)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest.gov.bc.ca/clp-cgi/logoff.cgi)
-export BACKUP_APP_NAME := $(or $(BACKUP_APP_NAME), sims-backup)
+export BACKUP_POSTGRESQL_APP_NAME := $(or $(BACKUP_POSTGRESQL_APP_NAME), postgresql-backup)
+export BACKUP_MONGODB_APP_NAME := $(or $(BACKUP_MONGODB_APP_NAME), mongodb-backup)
+export BACKUP_CONFIGMAP_NAME := $(or $(BACKUP_CONFIGMAP_NAME), backup-conf)
 
 define BUILD_TAG
 "$(BUILD_REF)-${BUILD_ID}"
@@ -57,8 +59,16 @@ oc-deploy-api: | print-status deploy-api
 oc-create-db: | print-status create-db
 oc-build-web: | print-status build-web
 oc-deploy-web: | print-status deploy-web
-oc-database-backup-init: | print-status database-backup-build database-backup-configmap database-backup-deploy
-oc-database-backup-delete: | print-status database-backup-build-delete database-backup-configmap-delete database-backup-deploy-delete
+# Create/delete backup structure
+# Create/delete config map shared accross postgresql and mongodb.
+oc-db-backup-configmap-init: | print-status db-backup-configmap
+oc-db-backup-configmap-delete: | print-status db-backup-configmap
+# Create/delete structire for postgresql.
+oc-db-backup-init-postgresql: | print-status db-backup-build-postgresql db-backup-deploy-postgresql
+oc-db-backup-delete-postgresql: | print-status db-backup-build-delete-postgresql db-backup-deploy-delete-postgresql
+# Create/delete structire for mongodb.
+oc-db-backup-init-mongodb: | print-status db-backup-build-mongodb db-backup-deploy-mongodb
+oc-db-backup-delete-mongodb: | print-status db-backup-build-delete-mongodb db-backup-deploy-delete-mongodb
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -187,63 +197,118 @@ deploy-web:
 	$(call rollout_and_wait,dc/$(Web))
 
 # Create database backup structure (build/configmap/deploy)
-database-backup-build:
+
+# Create the config map to be shared by POSTGRES and mongodb.
+db-backup-configmap:
+	test -n "$(NAMESPACE)"
+	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
+	test -n "$(BACKUP_MONGODB_APP_NAME)"
+	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
+	oc -n $(NAMESPACE) create configmap $(BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/backup.conf
+
+db-backup-configmap-delete:
+	test -n "$(NAMESPACE)"
+	@echo "+\n++ Removing configmap resoures for database backups on $(NAMESPACE)\n+"
+	oc -n $(NAMESPACE) delete configmap/$(BACKUP_CONFIGMAP_NAME)
+
+# Create the POSTGRES structure
+db-backup-build-postgresql:
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_APP_NAME)"
+	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
 	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
-		-p NAME=$(BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
+		-p NAME=$(BACKUP_POSTGRESQL_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
 		-p BASE_IMAGE_FOR_BUILD=artifacts.developer.gov.bc.ca/docker-remote/centos/postgresql-12-centos7:20200917-804ef01 | oc -n $(BUILD_NAMESPACE) create -f -
 
-database-backup-build-delete:
+db-backup-build-delete-postgresql:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_APP_NAME)"
+	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Removing build resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(BUILD_NAMESPACE) delete is/$(BACKUP_APP_NAME) bc/$(BACKUP_APP_NAME)
+	oc -n $(BUILD_NAMESPACE) delete is/$(BACKUP_POSTGRESQL_APP_NAME) bc/$(BACKUP_POSTGRESQL_APP_NAME)
 
-database-backup-configmap:
-	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_APP_NAME)"
-	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) create configmap $(BACKUP_APP_NAME)-conf --from-file=./openshift/database-backup/backup.conf
-	oc -n $(NAMESPACE) label configmap $(BACKUP_APP_NAME)-conf app=$(BACKUP_APP_NAME)
-
-database-backup-configmap-delete:
-	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_APP_NAME)"
-	@echo "+\n++ Removing configmap resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) delete configmap/$(BACKUP_APP_NAME)-conf
-
-database-backup-deploy:
+db-backup-deploy-postgresql:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BACKUP_APP_NAME)"
+	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Creating deploy config resoures for database backups on $(NAMESPACE)\n+"
 	oc -n $(NAMESPACE) process -f ./openshift/database-backup/backup-deploy.yaml \
-  	-p NAME=$(BACKUP_APP_NAME) \
+  	-p NAME=$(BACKUP_POSTGRESQL_APP_NAME) \
   	-p IMAGE_NAMESPACE=$(BUILD_NAMESPACE) \
-  	-p SOURCE_IMAGE_NAME=$(BACKUP_APP_NAME) \
+  	-p SOURCE_IMAGE_NAME=$(BACKUP_POSTGRESQL_APP_NAME) \
   	-p TAG_NAME=v1 \
-  	-p BACKUP_VOLUME_NAME=$(BACKUP_APP_NAME)-pvc -p BACKUP_VOLUME_SIZE=20Gi \
+		-p FTP_SECRET_KEY=$(BACKUP_POSTGRESQL_APP_NAME)-ftp-secret \
+  	-p BACKUP_VOLUME_NAME=$(BACKUP_POSTGRESQL_APP_NAME)-pvc \
+		-p BACKUP_VOLUME_SIZE=20Gi \
   	-p VERIFICATION_VOLUME_SIZE=5Gi \
   	-p ENVIRONMENT_NAME=$(NAMESPACE) \
-		-p CONFIG_MAP_NAME=$(BACKUP_APP_NAME)-conf \
-		-p VERIFICATION_VOLUME_NAME=$(BACKUP_APP_NAME)-verification-pvc \
+		-p CONFIG_MAP_NAME=$(BACKUP_CONFIGMAP_NAME) \
+		-p VERIFICATION_VOLUME_NAME=$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
 		-p DATABASE_SERVER_NAME=PATRONI_MASTER \
 		-p DATABASE_SECRET_NAME=patroni-creds \
 		-p DATABASE_SECRET_USER_KEY_NAME=superuser-username \
 		-p DATABASE_SECRET_PASSWORD_KEY_NAME=superuser-password \
-  	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) DB Backups' | oc -n $(NAMESPACE) create -f -
+  	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' | oc -n $(NAMESPACE) create -f -
 
-database-backup-deploy-delete:
+db-backup-deploy-delete-postgresql:
 	test -n "$(NAMESPACE)"
-	test -n "$(BACKUP_APP_NAME)"
+	test -n "$(BACKUP_POSTGRESQL_APP_NAME)"
 	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
 	oc -n $(NAMESPACE) delete \
-		pvc/$(BACKUP_APP_NAME)-pvc \
-  	pvc/$(BACKUP_APP_NAME)-verification-pvc \
-  	secret/$(BACKUP_APP_NAME) \
-  	secret/ftp-secret \
-  	dc/$(BACKUP_APP_NAME) \
-  	networkpolicy/$(BACKUP_APP_NAME)
+		pvc/$(BACKUP_POSTGRESQL_APP_NAME)-pvc \
+  	pvc/$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
+  	secret/$(BACKUP_POSTGRESQL_APP_NAME) \
+  	secret/$(BACKUP_POSTGRESQL_APP_NAME)-ftp-secret \
+  	dc/$(BACKUP_POSTGRESQL_APP_NAME) \
+  	networkpolicy/$(BACKUP_POSTGRESQL_APP_NAME)
+	
+# Create the MONGODB structure
+db-backup-build-mongodb:
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BACKUP_MONGODB_APP_NAME)"
+	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
+	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
+		-p NAME=$(BACKUP_MONGODB_APP_NAME) OUTPUT_IMAGE_TAG=v1 \
+		-p BASE_IMAGE_FOR_BUILD=artifacts.developer.gov.bc.ca/redhat-docker-remote/rhscl/mongodb-36-rhel7 | oc -n $(BUILD_NAMESPACE) create -f -
+
+db-backup-build-delete-mongodb:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BACKUP_MONGODB_APP_NAME)"
+	@echo "+\n++ Removing build resoures for database backups on $(NAMESPACE)\n+"
+	oc -n $(BUILD_NAMESPACE) delete is/$(BACKUP_MONGODB_APP_NAME) bc/$(BACKUP_MONGODB_APP_NAME)
+
+db-backup-deploy-mongodb:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(BACKUP_MONGODB_APP_NAME)"
+	@echo "+\n++ Creating deploy config resoures for database backups on $(NAMESPACE)\n+"
+	oc -n $(NAMESPACE) process -f ./openshift/database-backup/backup-deploy.yaml \
+  	-p NAME=$(BACKUP_MONGODB_APP_NAME) \
+  	-p IMAGE_NAMESPACE=$(BUILD_NAMESPACE) \
+  	-p SOURCE_IMAGE_NAME=$(BACKUP_MONGODB_APP_NAME) \
+  	-p TAG_NAME=v1 \
+		-p FTP_SECRET_KEY=$(BACKUP_MONGODB_APP_NAME)-ftp-secret \
+  	-p BACKUP_VOLUME_NAME=$(BACKUP_MONGODB_APP_NAME)-pvc \
+		-p BACKUP_VOLUME_SIZE=5Gi \
+  	-p VERIFICATION_VOLUME_SIZE=1Gi \
+  	-p ENVIRONMENT_NAME=$(NAMESPACE) \
+		-p CONFIG_MAP_NAME=$(BACKUP_CONFIGMAP_NAME) \
+		-p VERIFICATION_VOLUME_NAME=$(BACKUP_MONGODB_APP_NAME)-verification-pvc \
+		-p DATABASE_SERVER_NAME=MONGO \
+		-p DATABASE_SECRET_NAME=mongodb-creds \
+		-p DATABASE_SECRET_USER_KEY_NAME=username \
+		-p DATABASE_SECRET_PASSWORD_KEY_NAME=password \
+  	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) MONGO DB Backups' | oc -n $(NAMESPACE) create -f -
+
+db-backup-deploy-delete-mongodb:
+	test -n "$(NAMESPACE)"
+	test -n "$(BACKUP_MONGODB_APP_NAME)"
+	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
+	oc -n $(NAMESPACE) delete \
+		pvc/$(BACKUP_MONGODB_APP_NAME)-pvc \
+  	pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc \
+  	secret/$(BACKUP_MONGODB_APP_NAME) \
+  	secret/$(BACKUP_MONGODB_APP_NAME)-ftp-secret \
+  	dc/$(BACKUP_MONGODB_APP_NAME) \
+  	networkpolicy/$(BACKUP_MONGODB_APP_NAME)
