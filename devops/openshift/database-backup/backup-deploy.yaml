@@ -454,4 +454,4 @@ parameters:
     displayName: Group label
     description: Group label for backup structure.
     required: true
-    value: DB_Backups
+    value: backups
