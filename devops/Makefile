@@ -19,6 +19,10 @@ define BUILD_TAG
 "$(BUILD_REF)-$(BUILD_ID)"
 endef
 
+define BUILD_TEMPLATE_PATH
+"openshift/docker-build.yml"
+endef
+
 define API
 "api-$(APP_NAME)"
 endef
@@ -132,11 +136,11 @@ define FORMIO_SOURCE_REPO_URL
 endef
 
 define FORMIO_SOURCE_REPO_BRANCH
-"master"
+"RC4.0.0"
 endef
 
 define SOURCE_REPOSITORY_REF
-"master"
+"main"
 endef
 
 define SOURCE_CONTEXT_DIR
@@ -174,11 +178,8 @@ oc-deploy-forms-flow-api: | print-status deploy-forms-flow-api
 oc-deploy-forms-flow-web: | print-status deploy-forms-flow-web
 
 oc-build-forms-flow-ai: | print-status build-forms-flow-forms build-forms-flow-bpm build-forms-flow-api build-forms-flow-web
-
 oc-forms-flow-ai-db: | print-status oc-deploy-forms-flow-db-secrets oc-create-ffa-bpm-db oc-create-ffa-api-db
-
 oc-forms-flow-ai-secrets: | print-status oc-deploy-forms-flow-secrets
-
 oc-deploy-forms-flow-ai: | print-status deploy-forms-flow-forms deploy-forms-flow-bpm deploy-forms-flow-api deploy-forms-flow-web
 
 print-status:
