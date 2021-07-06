@@ -286,7 +286,6 @@ create-new-db:
 deploy-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
 	test -n "$(KEYCLOAK_REALM)"
 	test -n "$(KEYCLOAK_CLIENT_STUDENT)"
 	test -n "$(KEYCLOAK_CLIENT_INSTITUTION)"
@@ -303,7 +302,6 @@ deploy-api:
 deploy-web:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
 	@echo "+\n++ Deploying Web with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml -p NAME=$(Web) -p HOST_NAME=$(HOST) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(Web):$(BUILD_TAG)"  | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(Web))
@@ -378,8 +376,6 @@ deploy-forms-flow-secrets:
 deploy-forms-flow-forms:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Deploying forms-flow-forms with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_FORMS_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMIO_FORMS_NAME) -p FFA_FORMS_URL=$(FORM_AI_FORMS_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_FORMS_NAME))
@@ -387,8 +383,6 @@ deploy-forms-flow-forms:
 deploy-forms-flow-bpm:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Deploying forms-flow-bpm with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_BPM_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMIO_BPM_NAME) -p CAMUNDA_URL=$(FORM_AI_BPM_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_BPM_NAME))
@@ -396,8 +390,6 @@ deploy-forms-flow-bpm:
 deploy-forms-flow-api:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_API_DEPLOY_TEMPLATE_PATH) -p NAME=$(FORMIO_API_NAME) -p WEBAPI_URL=$(FORM_AI_API_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_API_NAME))
@@ -405,8 +397,6 @@ deploy-forms-flow-api:
 deploy-forms-flow-web:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_WEB_DEPLOY_TEMPLATE_PATH) --param-file=$(WEB_PARAM_PATH) -p NAME=$(FORMIO_WEB_NAME) -p FFAWEB_URL=$(FORM_AI_WEB_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_WEB_NAME))
