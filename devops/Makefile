@@ -261,7 +261,7 @@ db-backup-deploy-delete-postgresql:
   	secret/$(BACKUP_POSTGRESQL_APP_NAME)-ftp-secret \
   	dc/$(BACKUP_POSTGRESQL_APP_NAME) \
   	networkpolicy/$(BACKUP_POSTGRESQL_APP_NAME)
-# The below PVCs are not deleted to avoid data loss in case of a human error.
+# The below PVCs are not deleted.
 # pvc/$(BACKUP_POSTGRESQL_APP_NAME)-pvc \
 # pvc/$(BACKUP_POSTGRESQL_APP_NAME)-verification-pvc \
 	
@@ -315,6 +315,6 @@ db-backup-deploy-delete-mongodb:
   	secret/$(BACKUP_MONGODB_APP_NAME)-ftp-secret \
   	dc/$(BACKUP_MONGODB_APP_NAME) \
   	networkpolicy/$(BACKUP_MONGODB_APP_NAME)
-# The below PVCs are not deleted to avoid data loss in case of a human error.
+# The below PVCs are not deleted.
 # pvc/$(BACKUP_MONGODB_APP_NAME)-pvc
 # pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc
