@@ -1,4 +1,8 @@
-import { SummaryEducationProgramDto, EducationProgramDto } from "../../types";
+import {
+  SummaryEducationProgramDto,
+  EducationProgramDto,
+  OptionItemDto,
+} from "../../types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class EducationProgramApi extends HttpBaseClient {
@@ -68,6 +72,21 @@ export class EducationProgramApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as EducationProgramDto;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getLocationProgramsOptionList(
+    locationId: number,
+  ): Promise<OptionItemDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/education-program/location/${locationId}/options-list`,
+        this.addAuthHeader(),
+      );
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

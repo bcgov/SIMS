@@ -5,6 +5,7 @@ import {
   InstitutionUserDto,
   InstitutionLocationUserAuthDto,
   LocationStateForStore,
+  OptionItemDto,
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -143,6 +144,19 @@ export class InstitutionLocationApi extends HttpBaseClient {
         header || this.addAuthHeader(),
       );
       return res?.data as LocationStateForStore;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getOptionsList(): Promise<OptionItemDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        "institution/location/options-list",
+        this.addAuthHeader(),
+      );
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

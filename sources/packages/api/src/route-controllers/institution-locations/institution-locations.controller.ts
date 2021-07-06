@@ -26,8 +26,8 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { OptionItem } from "../../types";
 
-@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
@@ -39,6 +39,7 @@ export class InstitutionLocationsController extends BaseController {
     super();
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
   @Post()
   async create(
@@ -58,8 +59,9 @@ export class InstitutionLocationsController extends BaseController {
     }
 
     //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userToken.userName,
+    );
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find a institution associated with the current user name.",
@@ -67,29 +69,15 @@ export class InstitutionLocationsController extends BaseController {
     }
 
     // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation =
-      await this.locationService.createLocation(
-        institutionDetails.id,
-        dryRunSubmissionResult.data,
-      );
-
-    // Save a form to formIO to handle the location approval.
-    const submissionResult = await this.formService.submission(
-      "institutionLocation",
-      payload,
+    const createdInstitutionLocation = await this.locationService.createLocation(
+      institutionDetails.id,
+      dryRunSubmissionResult.data,
     );
-
-    // Create an application entry on FormFlow.ai, using the
-    // previously created form definition on formIO.
-    await this.formsFlowService.createApplication({
-      formId: submissionResult.formId,
-      formUrl: submissionResult.absolutePath,
-      submissionId: submissionResult.submissionId,
-    });
 
     return createdInstitutionLocation.id;
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
@@ -98,8 +86,9 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
     //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userToken.userName,
+    );
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find a institution associated with the current user name.",
@@ -116,16 +105,16 @@ export class InstitutionLocationsController extends BaseController {
     return updateResult.affected;
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations.
-    const InstitutionLocationData =
-      await this.locationService.getAllInstitutionLocations(
-        userToken.authorizations.institutionId,
-      );
+    const InstitutionLocationData = await this.locationService.getAllInstitutionLocations(
+      userToken.authorizations.institutionId,
+    );
     return InstitutionLocationData.map((el: InstitutionLocation) => {
       return {
         id: el.id,
@@ -156,6 +145,22 @@ export class InstitutionLocationsController extends BaseController {
     });
   }
 
+  /**
+   * Get a key/value pair list of all locations
+   * from all institution available.
+   * @returns key/value pair list of all locations.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get("options-list")
+  async getOptionsList(): Promise<OptionItem[]> {
+    const locations = await this.locationService.getLocations();
+    return locations.map((location) => ({
+      id: location.id,
+      description: location.name,
+    }));
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(":locationId")
   async getInstitutionLocation(
@@ -163,8 +168,9 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionLocation> {
     //To retrive institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
+    const institutionDetails = await this.institutionService.getInstituteByUserName(
+      userToken.userName,
+    );
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find the Location associated.",

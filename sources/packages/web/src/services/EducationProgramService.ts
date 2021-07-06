@@ -1,11 +1,11 @@
-import { SummaryEducationProgramDto, EducationProgramDto } from "../types";
+import { EducationProgramDto, OptionItemDto } from "../types";
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
   // Share Instance
   private static instance: EducationProgramService;
 
-  public static get shared(): any {
+  public static get shared(): EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
@@ -29,5 +29,11 @@ export class EducationProgramService {
     programId: number,
   ): Promise<EducationProgramDto> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
+  }
+
+  public async getLocationProgramsOptionList(
+    locationId: number,
+  ): Promise<OptionItemDto[]> {
+    return ApiClient.EducationProgram.getLocationProgramsOptionList(locationId);
   }
 }

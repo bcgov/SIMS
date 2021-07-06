@@ -86,11 +86,11 @@ objects:
         name: ${NAME}
 parameters:
   - name: NAME
-    description: | 
+    description: |
       The name of the application for labelling all artifacts.
     displayName: Application Name
     value: patroni
-  - name: PROJECT 
+  - name: PROJECT
     value: sims
   - name: PATRONI_SUPERUSER_USERNAME
     description: |
@@ -109,8 +109,7 @@ parameters:
     displayName: Replication Username
     value: replication
   - name: PATRONI_REPLICATION_PASSWORD
-    description: 
-      Password of the replication account for initialization.
+    description: Password of the replication account for initialization.
     displayName: Replication Password
     generate: expression
     from: "[a-zA-Z0-9]{32}"

@@ -7,7 +7,7 @@
 FROM docker-remote.artifacts.developer.gov.bc.ca/node:12.2.0-alpine
 
 # set working directory
-WORKDIR /forms/
+WORKDIR /forms
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine
 # (note: using pinned versions to ensure immutable build environment)
@@ -18,7 +18,8 @@ RUN apk update && \
   apk add git
 
 # Clone code
-RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /forms/
+RUN git clone -b ${FORMIO_SOURCE_REPO_BRANCH} ${FORMIO_SOURCE_REPO_URL} /tmp/forms-flow-ai/
+RUN cp -r /tmp/forms-flow-ai/forms-flow-forms/. /forms/
 
 # Using an alternative package install location
 # to allow overwriting the /app folder at runtime
@@ -29,8 +30,9 @@ ENV NPM_PACKAGES=/.npm-packages \
 RUN echo "prefix = $NPM_PACKAGES" >> ~/.npmrc
 
 # Include details of the required dependencies
-COPY ./package.json $NPM_PACKAGES/
-COPY ./package-lock.json $NPM_PACKAGES/
+RUN mkdir -p $NPM_PACKAGES/
+RUN cp package.json $NPM_PACKAGES/
+RUN cp package-lock.json $NPM_PACKAGES/
 
 # Use "Continuous Integration" to install as-is from package-lock.json
 RUN npm ci --prefix=$NPM_PACKAGES
