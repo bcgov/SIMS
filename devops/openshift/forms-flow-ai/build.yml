@@ -1,0 +1,74 @@
+# Generalised template for building from Dockerfile in a git repo.
+# Includes importing the base image as an imagestream.
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}
+objects:
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: ${NAME}
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+    spec:
+      resources:
+        limits:
+          cpu: ${CPU_LIMIT}
+          memory: ${MEMORY_LIMIT}
+        requests:
+          cpu: ${CPU_REQUEST}
+          memory: ${MEMORY_REQUEST}
+      output:
+        to:
+          kind: ImageStreamTag
+          name: "${NAME}:${TAG}"
+      runPolicy: SerialLatestOnly
+      source:
+        contextDir: "${SOURCE_CONTEXT_DIR}"
+        git:
+          uri: "${SOURCE_REPOSITORY_URL}"
+          ref: "${SOURCE_REPOSITORY_REF}"
+        type: Git
+      strategy:
+        dockerStrategy:
+          dockerfilePath: Dockerfile
+          env:
+            - name: FORMIO_SOURCE_REPO_URL
+              value: "${FORMIO_SOURCE_REPO_URL}"
+            - name: FORMIO_SOURCE_REPO_BRANCH
+              value: "${FORMIO_SOURCE_REPO_BRANCH}"
+        type: Docker
+      triggers:
+        - type: ImageChange
+          imageChange: {}
+        - type: ConfigChange
+parameters:
+  - name: NAME
+    required: true
+  - name: SUFFIX
+  - name: SOURCE_CONTEXT_DIR
+    required: true
+  - name: SOURCE_REPOSITORY_URL
+    required: true
+    value: https://github.com/bcgov/SIMS.git
+  - name: SOURCE_REPOSITORY_REF
+    required: true
+  - name: FORMIO_SOURCE_REPO_URL
+    required: true
+  - name: FORMIO_SOURCE_REPO_BRANCH
+    required: true
+  - name: TAG
+    required: true
+  - name: CPU_LIMIT
+    value: "2"
+  - name: MEMORY_LIMIT
+    value: "8Gi"
+  - name: CPU_REQUEST
+    value: "1"
+  - name: MEMORY_REQUEST
+    value: "2Gi"
