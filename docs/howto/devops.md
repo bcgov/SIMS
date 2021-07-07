@@ -88,12 +88,12 @@ Under `ROOT/devops/openshift/`, all the OpenShift related template file are stor
 
 #### Database Backups
 
-Under `ROOT/devops/openshift/database-backup`, all the OpenShift database backups related templates file are stored. The templates were copied and adpated from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container).
+Under `ROOT/devops/openshift/database-backup`, all the OpenShift database backups related templates file are stored. The templates were copied and adapted from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container).
 
 The backups are executed using two different containers, one for Postgres databases and other for MongoDb databases. It follows what is decribed on [backup-container-options](https://github.com/BCDevOps/backup-container#backup-container-options) as a mixed environment where we have different containers to execute the backups for different databases types, but both are sharing the same backup configuration.
 
-- `backup-build.yaml`: build template used to Postgres and Mongo DBs.
-- `backup-deploy.yaml`: deploy template used to Postgres and Mongo.
+- `backup-build.yaml`: build template used by Postgres and Mongo DBs.
+- `backup-deploy.yaml`: deploy template used by Postgres and Mongo.
 - `backup-example.conf`: sample configuration for backups.
 - `backup.conf`: current backup configuration shared by Postgres and Mongo DBs.
 
