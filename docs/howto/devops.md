@@ -14,6 +14,7 @@ N.B: ROOT means repository root directory
     - [OpenShift Login](#openshift-login)
     - [OpenShift Infrastructure](#openshift-infrastructure)
     - [OpenShift Template files](#openshift-template-files)
+      - [Database Backups](#database-backups)
     - [OpenShift Setup](#openshift-setup)
   - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
@@ -85,6 +86,17 @@ Under `ROOT/devops/openshift/`, all the OpenShift related template file are stor
 - `security-init.yml`: Network and security polices template to enable any namespace for application dev.
 - `createdb-job.yml`: Job template to create separate database in patroni postgres database.
 
+#### Database Backups
+
+Under `ROOT/devops/openshift/database-backup`, all the OpenShift database backups related templates file are stored. The templates were copied and adpated from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container).
+
+The backups are executed using two different containers, one for Postgres databases and other for MongoDb databases. It follows what is decribed on [backup-container-options](https://github.com/BCDevOps/backup-container#backup-container-options) as a mixed environment where we have different containers to execute the backups for different databases types, but both are sharing the same backup configuration.
+
+- `backup-build.yaml`: build template used to Postgres and Mongo DBs.
+- `backup-deploy.yaml`: deploy template used to Postgres and Mongo.
+- `backup-example.conf`: sample configuration for backups.
+- `backup.conf`: current backup configuration shared by Postgres and Mongo DBs.
+
 ### OpenShift Setup
 
 We have created a setup of make helper commands, Now we can perform following steps to setup any namespace.
@@ -119,9 +131,21 @@ We have created a setup of make helper commands, Now we can perform following st
 
 - Deploy Web app: `make oc-deploy-web`
 
+- Create backup config (shared for Postgres and Mongo): `make oc-db-backup-configmap-init`
+
+- Build and deploy Postgress DB backup structure: `make oc-db-backup-init-postgresql`
+
+- Build and deploy Mongo DB backup structure: `make oc-db-backup-init-mongodb`
+
 Some additional commands,
 
 - Create new database: `make create-new-db NEW_DB=newdbname JOB_NAME=openshift-jobname`
+  
+- Delete the config map for databases config: `oc-db-backup-configmap-delete`
+
+- Delete the resources associate with Postgres database (PVCs are not deleted): `oc-db-backup-delete-postgresql`
+
+- Delete the resources associate with Mongo database (PVCs are not deleted): `oc-db-backup-delete-mongodb`
 
 ## CI-CD Pipeline And Github Actions
 
