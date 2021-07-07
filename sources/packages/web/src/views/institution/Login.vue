@@ -17,11 +17,11 @@
       <v-row justify="center" class="m-3">
         <v-btn color="primary" @click="login">
           <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-          Login with BCSC
+          Login with BCeID
         </v-btn>
         <v-btn color="primary" @click="login">
           <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
-          Sign Up with BCSC
+          Sign Up with BCeID
         </v-btn>
       </v-row>
     </v-card-actions>
