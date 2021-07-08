@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { CreateApplicationPayload } from "../../types";
-import { ConfigService } from "..";
+import { ConfigService, TokensService } from "..";
 import axios from "axios";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { TokensService } from "../auth/tokens.service";
 
 /**
  * Service to handle interactions with FormsFlow.ai.

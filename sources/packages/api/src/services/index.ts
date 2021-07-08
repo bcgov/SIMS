@@ -1,6 +1,9 @@
+export * from "./config/config.service";
+export * from "./auth/keycloak/keycloak.service";
+export * from "./auth/token-cache.service";
+export * from "./auth/tokens.service";
 export * from "./student/student.service";
 export * from "./user/user.service";
-export * from "./config/config.service";
 export * from "./archive-db/archive-db.service";
 export * from "./bceid/bceid.service";
 export * from "./bceid/bceid.service.provider";
@@ -18,6 +21,3 @@ export * from "./institution-user-auth/institution-user-auth.service";
 export * from "./education-program/education-program.service";
 export * from "./education-program-offering/education-program-offering.service";
 export * from "./workflow/workflow-actions.service";
-export * from "./auth/token-cache.service";
-export * from "./auth/tokens.service";
-export * from "./auth/keycloak/keycloak.service";

@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { WorkflowConfig } from "../../types";
-import { ConfigService } from "../config/config.service";
+import { ConfigService, TokensService } from "..";
 import axios from "axios";
 import { WorkflowStartResult } from "./workflow.models";
-import { TokensService } from "../auth/tokens.service";
 
 @Injectable()
 export class WorkflowService {

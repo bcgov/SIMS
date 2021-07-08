@@ -1,9 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService } from "../config/config.service";
-import { TokenCacheService } from "./token-cache.service";
+import { KeycloakService, ConfigService, TokenCacheService } from "..";
 import { ClientCredential } from "../../types";
 import { TokenCacheResponse } from "./token-cache.service.models";
-import { KeycloakService } from "./keycloak/keycloak.service";
 import { JwtService } from "@nestjs/jwt";
 
 /**
