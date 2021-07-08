@@ -8,7 +8,7 @@ import { TokenCacheResponse } from "./token-cache.service.models";
 // expiration and the below const is defined as 30, the token will
 // be renewed if the token was acquired 9min30s ago or if it is
 // already expired.
-const TOKEN_RENEWAL_SECONDS = 30;
+export const TOKEN_RENEWAL_SECONDS = 30;
 
 /**
  * Keeps a token that could be shared accross the application
