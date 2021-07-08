@@ -1,6 +1,6 @@
 <template>
   <v-container class="center-container application-container">
-    <div class="p-card p-m-4">
+    <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
         <formio
           formName="SFAA2022-23"
@@ -50,9 +50,7 @@ export default {
 
     onMounted(async () => {
       if (props.id) {
-        const dataToLoad = await ApiClient.Application.getApplicationData(
-          props.id,
-        );
+        const dataToLoad = await ApiClient.Application.getApplicationData(props.id);
         initialData.value = dataToLoad;
       } else {
         //Get the student info from api call
@@ -89,20 +87,17 @@ export default {
         await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
-          PROGRAMS_DROPDOWN_KEY,
+          PROGRAMS_DROPDOWN_KEY
         );
       }
 
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        const locationId = +formioUtils.getComponentValue(
-          form,
-          LOCATIONS_DROPDOWN_KEY,
-        );
+        const locationId = +formioUtils.getComponentValue(form, LOCATIONS_DROPDOWN_KEY);
         await formioDataLoader.loadOfferingsForLocation(
           form,
           +event.changed.value,
           locationId,
-          OFFERINGS_DROPDOWN_KEY,
+          OFFERINGS_DROPDOWN_KEY
         );
       }
     };
