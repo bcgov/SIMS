@@ -27,6 +27,11 @@ export function needRenewJwtToken(
   return new Date() > expiredDate;
 }
 
+/**
+ * Creates a Date from a jwt token exp attribute.
+ * @param time number from jwt token exp attribute.
+ * @returns expiration expressed as a Date.
+ */
 export function tokenTimeToDate(time: number) {
   return new Date(time * 1000);
 }
