@@ -38,12 +38,10 @@ export class ConfigService {
           password: process.env.FORMS_SA_PASSWORD,
         },
       },
-      formsFlow: {
-        formFlowApiUrl: process.env.FORMS_FLOW_API_URL,
-        credential: {
-          clientId: process.env.SIMS_API_CLIENT_ID,
-          clientSecret: process.env.SIMS_API_CLIENT_SECRET,
-        },
+      formFlowApiUrl: process.env.FORMS_FLOW_API_URL,
+      simsApiClientCredential: {
+        clientId: process.env.SIMS_API_CLIENT_ID,
+        clientSecret: process.env.SIMS_API_CLIENT_SECRET,
       },
       zoneBsFTP: {
         host: process.env.ZONE_B_SFTP_SERVER,

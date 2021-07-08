@@ -1,14 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import {
-  CreateApplicationPayload,
-  FormsFlowConfig,
-  WorkflowConfig,
-} from "../../types";
+import { CreateApplicationPayload } from "../../types";
 import { ConfigService } from "..";
 import axios from "axios";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { KeycloakService } from "../auth/keycloak/keycloak.service";
+import { TokensService } from "../auth/tokens.service";
 
 /**
  * Service to handle interactions with FormsFlow.ai.
@@ -18,18 +14,18 @@ export class FormsFlowService {
   @InjectLogger()
   logger: LoggerService;
 
-  private config: FormsFlowConfig;
+  private formFlowApiUrl: string;
 
   constructor(
-    private readonly keycloakService: KeycloakService,
+    private readonly tokensService: TokensService,
     configService: ConfigService,
   ) {
-    this.config = configService.getConfig().formsFlow;
+    this.formFlowApiUrl = configService.getConfig().formFlowApiUrl;
   }
 
   public async createApplication(payload: CreateApplicationPayload) {
     try {
-      const endpoint = `${this.config.formFlowApiUrl}/application/create`;
+      const endpoint = `${this.formFlowApiUrl}/application/create`;
       const authHeader = await this.createAuthHeader();
       await axios.post(endpoint, payload, authHeader);
     } catch (error) {
@@ -40,12 +36,9 @@ export class FormsFlowService {
 
   private async createAuthHeader(): Promise<any> {
     // TODO: Hold and reuse the ticket until it is valid.
-    const tokenResponse = await this.keycloakService.getTokenFromClientSecret(
-      this.config.credential.clientId,
-      this.config.credential.clientSecret,
-    );
+    const accessToken = await this.tokensService.simsApiClient.getToken();
     return {
-      headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
     };
   }
 }

@@ -9,26 +9,24 @@ import axios from "axios";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import { JwtService } from "@nestjs/jwt";
-import { needRenewJwtToken } from "../../utilities/auth-utils";
+import { TokenCacheService } from "..";
+import { TokenCacheResponse } from "../auth/token-cache.service.models";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
-// Amount of seconds before the token expires that should be
-// considered to renew it. For instance, if a token has 10min
-// expiration and the below const is defined as 30, the token will
-// be renewed if the token was acquired 9min30s ago or if it is
-// already expired.
-const FORMIO_TOKEN_RENEWAL_SECONDS = 30;
 
 @Injectable()
 export class FormService {
-  @InjectLogger()
-  logger: LoggerService;
+  private tokenCacheService: TokenCacheService = null;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.tokenCacheService = new TokenCacheService("Form.IO", () =>
+      this.getToken(),
+    );
+  }
 
   get config(): FormsConfig {
     return this.configService.getConfig().forms;
@@ -130,46 +128,26 @@ export class FormService {
    * @returns header to be added to HTTP request.
    */
   private async createAuthHeader() {
-    const token = await this.tryGetCachedToken();
+    const token = await this.tokenCacheService.getToken();
     return {
       headers: {
-        [FORMIO_TOKEN_NAME]: token.token,
+        [FORMIO_TOKEN_NAME]: token,
       },
     };
   }
 
   /**
-   * Cached token for Form.IO service, managed
-   * by the method tryGetCachedToken.
+   * Executes the token request and (alongside with TokenCacheService)
+   * allows it to be cache until it expires.
+   * @returns token and expiration to be cached.
    */
-  private cachedToken: {
-    token: any;
-    decoded: any;
-  };
-
-  /**
-   * Tries get the token from the cache if it is not expired
-   * or about to be expired, otherwise get a new one.
-   * @returns Cached token or a new one.
-   */
-  private async tryGetCachedToken(): Promise<{ token: any; decoded: any }> {
-    const needRenewToken =
-      !this.cachedToken || // If the token is not present, retrieve it.
-      needRenewJwtToken(
-        +this.cachedToken.decoded["exp"],
-        FORMIO_TOKEN_RENEWAL_SECONDS,
-      ); // If the token is about to expire, retrieve it.
-
-    if (needRenewToken) {
-      const token = await this.getAuthToken();
-      const decoded = this.jwtService.decode(token);
-      this.cachedToken = {
-        token,
-        decoded,
-      };
-    }
-
-    return this.cachedToken;
+  private async getToken(): Promise<TokenCacheResponse> {
+    const token = await this.getAuthToken();
+    const decoded = this.jwtService.decode(token);
+    return {
+      accessToken: token,
+      expiresIn: +decoded["exp"],
+    };
   }
 
   /**
@@ -177,8 +155,6 @@ export class FormService {
    * @returns the token that is needed to authentication on the formio API.
    */
   private async getAuthToken() {
-    // TODO: Cache the token ultil it expires and just request a new one
-    // when there is no token in the cache or it is about to expire.
     const authResponse = await this.getUserLogin();
     return authResponse.headers[FORMIO_TOKEN_NAME];
   }
@@ -217,4 +193,7 @@ export class FormService {
       throw excp;
     }
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

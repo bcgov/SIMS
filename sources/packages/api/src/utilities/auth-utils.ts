@@ -26,3 +26,7 @@ export function needRenewJwtToken(
   );
   return new Date() > expiredDate;
 }
+
+export function tokenTimeToDate(time: number) {
+  return new Date(time * 1000);
+}
