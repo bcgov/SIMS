@@ -5,9 +5,10 @@ export interface IConfig {
   bceid: BCeIDConfig;
   workflow: WorkflowConfig;
   forms: FormsConfig;
-  formsFlow: FormsFlowConfig;
+  formFlowApiUrl: string;
   zoneBsFTP: SFTPConfig;
   CRAIntegration: CRAIntegrationConfig;
+  simsApiClientCredential: ClientCredential;
 }
 
 export interface IAuthConfig {
@@ -70,11 +71,6 @@ export interface WorkflowConfig {
 export interface FormsConfig {
   formsUrl: string;
   serviceAccountCredential: UserPasswordCredential;
-}
-
-export interface FormsFlowConfig {
-  formFlowApiUrl: string;
-  credential: ClientCredential;
 }
 
 export interface SFTPConfig {
