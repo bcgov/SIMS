@@ -57,4 +57,8 @@ export class StudentService {
   async synchronizeFromUserInfo(): Promise<void> {
     return await ApiClient.Students.synchronizeFromUserInfo();
   }
+
+  async getProgramYears(): Promise<void> {
+    await ApiClient.Students.getProgramYears();
+  }
 }

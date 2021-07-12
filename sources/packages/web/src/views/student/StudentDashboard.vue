@@ -11,9 +11,7 @@
       <v-btn
         color="primary"
         class="p-button-raised"
-        @click="
-          $router.push({ name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM })
-        "
+        @click="$router.push({ name: StudentRoutesConst.PROGRAM_YEARS })"
       >
         <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
         Start New Application

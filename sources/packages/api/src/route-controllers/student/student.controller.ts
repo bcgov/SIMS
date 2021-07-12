@@ -8,11 +8,16 @@ import {
   InternalServerErrorException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { StudentService, UserService } from "../../services";
+import {
+  StudentService,
+  UserService,
+  ProgramYearService,
+} from "../../services";
 import {
   CreateStudentDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
+  ProgramYearDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -26,6 +31,7 @@ export class StudentController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly studentService: StudentService,
+    private readonly programYearService: ProgramYearService,
   ) {
     super();
   }
@@ -133,5 +139,22 @@ export class StudentController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     await this.studentService.synchronizeFromUserInfo(userToken);
+  }
+
+  @Get("/program-year")
+  async getProgramYears(): Promise<ProgramYearDto[]> {
+    const programYears = await this.programYearService.getProgramYears();
+
+    if (!programYears) {
+      throw new NotFoundException(`Program Years are not found.`);
+    }
+
+    return programYears.map((programYear) => {
+      const item = new ProgramYearDto();
+      item.programYear = programYear.programYear;
+      item.programYearDesc = programYear.programYearDesc;
+      item.formName = programYear.formName;
+      return item;
+    });
   }
 }

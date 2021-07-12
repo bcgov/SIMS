@@ -14,6 +14,7 @@ export const StudentRoutesConst = {
   DYNAMIC_FINANCIAL_APP_FORM: Symbol(),
   NOTIFICATIONS: Symbol(),
   NOTIFICATIONS_SETTINGS: Symbol(),
+  PROGRAM_YEARS: Symbol(),
 };
 export const InstitutionRoutesConst = {
   //Institution
