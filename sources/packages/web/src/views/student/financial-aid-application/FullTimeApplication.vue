@@ -1,6 +1,6 @@
 <template>
   <v-container class="center-container application-container">
-    <div class="p-card p-m-4">
+    <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
         <formio
           formName="SFAA2022-23"
