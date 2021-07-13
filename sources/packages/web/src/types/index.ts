@@ -18,3 +18,4 @@ export * from "./StoreState";
 export * from "./contracts/InstituteContract";
 export * from "./contracts/InstitutionRouteMeta";
 export * from "./contracts/OptionItemDto";
+export * from "./contracts/FileUploadContracts";

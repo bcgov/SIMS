@@ -8,3 +8,11 @@ export class CreateApplicationDto {
 export class GetApplicationDataDto {
   data: any;
 }
+
+export interface ApplicationFileCreateDto {
+  fileName: string;
+  uniqueFileName: string;
+  url: string;
+  size: number;
+  mimetype: string;
+}

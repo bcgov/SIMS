@@ -1,3 +1,4 @@
+import { FormUploadFileInfo } from "@/types";
 import { AxiosRequestConfig } from "axios";
 import ApiClient from "../services/http/ApiClient";
 
@@ -9,24 +10,37 @@ export default class FormUploadService {
     dir: string,
     evt: any,
     url: string,
-  ) {
+  ): Promise<FormUploadFileInfo> {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("name", fileName);
-    formData.append("dir", dir);
-    console.log(formData);
+    formData.append("uniqueFileName", fileName);
+    formData.append("group", dir);
+    // Configure the request to provide upload progress status.
     const requestConfig: AxiosRequestConfig = { onUploadProgress: evt };
     const uploadResponse = await ApiClient.FileUpload.upload(
       url,
       formData,
       requestConfig,
     );
+
     return {
       storage: storage,
-      name: fileName,
-      url: "http://www.test.com",
-      size: file.size,
-      type: file.type,
+      originalName: uploadResponse.fileName,
+      name: uploadResponse.uniqueFileName,
+      url: uploadResponse.url,
+      size: uploadResponse.size,
+      type: uploadResponse.mimetype,
+    };
+  }
+
+  public async downloadFile(fileInfo: FormUploadFileInfo) {
+    const fileContent = await ApiClient.FileUpload.download(fileInfo.url);
+    return {
+      storage: "base64",
+      url: fileContent,
+      originalName: fileInfo.originalName,
+      name: fileInfo.name,
+      type: fileInfo.type,
     };
   }
 }

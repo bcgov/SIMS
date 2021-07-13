@@ -31,6 +31,11 @@ export class ApplicationFile extends RecordDataModel {
   groupName: string;
 
   @Column({
+    name: "mime_type",
+  })
+  mimeType: string;
+
+  @Column({
     name: "file_content",
     type: "bytea",
   })
