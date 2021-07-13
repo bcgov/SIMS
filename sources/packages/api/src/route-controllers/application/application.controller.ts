@@ -6,6 +6,8 @@ import {
   NotFoundException,
   Param,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -18,10 +20,10 @@ import {
   CreateApplicationDto,
   GetApplicationDataDto,
 } from "./models/application.model";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import { AllowAuthorizedParty, Public, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { FileInterceptor } from "@nestjs/platform-express";
 
-@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
@@ -32,6 +34,7 @@ export class ApplicationController extends BaseController {
     super();
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":id/data")
   async getByApplicationId(
     @Param("id") applicationId: string,
@@ -51,13 +54,14 @@ export class ApplicationController extends BaseController {
     return { data: application.data };
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Post()
   async create(
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
     const submissionResult = await this.formService.dryRunSubmission(
-      "sfaa2022-23",
+      "SFAA2022-23-andrew-2020-07-08",
       payload.data,
     );
 
@@ -78,5 +82,24 @@ export class ApplicationController extends BaseController {
     );
 
     return createdApplication.id;
+  }
+
+  @Post("upload")
+  @UseInterceptors(FileInterceptor("file"))
+  uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body("name") uniqueFileName: string,
+  ) {
+    console.dir(file);
+    console.dir(uniqueFileName);
+  }
+
+  @Get("upload")
+  getUploadFile() {
+    return {
+      url: "http://link.to/file",
+      name: "The_Name_Of_The_File.doc",
+      size: 1000,
+    };
   }
 }
