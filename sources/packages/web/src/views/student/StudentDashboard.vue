@@ -25,6 +25,7 @@
       <v-btn
         color="primary"
         class="p-button-raised"
+        :disabled="!selectedForm"
         @click="
           $router.push({
             name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
