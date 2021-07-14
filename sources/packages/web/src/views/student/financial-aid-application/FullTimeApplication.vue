@@ -3,7 +3,7 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="SFAA2022-23"
+          formName="{{props.selectedForm}}"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
@@ -29,6 +29,10 @@ export default {
     id: {
       type: String,
       required: false,
+    },
+    selectedForm: {
+      type: String,
+      required: true,
     },
   },
   setup(props: any) {

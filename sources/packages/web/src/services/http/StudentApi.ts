@@ -64,12 +64,12 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async getProgramYears(): Promise<ProgramYear> {
+  public async getProgramYears(): Promise<ProgramYear[]> {
     const response = await this.apiClient.get(
       "students/program-year",
       this.addAuthHeader(),
     );
-    const programYear = response.data as ProgramYear;
+    const programYear = response.data as ProgramYear[];
     return programYear;
   }
 }

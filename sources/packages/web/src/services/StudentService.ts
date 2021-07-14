@@ -3,6 +3,7 @@ import Helper from "../helpers/utilfunctions";
 import {
   StudentContact,
   CreateStudent,
+  ProgramYear,
 } from "../types/contracts/StudentContract";
 
 export class StudentService {
@@ -58,7 +59,7 @@ export class StudentService {
     return await ApiClient.Students.synchronizeFromUserInfo();
   }
 
-  async getProgramYears(): Promise<void> {
-    await ApiClient.Students.getProgramYears();
+  async getProgramYears(): Promise<ProgramYear[] | null> {
+    return await ApiClient.Students.getProgramYears();
   }
 }
