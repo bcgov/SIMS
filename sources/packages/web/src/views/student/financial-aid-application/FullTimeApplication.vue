@@ -3,7 +3,7 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="{{props.selectedForm}}"
+          :formName="selectedForm"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"

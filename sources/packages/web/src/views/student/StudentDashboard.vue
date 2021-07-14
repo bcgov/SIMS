@@ -15,6 +15,7 @@
         v-model="selectedForm"
         :options="programYearList"
         optionLabel="name"
+        optionValue="code"
         placeholder="Select a Program Year"
         :style="{ width: '30vw' }"
         @change="onYearChange"
