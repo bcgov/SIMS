@@ -82,7 +82,7 @@ export default {
       });
 
       form.on("submit", (submision: any) => {
-        context.emit("submitted", submision.data);
+        context.emit("submitted", submision.data, form);
       });
     });
 

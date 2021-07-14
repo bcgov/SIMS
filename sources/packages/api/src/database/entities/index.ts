@@ -10,4 +10,6 @@ export * from "./sequence-controls.model";
 export * from "./institution-location.model";
 export * from "./education-program.model";
 export * from "./education-program-offering.model";
-export * from "./application-file.model";
+export * from "./student-file.model";
+export * from "./application.model";
+export * from "./application-student-file.model";

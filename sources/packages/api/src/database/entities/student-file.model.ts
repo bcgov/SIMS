@@ -6,12 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import { Application } from "./application.model";
 import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 
-@Entity({ name: TableNames.ApplicationsFiles })
-export class ApplicationFile extends RecordDataModel {
+@Entity({ name: TableNames.StudentsFiles })
+export class StudentFile extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -40,13 +39,6 @@ export class ApplicationFile extends RecordDataModel {
     type: "bytea",
   })
   fileContent: Buffer;
-
-  @OneToOne(() => Application, { eager: false, cascade: true })
-  @JoinColumn({
-    name: "application_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  application: Application;
 
   @OneToOne(() => Student, { eager: false, cascade: true })
   @JoinColumn({

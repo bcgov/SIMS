@@ -20,7 +20,7 @@ import {
   FormsFlowService,
   KeycloakService,
   TokensService,
-  ApplicationFileService,
+  StudentFileService,
 } from "./services";
 import {
   UserController,
@@ -76,7 +76,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     InstitutionUserAuthService,
     EducationProgramService,
     EducationProgramOfferingService,
-    ApplicationFileService,
+    StudentFileService,
   ],
 })
 export class AppModule {}

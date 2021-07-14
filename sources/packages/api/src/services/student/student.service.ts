@@ -32,6 +32,10 @@ export class StudentService extends RecordDataModelService<Student> {
     return student;
   }
 
+  async getStudentByUserId(userId: number): Promise<Student> {
+    return this.repo.findOne({ user: { id: userId } });
+  }
+
   async createStudent(
     userInfo: UserInfo,
     otherInfo: CreateStudentDto,
@@ -62,9 +66,8 @@ export class StudentService extends RecordDataModelService<Student> {
 
     // Get PD status from Archive DB
     try {
-      const result: StudentLegacyData[] = await this.archiveDB.getIndividualPDStatus(
-        student,
-      );
+      const result: StudentLegacyData[] =
+        await this.archiveDB.getIndividualPDStatus(student);
       if (result && result.length > 0 && result[0].disability === "Y") {
         student.studentPDVerified = true;
       }

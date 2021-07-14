@@ -4,7 +4,12 @@ import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { Application } from "../../database/entities/application.model";
+import {
+  Application,
+  ApplicationStudentFile,
+  Student,
+  StudentFile,
+} from "../../database/entities";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 import { StudentService } from "..";
 
@@ -22,24 +27,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   async createApplication(
-    userInfo: UserInfo,
+    studentId: number,
     applicationDto: CreateApplicationDto,
+    studentFiles: StudentFile[],
   ): Promise<Application> {
-    // Find the student realted to the logged user.
-    const student = await this.studentService.getStudentByUserName(
-      userInfo.userName,
-    );
-    if (!student) {
-      throw new Error(
-        "Not able to find a student associated with the current user name.",
-      );
-    }
-
     // Create the new application.
     const newApplication = new Application();
-    newApplication.student = student;
+    newApplication.student = { id: studentId } as Student;
     newApplication.data = applicationDto.data;
-
+    newApplication.studentFiles = studentFiles.map((file) => {
+      const newFileAssociation = new ApplicationStudentFile();
+      newFileAssociation.studentFile = { id: file.id } as StudentFile;
+      return newFileAssociation;
+    });
     return await this.repo.save(newApplication);
   }
 

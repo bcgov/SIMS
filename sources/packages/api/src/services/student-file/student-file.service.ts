@@ -1,22 +1,22 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { Connection, In } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { ApplicationFile, Student } from "../../database/entities";
-import { CreateApplicationFile } from "./application-file.model";
+import { StudentFile, Student } from "../../database/entities";
+import { CreateApplicationFile } from "./student-file.model";
 
 @Injectable()
-export class ApplicationFileService extends RecordDataModelService<ApplicationFile> {
+export class StudentFileService extends RecordDataModelService<StudentFile> {
   constructor(@Inject("Connection") connection: Connection) {
-    super(connection.getRepository(ApplicationFile));
+    super(connection.getRepository(StudentFile));
   }
 
   async createFile(
     createFile: CreateApplicationFile,
     studentId: number,
-  ): Promise<ApplicationFile> {
-    const newFile = new ApplicationFile();
+  ): Promise<StudentFile> {
+    const newFile = new StudentFile();
     newFile.fileName = createFile.fileName;
     newFile.uniqueFileName = createFile.uniqueFileName;
     newFile.groupName = createFile.groupName;
@@ -29,8 +29,22 @@ export class ApplicationFileService extends RecordDataModelService<ApplicationFi
   async getStudentFile(
     studentId: number,
     uniqueFileName: string,
-  ): Promise<ApplicationFile> {
+  ): Promise<StudentFile> {
     return this.repo.findOne({ uniqueFileName, student: { id: studentId } });
+  }
+
+  async getStudentFiles(
+    studentId: number,
+    uniqueFileNames: string[],
+  ): Promise<StudentFile[]> {
+    return this.repo
+      .createQueryBuilder("studentFile")
+      .where("studentFile.student.id = :studentId", { studentId })
+      .andWhere("studentFile.uniqueFileName IN (:...uniqueFileNames)", {
+        uniqueFileNames,
+      })
+      .select("studentFile.id")
+      .getMany();
   }
 
   @InjectLogger()

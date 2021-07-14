@@ -7,10 +7,20 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UnprocessableEntityException,
+  Param,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
-import { StudentService, UserService } from "../../services";
+import { Response } from "express";
+import {
+  StudentFileService,
+  StudentService,
+  UserService,
+} from "../../services";
 import {
   CreateStudentDto,
+  FileCreateDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
 } from "./models/student.dto";
@@ -20,12 +30,15 @@ import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Readable } from "stream";
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly studentService: StudentService,
+    private readonly fileService: StudentFileService,
   ) {
     super();
   }
@@ -133,5 +146,78 @@ export class StudentController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     await this.studentService.synchronizeFromUserInfo(userToken);
+  }
+
+  @Post("files")
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadFile(
+    @UserToken() userToken: IUserToken,
+    @UploadedFile() file: Express.Multer.File,
+    @Body("uniqueFileName") uniqueFileName: string,
+    @Body("group") groupName: string,
+  ): Promise<FileCreateDto> {
+    console.dir(file);
+    console.dir(uniqueFileName);
+
+    const student = await this.studentService.getStudentByUserName(
+      userToken.userName,
+    );
+
+    const createdFile = await this.fileService.createFile(
+      {
+        fileName: file.originalname,
+        uniqueFileName: uniqueFileName,
+        groupName: groupName,
+        mimeType: file.mimetype,
+        fileContent: file.buffer,
+      },
+      student.id,
+    );
+
+    return {
+      fileName: createdFile.fileName,
+      uniqueFileName: createdFile.uniqueFileName,
+      url: `application/files/${createdFile.uniqueFileName}`,
+      size: createdFile.fileContent.length,
+      mimetype: createdFile.mimeType,
+    };
+  }
+
+  @Get("files/:uniqueFileName")
+  async getUploadedFile(
+    @UserToken() userToken: IUserToken,
+    @Param("uniqueFileName") uniqueFileName: string,
+    @Res() response: Response,
+  ) {
+    const student = await this.studentService.getStudentByUserName(
+      userToken.userName,
+    );
+
+    const studentFile = await this.fileService.getStudentFile(
+      student.id,
+      uniqueFileName,
+    );
+
+    if (!studentFile) {
+      throw new NotFoundException(
+        "Requested file was not found or you do not have access to it.",
+      );
+    }
+
+    response.setHeader("Content-Type", studentFile.mimeType);
+    response.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${studentFile.fileName}`,
+    );
+    response.setHeader(
+      "Content-Length",
+      studentFile.fileContent.length.toString(),
+    );
+
+    const stream = new Readable();
+    stream.push(studentFile.fileContent);
+    stream.push(null);
+
+    stream.pipe(response);
   }
 }

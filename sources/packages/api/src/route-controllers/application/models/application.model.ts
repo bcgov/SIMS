@@ -1,18 +1,8 @@
-import { IsNotEmpty } from "class-validator";
-
-export class CreateApplicationDto {
-  @IsNotEmpty()
+export interface CreateApplicationDto {
   data: any;
+  associatedFiles: string[];
 }
 
-export class GetApplicationDataDto {
+export interface GetApplicationDataDto {
   data: any;
-}
-
-export interface ApplicationFileCreateDto {
-  fileName: string;
-  uniqueFileName: string;
-  url: string;
-  size: number;
-  mimetype: string;
 }
