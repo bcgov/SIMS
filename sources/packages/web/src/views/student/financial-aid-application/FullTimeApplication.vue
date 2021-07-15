@@ -3,7 +3,7 @@
     <div class="p-card p-m-4">
       <div class="p-p-4">
         <formio
-          formName="SFAA2022-23-andrew-2020-07-08"
+          formName="SFAA2022-23"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"

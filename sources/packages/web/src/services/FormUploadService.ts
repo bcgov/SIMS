@@ -41,7 +41,7 @@ export default class FormUploadService {
   public async downloadFile(fileInfo: FormUploadFileInfo) {
     const fileContent = await ApiClient.FileUpload.download(fileInfo.url);
     // Change the storage type to base64 to allow the file to be "downloaded"
-    // using the bytes retrieved instead of juts opening an url.
+    // using the bytes retrieved instead of just opening an url.
     // if we use directly the url we will not have the oportunity to authorize
     // the file download.
     return {

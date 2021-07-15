@@ -62,7 +62,7 @@ export class ApplicationController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
     const submissionResult = await this.formService.dryRunSubmission(
-      "SFAA2022-23-andrew-2020-07-08",
+      "SFAA2022-23",
       payload.data,
     );
 

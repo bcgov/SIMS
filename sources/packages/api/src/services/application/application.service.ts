@@ -1,7 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { UserInfo } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -11,17 +10,13 @@ import {
   StudentFile,
 } from "../../database/entities";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
-import { StudentService } from "..";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
   logger: LoggerService;
 
-  constructor(
-    @Inject("Connection") connection: Connection,
-    private readonly studentService: StudentService,
-  ) {
+  constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
   }

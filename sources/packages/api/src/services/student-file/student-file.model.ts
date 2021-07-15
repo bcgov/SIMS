@@ -1,4 +1,4 @@
-export interface CreateApplicationFile {
+export interface CreateFile {
   fileName: string;
   uniqueFileName: string;
   groupName: string;

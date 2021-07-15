@@ -32,6 +32,16 @@ import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.dec
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
+
+const UPLOAD_LIMITS = {
+  // For multipart forms, the max file size (in bytes).
+  fileSize: 4194304,
+  /** For multipart forms, the max number of file fields (Default: Infinity) */
+  files: 1,
+  /** For multipart forms, the max number of parts (fields + files)(Default: Infinity) */
+  parts: 3,
+};
+
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
 export class StudentController extends BaseController {
@@ -148,17 +158,23 @@ export class StudentController extends BaseController {
     await this.studentService.synchronizeFromUserInfo(userToken);
   }
 
+  /**
+   * Allow files uploads to a particular student.
+   * @param userToken authentication token.
+   * @param file file content.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param groupName friendly name to group files. Currently using
+   * the value from 'Directory' property from form.IO file component.
+   * @returns created file information.
+   */
   @Post("files")
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(FileInterceptor("file", { limits: UPLOAD_LIMITS }))
   async uploadFile(
     @UserToken() userToken: IUserToken,
     @UploadedFile() file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateDto> {
-    console.dir(file);
-    console.dir(uniqueFileName);
-
     const student = await this.studentService.getStudentByUserName(
       userToken.userName,
     );
@@ -183,14 +199,20 @@ export class StudentController extends BaseController {
     };
   }
 
+  /**
+   * Gets a student file validating if the user has the access to it.
+   * @param userToken authentication token.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param response file content.
+   */
   @Get("files/:uniqueFileName")
   async getUploadedFile(
     @UserToken() userToken: IUserToken,
     @Param("uniqueFileName") uniqueFileName: string,
     @Res() response: Response,
   ) {
-    const student = await this.studentService.getStudentByUserName(
-      userToken.userName,
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
     );
 
     const studentFile = await this.fileService.getStudentFile(
@@ -204,15 +226,12 @@ export class StudentController extends BaseController {
       );
     }
 
-    response.setHeader("Content-Type", studentFile.mimeType);
     response.setHeader(
       "Content-Disposition",
       `attachment; filename=${studentFile.fileName}`,
     );
-    response.setHeader(
-      "Content-Length",
-      studentFile.fileContent.length.toString(),
-    );
+    response.setHeader("Content-Type", studentFile.mimeType);
+    response.setHeader("Content-Length", studentFile.fileContent.length);
 
     const stream = new Readable();
     stream.push(studentFile.fileContent);

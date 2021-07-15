@@ -16,7 +16,7 @@ export class StudentService extends RecordDataModelService<Student> {
   @InjectLogger()
   logger: LoggerService;
   constructor(
-    @Inject("Connection") private readonly connection: Connection,
+    @Inject("Connection") connection: Connection,
     private readonly archiveDB: ArchiveDbService,
   ) {
     super(connection.getRepository(Student));
