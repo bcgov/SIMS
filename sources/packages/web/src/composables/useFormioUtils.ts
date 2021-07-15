@@ -14,10 +14,12 @@ export function useFormioUtils() {
     return Utils.getValue(form.submission, componentKey);
   };
 
+  // Search for components of a specifi type.
   const getComponentsOfType = (form: any, type: string): any[] => {
     return Utils.searchComponents(form.components, { type });
   };
 
+  // Get all unique file names from all file components.
   const getAssociatedFiles = (form: any): string[] => {
     const fileComponents = getComponentsOfType(form, "file");
     const associatedFiles: string[] = [];
