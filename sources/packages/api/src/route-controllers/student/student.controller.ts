@@ -35,10 +35,12 @@ import { Readable } from "stream";
 
 const UPLOAD_LIMITS = {
   // For multipart forms, the max file size (in bytes).
+  // 4MB (4194304 bytes).
   fileSize: 4194304,
-  /** For multipart forms, the max number of file fields (Default: Infinity) */
-  files: 1,
-  /** For multipart forms, the max number of parts (fields + files)(Default: Infinity) */
+  // For multipart forms, the max number of file fields.
+  files: 1, //
+  // For multipart forms, the max number of parts (fields + files)
+  // The file + uniqueFileName + group
   parts: 3,
 };
 
@@ -193,7 +195,7 @@ export class StudentController extends BaseController {
     return {
       fileName: createdFile.fileName,
       uniqueFileName: createdFile.uniqueFileName,
-      url: `application/files/${createdFile.uniqueFileName}`,
+      url: `students/files/${createdFile.uniqueFileName}`,
       size: createdFile.fileContent.length,
       mimetype: createdFile.mimeType,
     };
