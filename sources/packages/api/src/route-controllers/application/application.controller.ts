@@ -87,10 +87,10 @@ export class ApplicationController extends BaseController {
       studentFiles,
     );
 
-    // await this.workflow.startApplicationAssessment(
-    //   submissionResult.data.data.workflowName,
-    //   createdApplication.id,
-    // );
+    await this.workflow.startApplicationAssessment(
+      submissionResult.data.data.workflowName,
+      createdApplication.id,
+    );
 
     return createdApplication.id;
   }
