@@ -16,7 +16,7 @@ import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { computed } from "vue";
 import { useStore } from "vuex";
 export default {
-  setup(props: any) {
+  setup() {
     const store = useStore();
     const user = computed(() => store.state.student.profile);
     return {

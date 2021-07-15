@@ -39,7 +39,7 @@ import { SetupContext, onMounted, ref } from "vue";
 import { ProgramYear } from "@/types/contracts/ProgramYearContract";
 export default {
   emits: ["update:formName", "change"],
-  setup(props: any, context: SetupContext) {
+  setup(context: SetupContext) {
     const programYearList = ref();
     const formName = ref();
     const onYearChange = (event: any) => {
