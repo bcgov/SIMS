@@ -54,4 +54,22 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   user: User;
+
+  @Column({
+    name: "pd_date_sent",
+    nullable: true,
+  })
+  StudentPDSentAt?: Date;
+
+  @Column({
+    name: "pd_date_update",
+    nullable: true,
+  })
+  StudentPDUpdateAt?: Date;
+
+  @Column({
+    name: "pd_status",
+    nullable: true,
+  })
+  StudentPDStatus?: boolean;
 }

@@ -9,6 +9,7 @@ export interface IConfig {
   zoneBsFTP: SFTPConfig;
   CRAIntegration: CRAIntegrationConfig;
   simsApiClientCredential: ClientCredential;
+  ATBCIntegration: ATBCIntegrationConfig;
 }
 
 export interface IAuthConfig {
@@ -86,4 +87,13 @@ export interface CRAIntegrationConfig {
   ftpResponseFolder: string;
   programAreaCode: string;
   environmentCode: string;
+}
+
+export interface ATBCIntegrationConfig {
+  ATBCClientCreateEndpoint: string;
+  ATBCSinInfoEndpoint: string;
+  ATBCloginEndpoint: string;
+  ATBCUserName: string;
+  ATBCPassword: string;
+  ATBCApp: string;
 }

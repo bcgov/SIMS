@@ -62,9 +62,8 @@ export class StudentService extends RecordDataModelService<Student> {
 
     // Get PD status from Archive DB
     try {
-      const result: StudentLegacyData[] = await this.archiveDB.getIndividualPDStatus(
-        student,
-      );
+      const result: StudentLegacyData[] =
+        await this.archiveDB.getIndividualPDStatus(student);
       if (result && result.length > 0 && result[0].disability === "Y") {
         student.studentPDVerified = true;
       }
@@ -171,6 +170,38 @@ export class StudentService extends RecordDataModelService<Student> {
     });
     if (studentToUpdate) {
       studentToUpdate.validSIN = validSIN;
+      this.repo.save(studentToUpdate);
+    }
+  }
+
+  /**
+   * Update the PD Sent Date
+   * @param studentId
+   */
+  async updatePDSentDate(studentId: number): Promise<void> {
+    // get the Student Object
+    const studentToUpdate = await this.repo.findOne({
+      id: studentId,
+    });
+    if (studentToUpdate) {
+      studentToUpdate.StudentPDSentAt = new Date();
+      this.repo.save(studentToUpdate);
+    }
+  }
+
+  /**
+   * Update the PD Sent Date
+   * @param studentId
+   * @param status
+   */
+  async updatePDStatusNDate(studentId: number, status: boolean): Promise<void> {
+    // get the Student Object
+    const studentToUpdate = await this.repo.findOne({
+      id: studentId,
+    });
+    if (studentToUpdate) {
+      studentToUpdate.StudentPDStatus = status;
+      studentToUpdate.StudentPDUpdateAt = new Date();
       this.repo.save(studentToUpdate);
     }
   }

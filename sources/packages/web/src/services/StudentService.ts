@@ -3,6 +3,7 @@ import Helper from "../helpers/utilfunctions";
 import {
   StudentContact,
   CreateStudent,
+  StudentFormInfo,
 } from "../types/contracts/StudentContract";
 
 export class StudentService {
@@ -38,7 +39,7 @@ export class StudentService {
     return studentContact;
   }
 
-  async getStudentInfo() {
+  async getStudentInfo(): Promise<StudentFormInfo> {
     const studentInfo = await ApiClient.Students.getStudentInfo();
     const studentInfoAll = {
       ...studentInfo,
@@ -56,5 +57,9 @@ export class StudentService {
    */
   async synchronizeFromUserInfo(): Promise<void> {
     return await ApiClient.Students.synchronizeFromUserInfo();
+  }
+
+  async applyForPDStatus() {
+    return await ApiClient.Students.applyForPDStatus();
   }
 }
