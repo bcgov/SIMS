@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { ATBCIntegrationConfig } from "../../types";
 import { ConfigService } from "../config/config.service";
 import axios from "axios";
 import { LoggerService } from "../../logger/logger.service";
@@ -9,6 +8,7 @@ import {
   ATBCAuthTokenResponse,
 } from "../auth/token-cache.service.models";
 import {
+  ATBCIntegrationConfig,
   ATBCCreateClientResponse,
   ATBCCreateClientPayload,
   ATBCPDCheckerResponse,
@@ -49,13 +49,6 @@ export class ATBCService {
     return authResponse?.accessToken;
   }
 
-  // private createSLCCert() {
-  //   const https = require("https");
-  //   const params = { rejectUnauthorized: false };
-  //   return new https.Agent();
-  //   // return params;
-  // }
-
   /**
    * Executes the authentication on ATBC.
    * @returns the result of a success full authentication or throws an exception
@@ -66,7 +59,7 @@ export class ATBCService {
       const agent = new (require("https").Agent)({
         rejectUnauthorized: false,
       });
-      
+
       const authRequest = await axios.post(
         this.config.ATBCloginEndpoint,
         {

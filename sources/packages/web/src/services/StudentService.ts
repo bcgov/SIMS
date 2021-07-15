@@ -60,6 +60,6 @@ export class StudentService {
   }
 
   async applyForPDStatus() {
-    return await ApiClient.Students.applyForPDStatus();
+    return ApiClient.Students.applyForPDStatus();
   }
 }

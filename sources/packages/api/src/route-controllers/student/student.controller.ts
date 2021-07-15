@@ -190,7 +190,7 @@ export class StudentController extends BaseController {
       if (existingStudent?.StudentPDSentAt)
         msg = `${userToken.userName}'s already applied for PD status`;
       if (
-        !(existingStudent?.StudentPDStatus === null) ||
+        existingStudent?.StudentPDStatus !== null ||
         existingStudent?.studentPDVerified
       )
         msg = `${userToken.userName}'s PD status already captured`;
@@ -240,7 +240,7 @@ export class StudentController extends BaseController {
       if (!existingStudent?.StudentPDSentAt)
         msg = `${userToken.userName}'s profile not created at ATBC`;
       if (
-        !(existingStudent?.StudentPDStatus === null) ||
+        existingStudent?.StudentPDStatus !== null ||
         existingStudent?.studentPDVerified
       )
         msg = `${userToken.userName}'s PD status already captured`;
