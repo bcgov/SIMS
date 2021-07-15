@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In } from "typeorm";
+import { Connection } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import { StudentFile, Student } from "../../database/entities";
@@ -29,7 +29,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.mimeType = createFile.mimeType;
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
-    return await this.repo.save(newFile);
+    return this.repo.save(newFile);
   }
 
   /**
