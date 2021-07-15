@@ -32,17 +32,13 @@ import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.dec
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
+import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 
-const UPLOAD_LIMITS = {
-  // For multipart forms, the max file size (in bytes).
-  // 4MB (4194304 bytes).
-  fileSize: 4194304,
-  // For multipart forms, the max number of file fields.
-  files: 1, //
-  // For multipart forms, the max number of parts (fields + files)
-  // The file + uniqueFileName + group
-  parts: 3,
-};
+// For multipart forms, the max number of file fields.
+const MAX_UPLOAD_FILES = 1;
+// For multipart forms, the max number of parts (fields + files).
+// 3 means 'the file' + uniqueFileName + group.
+const MAX_UPLOAD_PARTS = 3;
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
@@ -170,7 +166,12 @@ export class StudentController extends BaseController {
    * @returns created file information.
    */
   @Post("files")
-  @UseInterceptors(FileInterceptor("file", { limits: UPLOAD_LIMITS }))
+  @UseInterceptors(
+    FileInterceptor("file", {
+      limits: uploadLimits(MAX_UPLOAD_FILES, MAX_UPLOAD_PARTS),
+      fileFilter: defaultFileFilter,
+    }),
+  )
   async uploadFile(
     @UserToken() userToken: IUserToken,
     @UploadedFile() file: Express.Multer.File,

@@ -16,40 +16,52 @@ export default class FormUploadService {
     evt: any,
     url: string,
   ): Promise<FormUploadFileInfo> {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("uniqueFileName", fileName);
-    formData.append("group", dir);
-    // Configure the request to provide upload progress status.
-    const requestConfig: AxiosRequestConfig = { onUploadProgress: evt };
-    const uploadResponse = await ApiClient.FileUpload.upload(
-      url,
-      formData,
-      requestConfig,
-    );
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("uniqueFileName", fileName);
+      formData.append("group", dir);
+      // Configure the request to provide upload progress status.
+      const requestConfig: AxiosRequestConfig = { onUploadProgress: evt };
+      const uploadResponse = await ApiClient.FileUpload.upload(
+        url,
+        formData,
+        requestConfig,
+      );
 
-    return {
-      storage: storage,
-      originalName: uploadResponse.fileName,
-      name: uploadResponse.uniqueFileName,
-      url: uploadResponse.url,
-      size: uploadResponse.size,
-      type: uploadResponse.mimetype,
-    };
+      return {
+        storage: storage,
+        originalName: uploadResponse.fileName,
+        name: uploadResponse.uniqueFileName,
+        url: uploadResponse.url,
+        size: uploadResponse.size,
+        type: uploadResponse.mimetype,
+      };
+    } catch (error) {
+      throw new Error(
+        "there was an unexpected error while uploading the file.",
+      );
+    }
   }
 
   public async downloadFile(fileInfo: FormUploadFileInfo) {
-    const fileContent = await ApiClient.FileUpload.download(fileInfo.url);
-    // Change the storage type to base64 to allow the file to be "downloaded"
-    // using the bytes retrieved instead of just opening an url.
-    // if we use directly the url we will not have the oportunity to authorize
-    // the file download.
-    return {
-      storage: "base64",
-      url: fileContent,
-      originalName: fileInfo.originalName,
-      name: fileInfo.name,
-      type: fileInfo.type,
-    };
+    try {
+      const fileContent = await ApiClient.FileUpload.download(fileInfo.url);
+      // Change the storage type to base64 to allow the file to be "downloaded"
+      // using the bytes retrieved instead of just opening an url.
+      // if we use directly the url we will not have the oportunity to authorize
+      // the file download.
+      return {
+        storage: "base64",
+        url: fileContent,
+        originalName: fileInfo.originalName,
+        name: fileInfo.name,
+        type: fileInfo.type,
+      };
+    } catch (error) {
+      throw new Error(
+        "there was an unexpected error while downloading the file.",
+      );
+    }
   }
 }
