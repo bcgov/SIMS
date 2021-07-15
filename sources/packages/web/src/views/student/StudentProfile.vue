@@ -5,32 +5,38 @@
     information needs to be changed please visit
     <a href="http://id.gov.bc.ca" target="_blank">id.gov.bc.ca</a>.
   </Message>
-  {{ showApplyPDButton }}======================
-  {{
-    studentAllInfo?.validSin &&
-      studentAllInfo?.pdSentDate === null &&
-      studentAllInfo?.pdStatus === null
-  }}=========================== {{ studentAllInfo?.validSin }}^^{{
-    studentAllInfo.pdSentDate
-  }}##{{ studentAllInfo.pdStatus }}
   <span v-if="showApplyPDButton">
-    <v-btn color="primary" @click="applyPDStatus()" v-if="showApplyPDButton">
+    <v-btn
+      color="primary"
+      @click="applyPDStatus()"
+      v-if="showApplyPDButton"
+      :disabled="disableBtn"
+    >
       Apply for PD status
+      <span v-if="disableBtn">
+        &nbsp;&nbsp;
+        <ProgressSpinner style="width:30px;height:25px" strokeWidth="10"
+      /></span>
     </v-btn>
   </span>
-
   <span v-else>
     <Message
-      severity="info"
+      severity="warn"
       :closable="false"
-      v-if="studentAllInfo?.pdSentDate"
+      v-if="
+        studentAllInfo?.pdSentDate &&
+          studentAllInfo?.pdUpdatedDate === null &&
+          studentAllInfo?.pdStatus === null
+      "
     >
       <strong>PD Status: Pending</strong>
     </Message>
     <Message
       severity="success"
       :closable="false"
-      v-if="studentAllInfo?.pdStatus === true"
+      v-if="
+        studentAllInfo?.pdStatus === true || studentAllInfo?.pdVerified === true
+      "
     >
       <strong>PD Status: PD Confirmed</strong>
     </Message>
@@ -56,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
@@ -96,6 +102,7 @@ export default {
     const router = useRouter();
     const toast = useToast();
     const showApplyPDButton = ref();
+    const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
     const getStudentInfo = async () => {
@@ -106,15 +113,28 @@ export default {
       if (
         studentAllInfo.value?.validSin &&
         studentAllInfo.value?.pdSentDate === null &&
-        studentAllInfo.value?.pdStatus === null
+        studentAllInfo.value?.pdStatus === null &&
+        !studentAllInfo.value?.pdVerified
       ) {
         showApplyPDButton.value = true;
       }
     };
     const applyPDStatus = async () => {
-      await StudentService.shared.applyForPDStatus();
+      disableBtn.value = true;
+      try {
+        await StudentService.shared.applyForPDStatus();
+      } catch (error) {
+        toast.add({
+          severity: "error",
+          summary: "Unexpected error",
+          detail:
+            "An error happened during the apply PD process. Please try after sometime.",
+          life: 5000,
+        });
+      }
       await getStudentInfo();
       await appliedPDButton();
+      disableBtn.value = false;
     };
     const changed = (form: any, event: any) => {
       if (
@@ -206,6 +226,7 @@ export default {
       applyPDStatus,
       showApplyPDButton,
       studentAllInfo,
+      disableBtn,
     };
   },
 };

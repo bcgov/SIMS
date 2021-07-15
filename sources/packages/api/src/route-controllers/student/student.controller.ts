@@ -161,11 +161,13 @@ export class StudentController extends BaseController {
     // StudentPDStatus is true if PD Confirmed by ATBC
     // StudentPDStatus is false if PD Denied by ATBC
     // if student has a valid only, he/she should allow for a PD check
+    // if studentPDVerified is true from `SFASDB`, then no need to apply for PD to ATBC
 
     if (
       (existingStudent?.validSIN ?? false) &&
       !existingStudent?.StudentPDSentAt &&
-      existingStudent?.StudentPDStatus === null
+      existingStudent?.StudentPDStatus === null &&
+      !existingStudent?.studentPDVerified
     ) {
       // create client payload
       const payload: ATBCCreateClientPayload = {
@@ -187,7 +189,10 @@ export class StudentController extends BaseController {
         msg = `${userToken.userName}'s sin is not valid`;
       if (existingStudent?.StudentPDSentAt)
         msg = `${userToken.userName}'s already applied for PD status`;
-      if (!(existingStudent?.StudentPDStatus === null))
+      if (
+        !(existingStudent?.StudentPDStatus === null) ||
+        existingStudent?.studentPDVerified
+      )
         msg = `${userToken.userName}'s PD status already captured`;
       throw new NotAcceptableException(msg);
     }
@@ -208,7 +213,8 @@ export class StudentController extends BaseController {
     if (
       (existingStudent?.validSIN ?? false) &&
       existingStudent?.StudentPDSentAt &&
-      existingStudent?.StudentPDStatus === null
+      existingStudent?.StudentPDStatus === null &&
+      !existingStudent?.studentPDVerified
     ) {
       // create PD checker payload
       const payload: ATBCPDCheckerPayload = {
@@ -216,13 +222,13 @@ export class StudentController extends BaseController {
       };
       // api to check the student PD status in ATBC
       const response = await this.atbcService.ATBCPDChecker(payload);
-
+      // TODO: UPDATE PD STATUS, WHEN PD IS DENIED AND CONFIRMED (ONCE YOU GET THE SAMPLE RESPONSE, BELOW CODE WILL CHANGE)
       let status = false;
       if (response?.e9yStatusId === 1) {
-        // code to update PD Status and update date
         // code to set PD Status
         status = true;
       }
+      // code to update PD Status and update date
       await this.studentService.updatePDStatusNDate(
         existingStudent?.id,
         status,
@@ -233,7 +239,10 @@ export class StudentController extends BaseController {
         msg = `${userToken.userName}'s sin is not valid`;
       if (!existingStudent?.StudentPDSentAt)
         msg = `${userToken.userName}'s profile not created at ATBC`;
-      if (!(existingStudent?.StudentPDStatus === null))
+      if (
+        !(existingStudent?.StudentPDStatus === null) ||
+        existingStudent?.studentPDVerified
+      )
         msg = `${userToken.userName}'s PD status already captured`;
       throw new NotAcceptableException(msg);
     }

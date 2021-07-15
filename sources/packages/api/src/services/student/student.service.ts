@@ -178,14 +178,14 @@ export class StudentService extends RecordDataModelService<Student> {
    * Update the PD Sent Date
    * @param studentId
    */
-  async updatePDSentDate(studentId: number): Promise<void> {
+  async updatePDSentDate(studentId: number): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOne({
       id: studentId,
     });
     if (studentToUpdate) {
       studentToUpdate.StudentPDSentAt = new Date();
-      this.repo.save(studentToUpdate);
+      return this.repo.save(studentToUpdate);
     }
   }
 
@@ -194,7 +194,10 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentId
    * @param status
    */
-  async updatePDStatusNDate(studentId: number, status: boolean): Promise<void> {
+  async updatePDStatusNDate(
+    studentId: number,
+    status: boolean,
+  ): Promise<Student> {
     // get the Student Object
     const studentToUpdate = await this.repo.findOne({
       id: studentId,
@@ -202,7 +205,7 @@ export class StudentService extends RecordDataModelService<Student> {
     if (studentToUpdate) {
       studentToUpdate.StudentPDStatus = status;
       studentToUpdate.StudentPDUpdateAt = new Date();
-      this.repo.save(studentToUpdate);
+      return this.repo.save(studentToUpdate);
     }
   }
 }
