@@ -3,7 +3,6 @@ import {
   StudentInfo,
   StudentContact,
   StudentProfile,
-  ProgramYear,
 } from "../../types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -62,14 +61,5 @@ export class StudentApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
-  }
-
-  public async getProgramYears(): Promise<ProgramYear[]> {
-    const response = await this.apiClient.get(
-      "students/program-year",
-      this.addAuthHeader(),
-    );
-    const programYear = response.data as ProgramYear[];
-    return programYear;
   }
 }

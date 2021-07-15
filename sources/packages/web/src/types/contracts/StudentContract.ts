@@ -49,9 +49,3 @@ export interface StudentProfile {
   country: string;
   postalCode: string;
 }
-
-export interface ProgramYear {
-  programYear: string;
-  programYearDesc: string;
-  formName: string;
-}

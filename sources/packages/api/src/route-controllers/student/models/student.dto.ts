@@ -44,12 +44,3 @@ export class UpdateStudentContactDto {
   @IsNotEmpty()
   postalCode: string;
 }
-
-export class ProgramYearDto {
-  @IsNotEmpty()
-  programYear: string;
-  @IsNotEmpty()
-  programYearDesc: string;
-  @IsNotEmpty()
-  formName: string;
-}

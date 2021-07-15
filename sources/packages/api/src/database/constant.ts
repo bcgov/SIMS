@@ -13,5 +13,5 @@ export const TableNames = {
   Applications: "applications",
   EducationPrograms: "education_programs",
   EducationProgramsOfferings: "education_programs_offerings",
-  ProgramYear: "program_year",
+  ProgramYear: "program_years",
 };

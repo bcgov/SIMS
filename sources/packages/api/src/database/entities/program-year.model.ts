@@ -37,7 +37,7 @@ export class ProgramYear extends RecordDataModel {
    * Active Indicator
    */
   @Column({
-    name: "active_indicator",
+    name: "is_active",
     nullable: false,
   })
   active: boolean;

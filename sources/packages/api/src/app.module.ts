@@ -25,6 +25,7 @@ import {
 import {
   UserController,
   StudentController,
+  ProgramYearController,
   InstitutionController,
   ConfigController,
   DynamicFormController,
@@ -46,6 +47,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     AppController,
     UserController,
     StudentController,
+    ProgramYearController,
     InstitutionController,
     ConfigController,
     DynamicFormController,

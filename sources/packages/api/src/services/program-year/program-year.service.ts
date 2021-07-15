@@ -10,10 +10,10 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
   }
 
   async getProgramYears(): Promise<ProgramYear[]> {
-    const programYear = await this.repo
-      .createQueryBuilder("programyear")
-      .where("programYear.active_indicator = true")
+    return this.repo
+      .createQueryBuilder("programYear")
+      .where("programYear.is_active = true")
+      .orderBy("programYear.id", "DESC")
       .getMany();
-    return programYear;
   }
 }
