@@ -8,7 +8,6 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ATBCPDCheckerPayload } from "../../types";
 import { Student } from "../../database/entities";
 import { ATBCPDResponseDto } from "./atbc.res.dto";
 

@@ -228,7 +228,7 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   async getStudentsAppliedForPD(): Promise<Student[]> {
-    return await this.repo
+    return this.repo
       .createQueryBuilder("student")
       .where("student.StudentPDSentAt is not null")
       .andWhere("student.StudentPDUpdateAt is null")

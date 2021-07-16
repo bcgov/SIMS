@@ -7,7 +7,6 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UnprocessableEntityException,
-  NotAcceptableException,
 } from "@nestjs/common";
 import { StudentService, UserService, ATBCService } from "../../services";
 import {
@@ -21,7 +20,7 @@ import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ATBCCreateClientPayload, ATBCPDCheckerPayload } from "../../types";
+import { ATBCCreateClientPayload } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
