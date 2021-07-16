@@ -26,7 +26,7 @@
       v-if="
         studentAllInfo?.pdSentDate &&
           studentAllInfo?.pdUpdatedDate === null &&
-          studentAllInfo?.pdStatus === null
+          studentAllInfo?.pdVerified === null
       "
     >
       <strong>PD Status: Pending</strong>
@@ -34,16 +34,14 @@
     <Message
       severity="success"
       :closable="false"
-      v-if="
-        studentAllInfo?.pdStatus === true || studentAllInfo?.pdVerified === true
-      "
+      v-if="studentAllInfo?.pdVerified === true"
     >
       <strong>PD Status: PD Confirmed</strong>
     </Message>
     <Message
       severity="error"
       :closable="false"
-      v-if="studentAllInfo?.pdStatus === false"
+      v-if="studentAllInfo?.pdVerified === false"
     >
       <strong>PD Status: PD Denied</strong>
     </Message>
@@ -113,8 +111,7 @@ export default {
       if (
         studentAllInfo.value?.validSin &&
         studentAllInfo.value?.pdSentDate === null &&
-        studentAllInfo.value?.pdStatus === null &&
-        !studentAllInfo.value?.pdVerified
+        studentAllInfo.value?.pdVerified === null
       ) {
         showApplyPDButton.value = true;
       }
@@ -123,6 +120,12 @@ export default {
       disableBtn.value = true;
       try {
         await StudentService.shared.applyForPDStatus();
+        toast.add({
+          severity: "success",
+          summary: `Applied for PD Status!`,
+          detail: " Successfully!",
+          life: 5000,
+        });
       } catch (error) {
         toast.add({
           severity: "error",

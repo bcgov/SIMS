@@ -42,7 +42,6 @@ export interface StudentInfo {
   sin: string;
   pdSentDate: string;
   pdUpdatedDate: string;
-  pdStatus: boolean;
 }
 
 export interface StudentProfile {

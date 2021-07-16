@@ -66,10 +66,4 @@ export class Student extends RecordDataModel {
     nullable: true,
   })
   StudentPDUpdateAt?: Date;
-
-  @Column({
-    name: "pd_status",
-    nullable: true,
-  })
-  StudentPDStatus?: boolean;
 }

@@ -65,8 +65,9 @@ export class StudentApi extends HttpBaseClient {
 
   public async applyForPDStatus() {
     try {
-      return await this.apiClient.get(
-        "students/apply-PD-status",
+      return await this.apiClient.patch(
+        "students/apply-pd-status",
+        null,
         this.addAuthHeader(),
       );
     } catch (error) {

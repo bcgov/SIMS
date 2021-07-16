@@ -180,11 +180,20 @@ export class StudentService extends RecordDataModelService<Student> {
    */
   async updatePDSentDate(studentId: number): Promise<Student> {
     // get the Student Object
-    const studentToUpdate = await this.repo.findOne({
+    const studentToUpdate = await this.repo.findOneOrFail({
       id: studentId,
     });
     if (studentToUpdate) {
-      studentToUpdate.StudentPDSentAt = new Date();
+      const now = new Date();
+      // Date in UTC
+      studentToUpdate.StudentPDSentAt = new Date(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDay(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+      );
       return this.repo.save(studentToUpdate);
     }
   }
@@ -199,13 +208,31 @@ export class StudentService extends RecordDataModelService<Student> {
     status: boolean,
   ): Promise<Student> {
     // get the Student Object
-    const studentToUpdate = await this.repo.findOne({
+    const studentToUpdate = await this.repo.findOneOrFail({
       id: studentId,
     });
     if (studentToUpdate) {
-      studentToUpdate.StudentPDStatus = status;
-      studentToUpdate.StudentPDUpdateAt = new Date();
+      const now = new Date();
+      studentToUpdate.studentPDVerified = status;
+      // Date in UTC format
+      studentToUpdate.StudentPDUpdateAt = new Date(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDay(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+      );
       return this.repo.save(studentToUpdate);
     }
+  }
+
+  async getStudentsAppliedForPD(): Promise<Student[]> {
+    return await this.repo
+      .createQueryBuilder("student")
+      .where("student.StudentPDSentAt is not null")
+      .andWhere("student.StudentPDUpdateAt is null")
+      .andWhere("student.studentPDVerified is null")
+      .getMany();
   }
 }

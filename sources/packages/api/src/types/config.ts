@@ -90,10 +90,9 @@ export interface CRAIntegrationConfig {
 }
 
 export interface ATBCIntegrationConfig {
-  ATBCClientCreateEndpoint: string;
-  ATBCSinInfoEndpoint: string;
   ATBCloginEndpoint: string;
   ATBCUserName: string;
   ATBCPassword: string;
   ATBCApp: string;
+  ATBCEndpoint: string;
 }

@@ -8,7 +8,7 @@ export interface ATBCCreateClientPayload {
   SIN: string;
   firstName: string;
   lastName: string;
-  birthDate: string;
+  birthDate: Date;
   email: string;
 }
 

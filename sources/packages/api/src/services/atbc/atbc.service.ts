@@ -14,11 +14,24 @@ import {
   ATBCPDCheckerResponse,
   ATBCPDCheckerPayload,
 } from "../../types";
+import { Student } from "../../database/entities";
+import { StudentService } from "../../services";
 
 @Injectable()
 export class ATBCService {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly studentService: StudentService,
+  ) {
     this.logger.log("[Created]");
+  }
+  /**
+   * Allow a singleton access to the ATBCService for areas
+   * of the application that are not part of the dependency
+   * injection framework.
+   */
+  public static get shared(): ATBCService {
+    return ATBCService.shared;
   }
 
   get config(): ATBCIntegrationConfig {
@@ -54,7 +67,7 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  private async ATBCLogin(): Promise<ATBCAuthTokenResponse> {
+  public async ATBCLogin(): Promise<ATBCAuthTokenResponse> {
     try {
       const agent = new (require("https").Agent)({
         rejectUnauthorized: false,
@@ -82,16 +95,16 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  public async ATBCcreateClient(
+  public async ATBCCreateClient(
     payload: ATBCCreateClientPayload,
   ): Promise<ATBCCreateClientResponse> {
     try {
       const config = await this.getConfig();
-      const res = await axios.post(
-        this.config.ATBCClientCreateEndpoint,
-        payload,
-        config,
-      );
+      const apiEndpoint =
+        this.config.ATBCEndpoint.slice(-1) === "/"
+          ? `${this.config.ATBCEndpoint}pd-clients`
+          : `${this.config.ATBCEndpoint}/pd-clients`;
+      const res = await axios.post(`${apiEndpoint}`, payload, config);
       return res?.data as ATBCCreateClientResponse;
     } catch (excp) {
       this.logger.error(`Received exception while creating client at ATBC`);
@@ -104,17 +117,55 @@ export class ATBCService {
    * @returns the result of a success full authentication or throws an exception
    * in case the result is anything different from HTTP 200 code.
    */
-  public async ATBCPDChecker(
+  private async ATBCPDChecker(
     payload: ATBCPDCheckerPayload,
   ): Promise<ATBCPDCheckerResponse> {
     try {
       const config = await this.getConfig();
-      const res = await axios.post(
-        this.config.ATBCSinInfoEndpoint,
-        payload,
-        config,
-      );
+      const apiEndpoint =
+        this.config.ATBCEndpoint.slice(-1) === "/"
+          ? `${this.config.ATBCEndpoint}pd`
+          : `${this.config.ATBCEndpoint}/pd`;
+      const res = await axios.post(`${apiEndpoint}`, payload, config);
       return res?.data as ATBCPDCheckerResponse;
+    } catch (excp) {
+      this.logger.error(
+        `Received exception while checking the PD status at ATBC`,
+      );
+      this.logger.error(excp);
+      throw excp;
+    }
+  }
+
+  public async PDCheckerProcess(eachStudent: Student) {
+    try {
+      this.logger.log(`Creating Payload for student id ${eachStudent.id}`);
+      // create PD checker payload
+      const payload: ATBCPDCheckerPayload = {
+        id: eachStudent.sin,
+      };
+      // api to check the student PD status in ATBC
+      this.logger.log(`Check for PD status of student ${eachStudent.id}`);
+      // try {
+      const response = await this.ATBCPDChecker(payload);
+      // e9yStatusId === 1 , PD Confirmed
+      // e9yStatusId === 2 , PD Denied
+      // e9yStatusId === 0 , Processing, In Queue
+
+      this.logger.log(
+        `PD Status for student ${eachStudent.id}, status ${response?.e9yStatusId} ${response?.e9yStatus}, `,
+      );
+      if (response?.e9yStatusId === 1 || response?.e9yStatusId === 2) {
+        // code to set PD Status
+        let status = false;
+        if (response?.e9yStatusId === 1) {
+          status = true;
+        }
+        this.logger.log(
+          `Updating PD Status for student ${eachStudent.id}, status ${response?.e9yStatusId} ${response?.e9yStatus}, `,
+        );
+        await this.studentService.updatePDStatusNDate(eachStudent.id, status);
+      }
     } catch (excp) {
       this.logger.error(
         `Received exception while checking the PD status at ATBC`,
