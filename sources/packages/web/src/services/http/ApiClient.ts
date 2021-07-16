@@ -1,5 +1,6 @@
 import { ConfigApi } from "./ConfigApi";
 import { StudentApi } from "./StudentApi";
+import { ProgramYearApi } from "./ProgramYearApi";
 import { UserApi } from "./UserApi";
 import { InstitutionApi } from "./Institution";
 import { DynamicFormsApi } from "./DynamicForms";
@@ -13,6 +14,7 @@ import { FileUploadApi } from "./FileUploadApi";
 const ApiClient = {
   Configs: new ConfigApi(),
   Students: new StudentApi(),
+  ProgramYear: new ProgramYearApi(),
   User: new UserApi(),
   Institution: new InstitutionApi(),
   DynamicForms: new DynamicFormsApi(),

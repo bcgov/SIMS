@@ -15,4 +15,5 @@ export const TableNames = {
   ApplicationStudentFiles: "application_student_files",
   EducationPrograms: "education_programs",
   EducationProgramsOfferings: "education_programs_offerings",
+  ProgramYear: "program_years",
 };

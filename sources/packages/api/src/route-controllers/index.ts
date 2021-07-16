@@ -1,5 +1,6 @@
 export * from "./user/user.controller";
 export * from "./student/student.controller";
+export * from "./program-year/program-year.controller";
 export * from "./config/config.controller";
 export * from "./institution/institution.controller";
 export * from "./dynamic-form/dynamic-form.controller";

@@ -21,10 +21,12 @@ import {
   KeycloakService,
   TokensService,
   StudentFileService,
+  ProgramYearService,
 } from "./services";
 import {
   UserController,
   StudentController,
+  ProgramYearController,
   InstitutionController,
   ConfigController,
   DynamicFormController,
@@ -46,6 +48,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     AppController,
     UserController,
     StudentController,
+    ProgramYearController,
     InstitutionController,
     ConfigController,
     DynamicFormController,
@@ -77,6 +80,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     EducationProgramService,
     EducationProgramOfferingService,
     StudentFileService,
+    ProgramYearService,
   ],
 })
 export class AppModule {}
