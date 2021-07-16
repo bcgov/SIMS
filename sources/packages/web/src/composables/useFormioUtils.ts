@@ -14,15 +14,6 @@ export function useFormioUtils() {
     return Utils.getValue(form.submission, componentKey);
   };
 
-  // Get the value from a component in a form definition once it is loaded.
-  const getComponentValue = (form: any, component: any): any => {
-    if (component.path !== component.key) {
-      // Nested component that does not have a key in the final submission.
-      return component.getValue();
-    }
-    return Utils.getValue(form.submission, component.key);
-  };
-
   /**
    * Iterates recursively in all components checking for
    * a matchCondition provided as a parameter.
@@ -81,7 +72,7 @@ export function useFormioUtils() {
     const fileComponents = getComponentsOfType(form, "file");
     const associatedFiles: string[] = [];
     fileComponents.forEach(fileComponent => {
-      const fileComponentValue = getComponentValue(form, fileComponent);
+      const fileComponentValue = fileComponent.getValue();
       if (fileComponentValue) {
         fileComponentValue.forEach((file: any) => {
           associatedFiles.push(file.name);
@@ -93,7 +84,6 @@ export function useFormioUtils() {
 
   return {
     getComponent,
-    getComponentValue,
     getComponentValueByKey,
     getComponentsOfType,
     getAssociatedFiles,
