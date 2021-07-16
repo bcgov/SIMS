@@ -178,9 +178,15 @@ export class StudentController extends BaseController {
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateDto> {
-    const student = await this.studentService.getStudentByUserName(
-      userToken.userName,
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
     );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
 
     const createdFile = await this.fileService.createFile(
       {
@@ -217,6 +223,12 @@ export class StudentController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
 
     const studentFile = await this.fileService.getStudentFile(
       student.id,
