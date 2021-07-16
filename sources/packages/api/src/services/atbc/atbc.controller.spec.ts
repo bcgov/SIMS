@@ -44,11 +44,11 @@ describe("Test student model", () => {
     const archiveDB = new ArchiveDbService();
     const studentService = new StudentService(connection, archiveDB);
     const atbcService = new ATBCService(configService, studentService);
-    const sub = new Student();
-    sub.sin = "9999999999";
-    sub.birthdate = faker.date.past(18);
-    sub.gender = "X";
-    sub.contactInfo = {
+    const fakestudent = new Student();
+    fakestudent.sin = "123456789";
+    fakestudent.birthdate = faker.date.past(20);
+    fakestudent.gender = "F";
+    fakestudent.contactInfo = {
       addresses: [
         {
           addressLine1: faker.address.streetAddress(),
@@ -65,10 +65,10 @@ describe("Test student model", () => {
     user.email = faker.internet.email();
     user.firstName = faker.name.firstName();
     user.lastName = faker.name.lastName();
-    sub.user = user;
+    fakestudent.user = user;
 
     // Save the student in SIMS
-    await studentService.save(sub);
+    await studentService.save(fakestudent);
     // creating mockup for getStudentByUserName, username is from BCSC
     jest
       .spyOn(studentService, "getStudentByUserName")
@@ -77,7 +77,7 @@ describe("Test student model", () => {
           validSIN: null,
           StudentPDSentAt: null,
           studentPDVerified: null,
-          id: sub.id,
+          id: fakestudent.id,
         } as Student;
       });
 
@@ -92,6 +92,6 @@ describe("Test student model", () => {
       .expect(HttpStatus.OK);
 
     // Remove the created fake user from SIMS db
-    await studentService.remove(sub);
+    await studentService.remove(fakestudent);
   });
 });
