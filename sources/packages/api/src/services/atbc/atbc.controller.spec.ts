@@ -53,19 +53,19 @@ describe("Test student model", () => {
         {
           addressLine1: faker.address.streetAddress(),
           city: faker.address.city(),
-          country: "can",
-          province: "bc",
+          country: "Canada",
+          province: "ON",
           postalCode: faker.address.zipCode(),
         },
       ],
       phone: faker.phone.phoneNumber(),
     };
-    const user = new User();
-    user.userName = faker.random.uuid();
-    user.email = faker.internet.email();
-    user.firstName = faker.name.firstName();
-    user.lastName = faker.name.lastName();
-    fakestudent.user = user;
+    const simsUser = new User();
+    simsUser.userName = faker.random.uuid();
+    simsUser.email = faker.internet.email();
+    simsUser.firstName = faker.name.firstName();
+    simsUser.lastName = faker.name.lastName();
+    fakestudent.user = simsUser;
 
     // Save the student in SIMS
     await studentService.save(fakestudent);
