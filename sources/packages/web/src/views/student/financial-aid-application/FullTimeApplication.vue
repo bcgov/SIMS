@@ -98,7 +98,7 @@ export default {
       }
 
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        const locationId = +formioUtils.getComponentValue(
+        const locationId = +formioUtils.getComponentValueByKey(
           form,
           LOCATIONS_DROPDOWN_KEY,
         );

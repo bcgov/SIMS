@@ -22,6 +22,7 @@ import {
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { StudentFile } from "../../database/entities";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -76,10 +77,15 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
 
-    const studentFiles = await this.fileService.getStudentFiles(
-      student.id,
-      payload.associatedFiles,
-    );
+    // Check for the existing student files if
+    // some association was provided.
+    let studentFiles: StudentFile[] = [];
+    if (payload.associatedFiles?.length) {
+      studentFiles = await this.fileService.getStudentFiles(
+        student.id,
+        payload.associatedFiles,
+      );
+    }
 
     const createdApplication = await this.applicationService.createApplication(
       student.id,
