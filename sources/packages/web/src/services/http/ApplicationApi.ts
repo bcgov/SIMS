@@ -5,7 +5,7 @@ export class ApplicationApi extends HttpBaseClient {
     try {
       return await this.apiClient.post(
         "application",
-        { data },
+        data,
         this.addAuthHeader(),
       );
     } catch (error) {

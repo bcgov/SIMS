@@ -20,6 +20,7 @@ import {
   FormsFlowService,
   KeycloakService,
   TokensService,
+  StudentFileService,
   ProgramYearService,
 } from "./services";
 import {
@@ -78,6 +79,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     InstitutionUserAuthService,
     EducationProgramService,
     EducationProgramOfferingService,
+    StudentFileService,
     ProgramYearService,
   ],
 })

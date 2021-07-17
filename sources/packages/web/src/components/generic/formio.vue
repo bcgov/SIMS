@@ -8,6 +8,7 @@ import { onMounted, ref, watch } from "vue";
 import { Formio } from "formiojs";
 import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
+import FormUploadService from "../../services/FormUploadService";
 
 export default {
   emits: ["submitted", "loaded", "changed"],
@@ -60,6 +61,9 @@ export default {
       form = await Formio.createForm(
         formioContainerRef.value,
         formDefinition.data,
+        {
+          fileService: new FormUploadService(),
+        },
       );
 
       form.nosubmit = true;
@@ -78,7 +82,7 @@ export default {
       });
 
       form.on("submit", (submision: any) => {
-        context.emit("submitted", submision.data);
+        context.emit("submitted", submision.data, form);
       });
     });
 

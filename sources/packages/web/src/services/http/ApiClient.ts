@@ -9,6 +9,7 @@ import { ApplicationApi } from "./ApplicationApi";
 import { InstitutionLocationApi } from "./InstitutionLocation";
 import { EducationProgramApi } from "./EducationProgramApi";
 import { EducationProgramOfferingApi } from "./EducationProgramOfferingApi";
+import { FileUploadApi } from "./FileUploadApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -22,6 +23,7 @@ const ApiClient = {
   InstitutionLocation: new InstitutionLocationApi(),
   EducationProgram: new EducationProgramApi(),
   EducationProgramOffering: new EducationProgramOfferingApi(),
+  FileUpload: new FileUploadApi(),
 };
 
 export default ApiClient;

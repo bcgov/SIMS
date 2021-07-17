@@ -10,6 +10,8 @@ import {
 import {
   ApplicationService,
   FormService,
+  StudentFileService,
+  StudentService,
   WorkflowActionsService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -20,18 +22,21 @@ import {
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { StudentFile } from "../../database/entities";
 
-@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly workflow: WorkflowActionsService,
+    private readonly studentService: StudentService,
+    private readonly fileService: StudentFileService,
   ) {
     super();
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":id/data")
   async getByApplicationId(
     @Param("id") applicationId: string,
@@ -51,13 +56,14 @@ export class ApplicationController extends BaseController {
     return { data: application.data };
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Post()
   async create(
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
     const submissionResult = await this.formService.dryRunSubmission(
-      "sfaa2022-23",
+      "SFAA2022-23",
       payload.data,
     );
 
@@ -67,9 +73,24 @@ export class ApplicationController extends BaseController {
       );
     }
 
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    // Check for the existing student files if
+    // some association was provided.
+    let studentFiles: StudentFile[] = [];
+    if (payload.associatedFiles?.length) {
+      studentFiles = await this.fileService.getStudentFiles(
+        student.id,
+        payload.associatedFiles,
+      );
+    }
+
     const createdApplication = await this.applicationService.createApplication(
-      userToken,
+      student.id,
       submissionResult.data,
+      studentFiles,
     );
 
     await this.workflow.startApplicationAssessment(

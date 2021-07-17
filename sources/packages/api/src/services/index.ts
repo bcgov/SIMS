@@ -21,4 +21,5 @@ export * from "./institution-user-auth/institution-user-auth.service";
 export * from "./education-program/education-program.service";
 export * from "./education-program-offering/education-program-offering.service";
 export * from "./workflow/workflow-actions.service";
+export * from "./student-file/student-file.service";
 export * from "./program-year/program-year.service";
