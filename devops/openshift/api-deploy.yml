@@ -165,9 +165,9 @@ objects:
                       key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
                       name: ${ZONE_B_SFTP_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
-                  value: "${FILE_UPLOAD_MAX_FILE_SIZE}"
+                  value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
-                  value: "${FILE_UPLOAD_ALLOWED_EXTENSIONS}"
+                  value: ${FILE_UPLOAD_ALLOWED_EXTENSIONS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -331,6 +331,6 @@ parameters:
   - name: ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY
     value: private-key
   - name: FILE_UPLOAD_MAX_FILE_SIZE
-    value: 4194304
+    value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
-    value: .pdf,.doc,.docx,.jpg,.png
+    value: ".pdf,.doc,.docx,.jpg,.png"
