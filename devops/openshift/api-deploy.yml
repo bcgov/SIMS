@@ -164,31 +164,29 @@ objects:
                     secretKeyRef:
                       key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
                       name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: FILE_UPLOAD_MAX_FILE_SIZE
+                  value: ${FILE_UPLOAD_MAX_FILE_SIZE}
+                - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
+                  value: ${FILE_UPLOAD_ALLOWED_EXTENSIONS}
                 - name: ATBC_LOGIN_ENDPOINT
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ATBC_LOGIN_ENDPOINT_NAME_KEY}
-                      name: ${ATBC_LOGIN_ENDPOINT_SECRET_NAME}
+                  value: ${ATBC_LOGIN_ENDPOINT}
                 - name: ATBC_ENDPOINT
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${ATBC_ENDPOINT_NAME_KEY}
-                      name: ${ATBC_ENDPOINT_SECRET_NAME}
+                  value: ${ATBC_ENDPOINT}
                 - name: ATBC_USERNAME
                   valueFrom:
                     secretKeyRef:
                       key: ${ATBC_USERNAME_NAME_KEY}
-                      name: ${ATBC_USERNAME_SECRET_NAME}
+                      name: ${API_SECRET_NAME}
                 - name: ATBC_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${ATBC_PASSWORD_NAME_KEY}
-                      name: ${ATBC_PASSWORD_SECRET_NAME}
+                      name: ${API_SECRET_NAME}
                 - name: ATBC_APP
                   valueFrom:
                     secretKeyRef:
                       key: ${ATBC_APP_NAME_KEY}
-                      name: ${ATBC_APP_SECRET_NAME}
+                      name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -351,3 +349,11 @@ parameters:
     value: private-key-passphrase
   - name: ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY
     value: private-key
+  - name: FILE_UPLOAD_MAX_FILE_SIZE
+    value: "4194304"
+  - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
+    value: ".pdf,.doc,.docx,.jpg,.png"
+  - name: ATBC_LOGIN_ENDPOINT
+    require: true
+  - name: ATBC_ENDPOINT
+    require: true

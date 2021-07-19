@@ -16,7 +16,7 @@ export class StudentService extends RecordDataModelService<Student> {
   @InjectLogger()
   logger: LoggerService;
   constructor(
-    @Inject("Connection") private readonly connection: Connection,
+    @Inject("Connection") connection: Connection,
     private readonly archiveDB: ArchiveDbService,
   ) {
     super(connection.getRepository(Student));
@@ -30,6 +30,10 @@ export class StudentService extends RecordDataModelService<Student> {
       .where("user.userName = :userNameParam", { userNameParam: userName })
       .getOneOrFail();
     return student;
+  }
+
+  async getStudentByUserId(userId: number): Promise<Student> {
+    return this.repo.findOne({ user: { id: userId } });
   }
 
   async createStudent(

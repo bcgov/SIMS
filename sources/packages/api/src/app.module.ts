@@ -21,6 +21,7 @@ import {
   KeycloakService,
   TokensService,
   ATBCService,
+  StudentFileService,
   ProgramYearService,
 } from "./services";
 import {
@@ -82,6 +83,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     EducationProgramService,
     EducationProgramOfferingService,
     ATBCService,
+    StudentFileService,
     ProgramYearService,
   ],
 })

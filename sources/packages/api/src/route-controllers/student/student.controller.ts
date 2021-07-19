@@ -7,10 +7,21 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UnprocessableEntityException,
+  Param,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
-import { StudentService, UserService, ATBCService } from "../../services";
+import { Response } from "express";
+import {
+  StudentFileService,
+  StudentService,
+  UserService,
+  ATBCService
+} from "../../services";
 import {
   CreateStudentDto,
+  FileCreateDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
 } from "./models/student.dto";
@@ -21,6 +32,15 @@ import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ATBCCreateClientPayload } from "../../types";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Readable } from "stream";
+import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
+
+// For multipart forms, the max number of file fields.
+const MAX_UPLOAD_FILES = 1;
+// For multipart forms, the max number of parts (fields + files).
+// 3 means 'the file' + uniqueFileName + group.
+const MAX_UPLOAD_PARTS = 3;
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
@@ -29,6 +49,7 @@ export class StudentController extends BaseController {
     private readonly userService: UserService,
     private readonly studentService: StudentService,
     private readonly atbcService: ATBCService,
+    private readonly fileService: StudentFileService,
   ) {
     super();
   }
@@ -188,5 +209,102 @@ export class StudentController extends BaseController {
         await this.studentService.updatePDSentDate(existingStudent.id);
       }
     }
+  /**
+   * Allow files uploads to a particular student.
+   * @param userToken authentication token.
+   * @param file file content.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param groupName friendly name to group files. Currently using
+   * the value from 'Directory' property from form.IO file component.
+   * @returns created file information.
+   */
+  @Post("files")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      limits: uploadLimits(MAX_UPLOAD_FILES, MAX_UPLOAD_PARTS),
+      fileFilter: defaultFileFilter,
+    }),
+  )
+  async uploadFile(
+    @UserToken() userToken: IUserToken,
+    @UploadedFile() file: Express.Multer.File,
+    @Body("uniqueFileName") uniqueFileName: string,
+    @Body("group") groupName: string,
+  ): Promise<FileCreateDto> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
+
+    const createdFile = await this.fileService.createFile(
+      {
+        fileName: file.originalname,
+        uniqueFileName: uniqueFileName,
+        groupName: groupName,
+        mimeType: file.mimetype,
+        fileContent: file.buffer,
+      },
+      student.id,
+    );
+
+    return {
+      fileName: createdFile.fileName,
+      uniqueFileName: createdFile.uniqueFileName,
+      url: `students/files/${createdFile.uniqueFileName}`,
+      size: createdFile.fileContent.length,
+      mimetype: createdFile.mimeType,
+    };
+  }
+
+  /**
+   * Gets a student file validating if the user has the access to it.
+   * @param userToken authentication token.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param response file content.
+   */
+  @Get("files/:uniqueFileName")
+  async getUploadedFile(
+    @UserToken() userToken: IUserToken,
+    @Param("uniqueFileName") uniqueFileName: string,
+    @Res() response: Response,
+  ) {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
+
+    const studentFile = await this.fileService.getStudentFile(
+      student.id,
+      uniqueFileName,
+    );
+
+    if (!studentFile) {
+      throw new NotFoundException(
+        "Requested file was not found or you do not have access to it.",
+      );
+    }
+
+    response.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${studentFile.fileName}`,
+    );
+    response.setHeader("Content-Type", studentFile.mimeType);
+    response.setHeader("Content-Length", studentFile.fileContent.length);
+
+    const stream = new Readable();
+    stream.push(studentFile.fileContent);
+    stream.push(null);
+
+    stream.pipe(response);
   }
 }

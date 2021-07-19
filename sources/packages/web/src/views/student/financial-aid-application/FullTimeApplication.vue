@@ -39,14 +39,18 @@ export default {
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
-    const submitted = async (args: any) => {
+    const submitted = async (args: any, form: any) => {
       if (props.id) {
         // TODO: Define how the update will happen.
         return;
       }
 
       try {
-        await ApiClient.Application.createApplication(args);
+        const associatedFiles = formioUtils.getAssociatedFiles(form);
+        await ApiClient.Application.createApplication({
+          data: args,
+          associatedFiles,
+        });
       } catch (error) {
         console.error(error);
       }
@@ -98,7 +102,7 @@ export default {
       }
 
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        const locationId = +formioUtils.getComponentValue(
+        const locationId = +formioUtils.getComponentValueByKey(
           form,
           LOCATIONS_DROPDOWN_KEY,
         );

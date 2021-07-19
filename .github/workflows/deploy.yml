@@ -73,6 +73,8 @@ jobs:
       FORMS_URL: "https://dev-aest-ffa-forms.apps.silver.devops.gov.bc.ca"
       SITE_MINDER_LOGOUT_URL: "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi"
       FORMS_FLOW_API_URL: "https://dev-aest-ffa-api.apps.silver.devops.gov.bc.ca"
+      ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
+      ATBC_ENDPOINT: "https://sabc.at-bc.ca/api/"
     needs:
       - build
     steps:

@@ -25,9 +25,9 @@ objects:
       cra-response-folder: ${CRA_RESPONSE_FOLDER}
       cra-program-area-code: ${CRA_PROGRAM_AREA_CODE}
       cra-environment-code: ${CRA_ENVIRONMENT_CODE}
-      atbc_username: ${ATBC_USERNAME}
-      atbc_password: ${ATBC_PASSWORD}
-      atbc_app: ${ATBC_APP}
+      atbc-username: ${ATBC_USERNAME}
+      atbc-password: ${ATBC_PASSWORD}
+      atbc-app: ${ATBC_APP}
 parameters:
   - name: NAME
     description: |
@@ -114,3 +114,18 @@ parameters:
     required: true
     description: |
       CRA environment identifier (A=Test, P=Production).
+  - name: ATBC_USERNAME
+    displayName: ATBC username
+    required: true
+    description: |
+      ATBC username to get access token.
+  - name: ATBC_PASSWORD
+    displayName: ATBC password
+    required: true
+    description: |
+      ATBC password to get access token.
+  - name: ATBC_APP
+    displayName: ATBC App name
+    required: true
+    description: |
+      ATBC App name to get access token.

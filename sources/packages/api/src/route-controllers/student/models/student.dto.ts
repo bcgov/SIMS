@@ -44,3 +44,11 @@ export class UpdateStudentContactDto {
   @IsNotEmpty()
   postalCode: string;
 }
+
+export interface FileCreateDto {
+  fileName: string;
+  uniqueFileName: string;
+  url: string;
+  size: number;
+  mimetype: string;
+}
