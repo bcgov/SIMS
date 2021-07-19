@@ -1,5 +1,5 @@
 export enum ATBCPDStatus {
-  CONFIRMED = 1,
-  DENIED = 2,
-  PROCESSING = 3,
+  Confirmed = 1,
+  Denied = 2,
+  Processing = 3,
 }

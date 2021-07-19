@@ -145,8 +145,8 @@ export class ATBCService {
         `PD Status for student ${eachStudent.id}, status ${response?.e9yStatusId} ${response?.e9yStatus}, `,
       );
       if (
-        response?.e9yStatusId === ATBCPDStatus.CONFIRMED ||
-        response?.e9yStatusId === ATBCPDStatus.DENIED
+        response?.e9yStatusId === ATBCPDStatus.Confirmed ||
+        response?.e9yStatusId === ATBCPDStatus.Denied
       ) {
         // code to set PD Status
         let status = false;
