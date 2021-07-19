@@ -25,6 +25,9 @@ objects:
       cra-response-folder: ${CRA_RESPONSE_FOLDER}
       cra-program-area-code: ${CRA_PROGRAM_AREA_CODE}
       cra-environment-code: ${CRA_ENVIRONMENT_CODE}
+      atbc_username: ${ATBC_USERNAME}
+      atbc_password: ${ATBC_PASSWORD}
+      atbc_app: ${ATBC_APP}
 parameters:
   - name: NAME
     description: |

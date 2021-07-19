@@ -164,6 +164,31 @@ objects:
                     secretKeyRef:
                       key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
                       name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: ATBC_LOGIN_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_LOGIN_ENDPOINT_NAME_KEY}
+                      name: ${ATBC_LOGIN_ENDPOINT_SECRET_NAME}
+                - name: ATBC_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_ENDPOINT_NAME_KEY}
+                      name: ${ATBC_ENDPOINT_SECRET_NAME}
+                - name: ATBC_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_USERNAME_NAME_KEY}
+                      name: ${ATBC_USERNAME_SECRET_NAME}
+                - name: ATBC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_PASSWORD_NAME_KEY}
+                      name: ${ATBC_PASSWORD_SECRET_NAME}
+                - name: ATBC_APP
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_APP_NAME_KEY}
+                      name: ${ATBC_APP_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
