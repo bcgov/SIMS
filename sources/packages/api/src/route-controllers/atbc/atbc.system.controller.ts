@@ -1,8 +1,4 @@
-import {
-  Controller,
-  InternalServerErrorException,
-  Patch,
-} from "@nestjs/common";
+import { Controller, Patch } from "@nestjs/common";
 import { ATBCService, StudentService } from "../../services";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
