@@ -190,7 +190,7 @@ export class StudentService extends RecordDataModelService<Student> {
     if (studentToUpdate) {
       const now = new Date();
       // Date in UTC
-      studentToUpdate.StudentPDSentAt = new Date(
+      studentToUpdate.studentPDSentAt = new Date(
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDay(),
@@ -219,7 +219,7 @@ export class StudentService extends RecordDataModelService<Student> {
       const now = new Date();
       studentToUpdate.studentPDVerified = status;
       // Date in UTC format
-      studentToUpdate.StudentPDUpdateAt = new Date(
+      studentToUpdate.studentPDUpdateAt = new Date(
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDay(),
@@ -234,8 +234,8 @@ export class StudentService extends RecordDataModelService<Student> {
   async getStudentsAppliedForPD(): Promise<Student[]> {
     return this.repo
       .createQueryBuilder("student")
-      .where("student.StudentPDSentAt is not null")
-      .andWhere("student.StudentPDUpdateAt is null")
+      .where("student.studentPDSentAt is not null")
+      .andWhere("student.studentPDUpdateAt is null")
       .andWhere("student.studentPDVerified is null")
       .getMany();
   }

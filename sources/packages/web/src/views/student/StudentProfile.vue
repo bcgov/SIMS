@@ -20,28 +20,20 @@
     </v-btn>
   </span>
   <span v-else>
-    <Message
-      severity="warn"
-      :closable="false"
-      v-if="
-        studentAllInfo?.pdSentDate &&
-          studentAllInfo?.pdUpdatedDate === null &&
-          studentAllInfo?.pdVerified === null
-      "
-    >
+    <Message severity="warn" :closable="false" v-if="showPendingStatus">
       <strong>PD Status: Pending</strong>
     </Message>
     <Message
       severity="success"
       :closable="false"
-      v-if="studentAllInfo?.pdVerified === true"
+      v-if="studentAllInfo.pdVerified === true"
     >
       <strong>PD Status: PD Confirmed</strong>
     </Message>
     <Message
       severity="error"
       :closable="false"
-      v-if="studentAllInfo?.pdVerified === false"
+      v-if="studentAllInfo.pdVerified === false"
     >
       <strong>PD Status: PD Denied</strong>
     </Message>
@@ -60,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
@@ -106,6 +98,12 @@ export default {
     const getStudentInfo = async () => {
       studentAllInfo.value = await StudentService.shared.getStudentInfo();
     };
+    const showPendingStatus = computed(
+      () =>
+        studentAllInfo.value.pdSentDate &&
+        studentAllInfo.value.pdUpdatedDate === null &&
+        studentAllInfo.value.pdVerified === null,
+    );
     const appliedPDButton = async () => {
       showApplyPDButton.value = false;
       if (
@@ -230,6 +228,7 @@ export default {
       showApplyPDButton,
       studentAllInfo,
       disableBtn,
+      showPendingStatus,
     };
   },
 };

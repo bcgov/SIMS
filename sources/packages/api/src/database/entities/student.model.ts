@@ -59,11 +59,11 @@ export class Student extends RecordDataModel {
     name: "pd_date_sent",
     nullable: true,
   })
-  StudentPDSentAt?: Date;
+  studentPDSentAt?: Date;
 
   @Column({
     name: "pd_date_update",
     nullable: true,
   })
-  StudentPDUpdateAt?: Date;
+  studentPDUpdateAt?: Date;
 }

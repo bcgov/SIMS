@@ -7,6 +7,6 @@ export interface ATBCAuthTokenResponse {
 }
 
 export interface ATBCHeader {
-  headers?: { Authorization: string };
+  headers: { Authorization: string };
   httpsAgent?: any;
 }

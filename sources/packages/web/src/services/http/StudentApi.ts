@@ -63,7 +63,7 @@ export class StudentApi extends HttpBaseClient {
     }
   }
 
-  public async applyForPDStatus() {
+  public async applyForPDStatus(): Promise<void> {
     try {
       return await this.apiClient.patch(
         "students/apply-pd-status",

@@ -9,7 +9,6 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { Student } from "../../database/entities";
-import { ATBCPDResponseDto } from "./atbc.res.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/atbc")
@@ -25,26 +24,17 @@ export class ATBCController {
    * update the status in SIMS DB
    */
   @Patch("pd-check")
-  async PDCheck(): Promise<ATBCPDResponseDto> {
-    try {
-      this.logger.log("Get all student applied for PD in ATBC...");
-      const studentAppliedPD: Student[] =
-        await this.studentService.getStudentsAppliedForPD();
+  async PDCheck(): Promise<void> {
+    this.logger.log("Get all student applied for PD in ATBC...");
+    const studentAppliedPD: Student[] =
+      await this.studentService.getStudentsAppliedForPD();
 
-      // Executes the processing of each student in parallel.
-      const pdProcess = studentAppliedPD.map((eachStudent) =>
-        this.atbcService.PDCheckerProcess(eachStudent),
-      );
-      // Waits for all the parallel processes to be finished.
-      await Promise.all(pdProcess);
-      return {
-        message: "PD checker ran successfully",
-        status: "Success",
-      };
-    } catch (error) {
-      this.logger.log(`${error}, `);
-      throw new InternalServerErrorException();
-    }
+    // Executes the processing of each student in parallel.
+    const pdProcess = studentAppliedPD.map((eachStudent) =>
+      this.atbcService.PDCheckerProcess(eachStudent),
+    );
+    // Waits for all the parallel processes to be finished.
+    await Promise.all(pdProcess);
   }
 
   @InjectLogger()

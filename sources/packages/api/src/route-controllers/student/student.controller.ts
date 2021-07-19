@@ -17,7 +17,7 @@ import {
   StudentFileService,
   StudentService,
   UserService,
-  ATBCService
+  ATBCService,
 } from "../../services";
 import {
   CreateStudentDto,
@@ -89,8 +89,8 @@ export class StudentController extends BaseController {
       },
       pdVerified: existingStudent.studentPDVerified,
       validSin: existingStudent.validSIN,
-      pdSentDate: existingStudent.StudentPDSentAt,
-      pdUpdatedDate: existingStudent.StudentPDUpdateAt,
+      pdSentDate: existingStudent.studentPDSentAt,
+      pdUpdatedDate: existingStudent.studentPDUpdateAt,
     };
     return studentInfo;
   }
@@ -183,15 +183,15 @@ export class StudentController extends BaseController {
       );
     }
     //check pd status in db, student should only allowed to check PD status once
-    // existingStudent?.StudentPDSentAt is set when student apply for PD Status first
+    // existingStudent?.studentPDSentAt is set when student apply for PD Status first
     // studentPDVerified is null  before PD checker update status
     // studentPDVerified is true if PD Confirmed by ATBC OR is true from `SFASDB
     // studentPDVerified is false if PD Denied by ATBC
-    // if student has a valid only, he/she should allow for a PD check
+    // if student has a SIN valid only, he/she should allow for a PD check
 
     if (
       existingStudent.validSIN &&
-      !existingStudent.StudentPDSentAt &&
+      !existingStudent.studentPDSentAt &&
       existingStudent.studentPDVerified === null
     ) {
       // create client payload
@@ -209,6 +209,7 @@ export class StudentController extends BaseController {
         await this.studentService.updatePDSentDate(existingStudent.id);
       }
     }
+  }
   /**
    * Allow files uploads to a particular student.
    * @param userToken authentication token.

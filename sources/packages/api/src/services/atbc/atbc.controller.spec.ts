@@ -3,7 +3,12 @@ import { closeDB, setupDB } from "../../testHelpers";
 import { Connection } from "typeorm";
 import * as faker from "faker";
 import { Student, User } from "../../database/entities";
-import { StudentService, ArchiveDbService, ATBCService } from "../../services";
+import {
+  StudentService,
+  ArchiveDbService,
+  ATBCService,
+  UserService,
+} from "../../services";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
 import { ConfigService } from "../config/config.service";
@@ -12,7 +17,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { ATBCCreateClientResponse } from "../../types";
 
-describe("Test student model", () => {
+describe("Test ATBC Controller", () => {
   const clientId = "student";
   let connection: Connection;
   let accesstoken: string;
@@ -39,9 +44,10 @@ describe("Test student model", () => {
     await closeDB();
   });
 
-  it("should save student model object with user relationship and address jsonb", async () => {
+  it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Create fake student in SIMS DB
     const archiveDB = new ArchiveDbService();
+    const userService = new UserService(connection);
     const studentService = new StudentService(connection, archiveDB);
     const atbcService = new ATBCService(configService, studentService);
     const fakestudent = new Student();
@@ -61,7 +67,7 @@ describe("Test student model", () => {
       phone: faker.phone.phoneNumber(),
     };
     const simsUser = new User();
-    simsUser.userName = faker.random.uuid();
+    simsUser.userName = process.env.E2E_TEST_STUDENT_USERNAME;
     simsUser.email = faker.internet.email();
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
@@ -69,17 +75,6 @@ describe("Test student model", () => {
 
     // Save the student in SIMS
     await studentService.save(fakestudent);
-    // creating mockup for getStudentByUserName, username is from BCSC
-    jest
-      .spyOn(studentService, "getStudentByUserName")
-      .mockImplementation(async () => {
-        return {
-          validSIN: null,
-          StudentPDSentAt: null,
-          studentPDVerified: null,
-          id: fakestudent.id,
-        } as Student;
-      });
 
     // creating mockup for ATBCCreateClient, this function actually calls the ATBC server to create the student profile
     jest.spyOn(atbcService, "ATBCCreateClient").mockImplementation(async () => {
@@ -93,5 +88,6 @@ describe("Test student model", () => {
 
     // Remove the created fake user from SIMS db
     await studentService.remove(fakestudent);
+    await userService.remove(simsUser);
   });
 });

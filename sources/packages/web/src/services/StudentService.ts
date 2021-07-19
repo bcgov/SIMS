@@ -59,7 +59,7 @@ export class StudentService {
     return await ApiClient.Students.synchronizeFromUserInfo();
   }
 
-  async applyForPDStatus() {
+  async applyForPDStatus(): Promise<void> {
     return ApiClient.Students.applyForPDStatus();
   }
 }

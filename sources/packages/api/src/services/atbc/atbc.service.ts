@@ -16,6 +16,7 @@ import {
 } from "../../types";
 import { Student } from "../../database/entities";
 import { StudentService } from "../../services";
+import { ATBCPDStatus } from "./atbc.models";
 
 @Injectable()
 export class ATBCService {
@@ -25,16 +26,8 @@ export class ATBCService {
   ) {
     this.logger.log("[Created]");
   }
-  /**
-   * Allow a singleton access to the ATBCService for areas
-   * of the application that are not part of the dependency
-   * injection framework.
-   */
-  public static get shared(): ATBCService {
-    return ATBCService.shared;
-  }
 
-  get config(): ATBCIntegrationConfig {
+  private get config(): ATBCIntegrationConfig {
     return this.configService.getConfig().ATBCIntegration;
   }
   /**
@@ -74,7 +67,7 @@ export class ATBCService {
       });
 
       const authRequest = await axios.post(
-        this.config.ATBCloginEndpoint,
+        this.config.ATBCLoginEndpoint,
         {
           usr: this.config.ATBCUserName,
           pwd: this.config.ATBCPassword,
@@ -100,11 +93,8 @@ export class ATBCService {
   ): Promise<ATBCCreateClientResponse> {
     try {
       const config = await this.getConfig();
-      const apiEndpoint =
-        this.config.ATBCEndpoint.slice(-1) === "/"
-          ? `${this.config.ATBCEndpoint}pd-clients`
-          : `${this.config.ATBCEndpoint}/pd-clients`;
-      const res = await axios.post(`${apiEndpoint}`, payload, config);
+      const apiEndpoint = `${this.config.ATBCEndpoint}/pd-clients`;
+      const res = await axios.post(apiEndpoint, payload, config);
       return res?.data as ATBCCreateClientResponse;
     } catch (excp) {
       this.logger.error(`Received exception while creating client at ATBC`);
@@ -122,11 +112,8 @@ export class ATBCService {
   ): Promise<ATBCPDCheckerResponse> {
     try {
       const config = await this.getConfig();
-      const apiEndpoint =
-        this.config.ATBCEndpoint.slice(-1) === "/"
-          ? `${this.config.ATBCEndpoint}pd`
-          : `${this.config.ATBCEndpoint}/pd`;
-      const res = await axios.post(`${apiEndpoint}`, payload, config);
+      const apiEndpoint = `${this.config.ATBCEndpoint}/pd`;
+      const res = await axios.post(apiEndpoint, payload, config);
       return res?.data as ATBCPDCheckerResponse;
     } catch (excp) {
       this.logger.error(
@@ -145,7 +132,9 @@ export class ATBCService {
         id: eachStudent.sin,
       };
       // api to check the student PD status in ATBC
-      this.logger.log(`Check for PD status of student ${eachStudent.id}`);
+      this.logger.log(
+        `Check starting for PD status of student ${eachStudent.id}`,
+      );
       // try {
       const response = await this.ATBCPDChecker(payload);
       // e9yStatusId === 1 , PD Confirmed
@@ -155,7 +144,10 @@ export class ATBCService {
       this.logger.log(
         `PD Status for student ${eachStudent.id}, status ${response?.e9yStatusId} ${response?.e9yStatus}, `,
       );
-      if (response?.e9yStatusId === 1 || response?.e9yStatusId === 2) {
+      if (
+        response?.e9yStatusId === ATBCPDStatus.CONFIRMED ||
+        response?.e9yStatusId === ATBCPDStatus.DENIED
+      ) {
         // code to set PD Status
         let status = false;
         if (response?.e9yStatusId === 1) {
