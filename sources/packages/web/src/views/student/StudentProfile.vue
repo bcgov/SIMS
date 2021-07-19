@@ -104,7 +104,7 @@ export default {
         studentAllInfo.value.pdUpdatedDate === null &&
         studentAllInfo.value.pdVerified === null,
     );
-    const appliedPDButton = async () => {
+    const appliedPDButton = () => {
       showApplyPDButton.value = false;
       if (
         studentAllInfo.value?.validSin &&
@@ -134,7 +134,7 @@ export default {
         });
       }
       await getStudentInfo();
-      await appliedPDButton();
+      appliedPDButton();
       disableBtn.value = false;
     };
     const changed = (form: any, event: any) => {
@@ -217,7 +217,7 @@ export default {
         initialData.value = obj;
       }
       await getStudentInfo();
-      await appliedPDButton();
+      appliedPDButton();
     });
 
     return {
