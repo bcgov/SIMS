@@ -37,6 +37,11 @@ export interface StudentInfo {
     postalCode: string;
     phone: string;
   };
+  pdVerified: boolean;
+  validSin: boolean;
+  sin: string;
+  pdSentDate: string;
+  pdUpdatedDate: string;
 }
 
 export interface StudentProfile {
@@ -48,4 +53,9 @@ export interface StudentProfile {
   provinceState: string;
   country: string;
   postalCode: string;
+}
+
+export interface StudentFormInfo extends StudentInfo {
+  birthDateFormatted: string;
+  birthDateFormatted2: string;
 }

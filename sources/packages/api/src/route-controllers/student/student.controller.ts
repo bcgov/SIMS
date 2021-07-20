@@ -17,6 +17,7 @@ import {
   StudentFileService,
   StudentService,
   UserService,
+  ATBCService,
 } from "../../services";
 import {
   CreateStudentDto,
@@ -30,6 +31,7 @@ import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
@@ -46,6 +48,7 @@ export class StudentController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly studentService: StudentService,
+    private readonly atbcService: ATBCService,
     private readonly fileService: StudentFileService,
   ) {
     super();
@@ -73,7 +76,6 @@ export class StudentController extends BaseController {
         `No user record was found with for student ${userToken.userName}`,
       );
     }
-
     const studentInfo: StudentInfo = {
       firstName: existingUser.firstName,
       lastName: existingUser.lastName,
@@ -85,6 +87,10 @@ export class StudentController extends BaseController {
         provinceState: existingStudent.contactInfo.addresses[0].province,
         phone: existingStudent.contactInfo.phone,
       },
+      pdVerified: existingStudent.studentPDVerified,
+      validSin: existingStudent.validSIN,
+      pdSentDate: existingStudent.studentPDSentAt,
+      pdUpdatedDate: existingStudent.studentPDUpdateAt,
     };
     return studentInfo;
   }
@@ -156,6 +162,54 @@ export class StudentController extends BaseController {
     await this.studentService.synchronizeFromUserInfo(userToken);
   }
 
+  @Patch("/apply-pd-status")
+  async applyForPDStatus(@UserToken() userToken: IUserToken): Promise<void> {
+    // Get student details
+    const existingStudent = await this.studentService.getStudentByUserName(
+      userToken.userName,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException(
+        `No student was found with the student name ${userToken.userName}`,
+      );
+    }
+    // Check user exists or not
+    const existingUser = await this.userService.getActiveUser(
+      userToken.userName,
+    );
+    if (!existingUser) {
+      throw new NotFoundException(
+        `No user record was found with for student ${userToken.userName}`,
+      );
+    }
+    //check pd status in db, student should only allowed to check PD status once
+    // existingStudent?.studentPDSentAt is set when student apply for PD Status first
+    // studentPDVerified is null  before PD checker update status
+    // studentPDVerified is true if PD Confirmed by ATBC OR is true from `SFASDB
+    // studentPDVerified is false if PD Denied by ATBC
+    // if student has a SIN valid only, he/she should allow for a PD check
+
+    if (
+      existingStudent.validSIN &&
+      !existingStudent.studentPDSentAt &&
+      existingStudent.studentPDVerified === null
+    ) {
+      // create client payload
+      const payload: ATBCCreateClientPayload = {
+        SIN: existingStudent.sin,
+        firstName: existingUser.firstName,
+        lastName: existingUser.lastName,
+        email: existingUser.email,
+        birthDate: existingStudent.birthdate,
+      };
+      // api to create student profile in ATBC
+      const response = await this.atbcService.ATBCCreateClient(payload);
+      if (response) {
+        //code to update PD Sent Date
+        await this.studentService.updatePDSentDate(existingStudent.id);
+      }
+    }
+  }
   /**
    * Allow files uploads to a particular student.
    * @param userToken authentication token.

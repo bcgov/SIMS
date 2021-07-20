@@ -20,6 +20,7 @@ import {
   FormsFlowService,
   KeycloakService,
   TokensService,
+  ATBCService,
   StudentFileService,
   ProgramYearService,
 } from "./services";
@@ -37,6 +38,7 @@ import {
   EducationProgramController,
   EducationProgramOfferingController,
   ApplicationSystemController,
+  ATBCController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -59,6 +61,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     EducationProgramController,
     EducationProgramOfferingController,
     ApplicationSystemController,
+    ATBCController,
   ],
   providers: [
     AppService,
@@ -79,6 +82,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     InstitutionUserAuthService,
     EducationProgramService,
     EducationProgramOfferingService,
+    ATBCService,
     StudentFileService,
     ProgramYearService,
   ],

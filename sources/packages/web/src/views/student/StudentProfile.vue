@@ -5,6 +5,40 @@
     information needs to be changed please visit
     <a href="http://id.gov.bc.ca" target="_blank">id.gov.bc.ca</a>.
   </Message>
+  <span v-if="showApplyPDButton">
+    <v-btn
+      color="primary"
+      @click="applyPDStatus()"
+      v-if="showApplyPDButton"
+      :disabled="disableBtn"
+    >
+      Apply for PD status
+      <span v-if="disableBtn">
+        &nbsp;&nbsp;
+        <ProgressSpinner style="width:30px;height:25px" strokeWidth="10"
+      /></span>
+    </v-btn>
+  </span>
+  <span v-else>
+    <Message severity="warn" :closable="false" v-if="showPendingStatus">
+      <strong>PD Status: Pending</strong>
+    </Message>
+    <Message
+      severity="success"
+      :closable="false"
+      v-if="studentAllInfo.pdVerified === true"
+    >
+      <strong>PD Status: PD Confirmed</strong>
+    </Message>
+    <Message
+      severity="error"
+      :closable="false"
+      v-if="studentAllInfo.pdVerified === false"
+    >
+      <strong>PD Status: PD Denied</strong>
+    </Message>
+  </span>
+
   <Card class="p-m-4">
     <template #content>
       <formio
@@ -18,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
@@ -28,7 +62,8 @@ import { sinValidationRule } from "../../validators/SinNumberValidator";
 import {
   StudentInfo,
   StudentContact,
-} from "../../types/contracts/StudentContract";
+  StudentFormInfo,
+} from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 // import ApiClient from "../../services/http/ApiClient";
 
@@ -56,7 +91,52 @@ export default {
     const store = useStore();
     const router = useRouter();
     const toast = useToast();
+    const showApplyPDButton = ref();
+    const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
+    const studentAllInfo = ref({} as StudentFormInfo);
+    const getStudentInfo = async () => {
+      studentAllInfo.value = await StudentService.shared.getStudentInfo();
+    };
+    const showPendingStatus = computed(
+      () =>
+        studentAllInfo.value.pdSentDate &&
+        studentAllInfo.value.pdUpdatedDate === null &&
+        studentAllInfo.value.pdVerified === null,
+    );
+    const appliedPDButton = () => {
+      showApplyPDButton.value = false;
+      if (
+        studentAllInfo.value?.validSin &&
+        studentAllInfo.value?.pdSentDate === null &&
+        studentAllInfo.value?.pdVerified === null
+      ) {
+        showApplyPDButton.value = true;
+      }
+    };
+    const applyPDStatus = async () => {
+      disableBtn.value = true;
+      try {
+        await StudentService.shared.applyForPDStatus();
+        toast.add({
+          severity: "success",
+          summary: `Applied for PD Status!`,
+          detail: " Successfully!",
+          life: 5000,
+        });
+      } catch (error) {
+        toast.add({
+          severity: "error",
+          summary: "Unexpected error",
+          detail:
+            "An error happened during the apply PD process. Please try after sometime.",
+          life: 5000,
+        });
+      }
+      await getStudentInfo();
+      appliedPDButton();
+      disableBtn.value = false;
+    };
     const changed = (form: any, event: any) => {
       if (
         event.changed &&
@@ -64,7 +144,6 @@ export default {
         event.changed.value
       ) {
         const value = event.changed.value;
-
         const isValidSin = sinValidationRule(value);
         const newSubmissionData: StudentFormData = {
           ...event.data,
@@ -118,12 +197,12 @@ export default {
 
     onMounted(async () => {
       if (props.editMode) {
-        const studentAllInfo = await StudentService.shared.getStudentInfo();
+        await getStudentInfo();
         const data: StudentFormData = {
-          ...studentAllInfo,
-          ...studentAllInfo.contact,
-          givenNames: studentAllInfo.firstName,
-          dateOfBirth: studentAllInfo.birthDateFormatted2,
+          ...studentAllInfo.value,
+          ...studentAllInfo.value.contact,
+          givenNames: studentAllInfo.value.firstName,
+          dateOfBirth: studentAllInfo.value.birthDateFormatted2,
           mode: "edit",
         };
         initialData.value = data;
@@ -137,9 +216,20 @@ export default {
         };
         initialData.value = obj;
       }
+      await getStudentInfo();
+      appliedPDButton();
     });
 
-    return { changed, submitted, initialData };
+    return {
+      changed,
+      submitted,
+      initialData,
+      applyPDStatus,
+      showApplyPDButton,
+      studentAllInfo,
+      disableBtn,
+      showPendingStatus,
+    };
   },
 };
 </script>

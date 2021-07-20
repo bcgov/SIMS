@@ -7,4 +7,8 @@ export interface StudentInfo {
   gender: string;
   dateOfBirth: Date;
   contact: StudentContact;
+  pdVerified: boolean;
+  validSin: boolean;
+  pdSentDate?: Date;
+  pdUpdatedDate?: Date;
 }

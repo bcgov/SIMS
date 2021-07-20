@@ -168,6 +168,25 @@ objects:
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
                   value: ${FILE_UPLOAD_ALLOWED_EXTENSIONS}
+                - name: ATBC_LOGIN_ENDPOINT
+                  value: ${ATBC_LOGIN_ENDPOINT}
+                - name: ATBC_ENDPOINT
+                  value: ${ATBC_ENDPOINT}
+                - name: ATBC_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_USERNAME_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ATBC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_PASSWORD_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: ATBC_APP
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ATBC_APP_NAME_KEY}
+                      name: ${API_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -334,3 +353,7 @@ parameters:
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
     value: ".pdf,.doc,.docx,.jpg,.png"
+  - name: ATBC_LOGIN_ENDPOINT
+    require: true
+  - name: ATBC_ENDPOINT
+    require: true

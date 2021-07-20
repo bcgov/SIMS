@@ -56,6 +56,13 @@ export class ConfigService {
         programAreaCode: process.env.CRA_PROGRAM_AREA_CODE,
         environmentCode: process.env.CRA_ENVIRONMENT_CODE,
       },
+      ATBCIntegration: {
+        ATBCLoginEndpoint: process.env.ATBC_LOGIN_ENDPOINT,
+        ATBCUserName: process.env.ATBC_USERNAME,
+        ATBCPassword: process.env.ATBC_PASSWORD,
+        ATBCApp: process.env.ATBC_APP,
+        ATBCEndpoint: process.env.ATBC_ENDPOINT,
+      },
     };
   }
 

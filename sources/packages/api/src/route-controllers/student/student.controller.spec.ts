@@ -2,9 +2,11 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
   ArchiveDbService,
-  StudentFileService,
   StudentService,
   UserService,
+  ATBCService,
+  ConfigService,
+  StudentFileService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -17,9 +19,11 @@ describe("StudentController", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
       providers: [
+        ConfigService,
         StudentService,
         UserService,
         ArchiveDbService,
+        ATBCService,
         StudentFileService,
       ],
       controllers: [StudentController],
