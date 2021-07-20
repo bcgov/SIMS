@@ -1,5 +1,4 @@
 {
-  "_id": "6078aa65d5bd29ffb12c0d67",
   "type": "form",
   "tags": [
     "common"
@@ -135,7 +134,7 @@
                   },
                   "unique": false,
                   "errorLabel": "",
-                  "key": "userfFrstName",
+                  "key": "userFirstName",
                   "tags": [],
                   "properties": {},
                   "conditional": {
@@ -160,7 +159,7 @@
                   "hideOnChildrenHidden": false,
                   "refreshOn": "",
                   "inputType": "text",
-                  "id": "en62usq",
+                  "id": "ea4krmh",
                   "defaultValue": ""
                 }
               ],
@@ -1463,7 +1462,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "datepickerMode": "day",
-          "id": "ekjl2r"
+          "id": "ew6b0sd"
         }
       ],
       "id": "emks76p"
@@ -3889,70 +3888,7 @@
   "name": "institutionprofile",
   "path": "institutionprofile",
   "title": "Institution Profile",
-  "submissionAccess": [
-    {
-      "roles": [
-        "603963e92ae0680f9f0ed524"
-      ],
-      "type": "create_all"
-    },
-    {
-      "roles": [
-        "60401930bee4f21c762bbd1c"
-      ],
-      "type": "read_all"
-    },
-    {
-      "roles": [
-        "60401930bee4f21c762bbd1c"
-      ],
-      "type": "update_all"
-    },
-    {
-      "roles": [
-        "603963e92ae0680f9f0ed524",
-        "60401930bee4f21c762bbd1c"
-      ],
-      "type": "delete_all"
-    },
-    {
-      "roles": [
-        "60401930bee4f270cf2bbd1d"
-      ],
-      "type": "create_own"
-    },
-    {
-      "roles": [
-        "60401930bee4f270cf2bbd1d"
-      ],
-      "type": "read_own"
-    },
-    {
-      "roles": [
-        "60401930bee4f270cf2bbd1d"
-      ],
-      "type": "update_own"
-    },
-    {
-      "roles": [
-        "60401930bee4f21c762bbd1c"
-      ],
-      "type": "delete_own"
-    }
-  ],
-  "access": [
-    {
-      "roles": [
-        "603963e92ae0680f9f0ed524",
-        "603963e92ae06897580ed525",
-        "603963e92ae06867e70ed526",
-        "60401930bee4f21c762bbd1c",
-        "60401930bee4f270cf2bbd1d"
-      ],
-      "type": "read_all"
-    }
-  ],
-  "created": "2021-04-15T21:04:37.926Z",
-  "modified": "2021-04-19T19:21:03.419Z",
-  "machineName": "institutionProfile"
+  "machineName": "institutionProfile",
+  "created": "2021-06-28T22:07:09.693Z",
+  "modified": "2021-06-28T22:07:09.700Z"
 }
