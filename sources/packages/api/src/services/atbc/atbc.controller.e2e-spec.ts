@@ -8,7 +8,8 @@ import {
   ArchiveDbService,
   ATBCService,
   UserService,
-} from "../../services";
+  StudentFileService,
+} from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
 import { ConfigService } from "../config/config.service";
@@ -16,13 +17,18 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { ATBCCreateClientResponse } from "../../types";
+import { AppModule } from "../../app.module";
+import { StudentController } from "../../route-controllers/index";
 
-describe("Test ATBC Controller", () => {
+describe.skip("Test ATBC Controller", () => {
   const clientId = "student";
   let connection: Connection;
   let accesstoken: string;
   let configService: ConfigService;
   let app: INestApplication;
+  let studentService: StudentService;
+  let atbcService: ATBCService;
+  let userService: UserService;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -34,22 +40,37 @@ describe("Test ATBC Controller", () => {
     accesstoken = token.access_token;
 
     connection = await setupDB();
-    const moduleFixture: TestingModule = await Test.createTestingModule(
-      {},
-    ).compile();
+    const archiveDB = new ArchiveDbService();
+    userService = new UserService(connection);
+    studentService = new StudentService(connection, archiveDB);
+    atbcService = new ATBCService(configService, studentService);
+
+    const studentFileService = new StudentFileService(connection);
+
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      controllers: [StudentController],
+      providers: [UserService, StudentService, ATBCService, StudentFileService],
+    })
+      .overrideProvider(UserService)
+      .useValue(userService)
+      .overrideProvider(StudentService)
+      .useValue(studentService)
+      .overrideProvider(ATBCService)
+      .useValue(atbcService)
+      .overrideProvider(StudentFileService)
+      .useValue(studentFileService)
+      .compile();
     app = moduleFixture.createNestApplication();
     await app.init();
   });
+
   afterAll(async () => {
     await closeDB();
   });
 
   it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Create fake student in SIMS DB
-    const archiveDB = new ArchiveDbService();
-    const userService = new UserService(connection);
-    const studentService = new StudentService(connection, archiveDB);
-    const atbcService = new ATBCService(configService, studentService);
+
     const fakestudent = new Student();
     fakestudent.sin = "123456789";
     fakestudent.birthdate = faker.date.past(20);
@@ -80,14 +101,16 @@ describe("Test ATBC Controller", () => {
     jest.spyOn(atbcService, "ATBCCreateClient").mockImplementation(async () => {
       return {} as ATBCCreateClientResponse;
     });
-    // call to the controller, to apply for the PD
-    request(app.getHttpServer())
-      .patch("/student/apply-pd-status")
-      .auth(accesstoken, { type: "bearer" })
-      .expect(HttpStatus.OK);
 
-    // Remove the created fake user from SIMS db
-    await studentService.remove(fakestudent);
-    await userService.remove(simsUser);
+    try {
+      // call to the controller, to apply for the PD
+      return request(app.getHttpServer())
+        .patch("/students/apply-pd-status")
+        .auth(accesstoken, { type: "bearer" })
+        .expect(HttpStatus.OK);
+    } finally {
+      await studentService.remove(fakestudent);
+      await userService.remove(simsUser);
+    }
   });
 });
