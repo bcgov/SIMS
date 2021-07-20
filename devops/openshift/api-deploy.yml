@@ -357,3 +357,9 @@ parameters:
     require: true
   - name: ATBC_ENDPOINT
     require: true
+  - name: ATBC_USERNAME_NAME_KEY
+    value: atbc-username
+  - name: ATBC_PASSWORD_NAME_KEY
+    value: atbc-password
+  - name: ATBC_APP_NAME_KEY
+    value: atbc-app
