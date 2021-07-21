@@ -16,7 +16,10 @@ const getFormIoPath = () =>
  */
 (async () => {
   try {
-    console.log("**** Deploying Form IO Definitions ****");
+    console.log(process.env.NODE_ENV);
+    console.log(
+      `**** Deploying Form IO Definitions to ${process.env.FORMS_URL} ****`
+    );
     const directory = getFormIoPath();
     console.log(`Getting form definitions from ${directory}`);
     const files: string[] = fs.readdirSync(directory);
@@ -39,14 +42,25 @@ const getFormIoPath = () =>
       const jsonContent = JSON.parse(fileContent);
       const formAlias = file.replace(path.extname(file), "");
       const isDeployed = await isFormDeployed(formAlias, authHeader);
-      if (isDeployed) {
-        console.log(`Form ${formAlias} is already deployed. Updating form...`);
-        //await updateForm(formAlias, jsonContent, authHeader);
-        console.log(`Form ${formAlias} updated!`);
-      } else {
-        console.log(`Form ${formAlias} was not found. Creating form...`);
-        //await createForm(jsonContent, authHeader);
-        console.log(`Form ${formAlias} created!`);
+      try {
+        if (isDeployed) {
+          console.log(
+            `Form ${formAlias} is already deployed. Updating form...`
+          );
+          await updateForm(formAlias, jsonContent, authHeader);
+          console.log(`Form ${formAlias} updated!`);
+        } else {
+          console.log(`Form ${formAlias} was not found. Creating form...`);
+          await createForm(jsonContent, authHeader);
+          console.log(`Form ${formAlias} created!`);
+        }
+      } catch (error) {
+        // Case an error happen, log and try to continue.
+        console.error(
+          `Error while ${
+            isDeployed ? "updating" : "creating"
+          } form ${formAlias}`
+        );
       }
     }
   } catch (excp) {

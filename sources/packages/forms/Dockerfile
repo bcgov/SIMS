@@ -1,8 +1,8 @@
-# Base Image
 ARG FORMS_URL
 ARG FORMS_SA_USER_NAME
 ARG FORMS_SA_PASSWORD
 
+# Base Image
 FROM node:12.18.3-slim
 
 WORKDIR /forms-deploy
@@ -14,6 +14,8 @@ COPY ./package*.json ./
 
 # Installing dependencies.
 RUN npm ci
+
+ENV NODE_ENV production
 
 # Copy soruce code to build.
 COPY . /forms-deploy

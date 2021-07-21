@@ -1,0 +1,6 @@
+# Forms Related - TEST
+FORMS_URL=https://test-aest-ffa-forms.apps.silver.devops.gov.bc.ca
+# Service Account
+FORMS_SA_USER_NAME=
+FORMS_SA_PASSWORD=
+
