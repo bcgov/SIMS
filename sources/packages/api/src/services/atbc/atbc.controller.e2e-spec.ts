@@ -1,6 +1,5 @@
 require("../../../env_setup");
-import { closeDB, setupDB } from "../../testHelpers";
-import { Connection } from "typeorm";
+import { closeDB } from "../../testHelpers";
 import * as faker from "faker";
 import { Student, User } from "../../database/entities";
 import {
@@ -17,14 +16,13 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { ATBCCreateClientResponse } from "../../types";
-import { AppModule } from "../../app.module";
-import { StudentController } from "../../route-controllers/index";
+import { StudentController } from "../../route-controllers";
+import { DatabaseModule } from "../../database/database.module";
+import { AuthModule } from "../../auth/auth.module";
 
-describe.skip("Test ATBC Controller", () => {
+describe("Test ATBC Controller", () => {
   const clientId = "student";
-  let connection: Connection;
   let accesstoken: string;
-  let configService: ConfigService;
   let app: INestApplication;
   let studentService: StudentService;
   let atbcService: ATBCService;
@@ -39,38 +37,30 @@ describe.skip("Test ATBC Controller", () => {
     );
     accesstoken = token.access_token;
 
-    connection = await setupDB();
-    const archiveDB = new ArchiveDbService();
-    userService = new UserService(connection);
-    studentService = new StudentService(connection, archiveDB);
-    atbcService = new ATBCService(configService, studentService);
-
-    const studentFileService = new StudentFileService(connection);
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [DatabaseModule, AuthModule],
       controllers: [StudentController],
-      providers: [UserService, StudentService, ATBCService, StudentFileService],
-    })
-      .overrideProvider(UserService)
-      .useValue(userService)
-      .overrideProvider(StudentService)
-      .useValue(studentService)
-      .overrideProvider(ATBCService)
-      .useValue(atbcService)
-      .overrideProvider(StudentFileService)
-      .useValue(studentFileService)
-      .compile();
+      providers: [
+        ConfigService,
+        UserService,
+        ArchiveDbService,
+        ATBCService,
+        StudentFileService,
+        StudentService,
+      ],
+    }).compile();
+    userService = await moduleFixture.get(UserService);
+    atbcService = await moduleFixture.get(ATBCService);
+    studentService = await moduleFixture.get(StudentService);
     app = moduleFixture.createNestApplication();
     await app.init();
   });
-
   afterAll(async () => {
     await closeDB();
   });
 
   it("should return an HTTP 200 status when applying for PD and student is valid", async () => {
     // Create fake student in SIMS DB
-
     const fakestudent = new Student();
     fakestudent.sin = "123456789";
     fakestudent.birthdate = faker.date.past(20);
@@ -104,7 +94,7 @@ describe.skip("Test ATBC Controller", () => {
 
     try {
       // call to the controller, to apply for the PD
-      return request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch("/students/apply-pd-status")
         .auth(accesstoken, { type: "bearer" })
         .expect(HttpStatus.OK);
