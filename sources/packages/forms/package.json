@@ -2,16 +2,17 @@
   "name": "forms",
   "version": "1.0.0",
   "description": "Form IO Definitions",
-  "main": "deploy-forms.ts",
+  "main": "deploy-forms.js",
   "scripts": {
-    "build": "npx tsc && npm run copy-definitions",
+    "build": "tsc -p tsconfig.json",
     "deploy-forms": "NODE_ENV=local ts-node ./src/deploy-forms.ts",
-    "deploy-forms:win": "SET NODE_ENV=local&&ts-node ./src/deploy-forms.ts",
-    "copy-definitions": "copyfiles -u 1 \"src/**/*.json\" dist"
+    "deploy-forms:win": "SET NODE_ENV=local&&ts-node ./src/deploy-forms.ts"
   },
   "author": "",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.4.0",
     "copyfiles": "^2.4.1",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"

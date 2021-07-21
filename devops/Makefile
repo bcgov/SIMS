@@ -563,3 +563,11 @@ db-backup-deploy-delete-mongodb:
 # The below PVCs are not deleted.
 # pvc/$(BACKUP_MONGODB_APP_NAME)-pvc
 # pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc
+
+deploy-forms:
+	docker build \
+	--build-arg FORMS_URL=TO_BE_DEFINED \
+	--build-arg FORMS_SA_USER_NAME=TO_BE_DEFINED \
+	--build-arg FORMS_SA_PASSWORD=TO_BE_DEFINED \
+	-t form-deployment ../sources/packages/forms \
+	&& docker run -it form-deployment
