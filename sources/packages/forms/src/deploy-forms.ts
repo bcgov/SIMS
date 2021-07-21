@@ -7,7 +7,7 @@ import {
   createForm,
 } from "./formio-api";
 
-const sourceDir = process.env.NODE_ENV === "local" ? "src" : "dist";
+const sourceDir = process.env.NODE_ENV === "production" ? "dist" : "src";
 const getFormIoPath = () =>
   path.resolve(__dirname, `../${sourceDir}/form-definitions`);
 
