@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 dotenv.config({ path: __dirname + "/../.env" });
 const formsUrl = process.env.FORMS_URL;
@@ -12,7 +12,7 @@ const FORMIO_TOKEN_NAME = "x-jwt-token";
  * Creates the expected authorization header to authorize the formio API.
  * @returns header to be added to HTTP request.
  */
-export const createAuthHeader = async () => {
+export const createAuthHeader = async (): Promise<{ headers: any }> => {
   const token = await getAuthToken();
   return {
     headers: {
@@ -25,7 +25,7 @@ export const createAuthHeader = async () => {
  * Gets the authentication token value to authorize the formio API.
  * @returns the token that is needed to authentication on the formio API.
  */
-const getAuthToken = async () => {
+const getAuthToken = async (): Promise<string> => {
   const authResponse = await getUserLogin();
   return authResponse.headers[FORMIO_TOKEN_NAME];
 };
@@ -35,15 +35,14 @@ const getAuthToken = async () => {
  * @returns the result of a sucessfull authentication or thows an expection
  * in case the result is anything different from HTTP 200 code.
  */
-const getUserLogin = async () => {
+const getUserLogin = async (): Promise<AxiosResponse<any>> => {
   try {
-    const authRequest = await axios.post(`${formsUrl}/user/login`, {
+    return await axios.post(`${formsUrl}/user/login`, {
       data: {
         email: formsUserName,
         password: formsPassword,
       },
     });
-    return authRequest;
   } catch (error) {
     console.error("Received exception while getting form SA token");
     console.error(error);
