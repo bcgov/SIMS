@@ -1,23 +1,18 @@
-require("../env_setup");
-import * as fs from "fs";
-import * as path from "path";
+import * as dotenv from "dotenv";
 import axios from "axios";
 
-const formDefinitionsPath = "api/forms";
+dotenv.config({ path: __dirname + "/../.env" });
 const formsUrl = process.env.FORMS_URL;
 const formsUserName = process.env.FORMS_SA_USER_NAME;
 const formsPassword = process.env.FORMS_SA_PASSWORD;
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
 
-const getFormIoPath = () =>
-  path.resolve(__dirname, `../../${formDefinitionsPath}`);
-
 /**
  * Creates the expected authorization header to authorize the formio API.
  * @returns header to be added to HTTP request.
  */
-const createAuthHeader = async () => {
+export const createAuthHeader = async () => {
   const token = await getAuthToken();
   return {
     headers: {
@@ -54,9 +49,9 @@ const getUserLogin = async () => {
   }
 };
 
-const isFormDeployed = async (
+export const isFormDeployed = async (
   formAlias: string,
-  authHeader: any,
+  authHeader: any
 ): Promise<boolean> => {
   try {
     const authRequest = await axios.get(`${formsUrl}/${formAlias}`, authHeader);
@@ -66,10 +61,10 @@ const isFormDeployed = async (
   }
 };
 
-const updateForm = async (
+export const updateForm = async (
   formAlias: string,
   formDefinition: any,
-  authHeader: any,
+  authHeader: any
 ): Promise<void> => {
   try {
     await axios.put(`${formsUrl}/${formAlias}`, formDefinition, authHeader);
@@ -80,10 +75,9 @@ const updateForm = async (
   }
 };
 
-const createForm = async (
-  formAlias: string,
+export const createForm = async (
   formDefinition: any,
-  authHeader: any,
+  authHeader: any
 ): Promise<void> => {
   try {
     await axios.post(`${formsUrl}/form`, formDefinition, authHeader);
@@ -93,47 +87,3 @@ const createForm = async (
     throw error;
   }
 };
-
-/**
- * Script main execution method
- */
-(async () => {
-  try {
-    console.log("**** Deploying Form IO Definitions ****");
-    const directory = getFormIoPath();
-    console.log(`Getting form definitions from ${directory}`);
-    const files: string[] = fs.readdirSync(directory);
-
-    if (files.length === 0) {
-      console.log("No files found to be deployed!");
-      return;
-    }
-
-    console.log("Acquiring access token...");
-    const authHeader = await createAuthHeader();
-
-    for (const file of files) {
-      console.log(
-        "------------------------------------------------------------",
-      );
-      console.log(`Deploying form definition ${file}`);
-      const filePath = path.join(directory, file);
-      const fileContent = fs.readFileSync(filePath, { encoding: "utf8" });
-      const jsonContent = JSON.parse(fileContent);
-      const formAlias = file.replace(path.extname(file), "");
-      const isDeployed = await isFormDeployed(formAlias, authHeader);
-      if (isDeployed) {
-        console.log(`Form ${formAlias} is already deployed. Updating form...`);
-        await updateForm(formAlias, jsonContent, authHeader);
-        console.log(`Form ${formAlias} updated!`);
-      } else {
-        console.log(`Form ${formAlias} was not found. Creating form...`);
-        await createForm(formAlias, jsonContent, authHeader);
-        console.log(`Form ${formAlias} created!`);
-      }
-    }
-  } catch (excp) {
-    console.error(`Exception occurs during Form IO deployment: ${excp}`);
-    throw excp;
-  }
-})();
