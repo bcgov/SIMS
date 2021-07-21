@@ -22,6 +22,7 @@
     "test:e2e:local": "NODE_ENV=local ENVIRONMENT=test jest --config ./test/jest-e2e.json",
     "test:e2e:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest --config ./test/jest-e2e.json",
     "setup:db": "ts-node scripts/setupDB",
+    "deploy-form-io": "ts-node scripts/deployFormIO",
     "local": "ENVIRONMENT=local NODE_ENV=local npm run start:dev",
     "test:local": "NODE_ENV=local ENVIRONMENT=test jest",
     "test:local:win": "SET NODE_ENV=local&&SET ENVIRONMENT=test&&jest",
