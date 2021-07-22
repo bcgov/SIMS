@@ -1,0 +1,23 @@
+{
+  "name": "forms",
+  "version": "1.0.0",
+  "description": "Form IO Definitions",
+  "main": "deploy-forms.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "deploy-local": "ts-node ./src/deploy-forms.ts"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.4.0",
+    "copyfiles": "^2.4.1",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0"
+  }
+}
