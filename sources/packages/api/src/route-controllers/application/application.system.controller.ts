@@ -1,6 +1,6 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import { Controller, Get, Patch, NotFoundException, Param, Body } from "@nestjs/common";
 import { ApplicationService } from "../../services";
-import { GetApplicationDataDto } from "./models/application.model";
+import { GetApplicationDataDto, ApplicationAssessmentDTO } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
@@ -27,5 +27,33 @@ export class ApplicationSystemController {
     }
 
     return { data: application.data };
+  }
+
+  @Patch(":applicationId/assessment")
+  async updateAssessmentInApplication(
+    @Body() assessment: ApplicationAssessmentDTO,
+    @Param("applicationId") applicationId: number,
+  ): Promise<number> {
+    const application = await this.getByApplicationId(applicationId);
+    const updateAssessmentInApplication = await this.applicationService.updateAssessmentInApplication(
+      applicationId,
+      application,
+      assessment,
+    );
+    return updateAssessmentInApplication.affected;
+  }
+
+  @Get(":applicationId/assessment")
+  async getAssessmentInApplication(
+    @Param("applicationId") applicationId: number,
+  ): Promise<ApplicationAssessmentDTO> {
+    const assessment = await this.applicationService.getAssessmentByApplicationId(applicationId);
+    if (!assessment) {
+      throw new NotFoundException(
+        `Assessment for the applicaiton id ${applicationId} was not calculated.`,
+      );
+    }
+
+    return assessment;
   }
 }
