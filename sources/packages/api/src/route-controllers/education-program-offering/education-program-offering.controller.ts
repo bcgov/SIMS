@@ -7,6 +7,7 @@ import {
   Get,
   UnprocessableEntityException,
   ForbiddenException,
+  NotFoundException,
 } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -60,7 +61,7 @@ export class EducationProgramOfferingController {
       userToken.authorizations.institutionId,
     );
     if (!requestProgram) {
-      throw new ForbiddenException();
+      throw new NotFoundException();
     }
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.EducationProgramOffering,
