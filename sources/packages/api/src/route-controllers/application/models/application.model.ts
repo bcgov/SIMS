@@ -16,21 +16,3 @@ export interface GetApplicationDataDto {
    */
   data: any;
 }
-
-export interface ApplicationAssessmentDTO {
-  /**
-   * Assessment data for an Application
-   */
-  weeks: number;
-  federal_assessment_need: number;
-  provincial_assessment_need: number;
-  total_federal_award: number;
-  total_provincial_award: number;
-}
-
-export class ApplicationDto {
-  /**
-   * Assessment Values in an Application
-   */
-  assessment: any;
-}

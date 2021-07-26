@@ -19,7 +19,6 @@ import BaseController from "../BaseController";
 import {
   CreateApplicationDto,
   GetApplicationDataDto,
-  ApplicationAssessmentDTO,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -105,7 +104,7 @@ export class ApplicationController extends BaseController {
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
-  ): Promise<ApplicationAssessmentDTO> {
+  ): Promise<any> {
     const assessment = await this.applicationService.getAssessmentByApplicationId(
       applicationId,
     );

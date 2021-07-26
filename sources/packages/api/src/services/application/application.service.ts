@@ -9,10 +9,7 @@ import {
   Student,
   StudentFile,
 } from "../../database/entities";
-import {
-  CreateApplicationDto,
-  ApplicationAssessmentDTO,
-} from "../../route-controllers/application/models/application.model";
+import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -64,21 +61,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.update(applicationId, { assessment });
   }
 
-  async getAssessmentByApplicationId(
-    applicationId: number,
-  ): Promise<ApplicationAssessmentDTO> {
-    const application = await this.repo
+  async getAssessmentByApplicationId(applicationId: number): Promise<any> {
+    return this.repo
       .createQueryBuilder("application")
       .select("application.assessment")
       .where("application.id = :applicationId", { applicationId })
       .getOne();
-    return {
-      weeks: application.assessment.weeks,
-      federal_assessment_need: application.assessment.federal_assessment_need,
-      provincial_assessment_need:
-        application.assessment.provincial_assessment_need,
-      total_federal_award: application.assessment.total_federal_award,
-      total_provincial_award: application.assessment.total_provincial_award,
-    };
   }
 }
