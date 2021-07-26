@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -9,6 +10,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
+import { Application } from ".";
 /**
  * The main resource table to store education programs offerings related information.
  * Education programs offering is for a particular program and location.

@@ -1,11 +1,13 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { Connection, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
   Application,
   ApplicationStudentFile,
+  EducationProgramOffering,
+  ProgramInfoStatus,
   Student,
   StudentFile,
 } from "../../database/entities";
@@ -38,8 +40,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return await this.repo.save(newApplication);
   }
 
+  async associateAssessmentWorkflow(
+    applicationId: number,
+    assessmentWorkflowId: string,
+  ): Promise<UpdateResult> {
+    return this.repo.update({ id: applicationId }, { assessmentWorkflowId });
+  }
+
   async getApplicationById(
-    applicationId: string,
+    applicationId: number,
     userName: string,
   ): Promise<Application> {
     const application = await this.repo
@@ -52,5 +61,59 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return application;
+  }
+
+  /**
+   * Updates program information request related data.
+   * @param applicationId application id to be updated.
+   * @param locationId location id related to the offering.
+   * @param status status of the program information request.
+   * @param offering offering id, when available, otherwise
+   * a PIR request need happen to an offering id be provided.
+   * @returns program info update result.
+   */
+  async updateProgramInfo(
+    applicationId: number,
+    locationId: number,
+    status: ProgramInfoStatus,
+    offeringId?: number,
+  ): Promise<UpdateResult> {
+    return await this.repo.update(
+      { id: applicationId },
+      {
+        location: { id: locationId },
+        offering: { id: offeringId },
+        pirStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates program information request status.
+   * @param applicationId application id to be updated.
+   * @param status status of the program information request.
+   * a PIR request need happen to an offering id be provided.
+   * @returns program information request status update result.
+   */
+  async updateProgramInfoStatus(
+    applicationId: number,
+    status: ProgramInfoStatus,
+  ): Promise<UpdateResult> {
+    return await this.repo.update(
+      { id: applicationId },
+      {
+        pirStatus: status,
+      },
+    );
+  }
+
+  async getOfferingByApplicationId(
+    applicationId: number,
+  ): Promise<EducationProgramOffering> {
+    const application = await this.repo.findOne(applicationId, {
+      relations: ["offering"],
+    });
+
+    return application?.offering;
   }
 }

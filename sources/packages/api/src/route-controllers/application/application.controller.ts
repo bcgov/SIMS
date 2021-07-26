@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   Post,
@@ -39,7 +40,7 @@ export class ApplicationController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":id/data")
   async getByApplicationId(
-    @Param("id") applicationId: string,
+    @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<GetApplicationDataDto> {
     const application = await this.applicationService.getApplicationById(
@@ -93,10 +94,27 @@ export class ApplicationController extends BaseController {
       studentFiles,
     );
 
-    await this.workflow.startApplicationAssessment(
+    const assessmentWorflow = await this.workflow.startApplicationAssessment(
       submissionResult.data.data.workflowName,
       createdApplication.id,
     );
+
+    // TODO: Once we have the application status we should run the create/associate
+    // under a DB transation to ensure that, if the workflow fails to start we would
+    // be rolling back the transaction and returning an error to the student.
+    const workflowAssociationResult =
+      await this.applicationService.associateAssessmentWorkflow(
+        createdApplication.id,
+        assessmentWorflow.id,
+      );
+
+    if (workflowAssociationResult.affected !== 1) {
+      // TODO: Once we add a transaction, this error should force a rollback
+      // and should also cancel the workflow.
+      throw new InternalServerErrorException(
+        "Error while associating the assessment workflow.",
+      );
+    }
 
     return createdApplication.id;
   }

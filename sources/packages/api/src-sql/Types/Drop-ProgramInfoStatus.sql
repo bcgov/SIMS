@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.program_info_status 
