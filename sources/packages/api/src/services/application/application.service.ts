@@ -11,7 +11,6 @@ import {
 } from "../../database/entities";
 import {
   CreateApplicationDto,
-  ApplicationDto,
   ApplicationAssessmentDTO,
 } from "../../route-controllers/application/models/application.model";
 
