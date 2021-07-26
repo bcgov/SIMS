@@ -35,6 +35,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newFileAssociation.studentFile = { id: file.id } as StudentFile;
       return newFileAssociation;
     });
+    newApplication.applicationNumber = applicationDto.applicationNumber
     return await this.repo.save(newApplication);
   }
 

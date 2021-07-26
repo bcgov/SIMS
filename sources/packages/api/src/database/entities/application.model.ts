@@ -23,6 +23,12 @@ export class Application extends RecordDataModel {
   })
   data: any;
 
+  @Column({
+    name: "application_number",
+    nullable: false,
+  })
+  applicationNumber: string;
+
   @OneToOne(() => Student, { eager: false, cascade: true })
   @JoinColumn({
     name: "student_id",

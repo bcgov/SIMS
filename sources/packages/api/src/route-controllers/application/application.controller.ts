@@ -13,6 +13,7 @@ import {
   StudentFileService,
   StudentService,
   WorkflowActionsService,
+  SequenceControlService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -32,6 +33,7 @@ export class ApplicationController extends BaseController {
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly fileService: StudentFileService,
+    private readonly sequenceService: SequenceControlService,
   ) {
     super();
   }
@@ -86,13 +88,26 @@ export class ApplicationController extends BaseController {
         payload.associatedFiles,
       );
     }
-
+    // TODO:remove the static program year and add dynamic year, from program year table
+    const sequenceName = "2122";
+    let nextApplicationSequence: number = NaN;
+    await this.sequenceService.consumeNextSequence(
+      sequenceName,
+      async (nextSequenceNumber: number) => {
+        nextApplicationSequence = nextSequenceNumber;
+      },
+    );
+    if (!nextApplicationSequence) {
+      throw new BadRequestException();
+    }
+    const applicationNumber =
+      parseInt(sequenceName) * 10 ** 6 + (nextApplicationSequence - 1);
+    submissionResult.data.applicationNumber = applicationNumber;
     const createdApplication = await this.applicationService.createApplication(
       student.id,
       submissionResult.data,
       studentFiles,
     );
-
     await this.workflow.startApplicationAssessment(
       submissionResult.data.data.workflowName,
       createdApplication.id,
