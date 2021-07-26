@@ -24,7 +24,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getById(id: number): Promise<InstitutionLocation> {
     return await this.repo.findOne(id);
   }
-  
+
   async getInstitutionLocationById(id: number): Promise<InstitutionLocation> {
     return this.repo
       .createQueryBuilder("institution_location")
@@ -32,10 +32,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institution_location.name",
         "institution_location.data",
         "institution_location.id",
-        "institution",
+        "institution.id",
       ])
       .leftJoin("institution_location.institution", "institution")
-      .where("institution_location.id = :id", { id: id })
+      .where("institution_location.id = :id", { id })
       .getOneOrFail();
   }
 
