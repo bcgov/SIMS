@@ -30,15 +30,6 @@ export interface ApplicationAssessmentDTO {
 
 export class ApplicationDto {
   /**
-   * Application dynamic data.
-   */
-  data: any;
-  /**
-   * Array of unique file names to be associated
-   * with this application.
-   */
-  associatedFiles: string[];
-  /**
    * Assessment Values in an Application
    */
   assessment: any;

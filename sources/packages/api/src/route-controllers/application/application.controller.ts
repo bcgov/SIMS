@@ -19,6 +19,7 @@ import BaseController from "../BaseController";
 import {
   CreateApplicationDto,
   GetApplicationDataDto,
+  ApplicationAssessmentDTO,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -99,5 +100,21 @@ export class ApplicationController extends BaseController {
     );
 
     return createdApplication.id;
+  }
+
+  @Get(":applicationId/assessment")
+  async getAssessmentInApplication(
+    @Param("applicationId") applicationId: number,
+  ): Promise<ApplicationAssessmentDTO> {
+    const assessment = await this.applicationService.getAssessmentByApplicationId(
+      applicationId,
+    );
+    if (!assessment) {
+      throw new NotFoundException(
+        `Assessment for the applicaiton id ${applicationId} was not calculated.`,
+      );
+    }
+
+    return assessment;
   }
 }

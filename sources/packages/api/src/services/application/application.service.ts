@@ -11,9 +11,8 @@ import {
 } from "../../database/entities";
 import {
   CreateApplicationDto,
-  ApplicationAssessmentDTO,
   ApplicationDto,
-  GetApplicationDataDto,
+  ApplicationAssessmentDTO,
 } from "../../route-controllers/application/models/application.model";
 
 @Injectable()
@@ -61,39 +60,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   async updateAssessmentInApplication(
     applicationId: number,
-    application: GetApplicationDataDto,
-    assessment: ApplicationAssessmentDTO,
+    assessment: any,
   ): Promise<UpdateResult> {
-    const populatedApplication = await this.populateApplication(
-      application,
-      assessment,
-    );
-    return this.repo.update(applicationId, populatedApplication);
+    return this.repo.update(applicationId, { assessment });
   }
 
-  async populateApplication(
-    applicationDto: GetApplicationDataDto,
-    assessment: ApplicationAssessmentDTO,
-  ): Promise<ApplicationDto> {
-    const application = new ApplicationDto();
-    application.data = applicationDto.data;
-    application.assessment = {
-      weeks: assessment.weeks,
-      federal_assessment_need: assessment.federal_assessment_need,
-      provincial_assessment_need: assessment.provincial_assessment_need,
-      total_federal_award: assessment.total_federal_award,
-      total_provincial_award: assessment.total_provincial_award,
-    };
-    return application;
-  }
-
-  async getAssessmentByApplicationId(applicationId: number): Promise<any> {
-    return this.repo
+  async getAssessmentByApplicationId(
+    applicationId: number,
+  ): Promise<ApplicationAssessmentDTO> {
+    const application = await this.repo
       .createQueryBuilder("application")
       .select("application.assessment")
-      .where("application.id = :applicationIdParam", {
-        applicationIdParam: applicationId,
-      })
+      .where("application.id = :applicationId", { applicationId })
       .getOne();
+    return {
+      weeks: application.assessment.weeks,
+      federal_assessment_need: application.assessment.federal_assessment_need,
+      provincial_assessment_need:
+        application.assessment.provincial_assessment_need,
+      total_federal_award: application.assessment.total_federal_award,
+      total_provincial_award: application.assessment.total_provincial_award,
+    };
   }
 }
