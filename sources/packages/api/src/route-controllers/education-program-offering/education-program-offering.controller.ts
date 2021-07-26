@@ -6,23 +6,37 @@ import {
   Param,
   Get,
   UnprocessableEntityException,
+  ForbiddenException,
+  NotFoundException,
 } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, HasLocationAccess } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  HasLocationAccess,
+  UserToken,
+} from "../../auth/decorators";
 import {
   SaveEducationProgramOfferingDto,
   EducationProgramOfferingDto,
   ProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
-import { EducationProgramOfferingService, FormService } from "../../services";
+import {
+  EducationProgramOfferingService,
+  FormService,
+  InstitutionLocationService,
+  EducationProgramService,
+} from "../../services";
 import { OptionItem } from "../../types";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
+    private readonly locationService: InstitutionLocationService,
+    private readonly programService: EducationProgramService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -32,7 +46,23 @@ export class EducationProgramOfferingController {
     @Body() payload: SaveEducationProgramOfferingDto,
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
+    );
+    if (
+      userToken.authorizations.institutionId !== requestedLoc.institution.id
+    ) {
+      throw new ForbiddenException();
+    }
+    const requestProgram = await this.programService.getInstitutionProgram(
+      programId,
+      userToken.authorizations.institutionId,
+    );
+    if (!requestProgram) {
+      throw new NotFoundException();
+    }
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.EducationProgramOffering,
       payload,
@@ -44,11 +74,12 @@ export class EducationProgramOfferingController {
       );
     }
 
-    const createdProgramOffering = await this.programOfferingService.createEducationProgramOffering(
-      locationId,
-      programId,
-      payload,
-    );
+    const createdProgramOffering =
+      await this.programOfferingService.createEducationProgramOffering(
+        locationId,
+        programId,
+        payload,
+      );
     return createdProgramOffering.id;
   }
 
@@ -58,12 +89,22 @@ export class EducationProgramOfferingController {
   async getAllEducationProgramOffering(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramOfferingDto[]> {
-    //To retrive Education program offering corresponding to ProgramId and LocationId
-    const programOferingList = await this.programOfferingService.getAllEducationProgramOffering(
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
       locationId,
-      programId,
     );
+    if (
+      userToken.authorizations.institutionId !== requestedLoc.institution.id
+    ) {
+      throw new ForbiddenException();
+    }
+    //To retrive Education program offering corresponding to ProgramId and LocationId
+    const programOferingList =
+      await this.programOfferingService.getAllEducationProgramOffering(
+        locationId,
+        programId,
+      );
     if (!programOferingList) {
       throw new UnprocessableEntityException(
         "Not able to find a Education Program Offering associated with the current Education Program and Location.",
@@ -84,7 +125,16 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("offeringId") offeringId: number,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<ProgramOfferingDto> {
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
+    );
+    if (
+      userToken.authorizations.institutionId !== requestedLoc.institution.id
+    ) {
+      throw new ForbiddenException();
+    }
     //To retrive Education program offering corresponding to ProgramId and LocationId
     const offering = await this.programOfferingService.getProgramOffering(
       locationId,
@@ -124,10 +174,35 @@ export class EducationProgramOfferingController {
   )
   async updateProgramOffering(
     @Body() payload: SaveEducationProgramOfferingDto,
+    @UserToken() userToken: IInstitutionUserToken,
     @Param("locationId") locationId: number,
     @Param("programId") programId?: number,
     @Param("offeringId") offeringId?: number,
   ): Promise<number> {
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
+    );
+    if (
+      userToken.authorizations.institutionId !== requestedLoc.institution.id
+    ) {
+      throw new ForbiddenException();
+    }
+    const requestOffering =
+      await this.programOfferingService.getProgramOffering(
+        locationId,
+        programId,
+        offeringId,
+      );
+    if (!requestOffering) {
+      throw new ForbiddenException();
+    }
+    const requestProgram = await this.programService.getInstitutionProgram(
+      programId,
+      userToken.authorizations.institutionId,
+    );
+    if (!requestProgram) {
+      throw new ForbiddenException();
+    }
     const updatingResult = await this.formService.dryRunSubmission(
       FormNames.EducationProgramOffering,
       payload,
@@ -139,12 +214,13 @@ export class EducationProgramOfferingController {
       );
     }
 
-    const updateProgramOffering = await this.programOfferingService.updateEducationProgramOffering(
-      locationId,
-      programId,
-      offeringId,
-      payload,
-    );
+    const updateProgramOffering =
+      await this.programOfferingService.updateEducationProgramOffering(
+        locationId,
+        programId,
+        offeringId,
+        payload,
+      );
     return updateProgramOffering.affected;
   }
 
@@ -154,10 +230,11 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<OptionItem[]> {
-    const offerings = await this.programOfferingService.getProgramOfferingsForLocation(
-      locationId,
-      programId,
-    );
+    const offerings =
+      await this.programOfferingService.getProgramOfferingsForLocation(
+        locationId,
+        programId,
+      );
 
     return offerings.map((offering) => ({
       id: offering.id,
