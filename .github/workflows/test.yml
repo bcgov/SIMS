@@ -38,6 +38,7 @@ jobs:
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
       E2E_TEST_STUDENT_USERNAME: student_e2e_test
       E2E_TEST_STUDENT_PASSWORD: ${{ secrets.TEST_STUDENT_PASSWORD }}
+      FORMS_FLOW_BPM_CLIENT_SECRET: ${{ secrets.TEST_FORMS_FLOW_BPM_CLIENT_SECRET }}
       COMPOSE_INTERACTIVE_NO_CLI: 1
     steps:
       - name: Print env
@@ -65,7 +66,7 @@ jobs:
       - name: Sleep for 10 seconds
         uses: jakejarvis/wait-action@master
         with:
-            time: '10s'
+          time: "10s"
       - name: Run tests
         working-directory: "./sources/"
         run: |
@@ -89,5 +90,3 @@ jobs:
         run: |
           npm ci
           npm run test:unit
-
-

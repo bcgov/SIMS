@@ -47,8 +47,6 @@ export class ApplicationSystemController {
     @Param("id") applicationId: number,
     @Body() payload: UpdateProgramInfoDto,
   ): Promise<void> {
-    console.log(payload);
-
     const updateResult = await this.applicationService.updateProgramInfo(
       applicationId,
       payload.locationId,

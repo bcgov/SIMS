@@ -8,7 +8,7 @@ import {
 import { createFakeEducationProgram } from "./education-program-fake";
 
 export function createFakeEducationProgramOffering(
-  program: EducationProgram,
+  program?: EducationProgram,
   institutionLocation?: InstitutionLocation,
 ): EducationProgramOffering {
   const offering = new EducationProgramOffering();

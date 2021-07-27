@@ -59,7 +59,7 @@ describe("Test system-access/application Controller", () => {
     await app.init();
   });
 
-  describe("Test route :id/program-info", () => {
+  describe("Test route PATCH :id/program-info", () => {
     it("should return bad request for an invalid Program Request Info (PIR) status", async () => {
       await request(app.getHttpServer())
         .patch("/system-access/application/1/program-info")
@@ -171,7 +171,7 @@ describe("Test system-access/application Controller", () => {
     });
   });
 
-  describe("Test route :id/program-info/status", () => {
+  describe("Test route PATCH :id/program-info/status", () => {
     it("should return bad request for an invalid Program Request Info (PIR) status", async () => {
       await request(app.getHttpServer())
         .patch("/system-access/application/1/program-info/status")
@@ -201,6 +201,75 @@ describe("Test system-access/application Controller", () => {
           expect(updatedApplication.pirStatus).toBe(status);
         }
       } finally {
+        await applicationRepository.remove(testApplication);
+      }
+    });
+  });
+
+  describe("Test route GET :id/offering", () => {
+    it("should return a HTTP NOT_FOUND (404) when the offering does not exists", async () => {
+      await request(app.getHttpServer())
+        .get(`/system-access/application/${-1}/offering`)
+        .auth(accesstoken, { type: "bearer" })
+        .expect(HttpStatus.NOT_FOUND);
+    });
+
+    it("should be able to get an offering associated to an application when the application and offering exists", async () => {
+      // Create fake institution.
+      const testInstitution = await institutionRepository.save(
+        createFakeInstitution(),
+      );
+      // Create fake location.
+      const testLocation = await locationRepository.save(
+        createFakeLocation(testInstitution),
+      );
+      // Create fake program.
+      const testProgram = await programRepository.save(
+        createFakeEducationProgram(testInstitution),
+      );
+      // Create fake offering.
+      const testOffering = await offeringRepository.save(
+        createFakeEducationProgramOffering(testProgram, testLocation),
+      );
+      // Create fake application using the previously saved offering.
+      const testApplication = await applicationRepository.save(
+        createFakeApplication(null, testOffering),
+      );
+
+      try {
+        await request(app.getHttpServer())
+          .get(`/system-access/application/${testApplication.id}/offering`)
+          .auth(accesstoken, { type: "bearer" })
+          .expect(HttpStatus.OK)
+          .then((resp) => {
+            expect(resp.body).toBeDefined();
+            expect(resp.body.id).toBe(testOffering.id);
+            expect(resp.body.studyStartDate).toBe(testOffering.studyStartDate);
+            expect(resp.body.studyEndDate).toBe(testOffering.studyEndDate);
+            expect(resp.body.breakStartDate).toBe(testOffering.breakStartDate);
+            expect(resp.body.breakEndDate).toBe(testOffering.breakEndDate);
+            expect(resp.body.actualTuitionCosts).toBe(
+              testOffering.actualTuitionCosts,
+            );
+            expect(resp.body.programRelatedCosts).toBe(
+              testOffering.programRelatedCosts,
+            );
+            expect(resp.body.mandatoryFees).toBe(testOffering.mandatoryFees);
+            expect(resp.body.exceptionalExpenses).toBe(
+              testOffering.exceptionalExpenses,
+            );
+            expect(resp.body.tuitionRemittanceRequestedAmount).toBe(
+              testOffering.tuitionRemittanceRequestedAmount,
+            );
+            expect(resp.body.offeringDelivered).toBe(
+              testOffering.offeringDelivered,
+            );
+          });
+      } finally {
+        await offeringRepository.remove(testOffering);
+        await programRepository.remove(testProgram);
+        await locationRepository.remove(testLocation);
+        await institutionRepository.remove(testInstitution);
         await applicationRepository.remove(testApplication);
       }
     });
