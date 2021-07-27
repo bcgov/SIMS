@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { Connection, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -52,5 +52,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return application;
+  }
+
+  async updateAssessmentInApplication(
+    applicationId: number,
+    assessment: any,
+  ): Promise<UpdateResult> {
+    return this.repo.update(applicationId, { assessment });
+  }
+
+  async getAssessmentByApplicationId(applicationId: number): Promise<any> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select("application.assessment")
+      .where("application.id = :applicationId", { applicationId })
+      .getOne();
   }
 }

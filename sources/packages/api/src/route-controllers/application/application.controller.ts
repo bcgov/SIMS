@@ -100,4 +100,20 @@ export class ApplicationController extends BaseController {
 
     return createdApplication.id;
   }
+
+  @Get(":applicationId/assessment")
+  async getAssessmentInApplication(
+    @Param("applicationId") applicationId: number,
+  ): Promise<any> {
+    const assessment = await this.applicationService.getAssessmentByApplicationId(
+      applicationId,
+    );
+    if (!assessment) {
+      throw new NotFoundException(
+        `Assessment for the applicaiton id ${applicationId} was not calculated.`,
+      );
+    }
+
+    return assessment;
+  }
 }

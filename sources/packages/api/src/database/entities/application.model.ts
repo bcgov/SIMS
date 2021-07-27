@@ -23,6 +23,13 @@ export class Application extends RecordDataModel {
   })
   data: any;
 
+  @Column({
+    name: "assessment",
+    type: "jsonb",
+    nullable: true,
+  })
+  assessment: any;
+
   @OneToOne(() => Student, { eager: false, cascade: true })
   @JoinColumn({
     name: "student_id",

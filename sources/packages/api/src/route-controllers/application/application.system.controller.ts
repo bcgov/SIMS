@@ -1,4 +1,11 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Patch,
+  NotFoundException,
+  Param,
+  Body,
+} from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import { GetApplicationDataDto } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
@@ -27,5 +34,17 @@ export class ApplicationSystemController {
     }
 
     return { data: application.data };
+  }
+
+  @Patch(":applicationId/assessment")
+  async updateAssessmentInApplication(
+    @Body() assessment: any,
+    @Param("applicationId") applicationId: number,
+  ): Promise<number> {
+    const updateAssessmentInApplication = await this.applicationService.updateAssessmentInApplication(
+      applicationId,
+      assessment,
+    );
+    return updateAssessmentInApplication.affected;
   }
 }
