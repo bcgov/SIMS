@@ -24,6 +24,11 @@ export class Application extends RecordDataModel {
   data: any;
 
   @Column({
+    name: "application_number",
+  })
+  applicationNumber: string;
+
+  @Column({
     name: "assessment",
     type: "jsonb",
     nullable: true,

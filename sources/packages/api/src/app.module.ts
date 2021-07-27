@@ -23,6 +23,7 @@ import {
   ATBCService,
   StudentFileService,
   ProgramYearService,
+  SequenceControlService,
 } from "./services";
 import {
   UserController,
@@ -85,6 +86,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     ATBCService,
     StudentFileService,
     ProgramYearService,
+    SequenceControlService,
   ],
 })
 export class AppModule {}

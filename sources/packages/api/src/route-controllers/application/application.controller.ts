@@ -92,7 +92,6 @@ export class ApplicationController extends BaseController {
       submissionResult.data,
       studentFiles,
     );
-
     await this.workflow.startApplicationAssessment(
       submissionResult.data.data.workflowName,
       createdApplication.id,

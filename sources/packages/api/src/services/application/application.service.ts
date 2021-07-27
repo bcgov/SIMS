@@ -9,6 +9,7 @@ import {
   Student,
   StudentFile,
 } from "../../database/entities";
+import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 
 @Injectable()
@@ -16,7 +17,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
   logger: LoggerService;
 
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(
+    @Inject("Connection") connection: Connection,
+    private readonly sequenceService: SequenceControlService,
+  ) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
   }
@@ -28,6 +32,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     // Create the new application.
     const newApplication = new Application();
+    // TODO:remove the static program year and add dynamic year, from program year table
+    const sequenceName = "2122";
+    let nextApplicationSequence: number = NaN;
+    await this.sequenceService.consumeNextSequence(
+      sequenceName,
+      async (nextSequenceNumber: number) => {
+        nextApplicationSequence = nextSequenceNumber;
+      },
+    );
+    const MAX_APPLICATION_NUMBER_LENGTH = 10;
+    const sequenceNumberSize =
+      MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
+    const applicationNumber =
+      sequenceName +
+      `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0");
     newApplication.student = { id: studentId } as Student;
     newApplication.data = applicationDto.data;
     newApplication.studentFiles = studentFiles.map((file) => {
@@ -35,6 +54,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newFileAssociation.studentFile = { id: file.id } as StudentFile;
       return newFileAssociation;
     });
+    newApplication.applicationNumber = applicationNumber;
     return await this.repo.save(newApplication);
   }
 
