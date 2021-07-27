@@ -6,7 +6,11 @@ import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { ApplicationSystemController } from "..";
 import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
-import { ApplicationService, KeycloakService } from "../../services";
+import {
+  ApplicationService,
+  KeycloakService,
+  SequenceControlService,
+} from "../../services";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import { setGlobalPipes } from "../../utilities/auth-utils";
 import { Connection, Repository } from "typeorm";
@@ -44,7 +48,7 @@ describe("Test system-access/application Controller", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule],
       controllers: [ApplicationSystemController],
-      providers: [ApplicationService],
+      providers: [ApplicationService, SequenceControlService],
     }).compile();
 
     const connection = module.get(Connection);
