@@ -3,7 +3,7 @@
  */
 export enum ProgramInfoStatus {
   /**
-   * The PIR must happen to complete an offering id
+   * The PIR must happen to an offering id
    * be provided by the institution.
    */
   required = "required",

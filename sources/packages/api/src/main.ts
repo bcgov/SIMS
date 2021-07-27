@@ -2,7 +2,6 @@ import "reflect-metadata";
 require("../env_setup");
 import { NestFactory, HttpAdapterHost } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import { KeycloakConfig } from "./auth/keycloakConfig";
 import { LoggerService } from "./logger/logger.service";

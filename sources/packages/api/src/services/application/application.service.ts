@@ -93,7 +93,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     status: ProgramInfoStatus,
     offeringId?: number,
   ): Promise<UpdateResult> {
-    return await this.repo.update(
+    return this.repo.update(
       { id: applicationId },
       {
         location: { id: locationId },
@@ -114,7 +114,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     status: ProgramInfoStatus,
   ): Promise<UpdateResult> {
-    return await this.repo.update(
+    return this.repo.update(
       { id: applicationId },
       {
         pirStatus: status,
