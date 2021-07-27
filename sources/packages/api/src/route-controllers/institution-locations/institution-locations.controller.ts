@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   UnprocessableEntityException,
+  ForbiddenException,
 } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
@@ -27,7 +28,6 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { OptionItem } from "../../types";
-
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
@@ -59,9 +59,8 @@ export class InstitutionLocationsController extends BaseController {
     }
 
     //To retrieve institution id
-    const institutionDetails = await this.institutionService.getInstituteByUserName(
-      userToken.userName,
-    );
+    const institutionDetails =
+      await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find a institution associated with the current user name.",
@@ -69,10 +68,11 @@ export class InstitutionLocationsController extends BaseController {
     }
 
     // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation = await this.locationService.createLocation(
-      institutionDetails.id,
-      dryRunSubmissionResult.data,
-    );
+    const createdInstitutionLocation =
+      await this.locationService.createLocation(
+        institutionDetails.id,
+        dryRunSubmissionResult.data,
+      );
 
     return createdInstitutionLocation.id;
   }
@@ -86,22 +86,25 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
     //To retrieve institution id
-    const institutionDetails = await this.institutionService.getInstituteByUserName(
-      userToken.userName,
+    const institutionDetails =
+      await this.institutionService.getInstituteByUserName(userToken.userName);
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
     );
+    if (institutionDetails.id !== requestedLoc.institution.id) {
+      throw new ForbiddenException();
+    }
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find a institution associated with the current user name.",
       );
     }
-
     // If the data is valid the location is updated to SIMS DB.
     const updateResult = await this.locationService.updateLocation(
       locationId,
       institutionDetails.id,
       payload,
     );
-
     return updateResult.affected;
   }
 
@@ -112,9 +115,10 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations.
-    const InstitutionLocationData = await this.locationService.getAllInstitutionLocations(
-      userToken.authorizations.institutionId,
-    );
+    const InstitutionLocationData =
+      await this.locationService.getAllInstitutionLocations(
+        userToken.authorizations.institutionId,
+      );
     return InstitutionLocationData.map((el: InstitutionLocation) => {
       return {
         id: el.id,
@@ -168,9 +172,8 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionLocation> {
     //To retrive institution id
-    const institutionDetails = await this.institutionService.getInstituteByUserName(
-      userToken.userName,
-    );
+    const institutionDetails =
+      await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find the Location associated.",

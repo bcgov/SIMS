@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UnprocessableEntityException,
+  ForbiddenException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -16,7 +17,11 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { EducationProgramDto } from "./models/save-education-program.dto";
-import { EducationProgramService, FormService } from "../../services";
+import {
+  EducationProgramService,
+  FormService,
+  InstitutionLocationService,
+} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import {
@@ -31,6 +36,7 @@ export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
+    private readonly locationService: InstitutionLocationService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -40,6 +46,14 @@ export class EducationProgramController {
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SummaryEducationProgramDto[]> {
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
+    );
+    if (
+      userToken.authorizations.institutionId !== requestedLoc.institution.id
+    ) {
+      throw new ForbiddenException();
+    }
     const programs = await this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,

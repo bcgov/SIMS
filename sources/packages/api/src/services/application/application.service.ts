@@ -63,6 +63,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application;
   }
 
+  async updateAssessmentInApplication(
+    applicationId: number,
+    assessment: any,
+  ): Promise<UpdateResult> {
+    return this.repo.update(applicationId, { assessment });
+  }
+
+  async getAssessmentByApplicationId(applicationId: number): Promise<any> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select("application.assessment")
+      .where("application.id = :applicationId", { applicationId })
+      .getOne();
+  }
+
   /**
    * Updates Program Information Request (PIR) related data.
    * @param applicationId application id to be updated.

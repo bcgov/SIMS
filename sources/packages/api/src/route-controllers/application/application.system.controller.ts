@@ -42,6 +42,19 @@ export class ApplicationSystemController {
     return { data: application.data };
   }
 
+  @Patch(":applicationId/assessment")
+  async updateAssessmentInApplication(
+    @Body() assessment: any,
+    @Param("applicationId") applicationId: number,
+  ): Promise<number> {
+    const updateAssessmentInApplication =
+      await this.applicationService.updateAssessmentInApplication(
+        applicationId,
+        assessment,
+      );
+    return updateAssessmentInApplication.affected;
+  }
+
   /**
    * Updates Program Information Request (PIR) related data.
    * @param applicationId application id to be updated.
