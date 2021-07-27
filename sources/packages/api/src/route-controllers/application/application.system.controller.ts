@@ -52,6 +52,7 @@ export class ApplicationSystemController {
         applicationId,
         assessment,
       );
+
     return updateAssessmentInApplication.affected;
   }
 
