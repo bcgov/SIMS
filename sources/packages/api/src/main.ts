@@ -8,6 +8,7 @@ import { KeycloakConfig } from "./auth/keycloakConfig";
 import { LoggerService } from "./logger/logger.service";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { exit } from "process";
+import { setGlobalPipes } from "./utilities/auth-utils";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -33,14 +34,7 @@ async function bootstrap() {
   app.use(LoggerService.apiLogger);
 
   // pipes
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-      disableErrorMessages: false,
-    }),
-  );
+  setGlobalPipes(app);
 
   // Starting application
   await app.listen(port);

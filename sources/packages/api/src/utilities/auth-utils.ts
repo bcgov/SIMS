@@ -1,3 +1,5 @@
+import { INestApplication, ValidationPipe } from "@nestjs/common";
+
 export function extractRawUserName(userName: string): string {
   const atIndex = userName.indexOf("@");
   if (atIndex > -1) {
@@ -34,4 +36,19 @@ export function needRenewJwtToken(
  */
 export function tokenTimeToDate(time: number) {
   return new Date(time * 1000);
+}
+
+/**
+ * Sets global pipes used during application bootstrap and e2e tests.
+ * @param app Nest application.
+ */
+export function setGlobalPipes(app: INestApplication) {
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      disableErrorMessages: false,
+    }),
+  );
 }
