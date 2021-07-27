@@ -25,7 +25,6 @@ export class Application extends RecordDataModel {
 
   @Column({
     name: "application_number",
-    nullable: false,
   })
   applicationNumber: string;
 

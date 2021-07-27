@@ -8,7 +8,6 @@ export interface CreateApplicationDto {
    * with this application.
    */
   associatedFiles: string[];
-  applicationNumber: string
 }
 
 export interface GetApplicationDataDto {
