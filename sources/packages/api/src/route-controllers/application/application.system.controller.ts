@@ -42,6 +42,13 @@ export class ApplicationSystemController {
     return { data: application.data };
   }
 
+  /**
+   * Updates Program Information Request (PIR) related data.
+   * @param applicationId application id to be updated.
+   * @param payload data to be updated.
+   * @returns success HTTP 200 status code if PIR was updated
+   * or a HTTP 422 error in case of failure to update it.
+   */
   @Patch(":id/program-info")
   async updateProgramInfoRequest(
     @Param("id") applicationId: number,
@@ -61,6 +68,11 @@ export class ApplicationSystemController {
     }
   }
 
+  /**
+   * Updates Program Information Request (PRI) status.
+   * @param applicationId application id to be updated.
+   * @param payload status of the program information request.
+   */
   @Patch(":id/program-info/status")
   async updateProgramInfoRequestStatus(
     @Param("id") applicationId: number,
@@ -78,6 +90,13 @@ export class ApplicationSystemController {
     }
   }
 
+  /**
+   * Gets the offering associated with an application.
+   * @param applicationId application id.
+   * @returns offering associated with an application or
+   * a HTTP 404 when the application does not exists or
+   * there is no offering associated with it at this time.
+   */
   @Get(":id/offering")
   async getApplicationOffering(
     @Param("id") applicationId: number,

@@ -64,7 +64,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Updates program information request related data.
+   * Updates Program Information Request (PIR) related data.
    * @param applicationId application id to be updated.
    * @param locationId location id related to the offering.
    * @param status status of the program information request.
@@ -89,7 +89,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Updates program information request status.
+   * Updates Program Information Request (PRI) status.
    * @param applicationId application id to be updated.
    * @param status status of the program information request.
    * a PIR request need happen to an offering id be provided.
@@ -107,6 +107,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
   }
 
+  /**
+   * Gets the offering associated with an application.
+   * @param applicationId application id.
+   * @returns offering associated with an application or null
+   * when the application does not exists or there is no
+   * offering associated with it at this time.
+   */
   async getOfferingByApplicationId(
     applicationId: number,
   ): Promise<EducationProgramOffering> {
