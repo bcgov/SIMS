@@ -75,6 +75,8 @@ export class ApplicationSystemController {
       payload.offeringId,
     );
 
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         "Not able to update the program information request with provided data.",
@@ -97,6 +99,8 @@ export class ApplicationSystemController {
       payload.status,
     );
 
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         "Not able to update the program information request status with provided data.",

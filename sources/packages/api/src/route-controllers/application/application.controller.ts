@@ -107,6 +107,8 @@ export class ApplicationController extends BaseController {
         assessmentWorflow.id,
       );
 
+    // 1 means the number of affected rows expected while
+    // associating the workflow id.
     if (workflowAssociationResult.affected !== 1) {
       // TODO: Once we add a transaction, this error should force a rollback
       // and should also cancel the workflow.
