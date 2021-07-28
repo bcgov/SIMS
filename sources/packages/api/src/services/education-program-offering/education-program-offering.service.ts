@@ -207,4 +207,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .orderBy("offerings.name")
       .getMany();
   }
+
+  async getOfferingById(id: number): Promise<EducationProgramOffering> {
+    return this.repo.findOne(id);
+  }
 }

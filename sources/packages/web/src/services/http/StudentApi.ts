@@ -3,6 +3,7 @@ import {
   StudentInfo,
   StudentContact,
   StudentProfile,
+  StudentApplication,
 } from "../../types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -70,6 +71,19 @@ export class StudentApi extends HttpBaseClient {
         null,
         this.addAuthHeader(),
       );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getAllStudentApplications(): Promise<StudentApplication[]> {
+    try {
+      const result = await this.apiClient.get(
+        "students/application-summary",
+        this.addAuthHeader(),
+      );
+      return result?.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

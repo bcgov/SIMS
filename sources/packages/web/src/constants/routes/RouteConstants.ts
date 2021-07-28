@@ -14,6 +14,8 @@ export const StudentRoutesConst = {
   DYNAMIC_FINANCIAL_APP_FORM: Symbol(),
   NOTIFICATIONS: Symbol(),
   NOTIFICATIONS_SETTINGS: Symbol(),
+  STUDENT_APPLICATION_SUMMARY: Symbol(),
+  STUDENT_EDIT_APPLICATION: Symbol(),
 };
 export const InstitutionRoutesConst = {
   //Institution

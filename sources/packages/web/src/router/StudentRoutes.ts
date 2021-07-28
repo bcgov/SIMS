@@ -8,10 +8,11 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "../views/student/financial-aid-application/FullTimeApplication.vue";
-import Applications from "../views/student/financial-aid-application/Applications.vue";
 import StudentProfile from "../views/student/StudentProfile.vue";
 import Notifications from "../views/student/Notifications.vue";
 import NotificationsSettings from "../views/student/NotificationsSettings.vue";
+import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
+import StudentEditApplication from "@/views/student/StudentEditApplication.vue";
 
 import {
   StudentRoutesConst,
@@ -91,14 +92,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "applications",
-        name: StudentRoutesConst.APPLICATIONS,
-        component: Applications,
-        meta: {
-          clientType: ClientIdType.STUDENT,
-        },
-      },
-      {
         path: "notifications",
         name: StudentRoutesConst.NOTIFICATIONS,
         component: Notifications,
@@ -152,6 +145,22 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             },
           },
         ], //Children under /Student/FinancialAidApplication
+      },
+      {
+        path: AppRoutes.StudentApplicationSummary,
+        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        component: StudentApplicationSummary,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
+        path: AppRoutes.StudentEditApplication,
+        name: StudentRoutesConst.STUDENT_EDIT_APPLICATION,
+        component: StudentEditApplication,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
       },
     ], //Children under /Student
     beforeEnter: (to, from, next) => {

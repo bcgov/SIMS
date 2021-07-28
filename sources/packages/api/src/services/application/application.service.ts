@@ -88,4 +88,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationId", { applicationId })
       .getOne();
   }
+
+  async getAllStudentApplications(studentId: number): Promise<Application[]> {
+    return await this.repo
+      .createQueryBuilder("application")
+      .where("application.student_id = :studentId", { studentId })
+      .getMany();
+  }
 }
