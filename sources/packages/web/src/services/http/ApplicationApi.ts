@@ -27,6 +27,9 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Retrieve the Notice of Assessment (NOA) for a particular application.
+   */
   public async getNOA(applicationId: any): Promise<any> {
     try {
       const response = await this.apiClient.get(
