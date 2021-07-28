@@ -1,6 +1,7 @@
 <template>
   <v-btn color="primary" class="float-right" @click="toggle"
-    >Application Options &#9660;</v-btn
+    >Application Options
+    <v-icon size="25"> mdi-arrow-down-bold-circle</v-icon></v-btn
   >
   <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
 </template>

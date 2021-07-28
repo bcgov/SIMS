@@ -2,12 +2,12 @@ import "reflect-metadata";
 require("../env_setup");
 import { NestFactory, HttpAdapterHost } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
 import { KeycloakConfig } from "./auth/keycloakConfig";
 import { LoggerService } from "./logger/logger.service";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { exit } from "process";
+import { setGlobalPipes } from "./utilities/auth-utils";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -33,14 +33,7 @@ async function bootstrap() {
   app.use(LoggerService.apiLogger);
 
   // pipes
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-      disableErrorMessages: false,
-    }),
-  );
+  setGlobalPipes(app);
 
   // Starting application
   await app.listen(port);

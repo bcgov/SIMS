@@ -14,7 +14,7 @@
     <br />
     <v-btn
       color="primary"
-      class="p-button-raised"
+      class="p-button-raised ml-2"
       :disabled="!formName"
       @click="
         $router.push({
@@ -25,8 +25,23 @@
         })
       "
     >
-      <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
+      <v-icon size="25">mdi-text-box-plus</v-icon>
       Start New Application
+    </v-btn>
+    <v-btn
+      color="primary"
+      class="p-button-raised ml-2"
+      @click="
+        $router.push({
+          name: StudentRoutesConst.ASSESSMENT,
+          params: {
+            applicationId: 112,
+          },
+        })
+      "
+    >
+      <v-icon size="25">mdi-text-box-plus</v-icon>
+      View Assessment
     </v-btn>
   </div>
 </template>

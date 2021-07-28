@@ -26,4 +26,5 @@ export enum AppRoutes {
   StudentApplication = "application-form/:id?/:selectedForm",
   StudentApplicationSummary = "my-application-summary",
   StudentEditApplication = "application/:id",
+  Assessment = "application/:applicationId/assessment",
 }

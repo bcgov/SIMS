@@ -7,6 +7,7 @@ export const StudentRoutesConst = {
   STUDENT_PROFILE_EDIT: Symbol(),
   FINANCIAL_AID_APPLICATION: Symbol(),
   APPLICATIONS: Symbol(),
+  ASSESSMENT: Symbol(),
   PERSONAL_INFO: Symbol(),
   SELECT_PROGRAM: Symbol(),
   FINANCIAL_INFO: Symbol(),
