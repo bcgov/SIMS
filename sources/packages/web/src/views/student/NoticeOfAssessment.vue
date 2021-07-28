@@ -9,7 +9,7 @@
 <script lang="ts">
 import formio from "../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
-import ApiClient from "../../services/http/ApiClient";
+import { ApplicationService } from "../../services/ApplicationService";
 
 export default {
   components: { formio },
@@ -23,7 +23,7 @@ export default {
     // Hooks
     const initialData = ref({});
     onMounted(async () => {
-      initialData.value = await ApiClient.Application.getNOA(
+      initialData.value = await ApplicationService.shared.getNOA(
         props.applicationId,
       );
     });
