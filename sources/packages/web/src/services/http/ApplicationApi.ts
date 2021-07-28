@@ -26,4 +26,17 @@ export class ApplicationApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async getNOA(applicationId: any): Promise<any> {
+    try {
+      const response = await this.apiClient.get(
+        `application/${applicationId}/assessment`,
+        this.addAuthHeader(),
+      );
+      return response.data.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

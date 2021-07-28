@@ -9,6 +9,7 @@ import FinancialInfo from "../views/student/financial-aid-application/FinancialI
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "../views/student/financial-aid-application/FullTimeApplication.vue";
 import Applications from "../views/student/financial-aid-application/Applications.vue";
+import Assessment from "../views/student/NoticeOfAssessment.vue";
 import StudentProfile from "../views/student/StudentProfile.vue";
 import Notifications from "../views/student/Notifications.vue";
 import NotificationsSettings from "../views/student/NotificationsSettings.vue";
@@ -94,6 +95,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "applications",
         name: StudentRoutesConst.APPLICATIONS,
         component: Applications,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
+        path: AppRoutes.Assessment,
+        name: StudentRoutesConst.ASSESSMENT,
+        component: Assessment,
+        props: true,
         meta: {
           clientType: ClientIdType.STUDENT,
         },
@@ -187,7 +197,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });

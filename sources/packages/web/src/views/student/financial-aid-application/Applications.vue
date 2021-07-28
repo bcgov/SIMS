@@ -31,6 +31,21 @@
     <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
     Start New Application
   </v-btn>
+  <v-btn
+    color="primary"
+    class="p-button-raised"
+    @click="
+      $router.push({
+        name: StudentRoutesConst.ASSESSMENT,
+        params: {
+          applicationId: 112,
+        },
+      })
+    "
+  >
+    <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
+    View Assessment
+  </v-btn>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
