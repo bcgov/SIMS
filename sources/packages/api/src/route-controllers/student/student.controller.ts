@@ -37,11 +37,7 @@ import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
-import {
-  StudentApplicationDTO,
-  StudentApplication,
-} from "../application/models/application.model";
-import { EducationProgramOffering } from "../../database/entities/education-program-offering.model";
+import { StudentApplicationDTO } from "../application/models/application.model";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
