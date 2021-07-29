@@ -30,7 +30,7 @@ export interface StudentApplicationDTO {
 export interface ApplicationFormData {
   selectedLocation: number;
   selectedProgram?: number;
-  offeringIWillBeAttending?: number;
+  selectedOffering?: number;
   studystartDate?: string;
   studyendDate?: string;
 }

@@ -332,12 +332,9 @@ export class StudentController extends BaseController {
     let response = [] as StudentApplicationDTO[];
     for await (const element of application) {
       let offering = undefined;
-      if (
-        element.data.selectedProgram &&
-        element.data.offeringIWillBeAttending
-      ) {
+      if (element.data.selectedProgram && element.data.selectedOffering) {
         offering = await this.programOfferingService.getOfferingById(
-          element.data.offeringIWillBeAttending,
+          element.data.selectedOffering,
         );
       }
       response.push({

@@ -1229,7 +1229,7 @@
             "multiple": false,
             "unique": false
           },
-          "key": "offeringIWillBeAttending",
+          "key": "selectedOffering",
           "customConditional": "show = (data.selectedProgram  && !data.offeringnotListed && !data.programnotListed);",
           "type": "select",
           "indexeddb": {
