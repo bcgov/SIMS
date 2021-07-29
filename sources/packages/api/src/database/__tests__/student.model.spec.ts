@@ -5,6 +5,8 @@ import * as faker from "faker";
 import { Student, User } from "../entities";
 import { StudentService, ArchiveDbService } from "../../services";
 
+jest.setTimeout(15000);
+
 describe("Test student model", () => {
   let connection: Connection;
   beforeAll(async () => {
