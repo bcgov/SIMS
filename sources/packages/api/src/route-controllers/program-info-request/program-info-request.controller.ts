@@ -35,7 +35,7 @@ export class ProgramInfoRequestController {
    */
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/complete")
-  async getInstitutionLocation(
+  async completeProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
     @Body() payload: CompleteProgramInfoRequestDto,
