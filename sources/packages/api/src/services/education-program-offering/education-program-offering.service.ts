@@ -207,4 +207,20 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .orderBy("offerings.name")
       .getMany();
   }
+
+  /**
+   * Gets location id from an offering.
+   * @param offeringId offering id.
+   * @returns offering location id.
+   */
+  async getOfferingLocationId(offeringId: number): Promise<number> {
+    const locationIdQuery = await this.repo
+      .createQueryBuilder("offerings")
+      .innerJoin("offerings.institutionLocation", "location")
+      .select("location.id", "locationId")
+      .where("offerings.id = :offeringId", { offeringId })
+      .getRawOne();
+
+    return locationIdQuery.locationId;
+  }
 }

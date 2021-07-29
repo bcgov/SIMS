@@ -40,6 +40,7 @@ import {
   EducationProgramOfferingController,
   ApplicationSystemController,
   ATBCController,
+  ProgramInfoRequestController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -63,6 +64,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     EducationProgramOfferingController,
     ApplicationSystemController,
     ATBCController,
+    ProgramInfoRequestController,
   ],
   providers: [
     AppService,
