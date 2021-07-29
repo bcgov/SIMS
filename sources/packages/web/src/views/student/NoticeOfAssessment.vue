@@ -23,9 +23,8 @@ export default {
     // Hooks
     const initialData = ref({});
     onMounted(async () => {
-      initialData.value = await ApplicationService.shared.getNOA(
-        props.applicationId,
-      );
+      const NOA = await ApplicationService.shared.getNOA(props.applicationId);
+      initialData.value = NOA.assessment;
     });
     return {
       initialData,
