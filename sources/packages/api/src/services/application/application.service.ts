@@ -145,15 +145,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Completes the Program Info Request (PIR), defining the PIR status as
-   * completed in the student application table.
+   * Set the offering for Program Info Request (PIR).
+   * Once the offering is set it will be a workflow responsability
+   * to set the PIR status to completed.
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
-   * @param locationId location that is completing the PIR.
+   * @param locationId location that is setting the offering.
    * @param offeringId offering id to be set in the student application.
    * @returns updated application.
    */
-  async completeProgramInfoRequest(
+  async setOfferingForProgramInfoRequest(
     applicationId: number,
     locationId: number,
     offeringId: number,
@@ -172,7 +173,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     application.offering = { id: offeringId } as EducationProgramOffering;
-    application.pirStatus = ProgramInfoStatus.completed;
     return this.repo.save(application);
   }
 

@@ -51,9 +51,8 @@ export class ProgramInfoRequestController {
     }
 
     try {
-      // Try to complete the PIR.
       const updatedApplication =
-        await this.applicationService.completeProgramInfoRequest(
+        await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
           locationId,
           payload.offeringId,
