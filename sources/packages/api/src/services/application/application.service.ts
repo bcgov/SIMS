@@ -13,9 +13,9 @@ import {
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
+import { CustomNamedError } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
-
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
@@ -165,11 +165,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       pirStatus: ProgramInfoStatus.required,
     });
     if (!application) {
-      throw {
-        name: PIR_REQUEST_NOT_FOUND_ERROR,
-        message:
-          "Not able to find an application that requires a PIR to be completed.",
-      };
+      throw new CustomNamedError(
+        "Not able to find an application that requires a PIR to be completed.",
+        PIR_REQUEST_NOT_FOUND_ERROR,
+      );
     }
 
     application.offering = { id: offeringId } as EducationProgramOffering;
