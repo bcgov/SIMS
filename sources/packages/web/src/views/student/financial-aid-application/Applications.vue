@@ -14,7 +14,7 @@
     <br />
     <v-btn
       color="primary"
-      class="p-button-raised ml-2"
+      class="p-button-raised float-right"
       :disabled="!formName"
       @click="
         $router.push({
@@ -28,25 +28,9 @@
       <v-icon size="25">mdi-text-box-plus</v-icon>
       Start New Application
     </v-btn>
-    <v-btn
-      color="primary"
-      class="p-button-raised ml-2"
-      @click="
-        $router.push({
-          name: StudentRoutesConst.ASSESSMENT,
-          params: {
-            applicationId: 112,
-          },
-        })
-      "
-    >
-      <v-icon size="25">mdi-text-box-plus</v-icon>
-      View Assessment
-    </v-btn>
   </div>
 </template>
 <script lang="ts">
-import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 import { SetupContext, onMounted, ref } from "vue";
 import { ProgramYear } from "@/types/contracts/ProgramYearContract";
@@ -68,7 +52,6 @@ export default {
       }));
     });
     return {
-      StudentRoutesConst,
       programYearList,
       onYearChange,
       formName,

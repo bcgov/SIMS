@@ -168,6 +168,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StudentEditApplication,
         name: StudentRoutesConst.STUDENT_EDIT_APPLICATION,
         component: StudentEditApplication,
+        props: true,
         meta: {
           clientType: ClientIdType.STUDENT,
         },
