@@ -5,10 +5,10 @@
       <span class="p-m-4"
         >A list of your applications for funding, grants, and busaries.</span
       >
-      <v-col>
+      <v-col cols="12">
         <span class="float-right"><StartApplication /></span>
       </v-col>
-      <v-col>
+      <v-col cols="12">
         <DataTable :autoLayout="true" :value="myApplications" class="p-m-4">
           <Column field="applicationNumber" header="Application #">
             <template #body="slotProps">
@@ -71,16 +71,14 @@ export default {
         },
       });
     };
+    const dateString = (date: string): string => {
+      if (date) return new Date(date).toDateString();
+      return "";
+    };
     onMounted(async () => {
       myApplications.value = await StudentService.shared.getAllStudentApplications();
     });
-    return { myApplications, goToApplication };
-  },
-  methods: {
-    dateString(date: string) {
-      if (date) return new Date(date).toDateString();
-      return "";
-    },
+    return { myApplications, goToApplication, dateString };
   },
 };
 </script>

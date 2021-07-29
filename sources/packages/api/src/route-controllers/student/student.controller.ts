@@ -318,12 +318,12 @@ export class StudentController extends BaseController {
   async getStudentApplicationSummary(
     @UserToken() userToken: IUserToken,
   ): Promise<StudentApplicationDTO[]> {
-    const existingStudent = await this.studentService.getStudentByUserName(
-      userToken.userName,
+    const existingStudent = await this.studentService.getStudentByUserId(
+      userToken.userId,
     );
     if (!existingStudent) {
       throw new NotFoundException(
-        `No student was found with the student name ${userToken.userName}`,
+        `No student was found with the student id ${userToken.userId}`,
       );
     }
     const application = await this.applicationService.getAllStudentApplications(
@@ -333,20 +333,20 @@ export class StudentController extends BaseController {
     for await (const element of application) {
       let offering = undefined;
       if (
-        element.data?.selectedProgram &&
-        element.data?.offeringIWillBeAttending
+        element.data.selectedProgram &&
+        element.data.offeringIWillBeAttending
       ) {
         offering = await this.programOfferingService.getOfferingById(
-          element.data?.offeringIWillBeAttending,
+          element.data.offeringIWillBeAttending,
         );
       }
       response.push({
         applicationNumber: element.applicationNumber,
         id: element.id,
         studyStartPeriod:
-          element.data?.studystartDate ?? offering?.studyStartDate ?? "",
+          element.data.studystartDate ?? offering?.studyStartDate ?? "",
         studyEndPeriod:
-          element.data?.studyendDate ?? offering?.studyEndDate ?? "",
+          element.data.studyendDate ?? offering?.studyEndDate ?? "",
         // TODO: when application name is captured, update the below line
         applicationName: "Financial Aid Application",
         // TODO: when award is captured, update the below line

@@ -15,21 +15,22 @@ export default {
   },
   setup() {
     const items = ref();
+    const menu = ref();
+
     onMounted(() => {
       items.value = [
         { label: "Edit application", icon: "pi pi-fw pi-pencil" },
+        { separator: true },
         {
           label: "Cancel application",
           icon: "pi pi-fw pi-trash",
         },
       ];
     });
-    return { items };
-  },
-  methods: {
-    toggle(event: any) {
-      this.$refs.menu.toggle(event);
-    },
+    const toggle = (event: any) => {
+      menu?.value?.toggle(event);
+    };
+    return { items, toggle, menu };
   },
 };
 </script>

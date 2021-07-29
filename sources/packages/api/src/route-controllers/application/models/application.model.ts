@@ -16,6 +16,7 @@ export interface GetApplicationDataDto {
    */
   data: any;
 }
+
 export interface StudentApplicationDTO {
   applicationNumber: string;
   studyStartPeriod: string;
