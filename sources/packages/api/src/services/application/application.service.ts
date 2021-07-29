@@ -14,6 +14,8 @@ import {
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 
+export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
+
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
@@ -140,6 +142,38 @@ export class ApplicationService extends RecordDataModelService<Application> {
         pirStatus: status,
       },
     );
+  }
+
+  /**
+   * Completes the Program Info Request (PIR), defining the PIR status as
+   * completed in the student application table.
+   * Updates only applications that have the PIR status as required.
+   * @param applicationId application id to be updated.
+   * @param locationId location that is completing the PIR.
+   * @param offeringId offering id to be set in the student application.
+   * @returns updated application.
+   */
+  async completeProgramInfoRequest(
+    applicationId: number,
+    locationId: number,
+    offeringId: number,
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      id: applicationId,
+      location: { id: locationId },
+      pirStatus: ProgramInfoStatus.required,
+    });
+    if (!application) {
+      throw {
+        name: PIR_REQUEST_NOT_FOUND_ERROR,
+        message:
+          "Not able to find an application that requires a PIR to be completed.",
+      };
+    }
+
+    application.offering = { id: offeringId } as EducationProgramOffering;
+    application.pirStatus = ProgramInfoStatus.completed;
+    return this.repo.save(application);
   }
 
   /**
