@@ -86,7 +86,7 @@ export default {
     // Components names on Form.IO definition that will be manipulated.
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
-    const OFFERINGS_DROPDOWN_KEY = "offeringIWillBeAttending";
+    const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
 
     const formLoaded = async (form: any) => {
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);

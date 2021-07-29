@@ -8996,7 +8996,7 @@
               "id": "eft3ka"
             },
             {
-              "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
+              "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9158,7 +9158,7 @@
               "id": "epeh3bp"
             },
             {
-              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
+              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9400,7 +9400,7 @@
               "id": "e4y3zfv"
             },
             {
-              "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your study period??</strong>",
+              "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your study period??</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9643,7 +9643,7 @@
               "id": "evma09q"
             },
             {
-              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9724,7 +9724,7 @@
               "id": "ekdlcnt"
             },
             {
-              "title": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -9741,7 +9741,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -9887,7 +9887,7 @@
               "id": "euyurdl"
             },
             {
-              "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9968,7 +9968,7 @@
               "id": "e5lgiix"
             },
             {
-              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -9985,7 +9985,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -10131,7 +10131,7 @@
               "id": "ejbwll7"
             },
             {
-              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -10212,7 +10212,7 @@
               "id": "efsn92"
             },
             {
-              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
+              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -10374,7 +10374,7 @@
               "id": "el6d0zq"
             },
             {
-              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -10455,7 +10455,7 @@
               "id": "e5yzlrn"
             },
             {
-              "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
+              "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,

@@ -8,6 +8,8 @@ import {
   ATBCService,
   UserService,
   StudentFileService,
+  ApplicationService,
+  SequenceControlService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -47,6 +49,8 @@ describe("Test ATBC Controller", () => {
         ATBCService,
         StudentFileService,
         StudentService,
+        ApplicationService,
+        SequenceControlService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

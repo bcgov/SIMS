@@ -18,6 +18,7 @@ import {
   StudentService,
   UserService,
   ATBCService,
+  ApplicationService,
 } from "../../services";
 import {
   CreateStudentDto,
@@ -35,6 +36,8 @@ import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
+import { StudentApplicationDTO } from "../application/models/application.model";
+import { Application } from "../../database/entities";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -50,6 +53,7 @@ export class StudentController extends BaseController {
     private readonly studentService: StudentService,
     private readonly atbcService: ATBCService,
     private readonly fileService: StudentFileService,
+    private readonly applicationService: ApplicationService,
   ) {
     super();
   }
@@ -307,5 +311,36 @@ export class StudentController extends BaseController {
     stream.push(null);
 
     stream.pipe(response);
+  }
+
+  @Get("application-summary")
+  async getStudentApplicationSummary(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentApplicationDTO[]> {
+    const existingStudent = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException(
+        `No student was found with the student id ${userToken.userId}`,
+      );
+    }
+    const application = await this.applicationService.getAllStudentApplications(
+      existingStudent.id,
+    );
+    return application.map((eachApplication: Application) => {
+      return {
+        applicationNumber: eachApplication.applicationNumber,
+        id: eachApplication.id,
+        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
+        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
+        // TODO: when application name is captured, update the below line
+        applicationName: "Financial Aid Application",
+        // TODO: when award is captured, update the below line
+        award: "5500",
+        // TODO: when status is captured, update the below line
+        status: "completed",
+      };
+    }) as StudentApplicationDTO[];
   }
 }

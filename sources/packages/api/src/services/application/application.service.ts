@@ -100,6 +100,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
+  async getAllStudentApplications(studentId: number): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ])
+      .leftJoin("application.offering", "offering")
+      .where("application.student_id = :studentId", { studentId })
+      .getMany();
+  }
   /**
    * Updates Program Information Request (PIR) related data.
    * @param applicationId application id to be updated.

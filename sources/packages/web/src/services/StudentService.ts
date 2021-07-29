@@ -4,6 +4,7 @@ import {
   StudentContact,
   CreateStudent,
   StudentFormInfo,
+  StudentApplication,
 } from "../types/contracts/StudentContract";
 
 export class StudentService {
@@ -61,5 +62,9 @@ export class StudentService {
 
   async applyForPDStatus(): Promise<void> {
     return ApiClient.Students.applyForPDStatus();
+  }
+
+  async getAllStudentApplications(): Promise<StudentApplication[]> {
+    return ApiClient.Students.getAllStudentApplications();
   }
 }

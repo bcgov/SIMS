@@ -1,54 +1,36 @@
 <template>
-  <div class="p-m-4">
-    <h2>Applications</h2>
+  <div>
+    <Dropdown
+      class="p-col-12"
+      v-model="formName"
+      :options="programYearList"
+      optionLabel="name"
+      optionValue="code"
+      placeholder="Select a Program Year"
+      :style="{ width: '30vw' }"
+      @change="onYearChange"
+    />
+    <br />
+    <br />
+    <v-btn
+      color="primary"
+      class="p-button-raised float-right"
+      :disabled="!formName"
+      @click="
+        $router.push({
+          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+          params: {
+            selectedForm: formName,
+          },
+        })
+      "
+    >
+      <v-icon size="25">mdi-text-box-plus</v-icon>
+      Start New Application
+    </v-btn>
   </div>
-
-  <Dropdown
-    class="p-col-12"
-    v-model="formName"
-    :options="programYearList"
-    optionLabel="name"
-    optionValue="code"
-    placeholder="Select a Program Year"
-    :style="{ width: '30vw' }"
-    @change="onYearChange"
-  />
-  <br />
-  <br />
-  <v-btn
-    color="primary"
-    class="p-button-raised"
-    :disabled="!formName"
-    @click="
-      $router.push({
-        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-        params: {
-          selectedForm: formName,
-        },
-      })
-    "
-  >
-    <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
-    Start New Application
-  </v-btn>
-  <v-btn
-    color="primary"
-    class="p-button-raised"
-    @click="
-      $router.push({
-        name: StudentRoutesConst.ASSESSMENT,
-        params: {
-          applicationId: 112,
-        },
-      })
-    "
-  >
-    <v-icon size="25" class="mr-2">mdi-text-box-plus</v-icon>
-    View Assessment
-  </v-btn>
 </template>
 <script lang="ts">
-import { StudentRoutesConst } from "../../../constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 import { SetupContext, onMounted, ref } from "vue";
 import { ProgramYear } from "@/types/contracts/ProgramYearContract";
@@ -70,7 +52,6 @@ export default {
       }));
     });
     return {
-      StudentRoutesConst,
       programYearList,
       onYearChange,
       formName,

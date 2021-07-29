@@ -59,3 +59,13 @@ export interface StudentFormInfo extends StudentInfo {
   birthDateFormatted: string;
   birthDateFormatted2: string;
 }
+
+export interface StudentApplication {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  award: string;
+  status: string;
+}

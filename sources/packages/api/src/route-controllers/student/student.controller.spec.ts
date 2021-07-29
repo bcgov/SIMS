@@ -7,6 +7,8 @@ import {
   ATBCService,
   ConfigService,
   StudentFileService,
+  ApplicationService,
+  SequenceControlService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -24,7 +26,9 @@ describe("StudentController", () => {
         UserService,
         ArchiveDbService,
         ATBCService,
+        SequenceControlService,
         StudentFileService,
+        ApplicationService,
       ],
       controllers: [StudentController],
     }).compile();

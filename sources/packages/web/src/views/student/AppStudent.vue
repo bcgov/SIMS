@@ -10,12 +10,14 @@
       src="../../assets/images/bc_student_logo.svg"
       @click="logoClick"
     />
-    <v-spacer></v-spacer>
-    <v-btn
+    <v-spacer></v-spacer
+    ><v-btn
       v-if="isAuthenticated"
       text
-      @click="$router.push({ name: StudentRoutesConst.APPLICATIONS })"
-      >Applications</v-btn
+      @click="
+        $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
+      "
+      >ApplicationS</v-btn
     >
     <v-btn
       v-if="isAuthenticated"
