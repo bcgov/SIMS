@@ -26,17 +26,3 @@ export interface StudentApplicationDTO {
   award: string;
   status: string;
 }
-
-export interface ApplicationFormData {
-  selectedLocation: number;
-  selectedProgram?: number;
-  selectedOffering?: number;
-  studystartDate?: string;
-  studyendDate?: string;
-}
-
-export interface StudentApplication {
-  data: ApplicationFormData;
-  id: number;
-  applicationNumber: string;
-}

@@ -8,7 +8,6 @@ import {
   ConfigService,
   StudentFileService,
   ApplicationService,
-  EducationProgramOfferingService,
   SequenceControlService,
 } from "../../services";
 import { StudentController } from "./student.controller";
@@ -30,7 +29,6 @@ describe("StudentController", () => {
         SequenceControlService,
         StudentFileService,
         ApplicationService,
-        EducationProgramOfferingService,
       ],
       controllers: [StudentController],
     }).compile();

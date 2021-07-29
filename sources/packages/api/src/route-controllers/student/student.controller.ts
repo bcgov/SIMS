@@ -19,7 +19,6 @@ import {
   UserService,
   ATBCService,
   ApplicationService,
-  EducationProgramOfferingService,
 } from "../../services";
 import {
   CreateStudentDto,
@@ -38,6 +37,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
+import { Application } from "../../database/entities";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -54,7 +54,6 @@ export class StudentController extends BaseController {
     private readonly atbcService: ATBCService,
     private readonly fileService: StudentFileService,
     private readonly applicationService: ApplicationService,
-    private readonly programOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -329,29 +328,19 @@ export class StudentController extends BaseController {
     const application = await this.applicationService.getAllStudentApplications(
       existingStudent.id,
     );
-    let response = [] as StudentApplicationDTO[];
-    for await (const element of application) {
-      let offering = undefined;
-      if (element.data.selectedProgram && element.data.selectedOffering) {
-        offering = await this.programOfferingService.getOfferingById(
-          element.data.selectedOffering,
-        );
-      }
-      response.push({
-        applicationNumber: element.applicationNumber,
-        id: element.id,
-        studyStartPeriod:
-          element.data.studystartDate ?? offering?.studyStartDate ?? "",
-        studyEndPeriod:
-          element.data.studyendDate ?? offering?.studyEndDate ?? "",
+    return application.map((eachApplication: Application) => {
+      return {
+        applicationNumber: eachApplication.applicationNumber,
+        id: eachApplication.id,
+        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
+        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
         // TODO: when application name is captured, update the below line
         applicationName: "Financial Aid Application",
         // TODO: when award is captured, update the below line
         award: "5500",
         // TODO: when status is captured, update the below line
         status: "completed",
-      });
-    }
-    return response;
+      };
+    }) as StudentApplicationDTO[];
   }
 }

@@ -9,7 +9,6 @@ import {
   UserService,
   StudentFileService,
   ApplicationService,
-  EducationProgramOfferingService,
   SequenceControlService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
@@ -51,7 +50,6 @@ describe("Test ATBC Controller", () => {
         StudentFileService,
         StudentService,
         ApplicationService,
-        EducationProgramOfferingService,
         SequenceControlService,
       ],
     }).compile();
