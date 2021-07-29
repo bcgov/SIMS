@@ -61,7 +61,7 @@
                     {
                       "components": [
                         {
-                          "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Let’s get started on your application</strong></span></h2><p>&nbsp;</p><p>In the next screens you’ll be able to select your application type. Whether you are looking for a student loan, grants or loan forgiveness options we’ve got you covered.</p><p>Before you begin before to gather the following:</p><p>• Your study information (institution, program)<br>&nbsp;• Your dependent details and costs<br>&nbsp;• Your income tax return or information&nbsp;</p>",
+                          "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Let’s get started on your application<br/><br/>(2022-23)</strong></span></h2><p>&nbsp;</p><p>In the next screens you’ll be able to select your application type. Whether you are looking for a student loan, grants or loan forgiveness options we’ve got you covered.</p><p>Before you begin before to gather the following:</p><p>• Your study information (institution, program)<br>&nbsp;• Your dependent details and costs<br>&nbsp;• Your income tax return or information&nbsp;</p>",
                           "label": "Content",
                           "refreshOnChange": false,
                           "key": "page1ColumnsContent",
@@ -83,6 +83,7 @@
                           "refreshOn": "",
                           "redrawOn": "",
                           "modalEdit": false,
+                          "dataGridLabel": false,
                           "labelPosition": "top",
                           "description": "",
                           "errorLabel": "",
@@ -124,8 +125,7 @@
                           "showWordCount": false,
                           "properties": {},
                           "allowMultipleMasks": false,
-                          "id": "eannian",
-                          "dataGridLabel": false
+                          "id": "e3k2zh"
                         }
                       ],
                       "offset": 0,
@@ -1201,10 +1201,22 @@
         },
         {
           "label": "Select the program offering you will be attending:*",
+          "labelPosition": "top",
           "widget": "choicesjs",
           "placeholder": "<i class=\"fa fa-search\"></i> search for your program offering",
+          "description": "",
+          "tooltip": "",
           "customClass": "font-weight-bold",
+          "tabindex": "",
+          "hidden": false,
+          "hideLabel": false,
+          "uniqueOptions": false,
+          "autofocus": false,
+          "disabled": false,
           "tableView": true,
+          "modalEdit": false,
+          "multiple": false,
+          "dataSrc": "values",
           "data": {
             "values": [
               {
@@ -1212,97 +1224,93 @@
                 "value": ""
               }
             ],
+            "resource": "",
             "json": "",
             "url": "",
-            "resource": "",
             "custom": ""
           },
+          "dataType": "",
+          "idPath": "id",
+          "valueProperty": "",
+          "template": "<span>{{ item.label }}</span>",
           "refreshOn": "selectedProgram",
+          "refreshOnBlur": "",
           "clearOnRefresh": true,
+          "searchEnabled": true,
           "selectThreshold": 0.3,
+          "readOnlyValue": false,
+          "customOptions": {},
+          "useExactSearch": false,
+          "persistent": true,
+          "protected": false,
+          "dbIndex": false,
+          "encrypted": false,
+          "clearOnHide": true,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "allowCalculateOverride": false,
+          "validateOn": "change",
           "validate": {
             "required": true,
             "onlyAvailableItems": false,
+            "customMessage": "",
             "custom": "",
             "customPrivate": false,
+            "json": "",
             "strictDateValidation": false,
             "multiple": false,
             "unique": false
           },
-          "key": "selectedOffering",
-          "customConditional": "show = (data.selectedProgram  && !data.offeringnotListed && !data.programnotListed);",
-          "type": "select",
-          "indexeddb": {
-            "filter": {}
-          },
-          "input": true,
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
           "unique": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "redrawOn": "",
-          "modalEdit": false,
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
           "errorLabel": "",
-          "tooltip": "",
-          "hideLabel": false,
-          "tabindex": "",
-          "disabled": false,
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "attributes": {},
-          "validateOn": "change",
+          "key": "selectedOffering",
+          "tags": [],
+          "properties": {},
           "conditional": {
             "show": null,
             "when": null,
-            "eq": ""
+            "eq": "",
+            "json": ""
           },
+          "customConditional": "show = (data.selectedProgram  && !data.offeringnotListed && !data.programnotListed);",
+          "logic": [],
+          "attributes": {},
           "overlay": {
             "style": "",
+            "page": "",
             "left": "",
             "top": "",
             "width": "",
             "height": ""
           },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "properties": {},
-          "allowMultipleMasks": false,
-          "idPath": "id",
-          "limit": 100,
-          "dataSrc": "values",
-          "valueProperty": "",
-          "lazyLoad": true,
-          "filter": "",
-          "searchEnabled": true,
+          "type": "select",
+          "indexeddb": {
+            "filter": {}
+          },
+          "selectFields": "",
           "searchField": "",
           "minSearch": 0,
-          "readOnlyValue": false,
+          "filter": "",
+          "limit": 100,
+          "redrawOn": "",
+          "input": true,
+          "prefix": "",
+          "suffix": "",
+          "dataGridLabel": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "lazyLoad": true,
           "authenticate": false,
           "ignoreCache": false,
-          "template": "<span>{{ item.label }}</span>",
-          "selectFields": "",
           "searchThreshold": 0.3,
-          "uniqueOptions": false,
           "fuseOptions": {
             "include": "score",
             "threshold": 0.3
           },
-          "customOptions": {},
-          "useExactSearch": false,
-          "id": "ecm7nt"
+          "id": "ehbv0d",
+          "defaultValue": ""
         },
         {
           "label": "My offering is not listed",
@@ -5621,7 +5629,7 @@
                   "input": true,
                   "refreshOn": "",
                   "inputType": "text",
-                  "id": "ercpnia0000000000000",
+                  "id": "ercpnia00000000000000",
                   "defaultValue": ""
                 },
                 {
@@ -5704,7 +5712,7 @@
                   "input": true,
                   "refreshOn": "",
                   "inputType": "text",
-                  "id": "eek1p5o000000000000",
+                  "id": "eek1p5o0000000000000",
                   "defaultValue": ""
                 },
                 {
@@ -5746,7 +5754,7 @@
                   "key": "strongWhatIsYourRelationshipWithThisContactStrong",
                   "type": "radio",
                   "input": true,
-                  "id": "e8kxjzk000000000000000000",
+                  "id": "e8kxjzk0000000000000000000",
                   "placeholder": "",
                   "prefix": "",
                   "customClass": "",
@@ -5832,7 +5840,7 @@
                   "key": "strongHowLongDoYouWantToGiveThisPersonAccessToYourStudentAidBcAccountStrong",
                   "type": "radio",
                   "input": true,
-                  "id": "ekk8vn000000000000000000",
+                  "id": "ekk8vn0000000000000000000",
                   "placeholder": "",
                   "prefix": "",
                   "customClass": "",
@@ -5938,7 +5946,7 @@
                     "disableWeekdays": false,
                     "maxDate": null
                   },
-                  "id": "esaj12000000000000000000",
+                  "id": "esaj120000000000000000000",
                   "prefix": "",
                   "suffix": "",
                   "multiple": false,
@@ -8988,7 +8996,7 @@
               "id": "eft3ka"
             },
             {
-              "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
+              "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9150,7 +9158,7 @@
               "id": "epeh3bp"
             },
             {
-              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
+              "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9392,7 +9400,7 @@
               "id": "e4y3zfv"
             },
             {
-              "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your study period??</strong>",
+              "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your study period??</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9635,7 +9643,7 @@
               "id": "evma09q"
             },
             {
-              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9716,7 +9724,7 @@
               "id": "ekdlcnt"
             },
             {
-              "title": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -9733,7 +9741,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -9879,7 +9887,7 @@
               "id": "euyurdl"
             },
             {
-              "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period?</strong>",
+              "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -9960,7 +9968,7 @@
               "id": "e5lgiix"
             },
             {
-              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -9977,7 +9985,7 @@
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
+              "label": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -10123,7 +10131,7 @@
               "id": "ejbwll7"
             },
             {
-              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -10204,7 +10212,7 @@
               "id": "efsn92"
             },
             {
-              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
+              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -10366,7 +10374,7 @@
               "id": "el6d0zq"
             },
             {
-              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
+              "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -10447,7 +10455,7 @@
               "id": "e5yzlrn"
             },
             {
-              "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
+              "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
               "breadcrumbClickable": false,
               "buttonSettings": {
                 "previous": false,
@@ -18464,5 +18472,5 @@
   "name": "SFAA2022-23",
   "machineName": "SFAA2022-23",
   "created": "2021-07-12T19:51:16.443Z",
-  "modified": "2021-07-19T17:31:00.146Z"
+  "modified": "2021-07-29T19:59:34.322Z"
 }

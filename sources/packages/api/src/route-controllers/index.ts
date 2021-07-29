@@ -12,3 +12,4 @@ export * from "./education-program/education-program.controller";
 export * from "./education-program-offering/education-program-offering.controller";
 export * from "./application/application.system.controller";
 export * from "./atbc/atbc.system.controller";
+export * from "./program-info-request/program-info-request.controller";
