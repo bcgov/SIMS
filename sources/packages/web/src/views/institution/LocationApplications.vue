@@ -49,10 +49,14 @@
               />
             </template>
           </Column>
-          <Column field="id" header="">
+          <Column field="applicationNumberId" header="">
             <template #body="slotProps">
-              <v-btn plain color="primary" outlined
-                >view {{ slotProps.id }}</v-btn
+              <v-btn
+                plain
+                color="primary"
+                outlined
+                @click="goToViewApplication(slotProps.data.applicationNumberId)"
+                >view</v-btn
               >
             </template>
           </Column>
@@ -68,6 +72,7 @@ import { ApplicationService } from "../../services/ApplicationService";
 import { LocationsApplicationDTO } from "@/types/contracts/institution/ApplicationsDto";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import { number } from "yup/lib/locale";
 
 export default {
   components: {
@@ -90,12 +95,15 @@ export default {
       if (date) return new Date(date).toDateString();
       return "";
     };
+    const goToViewApplication = (applicationId: number) => {
+      console.log(applicationId);
+    };
     onMounted(async () => {
-      applications.value = await ApplicationService.shared.getLocationApplications(
+      applications.value = await ApplicationService.shared.getPIRSummary(
         props.locationId,
       );
     });
-    return { applications, dateString };
+    return { applications, dateString, goToViewApplication };
   },
 };
 </script>

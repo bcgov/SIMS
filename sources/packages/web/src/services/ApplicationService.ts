@@ -11,9 +11,9 @@ export class ApplicationService {
   public async getNOA(applicationId: number): Promise<any> {
     return ApiClient.Application.getNOA(applicationId);
   }
-  public async getLocationApplications(
+  public async getPIRSummary(
     locationId: number,
   ): Promise<LocationsApplicationDTO[]> {
-    return ApiClient.Application.getLocationApplications(locationId);
+    return ApiClient.Application.getPIRSummary(locationId);
   }
 }

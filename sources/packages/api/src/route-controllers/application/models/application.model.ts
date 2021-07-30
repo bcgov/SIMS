@@ -31,18 +31,8 @@ export interface LocationsApplicationDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
-  id: number;
+  applicationNumberId: number;
   pirStatus: string;
   firstName: string;
   lastName: string;
-}
-
-export interface LocationApplications {
-  first_name: string;
-  last_name: string;
-  application_number: string;
-  id: number;
-  study_start_date: string;
-  study_end_date: string;
-  pir_status: string;
 }

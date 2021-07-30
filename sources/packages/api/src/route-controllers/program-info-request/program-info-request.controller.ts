@@ -22,10 +22,8 @@ import {
 } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import {
-  LocationsApplicationDTO,
-  LocationApplications,
-} from "../application/models/application.model";
+import { LocationsApplicationDTO } from "../application/models/application.model";
+import { Application } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -93,8 +91,8 @@ export class ProgramInfoRequestController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
-  @Get(":locationId/application-summary")
-  async allLocationApplications(
+  @Get(":locationId/pir-summary")
+  async getPIRSummary(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<LocationsApplicationDTO[]> {
@@ -111,17 +109,18 @@ export class ProgramInfoRequestController {
         "Not able to find a institution associated with the current user name.",
       );
     }
-    const applications =
-      await this.applicationService.getAllLocationApplications(locationId);
-    return applications.map((eachApplication: LocationApplications) => {
+    const applications = await this.applicationService.getPIRApplications(
+      locationId,
+    );
+    return applications.map((eachApplication: Application) => {
       return {
-        applicationNumber: eachApplication?.application_number,
-        id: eachApplication.id,
-        studyStartPeriod: eachApplication?.study_start_date ?? "",
-        studyEndPeriod: eachApplication?.study_end_date ?? "",
-        pirStatus: eachApplication?.pir_status,
-        firstName: eachApplication?.first_name,
-        lastName: eachApplication?.last_name,
+        applicationNumber: eachApplication?.applicationNumber,
+        applicationNumberId: eachApplication.id,
+        studyStartPeriod: eachApplication?.offering?.studyStartDate ?? "",
+        studyEndPeriod: eachApplication?.offering?.studyEndDate ?? "",
+        pirStatus: eachApplication?.pirStatus,
+        firstName: eachApplication?.student?.user?.firstName,
+        lastName: eachApplication?.student?.user?.lastName,
       };
     }) as LocationsApplicationDTO[];
   }

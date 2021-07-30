@@ -12,10 +12,7 @@ import {
   StudentFile,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import {
-  CreateApplicationDto,
-  LocationApplications,
-} from "../../route-controllers/application/models/application.model";
+import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 import { CustomNamedError } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -218,17 +215,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param locationId location id .
    * @returns student Application list.
    */
-  async getAllLocationApplications(
-    locationId: number,
-  ): Promise<LocationApplications[]> {
+  async getPIRApplications(locationId: number): Promise<Application[]> {
     return this.repo
-      .query(`SELECT users.first_name, users.last_name, applications.application_number,
-      applications.id, education_programs_offerings.study_start_date, education_programs_offerings.study_end_date,
-      applications.pir_status
-      FROM sims.applications
-      INNER JOIN sims.education_programs_offerings ON applications.offering_id=education_programs_offerings.id
-      INNER JOIN sims.students ON applications.student_id=students.id
-      INNER JOIN sims.users ON students.user_id=users.id
-      WHERE applications.location_id = ${locationId} AND applications.pir_status in ('required', 'completed');`);
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.pirStatus",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.student", "student")
+      .leftJoinAndSelect("student.user", "user")
+      .where("application.location_id = :locationId", { locationId })
+      .andWhere("application.pir_status in ('required', 'completed')")
+      .getMany();
   }
 }

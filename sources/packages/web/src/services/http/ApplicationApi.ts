@@ -44,12 +44,12 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async getLocationApplications(
+  public async getPIRSummary(
     locationId: number,
   ): Promise<LocationsApplicationDTO[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/location/${locationId}/application-summary`,
+        `institution/location/${locationId}/pir-summary`,
         this.addAuthHeader(),
       );
       return response.data;
