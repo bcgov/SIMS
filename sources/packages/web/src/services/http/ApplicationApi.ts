@@ -1,4 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
+import { LocationsApplicationDTO } from "@/types/contracts/institution/ApplicationsDto";
 
 export class ApplicationApi extends HttpBaseClient {
   public async createApplication(data: any): Promise<any> {
@@ -34,6 +35,21 @@ export class ApplicationApi extends HttpBaseClient {
     try {
       const response = await this.apiClient.get(
         `application/${applicationId}/assessment`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getLocationApplications(
+    locationId: number,
+  ): Promise<LocationsApplicationDTO[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/location/${locationId}/application-summary`,
         this.addAuthHeader(),
       );
       return response.data;

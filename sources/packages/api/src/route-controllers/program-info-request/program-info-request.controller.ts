@@ -6,6 +6,8 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
   InternalServerErrorException,
+  Get,
+  ForbiddenException,
 } from "@nestjs/common";
 import { CompleteProgramInfoRequestDto } from "./models/program-info-request.dto";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
@@ -15,7 +17,15 @@ import {
   EducationProgramOfferingService,
   WorkflowActionsService,
   PIR_REQUEST_NOT_FOUND_ERROR,
+  InstitutionService,
+  InstitutionLocationService,
 } from "../../services";
+import { UserToken } from "../../auth/decorators/userToken.decorator";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
+import {
+  LocationsApplicationDTO,
+  LocationApplications,
+} from "../application/models/application.model";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -24,6 +34,8 @@ export class ProgramInfoRequestController {
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly institutionService: InstitutionService,
+    private readonly locationService: InstitutionLocationService,
   ) {}
 
   /**
@@ -71,5 +83,46 @@ export class ProgramInfoRequestController {
         "Error while completing a Program Information Request (PIR).",
       );
     }
+  }
+
+  /**
+   * Get all application of a location in a institution
+   * with Program Info Request (PIR) status completed and required
+   * @param locationId location that is completing the PIR.
+   * @returns student application list of a institution location
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get(":locationId/application-summary")
+  async allLocationApplications(
+    @Param("locationId") locationId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<LocationsApplicationDTO[]> {
+    const institutionDetails =
+      await this.institutionService.getInstituteByUserName(userToken.userName);
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
+    );
+    if (institutionDetails.id !== requestedLoc.institution.id) {
+      throw new ForbiddenException();
+    }
+    if (!institutionDetails) {
+      throw new UnprocessableEntityException(
+        "Not able to find a institution associated with the current user name.",
+      );
+    }
+    const applications =
+      await this.applicationService.getAllLocationApplications(locationId);
+    return applications.map((eachApplication: LocationApplications) => {
+      return {
+        applicationNumber: eachApplication?.application_number,
+        id: eachApplication.id,
+        studyStartPeriod: eachApplication?.study_start_date ?? "",
+        studyEndPeriod: eachApplication?.study_end_date ?? "",
+        pirStatus: eachApplication?.pir_status,
+        firstName: eachApplication?.first_name,
+        lastName: eachApplication?.last_name,
+      };
+    }) as LocationsApplicationDTO[];
   }
 }

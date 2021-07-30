@@ -1,4 +1,5 @@
 import ApiClient from "../services/http/ApiClient";
+import { LocationsApplicationDTO } from "@/types/contracts/institution/ApplicationsDto";
 
 export class ApplicationService {
   // Share Instance
@@ -9,5 +10,10 @@ export class ApplicationService {
   }
   public async getNOA(applicationId: number): Promise<any> {
     return ApiClient.Application.getNOA(applicationId);
+  }
+  public async getLocationApplications(
+    locationId: number,
+  ): Promise<LocationsApplicationDTO[]> {
+    return ApiClient.Application.getLocationApplications(locationId);
   }
 }

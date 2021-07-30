@@ -14,6 +14,7 @@ import {
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 import { CustomNamedError } from "../../utilities";
+import { LocationApplications } from "../../route-controllers/application/models/application.model";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 @Injectable()
@@ -100,6 +101,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
+  /**
+   * get all student applications.
+   * @param studentId student id .
+   * @returns student Application list.
+   */
   async getAllStudentApplications(studentId: number): Promise<Application[]> {
     return this.repo
       .createQueryBuilder("application")
@@ -203,5 +209,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
 
     return application?.offering;
+  }
+  /**
+   * get applications of a institution location
+   * with PIR status required and completed.
+   * @param locationId location id .
+   * @returns student Application list.
+   */
+  async getAllLocationApplications(
+    locationId: number,
+  ): Promise<LocationApplications[]> {
+    return this.repo
+      .query(`SELECT users.first_name, users.last_name, applications.application_number,
+      applications.id, education_programs_offerings.study_start_date, education_programs_offerings.study_end_date,
+      applications.pir_status
+      FROM sims.applications
+      INNER JOIN sims.education_programs_offerings ON applications.offering_id=education_programs_offerings.id
+      INNER JOIN sims.students ON applications.student_id=students.id
+      INNER JOIN sims.users ON students.user_id=users.id
+      WHERE applications.location_id = ${locationId} AND applications.pir_status in ('required', 'completed');`);
   }
 }
