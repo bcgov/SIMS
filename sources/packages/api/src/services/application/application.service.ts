@@ -12,9 +12,11 @@ import {
   StudentFile,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
+import {
+  CreateApplicationDto,
+  LocationApplications,
+} from "../../route-controllers/application/models/application.model";
 import { CustomNamedError } from "../../utilities";
-import { LocationApplications } from "../../route-controllers/application/models/application.model";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 @Injectable()
