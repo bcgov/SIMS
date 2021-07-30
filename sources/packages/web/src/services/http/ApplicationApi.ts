@@ -36,7 +36,7 @@ export class ApplicationApi extends HttpBaseClient {
         `application/${applicationId}/assessment`,
         this.addAuthHeader(),
       );
-      return response.data.data;
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
