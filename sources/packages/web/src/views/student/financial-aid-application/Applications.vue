@@ -34,6 +34,8 @@
 import { ProgramYearService } from "@/services/ProgramYearService";
 import { SetupContext, onMounted, ref } from "vue";
 import { ProgramYear } from "@/types/contracts/ProgramYearContract";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+
 export default {
   emits: ["update:formName", "change"],
   setup(props: any, context: SetupContext) {
@@ -55,6 +57,7 @@ export default {
       programYearList,
       onYearChange,
       formName,
+      StudentRoutesConst,
     };
   },
 };
