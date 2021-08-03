@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { ApplicationService } from "../../services/ApplicationService";
 import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
 import DataTable from "primevue/datatable";
@@ -98,6 +98,15 @@ export default {
     const goToViewApplication = (applicationId: number) => {
       console.log(applicationId);
     };
+    watch(
+      () => props.locationId,
+      async () => {
+        //update the list
+        applications.value = await ApplicationService.shared.getPIRSummary(
+          props.locationId,
+        );
+      },
+    );
     onMounted(async () => {
       applications.value = await ApplicationService.shared.getPIRSummary(
         props.locationId,
