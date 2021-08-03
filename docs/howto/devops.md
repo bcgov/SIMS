@@ -17,6 +17,8 @@ N.B: ROOT means repository root directory
       - [Database Backups](#database-backups)
     - [OpenShift Setup](#openshift-setup)
       - [FORMSFLOWAI Setup](#formsflowai-setup)
+        - New Environment Setup(#new-environment-setup)
+        - Upgrade a New Version(#upgrade-a-new-version)
   - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
 ## Prerequisites
@@ -140,6 +142,8 @@ We have created a setup of make helper commands, Now we can perform following st
 
 #### FORMSFLOWAI Setup
 
+##### New Environment Setup
+
 We have created a setup of make helper commands to setup new formsflow.ai setup or just upgrade with the new version.
 Now we can perform following steps to setup any namespace.
 
@@ -148,8 +152,6 @@ Now we can perform following steps to setup any namespace.
   1. NAMESPACE
   2. HOST_PREFIX
   3. ${HOST_PREFIX} (optional, default is 1)
-
-To Start a completely new environment in openshift
 
 - Build to a particular branch: `make oc-build-forms-flow-ai`
 
@@ -167,7 +169,7 @@ To Start a completely new environment in openshift
 
 - Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
-To Upgrade a new version of formsflow.ai
+##### Upgrade a New Version
 
 - Particular branch build from formsflow.ai repo (`https://github.com/AOT-Technologies/forms-flow-ai`) : `make oc-build-forms-flow-ai`
 
@@ -175,7 +177,7 @@ To Upgrade a new version of formsflow.ai
 
 - Deploy the new version: `make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
 
-- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
+- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT*APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID. \*\*\_How to populate can be found in https://github.com/AOT-Technologies/forms-flow-ai/tree/master/forms-flow-forms#formsflow-forms-userrole-api*\*\*
 
 Additional commands for FormsFlowAI
 
