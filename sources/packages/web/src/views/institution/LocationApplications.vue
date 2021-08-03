@@ -98,19 +98,20 @@ export default {
     const goToViewApplication = (applicationId: number) => {
       console.log(applicationId);
     };
+    const updateSummaryList = async (locationId: number) => {
+      applications.value = await ApplicationService.shared.getPIRSummary(
+        locationId,
+      );
+    };
     watch(
       () => props.locationId,
       async currValue => {
         //update the list
-        applications.value = await ApplicationService.shared.getPIRSummary(
-          currValue,
-        );
+        await updateSummaryList(currValue);
       },
     );
     onMounted(async () => {
-      applications.value = await ApplicationService.shared.getPIRSummary(
-        props.locationId,
-      );
+      await updateSummaryList(props.locationId);
     });
     return { applications, dateString, goToViewApplication };
   },
