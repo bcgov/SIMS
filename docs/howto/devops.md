@@ -17,8 +17,8 @@ N.B: ROOT means repository root directory
       - [Database Backups](#database-backups)
     - [OpenShift Setup](#openshift-setup)
       - [FORMSFLOWAI Setup](#formsflowai-setup)
-        - New Environment Setup(#new-environment-setup)
-        - Upgrade a New Version(#upgrade-a-new-version)
+        - [New Environment Setup](#new-environment-setup)
+        - [Upgrade a New Version](#upgrade-a-new-version)
   - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
 ## Prerequisites
