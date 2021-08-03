@@ -137,10 +137,38 @@ We have created a setup of make helper commands, Now we can perform following st
 
 - Build and deploy Mongo DB backup structure: `make oc-db-backup-init-mongodb`
 
+#### FORMS-FLOW-AI Setup
+
+We have created a setup of make helper commands to setup new formsflow.ai setup or just upgrade with the new version.
+Now we can perform following steps to setup any namespace.
+
+- Setup your env variable in `ROOT/.env` file or in `ROOT/devops/Makefile`, sample env file is available under `ROOT/configs/env-example`. The list of essential env variables are
+
+  1. NAMESPACE
+  2. HOST_PREFIX
+  3. BUILD_ID (optional, default is 1)
+
+To Start a completely new environment in openshift
+
+- Build to a particular branch: `make oc-build-forms-flow-ai`
+
+- Create Mongo DB: `make oc-deploy-ha-mongo NAMESPACE=${NAMESPACE}`
+
+- Create Secrets
+  <—Populate SecretParam file in `ROOT/devops/openshift/forms-flow-ai/secrets/secrets-param.yml`—>
+  `make oc-forms-flow-ai-secrets NAMESPACE=${NAMESPACE}`
+
+- Create Patroni DB’s
+  `make oc-forms-flow-ai-db NAMESPACE=${NAMESPACE}`
+
+- Deploy the new version
+  <—Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml`—>
+  ` make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
+  <Update forms-flow-web-config with proper ID’s>
+
 Some additional commands,
 
 - Create new database: `make create-new-db NEW_DB=newdbname JOB_NAME=openshift-jobname`
-  
 - Delete the config map for databases config: `oc-db-backup-configmap-delete`
 
 - Delete the resources associate with Postgres database (PVCs are not deleted): `oc-db-backup-delete-postgresql`
