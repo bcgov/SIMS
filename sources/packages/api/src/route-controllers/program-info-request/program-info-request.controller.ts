@@ -101,13 +101,13 @@ export class ProgramInfoRequestController {
     const requestedLoc = await this.locationService.getInstitutionLocationById(
       locationId,
     );
-    if (institutionDetails.id !== requestedLoc.institution.id) {
-      throw new ForbiddenException();
-    }
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
         "Not able to find a institution associated with the current user name.",
       );
+    }
+    if (institutionDetails.id !== requestedLoc.institution.id) {
+      throw new ForbiddenException();
     }
     const applications = await this.applicationService.getPIRApplications(
       locationId,
