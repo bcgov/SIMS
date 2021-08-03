@@ -177,7 +177,7 @@ Now we can perform following steps to setup any namespace.
 
 - Deploy the new version: `make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
 
-- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT*APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID. \*\*\_How to populate can be found in `https://github.com/AOT-Technologies/forms-flow-ai/tree/master/forms-flow-forms#formsflow-forms-userrole-api`*\*\*
+- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT\*APP\*CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID. How to populate can be found in `https://github.com/AOT-Technologies/forms-flow-ai/tree/master/forms-flow-forms#formsflow-forms-userrole-api`
 
 Additional commands for FormsFlowAI
 
