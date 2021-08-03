@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { LocationsApplicationDTO } from "@/types/contracts/institution/ApplicationsDto";
+import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
 
 export class ApplicationApi extends HttpBaseClient {
   public async createApplication(data: any): Promise<any> {
@@ -44,9 +44,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async getPIRSummary(
-    locationId: number,
-  ): Promise<LocationsApplicationDTO[]> {
+  public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
     try {
       const response = await this.apiClient.get(
         `institution/location/${locationId}/pir-summary`,

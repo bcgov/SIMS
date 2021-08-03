@@ -69,7 +69,7 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { ApplicationService } from "../../services/ApplicationService";
-import { LocationsApplicationDTO } from "@/types/contracts/institution/ApplicationsDto";
+import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 
@@ -89,7 +89,7 @@ export default {
     },
   },
   setup(props: any) {
-    const applications = ref([] as LocationsApplicationDTO[]);
+    const applications = ref([] as PIRSummaryDTO[]);
     const dateString = (date: string): string => {
       if (date) return new Date(date).toDateString();
       return "";

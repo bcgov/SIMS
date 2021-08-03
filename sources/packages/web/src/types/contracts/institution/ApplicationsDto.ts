@@ -1,4 +1,4 @@
-export interface LocationsApplicationDTO {
+export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;

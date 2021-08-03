@@ -22,7 +22,7 @@ import {
 } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { LocationsApplicationDTO } from "../application/models/application.model";
+import { PIRSummaryDTO } from "../application/models/application.model";
 import { Application } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -95,7 +95,7 @@ export class ProgramInfoRequestController {
   async getPIRSummary(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<LocationsApplicationDTO[]> {
+  ): Promise<PIRSummaryDTO[]> {
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
     const requestedLoc = await this.locationService.getInstitutionLocationById(
@@ -122,6 +122,6 @@ export class ProgramInfoRequestController {
         firstName: eachApplication?.student?.user?.firstName,
         lastName: eachApplication?.student?.user?.lastName,
       };
-    }) as LocationsApplicationDTO[];
+    }) as PIRSummaryDTO[];
   }
 }
