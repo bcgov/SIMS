@@ -1,4 +1,5 @@
 import ApiClient from "../services/http/ApiClient";
+import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
 
 export class ApplicationService {
   // Share Instance
@@ -9,5 +10,8 @@ export class ApplicationService {
   }
   public async getNOA(applicationId: number): Promise<any> {
     return ApiClient.Application.getNOA(applicationId);
+  }
+  public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
+    return ApiClient.Application.getPIRSummary(locationId);
   }
 }
