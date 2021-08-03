@@ -169,6 +169,8 @@ Now we can perform following steps to setup any namespace.
 
 - Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
+**_How to populate can be found in [Document](https://github.com/AOT-Technologies/forms-flow-ai/tree/master/forms-flow-forms#formsflow-forms-userrole-api)_**
+
 ##### Upgrade a New Version
 
 - Particular branch build from formsflow.ai repo [FORMSFLOW.AI](https://github.com/AOT-Technologies/forms-flow-ai) : `make oc-build-forms-flow-ai`
