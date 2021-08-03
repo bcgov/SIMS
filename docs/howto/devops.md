@@ -179,7 +179,7 @@ To Upgrade a new version of formsflow.ai
 
 Additional commands for FormsFlowAI
 
-- **_Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web_**
+**_Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web_**
 
 - Build a particular module: `make oc-build-${MODULE_NAME}`
 
