@@ -146,24 +146,31 @@ Now we can perform following steps to setup any namespace.
 
   1. NAMESPACE
   2. HOST_PREFIX
-  3. BUILD_ID (optional, default is 1)
+  3. ${HOST_PREFIX} (optional, default is 1)
 
 To Start a completely new environment in openshift
 
 - Build to a particular branch: `make oc-build-forms-flow-ai`
-
 - Create Mongo DB: `make oc-deploy-ha-mongo NAMESPACE=${NAMESPACE}`
+- Populate SecretParam file in `ROOT/devops/openshift/forms-flow-ai/secrets/secrets-param.yml`
+- Create Secrets : `make oc-forms-flow-ai-secrets NAMESPACE=${NAMESPACE}`
+- Create Patroni DB’s : `make oc-forms-flow-ai-db NAMESPACE=${NAMESPACE}`
+- Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml`
+- Deploy the new version : ` make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
+- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
-- Create Secrets
-  Populate SecretParam file in `ROOT/devops/openshift/forms-flow-ai/secrets/secrets-param.yml`
-  Run `make oc-forms-flow-ai-secrets NAMESPACE=${NAMESPACE}`
+To Upgrade a new version of formsflow.ai
 
-- Create Patroni DB’s
-  `make oc-forms-flow-ai-db NAMESPACE=${NAMESPACE}`
+- Particular branch build from formsflow.ai repo (`https://github.com/AOT-Technologies/forms-flow-ai`) : `make oc-build-forms-flow-ai`
+- Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml`
+- Deploy the new version: `make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
+- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
-- Deploy the new version
-  Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml` : ` make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
-  Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
+Additional commands for FormsFlowAI,
+Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web
+
+- Build a particular module: `make oc-build-${MODULE_NAME}`
+- Deploy particular module of a particular BUILD_ID: `make oc-deploy-${MODULE_NAME} NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX} BUILD_TAG=${BUILD_TAG}`
 
 Some additional commands,
 
