@@ -38,14 +38,15 @@
           <Column field="pirStatus" header="Status">
             <template #body="slotProps">
               <Chip
-                v-if="slotProps.data.pirStatus === 'completed'"
-                label="COMPLETE"
-                class="p-mr-2 p-mb-2 bg-success text-white"
-              />
-              <Chip
-                v-if="slotProps.data.pirStatus === 'required'"
-                label="REQUIRED"
-                class="p-mr-2 p-mb-2 bg-warning text-white"
+                :label="slotProps.data.pirStatus"
+                class="p-mr-2 p-mb-2 text-uppercase"
+                :class="
+                  slotProps.data.pirStatus === 'completed'
+                    ? 'bg-success text-white'
+                    : slotProps.data.pirStatus === 'required'
+                    ? 'bg-warning text-white'
+                    : ''
+                "
               />
             </template>
           </Column>
