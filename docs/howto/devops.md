@@ -16,6 +16,7 @@ N.B: ROOT means repository root directory
     - [OpenShift Template files](#openshift-template-files)
       - [Database Backups](#database-backups)
     - [OpenShift Setup](#openshift-setup)
+      - [FORMSFLOWAI Setup](#formsflowai-setup)
   - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
 ## Prerequisites
@@ -137,7 +138,7 @@ We have created a setup of make helper commands, Now we can perform following st
 
 - Build and deploy Mongo DB backup structure: `make oc-db-backup-init-mongodb`
 
-#### FORMS-FLOW-AI Setup
+#### FORMSFLOWAI Setup
 
 We have created a setup of make helper commands to setup new formsflow.ai setup or just upgrade with the new version.
 Now we can perform following steps to setup any namespace.
@@ -176,9 +177,7 @@ To Upgrade a new version of formsflow.ai
 
 - Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
-Additional commands for FormsFlowAI
-
-##### Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web
+Additional commands for FormsFlowAI **_ Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web_**
 
 - Build a particular module: `make oc-build-${MODULE_NAME}`
 
