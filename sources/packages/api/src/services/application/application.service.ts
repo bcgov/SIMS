@@ -118,6 +118,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
+  /**
+   * get all student applications.
+   * @param studentId student id .
+   * @returns student Application list.
+   */
   async getAllStudentApplications(studentId: number): Promise<Application[]> {
     return this.repo
       .createQueryBuilder("application")
@@ -221,5 +226,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
 
     return application?.offering;
+  }
+  /**
+   * get applications of a institution location
+   * with PIR status required and completed.
+   * @param locationId location id .
+   * @returns student Application list.
+   */
+  async getPIRApplications(locationId: number): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.pirStatus",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.student", "student")
+      .leftJoinAndSelect("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus in ('required', 'completed')")
+      .getMany();
   }
 }

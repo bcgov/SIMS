@@ -26,3 +26,13 @@ export interface StudentApplicationDTO {
   award: string;
   status: string;
 }
+
+export interface PIRSummaryDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  applicationNumberId: number;
+  pirStatus: string;
+  firstName: string;
+  lastName: string;
+}
