@@ -16,6 +16,9 @@ N.B: ROOT means repository root directory
     - [OpenShift Template files](#openshift-template-files)
       - [Database Backups](#database-backups)
     - [OpenShift Setup](#openshift-setup)
+      - [FORMSFLOWAI Setup](#formsflowai-setup)
+        - [New Environment Setup](#new-environment-setup)
+        - [Upgrade a New Version](#upgrade-a-new-version)
   - [CI-CD Pipeline And Github Actions](#ci-cd-pipeline-and-github-actions)
 
 ## Prerequisites
@@ -137,10 +140,61 @@ We have created a setup of make helper commands, Now we can perform following st
 
 - Build and deploy Mongo DB backup structure: `make oc-db-backup-init-mongodb`
 
+#### FORMSFLOWAI Setup
+
+##### New Environment Setup
+
+We have created a setup of make helper commands to setup new formsflow.ai setup or just upgrade with the new version.
+Now we can perform following steps to setup any namespace.
+
+- Setup your env variable in `ROOT/.env` file or in `ROOT/devops/Makefile`, sample env file is available under `ROOT/configs/env-example`. The list of essential env variables are
+
+  1. NAMESPACE
+  2. HOST_PREFIX
+  3. ${HOST_PREFIX} (optional, default is 1)
+
+- Build to a particular branch: `make oc-build-forms-flow-ai`
+
+- Create Mongo DB: `make oc-deploy-ha-mongo NAMESPACE=${NAMESPACE}`
+
+- Populate SecretParam file in `ROOT/devops/openshift/forms-flow-ai/secrets/secrets-param.yml`
+
+- Create Secrets : `make oc-forms-flow-ai-secrets NAMESPACE=${NAMESPACE}`
+
+- Create Patroni DB’s : `make oc-forms-flow-ai-db NAMESPACE=${NAMESPACE}`
+
+- Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml`
+
+- Deploy the new version : ` make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
+
+- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
+
+**_How to populate can be found in [Document](https://github.com/AOT-Technologies/forms-flow-ai/tree/master/forms-flow-forms#formsflow-forms-userrole-api)_**
+
+##### Upgrade a New Version
+
+- Particular branch build from formsflow.ai repo [FORMSFLOW.AI](https://github.com/AOT-Technologies/forms-flow-ai) : `make oc-build-forms-flow-ai`
+
+- Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml`
+
+- Deploy the new version: `make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
+
+- Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT\*APP\*CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID.
+
+**_How to populate can be found in [Document](https://github.com/AOT-Technologies/forms-flow-ai/tree/master/forms-flow-forms#formsflow-forms-userrole-api)_**
+
+Additional commands for FormsFlowAI
+
+**_Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web_**
+
+- Build a particular module: `make oc-build-${MODULE_NAME}`
+
+- Deploy particular module of a particular BUILD_ID: `make oc-deploy-${MODULE_NAME} NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX} BUILD_TAG=${BUILD_TAG}`
+
 Some additional commands,
 
 - Create new database: `make create-new-db NEW_DB=newdbname JOB_NAME=openshift-jobname`
-  
+
 - Delete the config map for databases config: `oc-db-backup-configmap-delete`
 
 - Delete the resources associate with Postgres database (PVCs are not deleted): `oc-db-backup-delete-postgresql`
