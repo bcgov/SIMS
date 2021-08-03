@@ -229,8 +229,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.offering", "offering")
       .leftJoin("application.student", "student")
       .leftJoinAndSelect("student.user", "user")
-      .where("application.location_id = :locationId", { locationId })
-      .andWhere("application.pir_status in ('required', 'completed')")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus in ('required', 'completed')")
       .getMany();
   }
 }
