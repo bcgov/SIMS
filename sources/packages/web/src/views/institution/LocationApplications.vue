@@ -100,10 +100,10 @@ export default {
     };
     watch(
       () => props.locationId,
-      async () => {
+      async currValue => {
         //update the list
         applications.value = await ApplicationService.shared.getPIRSummary(
-          props.locationId,
+          currValue,
         );
       },
     );
