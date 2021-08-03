@@ -72,7 +72,6 @@ import { ApplicationService } from "../../services/ApplicationService";
 import { LocationsApplicationDTO } from "@/types/contracts/institution/ApplicationsDto";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import { number } from "yup/lib/locale";
 
 export default {
   components: {
