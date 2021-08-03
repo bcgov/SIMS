@@ -71,6 +71,12 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Gets program offerings for location authorized for students.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns program offerings for location.
+   */
   public async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
@@ -78,6 +84,30 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     try {
       const response = await this.apiClient.get(
         `institution/offering/location/${locationId}/education-program/${programId}/options-list`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets program offerings for location authorized
+   * for a apticular institution.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns program offerings for location authorized
+   * for a apticular institution.
+   */
+  public async getProgramOfferingsForLocationForInstitution(
+    locationId: number,
+    programId: number,
+  ): Promise<OptionItemDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/location/${locationId}/education-program/${programId}/offerings-list`,
         this.addAuthHeader(),
       );
       return response.data;

@@ -23,6 +23,7 @@ import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/Ho
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
+import LocationEditProgramInfoRequest from "../views/institution/locations/programs/LocationEditProgramInfoRequest.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
@@ -303,6 +304,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationOfferingsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
         component: LocationProgramOffering,
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.LocationEditProgramInfoRequest,
+        name: InstitutionRoutesConst.EDIT_PROGRAM_INFO_REQUEST,
+        component: LocationEditProgramInfoRequest,
         props: true,
         meta: {
           clientType: ClientIdType.INSTITUTION,

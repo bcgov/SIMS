@@ -69,7 +69,25 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.update({ id: applicationId }, { assessmentWorkflowId });
   }
 
-  async getApplicationById(
+  async getApplicationForLocation(
+    locationId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .leftJoinAndSelect("application.student", "student")
+      .leftJoinAndSelect("application.location", "location")
+      .leftJoinAndSelect("student.user", "user")
+      .where("application.id = :applicationId", {
+        applicationId,
+      })
+      .andWhere("location.id = :locationId", { locationId })
+      .getOne();
+
+    return application;
+  }
+
+  async getApplicationByIdAndUserName(
     applicationId: number,
     userName: string,
   ): Promise<Application> {

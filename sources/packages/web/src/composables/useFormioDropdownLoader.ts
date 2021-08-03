@@ -17,9 +17,9 @@ export function useFormioDropdownLoader() {
     loadMethod: Promise<OptionItemDto[]>,
   ) => {
     // Find the dropdown to be populated with the locations.
-    const locationsDropdown = formioUtils.getComponent(form, dropdownName);
+    const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
-    locationsDropdown.component.data.values = optionsItems.map(item => ({
+    dropdown.component.data.values = optionsItems.map(item => ({
       value: item.id,
       label: item.description,
     }));
@@ -49,6 +49,23 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  // Retrieve the list of programs that have some
+  // offering to the locationId authorized for
+  // a particular ionstitution.
+  const loadProgramsForLocationForInstitution = async (
+    form: any,
+    locationId: number,
+    dropdownName: string,
+  ) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      EducationProgramService.shared.getLocationProgramsListForInstitutions(
+        locationId,
+      ),
+    );
+  };
+
   // Retrieve the list of offerings for a particular location.
   const loadOfferingsForLocation = async (
     form: any,
@@ -66,9 +83,28 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  // Retrieve the list of offerings for a particular location.
+  const loadOfferingsForLocationForInstitution = async (
+    form: any,
+    programId: number,
+    locationId: number,
+    dropdownName: string,
+  ) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      EducationProgramOfferingService.shared.getProgramOfferingsForLocationForInstitution(
+        locationId,
+        programId,
+      ),
+    );
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
+    loadProgramsForLocationForInstitution,
     loadOfferingsForLocation,
+    loadOfferingsForLocationForInstitution,
   };
 }

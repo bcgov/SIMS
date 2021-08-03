@@ -226,7 +226,26 @@ export class EducationProgramOfferingController {
 
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/education-program/:programId/options-list")
-  async getProgramOfferingsForLocation(
+  async getProgramOfferingsByLocation(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+  ): Promise<OptionItem[]> {
+    const offerings =
+      await this.programOfferingService.getProgramOfferingsForLocation(
+        locationId,
+        programId,
+      );
+
+    return offerings.map((offering) => ({
+      id: offering.id,
+      description: offering.name,
+    }));
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/education-program/:programId/offerings-list")
+  async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<OptionItem[]> {

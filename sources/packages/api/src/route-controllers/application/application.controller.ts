@@ -43,10 +43,11 @@ export class ApplicationController extends BaseController {
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<GetApplicationDataDto> {
-    const application = await this.applicationService.getApplicationById(
-      applicationId,
-      userToken.userName,
-    );
+    const application =
+      await this.applicationService.getApplicationByIdAndUserName(
+        applicationId,
+        userToken.userName,
+      );
 
     if (!application) {
       throw new NotFoundException(
@@ -101,10 +102,11 @@ export class ApplicationController extends BaseController {
     // TODO: Once we have the application status we should run the create/associate
     // under a DB transation to ensure that, if the workflow fails to start we would
     // be rolling back the transaction and returning an error to the student.
-    const workflowAssociationResult = await this.applicationService.associateAssessmentWorkflow(
-      createdApplication.id,
-      assessmentWorflow.id,
-    );
+    const workflowAssociationResult =
+      await this.applicationService.associateAssessmentWorkflow(
+        createdApplication.id,
+        assessmentWorflow.id,
+      );
 
     // 1 means the number of affected rows expected while
     // associating the workflow id.
@@ -123,9 +125,8 @@ export class ApplicationController extends BaseController {
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<any> {
-    const assessment = await this.applicationService.getAssessmentByApplicationId(
-      applicationId,
-    );
+    const assessment =
+      await this.applicationService.getAssessmentByApplicationId(applicationId);
     if (!assessment) {
       throw new NotFoundException(
         `Assessment for the application id ${applicationId} was not calculated.`,

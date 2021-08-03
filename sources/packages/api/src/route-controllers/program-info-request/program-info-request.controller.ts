@@ -6,8 +6,13 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
   InternalServerErrorException,
+  Get,
+  NotFoundException,
 } from "@nestjs/common";
-import { CompleteProgramInfoRequestDto } from "./models/program-info-request.dto";
+import {
+  CompleteProgramInfoRequestDto,
+  GetProgramInfoRequestDto,
+} from "./models/program-info-request.dto";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -15,7 +20,10 @@ import {
   EducationProgramOfferingService,
   WorkflowActionsService,
   PIR_REQUEST_NOT_FOUND_ERROR,
+  EducationProgramService,
 } from "../../services";
+import { getUserFullName } from "../../utilities/auth-utils";
+import { ProgramInfoStatus } from "src/database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -24,7 +32,57 @@ export class ProgramInfoRequestController {
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly programService: EducationProgramService,
   ) {}
+
+  @HasLocationAccess("locationId")
+  @Get(":locationId/program-info-request/application/:applicationId")
+  async getProgramInfoRequest(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+  ): Promise<GetProgramInfoRequestDto> {
+    const application = await this.applicationService.getApplicationForLocation(
+      locationId,
+      applicationId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        "The application was not found under the provided location.",
+      );
+    }
+
+    if (
+      !application.pirStatus ||
+      application.pirStatus === ProgramInfoStatus.notRequired
+    ) {
+      throw new NotFoundException(
+        "Program Information Request (PIR) not found.",
+      );
+    }
+
+    // TODO: Create program_id on applications table and populate it
+    // from worflow when setting PIR data.
+    let studentSelectedProgram = "";
+    if (application.data.selectedProgram) {
+      const program = await this.programService.findById(
+        +application.data.selectedProgram,
+      );
+      studentSelectedProgram = program.name;
+    }
+
+    return {
+      institutionLocationName: application.location.name,
+      applicationNumber: application.applicationNumber,
+      studentFullName: getUserFullName(application.student.user),
+      studentSelectedProgram: studentSelectedProgram,
+      studentCustomProgram: application.data.programName,
+      studentCustomProgramDescription: application.data.programDescription,
+      studentStudyStartDate: application.data.studystartDate,
+      studentStudyEndDate: application.data.studyendDate,
+      selectedProgram: +application.data.selectedProgram,
+      selectedOffering: application?.offering?.id,
+    };
+  }
 
   /**
    * Completes the Program Info Request (PIR), defining the PIR status as

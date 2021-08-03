@@ -58,11 +58,35 @@ export class EducationProgramOfferingService {
     );
   }
 
+  /**
+   * Gets program offerings for location authorized for students.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns program offerings for location.
+   */
   public async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
+      locationId,
+      programId,
+    );
+  }
+
+  /**
+   * Gets program offerings for location authorized
+   * for a apticular institution.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns program offerings for location authorized
+   * for a apticular institution.
+   */
+  public async getProgramOfferingsForLocationForInstitution(
+    locationId: number,
+    programId: number,
+  ): Promise<OptionItemDto[]> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingsForLocationForInstitution(
       locationId,
       programId,
     );

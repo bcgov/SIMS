@@ -227,4 +227,20 @@ export class EducationProgramController {
       description: program.name,
     }));
   }
+
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/programs-list")
+  async getLocationProgramsOptionListForInstitution(
+    @Param("locationId") locationId: number,
+  ): Promise<OptionItem[]> {
+    const programs = await this.programService.getProgramsForLocation(
+      locationId,
+    );
+
+    return programs.map((program) => ({
+      id: program.id,
+      description: program.name,
+    }));
+  }
 }
