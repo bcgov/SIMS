@@ -155,16 +155,15 @@ To Start a completely new environment in openshift
 - Create Mongo DB: `make oc-deploy-ha-mongo NAMESPACE=${NAMESPACE}`
 
 - Create Secrets
-  <—Populate SecretParam file in `ROOT/devops/openshift/forms-flow-ai/secrets/secrets-param.yml`—>
-  `make oc-forms-flow-ai-secrets NAMESPACE=${NAMESPACE}`
+  Populate SecretParam file in `ROOT/devops/openshift/forms-flow-ai/secrets/secrets-param.yml`
+  Run `make oc-forms-flow-ai-secrets NAMESPACE=${NAMESPACE}`
 
 - Create Patroni DB’s
   `make oc-forms-flow-ai-db NAMESPACE=${NAMESPACE}`
 
 - Deploy the new version
-  <—Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml`—>
-  ` make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
-  <Update forms-flow-web-config with proper ID’s>
+  Populate Configs in `ROOT/devops/openshift/forms-flow-ai/web-config.yml` : ` make oc-deploy-forms-flow-ai NAMESPACE=${NAMESPACE} HOST_PREFIX=${HOST_PREFIX}`
+  Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
 Some additional commands,
 
