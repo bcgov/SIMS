@@ -177,7 +177,9 @@ To Upgrade a new version of formsflow.ai
 
 - Update `ROOT/devops/openshift/forms-flow-ai/web-config.yml` with proper ID’s for REACT_APP_CLIENT_ID, REACT_APP_STAFF_REVIEWER_ID, REACT_APP_STAFF_DESIGNER_ID, REACT_APP_ANONYMOUS_ID
 
-Additional commands for FormsFlowAI **_Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web_**
+Additional commands for FormsFlowAI
+
+- **_Note: MODULE_NAME can be forms-flow-forms, forms-flow-bpm, forms-flow-api, forms-flow-web_**
 
 - Build a particular module: `make oc-build-${MODULE_NAME}`
 
