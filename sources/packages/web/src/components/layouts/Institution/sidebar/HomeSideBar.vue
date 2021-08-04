@@ -121,7 +121,8 @@ export default {
                     icon: "mdi-account-tie-outline",
                     command: () => {
                       router.push({
-                        name: InstitutionRoutesConst.LOCATION_STUDENTS,
+                        name:
+                          InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
                         params: {
                           locationId: data.id,
                           locationName: data.name,

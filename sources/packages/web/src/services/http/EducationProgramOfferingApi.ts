@@ -3,17 +3,25 @@ import { OfferingDTO } from "../../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto, OptionItemDto } from "../../types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
+  /**
+   * Creates program offering and returns the id of the created resource.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param createProgramOfferingDto
+   * @returns program offering id created.
+   */
   public async createProgramOffering(
     locationId: number,
     programId: number,
     createProgramOfferingDto: OfferingDTO,
-  ): Promise<void> {
+  ): Promise<number> {
     try {
-      await this.apiClient.post(
+      const response = await this.apiClient.post(
         `institution/offering/location/${locationId}/education-program/${programId}`,
         createProgramOfferingDto,
         this.addAuthHeader(),
       );
+      return +response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, Min } from "class-validator";
+import { SaveEducationProgramOfferingDto } from "../../../route-controllers/education-program-offering/models/education-program-offering.dto";
 
 export class CompleteProgramInfoRequestDto {
   @IsNotEmpty()
@@ -7,7 +8,7 @@ export class CompleteProgramInfoRequestDto {
   offeringId: number;
 }
 
-export class GetProgramInfoRequestDto {
+export interface GetProgramInfoRequestDto {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;

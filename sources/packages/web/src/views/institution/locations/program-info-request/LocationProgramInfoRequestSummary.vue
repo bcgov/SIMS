@@ -69,16 +69,14 @@
 
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { ApplicationService } from "../../services/ApplicationService";
-import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
+import { PIRSummaryDTO } from "@/types";
+import { useFormatters } from "@/composables";
 
 export default {
-  components: {
-    DataTable,
-    Column,
-  },
+  components: {},
   props: {
     locationId: {
       type: Number,
@@ -90,19 +88,23 @@ export default {
     },
   },
   setup(props: any) {
+    const router = useRouter();
+    const { dateString } = useFormatters();
     const applications = ref([] as PIRSummaryDTO[]);
-    const dateString = (date: string): string => {
-      if (date) return new Date(date).toDateString();
-      return "";
-    };
+
     const goToViewApplication = (applicationId: number) => {
-      console.log(applicationId);
+      router.push({
+        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+        params: { locationId: props.locationId, applicationId },
+      });
     };
+
     const updateSummaryList = async (locationId: number) => {
-      applications.value = await ApplicationService.shared.getPIRSummary(
+      applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
         locationId,
       );
     };
+
     watch(
       () => props.locationId,
       async currValue => {
@@ -110,9 +112,11 @@ export default {
         await updateSummaryList(currValue);
       },
     );
+
     onMounted(async () => {
       await updateSummaryList(props.locationId);
     });
+
     return { applications, dateString, goToViewApplication };
   },
 };

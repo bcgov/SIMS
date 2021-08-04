@@ -10,12 +10,19 @@ export class EducationProgramOfferingService {
     return this.instance || (this.instance = new this());
   }
 
+  /**
+   * Creates program offering and returns the id of the created resource.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param createProgramOfferingDto
+   * @returns program offering id created.
+   */
   public async createProgramOffering(
     locationId: number,
     programId: number,
     data: OfferingDTO,
-  ): Promise<void> {
-    await ApiClient.EducationProgramOffering.createProgramOffering(
+  ): Promise<number> {
+    return ApiClient.EducationProgramOffering.createProgramOffering(
       locationId,
       programId,
       data,

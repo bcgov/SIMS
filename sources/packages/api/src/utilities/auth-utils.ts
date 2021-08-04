@@ -52,3 +52,10 @@ export function setGlobalPipes(app: INestApplication) {
     }),
   );
 }
+
+export function getUserFullName(user: {
+  firstName: string;
+  lastName: string;
+}): string {
+  return `${user.firstName} ${user.lastName}`.trim();
+}

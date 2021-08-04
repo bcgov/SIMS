@@ -1,3 +1,4 @@
+import { GetProgramInfoRequestDto, PIRSummaryDTO } from "@/types";
 import ApiClient from "./http/ApiClient";
 
 export class ProgramInfoRequestService {
@@ -11,10 +12,26 @@ export class ProgramInfoRequestService {
   async getProgramInfoRequest(
     locationId: number,
     applicationId: number,
-  ): Promise<any> {
+  ): Promise<GetProgramInfoRequestDto> {
     return ApiClient.ProgramInfoRequest.getProgramInfoRequest(
       locationId,
       applicationId,
     );
+  }
+
+  public async completeProgramInfoRequest(
+    locationId: number,
+    applicationId: number,
+    offeringId: number,
+  ): Promise<void> {
+    await ApiClient.ProgramInfoRequest.completeProgramInfoRequest(
+      locationId,
+      applicationId,
+      offeringId,
+    );
+  }
+
+  public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
+    return ApiClient.ProgramInfoRequest.getPIRSummary(locationId);
   }
 }

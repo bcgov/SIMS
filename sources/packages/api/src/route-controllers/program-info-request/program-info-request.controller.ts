@@ -89,7 +89,7 @@ export class ProgramInfoRequestController {
       studentStudyStartDate: application.data.studystartDate,
       studentStudyEndDate: application.data.studyendDate,
       selectedProgram: +application.data.selectedProgram,
-      selectedOffering: application?.offering?.id,
+      selectedOffering: application.offering?.id,
     };
   }
 
@@ -148,7 +148,7 @@ export class ProgramInfoRequestController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
-  @Get(":locationId/pir-summary")
+  @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,

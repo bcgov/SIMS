@@ -77,6 +77,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .leftJoinAndSelect("application.student", "student")
       .leftJoinAndSelect("application.location", "location")
+      .leftJoinAndSelect("application.offering", "offering")
       .leftJoinAndSelect("student.user", "user")
       .where("application.id = :applicationId", {
         applicationId,
