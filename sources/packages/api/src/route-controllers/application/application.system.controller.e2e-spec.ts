@@ -8,6 +8,7 @@ import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
+  EducationProgramOfferingService,
   KeycloakService,
   SequenceControlService,
 } from "../../services";
@@ -48,7 +49,11 @@ describe("Test system-access/application Controller", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule],
       controllers: [ApplicationSystemController],
-      providers: [ApplicationService, SequenceControlService],
+      providers: [
+        ApplicationService,
+        EducationProgramOfferingService,
+        SequenceControlService,
+      ],
     }).compile();
 
     const connection = module.get(Connection);
@@ -135,6 +140,19 @@ describe("Test system-access/application Controller", () => {
           offeringId: 1, // Valid
           locationId: 1, // Valid
           // status not present.
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it("should return unprocessable entity error when invalid ids are provided", async () => {
+      await request(app.getHttpServer())
+        .patch(`/system-access/application/1/program-info`)
+        .auth(accesstoken, { type: "bearer" })
+        .send({
+          programId: 9999,
+          offeringId: 9999,
+          locationId: 9999,
+          status: "completed",
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
