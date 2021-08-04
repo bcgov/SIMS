@@ -72,6 +72,7 @@ export class ApplicationSystemController {
       applicationId,
       payload.locationId,
       payload.status,
+      payload.programId,
       payload.offeringId,
     );
 

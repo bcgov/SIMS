@@ -7,7 +7,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { EducationProgramOffering, InstitutionLocation } from ".";
+import {
+  EducationProgram,
+  EducationProgramOffering,
+  InstitutionLocation,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
 import { ProgramInfoStatus } from "./program-info-status.type";
@@ -51,6 +55,22 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   location: InstitutionLocation;
+
+  /**
+   * References the program related to the application.
+   * For applications that do not have an offering
+   * defined yet (need a PIR) this is the way to figure
+   * out the related program.
+   */
+  @ManyToOne(() => EducationProgram, {
+    eager: false,
+    cascade: true,
+  })
+  @JoinColumn({
+    name: "education_program_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  program?: EducationProgram;
 
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
