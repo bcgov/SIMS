@@ -1,14 +1,22 @@
-import { IsInt, IsNotEmpty, Min } from "class-validator";
-import { SaveEducationProgramOfferingDto } from "../../../route-controllers/education-program-offering/models/education-program-offering.dto";
-
-export class CompleteProgramInfoRequestDto {
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  offeringId: number;
+export interface CompleteProgramInfoRequestDto {
+  studyStartDate: Date;
+  studyEndDate: Date;
+  breakStartDate: Date;
+  breakEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  tuitionRemittanceRequestedAmount: number;
+  offeringDelivered: string;
+  lacksStudyBreaks: boolean;
+  tuitionRemittanceRequested: string;
+  selectedProgram?: number;
+  selectedOffering?: number;
 }
 
-export interface GetProgramInfoRequestDto {
+export interface GetProgramInfoRequestDto
+  extends CompleteProgramInfoRequestDto {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
@@ -17,6 +25,4 @@ export interface GetProgramInfoRequestDto {
   studentCustomProgramDescription: string;
   studentStudyStartDate: string;
   studentStudyEndDate: string;
-  selectedProgram: number;
-  selectedOffering?: number;
 }

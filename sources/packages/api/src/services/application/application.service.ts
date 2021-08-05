@@ -75,6 +75,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
+      .leftJoinAndSelect("application.program", "program")
       .leftJoinAndSelect("application.student", "student")
       .leftJoinAndSelect("application.location", "location")
       .leftJoinAndSelect("application.offering", "offering")
@@ -193,13 +194,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
-   * @param offeringId offering id to be set in the student application.
+   * @param offering offering to be set in the student application.
    * @returns updated application.
    */
   async setOfferingForProgramInfoRequest(
     applicationId: number,
     locationId: number,
-    offeringId: number,
+    offering: EducationProgramOffering,
   ): Promise<Application> {
     const application = await this.repo.findOne({
       id: applicationId,
@@ -213,7 +214,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    application.offering = { id: offeringId } as EducationProgramOffering;
+    application.offering = offering;
     return this.repo.save(application);
   }
 

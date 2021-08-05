@@ -16,11 +16,11 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
   public async completeProgramInfoRequest(
     locationId: number,
     applicationId: number,
-    offeringId: number,
+    data: any,
   ): Promise<void> {
     await this.apiClient.patch(
       `institution/location/${locationId}/program-info-request/application/${applicationId}/complete`,
-      { offeringId },
+      { ...data },
       this.addAuthHeader(),
     );
   }

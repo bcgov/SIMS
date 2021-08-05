@@ -9,6 +9,7 @@ import {
   Get,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestDto,
@@ -23,14 +24,20 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   InstitutionService,
   InstitutionLocationService,
-  EducationProgramService,
+  FormService,
 } from "../../services";
 import { getUserFullName } from "../../utilities/auth-utils";
-import { ProgramInfoStatus } from "../../database/entities";
+import {
+  EducationProgram,
+  EducationProgramOffering,
+  InstitutionLocation,
+  ProgramInfoStatus,
+} from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { Application } from "../../database/entities";
+import { FormNames } from "../../services/form/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -39,9 +46,9 @@ export class ProgramInfoRequestController {
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly programService: EducationProgramService,
     private readonly institutionService: InstitutionService,
     private readonly locationService: InstitutionLocationService,
+    private readonly formService: FormService,
   ) {}
 
   @HasLocationAccess("locationId")
@@ -69,28 +76,40 @@ export class ProgramInfoRequestController {
       );
     }
 
-    // TODO: Create program_id on applications table and populate it
-    // from worflow when setting PIR data.
-    let studentSelectedProgram = "";
-    if (application.data.selectedProgram) {
-      const program = await this.programService.findById(
-        +application.data.selectedProgram,
-      );
-      studentSelectedProgram = program.name;
+    const result = {} as GetProgramInfoRequestDto;
+    // Program Info Request specific data.
+    result.institutionLocationName = application.location.name;
+    result.applicationNumber = application.applicationNumber;
+    result.studentFullName = getUserFullName(application.student.user);
+    result.studentSelectedProgram = application.program?.name;
+    result.selectedProgram = application.program?.id;
+    result.selectedOffering = application.offering?.id;
+    // Load application dynamic data
+    result.studentCustomProgram = application.data.programName;
+    result.studentCustomProgramDescription =
+      application.data.programDescription;
+    result.studentStudyStartDate = application.data.studystartDate;
+    result.studentStudyEndDate = application.data.studyendDate;
+
+    if (application.offering) {
+      // Load offering data
+      result.studyStartDate = application.offering.studyEndDate;
+      result.studyEndDate = application.offering.studyEndDate;
+      result.breakStartDate = application.offering.breakStartDate;
+      result.breakEndDate = application.offering.breakEndDate;
+      result.actualTuitionCosts = application.offering.actualTuitionCosts;
+      result.programRelatedCosts = application.offering.programRelatedCosts;
+      result.mandatoryFees = application.offering.mandatoryFees;
+      result.exceptionalExpenses = application.offering.exceptionalExpenses;
+      result.tuitionRemittanceRequestedAmount =
+        application.offering.tuitionRemittanceRequestedAmount;
+      result.offeringDelivered = application.offering.offeringDelivered;
+      result.lacksStudyBreaks = application.offering.lacksStudyBreaks;
+      result.tuitionRemittanceRequested =
+        application.offering.tuitionRemittanceRequested;
     }
 
-    return {
-      institutionLocationName: application.location.name,
-      applicationNumber: application.applicationNumber,
-      studentFullName: getUserFullName(application.student.user),
-      studentSelectedProgram: studentSelectedProgram,
-      studentCustomProgram: application.data.programName,
-      studentCustomProgramDescription: application.data.programDescription,
-      studentStudyStartDate: application.data.studystartDate,
-      studentStudyEndDate: application.data.studyendDate,
-      selectedProgram: +application.data.selectedProgram,
-      selectedOffering: application.offering?.id,
-    };
+    return result;
   }
 
   /**
@@ -107,14 +126,62 @@ export class ProgramInfoRequestController {
     @Param("applicationId") applicationId: number,
     @Body() payload: CompleteProgramInfoRequestDto,
   ): Promise<void> {
-    // Check if the offering belongs to the location.
-    const offeringLocationId = await this.offeringService.getOfferingLocationId(
-      payload.offeringId,
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.ProgramInformationRequest,
+      payload,
     );
-    if (offeringLocationId !== locationId) {
-      throw new UnauthorizedException(
-        "The location does not have access to the offering.",
+
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to complete the Program Information Request due to an invalid request.",
       );
+    }
+
+    let offeringToCompletePIR: EducationProgramOffering;
+    if (payload.selectedOffering) {
+      // Check if the offering belongs to the location.
+      const offeringLocationId =
+        await this.offeringService.getOfferingLocationId(
+          payload.selectedOffering,
+        );
+      if (offeringLocationId !== locationId) {
+        throw new UnauthorizedException(
+          "The location does not have access to the offering.",
+        );
+      }
+      // Offering exists, is valid and just need to be associated
+      // with the application to complete the PIR.
+      offeringToCompletePIR = {
+        id: payload.selectedOffering,
+      } as EducationProgramOffering;
+    } else {
+      // Offering does not exists and it is going to be created and
+      // associated with the application to complete the PIR.
+      offeringToCompletePIR = new EducationProgramOffering();
+      offeringToCompletePIR.name =
+        "Custom offering for Program Information Request.";
+      offeringToCompletePIR.lacksStudyDates = false;
+      offeringToCompletePIR.lacksFixedCosts = false;
+      offeringToCompletePIR.studyStartDate = payload.studyStartDate;
+      offeringToCompletePIR.studyEndDate = payload.studyEndDate;
+      offeringToCompletePIR.breakStartDate = payload.breakStartDate;
+      offeringToCompletePIR.breakEndDate = payload.breakEndDate;
+      offeringToCompletePIR.actualTuitionCosts = payload.actualTuitionCosts;
+      offeringToCompletePIR.programRelatedCosts = payload.programRelatedCosts;
+      offeringToCompletePIR.mandatoryFees = payload.mandatoryFees;
+      offeringToCompletePIR.exceptionalExpenses = payload.exceptionalExpenses;
+      offeringToCompletePIR.tuitionRemittanceRequestedAmount =
+        payload.tuitionRemittanceRequestedAmount;
+      offeringToCompletePIR.offeringDelivered = payload.offeringDelivered;
+      offeringToCompletePIR.lacksStudyBreaks = payload.lacksStudyBreaks;
+      offeringToCompletePIR.tuitionRemittanceRequested =
+        payload.tuitionRemittanceRequested;
+      offeringToCompletePIR.educationProgram = {
+        id: payload.selectedProgram,
+      } as EducationProgram;
+      offeringToCompletePIR.institutionLocation = {
+        id: locationId,
+      } as InstitutionLocation;
     }
 
     try {
@@ -122,7 +189,7 @@ export class ProgramInfoRequestController {
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
           locationId,
-          payload.offeringId,
+          offeringToCompletePIR,
         );
 
       // Send a message to allow the workflow to proceed.

@@ -22,12 +22,12 @@ export class ProgramInfoRequestService {
   public async completeProgramInfoRequest(
     locationId: number,
     applicationId: number,
-    offeringId: number,
+    data: any,
   ): Promise<void> {
     await ApiClient.ProgramInfoRequest.completeProgramInfoRequest(
       locationId,
       applicationId,
-      offeringId,
+      data,
     );
   }
 

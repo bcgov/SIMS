@@ -26,8 +26,6 @@ import {
   useFormioDropdownLoader,
   useFormatters,
 } from "@/composables";
-import { GetProgramInfoRequestDto } from "@/types";
-import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 
 export default {
   components: { formio },
@@ -50,28 +48,11 @@ export default {
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
 
-    const submitted = async (data: GetProgramInfoRequestDto) => {
-      let offeringId: number | undefined = data.selectedOffering;
-      if (!offeringId) {
-        const customOffering = {
-          ...data,
-          name: `Custom offering created for application ${data.applicationNumber}`,
-          lacksStudyBreaks: data.lacksStudyBreaks ?? false,
-          lacksStudyDates: false,
-          lacksFixedCosts: false,
-          tuitionRemittanceRequested: "",
-        };
-        offeringId = await EducationProgramOfferingService.shared.createProgramOffering(
-          props.locationId,
-          props.programId,
-          customOffering,
-        );
-      }
-
+    const submitted = async (data: any) => {
       ProgramInfoRequestService.shared.completeProgramInfoRequest(
         props.locationId,
         props.applicationId,
-        Number(offeringId),
+        data,
       );
     };
 
