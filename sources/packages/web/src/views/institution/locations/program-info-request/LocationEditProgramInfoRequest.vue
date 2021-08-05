@@ -92,13 +92,14 @@ export default {
         studentStudyEndDate: dateString(programRequestData.studentStudyEndDate),
       };
 
-      if (programRequestData.pirStatus === "completed") {
+      // While loading a PIR that is in the 'completed' status
+      // the editable area of the form should be disabled.
+      if (programRequestData.pirStatus.toLowerCase() === "completed") {
         const institutionEnteredDetails = formioUtils.getComponent(
           form,
           INSTITUTION_DETAILS_PANEL,
         );
         institutionEnteredDetails.disabled = true;
-        console.log(institutionEnteredDetails.disabled);
       }
 
       await formioDataLoader.loadProgramsForLocationForInstitution(

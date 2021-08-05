@@ -93,9 +93,7 @@ export class ProgramInfoRequestController {
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
 
-    if (
-      application.offering?.offeringType === OfferingTypes.applicationSpecific
-    ) {
+    if (application.offering) {
       // Loads the offering data only when the offering
       // is specific to the student application.
       result.offeringName = application.offering.name;
