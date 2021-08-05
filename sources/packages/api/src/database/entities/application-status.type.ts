@@ -5,7 +5,7 @@ export enum ApplicationStatus {
   /**
    * The application is in draft state and is not Submitted
    */
-  draft = "draft",
+  draft = "Draft",
   /**
    * The application has been submitted by the application
    */
