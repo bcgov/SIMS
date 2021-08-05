@@ -9,6 +9,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
+import { OfferingTypes } from ".";
 
 /**
  * The main resource table to store education programs offerings related information.
@@ -153,4 +154,12 @@ export class EducationProgramOffering extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   institutionLocation: InstitutionLocation;
+  /**
+   * Defines the type of the offering.
+   */
+  @Column({
+    name: "offering_type",
+    type: "enum",
+  })
+  offeringType: OfferingTypes;
 }

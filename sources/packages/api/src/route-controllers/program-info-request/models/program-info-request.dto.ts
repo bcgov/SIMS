@@ -1,4 +1,8 @@
+import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
+
 export interface CompleteProgramInfoRequestDto {
+  offeringName: string;
+  offeringType: OfferingTypes;
   studyStartDate: Date;
   studyEndDate: Date;
   breakStartDate: Date;
@@ -25,4 +29,5 @@ export interface GetProgramInfoRequestDto
   studentCustomProgramDescription: string;
   studentStudyStartDate: string;
   studentStudyEndDate: string;
+  pirStatus: ProgramInfoStatus;
 }

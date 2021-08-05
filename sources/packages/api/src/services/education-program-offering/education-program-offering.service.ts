@@ -3,6 +3,7 @@ import {
   EducationProgramOffering,
   EducationProgram,
   InstitutionLocation,
+  OfferingTypes,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -203,6 +204,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
+      })
+      .andWhere("offerings.offeringType = :offeringType", {
+        offeringType: OfferingTypes.public,
       })
       .orderBy("offerings.name")
       .getMany();

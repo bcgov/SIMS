@@ -8,7 +8,9 @@ export interface PIRSummaryDTO {
   lastName: string;
 }
 
-export interface SaveCustomOfferingDto {
+export interface CompleteProgramInfoRequestDto {
+  offeringName: string;
+  offeringType: string;
   studyStartDate: Date;
   studyEndDate: Date;
   breakStartDate: Date;
@@ -25,7 +27,8 @@ export interface SaveCustomOfferingDto {
   selectedOffering?: number;
 }
 
-export interface GetProgramInfoRequestDto extends SaveCustomOfferingDto {
+export interface GetProgramInfoRequestDto
+  extends CompleteProgramInfoRequestDto {
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
@@ -34,4 +37,5 @@ export interface GetProgramInfoRequestDto extends SaveCustomOfferingDto {
   studentCustomProgramDescription: string;
   studentStudyStartDate: string;
   studentStudyEndDate: string;
+  pirStatus: string;
 }

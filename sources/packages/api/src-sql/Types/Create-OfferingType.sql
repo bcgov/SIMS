@@ -1,1 +1,1 @@
-CREATE TYPE sims.offering_types AS ENUM ('public', 'application specific');
+CREATE TYPE sims.offering_types AS ENUM ('Public', 'Application Specific');

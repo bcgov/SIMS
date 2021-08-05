@@ -1,4 +1,8 @@
-import { GetProgramInfoRequestDto, PIRSummaryDTO } from "@/types";
+import {
+  CompleteProgramInfoRequestDto,
+  GetProgramInfoRequestDto,
+  PIRSummaryDTO,
+} from "@/types";
 import ApiClient from "./http/ApiClient";
 
 export class ProgramInfoRequestService {
@@ -22,7 +26,7 @@ export class ProgramInfoRequestService {
   public async completeProgramInfoRequest(
     locationId: number,
     applicationId: number,
-    data: any,
+    data: CompleteProgramInfoRequestDto,
   ): Promise<void> {
     await ApiClient.ProgramInfoRequest.completeProgramInfoRequest(
       locationId,

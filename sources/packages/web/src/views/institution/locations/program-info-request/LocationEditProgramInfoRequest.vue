@@ -59,6 +59,7 @@ export default {
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
+    const INSTITUTION_DETAILS_PANEL = "institutionEnteredDetails";
 
     const loadOfferingsForProgram = async (form: any) => {
       const programId = formioUtils.getComponentValueByKey(
@@ -82,6 +83,7 @@ export default {
         props.locationId,
         props.applicationId,
       );
+
       initialData.value = {
         ...programRequestData,
         studentStudyStartDate: dateString(
@@ -89,7 +91,15 @@ export default {
         ),
         studentStudyEndDate: dateString(programRequestData.studentStudyEndDate),
       };
-      console.log("programRequestData:", programRequestData);
+
+      if (programRequestData.pirStatus === "completed") {
+        const institutionEnteredDetails = formioUtils.getComponent(
+          form,
+          INSTITUTION_DETAILS_PANEL,
+        );
+        institutionEnteredDetails.disabled = true;
+        console.log(institutionEnteredDetails.disabled);
+      }
 
       await formioDataLoader.loadProgramsForLocationForInstitution(
         form,

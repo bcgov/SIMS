@@ -31,6 +31,7 @@ import {
   EducationProgram,
   EducationProgramOffering,
   InstitutionLocation,
+  OfferingTypes,
   ProgramInfoStatus,
 } from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
@@ -84,6 +85,7 @@ export class ProgramInfoRequestController {
     result.studentSelectedProgram = application.program?.name;
     result.selectedProgram = application.program?.id;
     result.selectedOffering = application.offering?.id;
+    result.pirStatus = application.pirStatus;
     // Load application dynamic data
     result.studentCustomProgram = application.data.programName;
     result.studentCustomProgramDescription =
@@ -91,8 +93,12 @@ export class ProgramInfoRequestController {
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
 
-    if (application.offering) {
-      // Load offering data
+    if (
+      application.offering?.offeringType === OfferingTypes.applicationSpecific
+    ) {
+      // Loads the offering data only when the offering
+      // is specific to the student application.
+      result.offeringName = application.offering.name;
       result.studyStartDate = application.offering.studyEndDate;
       result.studyEndDate = application.offering.studyEndDate;
       result.breakStartDate = application.offering.breakStartDate;
@@ -107,6 +113,7 @@ export class ProgramInfoRequestController {
       result.lacksStudyBreaks = application.offering.lacksStudyBreaks;
       result.tuitionRemittanceRequested =
         application.offering.tuitionRemittanceRequested;
+      result.offeringType = application.offering.offeringType;
     }
 
     return result;
@@ -158,10 +165,11 @@ export class ProgramInfoRequestController {
       // Offering does not exists and it is going to be created and
       // associated with the application to complete the PIR.
       offeringToCompletePIR = new EducationProgramOffering();
-      offeringToCompletePIR.name =
-        "Custom offering for Program Information Request.";
+      // While completing a PIR the offering must have dates and costs.
       offeringToCompletePIR.lacksStudyDates = false;
       offeringToCompletePIR.lacksFixedCosts = false;
+      offeringToCompletePIR.name = payload.offeringName;
+      offeringToCompletePIR.offeringType = payload.offeringType;
       offeringToCompletePIR.studyStartDate = payload.studyStartDate;
       offeringToCompletePIR.studyEndDate = payload.studyEndDate;
       offeringToCompletePIR.breakStartDate = payload.breakStartDate;
@@ -193,9 +201,9 @@ export class ProgramInfoRequestController {
         );
 
       // Send a message to allow the workflow to proceed.
-      await this.workflowService.sendProgramInfoCompletedMessage(
-        updatedApplication.assessmentWorkflowId,
-      );
+      //await this.workflowService.sendProgramInfoCompletedMessage(
+      //  updatedApplication.assessmentWorkflowId,
+      //);
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);

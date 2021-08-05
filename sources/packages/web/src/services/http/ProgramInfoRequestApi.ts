@@ -1,4 +1,8 @@
-import { GetProgramInfoRequestDto, PIRSummaryDTO } from "@/types";
+import {
+  CompleteProgramInfoRequestDto,
+  GetProgramInfoRequestDto,
+  PIRSummaryDTO,
+} from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ProgramInfoRequestApi extends HttpBaseClient {
@@ -16,7 +20,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
   public async completeProgramInfoRequest(
     locationId: number,
     applicationId: number,
-    data: any,
+    data: CompleteProgramInfoRequestDto,
   ): Promise<void> {
     await this.apiClient.patch(
       `institution/location/${locationId}/program-info-request/application/${applicationId}/complete`,
