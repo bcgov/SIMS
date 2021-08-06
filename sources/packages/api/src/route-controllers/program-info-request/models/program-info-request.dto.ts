@@ -1,20 +1,8 @@
-import { OfferingTypes, ProgramInfoStatus } from "../../../database/entities";
+import { SaveEducationProgramOfferingDto } from "../../education-program-offering/models/education-program-offering.dto";
+import { ProgramInfoStatus } from "../../../database/entities";
 
-export interface CompleteProgramInfoRequestDto {
-  offeringName: string;
-  offeringType: OfferingTypes;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  tuitionRemittanceRequested: string;
+export interface CompleteProgramInfoRequestDto
+  extends SaveEducationProgramOfferingDto {
   selectedProgram?: number;
   selectedOffering?: number;
 }

@@ -58,7 +58,8 @@ export class Application extends RecordDataModel {
   location: InstitutionLocation;
 
   /**
-   * References the program related to the application.
+   * References the program related to the application
+   * at the moment it was submitted by the student.
    * For applications that do not have an offering
    * defined yet (need a PIR) this is the way to figure
    * out the related program.
@@ -68,10 +69,10 @@ export class Application extends RecordDataModel {
     cascade: true,
   })
   @JoinColumn({
-    name: "education_program_id",
+    name: "pir_education_program_id",
     referencedColumnName: ColumnNames.ID,
   })
-  program?: EducationProgram;
+  pirProgram?: EducationProgram;
 
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,

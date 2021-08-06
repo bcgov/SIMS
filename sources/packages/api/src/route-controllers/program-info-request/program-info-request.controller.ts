@@ -52,13 +52,25 @@ export class ProgramInfoRequestController {
     private readonly formService: FormService,
   ) {}
 
+  /**
+   * Gets the information to show a Program Information Request (PIR)
+   * with the data provided by the student, either when student select
+   * an existing program or not.
+   * Once the PIR is completed, it provides the data that express how
+   * the PIR was completed. It could be completed by select an existing
+   * offering, creating a new public offering or creating a new offering
+   * specific to the student application.
+   * @param locationId
+   * @param applicationId
+   * @returns program info request
+   */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request/application/:applicationId")
   async getProgramInfoRequest(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
   ): Promise<GetProgramInfoRequestDto> {
-    const application = await this.applicationService.getApplicationForLocation(
+    const application = await this.applicationService.getProgramInfoRequest(
       locationId,
       applicationId,
     );
@@ -82,11 +94,14 @@ export class ProgramInfoRequestController {
     result.institutionLocationName = application.location.name;
     result.applicationNumber = application.applicationNumber;
     result.studentFullName = getUserFullName(application.student.user);
-    result.studentSelectedProgram = application.program?.name;
-    result.selectedProgram = application.program?.id;
+    result.studentSelectedProgram = application.pirProgram?.name;
+    // If an offering is present, this value will be the program id associated
+    // with the offering, otherwise the program id from PIR will be used.
+    result.selectedProgram =
+      application.offering?.educationProgram.id ?? application.pirProgram?.id;
     result.selectedOffering = application.offering?.id;
     result.pirStatus = application.pirStatus;
-    // Load application dynamic data
+    // Load application dynamic data.
     result.studentCustomProgram = application.data.programName;
     result.studentCustomProgramDescription =
       application.data.programDescription;
@@ -94,7 +109,7 @@ export class ProgramInfoRequestController {
     result.studentStudyEndDate = application.data.studyendDate;
 
     if (application.offering) {
-      result.offeringName = application.offering.name;
+      result.name = application.offering.name;
       result.studyStartDate = application.offering.studyEndDate;
       result.studyEndDate = application.offering.studyEndDate;
       result.breakStartDate = application.offering.breakStartDate;
@@ -116,11 +131,15 @@ export class ProgramInfoRequestController {
   }
 
   /**
-   * Completes the Program Info Request (PIR), defining the PIR status as
-   * completed in the student application table.
+   * Completes the Program Info Request (PIR), defining the
+   * PIR status as completed in the student application table.
+   * The PIR could be completed by select an existing offering,
+   * creating a new public offering or creating a new offering
+   * specific to the student application.
    * @param locationId location that is completing the PIR.
    * @param applicationId application id to be updated.
-   * @param payload contains the offering id to be updated in the student application.
+   * @param payload contains the offering id to be updated in the
+   * student application or the information to create a new PIR.
    */
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/complete")
@@ -160,32 +179,11 @@ export class ProgramInfoRequestController {
     } else {
       // Offering does not exists and it is going to be created and
       // associated with the application to complete the PIR.
-      offeringToCompletePIR = new EducationProgramOffering();
-      // While completing a PIR the offering must have dates and costs.
-      offeringToCompletePIR.lacksStudyDates = false;
-      offeringToCompletePIR.lacksFixedCosts = false;
-      offeringToCompletePIR.name = payload.offeringName;
-      offeringToCompletePIR.offeringType = payload.offeringType;
-      offeringToCompletePIR.studyStartDate = payload.studyStartDate;
-      offeringToCompletePIR.studyEndDate = payload.studyEndDate;
-      offeringToCompletePIR.breakStartDate = payload.breakStartDate;
-      offeringToCompletePIR.breakEndDate = payload.breakEndDate;
-      offeringToCompletePIR.actualTuitionCosts = payload.actualTuitionCosts;
-      offeringToCompletePIR.programRelatedCosts = payload.programRelatedCosts;
-      offeringToCompletePIR.mandatoryFees = payload.mandatoryFees;
-      offeringToCompletePIR.exceptionalExpenses = payload.exceptionalExpenses;
-      offeringToCompletePIR.tuitionRemittanceRequestedAmount =
-        payload.tuitionRemittanceRequestedAmount;
-      offeringToCompletePIR.offeringDelivered = payload.offeringDelivered;
-      offeringToCompletePIR.lacksStudyBreaks = payload.lacksStudyBreaks;
-      offeringToCompletePIR.tuitionRemittanceRequested =
-        payload.tuitionRemittanceRequested;
-      offeringToCompletePIR.educationProgram = {
-        id: payload.selectedProgram,
-      } as EducationProgram;
-      offeringToCompletePIR.institutionLocation = {
-        id: locationId,
-      } as InstitutionLocation;
+      offeringToCompletePIR = this.offeringService.populateProgramOffering(
+        locationId,
+        payload.selectedProgram,
+        submissionResult.data.data,
+      );
     }
 
     try {

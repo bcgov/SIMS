@@ -1,3 +1,5 @@
+import { OfferingTypes } from "../../../database/entities";
+
 export interface SaveEducationProgramOfferingDto {
   name: string;
   studyStartDate: Date;
@@ -14,6 +16,7 @@ export interface SaveEducationProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeringType?: OfferingTypes;
 }
 
 export class EducationProgramOfferingDto {

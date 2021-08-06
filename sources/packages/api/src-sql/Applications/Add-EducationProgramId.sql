@@ -2,7 +2,7 @@
 ALTER TABLE
     sims.applications
 ADD
-    COLUMN IF NOT EXISTS education_program_id INT REFERENCES sims.education_programs(id) ON DELETE
+    COLUMN IF NOT EXISTS pir_education_program_id INT REFERENCES sims.education_programs(id) ON DELETE
 SET
     NULL;
 

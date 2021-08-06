@@ -1,3 +1,5 @@
+import { SaveEducationProgramOfferingDto } from "@/types";
+
 export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
@@ -8,21 +10,8 @@ export interface PIRSummaryDTO {
   lastName: string;
 }
 
-export interface CompleteProgramInfoRequestDto {
-  offeringName: string;
-  offeringType: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
-  lacksStudyBreaks: boolean;
-  tuitionRemittanceRequested: string;
+export interface CompleteProgramInfoRequestDto
+  extends SaveEducationProgramOfferingDto {
   selectedProgram?: number;
   selectedOffering?: number;
 }

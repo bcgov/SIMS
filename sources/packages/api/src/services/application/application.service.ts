@@ -71,16 +71,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.update({ id: applicationId }, { assessmentWorkflowId });
   }
 
-  async getApplicationForLocation(
+  /**
+   * Gets the Program Information Request
+   * associated with the application.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns student application with Program Information Request.
+   */
+  async getProgramInfoRequest(
     locationId: number,
     applicationId: number,
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
-      .leftJoinAndSelect("application.program", "program")
+      .leftJoinAndSelect("application.pirProgram", "pirProgram")
       .leftJoinAndSelect("application.student", "student")
       .leftJoinAndSelect("application.location", "location")
       .leftJoinAndSelect("application.offering", "offering")
+      .leftJoinAndSelect("offering.educationProgram", "offeringProgram")
       .leftJoinAndSelect("student.user", "user")
       .where("application.id = :applicationId", {
         applicationId,
@@ -163,7 +171,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       { id: applicationId },
       {
         location: { id: locationId },
-        program: { id: programId },
+        pirProgram: { id: programId },
         offering: { id: offeringId },
         pirStatus: status,
       },
