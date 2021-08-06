@@ -82,7 +82,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     locationId: number,
     applicationId: number,
   ): Promise<Application> {
-    const application = await this.repo
+    return this.repo
       .createQueryBuilder("application")
       .leftJoinAndSelect("application.pirProgram", "pirProgram")
       .leftJoinAndSelect("application.student", "student")
@@ -95,8 +95,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("location.id = :locationId", { locationId })
       .getOne();
-
-    return application;
   }
 
   async getApplicationByIdAndUserName(
