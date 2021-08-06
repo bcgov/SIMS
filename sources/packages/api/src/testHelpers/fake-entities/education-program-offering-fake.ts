@@ -25,5 +25,6 @@ export function createFakeEducationProgramOffering(
   offering.tuitionRemittanceRequested = "tuitionRemittanceRequested";
   offering.educationProgram = program ?? createFakeEducationProgram();
   offering.institutionLocation = institutionLocation ?? createFakeLocation();
+  offering.offeredType = "no";
   return offering;
 }

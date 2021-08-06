@@ -24,5 +24,6 @@ export function createFakeEducationProgram(
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";
   program.approvalStatus = "approvalStatus";
   program.institution = institution ?? createFakeInstitution();
+  program.partTimeBasisProgram = "fullTime";
   return program;
 }
