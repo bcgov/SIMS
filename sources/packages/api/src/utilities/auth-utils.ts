@@ -53,6 +53,12 @@ export function setGlobalPipes(app: INestApplication) {
   );
 }
 
+/**
+ * Gets user full name considering that the first name
+ * name can be null for mononymous names.
+ * @param user object with firstName and lastName.
+ * @returns user full name.
+ */
 export function getUserFullName(user: {
   firstName: string;
   lastName: string;
