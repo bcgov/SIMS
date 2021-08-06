@@ -154,7 +154,7 @@ describe("Test system-access/application Controller", () => {
           locationId: 9999,
           status: "completed",
         })
-        .expect(HttpStatus.BAD_REQUEST);
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY);
     });
 
     it("should be able to change the Program Info Status (location, program, offering, status) when payload is valid", async () => {
@@ -194,9 +194,9 @@ describe("Test system-access/application Controller", () => {
         // Check if the database was updated as expected.
         const updatedApplication = await applicationRepository.findOne(
           testApplication.id,
-          { relations: ["program", "offering", "location"] },
+          { relations: ["pirProgram", "offering", "location"] },
         );
-        expect(updatedApplication.program.id).toBe(testProgram.id);
+        expect(updatedApplication.pirProgram.id).toBe(testProgram.id);
         expect(updatedApplication.offering.id).toBe(testOffering.id);
         expect(updatedApplication.location.id).toBe(testLocation.id);
         expect(updatedApplication.pirStatus).toBe("completed");

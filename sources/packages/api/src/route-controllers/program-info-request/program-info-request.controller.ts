@@ -195,9 +195,9 @@ export class ProgramInfoRequestController {
         );
 
       // Send a message to allow the workflow to proceed.
-      //await this.workflowService.sendProgramInfoCompletedMessage(
-      //  updatedApplication.assessmentWorkflowId,
-      //);
+      await this.workflowService.sendProgramInfoCompletedMessage(
+        updatedApplication.assessmentWorkflowId,
+      );
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);
