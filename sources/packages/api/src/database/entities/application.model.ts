@@ -15,6 +15,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
 import { ProgramInfoStatus } from "./program-info-status.type";
+import { ApplicationStatus } from "./application-status.type";
 import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 
@@ -103,4 +104,10 @@ export class Application extends RecordDataModel {
     },
   )
   studentFiles: ApplicationStudentFile[];
+
+  @Column({
+    name: "application_status",
+    type: "enum",
+  })
+  applicationStatus: ApplicationStatus;
 }

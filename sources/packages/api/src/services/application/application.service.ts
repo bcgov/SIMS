@@ -8,6 +8,7 @@ import {
   ApplicationStudentFile,
   EducationProgramOffering,
   ProgramInfoStatus,
+  ApplicationStatus,
   Student,
   StudentFile,
 } from "../../database/entities";
@@ -59,6 +60,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       return newFileAssociation;
     });
     newApplication.applicationNumber = applicationNumber;
+    newApplication.applicationStatus = ApplicationStatus.submitted;
     return await this.repo.save(newApplication);
   }
 
