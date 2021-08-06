@@ -158,6 +158,7 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "offered_type",
+    nullable: false,
   })
   offeredType: string;
 }

@@ -193,6 +193,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "part_time_basis_program",
+    nullable: false,
   })
   partTimeBasisProgram: string;
 }
