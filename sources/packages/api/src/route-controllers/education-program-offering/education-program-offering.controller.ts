@@ -115,6 +115,7 @@ export class EducationProgramOfferingController {
       name: offering.name,
       studyDates: offering.studyDates,
       offeringDelivered: offering.offeringDelivered,
+      offeredType: offering.offeredType,
     }));
   }
 
@@ -164,6 +165,7 @@ export class EducationProgramOfferingController {
       lacksStudyBreaks: offering.lacksStudyBreaks,
       lacksFixedCosts: offering.lacksFixedCosts,
       tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
+      offeredType: offering.offeredType,
     };
   }
 

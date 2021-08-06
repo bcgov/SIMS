@@ -187,4 +187,12 @@ export class EducationProgram extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   institution: Institution;
+  /**
+   * If part_time_basis_program is yes, then the program is both Full-Time and Part-Time,
+   * if part_time_basis_program is no, then the program is only Full-Time basis.
+   */
+  @Column({
+    name: "part_time_basis_program",
+  })
+  partTimeBasisProgram: string;
 }

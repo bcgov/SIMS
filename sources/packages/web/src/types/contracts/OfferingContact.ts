@@ -14,4 +14,5 @@ export interface OfferingDTO {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeredType: string;
 }

@@ -153,4 +153,11 @@ export class EducationProgramOffering extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   institutionLocation: InstitutionLocation;
+  /**
+   *offered_type decides if offering is Full-Time and Part-Time
+   */
+  @Column({
+    name: "offered_type",
+  })
+  offeredType: string;
 }

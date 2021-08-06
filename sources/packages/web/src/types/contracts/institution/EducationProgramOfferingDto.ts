@@ -3,4 +3,5 @@ export interface EducationProgramOfferingDto {
   name: string;
   studyDates: string;
   offeringDelivered: string;
+  offeredType: string;
 }

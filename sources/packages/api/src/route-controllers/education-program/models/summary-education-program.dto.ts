@@ -16,4 +16,5 @@ export interface SubsetEducationProgramDto {
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
+  partTimeBasisProgram: string;
 }

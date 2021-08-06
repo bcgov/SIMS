@@ -24,6 +24,7 @@ export interface SaveEducationProgram {
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
   approvalStatus: string;
+  partTimeBasisProgram: string;
 }
 
 export interface ProgramDeliveryTypes {
@@ -57,6 +58,7 @@ export class EducationProgramModel {
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
+  partTimeBasisProgram: string;
   get credentialTypeToDisplay(): string {
     return credentialTypeToDisplay(
       this.credentialType,

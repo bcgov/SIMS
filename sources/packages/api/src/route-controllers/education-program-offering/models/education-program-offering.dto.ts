@@ -14,6 +14,7 @@ export interface SaveEducationProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeredType: string;
 }
 
 export class EducationProgramOfferingDto {
@@ -21,6 +22,7 @@ export class EducationProgramOfferingDto {
   name: string;
   studyDates: string;
   offeringDelivered: string;
+  offeredType: string;
 }
 
 export interface ProgramOfferingDto {
@@ -40,4 +42,5 @@ export interface ProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeredType: string;
 }

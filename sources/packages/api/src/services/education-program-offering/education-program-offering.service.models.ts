@@ -7,6 +7,7 @@ export class EducationProgramOfferingModel {
   studyStartDate: Date;
   studyEndDate: Date;
   offeringDelivered: string;
+  offeredType: string;
   get studyDates(): string {
     if (this.studyStartDate === null) {
       return "No program dates";
@@ -35,4 +36,5 @@ export interface ProgramOfferingModel {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeredType: string;
 }

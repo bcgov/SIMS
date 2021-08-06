@@ -18,4 +18,5 @@ export interface EducationProgramDto {
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
+  partTimeBasisProgram: string;
 }
