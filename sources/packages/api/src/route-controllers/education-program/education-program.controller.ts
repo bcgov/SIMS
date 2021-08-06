@@ -30,6 +30,7 @@ import {
 } from "./models/summary-education-program.dto";
 import { EducationProgram } from "../../database/entities";
 import { OptionItem } from "../../types";
+import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -109,7 +110,10 @@ export class EducationProgramController {
       eslEligibility: program.eslEligibility,
       hasJointInstitution: program.hasJointInstitution,
       hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-      partTimeBasisProgram: program.partTimeBasisProgram,
+      programIntensity:
+        program.programIntensity === ProgramIntensity.fullTimePartTime
+          ? "yes"
+          : "no",
     };
   }
 
@@ -204,7 +208,7 @@ export class EducationProgramController {
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
       approvalStatus: educationProgram.approvalStatus,
-      partTimeBasisProgram: educationProgram.partTimeBasisProgram,
+      programIntensity: educationProgram.programIntensity,
     };
   }
 

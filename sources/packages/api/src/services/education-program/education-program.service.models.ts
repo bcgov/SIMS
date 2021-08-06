@@ -1,4 +1,5 @@
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 
 export interface SaveEducationProgram {
   id?: number;
@@ -24,7 +25,7 @@ export interface SaveEducationProgram {
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
   approvalStatus: string;
-  partTimeBasisProgram: string;
+  programIntensity: string;
 }
 
 export interface ProgramDeliveryTypes {
@@ -58,7 +59,7 @@ export class EducationProgramModel {
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
-  partTimeBasisProgram: string;
+  programIntensity: ProgramIntensity;
   get credentialTypeToDisplay(): string {
     return credentialTypeToDisplay(
       this.credentialType,

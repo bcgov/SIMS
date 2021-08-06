@@ -1,3 +1,17 @@
+/**
+ * Valid Intensity of the Offerings.
+ */
+export enum ValidIntensity {
+  /**
+   * Program with ProgramIntensity = partTime, will be Part Time
+   */
+  partTime = "partTime",
+  /**
+   *  Program with ProgramIntensity = fullTime, will be Full Time
+   */
+  fullTime = "fullTime",
+}
+
 export interface OfferingDTO {
   name: string;
   studyStartDate?: Date;
@@ -14,5 +28,5 @@ export interface OfferingDTO {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
-  offeredType: string;
+  validIntensity: ValidIntensity;
 }

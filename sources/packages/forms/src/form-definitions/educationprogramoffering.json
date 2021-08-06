@@ -206,7 +206,7 @@
           "allowCalculateOverride": false,
           "validate": {
             "required": true,
-            "onlyAvailableItems": false,
+            "onlyAvailableItems": true,
             "customMessage": "",
             "custom": "",
             "customPrivate": false,
@@ -216,7 +216,7 @@
             "unique": false
           },
           "errorLabel": "",
-          "key": "offeredType",
+          "key": "validIntensity",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -252,7 +252,7 @@
           "allowMultipleMasks": false,
           "inputType": "radio",
           "fieldSet": false,
-          "id": "e84xyah",
+          "id": "epqh3ze",
           "defaultValue": ""
         },
         {
@@ -2452,5 +2452,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-08-05T22:42:09.166Z"
+  "modified": "2021-08-06T22:32:23.441Z"
 }

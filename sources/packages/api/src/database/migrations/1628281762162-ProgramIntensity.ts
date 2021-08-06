@@ -1,17 +1,18 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-const DIR = "EducationPrograms";
-export class CreatePartTimeProgram1628190125397 implements MigrationInterface {
+const DIR = "Types";
+
+export class ProgramIntensity1628281762162 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Create-part-time-basis-program.sql", DIR),
+      getSQLFileData("Create-ProgramIntensities.sql", DIR),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Remove-part-time-basis-program.sql", DIR),
+      getSQLFileData("Drop-ProgramIntensities.sql", DIR),
     );
   }
 }

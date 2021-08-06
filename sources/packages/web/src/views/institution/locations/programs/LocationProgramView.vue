@@ -37,12 +37,18 @@
             <p>
               <span
                 v-if="
-                  educationProgram.partTimeBasisProgram === 'yes' ||
-                    educationProgram.partTimeBasisProgram === 'no'
+                  educationProgram.programIntensity ===
+                    ProgramIntensity.fullTimePartTime ||
+                    educationProgram.programIntensity ===
+                      ProgramIntensity.fullTime
                 "
                 >Full Time</span
               >
-              <br /><span v-if="educationProgram.partTimeBasisProgram === 'yes'"
+              <br /><span
+                v-if="
+                  educationProgram.programIntensity ===
+                    ProgramIntensity.fullTimePartTime
+                "
                 >Part Time
               </span>
             </p>
@@ -91,12 +97,14 @@
             header="Study Dates"
             :sortable="true"
           ></Column>
-          <Column field="offeredType" header="Type" :sortable="true"
+          <Column field="validIntensity" header="Type" :sortable="true"
             ><template #body="slotProps">
-              <span v-if="slotProps.data.offeredType === 'partTime'"
+              <span
+                v-if="slotProps.data.validIntensity === ValidIntensity.partTime"
                 >Part Time
               </span>
-              <span v-if="slotProps.data.offeredType === 'fullTime'"
+              <span
+                v-if="slotProps.data.validIntensity === ValidIntensity.fullTime"
                 >Full Time
               </span>
             </template>
@@ -129,6 +137,8 @@ import { EducationProgramOfferingService } from "../../../../services/EducationP
 import {
   EducationProgramOfferingDto,
   EducationProgramDto,
+  ProgramIntensity,
+  ValidIntensity,
 } from "../../../../types";
 
 export default {
@@ -148,7 +158,6 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-
     const goBack = () => {
       router.push({
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -211,6 +220,8 @@ export default {
       educationProgram,
       offerings,
       goToEditOffering,
+      ValidIntensity,
+      ProgramIntensity,
     };
   },
 };

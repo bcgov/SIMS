@@ -1,6 +1,7 @@
 import * as faker from "faker";
 import { EducationProgram, Institution } from "../../database/entities";
 import { createFakeInstitution } from "./institution-fake";
+import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 
 export function createFakeEducationProgram(
   institution?: Institution,
@@ -24,6 +25,6 @@ export function createFakeEducationProgram(
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";
   program.approvalStatus = "approvalStatus";
   program.institution = institution ?? createFakeInstitution();
-  program.partTimeBasisProgram = "fullTime";
+  program.programIntensity = ProgramIntensity.fullTime;
   return program;
 }

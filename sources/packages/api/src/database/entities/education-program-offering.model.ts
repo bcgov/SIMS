@@ -9,6 +9,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
+import { ValidIntensity } from "./valid-intensity.type";
 
 /**
  * The main resource table to store education programs offerings related information.
@@ -154,11 +155,11 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   institutionLocation: InstitutionLocation;
   /**
-   *offered_type decides if offering is Full-Time and Part-Time
+   *valid_intensity decides if offering is Full-Time or Part-Time
    */
   @Column({
-    name: "offered_type",
+    name: "valid_intensity",
     nullable: false,
   })
-  offeredType: string;
+  validIntensity: ValidIntensity;
 }

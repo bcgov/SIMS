@@ -360,7 +360,7 @@
       "allowCalculateOverride": false,
       "validate": {
         "required": true,
-        "onlyAvailableItems": false,
+        "onlyAvailableItems": true,
         "customMessage": "",
         "custom": "",
         "customPrivate": false,
@@ -370,7 +370,7 @@
         "unique": false
       },
       "errorLabel": "",
-      "key": "partTimeBasisProgram",
+      "key": "programIntensity",
       "tags": [],
       "properties": {},
       "conditional": {
@@ -406,7 +406,7 @@
       "allowMultipleMasks": false,
       "inputType": "radio",
       "fieldSet": false,
-      "id": "epwryh",
+      "id": "e0h4wk",
       "defaultValue": ""
     },
     {
@@ -2855,5 +2855,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-08-05T21:20:55.676Z"
+  "modified": "2021-08-06T22:32:41.087Z"
 }

@@ -1,3 +1,4 @@
+import { ValidIntensity } from "../../../database/entities/valid-intensity.type";
 export interface SaveEducationProgramOfferingDto {
   name: string;
   studyStartDate: Date;
@@ -14,7 +15,7 @@ export interface SaveEducationProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
-  offeredType: string;
+  validIntensity: ValidIntensity;
 }
 
 export class EducationProgramOfferingDto {
@@ -22,7 +23,7 @@ export class EducationProgramOfferingDto {
   name: string;
   studyDates: string;
   offeringDelivered: string;
-  offeredType: string;
+  validIntensity: ValidIntensity;
 }
 
 export interface ProgramOfferingDto {
@@ -42,5 +43,5 @@ export interface ProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
-  offeredType: string;
+  validIntensity: ValidIntensity;
 }

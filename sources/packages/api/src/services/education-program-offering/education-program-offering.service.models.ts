@@ -1,5 +1,6 @@
 import * as dayjs from "dayjs";
 import { EXTENDED_DATE_FORMAT } from "../../utilities/constants";
+import { ValidIntensity } from "../../database/entities/valid-intensity.type";
 
 export class EducationProgramOfferingModel {
   id: number;
@@ -7,7 +8,7 @@ export class EducationProgramOfferingModel {
   studyStartDate: Date;
   studyEndDate: Date;
   offeringDelivered: string;
-  offeredType: string;
+  validIntensity: ValidIntensity;
   get studyDates(): string {
     if (this.studyStartDate === null) {
       return "No program dates";
@@ -36,5 +37,5 @@ export interface ProgramOfferingModel {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
-  offeredType: string;
+  validIntensity: ValidIntensity;
 }

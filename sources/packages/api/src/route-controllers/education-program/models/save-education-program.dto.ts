@@ -19,7 +19,7 @@ export interface EducationProgramDto {
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
-  partTimeBasisProgram: string;
+  programIntensity: string;
 }
 
 export interface ProgramDeliveryTypes {
