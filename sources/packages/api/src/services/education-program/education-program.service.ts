@@ -80,13 +80,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       educationProgram.hasJointDesignatedInstitution;
     program.approvalStatus = educationProgram.approvalStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
-    program.programIntensity =
-      educationProgram.programIntensity === "yes"
-        ? ProgramIntensity.fullTimePartTime
-        : educationProgram.programIntensity === "no"
-        ? ProgramIntensity.fullTime
-        : null;
-
+    if (educationProgram.programIntensity === "yes")
+      program.programIntensity = ProgramIntensity.fullTimePartTime;
+    if (educationProgram.programIntensity === "no")
+      program.programIntensity = ProgramIntensity.fullTime;
     return this.repo.save(program);
   }
 

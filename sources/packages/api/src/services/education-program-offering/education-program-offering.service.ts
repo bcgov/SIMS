@@ -183,12 +183,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.institutionLocation = {
       id: locationId,
     } as InstitutionLocation;
-    programOffering.validIntensity =
-      ValidIntensity.fullTime === educationProgramOffering.validIntensity
-        ? ValidIntensity.fullTime
-        : ValidIntensity.partTime === educationProgramOffering.validIntensity
-        ? ValidIntensity.partTime
-        : null;
+    if (ValidIntensity.fullTime === educationProgramOffering.validIntensity)
+      programOffering.validIntensity = ValidIntensity.fullTime;
+    if (ValidIntensity.partTime === educationProgramOffering.validIntensity)
+      programOffering.validIntensity = ValidIntensity.partTime;
     return programOffering;
   }
 
