@@ -13,6 +13,8 @@ export class CreateOfferingIntensity1628287835629
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(getSQLFileData("Drop-offering-intensity.sql", DIR));
+    await queryRunner.query(
+      getSQLFileData("Remove-offering-intensity.sql", DIR),
+    );
   }
 }

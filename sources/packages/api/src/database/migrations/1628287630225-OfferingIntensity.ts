@@ -11,8 +11,6 @@ export class OfferingIntensity1628287630225 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      getSQLFileData("Remove-offering-intensity.sql", DIR),
-    );
+    await queryRunner.query(getSQLFileData("Drop-offering-intensity.sql", DIR));
   }
 }
