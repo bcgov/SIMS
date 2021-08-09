@@ -224,6 +224,15 @@ export class EducationProgramOfferingController {
     return updateProgramOffering.affected;
   }
 
+  /**
+   * Get a key/value pair list of all offerings that
+   * belongs to a program under a location. Executes the
+   * students-based authorization (students must have access
+   * to all offerings).
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns key/value pair list of programs for students.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/education-program/:programId/options-list")
   async getProgramOfferingsByLocation(
@@ -242,6 +251,15 @@ export class EducationProgramOfferingController {
     }));
   }
 
+  /**
+   * Get a key/value pair list of all offerings that
+   * belongs to a program under a location. Executes the
+   * location-based authorization (locations must have
+   * access to their spcific offerings only).
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns key/value pair list of programs for students.
+   */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/education-program/:programId/offerings-list")
