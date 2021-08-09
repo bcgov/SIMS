@@ -1,13 +1,13 @@
 /**
  * Valid Intensity of the Offerings.
  */
-export enum ValidIntensity {
+export enum OfferingIntensity {
   /**
    * Program with ProgramIntensity = partTime, will be Part Time
    */
-  partTime = "partTime",
+  partTime = "Part Time",
   /**
    *  Program with ProgramIntensity = fullTime, will be Full Time
    */
-  fullTime = "fullTime",
+  fullTime = "Full Time",
 }

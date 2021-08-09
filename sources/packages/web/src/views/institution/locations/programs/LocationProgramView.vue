@@ -97,16 +97,9 @@
             header="Study Dates"
             :sortable="true"
           ></Column>
-          <Column field="validIntensity" header="Type" :sortable="true"
+          <Column field="offeringIntensity" header="Type" :sortable="true"
             ><template #body="slotProps">
-              <span
-                v-if="slotProps.data.validIntensity === ValidIntensity.partTime"
-                >Part Time
-              </span>
-              <span
-                v-if="slotProps.data.validIntensity === ValidIntensity.fullTime"
-                >Full Time
-              </span>
+              <span>{{ slotProps.data.offeringIntensity }} </span>
             </template>
           </Column>
           <Column
@@ -138,7 +131,6 @@ import {
   EducationProgramOfferingDto,
   EducationProgramDto,
   ProgramIntensity,
-  ValidIntensity,
 } from "../../../../types";
 
 export default {
@@ -220,7 +212,6 @@ export default {
       educationProgram,
       offerings,
       goToEditOffering,
-      ValidIntensity,
       ProgramIntensity,
     };
   },

@@ -3,13 +3,13 @@
  */
 export enum ProgramIntensity {
   /**
-   * Program with ProgramIntensity = fullTimePartTime, will be both Full Time and Part Time
+   * Program with ProgramIntensity = Full Time and Part Time, will be both Full Time and Part Time
    */
-  fullTimePartTime = "fullTimePartTime",
+  fullTimePartTime = "Full Time and Part Time",
   /**
-   *  Program with ProgramIntensity = fullTime, will be only Full Time
+   *  Program with ProgramIntensity = Full Time, will be only Full Time
    */
-  fullTime = "fullTime",
+  fullTime = "Full Time",
 }
 
 export interface SummaryEducationProgramDto {

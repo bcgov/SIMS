@@ -3,14 +3,16 @@ import { getSQLFileData } from "../../utilities";
 
 const DIR = "Types";
 
-export class ProgramIntensity1628281762162 implements MigrationInterface {
+export class OfferingIntensity1628287630225 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Create-program-intensity.sql", DIR),
+      getSQLFileData("Create-offering-intensity.sql", DIR),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(getSQLFileData("Drop-program-intensity.sql", DIR));
+    await queryRunner.query(
+      getSQLFileData("Remove-offering-intensity.sql", DIR),
+    );
   }
 }

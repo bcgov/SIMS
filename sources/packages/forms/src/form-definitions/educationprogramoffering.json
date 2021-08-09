@@ -216,7 +216,7 @@
             "unique": false
           },
           "errorLabel": "",
-          "key": "validIntensity",
+          "key": "offeringIntensity",
           "tags": [],
           "properties": {},
           "conditional": {

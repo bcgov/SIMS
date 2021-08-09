@@ -12,7 +12,6 @@ import {
   EducationProgramModel,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
-import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -80,10 +79,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       educationProgram.hasJointDesignatedInstitution;
     program.approvalStatus = educationProgram.approvalStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
-    if (educationProgram.programIntensity === "yes")
-      program.programIntensity = ProgramIntensity.fullTimePartTime;
-    if (educationProgram.programIntensity === "no")
-      program.programIntensity = ProgramIntensity.fullTime;
+    program.programIntensity = educationProgram.programIntensity;
     return this.repo.save(program);
   }
 

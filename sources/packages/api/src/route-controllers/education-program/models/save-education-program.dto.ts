@@ -1,3 +1,5 @@
+import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
+
 export interface EducationProgramDto {
   name: string;
   description: string;
@@ -19,7 +21,7 @@ export interface EducationProgramDto {
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
-  programIntensity: string;
+  programIntensity: ProgramIntensity;
 }
 
 export interface ProgramDeliveryTypes {

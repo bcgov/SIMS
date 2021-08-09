@@ -110,10 +110,7 @@ export class EducationProgramController {
       eslEligibility: program.eslEligibility,
       hasJointInstitution: program.hasJointInstitution,
       hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-      programIntensity:
-        program.programIntensity === ProgramIntensity.fullTimePartTime
-          ? "yes"
-          : "no",
+      programIntensity: program.programIntensity,
     };
   }
 

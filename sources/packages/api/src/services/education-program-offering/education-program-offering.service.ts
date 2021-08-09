@@ -12,7 +12,7 @@ import {
   ProgramOfferingModel,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
-import { ValidIntensity } from "../../database/entities/valid-intensity.type";
+import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -59,7 +59,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringDelivered",
-        "offerings.validIntensity",
+        "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -76,7 +76,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       item.studyStartDate = educationProgramOffering.studyStartDate;
       item.studyEndDate = educationProgramOffering.studyEndDate;
       item.offeringDelivered = educationProgramOffering.offeringDelivered;
-      item.validIntensity = educationProgramOffering.validIntensity;
+      item.offeringIntensity = educationProgramOffering.offeringIntensity;
       return item;
     });
   }
@@ -114,7 +114,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.lacksStudyBreaks",
         "offerings.lacksFixedCosts",
         "offerings.tuitionRemittanceRequested",
-        "offerings.validIntensity",
+        "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -183,10 +183,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.institutionLocation = {
       id: locationId,
     } as InstitutionLocation;
-    if (ValidIntensity.fullTime === educationProgramOffering.validIntensity)
-      programOffering.validIntensity = ValidIntensity.fullTime;
-    if (ValidIntensity.partTime === educationProgramOffering.validIntensity)
-      programOffering.validIntensity = ValidIntensity.partTime;
+    programOffering.offeringIntensity =
+      educationProgramOffering.offeringIntensity;
     return programOffering;
   }
 

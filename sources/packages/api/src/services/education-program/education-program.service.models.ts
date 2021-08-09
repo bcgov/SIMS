@@ -25,7 +25,7 @@ export interface SaveEducationProgram {
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
   approvalStatus: string;
-  programIntensity: string;
+  programIntensity: ProgramIntensity;
 }
 
 export interface ProgramDeliveryTypes {
