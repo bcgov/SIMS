@@ -1,10 +1,4 @@
-export interface EducationProgramOfferingDto {
-  id: number;
-  name: string;
-  studyDates: string;
-  offeringDelivered: string;
-}
-
+import { OfferingIntensity } from "@/types/contracts/OfferingContact";
 export interface SaveEducationProgramOfferingDto {
   name: string;
   studyStartDate: Date;
@@ -22,4 +16,12 @@ export interface SaveEducationProgramOfferingDto {
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringType?: string;
+}
+
+export interface EducationProgramOfferingDto {
+  id: number;
+  name: string;
+  studyDates: string;
+  offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
 }

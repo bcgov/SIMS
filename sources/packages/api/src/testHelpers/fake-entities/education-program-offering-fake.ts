@@ -6,6 +6,7 @@ import {
   InstitutionLocation,
 } from "../../database/entities";
 import { createFakeEducationProgram } from "./education-program-fake";
+import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
 
 export function createFakeEducationProgramOffering(
   program?: EducationProgram,
@@ -25,5 +26,6 @@ export function createFakeEducationProgramOffering(
   offering.tuitionRemittanceRequested = "tuitionRemittanceRequested";
   offering.educationProgram = program ?? createFakeEducationProgram();
   offering.institutionLocation = institutionLocation ?? createFakeLocation();
+  offering.offeringIntensity = OfferingIntensity.fullTime;
   return offering;
 }

@@ -109,6 +109,7 @@ export class EducationProgramController {
       eslEligibility: program.eslEligibility,
       hasJointInstitution: program.hasJointInstitution,
       hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+      programIntensity: program.programIntensity,
     };
   }
 
@@ -194,7 +195,6 @@ export class EducationProgramController {
       programId,
       userToken.authorizations.institutionId,
     );
-
     return {
       id: educationProgram.id,
       name: educationProgram.name,
@@ -204,6 +204,7 @@ export class EducationProgramController {
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
       approvalStatus: educationProgram.approvalStatus,
+      programIntensity: educationProgram.programIntensity,
     };
   }
 

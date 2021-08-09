@@ -8,6 +8,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution } from ".";
+import { ProgramIntensity } from "./program-intensity.type";
 
 /**
  * The main resource table to store education programs related information.
@@ -187,4 +188,14 @@ export class EducationProgram extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   institution: Institution;
+  /**
+   * If program_intensity is yes, then the program is both Full-Time and Part-Time,
+   * if program_intensity is no, then the program is only Full-Time basis.
+   */
+  @Column({
+    name: "program_intensity",
+    nullable: false,
+    type: "enum",
+  })
+  programIntensity: ProgramIntensity;
 }

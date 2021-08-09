@@ -1,3 +1,5 @@
+import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
+
 export class SummaryEducationProgramDto {
   id: number;
   name: string;
@@ -16,4 +18,5 @@ export interface SubsetEducationProgramDto {
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
+  programIntensity: ProgramIntensity;
 }
