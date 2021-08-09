@@ -1,18 +1,35 @@
+.primary-color {
+  color: #0053a4;
+}
+
+.secondary-color {
+  color: #485363;
+}
+
+.secondary-color-light {
+  color: #8692a4;
+}
+
 .category-header-small {
   height: 18px;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 12px;
   line-height: 18px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #0053a4;
 }
 
-.category-header-big {
+.category-header-medium {
   font-style: normal;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 20px;
   line-height: 27px;
-  color: #2965c5;
+}
+
+.category-header-large {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 34px;
 }
