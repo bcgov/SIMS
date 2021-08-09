@@ -1,3 +1,17 @@
+/**
+ * Program Intensities of the Program.
+ */
+export enum ProgramIntensity {
+  /**
+   * Program with ProgramIntensity = Full Time and Part Time, will be both Full Time and Part Time
+   */
+  fullTimePartTime = "Full Time and Part Time",
+  /**
+   *  Program with ProgramIntensity = Full Time, will be only Full Time
+   */
+  fullTime = "Full Time",
+}
+
 export interface SummaryEducationProgramDto {
   id: number;
   name: string;
@@ -18,4 +32,5 @@ export interface EducationProgramDto {
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
+  programIntensity: ProgramIntensity;
 }

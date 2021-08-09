@@ -58,6 +58,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringDelivered",
+        "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -74,6 +75,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       item.studyStartDate = educationProgramOffering.studyStartDate;
       item.studyEndDate = educationProgramOffering.studyEndDate;
       item.offeringDelivered = educationProgramOffering.offeringDelivered;
+      item.offeringIntensity = educationProgramOffering.offeringIntensity;
       return item;
     });
   }
@@ -111,6 +113,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.lacksStudyBreaks",
         "offerings.lacksFixedCosts",
         "offerings.tuitionRemittanceRequested",
+        "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -179,6 +182,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.institutionLocation = {
       id: locationId,
     } as InstitutionLocation;
+    programOffering.offeringIntensity =
+      educationProgramOffering.offeringIntensity;
     return programOffering;
   }
 

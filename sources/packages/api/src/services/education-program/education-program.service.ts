@@ -79,6 +79,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       educationProgram.hasJointDesignatedInstitution;
     program.approvalStatus = educationProgram.approvalStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
+    program.programIntensity = educationProgram.programIntensity;
     return this.repo.save(program);
   }
 
@@ -151,6 +152,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.nocCode",
         "programs.sabcCode",
         "programs.approvalStatus",
+        "programs.programIntensity",
       ])
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
@@ -166,6 +168,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     summaryItem.nocCode = educationProgram.nocCode;
     summaryItem.sabcCode = educationProgram.sabcCode;
     summaryItem.approvalStatus = educationProgram.approvalStatus;
+    summaryItem.programIntensity = educationProgram.programIntensity;
     return summaryItem;
   }
 
