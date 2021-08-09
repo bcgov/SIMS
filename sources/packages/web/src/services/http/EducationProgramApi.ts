@@ -78,12 +78,37 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Gets location programs option list authorized for students.
+   * @param locationId location id.
+   * @returns location programs option list.
+   */
   public async getLocationProgramsOptionList(
     locationId: number,
   ): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
         `institution/education-program/location/${locationId}/options-list`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets location programs list authorized for institutions.
+   * @param locationId location id.
+   * @returns location programs list for institutions.
+   */
+  public async getLocationProgramsListForInstitutions(
+    locationId: number,
+  ): Promise<OptionItemDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/education-program/location/${locationId}/programs-list`,
         this.addAuthHeader(),
       );
       return response.data;

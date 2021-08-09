@@ -1,8 +1,21 @@
-import { IsInt, IsNotEmpty, Min } from "class-validator";
+import { SaveEducationProgramOfferingDto } from "../../education-program-offering/models/education-program-offering.dto";
+import { ProgramInfoStatus } from "../../../database/entities";
 
-export class CompleteProgramInfoRequestDto {
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  offeringId: number;
+export interface CompleteProgramInfoRequestDto
+  extends SaveEducationProgramOfferingDto {
+  selectedProgram?: number;
+  selectedOffering?: number;
+}
+
+export interface GetProgramInfoRequestDto
+  extends CompleteProgramInfoRequestDto {
+  institutionLocationName: string;
+  applicationNumber: string;
+  studentFullName: string;
+  studentSelectedProgram: string;
+  studentCustomProgram: string;
+  studentCustomProgramDescription: string;
+  studentStudyStartDate: string;
+  studentStudyEndDate: string;
+  pirStatus: ProgramInfoStatus;
 }

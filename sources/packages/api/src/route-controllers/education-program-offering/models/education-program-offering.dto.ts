@@ -1,3 +1,4 @@
+import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 export interface SaveEducationProgramOfferingDto {
   name: string;
@@ -15,6 +16,7 @@ export interface SaveEducationProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeringType?: OfferingTypes;
   offeringIntensity: OfferingIntensity;
 }
 

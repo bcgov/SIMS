@@ -27,6 +27,19 @@ export default {
     const hideSpinner = ref(true);
     let form: any;
 
+    // Update the form submission data and triggers the form redraw.
+    // Redrawing ensures that components like dropdowns are going to
+    // display the correct label associated with the correct value
+    // that was loaded into the sumission data.
+    const updateFormSubmissionData = () => {
+      if (form && props.data) {
+        form.submission = {
+          data: props.data,
+        };
+        form.redraw();
+      }
+    };
+
     onMounted(async () => {
       let cachedFormDefinition: string | null = null;
       try {
@@ -68,11 +81,7 @@ export default {
 
       form.nosubmit = true;
       hideSpinner.value = true;
-      if (props.data) {
-        form.submission = {
-          data: props.data,
-        };
-      }
+      updateFormSubmissionData();
 
       context.emit("loaded", form);
 
@@ -89,11 +98,7 @@ export default {
     watch(
       () => props.data,
       () => {
-        if (form && props.data) {
-          form.submission = {
-            data: props.data,
-          };
-        }
+        updateFormSubmissionData();
       },
     );
 
