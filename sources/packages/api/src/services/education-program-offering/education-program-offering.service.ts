@@ -3,6 +3,7 @@ import {
   EducationProgramOffering,
   EducationProgram,
   InstitutionLocation,
+  OfferingTypes,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -31,7 +32,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     educationProgramOffering: SaveEducationProgramOfferingDto,
   ): Promise<EducationProgramOffering> {
-    const programOffering = await this.populateProgramOffering(
+    const programOffering = this.populateProgramOffering(
       locationId,
       programId,
       educationProgramOffering,
@@ -142,7 +143,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringId: number,
     educationProgramOffering: SaveEducationProgramOfferingDto,
   ): Promise<UpdateResult> {
-    const programOffering = await this.populateProgramOffering(
+    const programOffering = this.populateProgramOffering(
       locationId,
       programId,
       educationProgramOffering,
@@ -150,11 +151,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo.update(offeringId, programOffering);
   }
 
-  async populateProgramOffering(
+  populateProgramOffering(
     locationId: number,
     programId: number,
     educationProgramOffering: SaveEducationProgramOfferingDto,
-  ): Promise<EducationProgramOffering> {
+  ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.name;
     programOffering.studyStartDate = educationProgramOffering.studyStartDate;
@@ -178,6 +179,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.lacksFixedCosts = educationProgramOffering.lacksFixedCosts;
     programOffering.tuitionRemittanceRequested =
       educationProgramOffering.tuitionRemittanceRequested;
+    programOffering.offeringType =
+      educationProgramOffering.offeringType ?? OfferingTypes.public;
     programOffering.educationProgram = { id: programId } as EducationProgram;
     programOffering.institutionLocation = {
       id: locationId,
@@ -208,6 +211,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
+      })
+      .andWhere("offerings.offeringType = :offeringType", {
+        offeringType: OfferingTypes.public,
       })
       .orderBy("offerings.name")
       .getMany();

@@ -53,6 +53,7 @@ import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import { StudentApplication } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
+import { useFormatters } from "@/composables";
 
 export default {
   components: {
@@ -62,6 +63,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const { dateString } = useFormatters();
     const myApplications = ref([] as StudentApplication[]);
     const goToApplication = (id: number) => {
       return router.push({
@@ -71,10 +73,7 @@ export default {
         },
       });
     };
-    const dateString = (date: string): string => {
-      if (date) return new Date(date).toDateString();
-      return "";
-    };
+
     onMounted(async () => {
       myApplications.value = await StudentService.shared.getAllStudentApplications();
     });

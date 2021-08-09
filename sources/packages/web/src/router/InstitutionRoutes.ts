@@ -5,7 +5,7 @@ import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
 import LocationPrograms from "../views/institution/locations/programs/LocationPrograms.vue";
 import LocationUsers from "../views/institution/LocationUsers.vue";
-import LocationApplications from "../views/institution/LocationApplications.vue";
+import LocationProgramInfoRequestSummary from "../views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
 import ManageDesgination from "../views/institution/ManageDesgination.vue";
@@ -23,6 +23,7 @@ import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/Ho
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
+import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
@@ -121,10 +122,29 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: `${AppRoutes.LocationApplications}/:locationId`,
-        name: InstitutionRoutesConst.LOCATION_STUDENTS,
+        path: `${AppRoutes.LocationProgramInfoRequestSummary}`,
+        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
         components: {
-          default: LocationApplications,
+          default: LocationProgramInfoRequestSummary,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.LocationProgramInfoRequestEdit,
+        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+        components: {
+          default: LocationEditProgramInfoRequest,
           sidebar: InstitutionHomeSideBar,
         },
         props: true,

@@ -7,9 +7,14 @@ import {
   UnprocessableEntityException,
   InternalServerErrorException,
   Get,
+  NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from "@nestjs/common";
-import { CompleteProgramInfoRequestDto } from "./models/program-info-request.dto";
+import {
+  CompleteProgramInfoRequestDto,
+  GetProgramInfoRequestDto,
+} from "./models/program-info-request.dto";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -19,11 +24,18 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   InstitutionService,
   InstitutionLocationService,
+  FormService,
 } from "../../services";
+import { getUserFullName } from "../../utilities/auth-utils";
+import {
+  EducationProgramOffering,
+  ProgramInfoStatus,
+  Application,
+} from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { PIRSummaryDTO } from "../application/models/application.model";
-import { Application } from "../../database/entities";
+import { FormNames } from "../../services/form/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -34,14 +46,98 @@ export class ProgramInfoRequestController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly locationService: InstitutionLocationService,
+    private readonly formService: FormService,
   ) {}
 
   /**
-   * Completes the Program Info Request (PIR), defining the PIR status as
-   * completed in the student application table.
+   * Gets the information to show a Program Information Request (PIR)
+   * with the data provided by the student, either when student select
+   * an existing program or not.
+   * Once the PIR is completed, it provides the data that express how
+   * the PIR was completed. It could be completed by select an existing
+   * offering, creating a new public offering or creating a new offering
+   * specific to the student application.
+   * @param locationId
+   * @param applicationId
+   * @returns program info request
+   */
+  @HasLocationAccess("locationId")
+  @Get(":locationId/program-info-request/application/:applicationId")
+  async getProgramInfoRequest(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+  ): Promise<GetProgramInfoRequestDto> {
+    const application = await this.applicationService.getProgramInfoRequest(
+      locationId,
+      applicationId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        "The application was not found under the provided location.",
+      );
+    }
+
+    if (
+      !application.pirStatus ||
+      application.pirStatus === ProgramInfoStatus.notRequired
+    ) {
+      throw new NotFoundException(
+        "Program Information Request (PIR) not found.",
+      );
+    }
+
+    const result = {} as GetProgramInfoRequestDto;
+    // Program Info Request specific data.
+    result.institutionLocationName = application.location.name;
+    result.applicationNumber = application.applicationNumber;
+    result.studentFullName = getUserFullName(application.student.user);
+    result.studentSelectedProgram = application.pirProgram?.name;
+    // If an offering is present, this value will be the program id associated
+    // with the offering, otherwise the program id from PIR will be used.
+    result.selectedProgram =
+      application.offering?.educationProgram.id ?? application.pirProgram?.id;
+    result.selectedOffering = application.offering?.id;
+    result.pirStatus = application.pirStatus;
+    // Load application dynamic data.
+    result.studentCustomProgram = application.data.programName;
+    result.studentCustomProgramDescription =
+      application.data.programDescription;
+    result.studentStudyStartDate = application.data.studystartDate;
+    result.studentStudyEndDate = application.data.studyendDate;
+
+    if (application.offering) {
+      result.name = application.offering.name;
+      result.studyStartDate = application.offering.studyEndDate;
+      result.studyEndDate = application.offering.studyEndDate;
+      result.breakStartDate = application.offering.breakStartDate;
+      result.breakEndDate = application.offering.breakEndDate;
+      result.actualTuitionCosts = application.offering.actualTuitionCosts;
+      result.programRelatedCosts = application.offering.programRelatedCosts;
+      result.mandatoryFees = application.offering.mandatoryFees;
+      result.exceptionalExpenses = application.offering.exceptionalExpenses;
+      result.tuitionRemittanceRequestedAmount =
+        application.offering.tuitionRemittanceRequestedAmount;
+      result.offeringDelivered = application.offering.offeringDelivered;
+      result.lacksStudyBreaks = application.offering.lacksStudyBreaks;
+      result.tuitionRemittanceRequested =
+        application.offering.tuitionRemittanceRequested;
+      result.offeringType = application.offering.offeringType;
+      result.offeringIntensity = application.offering.offeringIntensity;
+    }
+
+    return result;
+  }
+
+  /**
+   * Completes the Program Info Request (PIR), defining the
+   * PIR status as completed in the student application table.
+   * The PIR could be completed by select an existing offering,
+   * creating a new public offering or creating a new offering
+   * specific to the student application.
    * @param locationId location that is completing the PIR.
    * @param applicationId application id to be updated.
-   * @param payload contains the offering id to be updated in the student application.
+   * @param payload contains the offering id to be updated in the
+   * student application or the information to create a new PIR.
    */
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/complete")
@@ -50,13 +146,41 @@ export class ProgramInfoRequestController {
     @Param("applicationId") applicationId: number,
     @Body() payload: CompleteProgramInfoRequestDto,
   ): Promise<void> {
-    // Check if the offering belongs to the location.
-    const offeringLocationId = await this.offeringService.getOfferingLocationId(
-      payload.offeringId,
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.ProgramInformationRequest,
+      payload,
     );
-    if (offeringLocationId !== locationId) {
-      throw new UnauthorizedException(
-        "The location does not have access to the offering.",
+
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to complete the Program Information Request due to an invalid request.",
+      );
+    }
+
+    let offeringToCompletePIR: EducationProgramOffering;
+    if (payload.selectedOffering) {
+      // Check if the offering belongs to the location.
+      const offeringLocationId =
+        await this.offeringService.getOfferingLocationId(
+          payload.selectedOffering,
+        );
+      if (offeringLocationId !== locationId) {
+        throw new UnauthorizedException(
+          "The location does not have access to the offering.",
+        );
+      }
+      // Offering exists, is valid and just need to be associated
+      // with the application to complete the PIR.
+      offeringToCompletePIR = {
+        id: payload.selectedOffering,
+      } as EducationProgramOffering;
+    } else {
+      // Offering does not exists and it is going to be created and
+      // associated with the application to complete the PIR.
+      offeringToCompletePIR = this.offeringService.populateProgramOffering(
+        locationId,
+        payload.selectedProgram,
+        submissionResult.data.data,
       );
     }
 
@@ -65,7 +189,7 @@ export class ProgramInfoRequestController {
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
           locationId,
-          payload.offeringId,
+          offeringToCompletePIR,
         );
 
       // Send a message to allow the workflow to proceed.
@@ -91,7 +215,7 @@ export class ProgramInfoRequestController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
-  @Get(":locationId/pir-summary")
+  @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
