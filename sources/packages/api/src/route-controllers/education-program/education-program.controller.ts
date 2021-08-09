@@ -30,7 +30,6 @@ import {
 } from "./models/summary-education-program.dto";
 import { EducationProgram } from "../../database/entities";
 import { OptionItem } from "../../types";
-import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 
 @Controller("institution/education-program")
 export class EducationProgramController {

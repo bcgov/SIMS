@@ -12,7 +12,6 @@ import {
   ProgramOfferingModel,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
-import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
