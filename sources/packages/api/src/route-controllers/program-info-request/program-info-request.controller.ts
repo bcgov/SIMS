@@ -122,6 +122,7 @@ export class ProgramInfoRequestController {
       result.tuitionRemittanceRequested =
         application.offering.tuitionRemittanceRequested;
       result.offeringType = application.offering.offeringType;
+      result.offeringIntensity = application.offering.offeringIntensity;
     }
 
     return result;
