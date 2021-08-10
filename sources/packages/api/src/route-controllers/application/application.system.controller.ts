@@ -15,6 +15,9 @@ import {
   ProgramOfferingDto,
   UpdateProgramInfoDto,
   UpdateProgramInfoStatusDto,
+  UpdateAssessmentStatusDto,
+  UpdateCOEStatusDto,
+  UpdateApplicationStatusDto,
 } from "./models/application.system.model";
 
 /**
@@ -104,6 +107,78 @@ export class ApplicationSystemController {
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         "Not able to update the program information request status with provided data.",
+      );
+    }
+  }
+
+  /**
+   * Updates Assessment status.
+   * @param applicationId application id to be updated.
+   * @param payload status of the program information request.
+   */
+  @Patch(":id/assessment/status")
+  async updateAssessmentStatus(
+    @Param("id") applicationId: number,
+    @Body() payload: UpdateAssessmentStatusDto,
+  ): Promise<void> {
+    const updateResult = await this.applicationService.updateAssessmentStatus(
+      applicationId,
+      payload.status,
+    );
+
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        "Not able to update the assessment status with provided data.",
+      );
+    }
+  }
+
+  /**
+   * Updates Confirmation of Enrollment(COE) status.
+   * @param applicationId application id to be updated.
+   * @param payload status of the program information request.
+   */
+  @Patch(":id/coe/status")
+  async updateCOEStatus(
+    @Param("id") applicationId: number,
+    @Body() payload: UpdateCOEStatusDto,
+  ): Promise<void> {
+    const updateResult = await this.applicationService.updateCOEStatus(
+      applicationId,
+      payload.status,
+    );
+
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        "Not able to update the Confirmation of Enrollment status with provided data.",
+      );
+    }
+  }
+
+  /**
+   * Updates overall Application status.
+   * @param applicationId application id to be updated.
+   * @param payload status of the program information request.
+   */
+  @Patch(":id/coe/status")
+  async updateApplicationStatus(
+    @Param("id") applicationId: number,
+    @Body() payload: UpdateApplicationStatusDto,
+  ): Promise<void> {
+    const updateResult = await this.applicationService.updateApplicationStatus(
+      applicationId,
+      payload.status,
+    );
+
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        "Not able to update the overall Application status with provided data.",
       );
     }
   }
