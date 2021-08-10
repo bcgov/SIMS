@@ -264,8 +264,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.student", "student")
       .leftJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus not in (:...nonPirStatus)", {
-        nonPirStatus: [ProgramInfoStatus.notRequired],
+      .andWhere("application.pirStatus != :nonPirStatus", {
+        nonPirStatus: ProgramInfoStatus.notRequired,
       })
       .getMany();
   }
