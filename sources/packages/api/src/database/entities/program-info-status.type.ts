@@ -6,15 +6,23 @@ export enum ProgramInfoStatus {
    * The PIR must happen to an offering id
    * be provided by the institution.
    */
-  required = "required",
+  required = "Required",
   /**
    * The offering id is present and no action
    * from institution is needed.
    */
-  notRequired = "not required",
+  notRequired = "Not Required",
+  /**
+   * The PIR was completed by the institution.
+   */
+  submitted = "Submitted",
   /**
    * The PIR was previously required and it is now
    * populated with an offering id.
    */
-  completed = "completed",
+  completed = "Completed",
+  /**
+   * The PIR was declined by the institution.
+   */
+  declined = "Declined",
 }

@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { useToast } from "primevue/usetoast";
 import { ProgramInfoRequestService } from "../../../../services/ProgramInfoRequestService";
 import formio from "../../../../components/generic/formio.vue";
 import { ref } from "vue";
@@ -25,6 +24,7 @@ import {
   useFormioUtils,
   useFormioDropdownLoader,
   useFormatters,
+  useToastMessage,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -41,7 +41,7 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToast();
+    const toast = useToastMessage();
     const router = useRouter();
     const { dateString } = useFormatters();
     const initialData = ref({});
@@ -84,9 +84,10 @@ export default {
         studentStudyEndDate: dateString(programRequestData.studentStudyEndDate),
       };
 
-      // While loading a PIR that is in the 'completed' status
+      // While loading a PIR that is in the some readonly status
       // the editable area of the form should be disabled.
-      if (programRequestData.pirStatus.toLowerCase() === "completed") {
+      const readonlyStatus = ["submitted", "completed", "declined"];
+      if (readonlyStatus.includes(programRequestData.pirStatus.toLowerCase())) {
         const institutionEnteredDetails = formioUtils.getComponent(
           form,
           INSTITUTION_DETAILS_PANEL,
@@ -111,28 +112,26 @@ export default {
 
     const submitted = async (data: any) => {
       try {
-        ProgramInfoRequestService.shared.completeProgramInfoRequest(
+        await ProgramInfoRequestService.shared.completeProgramInfoRequest(
           props.locationId,
           props.applicationId,
           data,
         );
-        toast.add({
-          severity: "success",
-          summary: "Completed!",
-          detail: "Program Information Request completed successfully!",
-          life: 5000,
-        });
+        toast.success(
+          "Completed!",
+          "Program Information Request completed successfully!",
+        );
         router.push({
           name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+          params: {
+            locationId: props.locationId,
+          },
         });
       } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail:
-            "An error happened while saving the Program Information Request.",
-          life: 5000,
-        });
+        toast.error(
+          "Unexpected error",
+          "An error happened while saving the Program Information Request.",
+        );
       }
     };
 
