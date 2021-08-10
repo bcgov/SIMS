@@ -4,13 +4,6 @@
     <p class="font-weight-bold h2">Program Information Requests</p>
     <v-sheet elevation="1" class="mx-auto mt-2">
       <v-container>
-        <p class="color-blue h3 font-weight-bold">New Applications</p>
-        <p>
-          New students have submitted applications for student aid funding or
-          grants. Confirm students are enrolled for the programs specificed in
-          their applications.
-        </p>
-
         <DataTable
           :autoLayout="true"
           :value="applications"
