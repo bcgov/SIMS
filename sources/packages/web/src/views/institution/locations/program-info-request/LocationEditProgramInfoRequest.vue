@@ -84,9 +84,10 @@ export default {
         studentStudyEndDate: dateString(programRequestData.studentStudyEndDate),
       };
 
-      // While loading a PIR that is in the 'completed' status
+      // While loading a PIR that is in the some readonly status
       // the editable area of the form should be disabled.
-      if (programRequestData.pirStatus.toLowerCase() === "completed") {
+      const readonlyStatus = ["submitted", "completed", "declined"];
+      if (readonlyStatus.includes(programRequestData.pirStatus.toLowerCase())) {
         const institutionEnteredDetails = formioUtils.getComponent(
           form,
           INSTITUTION_DETAILS_PANEL,

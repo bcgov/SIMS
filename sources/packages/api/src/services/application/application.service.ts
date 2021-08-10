@@ -223,6 +223,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     application.offering = offering;
+    application.pirStatus = ProgramInfoStatus.submitted;
     return this.repo.save(application);
   }
 
@@ -263,7 +264,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.student", "student")
       .leftJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus in ('required', 'completed')")
+      .andWhere("application.pirStatus not in (:...nonPirStatus)", {
+        nonPirStatus: [ProgramInfoStatus.notRequired],
+      })
       .getMany();
   }
 }

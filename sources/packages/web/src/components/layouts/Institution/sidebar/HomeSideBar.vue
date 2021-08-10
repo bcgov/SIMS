@@ -117,7 +117,7 @@ export default {
                     },
                   },
                   {
-                    label: "Applications",
+                    label: "Program Info Requests",
                     icon: "mdi-account-tie-outline",
                     command: () => {
                       router.push({

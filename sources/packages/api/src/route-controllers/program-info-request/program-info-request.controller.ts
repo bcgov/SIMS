@@ -107,7 +107,7 @@ export class ProgramInfoRequestController {
 
     if (application.offering) {
       result.name = application.offering.name;
-      result.studyStartDate = application.offering.studyEndDate;
+      result.studyStartDate = application.offering.studyStartDate;
       result.studyEndDate = application.offering.studyEndDate;
       result.breakStartDate = application.offering.breakStartDate;
       result.breakEndDate = application.offering.breakEndDate;

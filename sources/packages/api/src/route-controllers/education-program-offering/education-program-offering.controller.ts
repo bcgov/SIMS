@@ -29,6 +29,7 @@ import {
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
+import { OfferingTypes } from "../../database/entities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -104,6 +105,7 @@ export class EducationProgramOfferingController {
       await this.programOfferingService.getAllEducationProgramOffering(
         locationId,
         programId,
+        [OfferingTypes.public],
       );
     if (!programOferingList) {
       throw new UnprocessableEntityException(
