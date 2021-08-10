@@ -33,3 +33,17 @@
   font-size: 27px;
   line-height: 34px;
 }
+
+.label-medium {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.label-small {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 18px;
+}

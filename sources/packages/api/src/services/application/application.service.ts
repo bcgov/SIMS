@@ -267,6 +267,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.pirStatus != :nonPirStatus", {
         nonPirStatus: ProgramInfoStatus.notRequired,
       })
+      .orderBy(
+        `CASE application.pirStatus
+            WHEN '${ProgramInfoStatus.required}' THEN 1
+            WHEN '${ProgramInfoStatus.submitted}' THEN 2
+            WHEN '${ProgramInfoStatus.completed}' THEN 3
+            WHEN '${ProgramInfoStatus.declined}' THEN 4
+            ELSE 5
+          END`,
+      )
+      .addOrderBy("application.applicationNumber")
       .getMany();
   }
 }

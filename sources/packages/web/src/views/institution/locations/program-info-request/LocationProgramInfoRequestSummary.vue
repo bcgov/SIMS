@@ -106,6 +106,8 @@ export default {
 
     const getPirStatusColorClass = (status: string) => {
       switch (status) {
+        case "Submitted":
+          return "bg-info text-white";
         case "Completed":
           return "bg-success text-white";
         case "Required":
