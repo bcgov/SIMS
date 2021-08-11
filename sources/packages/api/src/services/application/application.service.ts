@@ -259,9 +259,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param status status of the Application.
    * @returns COE status update result.
    */
-  async studentConfirmAssessment(applicationId: number): Promise<UpdateResult> {
+  async studentConfirmAssessment(
+    applicationId: number,
+    student: Student,
+  ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: applicationId },
+      { id: applicationId, student: student },
       {
         assessmentStatus: AssessmentStatus.completed,
         applicationStatus: ApplicationStatus.enrollment,

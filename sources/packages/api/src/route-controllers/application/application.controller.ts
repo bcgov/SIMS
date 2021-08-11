@@ -145,10 +145,22 @@ export class ApplicationController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
+    @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
   ): Promise<void> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
+
     const updateResult = await this.applicationService.studentConfirmAssessment(
       applicationId,
+      student,
     );
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
