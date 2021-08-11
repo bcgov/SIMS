@@ -17,15 +17,21 @@ export function useFormioDropdownLoader() {
     loadMethod: Promise<OptionItemDto[]>,
   ) => {
     // Find the dropdown to be populated with the locations.
-    const locationsDropdown = formioUtils.getComponent(form, dropdownName);
+    const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
-    locationsDropdown.component.data.values = optionsItems.map(item => ({
+    dropdown.component.data.values = optionsItems.map(item => ({
       value: item.id,
       label: item.description,
     }));
   };
 
-  const loadText = async (form: any, fieldId: string, value?: any) => {
+  /**
+   * find the formio field and set the value
+   * @param form form.
+   * @param fieldId field api/id from formio.
+   * @param value value that need to be set to the field
+   */
+  const loadText = async (form: any, fieldId: string, value: any) => {
     // load the value to the formio fields.
     const fieldObject = formioUtils.getComponent(form, fieldId);
     if (fieldId in fieldObject.data) fieldObject.data[fieldId] = value;
@@ -55,6 +61,23 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  // Retrieve the list of programs that have some
+  // offering to the locationId authorized for
+  // a particular ionstitution.
+  const loadProgramsForLocationForInstitution = async (
+    form: any,
+    locationId: number,
+    dropdownName: string,
+  ) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      EducationProgramService.shared.getLocationProgramsListForInstitutions(
+        locationId,
+      ),
+    );
+  };
+
   // Retrieve the list of offerings for a particular location.
   const loadOfferingsForLocation = async (
     form: any,
@@ -72,6 +95,7 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  // get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio
   const loadSelectedOfferingDate = async (
     form: any,
     offeringId: number,
@@ -87,10 +111,29 @@ export function useFormioDropdownLoader() {
     return loadText(form, fieldId, valueToBeLoaded?.studyStartDate);
   };
 
+  // Retrieve the list of offerings for a particular location.
+  const loadOfferingsForLocationForInstitution = async (
+    form: any,
+    programId: number,
+    locationId: number,
+    dropdownName: string,
+  ) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      EducationProgramOfferingService.shared.getProgramOfferingsForLocationForInstitution(
+        locationId,
+        programId,
+      ),
+    );
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
+    loadProgramsForLocationForInstitution,
     loadOfferingsForLocation,
     loadSelectedOfferingDate,
+    loadOfferingsForLocationForInstitution,
   };
 }

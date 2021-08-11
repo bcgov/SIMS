@@ -71,7 +71,33 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.update({ id: applicationId }, { assessmentWorkflowId });
   }
 
-  async getApplicationById(
+  /**
+   * Gets the Program Information Request
+   * associated with the application.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns student application with Program Information Request.
+   */
+  async getProgramInfoRequest(
+    locationId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .leftJoinAndSelect("application.pirProgram", "pirProgram")
+      .leftJoinAndSelect("application.student", "student")
+      .leftJoinAndSelect("application.location", "location")
+      .leftJoinAndSelect("application.offering", "offering")
+      .leftJoinAndSelect("offering.educationProgram", "offeringProgram")
+      .leftJoinAndSelect("student.user", "user")
+      .where("application.id = :applicationId", {
+        applicationId,
+      })
+      .andWhere("location.id = :locationId", { locationId })
+      .getOne();
+  }
+
+  async getApplicationByIdAndUserName(
     applicationId: number,
     userName: string,
   ): Promise<Application> {
@@ -125,6 +151,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id to be updated.
    * @param locationId location id related to the offering.
    * @param status status of the program information request.
+   * @param programId program id related to the application.
+   * When the application do not have an offering, this is used
+   * to determine the associated program.
    * @param offering offering id, when available, otherwise
    * a PIR request need happen to an offering id be provided.
    * @returns program info update result.
@@ -133,12 +162,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     locationId: number,
     status: ProgramInfoStatus,
+    programId?: number,
     offeringId?: number,
   ): Promise<UpdateResult> {
     return this.repo.update(
       { id: applicationId },
       {
         location: { id: locationId },
+        pirProgram: { id: programId },
         offering: { id: offeringId },
         pirStatus: status,
       },
@@ -171,13 +202,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
-   * @param offeringId offering id to be set in the student application.
+   * @param offering offering to be set in the student application.
    * @returns updated application.
    */
   async setOfferingForProgramInfoRequest(
     applicationId: number,
     locationId: number,
-    offeringId: number,
+    offering: EducationProgramOffering,
   ): Promise<Application> {
     const application = await this.repo.findOne({
       id: applicationId,
@@ -191,7 +222,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    application.offering = { id: offeringId } as EducationProgramOffering;
+    application.offering = offering;
+    application.pirStatus = ProgramInfoStatus.submitted;
     return this.repo.save(application);
   }
 
@@ -232,7 +264,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.student", "student")
       .leftJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.pirStatus in ('required', 'completed')")
+      .andWhere("application.pirStatus != :nonPirStatus", {
+        nonPirStatus: ProgramInfoStatus.notRequired,
+      })
+      .orderBy(
+        `CASE application.pirStatus
+            WHEN '${ProgramInfoStatus.required}' THEN 1
+            WHEN '${ProgramInfoStatus.submitted}' THEN 2
+            WHEN '${ProgramInfoStatus.completed}' THEN 3
+            WHEN '${ProgramInfoStatus.declined}' THEN 4
+            ELSE 5
+          END`,
+      )
+      .addOrderBy("application.applicationNumber")
       .getMany();
   }
 }

@@ -1,16 +1,9 @@
 <template>
   <v-container>
     <p class="text-muted font-weight-bold h3">{{ locationName }}</p>
-    <p class="font-weight-bold h2">Student Applications</p>
+    <p class="font-weight-bold h2">Program Information Requests</p>
     <v-sheet elevation="1" class="mx-auto mt-2">
       <v-container>
-        <p class="color-blue h3 font-weight-bold">New Applications</p>
-        <p>
-          New students have submitted applications for student aid funding or
-          grants. Confirm students are enrolled for the programs specificed in
-          their applications.
-        </p>
-
         <DataTable
           :autoLayout="true"
           :value="applications"
@@ -40,13 +33,7 @@
               <Chip
                 :label="slotProps.data.pirStatus"
                 class="p-mr-2 p-mb-2 text-uppercase"
-                :class="
-                  slotProps.data.pirStatus === 'completed'
-                    ? 'bg-success text-white'
-                    : slotProps.data.pirStatus === 'required'
-                    ? 'bg-warning text-white'
-                    : ''
-                "
+                :class="getPirStatusColorClass(slotProps.data.pirStatus)"
               />
             </template>
           </Column>
@@ -69,16 +56,14 @@
 
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { ApplicationService } from "../../services/ApplicationService";
-import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
+import { PIRSummaryDTO } from "@/types";
+import { useFormatters } from "@/composables";
 
 export default {
-  components: {
-    DataTable,
-    Column,
-  },
+  components: {},
   props: {
     locationId: {
       type: Number,
@@ -90,19 +75,23 @@ export default {
     },
   },
   setup(props: any) {
+    const router = useRouter();
+    const { dateString } = useFormatters();
     const applications = ref([] as PIRSummaryDTO[]);
-    const dateString = (date: string): string => {
-      if (date) return new Date(date).toDateString();
-      return "";
-    };
+
     const goToViewApplication = (applicationId: number) => {
-      console.log(applicationId);
+      router.push({
+        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+        params: { locationId: props.locationId, applicationId },
+      });
     };
+
     const updateSummaryList = async (locationId: number) => {
-      applications.value = await ApplicationService.shared.getPIRSummary(
+      applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
         locationId,
       );
     };
+
     watch(
       () => props.locationId,
       async currValue => {
@@ -110,10 +99,32 @@ export default {
         await updateSummaryList(currValue);
       },
     );
+
     onMounted(async () => {
       await updateSummaryList(props.locationId);
     });
-    return { applications, dateString, goToViewApplication };
+
+    const getPirStatusColorClass = (status: string) => {
+      switch (status) {
+        case "Submitted":
+          return "bg-info text-white";
+        case "Completed":
+          return "bg-success text-white";
+        case "Required":
+          return "bg-warning text-white";
+        case "Declined":
+          return "bg-danger text-white";
+        default:
+          return "";
+      }
+    };
+
+    return {
+      applications,
+      dateString,
+      goToViewApplication,
+      getPirStatusColorClass,
+    };
   },
 };
 </script>

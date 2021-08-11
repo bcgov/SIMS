@@ -5,6 +5,10 @@ export class UpdateProgramInfoDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  programId?: number;
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   offeringId?: number;
   @IsNotEmpty()
   @IsInt()

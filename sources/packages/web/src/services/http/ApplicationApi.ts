@@ -1,5 +1,4 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
 
 export class ApplicationApi extends HttpBaseClient {
   public async createApplication(data: any): Promise<any> {
@@ -35,19 +34,6 @@ export class ApplicationApi extends HttpBaseClient {
     try {
       const response = await this.apiClient.get(
         `application/${applicationId}/assessment`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/location/${locationId}/pir-summary`,
         this.addAuthHeader(),
       );
       return response.data;

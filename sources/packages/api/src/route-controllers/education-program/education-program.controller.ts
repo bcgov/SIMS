@@ -211,12 +211,38 @@ export class EducationProgramController {
   /**
    * Get a key/value pair list of all programs that have
    * at least one offering for the particular location.
+   * Executes the students-based authorization
+   * (students must have access to all programs).
    * @param locationId location id.
    * @returns key/value pair list of programs.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/options-list")
   async getLocationProgramsOptionList(
+    @Param("locationId") locationId: number,
+  ): Promise<OptionItem[]> {
+    const programs = await this.programService.getProgramsForLocation(
+      locationId,
+    );
+
+    return programs.map((program) => ({
+      id: program.id,
+      description: program.name,
+    }));
+  }
+
+  /**
+   * Get a key/value pair list of all programs that have
+   * at least one offering for the particular location.
+   * Executes a location-based authentication (locations
+   * must have access to their specifics programs only).
+   * @param locationId location id.
+   * @returns key/value pair list of programs.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/programs-list")
+  async getLocationProgramsOptionListForInstitution(
     @Param("locationId") locationId: number,
   ): Promise<OptionItem[]> {
     const programs = await this.programService.getProgramsForLocation(

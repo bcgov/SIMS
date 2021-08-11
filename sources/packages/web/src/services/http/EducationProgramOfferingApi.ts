@@ -6,17 +6,25 @@ import {
 import { EducationProgramOfferingDto, OptionItemDto } from "../../types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
+  /**
+   * Creates program offering and returns the id of the created resource.
+   * @param locationId location id.
+   * @param programId program id.
+   * @param createProgramOfferingDto
+   * @returns program offering id created.
+   */
   public async createProgramOffering(
     locationId: number,
     programId: number,
     createProgramOfferingDto: OfferingDTO,
-  ): Promise<void> {
+  ): Promise<number> {
     try {
-      await this.apiClient.post(
+      const response = await this.apiClient.post(
         `institution/offering/location/${locationId}/education-program/${programId}`,
         createProgramOfferingDto,
         this.addAuthHeader(),
       );
+      return +response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -74,6 +82,12 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Gets program offerings for location authorized for students.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns program offerings for location.
+   */
   public async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
@@ -90,6 +104,13 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Gets program offering date
+   * @param locationId location id.
+   * @param programId program id.
+   * @param offeringId offering id
+   * @returns offering date for the given offering
+   */
   public async getProgramOfferingDate(
     locationId: number,
     programId: number,
@@ -101,6 +122,30 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as OfferingDateDTO;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets program offerings for location authorized
+   * for a apticular institution.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns program offerings for location authorized
+   * for a apticular institution.
+   */
+  public async getProgramOfferingsForLocationForInstitution(
+    locationId: number,
+    programId: number,
+  ): Promise<OptionItemDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/location/${locationId}/education-program/${programId}/offerings-list`,
+        this.addAuthHeader(),
+      );
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

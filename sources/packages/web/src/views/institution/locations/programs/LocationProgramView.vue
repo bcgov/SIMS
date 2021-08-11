@@ -28,12 +28,12 @@
         </v-row>
         <v-row>
           <v-col cols="5">
-            <strong>Description</strong>
+            <span class="font-weight-bold">Description</span>
             <br />
             <p>{{ educationProgram.name }}</p>
           </v-col>
           <v-col cols="4"
-            ><strong>Offering</strong> <br />
+            ><span class="font-weight-bold">Offering</span> <br />
             <p>
               <span
                 v-if="
@@ -54,24 +54,28 @@
             </p>
           </v-col>
           <v-col cols="2"
-            ><strong>Credential Type</strong>
+            ><span class="font-weight-bold">Credential Type</span>
             <br />
             <p>{{ educationProgram.credentialType }}</p>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="5">
-            <strong>Classification of Instructional Programs (CIP)</strong>
+            <span class="font-weight-bold"
+              >Classification of Instructional Programs (CIP)</span
+            >
             <br />
             <p>{{ educationProgram.cipCode }}</p>
           </v-col>
           <v-col cols="4"
-            ><strong>National Occupational Classification (NOC)</strong>
+            ><span class="font-weight-bold"
+              >National Occupational Classification (NOC)</span
+            >
             <br />
             <p>{{ educationProgram.nocCode }}</p>
           </v-col>
           <v-col cols="3"
-            ><strong>SABC Code</strong>
+            ><span class="font-weight-bold">SABC Code</span>
             <br />
             <p>{{ educationProgram.sabcCode }}</p>
           </v-col>
