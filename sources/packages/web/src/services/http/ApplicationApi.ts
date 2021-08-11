@@ -43,7 +43,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async confirmationOfAssessment(applicationId: number): Promise<void> {
+  public async confirmAssessment(applicationId: number): Promise<void> {
     try {
       await this.apiClient.patch(
         `application/${applicationId}/confirm-assessment`,

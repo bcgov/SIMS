@@ -11,7 +11,7 @@ export class ApplicationService {
   public async getNOA(applicationId: number): Promise<any> {
     return ApiClient.Application.getNOA(applicationId);
   }
-  public async confirmationOfAssessment(applicationId: number): Promise<void> {
-    return ApiClient.Application.confirmationOfAssessment(applicationId);
+  public async confirmAssessment(applicationId: number): Promise<void> {
+    return ApiClient.Application.confirmAssessment(applicationId);
   }
 }

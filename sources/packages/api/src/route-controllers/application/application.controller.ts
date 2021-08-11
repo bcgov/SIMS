@@ -160,7 +160,7 @@ export class ApplicationController extends BaseController {
 
     const updateResult = await this.applicationService.studentConfirmAssessment(
       applicationId,
-      student,
+      student.id,
     );
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(

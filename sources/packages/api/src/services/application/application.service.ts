@@ -261,10 +261,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async studentConfirmAssessment(
     applicationId: number,
-    student: Student,
+    studentId: number,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: applicationId, student: student },
+      {
+        id: applicationId,
+        student: { id: studentId },
+        applicationStatus: ApplicationStatus.assessment,
+      },
       {
         assessmentStatus: AssessmentStatus.completed,
         applicationStatus: ApplicationStatus.enrollment,

@@ -33,9 +33,7 @@ export default {
     const toast = useToastMessage();
     const initialData = ref({});
     const confirmAssessment = async () => {
-      await ApplicationService.shared.confirmationOfAssessment(
-        props.applicationId,
-      );
+      await ApplicationService.shared.confirmAssessment(props.applicationId);
       toast.success(
         "Completed!",
         "Confirmation of Assessment completed successfully!",
