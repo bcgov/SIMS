@@ -33,11 +33,18 @@ export default {
     const toast = useToastMessage();
     const initialData = ref({});
     const confirmAssessment = async () => {
-      await ApplicationService.shared.confirmAssessment(props.applicationId);
-      toast.success(
-        "Completed!",
-        "Confirmation of Assessment completed successfully!",
-      );
+      try {
+        await ApplicationService.shared.confirmAssessment(props.applicationId);
+        toast.success(
+          "Completed!",
+          "Confirmation of Assessment completed successfully!",
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "An error happened while confirming the assessment.",
+        );
+      }
     };
     onMounted(async () => {
       const NOA = await ApplicationService.shared.getNOA(props.applicationId);
