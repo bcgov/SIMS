@@ -87,6 +87,7 @@ export default {
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
+    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
 
     const formLoaded = async (form: any) => {
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
@@ -111,6 +112,15 @@ export default {
           +event.changed.value,
           locationId,
           OFFERINGS_DROPDOWN_KEY,
+        );
+      }
+      if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
+        await formioDataLoader.loadSelectedOfferingDate(
+          form,
+          +event.changed.value,
+          SELECTED_OFFERING_DATE_KEY,
+          +formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY),
+          +formioUtils.getComponentValueByKey(form, PROGRAMS_DROPDOWN_KEY),
         );
       }
     };

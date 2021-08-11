@@ -19,6 +19,7 @@ import {
   SaveEducationProgramOfferingDto,
   EducationProgramOfferingDto,
   ProgramOfferingDto,
+  ProgramOfferingDateDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -242,5 +243,30 @@ export class EducationProgramOfferingController {
       id: offering.id,
       description: offering.name,
     }));
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get(
+    "location/:locationId/education-program/:programId/offering/:offeringId/date",
+  )
+  async getProgramOfferingDate(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDateDto> {
+    //To retrive Education program offering corresponding to ProgramId and LocationId
+    const offering = await this.programOfferingService.getProgramOffering(
+      locationId,
+      programId,
+      offeringId,
+    );
+    if (!offering) {
+      throw new UnprocessableEntityException(
+        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+      );
+    }
+    return {
+      studyStartDate: offering.studyStartDate,
+    };
   }
 }

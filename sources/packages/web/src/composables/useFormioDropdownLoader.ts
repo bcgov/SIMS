@@ -25,6 +25,12 @@ export function useFormioDropdownLoader() {
     }));
   };
 
+  const loadText = async (form: any, fieldId: string, value?: any) => {
+    // load the value to the formio fields.
+    const fieldObject = formioUtils.getComponent(form, fieldId);
+    if (fieldId in fieldObject.data) fieldObject.data[fieldId] = value;
+  };
+
   // Retrieve the list of locations from the API and
   // populate a dropdown in a Form.IO component.
   const loadLocations = async (form: any, dropdownName: string) => {
@@ -66,9 +72,25 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  const loadSelectedOfferingDate = async (
+    form: any,
+    offeringId: number,
+    fieldId: string,
+    locationId: number,
+    programId: number,
+  ) => {
+    const valueToBeLoaded = await EducationProgramOfferingService.shared.getProgramOfferingDate(
+      locationId,
+      programId,
+      offeringId,
+    );
+    return loadText(form, fieldId, valueToBeLoaded?.studyStartDate);
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
     loadOfferingsForLocation,
+    loadSelectedOfferingDate,
   };
 }

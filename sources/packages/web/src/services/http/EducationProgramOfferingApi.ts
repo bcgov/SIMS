@@ -1,5 +1,8 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { OfferingDTO } from "../../types/contracts/OfferingContact";
+import {
+  OfferingDTO,
+  OfferingDateDTO,
+} from "../../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto, OptionItemDto } from "../../types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
@@ -81,6 +84,23 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getProgramOfferingDate(
+    locationId: number,
+    programId: number,
+    offeringId: number,
+  ): Promise<OfferingDateDTO> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/location/${locationId}/education-program/${programId}/offering/${offeringId}/date`,
+        this.addAuthHeader(),
+      );
+      return response.data as OfferingDateDTO;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
