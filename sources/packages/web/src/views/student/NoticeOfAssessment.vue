@@ -38,7 +38,7 @@ export default {
       );
       toast.success(
         "Completed!",
-        "Program Information Request completed successfully!",
+        "Confirmation of Assessment completed successfully!",
       );
     };
     onMounted(async () => {
