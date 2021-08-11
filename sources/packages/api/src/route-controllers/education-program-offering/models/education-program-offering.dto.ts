@@ -1,3 +1,5 @@
+import { OfferingTypes } from "../../../database/entities";
+import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 export interface SaveEducationProgramOfferingDto {
   name: string;
   studyStartDate: Date;
@@ -14,6 +16,8 @@ export interface SaveEducationProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeringType?: OfferingTypes;
+  offeringIntensity: OfferingIntensity;
 }
 
 export class EducationProgramOfferingDto {
@@ -21,6 +25,7 @@ export class EducationProgramOfferingDto {
   name: string;
   studyDates: string;
   offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
 }
 
 export interface ProgramOfferingDto {
@@ -40,4 +45,5 @@ export interface ProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
+  offeringIntensity: OfferingIntensity;
 }

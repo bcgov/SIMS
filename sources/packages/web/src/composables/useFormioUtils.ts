@@ -9,6 +9,11 @@ export function useFormioUtils() {
     return Utils.getComponent(form.components, componentKey, true);
   };
 
+  // Forces a component to execute a redraw.
+  const redrawComponent = (form: any, componentKey: string): any => {
+    return getComponent(form, componentKey).redraw();
+  };
+
   // Get the value from a component in a form definition once it is loaded.
   const getComponentValueByKey = (form: any, componentKey: string): any => {
     return Utils.getValue(form.submission, componentKey);
@@ -84,6 +89,7 @@ export function useFormioUtils() {
 
   return {
     getComponent,
+    redrawComponent,
     getComponentValueByKey,
     getComponentsOfType,
     getAssociatedFiles,

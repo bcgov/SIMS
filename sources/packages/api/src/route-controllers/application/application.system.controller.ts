@@ -7,7 +7,10 @@ import {
   Patch,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApplicationService } from "../../services";
+import {
+  ApplicationService,
+  EducationProgramOfferingService,
+} from "../../services";
 import { GetApplicationDataDto } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -29,7 +32,10 @@ import {
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/application")
 export class ApplicationSystemController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly offeringService: EducationProgramOfferingService,
+  ) {}
 
   @Get(":id")
   async getByApplicationId(
@@ -71,17 +77,31 @@ export class ApplicationSystemController {
     @Param("id") applicationId: number,
     @Body() payload: UpdateProgramInfoDto,
   ): Promise<void> {
+    if (payload.offeringId) {
+      const offering = await this.offeringService.getProgramOffering(
+        payload.locationId,
+        payload.programId,
+        payload.offeringId,
+      );
+      if (!offering) {
+        throw new UnprocessableEntityException(
+          "Not able to find the offering associate with the program and location.",
+        );
+      }
+    }
+
     const updateResult = await this.applicationService.updateProgramInfo(
       applicationId,
       payload.locationId,
       payload.status,
+      payload.programId,
       payload.offeringId,
     );
 
     // Checks if some record was updated.
     // If affected is zero it means that the update was not successful.
     if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
+      throw new NotFoundException(
         "Not able to update the program information request with provided data.",
       );
     }

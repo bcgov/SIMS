@@ -167,6 +167,95 @@
           "id": "e8rash"
         },
         {
+          "label": "How will this be offered?",
+          "labelPosition": "top",
+          "optionsLabelPosition": "right",
+          "description": "",
+          "tooltip": "",
+          "customClass": "",
+          "tabindex": "",
+          "inline": false,
+          "hidden": false,
+          "hideLabel": false,
+          "autofocus": false,
+          "disabled": false,
+          "tableView": false,
+          "modalEdit": false,
+          "values": [
+            {
+              "label": "Part time",
+              "value": "Part Time",
+              "shortcut": ""
+            },
+            {
+              "label": "Full time",
+              "value": "Full Time",
+              "shortcut": ""
+            }
+          ],
+          "dataType": "",
+          "persistent": true,
+          "protected": false,
+          "dbIndex": false,
+          "encrypted": false,
+          "redrawOn": "",
+          "clearOnHide": true,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "allowCalculateOverride": false,
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true,
+            "customMessage": "",
+            "custom": "",
+            "customPrivate": false,
+            "json": "",
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "errorLabel": "",
+          "key": "offeringIntensity",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "radio",
+          "input": true,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "unique": false,
+          "refreshOn": "",
+          "dataGridLabel": false,
+          "widget": null,
+          "validateOn": "change",
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "inputType": "radio",
+          "fieldSet": false,
+          "id": "e3ww0fl",
+          "defaultValue": ""
+        },
+        {
           "html": "<p><br><span style=\"color:#3498db;\"><strong>Study dates</strong></span></p>",
           "label": "Content",
           "customClass": "",
@@ -2363,5 +2452,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-07-20T18:18:59.247Z"
+  "modified": "2021-08-09T19:16:09.012Z"
 }

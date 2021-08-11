@@ -46,10 +46,11 @@ export class ApplicationController extends BaseController {
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<GetApplicationDataDto> {
-    const application = await this.applicationService.getApplicationById(
-      applicationId,
-      userToken.userName,
-    );
+    const application =
+      await this.applicationService.getApplicationByIdAndUserName(
+        applicationId,
+        userToken.userName,
+      );
 
     if (!application) {
       throw new NotFoundException(

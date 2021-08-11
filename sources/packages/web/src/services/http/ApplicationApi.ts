@@ -1,5 +1,4 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { PIRSummaryDTO } from "@/types/contracts/institution/ApplicationsDto";
 
 export class ApplicationApi extends HttpBaseClient {
   public async createApplication(data: any): Promise<any> {

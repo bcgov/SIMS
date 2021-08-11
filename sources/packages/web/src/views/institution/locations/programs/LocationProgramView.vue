@@ -10,7 +10,14 @@
       <v-container>
         <v-row>
           <v-col cols="8">
-            <h2 class="color-blue">{{ educationProgram.name }}</h2>
+            <span class="color-blue h3 font-weight-bold">
+              {{ educationProgram.name }}
+            </span>
+            <Chip
+              :label="educationProgram.approvalStatus"
+              class="ml-2 bg-success text-white p-text-uppercase"
+              >{{ educationProgram.approvalStatus }}</Chip
+            >
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" outlined @click="goToEditProgram()">
@@ -21,38 +28,54 @@
         </v-row>
         <v-row>
           <v-col cols="5">
-            <h6>Description</h6>
+            <span class="font-weight-bold">Description</span>
             <br />
             <p>{{ educationProgram.name }}</p>
           </v-col>
           <v-col cols="4"
-            ><h6>Credential Type</h6>
-            <br />
-            <p>{{ educationProgram.credentialType }}</p>
+            ><span class="font-weight-bold">Offering</span> <br />
+            <p>
+              <span
+                v-if="
+                  educationProgram.programIntensity ===
+                    ProgramIntensity.fullTimePartTime ||
+                    educationProgram.programIntensity ===
+                      ProgramIntensity.fullTime
+                "
+                >Full Time</span
+              >
+              <br /><span
+                v-if="
+                  educationProgram.programIntensity ===
+                    ProgramIntensity.fullTimePartTime
+                "
+                >Part Time
+              </span>
+            </p>
           </v-col>
           <v-col cols="2"
-            ><h6>Status</h6>
+            ><span class="font-weight-bold">Credential Type</span>
             <br />
-            <Chip
-              :label="educationProgram.approvalStatus"
-              class="p-mr-2 p-mb-2 bg-success text-white p-text-uppercase"
-              >{{ educationProgram.approvalStatus }}</Chip
-            >
+            <p>{{ educationProgram.credentialType }}</p>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="5">
-            <h6>Classification of Instructional Programs (CIP)</h6>
+            <span class="font-weight-bold"
+              >Classification of Instructional Programs (CIP)</span
+            >
             <br />
             <p>{{ educationProgram.cipCode }}</p>
           </v-col>
           <v-col cols="4"
-            ><h6>National Occupational Classification (NOC)</h6>
+            ><span class="font-weight-bold"
+              >National Occupational Classification (NOC)</span
+            >
             <br />
             <p>{{ educationProgram.nocCode }}</p>
           </v-col>
           <v-col cols="3"
-            ><h6>SABC Code</h6>
+            ><span class="font-weight-bold">SABC Code</span>
             <br />
             <p>{{ educationProgram.sabcCode }}</p>
           </v-col>
@@ -78,6 +101,11 @@
             header="Study Dates"
             :sortable="true"
           ></Column>
+          <Column field="offeringIntensity" header="Type" :sortable="true"
+            ><template #body="slotProps">
+              <span>{{ slotProps.data.offeringIntensity }} </span>
+            </template>
+          </Column>
           <Column
             field="offeringDelivered"
             header="Study Delivery"
@@ -106,6 +134,7 @@ import { EducationProgramOfferingService } from "../../../../services/EducationP
 import {
   EducationProgramOfferingDto,
   EducationProgramDto,
+  ProgramIntensity,
 } from "../../../../types";
 
 export default {
@@ -125,7 +154,6 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-
     const goBack = () => {
       router.push({
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -188,6 +216,7 @@ export default {
       educationProgram,
       offerings,
       goToEditOffering,
+      ProgramIntensity,
     };
   },
 };

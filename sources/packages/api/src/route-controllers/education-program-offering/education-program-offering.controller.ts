@@ -29,6 +29,7 @@ import {
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
+import { OfferingTypes } from "../../database/entities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -104,6 +105,7 @@ export class EducationProgramOfferingController {
       await this.programOfferingService.getAllEducationProgramOffering(
         locationId,
         programId,
+        [OfferingTypes.public],
       );
     if (!programOferingList) {
       throw new UnprocessableEntityException(
@@ -115,6 +117,7 @@ export class EducationProgramOfferingController {
       name: offering.name,
       studyDates: offering.studyDates,
       offeringDelivered: offering.offeringDelivered,
+      offeringIntensity: offering.offeringIntensity,
     }));
   }
 
@@ -164,6 +167,7 @@ export class EducationProgramOfferingController {
       lacksStudyBreaks: offering.lacksStudyBreaks,
       lacksFixedCosts: offering.lacksFixedCosts,
       tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
+      offeringIntensity: offering.offeringIntensity,
     };
   }
 
@@ -224,9 +228,46 @@ export class EducationProgramOfferingController {
     return updateProgramOffering.affected;
   }
 
+  /**
+   * Get a key/value pair list of all offerings that
+   * belongs to a program under a location. Executes the
+   * students-based authorization (students must have access
+   * to all offerings).
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns key/value pair list of programs for students.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/education-program/:programId/options-list")
-  async getProgramOfferingsForLocation(
+  async getProgramOfferingsByLocation(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+  ): Promise<OptionItem[]> {
+    const offerings =
+      await this.programOfferingService.getProgramOfferingsForLocation(
+        locationId,
+        programId,
+      );
+
+    return offerings.map((offering) => ({
+      id: offering.id,
+      description: offering.name,
+    }));
+  }
+
+  /**
+   * Get a key/value pair list of all offerings that
+   * belongs to a program under a location. Executes the
+   * location-based authorization (locations must have
+   * access to their spcific offerings only).
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns key/value pair list of programs for students.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get("location/:locationId/education-program/:programId/offerings-list")
+  async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<OptionItem[]> {

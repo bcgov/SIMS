@@ -145,7 +145,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ekkoi2m"
+      "id": "egdb2r4"
     },
     {
       "label": "Program name",
@@ -227,7 +227,7 @@
       "refreshOn": "",
       "dataGridLabel": false,
       "inputType": "text",
-      "id": "e1r7w4",
+      "id": "er15wh",
       "defaultValue": ""
     },
     {
@@ -318,6 +318,95 @@
       "inputMask": "",
       "fixedSize": true,
       "id": "e07pow",
+      "defaultValue": ""
+    },
+    {
+      "label": "Are students able to take this on a part time basis?",
+      "labelPosition": "top",
+      "optionsLabelPosition": "right",
+      "description": "<span>A part time program has a course load between 20 and 59%.</span><br />\r\n<span>A full time program must have course load of:</span><br />\r\n\r\n<span>&nbsp;\t&nbsp;\t•\t60% or greater OR</span> <br /> \r\n<span>&nbsp;\t&nbsp;\t•\tBetween 40 and 60% for students with a permanent disability</span> <br />\r\n</p>",
+      "tooltip": "",
+      "customClass": "",
+      "tabindex": "",
+      "inline": false,
+      "hidden": false,
+      "hideLabel": false,
+      "autofocus": false,
+      "disabled": false,
+      "tableView": false,
+      "modalEdit": false,
+      "values": [
+        {
+          "label": "Yes",
+          "value": "Full Time and Part Time",
+          "shortcut": ""
+        },
+        {
+          "label": "No",
+          "value": "Full Time",
+          "shortcut": ""
+        }
+      ],
+      "dataType": "",
+      "persistent": true,
+      "protected": false,
+      "dbIndex": false,
+      "encrypted": false,
+      "redrawOn": "",
+      "clearOnHide": true,
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "allowCalculateOverride": false,
+      "validate": {
+        "required": true,
+        "onlyAvailableItems": true,
+        "customMessage": "",
+        "custom": "",
+        "customPrivate": false,
+        "json": "",
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "errorLabel": "",
+      "key": "programIntensity",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "radio",
+      "input": true,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "unique": false,
+      "refreshOn": "",
+      "dataGridLabel": false,
+      "widget": null,
+      "validateOn": "change",
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "inputType": "radio",
+      "fieldSet": false,
+      "id": "e4a9tj",
       "defaultValue": ""
     },
     {
@@ -2765,6 +2854,6 @@
   "name": "educationProgram",
   "path": "educationprogram",
   "machineName": "educationProgram",
-  "created": "2021-06-28T22:03:49.230Z",
-  "modified": "2021-07-20T18:44:23.077Z"
+  "created": "2021-08-05T18:32:10.610Z",
+  "modified": "2021-08-09T18:39:26.028Z"
 }

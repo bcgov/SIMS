@@ -8,6 +8,7 @@ import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
+  EducationProgramOfferingService,
   KeycloakService,
   SequenceControlService,
 } from "../../services";
@@ -48,7 +49,11 @@ describe("Test system-access/application Controller", () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule],
       controllers: [ApplicationSystemController],
-      providers: [ApplicationService, SequenceControlService],
+      providers: [
+        ApplicationService,
+        EducationProgramOfferingService,
+        SequenceControlService,
+      ],
     }).compile();
 
     const connection = module.get(Connection);
@@ -69,6 +74,7 @@ describe("Test system-access/application Controller", () => {
         .patch("/system-access/application/1/program-info")
         .auth(accesstoken, { type: "bearer" })
         .send({
+          programId: 1, // Valid
           offeringId: 1, // Valid
           locationId: 1, // Valid
           status: "some invalid status", // Invalid
@@ -81,8 +87,22 @@ describe("Test system-access/application Controller", () => {
         .patch("/system-access/application/1/program-info")
         .auth(accesstoken, { type: "bearer" })
         .send({
+          programId: 1, // Valid
           offeringId: 1, // Valid
           locationId: -1, // Invalid
+          status: "required", // Valid
+        })
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it("should return bad request for an invalid programId", async () => {
+      await request(app.getHttpServer())
+        .patch("/system-access/application/1/program-info")
+        .auth(accesstoken, { type: "bearer" })
+        .send({
+          programId: -1, // Invalid
+          offeringId: 1, // Valid
+          locationId: 1, // Valid
           status: "required", // Valid
         })
         .expect(HttpStatus.BAD_REQUEST);
@@ -124,7 +144,20 @@ describe("Test system-access/application Controller", () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it("should be able to change the Program Info Status (location, offering, status) when payload is valid", async () => {
+    it("should return unprocessable entity error when invalid ids are provided", async () => {
+      await request(app.getHttpServer())
+        .patch(`/system-access/application/1/program-info`)
+        .auth(accesstoken, { type: "bearer" })
+        .send({
+          programId: 9999,
+          offeringId: 9999,
+          locationId: 9999,
+          status: "completed",
+        })
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+    });
+
+    it("should be able to change the Program Info Status (location, program, offering, status) when payload is valid", async () => {
       // Create fake application.
       const testApplication = await applicationRepository.save(
         createFakeApplication(),
@@ -152,6 +185,7 @@ describe("Test system-access/application Controller", () => {
           .patch(routeUrl)
           .auth(accesstoken, { type: "bearer" })
           .send({
+            programId: testProgram.id,
             offeringId: testOffering.id,
             locationId: testLocation.id,
             status: "completed", // Valid
@@ -160,8 +194,9 @@ describe("Test system-access/application Controller", () => {
         // Check if the database was updated as expected.
         const updatedApplication = await applicationRepository.findOne(
           testApplication.id,
-          { relations: ["offering", "location"] },
+          { relations: ["pirProgram", "offering", "location"] },
         );
+        expect(updatedApplication.pirProgram.id).toBe(testProgram.id);
         expect(updatedApplication.offering.id).toBe(testOffering.id);
         expect(updatedApplication.location.id).toBe(testLocation.id);
         expect(updatedApplication.pirStatus).toBe("completed");
