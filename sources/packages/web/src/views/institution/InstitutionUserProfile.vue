@@ -3,7 +3,7 @@
     Please notice that the read-only information below is retrieved from your BCeID
     account and it is not possible to change it here. If any read-only information needs
     to be changed please visit
-    <a href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
+    <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
   <Card class="p-m-4">
     <template #content>
