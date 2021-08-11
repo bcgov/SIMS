@@ -8,6 +8,7 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
+import { InstitutionUserDto } from "./models/institution-user.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -120,4 +121,16 @@ export class UserController extends BaseController {
       throw error;
     }
   }
+
+  @Get("/institutionUser")
+    async institutionDetail(
+      @UserToken() userToken: IUserToken,
+    ): Promise<InstitutionUserDto> {
+      const user = await this.service.getActiveUser(userToken.userName);
+      const institutionUser = new InstitutionUserDto();
+      institutionUser.userEmail = user?.email;
+      institutionUser.userFirstName = user?.firstName;
+      institutionUser.userLastName = user?.lastName;
+      return institutionUser;
+    }
 }

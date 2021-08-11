@@ -51,6 +51,15 @@ export class UserService extends DataModelService<User> {
       .execute();
   }
 
+  async updateUserEmail(userId: number, email: string) {
+    return this.repo
+      .createQueryBuilder()
+      .update(User)
+      .set({ email: email })
+      .where("id = :id", { id: userId })
+      .execute();
+  }
+
   async getActiveUser(userName: string) {
     return this.repo.findOne({ userName: userName, isActive: true });
   }

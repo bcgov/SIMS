@@ -4,6 +4,7 @@ export enum AppRoutes {
   StudentDashboard = "student-dashboard",
   InstitutionDashboard = "institution-dashboard",
   InstitutionProfile = "institution-profile",
+  InstitutionUserProfile = "institution-user-profile",
   InstitutionProfileEdit = "institution-profile/edit",
   Login = "login",
   ForbiddenUser = "/forbidden-user",

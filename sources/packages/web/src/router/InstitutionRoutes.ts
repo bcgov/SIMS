@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue";
 import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
+import InstitutionUserProfile from "../views/institution/InstitutionUserProfile.vue";
 import AppInstitution from "../views/institution/AppInstitution.vue";
 import ManageLocation from "../views/institution/ManageLocations.vue";
 import LocationPrograms from "../views/institution/locations/programs/LocationPrograms.vue";
@@ -211,6 +212,17 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.INSTITUTION,
           userTypes: [InstitutionUserTypes.admin],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionUserProfile,
+        name: InstitutionRoutesConst.INSTITUTION_USER_PROFILE,
+        components: {
+          default: InstitutionUserProfile,
+          sidebar: InstitutionHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.INSTITUTION
         },
       },
       {

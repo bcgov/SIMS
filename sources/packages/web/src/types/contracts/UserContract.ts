@@ -27,3 +27,9 @@ export interface BCeIDAccountDto {
 export interface BCeIDAccountsDto {
   accounts: BCeIDAccountDto[];
 }
+
+export interface InstitutionUserDetailsDto {
+  userFirstName: string;
+  userLastName: string;
+  userEmail: string;
+}

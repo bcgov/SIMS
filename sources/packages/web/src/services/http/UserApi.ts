@@ -1,6 +1,7 @@
 import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
+  InstitutionUserDetailsDto,
 } from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -51,6 +52,19 @@ export class UserApi extends HttpBaseClient {
         headers || this.addAuthHeader(),
       );
       return response.data as boolean;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getinstitutionUser(headers?: any): Promise<InstitutionUserDetailsDto> {
+    try {
+      const response = await this.apiClient.get(
+        "users/institutionUser",
+        headers || this.addAuthHeader(),
+      );
+      return response.data as InstitutionUserDetailsDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
