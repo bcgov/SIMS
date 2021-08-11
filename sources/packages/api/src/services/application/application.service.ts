@@ -11,6 +11,8 @@ import {
   ApplicationStatus,
   Student,
   StudentFile,
+  AssessmentStatus,
+  COEStatus,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
@@ -191,6 +193,86 @@ export class ApplicationService extends RecordDataModelService<Application> {
       { id: applicationId },
       {
         pirStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates Assessment status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Assessment.
+   * An assessment need to happen, when the application_status is in assessment.
+   * @returns assessment status update result.
+   */
+  async updateAssessmentStatus(
+    applicationId: number,
+    status: AssessmentStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: applicationId },
+      {
+        assessmentStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates Confirmation of Enrollment(COE) status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Confirmation of Enrollment.
+   * Confirmation of Enrollment need to happen, when the application_status is in enrollment.
+   * @returns COE status update result.
+   */
+  async updateCOEStatus(
+    applicationId: number,
+    status: COEStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: applicationId },
+      {
+        coeStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates overall Application status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Application.
+   * @returns COE status update result.
+   */
+  async updateApplicationStatus(
+    applicationId: number,
+    status: ApplicationStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: applicationId },
+      {
+        applicationStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates overall Application status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Application.
+   * @returns COE status update result.
+   */
+  async studentConfirmAssessment(
+    applicationId: number,
+    studentId: number,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        student: { id: studentId },
+        applicationStatus: ApplicationStatus.assessment,
+      },
+      {
+        assessmentStatus: AssessmentStatus.completed,
+        applicationStatus: ApplicationStatus.enrollment,
+        coeStatus: COEStatus.required,
       },
     );
   }

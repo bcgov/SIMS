@@ -16,3 +16,5 @@ export * from "./application-student-file.model";
 export * from "./program-info-status.type";
 export * from "./offering.type";
 export * from "./application-status.type";
+export * from "./assessment-status.type";
+export * from "./coe-status.type";
