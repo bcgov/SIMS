@@ -26,7 +26,6 @@ import {
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { StudentFile } from "../../database/entities";
-import { UpdateResult } from "typeorm";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
