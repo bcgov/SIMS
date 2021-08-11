@@ -284,6 +284,13 @@ export class EducationProgramOfferingController {
     }));
   }
 
+  /**
+   * Gets program offering date
+   * @param locationId location id.
+   * @param programId program id.
+   * @param offeringId offering id
+   * @returns offering date for the given offering
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(
     "location/:locationId/education-program/:programId/offering/:offeringId/date",
