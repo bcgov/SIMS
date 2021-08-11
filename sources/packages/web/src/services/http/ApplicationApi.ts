@@ -61,6 +61,7 @@ export class ApplicationApi extends HttpBaseClient {
     try {
       const response = await this.apiClient.patch(
         `application/${applicationId}/confirm-assessment`,
+        {},
         this.addAuthHeader(),
       );
       return response.data;
