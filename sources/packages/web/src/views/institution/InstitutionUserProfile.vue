@@ -3,7 +3,7 @@
     Please notice that the read-only information below is retrieved from your BCeID
     account and it is not possible to change it here. If any read-only information needs
     to be changed please visit
-    <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
+    <a href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
   <Card class="p-m-4">
     <template #content>
@@ -28,14 +28,7 @@ import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 export default {
   components: { formio },
-  props: {
-    editMode: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
-  },
-  setup(props: any) {
+  setup() {
     // Hooks
     const toast = useToast();
     const router = useRouter();
@@ -44,42 +37,22 @@ export default {
 
     const submitted = async (data: InstitutionDto) => {
       let redirectHome = true;
-      if (props.editMode) {
-        try {
-          await InstitutionService.shared.updateInstitute(data);
-          toast.add({
-            severity: "success",
-            summary: "Updated!",
-            detail: "Institution and User successfully updated!",
-            life: 5000,
-          });
-        } catch (excp) {
-          redirectHome = false;
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: "An error happened during the update process.",
-            life: 5000,
-          });
-        }
-      } else {
-        try {
-          await InstitutionService.shared.createInstitutionV2(data);
-          toast.add({
-            severity: "success",
-            summary: "Created!",
-            detail: "Institution and User successfully created!",
-            life: 5000,
-          });
-        } catch (excp) {
-          redirectHome = false;
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: "An error happened during the creation process.",
-            life: 5000,
-          });
-        }
+      try {
+        await InstitutionService.shared.updateInstitute(data);
+        toast.add({
+          severity: "success",
+          summary: "Updated!",
+          detail: "Institution and User successfully updated!",
+          life: 5000,
+        });
+      } catch (excp) {
+        redirectHome = false;
+        toast.add({
+          severity: "error",
+          summary: "Unexpected error",
+          detail: "An error happened during the update process.",
+          life: 5000,
+        });
       }
 
       if (redirectHome) {
