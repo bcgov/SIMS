@@ -18,6 +18,7 @@
 import formio from "../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { ApplicationService } from "../../services/ApplicationService";
+import { useToastMessage } from "@/composables";
 
 export default {
   components: { formio },
@@ -29,10 +30,15 @@ export default {
   },
   setup(props: any) {
     // Hooks
+    const toast = useToastMessage();
     const initialData = ref({});
     const confirmAssessment = async () => {
       await ApplicationService.shared.confirmationOfAssessment(
         props.applicationId,
+      );
+      toast.success(
+        "Completed!",
+        "Program Information Request completed successfully!",
       );
     };
     onMounted(async () => {

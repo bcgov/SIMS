@@ -26,6 +26,7 @@ import {
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { StudentFile } from "../../database/entities";
+import { UpdateResult } from "typeorm";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -145,15 +146,14 @@ export class ApplicationController extends BaseController {
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
     @Param("applicationId") applicationId: number,
-  ): Promise<any> {
+  ): Promise<void> {
     const updateResult = await this.applicationService.studentConfirmAssessment(
       applicationId,
     );
-    if (!updateResult) {
+    if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         `Confirmation of Assessment for the application id ${applicationId} failed.`,
       );
     }
-    return updateResult;
   }
 }
