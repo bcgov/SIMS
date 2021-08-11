@@ -20,6 +20,21 @@ export function useFormioUtils() {
   };
 
   /**
+   * find the formio component  and set the value
+   * @param form form.
+   * @param componentKey component api/id from formio.
+   * @param value value that need to be set to the field
+   */
+  const setComponentValue = (
+    form: any,
+    componentKey: string,
+    value: any,
+  ): any => {
+    const componentObj = getComponent(form, componentKey);
+    componentObj.setValue(value);
+  };
+
+  /**
    * Iterates recursively in all components checking for
    * a matchCondition provided as a parameter.
    * @param components components to iterate through.
@@ -94,5 +109,6 @@ export function useFormioUtils() {
     getComponentsOfType,
     getAssociatedFiles,
     recursiveSearch,
+    setComponentValue,
   };
 }
