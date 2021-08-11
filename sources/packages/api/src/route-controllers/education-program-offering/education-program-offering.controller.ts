@@ -19,7 +19,7 @@ import {
   SaveEducationProgramOfferingDto,
   EducationProgramOfferingDto,
   ProgramOfferingDto,
-  ProgramOfferingDateDto,
+  ProgramOfferingDetailsDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -285,30 +285,22 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Gets program offering date
-   * @param locationId location id.
-   * @param programId program id.
+   * Gets program offering details
    * @param offeringId offering id
-   * @returns offering date for the given offering
+   * @returns offering details for the given offering
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get(
-    "location/:locationId/education-program/:programId/offering/:offeringId/date",
-  )
-  async getProgramOfferingDate(
-    @Param("locationId") locationId: number,
-    @Param("programId") programId: number,
+  @Get(":offeringId")
+  async getProgramOfferingDetails(
     @Param("offeringId") offeringId: number,
-  ): Promise<ProgramOfferingDateDto> {
+  ): Promise<ProgramOfferingDetailsDto> {
     //To retrive Education program offering corresponding to ProgramId and LocationId
-    const offering = await this.programOfferingService.getProgramOffering(
-      locationId,
-      programId,
+    const offering = await this.programOfferingService.getOfferingById(
       offeringId,
     );
     if (!offering) {
       throw new UnprocessableEntityException(
-        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+        "Education Program Offering not found.",
       );
     }
     return {

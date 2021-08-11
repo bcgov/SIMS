@@ -48,6 +48,6 @@ export interface ProgramOfferingDto {
   offeringIntensity: OfferingIntensity;
 }
 
-export interface ProgramOfferingDateDto {
+export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;
 }

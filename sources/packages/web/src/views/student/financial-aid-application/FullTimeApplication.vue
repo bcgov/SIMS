@@ -119,8 +119,6 @@ export default {
           form,
           +event.changed.value,
           SELECTED_OFFERING_DATE_KEY,
-          +formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY),
-          +formioUtils.getComponentValueByKey(form, PROGRAMS_DROPDOWN_KEY),
         );
       }
     };

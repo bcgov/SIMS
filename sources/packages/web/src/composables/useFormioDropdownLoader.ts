@@ -100,12 +100,8 @@ export function useFormioDropdownLoader() {
     form: any,
     offeringId: number,
     fieldId: string,
-    locationId: number,
-    programId: number,
   ) => {
-    const valueToBeLoaded = await EducationProgramOfferingService.shared.getProgramOfferingDate(
-      locationId,
-      programId,
+    const valueToBeLoaded = await EducationProgramOfferingService.shared.getProgramOfferingDetails(
       offeringId,
     );
     return loadText(form, fieldId, valueToBeLoaded?.studyStartDate);

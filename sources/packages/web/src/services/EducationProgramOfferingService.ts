@@ -1,7 +1,7 @@
 import ApiClient from "./http/ApiClient";
 import {
   OfferingDTO,
-  OfferingDateDTO,
+  ProgramOfferingDetailsDto,
 } from "../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto, OptionItemDto } from "../types";
 
@@ -85,20 +85,14 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Gets program offering date
-   * @param locationId location id.
-   * @param programId program id.
+   * Gets program offering details
    * @param offeringId offering id
-   * @returns offering date for the given offering
+   * @returns offering details for the given offering
    */
-  public async getProgramOfferingDate(
-    locationId: number,
-    programId: number,
+  public async getProgramOfferingDetails(
     offeringId: number,
-  ): Promise<OfferingDateDTO> {
-    return ApiClient.EducationProgramOffering.getProgramOfferingDate(
-      locationId,
-      programId,
+  ): Promise<ProgramOfferingDetailsDto> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingDetails(
       offeringId,
     );
   }

@@ -30,6 +30,6 @@ export interface OfferingDTO {
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
 }
-export interface OfferingDateDTO {
+export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;
 }
