@@ -43,19 +43,6 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/location/${locationId}/pir-summary`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
   public async confirmationOfAssessment(applicationId: number): Promise<void> {
     try {
       await this.apiClient.patch(
