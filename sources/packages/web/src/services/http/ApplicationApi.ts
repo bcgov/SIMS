@@ -59,7 +59,7 @@ export class ApplicationApi extends HttpBaseClient {
 
   public async confirmationOfAssessment(applicationId: number): Promise<any> {
     try {
-      const response = await this.apiClient.get(
+      const response = await this.apiClient.patch(
         `application/${applicationId}/confirm-assessment`,
         this.addAuthHeader(),
       );

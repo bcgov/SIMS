@@ -30,9 +30,10 @@ export default {
   setup(props: any) {
     // Hooks
     const initialData = ref({});
-    const confirmAssessment = () => {
-      console.log("Inside method");
-      ApplicationService.shared.confirmationOfAssessment(props.applicationId);
+    const confirmAssessment = async () => {
+      await ApplicationService.shared.confirmationOfAssessment(
+        props.applicationId,
+      );
     };
     onMounted(async () => {
       const NOA = await ApplicationService.shared.getNOA(props.applicationId);
