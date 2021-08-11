@@ -7,6 +7,8 @@ import {
   NotFoundException,
   Param,
   Post,
+  Patch,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -24,6 +26,7 @@ import {
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { StudentFile } from "../../database/entities";
+import { UpdateResult } from "typeorm";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -101,10 +104,11 @@ export class ApplicationController extends BaseController {
     // TODO: Once we have the application status we should run the create/associate
     // under a DB transation to ensure that, if the workflow fails to start we would
     // be rolling back the transaction and returning an error to the student.
-    const workflowAssociationResult = await this.applicationService.associateAssessmentWorkflow(
-      createdApplication.id,
-      assessmentWorflow.id,
-    );
+    const workflowAssociationResult =
+      await this.applicationService.associateAssessmentWorkflow(
+        createdApplication.id,
+        assessmentWorflow.id,
+      );
 
     // 1 means the number of affected rows expected while
     // associating the workflow id.
@@ -123,9 +127,8 @@ export class ApplicationController extends BaseController {
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<any> {
-    const assessment = await this.applicationService.getAssessmentByApplicationId(
-      applicationId,
-    );
+    const assessment =
+      await this.applicationService.getAssessmentByApplicationId(applicationId);
     if (!assessment) {
       throw new NotFoundException(
         `Assessment for the application id ${applicationId} was not calculated.`,
@@ -133,5 +136,25 @@ export class ApplicationController extends BaseController {
     }
 
     return assessment;
+  }
+
+  /**
+   * Confirm Assessment of a Student.
+   * @param applicationId application id to be updated.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Patch(":applicationId/confirm-assessment")
+  async studentConfirmAssessment(
+    @Param("applicationId") applicationId: number,
+  ): Promise<any> {
+    const updateResult = await this.applicationService.studentConfirmAssessment(
+      applicationId,
+    );
+    if (!updateResult) {
+      throw new UnprocessableEntityException(
+        `Confirmation of Assessment for the application id ${applicationId} failed.`,
+      );
+    }
+    return updateResult;
   }
 }

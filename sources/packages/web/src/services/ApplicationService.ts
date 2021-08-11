@@ -14,4 +14,7 @@ export class ApplicationService {
   public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
     return ApiClient.Application.getPIRSummary(locationId);
   }
+  public async confirmationOfAssessment(applicationId: number): Promise<any> {
+    return ApiClient.Application.confirmationOfAssessment(applicationId);
+  }
 }

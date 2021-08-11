@@ -56,4 +56,17 @@ export class ApplicationApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async confirmationOfAssessment(applicationId: number): Promise<any> {
+    try {
+      const response = await this.apiClient.get(
+        `application/${applicationId}/confirm-assessment`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

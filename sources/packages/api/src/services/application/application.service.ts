@@ -223,6 +223,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Updates overall Application status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Application.
+   * @returns COE status update result.
+   */
+  async studentConfirmAssessment(applicationId: number): Promise<any> {
+    const assessmentStatusUpdate = this.updateAssessmentStatus(
+      applicationId,
+      AssessmentStatus.completed,
+    );
+    const applicationStatusUpdate = this.updateApplicationStatus(
+      applicationId,
+      ApplicationStatus.enrollment,
+    );
+    const coeStatusUpdate = this.updateCOEStatus(
+      applicationId,
+      COEStatus.required,
+    );
+    return Promise.all([
+      assessmentStatusUpdate,
+      applicationStatusUpdate,
+      coeStatusUpdate,
+    ]);
+  }
+
+  /**
    * Set the offering for Program Info Request (PIR).
    * Once the offering is set it will be a workflow responsability
    * to set the PIR status to completed.
