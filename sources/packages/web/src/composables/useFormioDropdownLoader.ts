@@ -92,7 +92,7 @@ export function useFormioDropdownLoader() {
     const valueToBeLoaded = await EducationProgramOfferingService.shared.getProgramOfferingDetails(
       offeringId,
     );
-    return formioUtils.setComponentValue(
+    formioUtils.setComponentValue(
       form,
       fieldId,
       valueToBeLoaded?.studyStartDate,

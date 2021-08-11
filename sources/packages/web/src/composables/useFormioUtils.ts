@@ -25,11 +25,7 @@ export function useFormioUtils() {
    * @param componentKey component api/id from formio.
    * @param value value that need to be set to the field
    */
-  const setComponentValue = (
-    form: any,
-    componentKey: string,
-    value: any,
-  ): any => {
+  const setComponentValue = (form: any, componentKey: string, value: any) => {
     const componentObj = getComponent(form, componentKey);
     componentObj.setValue(value);
   };
