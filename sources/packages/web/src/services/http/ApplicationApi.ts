@@ -56,14 +56,13 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async confirmationOfAssessment(applicationId: number): Promise<any> {
+  public async confirmationOfAssessment(applicationId: number): Promise<void> {
     try {
-      const response = await this.apiClient.patch(
+      await this.apiClient.patch(
         `application/${applicationId}/confirm-assessment`,
         {},
         this.addAuthHeader(),
       );
-      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
