@@ -42,4 +42,13 @@ export class ApplicationApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async createApplicationDraft(): Promise<number> {
+    const response = await this.apiClient.post(
+      "application/draft",
+      { data: {}, associatedFiles: [] },
+      this.addAuthHeader(),
+    );
+    return +response.data;
+  }
 }

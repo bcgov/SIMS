@@ -1,3 +1,4 @@
+import { ONLY_ONE_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
 
 export class ApplicationService {
@@ -10,5 +11,20 @@ export class ApplicationService {
 
   public async getNOA(applicationId: number): Promise<any> {
     return ApiClient.Application.getNOA(applicationId);
+  }
+
+  public async createApplicationDraft(): Promise<{
+    draftAlreadyExists: boolean;
+    draftId?: number;
+  }> {
+    try {
+      const appliationId = await ApiClient.Application.createApplicationDraft();
+      return { draftAlreadyExists: false, draftId: appliationId };
+    } catch (error) {
+      if (error.response.data?.errorType === ONLY_ONE_DRAFT_ERROR) {
+        return { draftAlreadyExists: true };
+      }
+      throw error;
+    }
   }
 }

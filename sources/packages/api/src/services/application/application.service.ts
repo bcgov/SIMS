@@ -12,11 +12,15 @@ import {
   Student,
   StudentFile,
 } from "../../database/entities";
-import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 import { CustomNamedError } from "../../utilities";
+import { SequenceControlService } from "../sequence-control/sequence-control.service";
+import { StudentFileService } from "../student-file/student-file.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
+export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
+export const ONLY_ONE_DRAFT_ERROR =
+  "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
@@ -25,6 +29,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   constructor(
     @Inject("Connection") connection: Connection,
     private readonly sequenceService: SequenceControlService,
+    private readonly fileService: StudentFileService,
   ) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
@@ -146,6 +151,71 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.student_id = :studentId", { studentId })
       .getMany();
   }
+
+  async getApplicationByStatus(
+    studentId: number,
+    status: ApplicationStatus,
+  ): Promise<Application> {
+    return await this.repo
+      .createQueryBuilder("application")
+      .where("application.student_id = :studentId", { studentId })
+      .andWhere("application.applicationStatus = :status", { status })
+      .getOne();
+  }
+
+  async saveDraftApplication(
+    studentId: number,
+    data: any,
+    associatedFiles: string[],
+    applicationId?: number,
+  ): Promise<Application> {
+    let draftApplication = await this.getApplicationByStatus(
+      studentId,
+      ApplicationStatus.draft,
+    );
+
+    if (applicationId && !draftApplication) {
+      throw new CustomNamedError(
+        "Not able to find the draft application associated with the student.",
+        APPLICATION_DRAFT_NOT_FOUND,
+      );
+    }
+
+    if (draftApplication && draftApplication.id !== applicationId) {
+      throw new CustomNamedError(
+        "There is already an existing draft application associated with the current student.",
+        ONLY_ONE_DRAFT_ERROR,
+      );
+    }
+
+    if (!draftApplication) {
+      draftApplication = new Application();
+    }
+
+    draftApplication.data = data;
+    draftApplication.student = { id: studentId } as Student;
+    draftApplication.applicationStatus = ApplicationStatus.draft;
+
+    // Check for the existing student files if
+    // some association was provided.
+    let studentFiles: StudentFile[] = [];
+    if (associatedFiles?.length) {
+      studentFiles = await this.fileService.getStudentFiles(
+        studentId,
+        associatedFiles,
+      );
+    }
+
+    // Associate uploaded files with the application.
+    draftApplication.studentFiles = studentFiles.map((file) => {
+      const fileAssociation = new ApplicationStudentFile();
+      fileAssociation.studentFile = { id: file.id } as StudentFile;
+      return fileAssociation;
+    });
+
+    return this.repo.save(draftApplication);
+  }
+
   /**
    * Updates Program Information Request (PIR) related data.
    * @param applicationId application id to be updated.
