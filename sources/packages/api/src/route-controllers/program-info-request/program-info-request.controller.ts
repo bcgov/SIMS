@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
   Get,
   NotFoundException,
-  ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
 import {

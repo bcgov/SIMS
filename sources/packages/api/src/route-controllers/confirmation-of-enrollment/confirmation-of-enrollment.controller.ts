@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Param,
-  UnprocessableEntityException,
-  Get,
-  ForbiddenException,
-} from "@nestjs/common";
+import { Controller, Param, Get } from "@nestjs/common";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
