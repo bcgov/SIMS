@@ -39,7 +39,9 @@ export class UserService {
     return ApiClient.User.checkActiveUser(authHeader);
   }
 
-  async getInstitutionUser(authHeader?: any): Promise<InstitutionUserDetailsDto> {
+  async getInstitutionUser(
+    authHeader?: any,
+  ): Promise<InstitutionUserDetailsDto> {
     return ApiClient.User.getinstitutionUser(authHeader);
   }
 }

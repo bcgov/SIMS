@@ -222,7 +222,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           sidebar: InstitutionHomeSideBar,
         },
         meta: {
-          clientType: ClientIdType.INSTITUTION
+          clientType: ClientIdType.INSTITUTION,
         },
       },
       {

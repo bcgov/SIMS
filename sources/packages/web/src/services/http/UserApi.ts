@@ -58,7 +58,9 @@ export class UserApi extends HttpBaseClient {
     }
   }
 
-  public async getinstitutionUser(headers?: any): Promise<InstitutionUserDetailsDto> {
+  public async getinstitutionUser(
+    headers?: any,
+  ): Promise<InstitutionUserDetailsDto> {
     try {
       const response = await this.apiClient.get(
         "users/institutionUser",

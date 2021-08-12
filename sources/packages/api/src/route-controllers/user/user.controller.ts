@@ -123,14 +123,14 @@ export class UserController extends BaseController {
   }
 
   @Get("/institutionUser")
-    async institutionDetail(
-      @UserToken() userToken: IUserToken,
-    ): Promise<InstitutionUserDto> {
-      const user = await this.service.getActiveUser(userToken.userName);
-      const institutionUser = new InstitutionUserDto();
-      institutionUser.userEmail = user?.email;
-      institutionUser.userFirstName = user?.firstName;
-      institutionUser.userLastName = user?.lastName;
-      return institutionUser;
-    }
+  async institutionDetail(
+    @UserToken() userToken: IUserToken,
+  ): Promise<InstitutionUserDto> {
+    const user = await this.service.getActiveUser(userToken.userName);
+    const institutionUser = new InstitutionUserDto();
+    institutionUser.userEmail = user?.email;
+    institutionUser.userFirstName = user?.firstName;
+    institutionUser.userLastName = user?.lastName;
+    return institutionUser;
+  }
 }

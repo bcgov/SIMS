@@ -1,8 +1,8 @@
 <template>
   <Message severity="info">
-    Please notice that the read-only information below is retrieved from your BCeID
-    account and it is not possible to change it here. If any read-only information needs
-    to be changed please visit
+    Please notice that the read-only information below is retrieved from your
+    BCeID account and it is not possible to change it here. If any read-only
+    information needs to be changed please visit
     <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
   <Card class="p-m-4">
@@ -64,21 +64,20 @@ export default {
 
     // Hooks
     onMounted(async () => {
-        const bceidAccount = await UserService.shared.getInstitutionUser();
-        if (bceidAccount) {
-          initialData.value = {
-            userFirstName: bceidAccount?.userFirstName,
-            userLastName: bceidAccount?.userLastName,
-            userEmail: bceidAccount?.userEmail
-          };
-        } else {
-          toast.add({
-            severity: "error",
-            summary: "BCeID Account error",
-            detail: "Unable to fetch account details.",
-          });
-        }
-
+      const bceidAccount = await UserService.shared.getInstitutionUser();
+      if (bceidAccount) {
+        initialData.value = {
+          userFirstName: bceidAccount?.userFirstName,
+          userLastName: bceidAccount?.userLastName,
+          userEmail: bceidAccount?.userEmail,
+        };
+      } else {
+        toast.add({
+          severity: "error",
+          summary: "BCeID Account error",
+          detail: "Unable to fetch account details.",
+        });
+      }
     });
 
     return {
@@ -88,4 +87,3 @@ export default {
   },
 };
 </script>
-
