@@ -346,6 +346,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.student", "student")
       .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus is not null")
       .andWhere("application.pirStatus != :nonPirStatus", {
         nonPirStatus: ProgramInfoStatus.notRequired,
       })
@@ -383,6 +384,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.student", "student")
       .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.coeStatus is not null")
       .andWhere("application.coeStatus != :nonCOEStatus", {
         nonCOEStatus: COEStatus.notRequired,
       })
