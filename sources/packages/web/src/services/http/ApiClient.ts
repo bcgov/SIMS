@@ -11,6 +11,7 @@ import { EducationProgramApi } from "./EducationProgramApi";
 import { EducationProgramOfferingApi } from "./EducationProgramOfferingApi";
 import { FileUploadApi } from "./FileUploadApi";
 import { ProgramInfoRequestApi } from "./ProgramInfoRequestApi";
+import { ConfirmationOfEnrollmentApi } from "./ConfirmationOfEnrollmentApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -26,6 +27,7 @@ const ApiClient = {
   EducationProgramOffering: new EducationProgramOfferingApi(),
   FileUpload: new FileUploadApi(),
   ProgramInfoRequest: new ProgramInfoRequestApi(),
+  ConfirmationOfEnrollment: new ConfirmationOfEnrollmentApi(),
 };
 
 export default ApiClient;

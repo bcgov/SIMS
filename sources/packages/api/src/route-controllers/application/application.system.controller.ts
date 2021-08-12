@@ -184,7 +184,7 @@ export class ApplicationSystemController {
    * @param applicationId application id to be updated.
    * @param payload status of the program information request.
    */
-  @Patch(":id/coe/status")
+  @Patch(":id/application/status")
   async updateApplicationStatus(
     @Param("id") applicationId: number,
     @Body() payload: UpdateApplicationStatusDto,
