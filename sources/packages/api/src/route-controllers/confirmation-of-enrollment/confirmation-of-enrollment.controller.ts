@@ -19,7 +19,7 @@ import { COESummaryDTO } from "../application/models/application.model";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-export class ProgramInfoRequestController {
+export class ConfirmationOfEnrollmentController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly institutionService: InstitutionService,
