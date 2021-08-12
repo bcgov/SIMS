@@ -31,7 +31,7 @@ export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
-  applicationNumberId: number;
+  applicationId: number;
   pirStatus: string;
   firstName: string;
   lastName: string;
@@ -41,7 +41,7 @@ export interface COESummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
-  applicationNumberId: number;
+  applicationId: number;
   coeStatus: string;
   firstName: string;
   lastName: string;

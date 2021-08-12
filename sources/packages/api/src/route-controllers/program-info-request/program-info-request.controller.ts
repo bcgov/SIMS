@@ -220,31 +220,18 @@ export class ProgramInfoRequestController {
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PIRSummaryDTO[]> {
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find a institution associated with the current user name.",
-      );
-    }
-    if (institutionDetails.id !== requestedLoc.institution.id) {
-      throw new ForbiddenException();
-    }
     const applications = await this.applicationService.getPIRApplications(
       locationId,
     );
     return applications.map((eachApplication: Application) => {
       return {
-        applicationNumber: eachApplication?.applicationNumber,
-        applicationNumberId: eachApplication.id,
+        applicationNumber: eachApplication.applicationNumber,
+        applicationId: eachApplication.id,
         studyStartPeriod: eachApplication?.offering?.studyStartDate ?? "",
         studyEndPeriod: eachApplication?.offering?.studyEndDate ?? "",
-        pirStatus: eachApplication?.pirStatus,
-        firstName: eachApplication?.student?.user?.firstName,
-        lastName: eachApplication?.student?.user?.lastName,
+        pirStatus: eachApplication.pirStatus,
+        firstName: eachApplication.student.user.firstName,
+        lastName: eachApplication.student.user.lastName,
       };
     }) as PIRSummaryDTO[];
   }

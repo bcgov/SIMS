@@ -343,8 +343,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "student",
       ])
       .leftJoin("application.offering", "offering")
-      .leftJoin("application.student", "student")
-      .leftJoinAndSelect("student.user", "user")
+      .innerJoin("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.pirStatus != :nonPirStatus", {
         nonPirStatus: ProgramInfoStatus.notRequired,
@@ -379,9 +379,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.studyEndDate",
         "student",
       ])
-      .leftJoin("application.offering", "offering")
-      .leftJoin("application.student", "student")
-      .leftJoinAndSelect("student.user", "user")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.pirStatus != :nonCOEStatus", {
         nonCOEStatus: COEStatus.notRequired,
@@ -391,7 +391,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           WHEN '${COEStatus.required}' THEN 1
           WHEN '${COEStatus.completed}' THEN 2
           WHEN '${COEStatus.declined}' THEN 3
-          ELSE 5
+          ELSE 4
         END`,
       )
       .addOrderBy("application.applicationNumber")
