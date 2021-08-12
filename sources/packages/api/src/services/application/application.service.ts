@@ -361,4 +361,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .addOrderBy("application.applicationNumber")
       .getMany();
   }
+
+  /**
+   * get applications of a institution location
+   * with COE status required and completed.
+   * @param locationId location id .
+   * @returns student Application list.
+   */
+  async getCOEApplications(locationId: number): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.coeStatus",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.student", "student")
+      .leftJoinAndSelect("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus != :nonCOEStatus", {
+        nonCOEStatus: COEStatus.notRequired,
+      })
+      .orderBy(
+        `CASE application.coeStatus
+          WHEN '${COEStatus.required}' THEN 1
+          WHEN '${COEStatus.completed}' THEN 2
+          WHEN '${COEStatus.declined}' THEN 3
+          ELSE 5
+        END`,
+      )
+      .addOrderBy("application.applicationNumber")
+      .getMany();
+  }
 }
