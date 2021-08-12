@@ -242,4 +242,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     return locationIdQuery.locationId;
   }
+
+  /**
+   * Gets location id from an offering.
+   * @param offeringId offering id.
+   * @returns offering object.
+   */
+  async getOfferingById(offeringId: number): Promise<EducationProgramOffering> {
+    return this.repo.findOne(offeringId);
+  }
 }
