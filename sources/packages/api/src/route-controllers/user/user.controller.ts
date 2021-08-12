@@ -1,4 +1,10 @@
-import { Controller, Get, UnprocessableEntityException } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   BCeIDService,
   UserService,
@@ -132,5 +138,14 @@ export class UserController extends BaseController {
     institutionUser.userFirstName = user?.firstName;
     institutionUser.userLastName = user?.lastName;
     return institutionUser;
+  }
+
+  @Patch("/institutionUser")
+  async updateInstitutionUser(
+    @UserToken() userToken: IUserToken,
+    @Body() body: InstitutionUserDto,
+  ): Promise<void> {
+    const user = await this.service.getActiveUser(userToken.userName);
+    this.service.updateUserEmail(user.id, body.userEmail);
   }
 }

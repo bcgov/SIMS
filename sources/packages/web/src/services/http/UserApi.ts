@@ -72,4 +72,20 @@ export class UserApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async updateInstitutionUser(
+    data: InstitutionUserDetailsDto,
+    headers?: any,
+  ): Promise<void> {
+    try {
+      const response = await this.apiClient.patch(
+        "users/institutionUser",
+        data,
+        headers || this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

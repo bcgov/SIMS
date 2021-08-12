@@ -44,4 +44,11 @@ export class UserService {
   ): Promise<InstitutionUserDetailsDto> {
     return ApiClient.User.getinstitutionUser(authHeader);
   }
+
+  async updateInstitutionUser(
+    data: InstitutionUserDetailsDto,
+    authHeader?: any,
+  ): Promise<void> {
+    return ApiClient.User.updateInstitutionUser(data, authHeader);
+  }
 }

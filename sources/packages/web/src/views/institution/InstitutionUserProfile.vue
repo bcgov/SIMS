@@ -22,8 +22,7 @@ import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { UserService } from "../../services/UserService";
-import { InstitutionDto } from "../../types";
-import { InstitutionService } from "../../services/InstitutionService";
+import { InstitutionUserDetailsDto } from "../../types";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 export default {
@@ -35,14 +34,14 @@ export default {
     // Data-bind
     const initialData = ref({});
 
-    const submitted = async (data: InstitutionDto) => {
+    const submitted = async (data: InstitutionUserDetailsDto) => {
       let redirectHome = true;
       try {
-        await InstitutionService.shared.updateInstitute(data);
+        await UserService.shared.updateInstitutionUser(data);
         toast.add({
           severity: "success",
           summary: "Updated!",
-          detail: "Institution and User successfully updated!",
+          detail: "Institution User successfully updated!",
           life: 5000,
         });
       } catch (excp) {
