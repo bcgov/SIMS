@@ -37,13 +37,13 @@
               />
             </template>
           </Column>
-          <Column field="applicationNumberId" header="">
+          <Column field="applicationId" header="">
             <template #body="slotProps">
               <v-btn
                 plain
                 color="primary"
                 outlined
-                @click="goToViewApplication(slotProps.data.applicationNumberId)"
+                @click="goToViewApplication(slotProps.data.applicationId)"
                 >view</v-btn
               >
             </template>
