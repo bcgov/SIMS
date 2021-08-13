@@ -377,18 +377,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     applicationStatus: ApplicationStatus,
     student: Student,
-  ): Promise<Application> {
-    const application = await this.repo.findOne({
-      id: applicationId,
-      student: student,
-      applicationStatus: Not(ApplicationStatus.completed),
-    });
-    if (!application) {
-      throw new UnprocessableEntityException(
-        "Not able to find an application of the student to status can be updated",
-      );
-    }
-    application.applicationStatus = applicationStatus;
-    return this.repo.save(application);
+  ): Promise<UpdateResult> {
+    return await this.repo.update(
+      {
+        id: applicationId,
+        student: student,
+        applicationStatus: Not(ApplicationStatus.completed),
+      },
+      { applicationStatus: applicationStatus },
+    );
   }
 }

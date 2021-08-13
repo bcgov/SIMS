@@ -191,10 +191,16 @@ export class ApplicationController extends BaseController {
         "The user is not associated with a student.",
       );
     }
-    await this.applicationService.updateStudentApplicationStatus(
-      applicationId,
-      payload.applicationStatus,
-      student,
-    );
+    const updateResult =
+      await this.applicationService.updateStudentApplicationStatus(
+        applicationId,
+        payload.applicationStatus,
+        student,
+      );
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        `Application Status update for Application ${applicationId} failed.`,
+      );
+    }
   }
 }
