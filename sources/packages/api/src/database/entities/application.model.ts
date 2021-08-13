@@ -20,6 +20,7 @@ import { AssessmentStatus } from "./assessment-status.type";
 import { COEStatus } from "./coe-status.type";
 import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
+import { ProgramYear } from "./program-year.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -75,7 +76,11 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   pirProgram?: EducationProgram;
-
+  @JoinColumn({
+    name: "program_year_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  programYearId?: ProgramYear;
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
     cascade: true,

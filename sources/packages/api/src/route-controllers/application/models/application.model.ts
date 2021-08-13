@@ -8,6 +8,11 @@ export interface CreateApplicationDto {
    * with this application.
    */
   associatedFiles: string[];
+  /**
+   * Selected form of the application.
+   * This will be used for ProgramYear active validation
+   */
+  selectedForm: string;
 }
 
 export interface GetApplicationDataDto {

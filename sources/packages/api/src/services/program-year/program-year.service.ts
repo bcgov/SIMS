@@ -16,4 +16,20 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
       .orderBy("programYear.id", "DESC")
       .getMany();
   }
+
+  /**
+   * Validate Program Year of an Application,
+   * if the ProgramYear is not active
+   *  return null
+   * else r
+   *  return the ProgramYear row
+   * @param selectedForm Selected Form of the application
+   */
+  async validateProgramYear(selectedForm: string): Promise<ProgramYear> {
+    return this.repo
+      .createQueryBuilder("programYear")
+      .where("programYear.is_active = true")
+      .andWhere("programYear.formName  = :selectedForm", { selectedForm })
+      .getOne();
+  }
 }

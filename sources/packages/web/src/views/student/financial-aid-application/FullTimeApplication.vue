@@ -49,6 +49,7 @@ export default {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
         await ApiClient.Application.createApplication({
           data: args,
+          selectedForm: props.selectedForm,
           associatedFiles,
         });
       } catch (error) {
