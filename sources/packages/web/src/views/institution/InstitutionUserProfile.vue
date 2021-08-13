@@ -45,7 +45,7 @@ export default {
         await UserService.shared.updateInstitutionUser(
           institutionUserPersistDto,
         );
-        toast.success("Updated!", "Institution and User successfully updated!");
+        toast.success("Updated!", "Institution User successfully updated!");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });

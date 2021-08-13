@@ -122,9 +122,6 @@ export default {
       {
         label: "Notifications Settings",
         icon: "pi pi-bell",
-        command: () => {
-          AppConfigService.shared.logout(ClientIdType.INSTITUTION);
-        },
       },
       {
         label: "Log off",
