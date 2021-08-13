@@ -41,6 +41,7 @@ import {
   ApplicationSystemController,
   ATBCController,
   ProgramInfoRequestController,
+  ConfirmationOfEnrollmentController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -65,6 +66,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     ApplicationSystemController,
     ATBCController,
     ProgramInfoRequestController,
+    ConfirmationOfEnrollmentController,
   ],
   providers: [
     AppService,

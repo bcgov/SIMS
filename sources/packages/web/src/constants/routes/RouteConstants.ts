@@ -38,6 +38,8 @@ export const InstitutionRoutesConst = {
   ADD_LOCATION_OFFERINGS: Symbol(),
   EDIT_LOCATION_OFFERINGS: Symbol(),
   PROGRAM_INFO_REQUEST_SUMMARY: Symbol(),
+  COE_SUMMARY: Symbol(),
+  COE_EDIT: Symbol(),
   PROGRAM_INFO_REQUEST_EDIT: Symbol(),
   LOCATION_STUDENTS: Symbol(),
   LOCATION_USERS: Symbol(),
