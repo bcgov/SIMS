@@ -54,7 +54,6 @@
       :model="userMenuItems"
       :popup="true"
     />
-    <!-- <v-btn v-if="isAuthenticated" text @click="logoff">Log off</v-btn> -->
   </v-app-bar>
   <router-view name="sidebar"></router-view>
   <v-main class="body-background">
