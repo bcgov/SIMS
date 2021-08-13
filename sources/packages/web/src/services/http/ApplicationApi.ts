@@ -1,11 +1,14 @@
+import { SaveStudentApplicationDto } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ApplicationApi extends HttpBaseClient {
-  public async createApplication(data: any): Promise<any> {
+  public async createApplication(
+    payload: SaveStudentApplicationDto,
+  ): Promise<any> {
     try {
       return await this.apiClient.post(
         "application",
-        data,
+        payload,
         this.addAuthHeader(),
       );
     } catch (error) {
@@ -14,7 +17,7 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async getApplicationData(applicationId: any): Promise<any> {
+  public async getApplicationData(applicationId: number): Promise<any> {
     try {
       const response = await this.apiClient.get(
         `application/${applicationId}/data`,
@@ -43,10 +46,24 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async createApplicationDraft(): Promise<number> {
+  public async createApplicationDraft(
+    payload: SaveStudentApplicationDto,
+  ): Promise<number> {
     const response = await this.apiClient.post(
       "application/draft",
-      { data: {}, associatedFiles: [] },
+      payload,
+      this.addAuthHeader(),
+    );
+    return +response.data;
+  }
+
+  public async saveApplicationDraft(
+    applicationId: number,
+    payload: SaveStudentApplicationDto,
+  ): Promise<number> {
+    const response = await this.apiClient.patch(
+      `application/${applicationId}/draft`,
+      payload,
       this.addAuthHeader(),
     );
     return +response.data;

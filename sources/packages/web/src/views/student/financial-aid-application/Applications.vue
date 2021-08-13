@@ -30,10 +30,6 @@ import { ProgramYear } from "@/types/contracts/ProgramYearContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { ApplicationService } from "@/services/ApplicationService";
-import {
-  ONLY_ONE_DRAFT_ERROR,
-  ApiProcessError,
-} from "@/types/contracts/ApiProcessError";
 import { useToastMessage } from "@/composables";
 
 export default {
@@ -58,7 +54,12 @@ export default {
 
     const startNewApplication = async () => {
       try {
-        const createDraftResult = await ApplicationService.shared.createApplicationDraft();
+        const createDraftResult = await ApplicationService.shared.createApplicationDraft(
+          {
+            data: {},
+            associatedFiles: [],
+          },
+        );
         if (createDraftResult.draftAlreadyExists) {
           toast.error(
             "Not able to start a new application",

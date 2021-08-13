@@ -1,3 +1,4 @@
+import { SaveStudentApplicationDto } from "@/types";
 import { ONLY_ONE_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
 
@@ -13,12 +14,16 @@ export class ApplicationService {
     return ApiClient.Application.getNOA(applicationId);
   }
 
-  public async createApplicationDraft(): Promise<{
+  public async createApplicationDraft(
+    payload: SaveStudentApplicationDto,
+  ): Promise<{
     draftAlreadyExists: boolean;
     draftId?: number;
   }> {
     try {
-      const appliationId = await ApiClient.Application.createApplicationDraft();
+      const appliationId = await ApiClient.Application.createApplicationDraft(
+        payload,
+      );
       return { draftAlreadyExists: false, draftId: appliationId };
     } catch (error) {
       if (error.response.data?.errorType === ONLY_ONE_DRAFT_ERROR) {
