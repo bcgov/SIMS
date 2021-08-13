@@ -75,7 +75,7 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<any> {
     try {
       return await this.apiClient.patch(
-        `application/${applicationId}`,
+        `application/${applicationId}/submit`,
         payload,
         this.addAuthHeader(),
       );

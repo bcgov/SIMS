@@ -12,15 +12,17 @@
               :loading="savingDraft"
               @click="saveDraft()"
             >
-              <v-icon left :size="25"> mdi-pencil </v-icon>Save draft</v-btn
+              <v-icon left :size="25"> mdi-pencil </v-icon
+              >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
             >
             <v-btn
-              :disabled="!isLastPage"
+              :disabled="!isLastPage || submittingApplication"
               v-show="!isFirstPage"
               color="primary"
-              :loading="submittingApplication"
               @click="wizardSubmit()"
-              >Submit application</v-btn
+              >{{
+                submittingApplication ? "Submitting..." : "Submit application"
+              }}</v-btn
             >
           </v-col>
         </v-row>

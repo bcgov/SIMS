@@ -48,11 +48,10 @@ export class ApplicationController extends BaseController {
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<GetApplicationDataDto> {
-    const application =
-      await this.applicationService.getApplicationByIdAndUserName(
-        applicationId,
-        userToken.userName,
-      );
+    const application = await this.applicationService.getApplicationByIdAndUser(
+      applicationId,
+      userToken.userId,
+    );
 
     if (!application) {
       throw new NotFoundException(
@@ -61,69 +60,6 @@ export class ApplicationController extends BaseController {
     }
 
     return { data: application.data };
-  }
-
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Post()
-  async create(
-    @Body() payload: CreateApplicationDto,
-    @UserToken() userToken: IUserToken,
-  ): Promise<number> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      "SFAA2022-23",
-      payload.data,
-    );
-
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create an applicaion due to an invalid request.",
-      );
-    }
-
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-
-    // Check for the existing student files if
-    // some association was provided.
-    let studentFiles: StudentFile[] = [];
-    if (payload.associatedFiles?.length) {
-      studentFiles = await this.fileService.getStudentFiles(
-        student.id,
-        payload.associatedFiles,
-      );
-    }
-
-    const createdApplication = await this.applicationService.createApplication(
-      student.id,
-      submissionResult.data,
-      studentFiles,
-    );
-    const assessmentWorflow = await this.workflow.startApplicationAssessment(
-      submissionResult.data.data.workflowName,
-      createdApplication.id,
-    );
-
-    // TODO: Once we have the application status we should run the create/associate
-    // under a DB transation to ensure that, if the workflow fails to start we would
-    // be rolling back the transaction and returning an error to the student.
-    const workflowAssociationResult =
-      await this.applicationService.associateAssessmentWorkflow(
-        createdApplication.id,
-        assessmentWorflow.id,
-      );
-
-    // 1 means the number of affected rows expected while
-    // associating the workflow id.
-    if (workflowAssociationResult.affected !== 1) {
-      // TODO: Once we add a transaction, this error should force a rollback
-      // and should also cancel the workflow.
-      throw new InternalServerErrorException(
-        "Error while associating the assessment workflow.",
-      );
-    }
-
-    return createdApplication.id;
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -144,6 +80,15 @@ export class ApplicationController extends BaseController {
       );
     }
 
+    const applicationToSubmit =
+      await this.applicationService.getApplicationByIdAndUser(
+        applicationId,
+        userToken.userId,
+      );
+    if (!applicationToSubmit) {
+      throw new NotFoundException("Student Application not found.");
+    }
+
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
@@ -158,15 +103,16 @@ export class ApplicationController extends BaseController {
       );
     }
 
-    const createdApplication = await this.applicationService.createApplication(
-      student.id,
-      submissionResult.data,
-      studentFiles,
-    );
+    const submittedApplication =
+      await this.applicationService.submitApplication(
+        applicationId,
+        submissionResult.data,
+        studentFiles,
+      );
 
     const assessmentWorflow = await this.workflow.startApplicationAssessment(
       submissionResult.data.data.workflowName,
-      createdApplication.id,
+      submittedApplication.id,
     );
 
     // TODO: Once we have the application status we should run the create/associate
@@ -174,7 +120,7 @@ export class ApplicationController extends BaseController {
     // be rolling back the transaction and returning an error to the student.
     const workflowAssociationResult =
       await this.applicationService.associateAssessmentWorkflow(
-        createdApplication.id,
+        submittedApplication.id,
         assessmentWorflow.id,
       );
 
@@ -188,7 +134,7 @@ export class ApplicationController extends BaseController {
       );
     }
 
-    return createdApplication.id;
+    return submittedApplication.id;
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)

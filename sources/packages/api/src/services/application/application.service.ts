@@ -35,15 +35,42 @@ export class ApplicationService extends RecordDataModelService<Application> {
     this.logger.log("[Created]");
   }
 
-  async createApplication(
-    studentId: number,
+  async submitApplication(
+    applicationId: number,
     applicationDto: CreateApplicationDto,
     studentFiles: StudentFile[],
   ): Promise<Application> {
-    // Create the new application.
-    const newApplication = new Application();
+    const application = await this.repo.findOne(applicationId);
+    if (application.applicationStatus !== ApplicationStatus.draft) {
+      throw new Error(
+        "Student Application is not in the correct status to be submitted.",
+      );
+    }
+
     // TODO:remove the static program year and add dynamic year, from program year table
-    const sequenceName = "2122";
+    application.applicationNumber = await this.generateApplicationNumber(
+      "2122",
+    );
+
+    application.data = applicationDto.data;
+    application.applicationStatus = ApplicationStatus.submitted;
+
+    application.studentFiles = studentFiles.map((file) => {
+      const newFileAssociation = new ApplicationStudentFile();
+      newFileAssociation.studentFile = { id: file.id } as StudentFile;
+      return newFileAssociation;
+    });
+
+    return await this.repo.save(application);
+  }
+
+  private async generateApplicationNumber(
+    sequenceName: string,
+  ): Promise<string> {
+    const MAX_APPLICATION_NUMBER_LENGTH = 10;
+    const sequenceNumberSize =
+      MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
+
     let nextApplicationSequence: number = NaN;
     await this.sequenceService.consumeNextSequence(
       sequenceName,
@@ -51,22 +78,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         nextApplicationSequence = nextSequenceNumber;
       },
     );
-    const MAX_APPLICATION_NUMBER_LENGTH = 10;
-    const sequenceNumberSize =
-      MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
-    const applicationNumber =
+
+    return (
       sequenceName +
-      `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0");
-    newApplication.student = { id: studentId } as Student;
-    newApplication.data = applicationDto.data;
-    newApplication.studentFiles = studentFiles.map((file) => {
-      const newFileAssociation = new ApplicationStudentFile();
-      newFileAssociation.studentFile = { id: file.id } as StudentFile;
-      return newFileAssociation;
-    });
-    newApplication.applicationNumber = applicationNumber;
-    newApplication.applicationStatus = ApplicationStatus.submitted;
-    return await this.repo.save(newApplication);
+      `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0")
+    );
   }
 
   async associateAssessmentWorkflow(
@@ -102,9 +118,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
-  async getApplicationByIdAndUserName(
+  async getApplicationByIdAndUser(
     applicationId: number,
-    userName: string,
+    userId: number,
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
@@ -113,7 +129,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
-      .andWhere("user.userName = :userNameParam", { userNameParam: userName })
+      .andWhere("user.id = :userId", { userId })
       .getOne();
     return application;
   }
@@ -158,6 +174,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     return await this.repo
       .createQueryBuilder("application")
+      .leftJoinAndSelect("application.studentFiles", "studentFiles")
       .where("application.student_id = :studentId", { studentId })
       .andWhere("application.applicationStatus = :status", { status })
       .getOne();

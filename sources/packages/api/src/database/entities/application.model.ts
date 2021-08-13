@@ -102,6 +102,7 @@ export class Application extends RecordDataModel {
     {
       eager: false,
       cascade: true,
+      onDelete: "CASCADE",
     },
   )
   studentFiles: ApplicationStudentFile[];
