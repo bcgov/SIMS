@@ -1,6 +1,8 @@
 import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
+  InstitutionUserDetailsDto,
+  InstitutionUserPersistDto,
 } from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -51,6 +53,34 @@ export class UserApi extends HttpBaseClient {
         headers || this.addAuthHeader(),
       );
       return response.data as boolean;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getinstitutionUser(): Promise<InstitutionUserDetailsDto> {
+    try {
+      const response = await this.apiClient.get(
+        "users/institution",
+        this.addAuthHeader(),
+      );
+      return response.data as InstitutionUserDetailsDto;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateInstitutionUser(
+    data: InstitutionUserPersistDto,
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        "users/institution",
+        data,
+        this.addAuthHeader(),
+      );
     } catch (error) {
       this.handleRequestError(error);
       throw error;

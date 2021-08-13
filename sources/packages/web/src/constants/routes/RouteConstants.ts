@@ -26,6 +26,7 @@ export const InstitutionRoutesConst = {
   LOGIN_WITH_BUSINESS_BCEID: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
   INSTITUTION_PROFILE_EDIT: Symbol(),
+  INSTITUTION_USER_PROFILE: Symbol(),
   MANAGE_LOCATIONS: Symbol(),
   ADD_INSTITUTION_LOCATION: Symbol(),
   EDIT_INSTITUTION_LOCATION: Symbol(),
