@@ -2,8 +2,8 @@
   <v-container class="center-container application-container">
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
-        <v-row class="center-container application-container mb-5">
-          <v-col md="12" class="ml-auto text-right">
+        <v-row class="center-container application-container mb-5 text-right">
+          <v-col md="12" class="ml-auto ">
             <v-btn
               color="primary"
               class="mr-5"
@@ -29,7 +29,7 @@
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
-          @submitted="submitted"
+          @submitted="submitApplication"
         ></formio>
         <v-row>
           <v-col md="6">
@@ -56,12 +56,12 @@
 import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
-import ApiClient from "../../../services/http/ApiClient";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
   useToastMessage,
 } from "../../../composables";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export default {
   components: {
@@ -86,11 +86,14 @@ export default {
     const submittingApplication = ref(false);
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
-    let applicationWizard: any | undefined = undefined;
+    let applicationWizard: any;
 
     onMounted(async () => {
-      //Get the student info from api call
-      const studentInfo = await StudentService.shared.getStudentInfo();
+      //Get the student information and application information.
+      const [studentInfo, applicationData] = await Promise.all([
+        StudentService.shared.getStudentInfo(),
+        ApplicationService.shared.getApplicationData(props.id),
+      ]);
       // TODO: Move formatted address to a common place in Vue app or API.
       // Adjust the spaces when optional fields are not present.
       const address = studentInfo.contact;
@@ -104,11 +107,7 @@ export default {
         studentHomeAddress: formattedAddress,
         studentEmail: studentInfo.email,
       };
-
-      const dataToLoad = await ApiClient.Application.getApplicationData(
-        props.id,
-      );
-      initialData.value = { ...studentFormData, ...dataToLoad };
+      initialData.value = { ...studentFormData, ...applicationData };
     });
 
     // Save the current state of the student application skipping all validations.
@@ -118,7 +117,7 @@ export default {
         const associatedFiles = formioUtils.getAssociatedFiles(
           applicationWizard,
         );
-        await ApiClient.Application.saveApplicationDraft(props.id, {
+        await ApplicationService.shared.saveApplicationDraft(props.id, {
           data: applicationWizard.submission.data,
           associatedFiles,
         });
@@ -131,11 +130,11 @@ export default {
     };
 
     // Execute the final submission of the student application.
-    const submitted = async (args: any, form: any) => {
+    const submitApplication = async (args: any, form: any) => {
       submittingApplication.value = true;
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        await ApiClient.Application.createApplication({
+        await ApplicationService.shared.submitApplication(props.id, {
           data: args,
           associatedFiles,
         });
@@ -154,10 +153,10 @@ export default {
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
-
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
+      formioUtils.disableWizardButtons(applicationWizard);
       applicationWizard.options.buttonSettings.showSubmit = false;
       // Handle the navigation using the breadcrumbs.
       applicationWizard.on("wizardPageSelected", (page: any, index: number) => {
@@ -220,7 +219,7 @@ export default {
       isFirstPage,
       isLastPage,
       saveDraft,
-      submitted,
+      submitApplication,
       savingDraft,
       submittingApplication,
     };

@@ -1,4 +1,7 @@
-import { SaveStudentApplicationDto } from "@/types";
+import {
+  CreateApplicationDraftResult,
+  SaveStudentApplicationDto,
+} from "@/types";
 import { ONLY_ONE_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
 
@@ -14,12 +17,13 @@ export class ApplicationService {
     return ApiClient.Application.getNOA(applicationId);
   }
 
+  public async getApplicationData(applicationId: number): Promise<any> {
+    return ApiClient.Application.getApplicationData(applicationId);
+  }
+
   public async createApplicationDraft(
     payload: SaveStudentApplicationDto,
-  ): Promise<{
-    draftAlreadyExists: boolean;
-    draftId?: number;
-  }> {
+  ): Promise<CreateApplicationDraftResult> {
     try {
       const appliationId = await ApiClient.Application.createApplicationDraft(
         payload,
@@ -31,5 +35,19 @@ export class ApplicationService {
       }
       throw error;
     }
+  }
+
+  public async saveApplicationDraft(
+    applicationId: number,
+    payload: SaveStudentApplicationDto,
+  ): Promise<number> {
+    return ApiClient.Application.saveApplicationDraft(applicationId, payload);
+  }
+
+  public async submitApplication(
+    applicationId: number,
+    payload: SaveStudentApplicationDto,
+  ): Promise<any> {
+    return ApiClient.Application.submitApplication(applicationId, payload);
   }
 }
