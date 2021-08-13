@@ -7,6 +7,8 @@ import {
   NotFoundException,
   Param,
   Post,
+  Patch,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -134,5 +136,36 @@ export class ApplicationController extends BaseController {
     }
 
     return assessment;
+  }
+
+  /**
+   * Confirm Assessment of a Student.
+   * @param applicationId application id to be updated.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Patch(":applicationId/confirm-assessment")
+  async studentConfirmAssessment(
+    @UserToken() userToken: IUserToken,
+    @Param("applicationId") applicationId: number,
+  ): Promise<void> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
+
+    const updateResult = await this.applicationService.studentConfirmAssessment(
+      applicationId,
+      student.id,
+    );
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        `Confirmation of Assessment for the application id ${applicationId} failed.`,
+      );
+    }
   }
 }

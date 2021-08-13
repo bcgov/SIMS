@@ -11,6 +11,8 @@ import {
   ApplicationStatus,
   Student,
   StudentFile,
+  AssessmentStatus,
+  COEStatus,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
@@ -196,6 +198,86 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Updates Assessment status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Assessment.
+   * An assessment need to happen, when the application_status is in assessment.
+   * @returns assessment status update result.
+   */
+  async updateAssessmentStatus(
+    applicationId: number,
+    status: AssessmentStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: applicationId },
+      {
+        assessmentStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates Confirmation of Enrollment(COE) status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Confirmation of Enrollment.
+   * Confirmation of Enrollment need to happen, when the application_status is in enrollment.
+   * @returns COE status update result.
+   */
+  async updateCOEStatus(
+    applicationId: number,
+    status: COEStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: applicationId },
+      {
+        coeStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates overall Application status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Application.
+   * @returns COE status update result.
+   */
+  async updateApplicationStatus(
+    applicationId: number,
+    status: ApplicationStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: applicationId },
+      {
+        applicationStatus: status,
+      },
+    );
+  }
+
+  /**
+   * Updates overall Application status.
+   * @param applicationId application id to be updated.
+   * @param status status of the Application.
+   * @returns COE status update result.
+   */
+  async studentConfirmAssessment(
+    applicationId: number,
+    studentId: number,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        student: { id: studentId },
+        applicationStatus: ApplicationStatus.assessment,
+      },
+      {
+        assessmentStatus: AssessmentStatus.completed,
+        applicationStatus: ApplicationStatus.enrollment,
+        coeStatus: COEStatus.required,
+      },
+    );
+  }
+
+  /**
    * Set the offering for Program Info Request (PIR).
    * Once the offering is set it will be a workflow responsability
    * to set the PIR status to completed.
@@ -261,9 +343,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "student",
       ])
       .leftJoin("application.offering", "offering")
-      .leftJoin("application.student", "student")
-      .leftJoinAndSelect("student.user", "user")
+      .innerJoin("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus is not null")
       .andWhere("application.pirStatus != :nonPirStatus", {
         nonPirStatus: ProgramInfoStatus.notRequired,
       })
@@ -275,6 +358,43 @@ export class ApplicationService extends RecordDataModelService<Application> {
             WHEN '${ProgramInfoStatus.declined}' THEN 4
             ELSE 5
           END`,
+      )
+      .addOrderBy("application.applicationNumber")
+      .getMany();
+  }
+
+  /**
+   * get applications of a institution location
+   * with COE status required and completed.
+   * @param locationId location id .
+   * @returns student Application list.
+   */
+  async getCOEApplications(locationId: number): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.coeStatus",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student",
+      ])
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.coeStatus is not null")
+      .andWhere("application.coeStatus != :nonCOEStatus", {
+        nonCOEStatus: COEStatus.notRequired,
+      })
+      .orderBy(
+        `CASE application.coeStatus
+          WHEN '${COEStatus.required}' THEN 1
+          WHEN '${COEStatus.completed}' THEN 2
+          WHEN '${COEStatus.declined}' THEN 3
+          ELSE 4
+        END`,
       )
       .addOrderBy("application.applicationNumber")
       .getMany();

@@ -4,7 +4,7 @@ export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
-  applicationNumberId: number;
+  applicationId: number;
   pirStatus: string;
   firstName: string;
   lastName: string;

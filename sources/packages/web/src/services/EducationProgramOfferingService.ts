@@ -1,5 +1,8 @@
 import ApiClient from "./http/ApiClient";
-import { OfferingDTO } from "../types/contracts/OfferingContact";
+import {
+  OfferingDTO,
+  ProgramOfferingDetailsDto,
+} from "../types/contracts/OfferingContact";
 import { EducationProgramOfferingDto, OptionItemDto } from "../types";
 
 export class EducationProgramOfferingService {
@@ -78,6 +81,19 @@ export class EducationProgramOfferingService {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
       locationId,
       programId,
+    );
+  }
+
+  /**
+   * Gets program offering details
+   * @param offeringId offering id
+   * @returns offering details for the given offering
+   */
+  public async getProgramOfferingDetails(
+    offeringId: number,
+  ): Promise<ProgramOfferingDetailsDto> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingDetails(
+      offeringId,
     );
   }
 

@@ -83,6 +83,22 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  // get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio
+  const loadSelectedOfferingDate = async (
+    form: any,
+    offeringId: number,
+    fieldId: string,
+  ) => {
+    const valueToBeLoaded = await EducationProgramOfferingService.shared.getProgramOfferingDetails(
+      offeringId,
+    );
+    formioUtils.setComponentValue(
+      form,
+      fieldId,
+      valueToBeLoaded?.studyStartDate,
+    );
+  };
+
   // Retrieve the list of offerings for a particular location.
   const loadOfferingsForLocationForInstitution = async (
     form: any,
@@ -105,6 +121,7 @@ export function useFormioDropdownLoader() {
     loadProgramsForLocation,
     loadProgramsForLocationForInstitution,
     loadOfferingsForLocation,
+    loadSelectedOfferingDate,
     loadOfferingsForLocationForInstitution,
   };
 }

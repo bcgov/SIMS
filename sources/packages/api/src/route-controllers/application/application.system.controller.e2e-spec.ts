@@ -90,7 +90,7 @@ describe("Test system-access/application Controller", () => {
           programId: 1, // Valid
           offeringId: 1, // Valid
           locationId: -1, // Invalid
-          status: "required", // Valid
+          status: "Required", // Valid
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -103,7 +103,7 @@ describe("Test system-access/application Controller", () => {
           programId: -1, // Invalid
           offeringId: 1, // Valid
           locationId: 1, // Valid
-          status: "required", // Valid
+          status: "Required", // Valid
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -115,7 +115,7 @@ describe("Test system-access/application Controller", () => {
         .send({
           offeringId: -1, // Invalid
           locationId: 1, // Valid
-          status: "required", // Valid
+          status: "Required", // Valid
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -127,7 +127,7 @@ describe("Test system-access/application Controller", () => {
         .send({
           offeringId: 1, // Valid
           // locationId not present
-          status: "required", // Valid
+          status: "Required", // Valid
         })
         .expect(HttpStatus.BAD_REQUEST);
     });
@@ -152,7 +152,7 @@ describe("Test system-access/application Controller", () => {
           programId: 9999,
           offeringId: 9999,
           locationId: 9999,
-          status: "completed",
+          status: "Completed",
         })
         .expect(HttpStatus.UNPROCESSABLE_ENTITY);
     });
@@ -188,7 +188,7 @@ describe("Test system-access/application Controller", () => {
             programId: testProgram.id,
             offeringId: testOffering.id,
             locationId: testLocation.id,
-            status: "completed", // Valid
+            status: "Completed", // Valid
           })
           .expect(HttpStatus.OK);
         // Check if the database was updated as expected.
@@ -199,7 +199,7 @@ describe("Test system-access/application Controller", () => {
         expect(updatedApplication.pirProgram.id).toBe(testProgram.id);
         expect(updatedApplication.offering.id).toBe(testOffering.id);
         expect(updatedApplication.location.id).toBe(testLocation.id);
-        expect(updatedApplication.pirStatus).toBe("completed");
+        expect(updatedApplication.pirStatus).toBe("Completed");
       } finally {
         await offeringRepository.remove(testOffering);
         await programRepository.remove(testProgram);
@@ -219,14 +219,20 @@ describe("Test system-access/application Controller", () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it("should be able to change the status to 'required'/'not required'/'completed'", async () => {
+    it("should be able to change the status to 'Required','Not Required','Submitted','Completed','Declined'", async () => {
       const applicationToCreate = createFakeApplication();
       const testApplication = await applicationRepository.save(
         applicationToCreate,
       );
       const routeUrl = `/system-access/application/${testApplication.id}/program-info/status`;
       try {
-        const statuses = ["required", "not required", "completed"];
+        const statuses = [
+          "Required",
+          "Not Required",
+          "Submitted",
+          "Completed",
+          "Declined",
+        ];
         for (const status of statuses) {
           await request(app.getHttpServer())
             .patch(routeUrl)

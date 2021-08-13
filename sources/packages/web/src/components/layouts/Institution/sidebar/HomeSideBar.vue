@@ -130,6 +130,19 @@ export default {
                       });
                     },
                   },
+                  {
+                    label: "Confirmation of Enrollment",
+                    icon: "mdi-account-tie-outline",
+                    command: () => {
+                      router.push({
+                        name: InstitutionRoutesConst.COE_SUMMARY,
+                        params: {
+                          locationId: data.id,
+                          locationName: data.name,
+                        },
+                      });
+                    },
+                  },
                 ],
               }
             : undefined;

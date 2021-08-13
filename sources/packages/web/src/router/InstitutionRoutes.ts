@@ -7,6 +7,7 @@ import ManageLocation from "../views/institution/ManageLocations.vue";
 import LocationPrograms from "../views/institution/locations/programs/LocationPrograms.vue";
 import LocationUsers from "../views/institution/LocationUsers.vue";
 import LocationProgramInfoRequestSummary from "../views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
+import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
 import ManageDesgination from "../views/institution/ManageDesgination.vue";
@@ -22,6 +23,7 @@ import { AuthStatus, AppRoutes } from "../types";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
+import LocationCOERequest from "../views/institution/locations/confirmation-of-enrollment/LocationEditCOERequest.vue";
 import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
 import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
@@ -142,10 +144,48 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: `${AppRoutes.LocationCOESummary}`,
+        name: InstitutionRoutesConst.COE_SUMMARY,
+        components: {
+          default: LocationCOESummary,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
         path: AppRoutes.LocationProgramInfoRequestEdit,
         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
         components: {
           default: LocationEditProgramInfoRequest,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.LocationCOEEdit,
+        name: InstitutionRoutesConst.COE_EDIT,
+        components: {
+          default: LocationCOERequest,
           sidebar: InstitutionHomeSideBar,
         },
         props: true,
@@ -387,7 +427,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             }
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });
