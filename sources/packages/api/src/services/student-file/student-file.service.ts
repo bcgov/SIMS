@@ -61,6 +61,8 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.uniqueFileName IN (:...uniqueFileNames)", {
         uniqueFileNames,
       })
+      .select("studentFile.id")
+      .addSelect("studentFile.uniqueFileName")
       .getMany();
   }
 

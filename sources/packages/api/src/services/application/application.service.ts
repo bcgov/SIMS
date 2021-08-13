@@ -12,7 +12,6 @@ import {
   Student,
   StudentFile,
 } from "../../database/entities";
-import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
 import { CustomNamedError } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -35,15 +34,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
     this.logger.log("[Created]");
   }
 
+  /**
+   * Submits a Student Application.
+   * The system ensures that there is an application draft prior
+   * the application submission.
+   * @param applicationId application id that must be updated to submitted.
+   * @param studentId student id for authorization validations.
+   * @param applicationData dynamic data received from Form.IO form.
+   * @param associatedFiles associated uploaded files.
+   * @returns application
+   */
   async submitApplication(
     applicationId: number,
-    applicationDto: CreateApplicationDto,
-    studentFiles: StudentFile[],
+    studentId: number,
+    applicationData: any,
+    associatedFiles: string[],
   ): Promise<Application> {
-    const application = await this.repo.findOne(applicationId);
-    if (application.applicationStatus !== ApplicationStatus.draft) {
+    let application = await this.getApplicationToSave(
+      studentId,
+      ApplicationStatus.draft,
+      applicationId,
+    );
+
+    if (!application) {
       throw new Error(
-        "Student Application is not in the correct status to be submitted.",
+        "Student Application not found or it is not in the correct status to be submitted.",
       );
     }
 
@@ -52,18 +67,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
       "2122",
     );
 
-    application.data = applicationDto.data;
+    application.data = applicationData;
     application.applicationStatus = ApplicationStatus.submitted;
-
-    application.studentFiles = studentFiles.map((file) => {
-      const newFileAssociation = new ApplicationStudentFile();
-      newFileAssociation.studentFile = { id: file.id } as StudentFile;
-      return newFileAssociation;
-    });
+    application.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      application.studentFiles,
+      associatedFiles,
+    );
 
     return await this.repo.save(application);
   }
 
+  /**
+   * Generates the unique application number that the application
+   * receives once the application is submitted.
+   * @param sequenceName name of the sequence that controls the
+   * number increment.
+   * @returns new unique application number.
+   */
   private async generateApplicationNumber(
     sequenceName: string,
   ): Promise<string> {
@@ -83,6 +104,107 @@ export class ApplicationService extends RecordDataModelService<Application> {
       sequenceName +
       `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0")
     );
+  }
+
+  /**
+   * Saves an Student Application in draft state.
+   * @param studentId student id.
+   * @param applicationData dynamic data received from Form.IO form.
+   * @param associatedFiles associated uploaded files.
+   * @param [applicationId] application id used to execute validations.
+   * @returns Student Application saved draft.
+   */
+  async saveDraftApplication(
+    studentId: number,
+    applicationData: any,
+    associatedFiles: string[],
+    applicationId?: number,
+  ): Promise<Application> {
+    let draftApplication = await this.getApplicationToSave(
+      studentId,
+      ApplicationStatus.draft,
+    );
+
+    if (applicationId && !draftApplication) {
+      throw new CustomNamedError(
+        "Not able to find the draft application associated with the student.",
+        APPLICATION_DRAFT_NOT_FOUND,
+      );
+    }
+
+    if (draftApplication && draftApplication.id !== applicationId) {
+      throw new CustomNamedError(
+        "There is already an existing draft application associated with the current student.",
+        ONLY_ONE_DRAFT_ERROR,
+      );
+    }
+
+    // If there is no draft application, create one
+    // and initialize the necessary data.
+    if (!draftApplication) {
+      draftApplication = new Application();
+      draftApplication.student = { id: studentId } as Student;
+      draftApplication.applicationStatus = ApplicationStatus.draft;
+    }
+
+    // Below data must be always updated.
+    draftApplication.data = applicationData;
+    draftApplication.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      draftApplication.studentFiles,
+      associatedFiles,
+    );
+
+    return this.repo.save(draftApplication);
+  }
+
+  /**
+   * Look for files that are already stored for student and
+   * application to define the associations that need to be
+   * created or just kept.
+   * @param studentId student id to check for the files associations.
+   * @param applicationFiles current files associations.
+   * @param [filesToAssociate] files associations that represents the
+   * final state that the associations must have.
+   * @returns an array with the files associations that should be
+   * persisted in the Student Application.
+   */
+  private async getSyncedApplicationFiles(
+    studentId: number,
+    applicationFiles: ApplicationStudentFile[],
+    filesToAssociate?: string[],
+  ): Promise<ApplicationStudentFile[]> {
+    // Check for the existing student files if
+    // some association was provided.
+    let studentStoredFiles: StudentFile[] = [];
+    if (filesToAssociate?.length) {
+      studentStoredFiles = await this.fileService.getStudentFiles(
+        studentId,
+        filesToAssociate,
+      );
+    }
+
+    // Associate uploaded files with the application.
+    return studentStoredFiles.map((studentStoredFile: StudentFile) => {
+      // Use the unique file name to check if the file is already
+      // associated with the current application.
+      const existingAssociation = applicationFiles.find(
+        (applicationFile: ApplicationStudentFile) =>
+          applicationFile.studentFile.uniqueFileName ===
+          studentStoredFile.uniqueFileName,
+      );
+
+      if (existingAssociation) {
+        // Keep the existing association.
+        return existingAssociation;
+      }
+      // Create a new association.
+      const fileAssociation = new ApplicationStudentFile();
+      fileAssociation.studentFile = {
+        id: studentStoredFile.id,
+      } as StudentFile;
+      return fileAssociation;
+    });
   }
 
   async associateAssessmentWorkflow(
@@ -168,69 +290,35 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getMany();
   }
 
-  async getApplicationByStatus(
+  /**
+   * Gets a application with the data needed to process
+   * the operations related to save/submitting an
+   * Student Application.
+   * @param studentId student id.
+   * @param status expected status for the application.
+   * @param [applicationId] apllication id, when possible.
+   * @returns application with the data needed to process
+   * the operations related to save/submitting.
+   */
+  private async getApplicationToSave(
     studentId: number,
     status: ApplicationStatus,
-  ): Promise<Application> {
-    return await this.repo
-      .createQueryBuilder("application")
-      .leftJoinAndSelect("application.studentFiles", "studentFiles")
-      .where("application.student_id = :studentId", { studentId })
-      .andWhere("application.applicationStatus = :status", { status })
-      .getOne();
-  }
-
-  async saveDraftApplication(
-    studentId: number,
-    data: any,
-    associatedFiles: string[],
     applicationId?: number,
   ): Promise<Application> {
-    let draftApplication = await this.getApplicationByStatus(
-      studentId,
-      ApplicationStatus.draft,
-    );
-
-    if (applicationId && !draftApplication) {
-      throw new CustomNamedError(
-        "Not able to find the draft application associated with the student.",
-        APPLICATION_DRAFT_NOT_FOUND,
-      );
+    let query = this.repo
+      .createQueryBuilder("application")
+      .select(["application", "studentFiles", "studentFile.uniqueFileName"])
+      .leftJoin("application.studentFiles", "studentFiles")
+      .leftJoin("studentFiles.studentFile", "studentFile")
+      .where("application.student.id = :studentId", { studentId })
+      .andWhere("application.applicationStatus = :status", { status });
+    if (applicationId) {
+      query = query.andWhere("application.id = :applicationId", {
+        applicationId,
+      });
     }
 
-    if (draftApplication && draftApplication.id !== applicationId) {
-      throw new CustomNamedError(
-        "There is already an existing draft application associated with the current student.",
-        ONLY_ONE_DRAFT_ERROR,
-      );
-    }
-
-    if (!draftApplication) {
-      draftApplication = new Application();
-    }
-
-    draftApplication.data = data;
-    draftApplication.student = { id: studentId } as Student;
-    draftApplication.applicationStatus = ApplicationStatus.draft;
-
-    // Check for the existing student files if
-    // some association was provided.
-    let studentFiles: StudentFile[] = [];
-    if (associatedFiles?.length) {
-      studentFiles = await this.fileService.getStudentFiles(
-        studentId,
-        associatedFiles,
-      );
-    }
-
-    // Associate uploaded files with the application.
-    draftApplication.studentFiles = studentFiles.map((file) => {
-      const fileAssociation = new ApplicationStudentFile();
-      fileAssociation.studentFile = { id: file.id } as StudentFile;
-      return fileAssociation;
-    });
-
-    return this.repo.save(draftApplication);
+    return query.getOne();
   }
 
   /**

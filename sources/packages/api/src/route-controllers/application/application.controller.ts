@@ -15,7 +15,6 @@ import {
   APPLICATION_DRAFT_NOT_FOUND,
   FormService,
   ONLY_ONE_DRAFT_ERROR,
-  StudentFileService,
   StudentService,
   WorkflowActionsService,
 } from "../../services";
@@ -27,7 +26,6 @@ import {
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { StudentFile } from "../../database/entities";
 import { ApiProcessError } from "../../types";
 
 @Controller("application")
@@ -37,7 +35,6 @@ export class ApplicationController extends BaseController {
     private readonly formService: FormService,
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
-    private readonly fileService: StudentFileService,
   ) {
     super();
   }
@@ -93,21 +90,12 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
 
-    // Check for the existing student files if
-    // some association was provided.
-    let studentFiles: StudentFile[] = [];
-    if (payload.associatedFiles?.length) {
-      studentFiles = await this.fileService.getStudentFiles(
-        student.id,
-        payload.associatedFiles,
-      );
-    }
-
     const submittedApplication =
       await this.applicationService.submitApplication(
         applicationId,
+        student.id,
         submissionResult.data,
-        studentFiles,
+        payload.associatedFiles,
       );
 
     const assessmentWorflow = await this.workflow.startApplicationAssessment(
