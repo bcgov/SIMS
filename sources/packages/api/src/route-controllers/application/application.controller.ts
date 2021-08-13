@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
-  Patch,
   Post,
   Patch,
   UnprocessableEntityException,

@@ -175,6 +175,31 @@ export default {
       applicationWizard.on("nextPage", prevNextNavigation);
 
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
+      const selectedLocationId = formioUtils.getComponentValueByKey(
+        form,
+        LOCATIONS_DROPDOWN_KEY,
+      );
+
+      if (selectedLocationId) {
+        await formioDataLoader.loadProgramsForLocation(
+          form,
+          +selectedLocationId,
+          PROGRAMS_DROPDOWN_KEY,
+        );
+      }
+
+      const selectedProgramId = formioUtils.getComponentValueByKey(
+        form,
+        PROGRAMS_DROPDOWN_KEY,
+      );
+      if (selectedProgramId) {
+        await formioDataLoader.loadOfferingsForLocation(
+          form,
+          selectedProgramId,
+          selectedLocationId,
+          OFFERINGS_DROPDOWN_KEY,
+        );
+      }
     };
 
     const formChanged = async (form: any, event: any) => {
