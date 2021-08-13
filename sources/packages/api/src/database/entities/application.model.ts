@@ -76,11 +76,21 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   pirProgram?: EducationProgram;
+
+  /**
+   * References the program year related to the application.
+   * This will be populated only when an active program year application is Submitted
+   */
+  @ManyToOne(() => ProgramYear, {
+    eager: false,
+    cascade: true,
+  })
   @JoinColumn({
     name: "program_year_id",
     referencedColumnName: ColumnNames.ID,
   })
-  programYearId?: ProgramYear;
+  programYear?: ProgramYear;
+
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
     cascade: true,

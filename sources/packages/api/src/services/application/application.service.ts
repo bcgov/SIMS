@@ -57,7 +57,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       sequenceName +
       `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0");
     newApplication.student = { id: studentId } as Student;
-    newApplication.programYearId = { id: programYearId } as ProgramYear;
+    newApplication.programYear = { id: programYearId } as ProgramYear;
     newApplication.data = applicationDto.data;
     newApplication.studentFiles = studentFiles.map((file) => {
       const newFileAssociation = new ApplicationStudentFile();
