@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <p class="text-muted font-weight-bold h3">{{ locationName }}</p>
-    <p class="font-weight-bold h2">Program Information Requests</p>
+    <p class="font-weight-bold h2">Confirmation Of Enrollment</p>
     <v-sheet elevation="1" class="mx-auto mt-2">
       <v-container>
         <DataTable
@@ -28,12 +28,12 @@
             </template></Column
           >
           <Column field="applicationNumber" header="Application #"></Column>
-          <Column field="pirStatus" header="Status">
+          <Column field="coeStatus" header="Status">
             <template #body="slotProps">
               <Chip
-                :label="slotProps.data.pirStatus"
+                :label="slotProps.data.coeStatus"
                 class="p-mr-2 p-mb-2 text-uppercase"
-                :class="getPirStatusColorClass(slotProps.data.pirStatus)"
+                :class="getCOEStatusColorClass(slotProps.data.coeStatus)"
               />
             </template>
           </Column>
@@ -58,8 +58,8 @@
 import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO } from "@/types";
+import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
+import { COESummaryDTO } from "@/types";
 import { useFormatters } from "@/composables";
 
 export default {
@@ -77,17 +77,17 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateString } = useFormatters();
-    const applications = ref([] as PIRSummaryDTO[]);
+    const applications = ref([] as COESummaryDTO[]);
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
-        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+        name: InstitutionRoutesConst.COE_EDIT,
         params: { locationId: props.locationId, applicationId },
       });
     };
 
     const updateSummaryList = async (locationId: number) => {
-      applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
+      applications.value = await ConfirmationOfEnrollmentService.shared.getCOESummary(
         locationId,
       );
     };
@@ -104,10 +104,8 @@ export default {
       await updateSummaryList(props.locationId);
     });
 
-    const getPirStatusColorClass = (status: string) => {
+    const getCOEStatusColorClass = (status: string) => {
       switch (status) {
-        case "Submitted":
-          return "bg-info text-white";
         case "Completed":
           return "bg-success text-white";
         case "Required":
@@ -123,7 +121,7 @@ export default {
       applications,
       dateString,
       goToViewApplication,
-      getPirStatusColorClass,
+      getCOEStatusColorClass,
     };
   },
 };

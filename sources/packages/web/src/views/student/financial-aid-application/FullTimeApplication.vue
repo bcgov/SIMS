@@ -155,6 +155,7 @@ export default {
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
+    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
@@ -195,6 +196,13 @@ export default {
           +event.changed.value,
           locationId,
           OFFERINGS_DROPDOWN_KEY,
+        );
+      }
+      if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
+        await formioDataLoader.loadSelectedOfferingDate(
+          form,
+          +event.changed.value,
+          SELECTED_OFFERING_DATE_KEY,
         );
       }
     };

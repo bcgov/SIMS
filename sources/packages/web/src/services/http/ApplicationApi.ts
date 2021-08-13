@@ -31,6 +31,19 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
+  public async confirmAssessment(applicationId: number): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `application/${applicationId}/confirm-assessment`,
+        {},
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
   public async createApplicationDraft(
     payload: SaveStudentApplicationDto,
   ): Promise<number> {

@@ -22,3 +22,4 @@ export * from "./contracts/OptionItemDto";
 export * from "./contracts/FileUploadContracts";
 export * from "./contracts/institution/ProgramInfoRequest";
 export * from "./contracts/student/ApplicationContract";
+export * from "./contracts/institution/ConfirmationOfEnrollment";

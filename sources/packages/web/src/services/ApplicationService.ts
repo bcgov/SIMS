@@ -21,6 +21,10 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationData(applicationId);
   }
 
+  public async confirmAssessment(applicationId: number): Promise<void> {
+    return ApiClient.Application.confirmAssessment(applicationId);
+  }
+
   public async createApplicationDraft(
     payload: SaveStudentApplicationDto,
   ): Promise<CreateApplicationDraftResult> {
