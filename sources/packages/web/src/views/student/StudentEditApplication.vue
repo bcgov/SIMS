@@ -19,18 +19,25 @@
       "
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
-      View Assessment
-    </v-btn>
+      View Assessment </v-btn
+    >{{ id }}
+    <CancelApplication
+      :showModal="showModal"
+      :applicationID="id"
+      @showHidecancelApplication="showHidecancelApplication"
+    />
   </div>
 </template>
 <script lang="ts">
 import Menu from "primevue/menu";
 import { onMounted, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 
 export default {
   components: {
     Menu,
+    CancelApplication,
   },
   props: {
     id: {
@@ -41,21 +48,39 @@ export default {
   setup() {
     const items = ref();
     const menu = ref();
-
+    const showModal = ref(false);
+    const showHidecancelApplication = () => {
+      showModal.value = !showModal.value;
+    };
     onMounted(() => {
       items.value = [
-        { label: "Edit application", icon: "pi pi-fw pi-pencil" },
+        { label: "Edit", icon: "pi pi-fw pi-pencil" },
         { separator: true },
         {
-          label: "Cancel application",
-          icon: "pi pi-fw pi-trash",
+          label: "View",
+          icon: "pi pi-fw pi-folder-open",
+        },
+        { separator: true },
+        {
+          label: "Cancel",
+          icon: "pi pi-fw pi-trash text-danger",
+          command: () => {
+            showHidecancelApplication();
+          },
         },
       ];
     });
     const toggle = (event: any) => {
       menu?.value?.toggle(event);
     };
-    return { items, toggle, menu, StudentRoutesConst };
+    return {
+      items,
+      toggle,
+      menu,
+      StudentRoutesConst,
+      showHidecancelApplication,
+      showModal,
+    };
   },
 };
 </script>

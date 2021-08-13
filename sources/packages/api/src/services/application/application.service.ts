@@ -1,6 +1,10 @@
-import { Injectable, Inject } from "@nestjs/common";
+import {
+  Injectable,
+  Inject,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, UpdateResult } from "typeorm";
+import { Connection, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -360,5 +364,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .addOrderBy("application.applicationNumber")
       .getMany();
+  }
+  /**
+   * Update Student Application status.
+   * Only allow the application with Non Completed status to update the status
+   * @param applicationId application id.
+   * @param applicationStatus application status that need to be updated.
+   * @param student student id.
+   * @returns student Application object.
+   */
+  async updateStudentApplicationStatus(
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+    student: Student,
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      id: applicationId,
+      student: student,
+      applicationStatus: Not(ApplicationStatus.completed),
+    });
+    if (!application) {
+      throw new UnprocessableEntityException(
+        "Not able to find an application of the student to status can be updated",
+      );
+    }
+    application.applicationStatus = applicationStatus;
+    return this.repo.save(application);
   }
 }

@@ -1,3 +1,4 @@
+import { ApplicationStatus } from "../../../database/entities";
 export interface CreateApplicationDto {
   /**
    * Application dynamic data.
@@ -35,4 +36,8 @@ export interface PIRSummaryDTO {
   pirStatus: string;
   firstName: string;
   lastName: string;
+}
+
+export interface ApplicationStatusToBeUpdatedDto {
+  applicationStatus: ApplicationStatus;
 }

@@ -39,6 +39,26 @@
               />
             </template>
           </Column>
+          <Column field="studyStartPeriod" header="Study Period">
+            <template #body="slotProps">
+              <span>
+                {{ dateString(slotProps.data.studyStartPeriod) }} -
+                {{ dateString(slotProps.data.studyEndPeriod) }}
+              </span>
+            </template></Column
+          >
+          <Column field="award" header="Award"></Column>
+          <Column field="id" header=""
+            ><template #body="">
+              <!-- TODO: below action buttons should only show if status is not complete -->
+              <span>
+                <v-btn plain> <v-icon size="25">mdi-pencil</v-icon></v-btn>
+                <v-btn plain>
+                  <v-icon size="25">mdi-trash-can-outline</v-icon>
+                </v-btn>
+              </span>
+            </template>
+          </Column>
         </DataTable>
       </v-col>
     </v-row>

@@ -22,6 +22,7 @@ import BaseController from "../BaseController";
 import {
   CreateApplicationDto,
   GetApplicationDataDto,
+  ApplicationStatusToBeUpdatedDto,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -167,5 +168,33 @@ export class ApplicationController extends BaseController {
         `Confirmation of Assessment for the application id ${applicationId} failed.`,
       );
     }
+  }
+
+  /**
+   * Update Student Application status.
+   * @param applicationId application id to be updated.
+   * @body payload contains the status, that need to be updated
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Patch(":applicationId/update-status")
+  async updateStudentApplicationStatus(
+    @UserToken() userToken: IUserToken,
+    @Param("applicationId") applicationId: number,
+    @Body() payload: ApplicationStatusToBeUpdatedDto,
+  ): Promise<void> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
+    await this.applicationService.updateStudentApplicationStatus(
+      applicationId,
+      payload.applicationStatus,
+      student,
+    );
   }
 }

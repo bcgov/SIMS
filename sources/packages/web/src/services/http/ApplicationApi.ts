@@ -1,4 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
+import { ApplicationStatusToBeUpdatedDto } from "@/types/contracts/students/ApplicationContract";
 
 export class ApplicationApi extends HttpBaseClient {
   public async createApplication(data: any): Promise<any> {
@@ -48,6 +49,22 @@ export class ApplicationApi extends HttpBaseClient {
       await this.apiClient.patch(
         `application/${applicationId}/confirm-assessment`,
         {},
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async updateStudentApplicationStatus(
+    applicationId: number,
+    payload: ApplicationStatusToBeUpdatedDto,
+  ) {
+    try {
+      await this.apiClient.patch(
+        `application/${applicationId}/update-status`,
+        payload,
         this.addAuthHeader(),
       );
     } catch (error) {

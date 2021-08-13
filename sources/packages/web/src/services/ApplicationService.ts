@@ -1,4 +1,5 @@
 import ApiClient from "../services/http/ApiClient";
+import { ApplicationStatusToBeUpdatedDto } from "@/types/contracts/students/ApplicationContract";
 
 export class ApplicationService {
   // Share Instance
@@ -13,5 +14,15 @@ export class ApplicationService {
   }
   public async confirmAssessment(applicationId: number): Promise<void> {
     return ApiClient.Application.confirmAssessment(applicationId);
+  }
+
+  public async updateStudentApplicationStatus(
+    applicationId: number,
+    payload: ApplicationStatusToBeUpdatedDto,
+  ) {
+    return ApiClient.Application.updateStudentApplicationStatus(
+      applicationId,
+      payload,
+    );
   }
 }
