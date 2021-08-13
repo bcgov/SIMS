@@ -2,6 +2,7 @@ import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
   InstitutionUserDetailsDto,
+  InstitutionUserPersistDto,
 } from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -58,13 +59,11 @@ export class UserApi extends HttpBaseClient {
     }
   }
 
-  public async getinstitutionUser(
-    headers?: any,
-  ): Promise<InstitutionUserDetailsDto> {
+  public async getinstitutionUser(): Promise<InstitutionUserDetailsDto> {
     try {
       const response = await this.apiClient.get(
-        "users/institutionUser",
-        headers || this.addAuthHeader(),
+        "users/institution",
+        this.addAuthHeader(),
       );
       return response.data as InstitutionUserDetailsDto;
     } catch (error) {
@@ -74,14 +73,13 @@ export class UserApi extends HttpBaseClient {
   }
 
   public async updateInstitutionUser(
-    data: InstitutionUserDetailsDto,
-    headers?: any,
+    data: InstitutionUserPersistDto,
   ): Promise<void> {
     try {
-      const response = await this.apiClient.patch(
-        "users/institutionUser",
+      await this.apiClient.patch(
+        "users/institution",
         data,
-        headers || this.addAuthHeader(),
+        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);

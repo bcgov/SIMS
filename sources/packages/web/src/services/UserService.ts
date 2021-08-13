@@ -3,6 +3,7 @@ import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
   InstitutionUserDetailsDto,
+  InstitutionUserPersistDto,
 } from "../types/contracts/UserContract";
 
 export class UserService {
@@ -39,16 +40,11 @@ export class UserService {
     return ApiClient.User.checkActiveUser(authHeader);
   }
 
-  async getInstitutionUser(
-    authHeader?: any,
-  ): Promise<InstitutionUserDetailsDto> {
-    return ApiClient.User.getinstitutionUser(authHeader);
+  async getInstitutionUser(): Promise<InstitutionUserDetailsDto> {
+    return ApiClient.User.getinstitutionUser();
   }
 
-  async updateInstitutionUser(
-    data: InstitutionUserDetailsDto,
-    authHeader?: any,
-  ): Promise<void> {
-    return ApiClient.User.updateInstitutionUser(data, authHeader);
+  async updateInstitutionUser(data: InstitutionUserPersistDto): Promise<void> {
+    return ApiClient.User.updateInstitutionUser(data);
   }
 }

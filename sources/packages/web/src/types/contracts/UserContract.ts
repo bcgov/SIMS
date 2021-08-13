@@ -33,3 +33,7 @@ export interface InstitutionUserDetailsDto {
   userLastName: string;
   userEmail: string;
 }
+
+export interface InstitutionUserPersistDto {
+  userEmail: string;
+}

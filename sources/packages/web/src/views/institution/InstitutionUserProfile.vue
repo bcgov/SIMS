@@ -2,7 +2,7 @@
   <Message severity="info">
     Please notice that the read-only information below is retrieved from your
     BCeID account and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
+    information needs to be changed please visitA
     <a rel="noopener" href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
   <Card class="p-m-4">
@@ -19,63 +19,58 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { UserService } from "../../services/UserService";
-import { InstitutionUserDetailsDto } from "../../types";
+import { useToastMessage } from "@/composables";
+import {
+  InstitutionUserDetailsDto,
+  InstitutionUserPersistDto,
+} from "../../types";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
 export default {
   components: { formio },
   setup() {
     // Hooks
-    const toast = useToast();
+    const toast = useToastMessage();
     const router = useRouter();
     // Data-bind
     const initialData = ref({});
 
     const submitted = async (data: InstitutionUserDetailsDto) => {
-      let redirectHome = true;
+      const institutionUserPersistDto: InstitutionUserPersistDto = {
+        userEmail: data.userEmail,
+      };
       try {
-        await UserService.shared.updateInstitutionUser(data);
-        toast.add({
-          severity: "success",
-          summary: "Updated!",
-          detail: "Institution User successfully updated!",
-          life: 5000,
-        });
-      } catch (excp) {
-        redirectHome = false;
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the update process.",
-          life: 5000,
-        });
-      }
-
-      if (redirectHome) {
+        await UserService.shared.updateInstitutionUser(
+          institutionUserPersistDto,
+        );
+        toast.success("Updated!", "Institution and User successfully updated!");
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         });
+      } catch (excp) {
+        toast.error(
+          "Unexpected error!",
+          "An error happened during the update process.",
+        );
       }
     };
 
     // Hooks
     onMounted(async () => {
-      const bceidAccount = await UserService.shared.getInstitutionUser();
-      if (bceidAccount) {
+      const institutionUser = await UserService.shared.getInstitutionUser();
+      if (institutionUser) {
         initialData.value = {
-          userFirstName: bceidAccount?.userFirstName,
-          userLastName: bceidAccount?.userLastName,
-          userEmail: bceidAccount?.userEmail,
+          userFirstName: institutionUser.userFirstName,
+          userLastName: institutionUser.userLastName,
+          userEmail: institutionUser.userEmail,
         };
       } else {
-        toast.add({
-          severity: "error",
-          summary: "BCeID Account error",
-          detail: "Unable to fetch account details.",
-        });
+        toast.error(
+          "Institution user Account error",
+          "Unable to fetch Institution user account details.",
+        );
       }
     });
 
