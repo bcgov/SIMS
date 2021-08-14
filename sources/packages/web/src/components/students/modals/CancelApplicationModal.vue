@@ -6,7 +6,6 @@
     :style="{ width: '50vw' }"
     :closable="false"
   >
-    {{ applicationID }}--{{ showModal }}
     <template #header
       ><p class="font-weight-bold h5">Cancel Application</p></template
     >
@@ -53,12 +52,12 @@ export default {
       type: Boolean,
       required: true,
     },
-    applicationID: {
+    applicationId: {
       type: Number,
       required: true,
     },
   },
-  emits: ["showHidecancelApplication"],
+  emits: ["showHidecancelApplication", "getApplicationDetails"],
   setup(props: any, context: any) {
     const toast = useToastMessage();
     const updateShowCancelApplicationModal = () => {
@@ -69,12 +68,12 @@ export default {
         const payload: ApplicationStatusToBeUpdatedDto = {
           applicationStatus: ApplicationStatus.cancelled,
         };
-        alert(props.applicationID);
         await ApplicationService.shared.updateStudentApplicationStatus(
-          props.applicationID,
+          props.applicationId,
           payload,
         );
         updateShowCancelApplicationModal();
+        context.emit("getApplicationDetails", props.applicationId);
         toast.success(
           "Application Cancelled",
           "Your application is now canceled!",

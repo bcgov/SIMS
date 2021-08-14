@@ -13,7 +13,7 @@ import StudentProfile from "../views/student/StudentProfile.vue";
 import Notifications from "../views/student/Notifications.vue";
 import NotificationsSettings from "../views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
-import StudentEditApplication from "@/views/student/StudentEditApplication.vue";
+import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 
 import {
   StudentRoutesConst,
@@ -165,9 +165,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentEditApplication,
-        name: StudentRoutesConst.STUDENT_EDIT_APPLICATION,
-        component: StudentEditApplication,
+        path: AppRoutes.StudentApplicationDetails,
+        name: StudentRoutesConst.STUDEN_APPLICATION_DETAILS,
+        component: StudentApplicationDetails,
         props: true,
         meta: {
           clientType: ClientIdType.STUDENT,

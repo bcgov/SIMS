@@ -38,3 +38,13 @@ export enum ApplicationStatus {
 export interface ApplicationStatusToBeUpdatedDto {
   applicationStatus: ApplicationStatus;
 }
+
+export interface GetApplicationDataDto {
+  /**
+   * Application dynamic data.
+   */
+  data: any;
+  id: number;
+  applicationStatus: ApplicationStatus;
+  applicationStatusUpdatedOn: string;
+}

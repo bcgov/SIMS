@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
@@ -20,7 +16,7 @@ import {
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError, getUTCNow } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 @Injectable()
@@ -147,6 +143,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "application.applicationStatus",
       ])
       .leftJoin("application.offering", "offering")
       .where("application.student_id = :studentId", { studentId })
@@ -385,7 +382,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: student,
         applicationStatus: Not(ApplicationStatus.completed),
       },
-      { applicationStatus: applicationStatus },
+      {
+        applicationStatus: applicationStatus,
+        applicationStatusUpdatedOn: getUTCNow(),
+      },
     );
   }
 

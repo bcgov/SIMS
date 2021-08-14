@@ -16,7 +16,7 @@ export const StudentRoutesConst = {
   NOTIFICATIONS: Symbol(),
   NOTIFICATIONS_SETTINGS: Symbol(),
   STUDENT_APPLICATION_SUMMARY: Symbol(),
-  STUDENT_EDIT_APPLICATION: Symbol(),
+  STUDEN_APPLICATION_DETAILS: Symbol(),
 };
 export const InstitutionRoutesConst = {
   //Institution

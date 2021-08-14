@@ -41,7 +41,7 @@ export class ApplicationController extends BaseController {
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get(":id/data")
+  @Get(":id")
   async getByApplicationId(
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -51,14 +51,19 @@ export class ApplicationController extends BaseController {
         applicationId,
         userToken.userName,
       );
-
+    console.log(application);
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
       );
     }
 
-    return { data: application.data };
+    return {
+      data: application.data,
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
+    };
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)

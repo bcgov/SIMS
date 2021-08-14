@@ -19,6 +19,7 @@ import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
+import { ApplicationService } from "@/services/ApplicationService";
 import { useFormioDropdownLoader, useFormioUtils } from "../../../composables";
 
 export default {
@@ -58,10 +59,10 @@ export default {
 
     onMounted(async () => {
       if (props.id) {
-        const dataToLoad = await ApiClient.Application.getApplicationData(
+        const dataToLoad = await ApplicationService.shared.getApplicationData(
           props.id,
         );
-        initialData.value = dataToLoad;
+        initialData.value = dataToLoad.data;
       } else {
         //Get the student info from api call
         const studentInfo = await StudentService.shared.getStudentInfo();

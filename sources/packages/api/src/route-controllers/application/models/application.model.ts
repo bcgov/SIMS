@@ -10,8 +10,16 @@ export interface CreateApplicationDto {
    */
   associatedFiles: string[];
 }
-
 export interface GetApplicationDataDto {
+  /**
+   * Application dynamic data.
+   */
+  data: any;
+  id: number;
+  applicationStatus: ApplicationStatus;
+  applicationStatusUpdatedOn: Date;
+}
+export interface ApplicationDataDto {
   /**
    * Application dynamic data.
    */

@@ -1,5 +1,8 @@
 import ApiClient from "../services/http/ApiClient";
-import { ApplicationStatusToBeUpdatedDto } from "@/types/contracts/students/ApplicationContract";
+import {
+  ApplicationStatusToBeUpdatedDto,
+  GetApplicationDataDto,
+} from "@/types/contracts/students/ApplicationContract";
 
 export class ApplicationService {
   // Share Instance
@@ -24,5 +27,10 @@ export class ApplicationService {
       applicationId,
       payload,
     );
+  }
+  public async getApplicationData(
+    applicationId: number,
+  ): Promise<GetApplicationDataDto> {
+    return ApiClient.Application.getApplicationData(applicationId);
   }
 }
