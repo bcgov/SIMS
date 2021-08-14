@@ -2,11 +2,10 @@
  * commonly used functions
  */
 import * as dayjs from "dayjs";
-
-const utc = require("dayjs/plugin/utc");
-const localizedFormat = require("dayjs/plugin/localizedFormat");
-dayjs.extend(localizedFormat);
+import * as utc from "dayjs/plugin/utc"; // import plugin
+import * as localizedFormat from "dayjs/plugin/localizedFormat"; // import plugin
 dayjs.extend(utc);
+dayjs.extend(localizedFormat);
 /**
  * get utc date time now
  * @returns date now in utc
