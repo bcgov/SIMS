@@ -77,7 +77,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       associatedFiles,
     );
 
-    return await this.repo.save(application);
+    return this.repo.save(application);
   }
 
   /**

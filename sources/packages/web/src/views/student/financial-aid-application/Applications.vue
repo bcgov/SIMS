@@ -1,4 +1,22 @@
 <template>
+  <v-dialog v-model="showOnlyOneDraftDialog">
+    <v-card>
+      <v-card-title class="text-h6">
+        <v-icon class="mr-2" size="35" color="orange">mdi-alert</v-icon>
+        Application already in progress
+      </v-card-title>
+      <v-card-text>
+        <p>There is already a draft of an application in progress.</p>
+        <p>Please continue your draft application or cancel it.</p>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="showOnlyOneDraftDialog = false">
+          Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <div>
     <Dropdown
       class="p-col-12"
@@ -39,6 +57,7 @@ export default {
     const toast = useToastMessage();
     const programYearList = ref();
     const formName = ref();
+    const showOnlyOneDraftDialog = ref(false);
     const onYearChange = (event: any) => {
       context.emit("update:formName", event.value);
       context.emit("change", event);
@@ -61,10 +80,7 @@ export default {
           },
         );
         if (createDraftResult.draftAlreadyExists) {
-          toast.error(
-            "Not able to start a new application",
-            "There is a draft of an application in progress. Please continue it or remove it.",
-          );
+          showOnlyOneDraftDialog.value = true;
           return;
         }
         router.push({
@@ -88,6 +104,7 @@ export default {
       formName,
       StudentRoutesConst,
       startNewApplication,
+      showOnlyOneDraftDialog,
     };
   },
 };
