@@ -20,7 +20,8 @@
         $router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: formName,
+            selectedForm: formName.formName,
+            programYearId: formName.id,
           },
         })
       "

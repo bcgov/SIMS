@@ -3,7 +3,7 @@
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
         <formio
-          :formName="formName"
+          :formName="selectedForm"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
@@ -20,7 +20,6 @@ import { onMounted, ref, computed } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
 import { useFormioDropdownLoader, useFormioUtils } from "../../../composables";
-import { ProgramYear } from "@/types";
 
 export default {
   components: {
@@ -35,11 +34,12 @@ export default {
       type: String,
       required: true,
     },
+    programYearId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
-    const formName = computed(() => {
-      return props.selectedForm.formName;
-    });
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -53,7 +53,7 @@ export default {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
         await ApiClient.Application.createApplication({
           data: args,
-          programYearId: props.selectedForm.programYearId,
+          programYearId: props.programYearId,
           associatedFiles,
         });
       } catch (error) {
@@ -128,7 +128,7 @@ export default {
       }
     };
 
-    return { initialData, formName, formLoaded, formChanged, submitted };
+    return { initialData, formLoaded, formChanged, submitted };
   },
 };
 </script>

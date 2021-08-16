@@ -89,7 +89,7 @@ export class Application extends RecordDataModel {
     name: "program_year_id",
     referencedColumnName: ColumnNames.ID,
   })
-  programYear?: ProgramYear;
+  programYear: ProgramYear;
 
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
