@@ -9,9 +9,9 @@ import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
 
 export function createFakeApplication(
-  programYear?: ProgramYear,
   student?: Student,
   offering?: EducationProgramOffering,
+  programYear?: ProgramYear,
 ): Application {
   const application = new Application();
   application.data = {};
