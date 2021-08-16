@@ -30,17 +30,16 @@
       :showModal="showModal"
       :applicationId="id"
       @showHidecancelApplication="showHidecancelApplication"
-      @getApplicationDetails="getApplicationDetails"
+      @reloadData="getApplicationDetails"
     />
 
     <v-container class="pt-12">
-      <!-- <div
+      <div
         class="bg-white application-info-border"
         v-if="
           applicationDetails.applicationStatus == ApplicationStatus.cancelled
         "
-      > -->
-        <div class="bg-white application-info-border">
+      >
         <p>
           <v-icon color="primary">mdi-information </v-icon
           ><span class="pl-2 font-weight-bold">For your information</span>

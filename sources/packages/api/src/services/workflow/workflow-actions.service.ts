@@ -59,6 +59,23 @@ export class WorkflowActionsService {
     }
   }
 
+  /**
+   * delete application assessment.
+   * @param assessmentWorkflowId workflow Id to be deleted.
+   * @returns .
+   */
+  async deleteApplicationAssessment(
+    assessmentWorkflowId: string,
+  ): Promise<number> {
+    try {
+      return await this.workflowService.delete(assessmentWorkflowId);
+    } catch (error) {
+      throw new Error(
+        `Error while deleting application assessment workflow: ${assessmentWorkflowId}, error: ${error}`,
+      );
+    }
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

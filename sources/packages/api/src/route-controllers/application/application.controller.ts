@@ -26,7 +26,7 @@ import {
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { StudentFile } from "../../database/entities";
+import { StudentFile, ApplicationStatus } from "../../database/entities";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -51,7 +51,6 @@ export class ApplicationController extends BaseController {
         applicationId,
         userToken.userName,
       );
-    console.log(application);
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
@@ -76,7 +75,6 @@ export class ApplicationController extends BaseController {
       "SFAA2022-23",
       payload.data,
     );
-
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create an applicaion due to an invalid request.",
@@ -190,18 +188,36 @@ export class ApplicationController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
-
     if (!student) {
       throw new UnprocessableEntityException(
         "The user is not associated with a student.",
       );
     }
-    const updateResult =
-      await this.applicationService.updateStudentApplicationStatus(
+    const studentApplication =
+      await this.applicationService.getStudentApplicationStatus(
         applicationId,
-        payload.applicationStatus,
         student,
       );
+
+    if (!studentApplication) {
+      throw new UnprocessableEntityException(
+        `Application ${applicationId} associated with student ${student.id} does not exist.`,
+      );
+    }
+    // workflow doest not exists for draft application
+    if (studentApplication.applicationStatus !== ApplicationStatus.draft && studentApplication.assessmentWorkflowId) {
+      // Calling the API to stop assessment process
+      await this.workflow.deleteApplicationAssessment(
+        studentApplication.assessmentWorkflowId,
+      );
+    }
+    // updating the application status
+    const updateResult =
+      await this.applicationService.updateStudentApplicationStatus(
+        studentApplication.id,
+        payload.applicationStatus,
+      );
+
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         `Application Status update for Application ${applicationId} failed.`,

@@ -22,8 +22,8 @@ export class ApplicationService {
   public async updateStudentApplicationStatus(
     applicationId: number,
     payload: ApplicationStatusToBeUpdatedDto,
-  ) {
-    return ApiClient.Application.updateStudentApplicationStatus(
+  ): Promise<void> {
+    await ApiClient.Application.updateStudentApplicationStatus(
       applicationId,
       payload,
     );

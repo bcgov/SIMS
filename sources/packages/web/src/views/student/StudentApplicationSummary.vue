@@ -41,11 +41,14 @@
             </template>
           </Column>
           <Column field="id" header=""
-            ><template #body="">
+            ><template #body="slotProps">
               <!-- TODO: below action buttons should only show if status is not complete -->
               <span>
                 <v-btn plain>
-                  <v-icon size="25" v-tooltip="'Click To Edit this Application'"
+                  <v-icon
+                    size="25"
+                    v-tooltip="'Click To Edit this Application'"
+                    @click="openConfirmCancel(slotProps.data.id)"
                     >mdi-pencil</v-icon
                   ></v-btn
                 >
@@ -62,6 +65,12 @@
         </DataTable>
       </v-col>
     </v-row>
+    <CancelApplication
+      :showModal="showModal"
+      :applicationId="selectedApplicationId"
+      @showHidecancelApplication="showHidecancelApplication"
+      @reloadData="loadApplicationSummary"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -75,18 +84,22 @@ import { StudentApplication } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import Tooltip from "primevue/tooltip";
+import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 
 export default {
   components: {
     StartApplication,
     DataTable,
     Column,
+    CancelApplication,
   },
   directives: {
     tooltip: Tooltip,
   },
   setup() {
+    const showModal = ref(false);
     const router = useRouter();
+    const selectedApplicationId = ref(0);
     const { dateString } = useFormatters();
     const myApplications = ref([] as StudentApplication[]);
     const getApplicationStatusClass = (status: string) => {
@@ -109,6 +122,13 @@ export default {
           return "";
       }
     };
+    const openConfirmCancel = (id: number) => {
+      showModal.value = true;
+      selectedApplicationId.value = id;
+    };
+    const showHidecancelApplication = () => {
+      showModal.value = !showModal.value;
+    };
     const goToApplication = (id: number) => {
       return router.push({
         name: StudentRoutesConst.STUDEN_APPLICATION_DETAILS,
@@ -117,14 +137,22 @@ export default {
         },
       });
     };
-    onMounted(async () => {
+    const loadApplicationSummary = async () => {
       myApplications.value = await StudentService.shared.getAllStudentApplications();
+    };
+    onMounted(async () => {
+      await loadApplicationSummary();
     });
     return {
       myApplications,
       goToApplication,
       dateString,
       getApplicationStatusClass,
+      openConfirmCancel,
+      showModal,
+      selectedApplicationId,
+      showHidecancelApplication,
+      loadApplicationSummary,
     };
   },
 };

@@ -63,6 +63,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     newApplication.applicationNumber = applicationNumber;
     newApplication.applicationStatus = ApplicationStatus.submitted;
+    newApplication.applicationStatusUpdatedOn = getUTCNow();
     return await this.repo.save(newApplication);
   }
 
@@ -368,18 +369,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Only allow the application with Non Completed status to update the status
    * @param applicationId application id.
    * @param applicationStatus application status that need to be updated.
-   * @param student student id.
-   * @returns student Application object.
+   * @returns student Application UpdateResult.
    */
   async updateStudentApplicationStatus(
     applicationId: number,
     applicationStatus: ApplicationStatus,
-    student: Student,
   ): Promise<UpdateResult> {
     return await this.repo.update(
       {
         id: applicationId,
-        student: student,
         applicationStatus: Not(ApplicationStatus.completed),
       },
       {
@@ -424,5 +422,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .addOrderBy("application.applicationNumber")
       .getMany();
+  }
+  /**
+   * get Student Application.
+   * @param applicationId application id.
+   * @param student student id.
+   * @returns student Application object.
+   */
+  async getStudentApplicationStatus(
+    applicationId: number,
+    student: Student,
+  ): Promise<Application> {
+    return await this.repo.findOne({
+      id: applicationId,
+      student: student,
+    });
   }
 }

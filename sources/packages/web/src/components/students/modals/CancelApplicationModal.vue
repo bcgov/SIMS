@@ -57,7 +57,7 @@ export default {
       required: true,
     },
   },
-  emits: ["showHidecancelApplication", "getApplicationDetails"],
+  emits: ["showHidecancelApplication", "reloadData"],
   setup(props: any, context: any) {
     const toast = useToastMessage();
     const updateShowCancelApplicationModal = () => {
@@ -73,7 +73,7 @@ export default {
           payload,
         );
         updateShowCancelApplicationModal();
-        context.emit("getApplicationDetails", props.applicationId);
+        context.emit("reloadData", props.applicationId);
         toast.success(
           "Application Cancelled",
           "Your application is now canceled!",
