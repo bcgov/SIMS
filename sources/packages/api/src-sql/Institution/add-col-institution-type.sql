@@ -1,4 +1,4 @@
--- Create program_year_id -  The default 2 is the Program Year 2022-2023, this is used to ensure not null constraint. 
+-- Add column institution_type_id as we will be storing the institution type of each enstitution created/modified
 ALTER TABLE
     sims.institutions
 ADD
@@ -6,7 +6,7 @@ ADD
 
 COMMENT ON COLUMN sims.institutions.institution_type_id IS 'References the institution type of the institution';
 
---Default constraint for the program_year_id is removed after the not null constraint is enforced
+--Default constraint for the institution_type_id is removed after the not null constraint is enforced
 ALTER TABLE
     sims.institutions
 ALTER
