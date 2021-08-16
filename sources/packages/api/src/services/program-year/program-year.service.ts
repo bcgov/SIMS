@@ -18,14 +18,14 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
   }
 
   /**
-   * Validate Program Year of an Application,
+   * Get the Program Year of an Application,
    * if the ProgramYear is not active
    *  return null
-   * else r
+   * else
    *  return the ProgramYear row
    * @param programYearId Selected Form ProgramYear of the application
    */
-  async getProgramYear(programYearId: number): Promise<ProgramYear> {
+  async getActiveProgramYear(programYearId: number): Promise<ProgramYear> {
     return this.repo
       .createQueryBuilder("programYear")
       .where("programYear.is_active = true")

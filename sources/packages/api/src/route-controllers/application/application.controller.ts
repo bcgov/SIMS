@@ -68,12 +68,12 @@ export class ApplicationController extends BaseController {
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
-    const programYear = await this.programYearService.getProgramYear(
+    const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
 
     if (!programYear) {
-      throw new BadRequestException(
+      throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request",
       );
     }

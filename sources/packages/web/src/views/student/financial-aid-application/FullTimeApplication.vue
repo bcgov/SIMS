@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import formio from "../../../components/generic/formio.vue";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
 import ApiClient from "../../../services/http/ApiClient";
 import { useFormioDropdownLoader, useFormioUtils } from "../../../composables";
