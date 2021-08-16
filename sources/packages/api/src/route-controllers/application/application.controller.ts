@@ -12,16 +12,16 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  APPLICATION_DRAFT_NOT_FOUND,
   FormService,
-  ONLY_ONE_DRAFT_ERROR,
   StudentService,
   WorkflowActionsService,
+  APPLICATION_DRAFT_NOT_FOUND,
+  ONLY_ONE_DRAFT_ERROR,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
-  CreateApplicationDto,
+  SaveApplicationDto,
   GetApplicationDataDto,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -59,13 +59,24 @@ export class ApplicationController extends BaseController {
     return { data: application.data };
   }
 
+  /**
+   * Submit an existing student application changing the status
+   * to submitted and triggering the necessary processes.
+   * The system will ensure that an application will always be
+   * transitioning from draft to submitted status. The student
+   * application is not supposed to be created directly in the
+   * submitted status in any scenario.
+   * @param payload payload to create the draft application.
+   * @param applicationId application id to be changed to submitted.
+   * @param userToken token from the authenticated student.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
   async submitApplication(
-    @Body() payload: CreateApplicationDto,
+    @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<number> {
+  ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
       "SFAA2022-23",
       payload.data,
@@ -121,14 +132,22 @@ export class ApplicationController extends BaseController {
         "Error while associating the assessment workflow.",
       );
     }
-
-    return submittedApplication.id;
   }
 
+  /**
+   * Creates a new application draft for the authenticated student.
+   * The student is allowed to have only one draft application, so
+   * this method will create the draft or throw an exception in case
+   * of the draft already exists.
+   * @param payload payload to create the draft application.
+   * @param userToken token from the authenticated student.
+   * @returns the application id of the created draft or an
+   * HTTP exception if it is not possible to create it.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
   async createDraft(
-    @Body() payload: CreateApplicationDto,
+    @Body() payload: SaveApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
     const student = await this.studentService.getStudentByUserId(
@@ -155,10 +174,16 @@ export class ApplicationController extends BaseController {
     }
   }
 
+  /**
+   * Updates an existing application draft
+   * @param payload payload to update the draft application.
+   * @param applicationId draft application id.
+   * @param userToken token from the authenticated student.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
   async updateDraft(
-    @Body() payload: CreateApplicationDto,
+    @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {

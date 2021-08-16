@@ -22,6 +22,7 @@ export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const ONLY_ONE_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
+
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
@@ -39,12 +40,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Submits a Student Application.
    * The system ensures that there is an application draft prior
-   * the application submission.
+   * to the application submission.
    * @param applicationId application id that must be updated to submitted.
    * @param studentId student id for authorization validations.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
-   * @returns application
+   * @returns the updated application.
    */
   async submitApplication(
     applicationId: number,
@@ -110,6 +111,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Saves an Student Application in draft state.
+   * If the application id is provided an update is performed,
+   * otheriwse the draft will be created. The validations are also
+   * apllied accordingly to update/create scenarios.
    * @param studentId student id.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
@@ -126,15 +130,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       studentId,
       ApplicationStatus.draft,
     );
-
+    // If an application id is provided it means that an update is supposed to happen,
+    // so an application draft is expected to be find. If not found, thown an error.
     if (applicationId && !draftApplication) {
       throw new CustomNamedError(
         "Not able to find the draft application associated with the student.",
         APPLICATION_DRAFT_NOT_FOUND,
       );
     }
-
-    if (draftApplication && draftApplication.id !== applicationId) {
+    // If an application id is provided, an insert is supposed to happen
+    // but, if an draft application already exists, it means that it is an
+    // attempt to create a second draft and the student is supposed to
+    // have only one draft.
+    if (!applicationId && draftApplication) {
       throw new CustomNamedError(
         "There is already an existing draft application associated with the current student.",
         ONLY_ONE_DRAFT_ERROR,

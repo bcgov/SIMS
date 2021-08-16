@@ -1,4 +1,4 @@
-export interface CreateApplicationDto {
+export interface SaveApplicationDto {
   /**
    * Application dynamic data.
    */
