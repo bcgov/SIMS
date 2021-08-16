@@ -13,6 +13,7 @@ import {
   StudentFile,
   AssessmentStatus,
   COEStatus,
+  ProgramYear,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
@@ -34,6 +35,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   async createApplication(
     studentId: number,
+    programYearId: number,
     applicationDto: CreateApplicationDto,
     studentFiles: StudentFile[],
   ): Promise<Application> {
@@ -55,6 +57,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       sequenceName +
       `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0");
     newApplication.student = { id: studentId } as Student;
+    newApplication.programYear = { id: programYearId } as ProgramYear;
     newApplication.data = applicationDto.data;
     newApplication.studentFiles = studentFiles.map((file) => {
       const newFileAssociation = new ApplicationStudentFile();

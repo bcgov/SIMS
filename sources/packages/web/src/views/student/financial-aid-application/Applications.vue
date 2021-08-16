@@ -2,10 +2,10 @@
   <div>
     <Dropdown
       class="p-col-12"
-      v-model="formName"
+      v-model="programYear"
       :options="programYearList"
       optionLabel="name"
-      optionValue="code"
+      optionValue="programYear"
       placeholder="Select a Program Year"
       :style="{ width: '30vw' }"
       @change="onYearChange"
@@ -15,12 +15,13 @@
     <v-btn
       color="primary"
       class="p-button-raised float-right"
-      :disabled="!formName"
+      :disabled="!programYear"
       @click="
         $router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: formName,
+            selectedForm: programYear.formName,
+            programYearId: programYear.id,
           },
         })
       "
@@ -37,26 +38,31 @@ import { ProgramYear } from "@/types/contracts/ProgramYearContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
-  emits: ["update:formName", "change"],
+  emits: ["update:programYear", "change"],
   setup(props: any, context: SetupContext) {
     const programYearList = ref();
-    const formName = ref();
+    const programYear = ref();
     const onYearChange = (event: any) => {
-      context.emit("update:formName", event.value);
+      context.emit("update:programYear", event.value);
       context.emit("change", event);
     };
     onMounted(async () => {
       const programYears = await ProgramYearService.shared.getProgramYears();
-      programYearList.value = programYears.map((programYear: ProgramYear) => ({
-        name:
-          "(" + programYear.programYear + ") - " + programYear.programYearDesc,
-        code: programYear.formName,
-      }));
+      programYearList.value = programYears.map(
+        (programYearItem: ProgramYear) => ({
+          name:
+            "(" +
+            programYearItem.programYear +
+            ") - " +
+            programYearItem.programYearDesc,
+          programYear: programYearItem,
+        }),
+      );
     });
     return {
       programYearList,
       onYearChange,
-      formName,
+      programYear,
       StudentRoutesConst,
     };
   },
