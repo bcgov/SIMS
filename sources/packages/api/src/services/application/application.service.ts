@@ -378,7 +378,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     applicationStatus: ApplicationStatus,
   ): Promise<UpdateResult> {
-    return await this.repo.update(
+    return this.repo.update(
       {
         id: applicationId,
         applicationStatus: Not(ApplicationStatus.completed),
@@ -436,7 +436,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     student: Student,
   ): Promise<Application> {
-    return await this.repo.findOne({
+    return this.repo.findOne({
       id: applicationId,
       student: student,
     });

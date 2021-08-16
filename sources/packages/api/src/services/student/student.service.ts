@@ -189,7 +189,6 @@ export class StudentService extends RecordDataModelService<Student> {
       id: studentId,
     });
     if (studentToUpdate) {
-      const now = new Date();
       // Date in UTC
       studentToUpdate.studentPDSentAt = getUTCNow();
       return this.repo.save(studentToUpdate);

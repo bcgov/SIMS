@@ -42,8 +42,14 @@
           </Column>
           <Column field="id" header=""
             ><template #body="slotProps">
-              <!-- TODO: below action buttons should only show if status is not complete -->
-              <span>
+              <span
+                v-if="
+                  !(
+                    slotProps.data.status === ApplicationStatus.cancelled ||
+                    slotProps.data.status === ApplicationStatus.completed
+                  )
+                "
+              >
                 <v-btn plain>
                   <v-icon
                     size="25"
@@ -85,6 +91,7 @@ import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import Tooltip from "primevue/tooltip";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import { ApplicationStatus } from "@/types/contracts/students/ApplicationContract";
 
 export default {
   components: {
@@ -153,6 +160,7 @@ export default {
       selectedApplicationId,
       showHidecancelApplication,
       loadApplicationSummary,
+      ApplicationStatus,
     };
   },
 };
