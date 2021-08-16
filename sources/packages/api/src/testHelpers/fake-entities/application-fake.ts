@@ -9,7 +9,7 @@ import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
 
 export function createFakeApplication(
-  programYear: ProgramYear,
+  programYear?: ProgramYear,
   student?: Student,
   offering?: EducationProgramOffering,
 ): Application {
