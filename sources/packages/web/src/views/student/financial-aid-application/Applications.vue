@@ -34,6 +34,7 @@
 <script lang="ts">
 import { ProgramYearService } from "@/services/ProgramYearService";
 import { SetupContext, onMounted, ref } from "vue";
+import { ProgramYear } from "@/types/contracts/ProgramYearContract";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
@@ -47,11 +48,16 @@ export default {
     };
     onMounted(async () => {
       const programYears = await ProgramYearService.shared.getProgramYears();
-      programYearList.value = programYears.map((programYear) => ({
-        name:
-          "(" + programYear.programYear + ") - " + programYear.programYearDesc,
-        programYear: programYear,
-      }));
+      programYearList.value = programYears.map(
+        (programYearItem: ProgramYear) => ({
+          name:
+            "(" +
+            programYearItem.programYear +
+            ") - " +
+            programYearItem.programYearDesc,
+          programYear: programYearItem,
+        }),
+      );
     });
     return {
       programYearList,
