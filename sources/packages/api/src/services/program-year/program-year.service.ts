@@ -23,13 +23,13 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
    *  return null
    * else r
    *  return the ProgramYear row
-   * @param selectedForm Selected Form of the application
+   * @param programYearId Selected Form ProgramYear of the application
    */
-  async validateProgramYear(selectedForm: string): Promise<ProgramYear> {
+  async getProgramYear(programYearId: number): Promise<ProgramYear> {
     return this.repo
       .createQueryBuilder("programYear")
       .where("programYear.is_active = true")
-      .andWhere("programYear.formName  = :selectedForm", { selectedForm })
+      .andWhere("programYear.id  = :programYearId", { programYearId })
       .getOne();
   }
 }

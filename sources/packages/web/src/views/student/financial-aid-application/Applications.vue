@@ -50,7 +50,7 @@ export default {
       programYearList.value = programYears.map((programYear: ProgramYear) => ({
         name:
           "(" + programYear.programYear + ") - " + programYear.programYearDesc,
-        code: programYear.formName,
+        code: programYear,
       }));
     });
     return {

@@ -23,6 +23,7 @@ export class ProgramYearController extends BaseController {
       programYear: programYear.programYear,
       programYearDesc: programYear.programYearDesc,
       formName: programYear.formName,
+      id: programYear.id,
     }));
   }
 }

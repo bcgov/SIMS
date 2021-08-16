@@ -68,8 +68,8 @@ export class ApplicationController extends BaseController {
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
-    const programYear = await this.programYearService.validateProgramYear(
-      payload.selectedForm,
+    const programYear = await this.programYearService.getProgramYear(
+      payload.programYearId,
     );
 
     if (!programYear) {
@@ -78,7 +78,7 @@ export class ApplicationController extends BaseController {
       );
     }
     const submissionResult = await this.formService.dryRunSubmission(
-      payload.selectedForm,
+      programYear.formName,
       payload.data,
     );
 

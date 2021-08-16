@@ -12,7 +12,7 @@ export interface CreateApplicationDto {
    * Selected form of the application.
    * This will be used for ProgramYear active validation
    */
-  selectedForm: string;
+  programYearId: number;
 }
 
 export interface GetApplicationDataDto {
