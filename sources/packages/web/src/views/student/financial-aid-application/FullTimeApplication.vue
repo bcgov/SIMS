@@ -35,6 +35,10 @@ export default {
       type: String,
       required: true,
     },
+    programYearId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
     const initialData = ref({});
@@ -50,6 +54,7 @@ export default {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
         await ApiClient.Application.createApplication({
           data: args,
+          programYearId: props.programYearId,
           associatedFiles,
         });
       } catch (error) {

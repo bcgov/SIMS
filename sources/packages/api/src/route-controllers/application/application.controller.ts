@@ -16,6 +16,7 @@ import {
   StudentFileService,
   StudentService,
   WorkflowActionsService,
+  ProgramYearService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -36,6 +37,7 @@ export class ApplicationController extends BaseController {
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly fileService: StudentFileService,
+    private readonly programYearService: ProgramYearService,
   ) {
     super();
   }
@@ -71,8 +73,17 @@ export class ApplicationController extends BaseController {
     @Body() payload: CreateApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active. Not able to create an application invalid request",
+      );
+    }
     const submissionResult = await this.formService.dryRunSubmission(
-      "SFAA2022-23",
+      programYear.formName,
       payload.data,
     );
     if (!submissionResult.valid) {
@@ -97,6 +108,7 @@ export class ApplicationController extends BaseController {
 
     const createdApplication = await this.applicationService.createApplication(
       student.id,
+      programYear.id,
       submissionResult.data,
       studentFiles,
     );

@@ -18,3 +18,4 @@ export * from "./offering.type";
 export * from "./application-status.type";
 export * from "./assessment-status.type";
 export * from "./coe-status.type";
+export * from "./program-year.model";
