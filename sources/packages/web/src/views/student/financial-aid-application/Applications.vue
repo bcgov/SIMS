@@ -48,7 +48,7 @@ export default {
     };
     onMounted(async () => {
       const programYears = await ProgramYearService.shared.getProgramYears();
-      programYearList.value = programYears.map((programYear: ProgramYear) => ({
+      programYearList.value = programYears.map((programYear) => ({
         name:
           "(" + programYear.programYear + ") - " + programYear.programYearDesc,
         programYear: programYear,

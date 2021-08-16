@@ -1,4 +1,3 @@
-import * as faker from "faker";
 import { ProgramYear } from "../../database/entities";
 
 export function createFakeProgramYear(): ProgramYear {
