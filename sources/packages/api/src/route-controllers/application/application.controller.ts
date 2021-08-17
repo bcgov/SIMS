@@ -229,11 +229,10 @@ export class ApplicationController extends BaseController {
       );
     }
     // updating the application status
-    const updateResult =
-      await this.applicationService.updateStudentApplicationStatus(
-        studentApplication.id,
-        payload.applicationStatus,
-      );
+    const updateResult = await this.applicationService.updateApplicationStatus(
+      studentApplication.id,
+      payload.applicationStatus,
+    );
 
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(

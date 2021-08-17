@@ -356,7 +356,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationStatus application status that need to be updated.
    * @returns student Application UpdateResult.
    */
-  async updateStudentApplicationStatus(
+  async updateApplicationStatus(
     applicationId: number,
     applicationStatus: ApplicationStatus,
   ): Promise<UpdateResult> {

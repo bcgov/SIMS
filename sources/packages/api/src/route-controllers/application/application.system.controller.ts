@@ -189,7 +189,7 @@ export class ApplicationSystemController {
     @Param("id") applicationId: number,
     @Body() payload: UpdateApplicationStatusDto,
   ): Promise<void> {
-    const updateResult = await this.applicationService.updateStudentApplicationStatus(
+    const updateResult = await this.applicationService.updateApplicationStatus(
       applicationId,
       payload.status,
     );
