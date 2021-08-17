@@ -124,8 +124,8 @@ export default {
           applicationWizard,
         );
         await ApplicationService.shared.saveApplicationDraft(props.id, {
-          data: applicationWizard.submission.data,
           programYearId: props.programYearId,
+          data: applicationWizard.submission.data,
           associatedFiles,
         });
         toast.success("Draft saved!", "Application draft saved with success.");
@@ -142,6 +142,7 @@ export default {
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
         await ApplicationService.shared.submitApplication(props.id, {
+          programYearId: props.programYearId,
           data: args,
           associatedFiles,
         });

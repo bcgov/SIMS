@@ -34,7 +34,7 @@
       color="primary"
       class="p-button-raised float-right"
       :disabled="!programYear"
-      @click="startNewApplication"
+      @click="startNewApplication()"
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
       Start New Application
@@ -57,7 +57,7 @@ export default {
     const toast = useToastMessage();
     const programYearList = ref();
     const showOnlyOneDraftDialog = ref(false);
-    const programYear = ref();
+    const programYear = ref({} as ProgramYear);
     const onYearChange = (event: any) => {
       context.emit("update:programYear", event.value);
       context.emit("change", event);
@@ -65,16 +65,19 @@ export default {
 
     onMounted(async () => {
       const programYears = await ProgramYearService.shared.getProgramYears();
-      programYearList.value = programYears.map((programYear: ProgramYear) => ({
-        name: `(${programYear.programYear}) - ${programYear.programYearDesc}`,
-        programYear: programYearItem,
-      }));
+      programYearList.value = programYears.map(
+        (programYearItem: ProgramYear) => ({
+          name: `(${programYearItem.programYear}) - ${programYearItem.programYearDesc}`,
+          programYear: programYearItem,
+        }),
+      );
     });
 
     const startNewApplication = async () => {
       try {
         const createDraftResult = await ApplicationService.shared.createApplicationDraft(
           {
+            programYearId: programYear.value.id,
             data: {},
             associatedFiles: [],
           },
@@ -83,11 +86,11 @@ export default {
           showOnlyOneDraftDialog.value = true;
           return;
         }
-        $router.push({
+        router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: programYear.formName,
-            programYearId: programYear.id,
+            selectedForm: programYear.value.formName,
+            programYearId: programYear.value.id,
             id: Number(createDraftResult.draftId),
           },
         });

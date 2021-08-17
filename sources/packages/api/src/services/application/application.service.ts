@@ -46,24 +46,33 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param studentId student id for authorization validations.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
+   * @param programYearId program year associated with the submission.
    * @returns the updated application.
    */
   async submitApplication(
     applicationId: number,
     studentId: number,
+    programYearId: number,
     applicationData: any,
     associatedFiles: string[],
-    programYearId: number,
   ): Promise<Application> {
     let application = await this.getApplicationToSave(
       studentId,
       ApplicationStatus.draft,
       applicationId,
     );
-
+    // If the application was not found it is because it does not belongs to the
+    // student or it is not in draft state. Either way it will be invalid.
     if (!application) {
       throw new Error(
         "Student Application not found or it is not in the correct status to be submitted.",
+      );
+    }
+    // If the the draft was created under a different program year than
+    // the one being used to submit it, it is not valid.
+    if (application.programYear.id !== programYearId) {
+      throw new Error(
+        "Student Application program year is not the expect one.",
       );
     }
 
@@ -117,6 +126,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * otheriwse the draft will be created. The validations are also
    * apllied accordingly to update/create scenarios.
    * @param studentId student id.
+   * @param programYearId program year associated with the application draft.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
    * @param [applicationId] application id used to execute validations.
@@ -124,6 +134,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async saveDraftApplication(
     studentId: number,
+    programYearId: number,
     applicationData: any,
     associatedFiles: string[],
     applicationId?: number,
@@ -140,7 +151,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_DRAFT_NOT_FOUND,
       );
     }
-    // If an application id is provided, an insert is supposed to happen
+    // If an application id is not provided, an insert is supposed to happen
     // but, if an draft application already exists, it means that it is an
     // attempt to create a second draft and the student is supposed to
     // have only one draft.
@@ -150,12 +161,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
         ONLY_ONE_DRAFT_ERROR,
       );
     }
-
+    // If an application id is provided, an update is supposed to happen
+    // but, if an draft application already exists under a different program year
+    // the operation should not be allowed.
+    if (draftApplication && draftApplication.programYear.id !== programYearId) {
+      throw new Error(
+        "The application is already saved under a different program year.",
+      );
+    }
     // If there is no draft application, create one
     // and initialize the necessary data.
     if (!draftApplication) {
       draftApplication = new Application();
       draftApplication.student = { id: studentId } as Student;
+      draftApplication.programYear = { id: programYearId } as ProgramYear;
       draftApplication.applicationStatus = ApplicationStatus.draft;
     }
 
@@ -319,7 +338,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     let query = this.repo
       .createQueryBuilder("application")
-      .select(["application", "studentFiles", "studentFile.uniqueFileName"])
+      .select([
+        "application",
+        "programYear.id",
+        "studentFiles",
+        "studentFile.uniqueFileName",
+      ])
+      .innerJoin("application.programYear", "programYear")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
       .where("application.student.id = :studentId", { studentId })

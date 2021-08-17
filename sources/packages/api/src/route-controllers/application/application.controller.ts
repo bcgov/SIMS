@@ -117,9 +117,9 @@ export class ApplicationController extends BaseController {
       await this.applicationService.submitApplication(
         applicationId,
         student.id,
+        programYear.id,
         submissionResult.data,
         payload.associatedFiles,
-        programYear.id,
       );
 
     const assessmentWorflow = await this.workflow.startApplicationAssessment(
@@ -163,6 +163,16 @@ export class ApplicationController extends BaseController {
     @Body() payload: SaveApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active, not able to create a draft application.",
+      );
+    }
+
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
@@ -171,6 +181,7 @@ export class ApplicationController extends BaseController {
       const draftApplication =
         await this.applicationService.saveDraftApplication(
           student.id,
+          payload.programYearId,
           payload.data,
           payload.associatedFiles,
         );
@@ -207,6 +218,7 @@ export class ApplicationController extends BaseController {
     try {
       await this.applicationService.saveDraftApplication(
         student.id,
+        payload.programYearId,
         payload.data,
         payload.associatedFiles,
         applicationId,
