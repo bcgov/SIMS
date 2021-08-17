@@ -143,6 +143,7 @@ export class Application extends RecordDataModel {
 
   @Column({
     name: "application_status_updated_on",
+    nullable: false,
   })
-  applicationStatusUpdatedOn?: Date;
+  applicationStatusUpdatedOn: Date;
 }
