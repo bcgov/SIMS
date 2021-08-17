@@ -44,9 +44,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * to the application submission.
    * @param applicationId application id that must be updated to submitted.
    * @param studentId student id for authorization validations.
+   * @param programYearId program year associated with the submission.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
-   * @param programYearId program year associated with the submission.
    * @returns the updated application.
    */
   async submitApplication(
