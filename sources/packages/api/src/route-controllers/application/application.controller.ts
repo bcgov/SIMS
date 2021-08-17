@@ -206,9 +206,9 @@ export class ApplicationController extends BaseController {
       );
     }
     const studentApplication =
-      await this.applicationService.getStudentApplicationStatus(
+      await this.applicationService.getApplicationByIdAndUserName(
         applicationId,
-        student,
+        userToken.userName,
       );
 
     if (!studentApplication) {

@@ -408,19 +408,4 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .addOrderBy("application.applicationNumber")
       .getMany();
   }
-  /**
-   * get Student Application.
-   * @param applicationId application id.
-   * @param student student id.
-   * @returns student Application object.
-   */
-  async getStudentApplicationStatus(
-    applicationId: number,
-    student: Student,
-  ): Promise<Application> {
-    return this.repo.findOne({
-      id: applicationId,
-      student: student,
-    });
-  }
 }
