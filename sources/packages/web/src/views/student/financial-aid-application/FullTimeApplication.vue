@@ -64,6 +64,7 @@ import {
   useToastMessage,
 } from "../../../composables";
 import { ApplicationService } from "@/services/ApplicationService";
+import { WizardNavigationEvent } from "@/types";
 
 export default {
   components: {
@@ -173,7 +174,7 @@ export default {
         isLastPage.value = applicationWizard.isLastPage();
       });
       // Handle the navigation using next/prev buttons.
-      const prevNextNavigation = (navigation: any) => {
+      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
         isLastPage.value = applicationWizard.isLastPage();
       };

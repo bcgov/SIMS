@@ -85,7 +85,7 @@ export class ApplicationApi extends HttpBaseClient {
   public async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
-  ): Promise<any> {
+  ): Promise<void> {
     try {
       return await this.apiClient.patch(
         `application/${applicationId}/submit`,

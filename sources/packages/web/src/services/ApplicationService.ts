@@ -51,7 +51,7 @@ export class ApplicationService {
   public async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
-  ): Promise<any> {
+  ): Promise<void> {
     return ApiClient.Application.submitApplication(applicationId, payload);
   }
 }
