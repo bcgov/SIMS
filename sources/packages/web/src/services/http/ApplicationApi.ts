@@ -68,7 +68,7 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.apiClient.patch(
-        `application/${applicationId}/update-status`,
+        `application/${applicationId}/status`,
         payload,
         this.addAuthHeader(),
       );

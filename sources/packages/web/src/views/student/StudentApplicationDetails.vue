@@ -37,7 +37,7 @@
       <div
         class="bg-white application-info-border"
         v-if="
-          applicationDetails.applicationStatus == ApplicationStatus.cancelled
+          applicationDetails.applicationStatus === ApplicationStatus.cancelled
         "
       >
         <p>

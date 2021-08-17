@@ -7,7 +7,7 @@ export enum ApplicationStatus {
    */
   draft = "Draft",
   /**
-   * The application has been submitted by the application
+   * The application has been submitted by the student
    */
   submitted = "Submitted",
   /**
@@ -26,7 +26,7 @@ export enum ApplicationStatus {
    */
   enrollment = "Enrollment",
   /**
-   * The application has been confirmed by the institution
+   * The application has been confirmed by the student
    */
   completed = "Completed",
   /**

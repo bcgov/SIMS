@@ -191,7 +191,7 @@ export class ApplicationController extends BaseController {
    * @body payload contains the status, that need to be updated
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Patch(":applicationId/update-status")
+  @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
     @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
@@ -211,8 +211,9 @@ export class ApplicationController extends BaseController {
     // delete workflow if the payload status is cancelled
     // workflow doest not exists for draft application
     if (
-      payload.applicationStatus === ApplicationStatus.cancelled &&
-      studentApplication.applicationStatus !== ApplicationStatus.draft &&
+      payload &&
+      ApplicationStatus.cancelled === payload.applicationStatus &&
+      ApplicationStatus.draft !== studentApplication.applicationStatus &&
       studentApplication.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
