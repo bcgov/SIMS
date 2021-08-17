@@ -348,6 +348,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
       .where("application.student.id = :studentId", { studentId })
+      .andWhere("programYear.active = true")
       .andWhere("application.applicationStatus = :status", { status });
     if (applicationId) {
       query = query.andWhere("application.id = :applicationId", {
