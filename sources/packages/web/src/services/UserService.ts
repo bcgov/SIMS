@@ -2,6 +2,8 @@ import ApiClient from "./http/ApiClient";
 import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
+  InstitutionUserDetailsDto,
+  InstitutionUserPersistDto,
 } from "../types/contracts/UserContract";
 
 export class UserService {
@@ -36,5 +38,13 @@ export class UserService {
 
   async checkActiveUser(authHeader?: any): Promise<boolean> {
     return ApiClient.User.checkActiveUser(authHeader);
+  }
+
+  async getInstitutionUser(): Promise<InstitutionUserDetailsDto> {
+    return ApiClient.User.getinstitutionUser();
+  }
+
+  async updateInstitutionUser(data: InstitutionUserPersistDto): Promise<void> {
+    return ApiClient.User.updateInstitutionUser(data);
   }
 }

@@ -13,6 +13,7 @@ import {
   StudentFile,
   AssessmentStatus,
   COEStatus,
+  ProgramYear,
 } from "../../database/entities";
 import { CustomNamedError } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
@@ -52,6 +53,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId: number,
     applicationData: any,
     associatedFiles: string[],
+    programYearId: number,
   ): Promise<Application> {
     let application = await this.getApplicationToSave(
       studentId,

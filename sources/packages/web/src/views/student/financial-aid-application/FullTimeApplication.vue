@@ -78,6 +78,10 @@ export default {
       type: String,
       required: true,
     },
+    programYearId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
     const initialData = ref({});
@@ -121,6 +125,7 @@ export default {
         );
         await ApplicationService.shared.saveApplicationDraft(props.id, {
           data: applicationWizard.submission.data,
+          programYearId: props.programYearId,
           associatedFiles,
         });
         toast.success("Draft saved!", "Application draft saved with success.");

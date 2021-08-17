@@ -1,4 +1,10 @@
-import { Controller, Get, UnprocessableEntityException } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   BCeIDService,
   UserService,
@@ -8,6 +14,8 @@ import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { BCeIDDetailsDto } from "./models/bceid-account.dto";
+import { InstitutionUserDto } from "./models/institution-user.dto";
+import { InstitutionUserPersistDto } from "./models/institution-user-persist.dto";
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -119,5 +127,32 @@ export class UserController extends BaseController {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  @Get("/institution")
+  async institutionDetail(
+    @UserToken() userToken: IUserToken,
+  ): Promise<InstitutionUserDto> {
+    const user = await this.service.getActiveUser(userToken.userName);
+    if (!user) {
+      throw new UnprocessableEntityException("No user record found for user");
+    }
+    const institutionUser = new InstitutionUserDto();
+    institutionUser.userEmail = user.email;
+    institutionUser.userFirstName = user.firstName;
+    institutionUser.userLastName = user.lastName;
+    return institutionUser;
+  }
+
+  @Patch("/institution")
+  async updateInstitutionUser(
+    @UserToken() userToken: IUserToken,
+    @Body() body: InstitutionUserPersistDto,
+  ): Promise<void> {
+    const user = await this.service.getActiveUser(userToken.userName);
+    if (!user) {
+      throw new UnprocessableEntityException("No user record found for user");
+    }
+    this.service.updateUserEmail(user.id, body.userEmail);
   }
 }

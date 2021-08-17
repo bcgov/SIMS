@@ -20,10 +20,10 @@
   <div>
     <Dropdown
       class="p-col-12"
-      v-model="formName"
+      v-model="programYear"
       :options="programYearList"
       optionLabel="name"
-      optionValue="code"
+      optionValue="programYear"
       placeholder="Select a Program Year"
       :style="{ width: '30vw' }"
       @change="onYearChange"
@@ -33,7 +33,7 @@
     <v-btn
       color="primary"
       class="p-button-raised float-right"
-      :disabled="!formName"
+      :disabled="!programYear"
       @click="startNewApplication"
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
@@ -51,15 +51,15 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { useToastMessage } from "@/composables";
 
 export default {
-  emits: ["update:formName", "change"],
+  emits: ["update:programYear", "change"],
   setup(props: any, context: SetupContext) {
     const router = useRouter();
     const toast = useToastMessage();
     const programYearList = ref();
-    const formName = ref();
     const showOnlyOneDraftDialog = ref(false);
+    const programYear = ref();
     const onYearChange = (event: any) => {
-      context.emit("update:formName", event.value);
+      context.emit("update:programYear", event.value);
       context.emit("change", event);
     };
 
@@ -67,7 +67,7 @@ export default {
       const programYears = await ProgramYearService.shared.getProgramYears();
       programYearList.value = programYears.map((programYear: ProgramYear) => ({
         name: `(${programYear.programYear}) - ${programYear.programYearDesc}`,
-        code: programYear.formName,
+        programYear: programYearItem,
       }));
     });
 
@@ -83,10 +83,11 @@ export default {
           showOnlyOneDraftDialog.value = true;
           return;
         }
-        router.push({
+        $router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: formName.value,
+            selectedForm: programYear.formName,
+            programYearId: programYear.id,
             id: Number(createDraftResult.draftId),
           },
         });
@@ -101,7 +102,7 @@ export default {
     return {
       programYearList,
       onYearChange,
-      formName,
+      programYear,
       StudentRoutesConst,
       startNewApplication,
       showOnlyOneDraftDialog,

@@ -15,6 +15,7 @@ import {
   FormService,
   StudentService,
   WorkflowActionsService,
+  ProgramYearService,
   APPLICATION_DRAFT_NOT_FOUND,
   ONLY_ONE_DRAFT_ERROR,
 } from "../../services";
@@ -35,6 +36,7 @@ export class ApplicationController extends BaseController {
     private readonly formService: FormService,
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
+    private readonly programYearService: ProgramYearService,
   ) {
     super();
   }
@@ -77,8 +79,18 @@ export class ApplicationController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active. Not able to create an application invalid request",
+      );
+    }
+
     const submissionResult = await this.formService.dryRunSubmission(
-      "SFAA2022-23",
+      programYear.formName,
       payload.data,
     );
 
@@ -107,6 +119,7 @@ export class ApplicationController extends BaseController {
         student.id,
         submissionResult.data,
         payload.associatedFiles,
+        programYear.id,
       );
 
     const assessmentWorflow = await this.workflow.startApplicationAssessment(
