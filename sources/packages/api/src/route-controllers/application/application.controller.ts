@@ -17,7 +17,7 @@ import {
   WorkflowActionsService,
   ProgramYearService,
   APPLICATION_DRAFT_NOT_FOUND,
-  ONLY_ONE_DRAFT_ERROR,
+  MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -159,7 +159,7 @@ export class ApplicationController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
-  async createDraft(
+  async createDraftApplication(
     @Body() payload: SaveApplicationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<number> {
@@ -187,13 +187,13 @@ export class ApplicationController extends BaseController {
         );
       return draftApplication.id;
     } catch (error) {
-      if (error.name === ONLY_ONE_DRAFT_ERROR) {
+      if (error.name === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR) {
         throw new UnprocessableEntityException(
           new ApiProcessError(error.message, error.name),
         );
       }
       throw new InternalServerErrorException(
-        "Unexpected error while creating the application draft.",
+        "Unexpected error while creating the draft application.",
       );
     }
   }
@@ -206,7 +206,7 @@ export class ApplicationController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
-  async updateDraft(
+  async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -228,7 +228,7 @@ export class ApplicationController extends BaseController {
         throw new NotFoundException(error);
       }
       throw new InternalServerErrorException(
-        "Unexpected error while updating the application draft.",
+        "Unexpected error while updating the draft application.",
       );
     }
   }

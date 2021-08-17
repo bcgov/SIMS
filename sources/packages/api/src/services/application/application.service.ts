@@ -21,7 +21,7 @@ import { StudentFileService } from "../student-file/student-file.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
-export const ONLY_ONE_DRAFT_ERROR =
+export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
 
 @Injectable()
@@ -72,7 +72,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // the one being used to submit it, it is not valid.
     if (application.programYear.id !== programYearId) {
       throw new Error(
-        "Student Application program year is not the expect one.",
+        "Student Application program year is not the expected one.",
       );
     }
 
@@ -158,7 +158,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (!applicationId && draftApplication) {
       throw new CustomNamedError(
         "There is already an existing draft application associated with the current student.",
-        ONLY_ONE_DRAFT_ERROR,
+        MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
       );
     }
     // If an application id is provided, an update is supposed to happen

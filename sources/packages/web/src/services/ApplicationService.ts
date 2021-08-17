@@ -2,7 +2,7 @@ import {
   CreateApplicationDraftResult,
   SaveStudentApplicationDto,
 } from "@/types";
-import { ONLY_ONE_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
+import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
 
 export class ApplicationService {
@@ -34,7 +34,9 @@ export class ApplicationService {
       );
       return { draftAlreadyExists: false, draftId: appliationId };
     } catch (error) {
-      if (error.response.data?.errorType === ONLY_ONE_DRAFT_ERROR) {
+      if (
+        error.response.data?.errorType === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR
+      ) {
         return { draftAlreadyExists: true };
       }
       throw error;
