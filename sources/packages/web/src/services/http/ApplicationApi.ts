@@ -1,3 +1,4 @@
+import { SaveStudentApplicationDto } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationStatusToBeUpdatedDto,
@@ -5,22 +6,7 @@ import {
 } from "@/types/contracts/students/ApplicationContract";
 
 export class ApplicationApi extends HttpBaseClient {
-  public async createApplication(data: any): Promise<any> {
-    try {
-      return await this.apiClient.post(
-        "application",
-        data,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async getApplicationData(
-    applicationId: number,
-  ): Promise<GetApplicationDataDto> {
+  public async getApplicationData(applicationId: number): Promise<any> {
     try {
       const response = await this.apiClient.get(
         `application/${applicationId}`,
@@ -69,6 +55,60 @@ export class ApplicationApi extends HttpBaseClient {
     try {
       await this.apiClient.patch(
         `application/${applicationId}/status`,
+        payload,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async createApplicationDraft(
+    payload: SaveStudentApplicationDto,
+  ): Promise<number> {
+    try {
+      const response = await this.apiClient.post(
+        "application/draft",
+        payload,
+        this.addAuthHeader(),
+      );
+      return +response.data;
+    } catch (error) {
+      if (!error.response.data?.errorType) {
+        // If it is an not expected error,
+        // handle it the default way.
+        this.handleRequestError(error);
+      }
+
+      throw error;
+    }
+  }
+
+  public async saveApplicationDraft(
+    applicationId: number,
+    payload: SaveStudentApplicationDto,
+  ): Promise<number> {
+    try {
+      const response = await this.apiClient.patch(
+        `application/${applicationId}/draft`,
+        payload,
+        this.addAuthHeader(),
+      );
+      return +response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async submitApplication(
+    applicationId: number,
+    payload: SaveStudentApplicationDto,
+  ): Promise<void> {
+    try {
+      return await this.apiClient.patch(
+        `application/${applicationId}/submit`,
         payload,
         this.addAuthHeader(),
       );

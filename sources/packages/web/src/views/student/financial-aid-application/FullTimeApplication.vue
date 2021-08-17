@@ -2,13 +2,53 @@
   <v-container class="center-container application-container">
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
+        <v-row class="center-container application-container mb-5 text-right">
+          <v-col md="12" class="ml-auto ">
+            <v-btn
+              color="primary"
+              class="mr-5"
+              v-show="!isFirstPage"
+              text
+              :loading="savingDraft"
+              @click="saveDraft()"
+            >
+              <v-icon left :size="25"> mdi-pencil </v-icon
+              >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+            >
+            <v-btn
+              :disabled="!isLastPage || submittingApplication"
+              v-show="!isFirstPage"
+              color="primary"
+              @click="wizardSubmit()"
+              >{{
+                submittingApplication ? "Submitting..." : "Submit application"
+              }}</v-btn
+            >
+          </v-col>
+        </v-row>
         <formio
           :formName="selectedForm"
           :data="initialData"
           @loaded="formLoaded"
           @changed="formChanged"
-          @submitted="submitted"
+          @submitted="submitApplication"
         ></formio>
+        <v-row>
+          <v-col md="6">
+            <v-btn
+              color="primary"
+              v-show="!isFirstPage"
+              outlined
+              @click="wizardGoPrevious()"
+              >Previous section</v-btn
+            >
+          </v-col>
+          <v-col md="6" class="ml-auto text-right">
+            <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext()"
+              >Next section</v-btn
+            >
+          </v-col>
+        </v-row>
       </div>
     </div>
   </v-container>
@@ -18,9 +58,13 @@
 import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
-import ApiClient from "../../../services/http/ApiClient";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormioDropdownLoader, useFormioUtils } from "../../../composables";
+import {
+  useFormioDropdownLoader,
+  useFormioUtils,
+  useToastMessage,
+} from "../../../composables";
+import { WizardNavigationEvent } from "@/types";
 
 export default {
   components: {
@@ -28,8 +72,8 @@ export default {
   },
   props: {
     id: {
-      type: String,
-      required: false,
+      type: Number,
+      required: true,
     },
     selectedForm: {
       type: String,
@@ -44,63 +88,129 @@ export default {
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
-    const submitted = async (args: any, form: any) => {
-      if (props.id) {
-        // TODO: Define how the update will happen.
-        return;
-      }
+    const toast = useToastMessage();
+    const savingDraft = ref(false);
+    const submittingApplication = ref(false);
+    const isFirstPage = ref(true);
+    const isLastPage = ref(false);
+    let applicationWizard: any;
 
+    onMounted(async () => {
+      //Get the student information and application information.
+      const [studentInfo, applicationData] = await Promise.all([
+        StudentService.shared.getStudentInfo(),
+        ApplicationService.shared.getApplicationData(props.id),
+      ]);
+      // TODO: Move formatted address to a common place in Vue app or API.
+      // Adjust the spaces when optional fields are not present.
+      const address = studentInfo.contact;
+      const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
+      const studentFormData = {
+        studentGivenNames: studentInfo.firstName,
+        studentLastName: studentInfo.lastName,
+        studentGender: studentInfo.gender,
+        studentDateOfBirth: studentInfo.birthDateFormatted,
+        studentPhoneNumber: studentInfo.contact.phone,
+        studentHomeAddress: formattedAddress,
+        studentEmail: studentInfo.email,
+      };
+      initialData.value = { ...studentFormData, ...applicationData.data };
+    });
+
+    // Save the current state of the student application skipping all validations.
+    const saveDraft = async () => {
+      savingDraft.value = true;
       try {
-        const associatedFiles = formioUtils.getAssociatedFiles(form);
-        await ApiClient.Application.createApplication({
-          data: args,
+        const associatedFiles = formioUtils.getAssociatedFiles(
+          applicationWizard,
+        );
+        await ApplicationService.shared.saveApplicationDraft(props.id, {
           programYearId: props.programYearId,
+          data: applicationWizard.submission.data,
           associatedFiles,
         });
+        toast.success("Draft saved!", "Application draft saved with success.");
       } catch (error) {
-        console.error(error);
+        toast.error("Unexpected error!", "An unexpected error happen.");
+      } finally {
+        savingDraft.value = false;
       }
     };
 
-    onMounted(async () => {
-      if (props.id) {
-        const dataToLoad = await ApplicationService.shared.getApplicationData(
-          props.id,
+    // Execute the final submission of the student application.
+    const submitApplication = async (args: any, form: any) => {
+      submittingApplication.value = true;
+      try {
+        const associatedFiles = formioUtils.getAssociatedFiles(form);
+        await ApplicationService.shared.submitApplication(props.id, {
+          programYearId: props.programYearId,
+          data: args,
+          associatedFiles,
+        });
+        toast.success(
+          "Application saved!",
+          "Application submitted with success.",
         );
-        initialData.value = dataToLoad.data;
-      } else {
-        //Get the student info from api call
-        const studentInfo = await StudentService.shared.getStudentInfo();
-
-        // TODO: Move formatted address to a common place in Vue app or API.
-        // Adjust the spaces when optional fields are not present.
-        const address = studentInfo.contact;
-        const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
-
-        initialData.value = {
-          studentGivenNames: studentInfo.firstName,
-          studentLastName: studentInfo.lastName,
-          studentGender: studentInfo.gender,
-          studentDateOfBirth: studentInfo.birthDateFormatted,
-          studentPhoneNumber: studentInfo.contact.phone,
-          studentHomeAddress: formattedAddress,
-          studentEmail: studentInfo.email,
-        };
+      } catch (error) {
+        toast.error("Unexpected error!", "An unexpected error happen.");
+      } finally {
+        submittingApplication.value = false;
       }
-    });
+    };
 
     // Components names on Form.IO definition that will be manipulated.
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
-
     const formLoaded = async (form: any) => {
+      applicationWizard = form;
+      // Disable internal submit button.
+      formioUtils.disableWizardButtons(applicationWizard);
+      applicationWizard.options.buttonSettings.showSubmit = false;
+      // Handle the navigation using the breadcrumbs.
+      applicationWizard.on("wizardPageSelected", (page: any, index: number) => {
+        isFirstPage.value = index === 0;
+        isLastPage.value = applicationWizard.isLastPage();
+      });
+      // Handle the navigation using next/prev buttons.
+      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
+        isFirstPage.value = navigation.page === 0;
+        isLastPage.value = applicationWizard.isLastPage();
+      };
+      applicationWizard.on("prevPage", prevNextNavigation);
+      applicationWizard.on("nextPage", prevNextNavigation);
+
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
+      const selectedLocationId = formioUtils.getComponentValueByKey(
+        form,
+        LOCATIONS_DROPDOWN_KEY,
+      );
+
+      if (selectedLocationId) {
+        await formioDataLoader.loadProgramsForLocation(
+          form,
+          +selectedLocationId,
+          PROGRAMS_DROPDOWN_KEY,
+        );
+      }
+
+      const selectedProgramId = formioUtils.getComponentValueByKey(
+        form,
+        PROGRAMS_DROPDOWN_KEY,
+      );
+      if (selectedProgramId) {
+        await formioDataLoader.loadOfferingsForLocation(
+          form,
+          selectedProgramId,
+          selectedLocationId,
+          OFFERINGS_DROPDOWN_KEY,
+        );
+      }
     };
 
     const formChanged = async (form: any, event: any) => {
-      if (event.changed.component.key === LOCATIONS_DROPDOWN_KEY) {
+      if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
         await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
@@ -129,7 +239,32 @@ export default {
       }
     };
 
-    return { initialData, formLoaded, formChanged, submitted };
+    const wizardGoPrevious = () => {
+      applicationWizard.prevPage();
+    };
+
+    const wizardGoNext = () => {
+      applicationWizard.nextPage();
+    };
+
+    const wizardSubmit = () => {
+      applicationWizard.submit();
+    };
+
+    return {
+      initialData,
+      formLoaded,
+      formChanged,
+      wizardGoPrevious,
+      wizardGoNext,
+      wizardSubmit,
+      isFirstPage,
+      isLastPage,
+      saveDraft,
+      submitApplication,
+      savingDraft,
+      submittingApplication,
+    };
   },
 };
 </script>

@@ -62,6 +62,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         uniqueFileNames,
       })
       .select("studentFile.id")
+      .addSelect("studentFile.uniqueFileName")
       .getMany();
   }
 
