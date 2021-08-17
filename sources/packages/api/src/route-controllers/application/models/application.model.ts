@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
 
 export class SaveApplicationDto {
   /**
