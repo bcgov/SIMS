@@ -98,6 +98,27 @@ export function useFormioUtils() {
     return associatedFiles;
   };
 
+  const setButtonSettings = (
+    form: any,
+    settings?: {
+      showPrevious: boolean;
+      showCancel: boolean;
+      showSubmit: boolean;
+      showNext: boolean;
+    },
+  ): void => {
+    form.options.buttonSettings = settings;
+  };
+
+  const disableWizardButtons = (form: any): void => {
+    setButtonSettings(form, {
+      showPrevious: false,
+      showCancel: false,
+      showSubmit: false,
+      showNext: false,
+    });
+  };
+
   return {
     getComponent,
     redrawComponent,
@@ -105,6 +126,8 @@ export function useFormioUtils() {
     getComponentsOfType,
     getAssociatedFiles,
     recursiveSearch,
+    setButtonSettings,
+    disableWizardButtons,
     setComponentValue,
   };
 }
