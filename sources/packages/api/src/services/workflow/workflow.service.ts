@@ -49,7 +49,7 @@ export class WorkflowService {
    * Deletes process instance by a given assessmentWorkflowId.
    * @param assessmentWorkflowId workflow Id to be deleted.
    * @returns status code-204 - Request successful (Status 204. No content.).
-   * @returns status code-404 - Process instance with given id does not exist.
+   * status code-404 - Process instance with given id does not exist.
    */
   async delete(assessmentWorkflowId: string): Promise<number> {
     const deleteURL = `${this.config.ruleEngineUrl}/process-instance/${assessmentWorkflowId}`;

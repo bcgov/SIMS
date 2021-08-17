@@ -62,7 +62,7 @@ export class WorkflowActionsService {
   /**
    * delete application assessment.
    * @param assessmentWorkflowId workflow Id to be deleted.
-   * @returns .
+   * @returns status code.
    */
   async deleteApplicationAssessment(
     assessmentWorkflowId: string,

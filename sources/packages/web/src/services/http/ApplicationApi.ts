@@ -65,7 +65,7 @@ export class ApplicationApi extends HttpBaseClient {
   public async updateStudentApplicationStatus(
     applicationId: number,
     payload: ApplicationStatusToBeUpdatedDto,
-  ) {
+  ): Promise<void> {
     try {
       await this.apiClient.patch(
         `application/${applicationId}/update-status`,
