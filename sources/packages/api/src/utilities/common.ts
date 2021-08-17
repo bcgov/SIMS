@@ -11,5 +11,5 @@ dayjs.extend(localizedFormat);
  * @returns date now in utc
  */
 export const getUTCNow = () => {
-  return new Date(dayjs().utc().format());
+  return dayjs().utc().toDate();
 };
