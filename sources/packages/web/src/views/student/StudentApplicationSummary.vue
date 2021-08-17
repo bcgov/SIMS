@@ -74,7 +74,7 @@
     <CancelApplication
       :showModal="showModal"
       :applicationId="selectedApplicationId"
-      @showHidecancelApplication="showHidecancelApplication"
+      @showHideCancelApplication="showHideCancelApplication"
       @reloadData="loadApplicationSummary"
     />
   </div>
@@ -133,7 +133,7 @@ export default {
       showModal.value = true;
       selectedApplicationId.value = id;
     };
-    const showHidecancelApplication = () => {
+    const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
     const goToApplication = (id: number) => {
@@ -158,7 +158,7 @@ export default {
       openConfirmCancel,
       showModal,
       selectedApplicationId,
-      showHidecancelApplication,
+      showHideCancelApplication,
       loadApplicationSummary,
       ApplicationStatus,
     };

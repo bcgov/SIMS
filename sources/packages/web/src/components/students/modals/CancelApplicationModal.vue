@@ -57,11 +57,11 @@ export default {
       required: true,
     },
   },
-  emits: ["showHidecancelApplication", "reloadData"],
+  emits: ["showHideCancelApplication", "reloadData"],
   setup(props: any, context: any) {
     const toast = useToastMessage();
     const updateShowCancelApplicationModal = () => {
-      context.emit("showHidecancelApplication");
+      context.emit("showHideCancelApplication");
     };
     const confirmCancelApplicationModal = async () => {
       try {

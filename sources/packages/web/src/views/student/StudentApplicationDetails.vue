@@ -29,7 +29,7 @@
     <CancelApplication
       :showModal="showModal"
       :applicationId="id"
-      @showHidecancelApplication="showHidecancelApplication"
+      @showHideCancelApplication="showHideCancelApplication"
       @reloadData="getApplicationDetails"
     />
 
@@ -97,7 +97,7 @@ export default {
 
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
-    const showHidecancelApplication = () => {
+    const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
     const goBack = () => {
@@ -126,7 +126,7 @@ export default {
             label: "Cancel",
             icon: "pi pi-fw pi-trash text-danger",
             command: () => {
-              showHidecancelApplication();
+              showHideCancelApplication();
             },
           },
         );
@@ -156,7 +156,7 @@ export default {
       toggle,
       menu,
       StudentRoutesConst,
-      showHidecancelApplication,
+      showHideCancelApplication,
       showModal,
       goBack,
       applicationDetails,
