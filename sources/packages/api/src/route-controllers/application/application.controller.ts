@@ -186,7 +186,7 @@ export class ApplicationController extends BaseController {
   }
 
   /**
-   * Update Student Application status.
+   * Generic method to update all Student Application status from frontend.
    * @param applicationId application id to be updated.
    * @body payload contains the status, that need to be updated
    */
@@ -216,8 +216,13 @@ export class ApplicationController extends BaseController {
         `Application ${applicationId} associated with student ${student.id} does not exist.`,
       );
     }
+    // delete workflow if the payload status is cancelled
     // workflow doest not exists for draft application
-    if (studentApplication.applicationStatus !== ApplicationStatus.draft && studentApplication.assessmentWorkflowId) {
+    if (
+      payload.applicationStatus === ApplicationStatus.cancelled &&
+      studentApplication.applicationStatus !== ApplicationStatus.draft &&
+      studentApplication.assessmentWorkflowId
+    ) {
       // Calling the API to stop assessment process
       await this.workflow.deleteApplicationAssessment(
         studentApplication.assessmentWorkflowId,
