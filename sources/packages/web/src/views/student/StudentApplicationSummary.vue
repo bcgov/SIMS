@@ -138,7 +138,7 @@ export default {
     };
     const goToApplication = (id: number) => {
       return router.push({
-        name: StudentRoutesConst.STUDEN_APPLICATION_DETAILS,
+        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
         params: {
           id: id,
         },

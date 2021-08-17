@@ -197,14 +197,6 @@ export class ApplicationController extends BaseController {
     @Param("applicationId") applicationId: number,
     @Body() payload: ApplicationStatusToBeUpdatedDto,
   ): Promise<void> {
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
-    }
     const studentApplication =
       await this.applicationService.getApplicationByIdAndUserName(
         applicationId,
@@ -213,7 +205,7 @@ export class ApplicationController extends BaseController {
 
     if (!studentApplication) {
       throw new UnprocessableEntityException(
-        `Application ${applicationId} associated with student ${student.id} does not exist.`,
+        `Application ${applicationId} associated with requested student does not exist.`,
       );
     }
     // delete workflow if the payload status is cancelled

@@ -166,7 +166,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.StudentApplicationDetails,
-        name: StudentRoutesConst.STUDEN_APPLICATION_DETAILS,
+        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
         component: StudentApplicationDetails,
         props: true,
         meta: {
