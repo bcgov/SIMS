@@ -7,6 +7,7 @@ import {
 import { createFakeEducationProgramOffering } from "./education-program-offering-fake";
 import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
+import { getUTCNow } from "../../utilities";
 
 export function createFakeApplication(
   student?: Student,
@@ -18,5 +19,6 @@ export function createFakeApplication(
   application.programYear = programYear ?? createFakeProgramYear();
   application.student = student ?? createFakeStudent();
   application.offering = offering ?? createFakeEducationProgramOffering();
+  application.applicationStatusUpdatedOn = getUTCNow();
   return application;
 }
