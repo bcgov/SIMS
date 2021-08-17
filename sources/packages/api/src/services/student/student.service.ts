@@ -10,6 +10,7 @@ import { ArchiveDbService } from "../archive-db/archive-db.service";
 import { StudentLegacyData } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
+import { getUTCNow } from "../../utilities";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -188,16 +189,8 @@ export class StudentService extends RecordDataModelService<Student> {
       id: studentId,
     });
     if (studentToUpdate) {
-      const now = new Date();
       // Date in UTC
-      studentToUpdate.studentPDSentAt = new Date(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDay(),
-        now.getUTCHours(),
-        now.getUTCMinutes(),
-        now.getUTCSeconds(),
-      );
+      studentToUpdate.studentPDSentAt = getUTCNow();
       return this.repo.save(studentToUpdate);
     }
   }
@@ -216,17 +209,9 @@ export class StudentService extends RecordDataModelService<Student> {
       id: studentId,
     });
     if (studentToUpdate) {
-      const now = new Date();
       studentToUpdate.studentPDVerified = status;
       // Date in UTC format
-      studentToUpdate.studentPDUpdateAt = new Date(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDay(),
-        now.getUTCHours(),
-        now.getUTCMinutes(),
-        now.getUTCSeconds(),
-      );
+      studentToUpdate.studentPDUpdateAt = getUTCNow();
       return this.repo.save(studentToUpdate);
     }
   }

@@ -24,9 +24,11 @@ import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
   GetApplicationDataDto,
+  ApplicationStatusToBeUpdatedDto,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
 
 @Controller("application")
@@ -42,7 +44,7 @@ export class ApplicationController extends BaseController {
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get(":id/data")
+  @Get(":id")
   async getByApplicationId(
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -58,7 +60,12 @@ export class ApplicationController extends BaseController {
       );
     }
 
-    return { data: application.data };
+    return {
+      data: application.data,
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
+    };
   }
 
   /**
@@ -93,7 +100,6 @@ export class ApplicationController extends BaseController {
       programYear.formName,
       payload.data,
     );
-
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create an applicaion due to an invalid request.",
@@ -275,6 +281,55 @@ export class ApplicationController extends BaseController {
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         `Confirmation of Assessment for the application id ${applicationId} failed.`,
+      );
+    }
+  }
+
+  /**
+   * Generic method to update all Student Application status from frontend.
+   * @param applicationId application id to be updated.
+   * @body payload contains the status, that need to be updated
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Patch(":applicationId/status")
+  async updateStudentApplicationStatus(
+    @UserToken() userToken: IUserToken,
+    @Param("applicationId") applicationId: number,
+    @Body() payload: ApplicationStatusToBeUpdatedDto,
+  ): Promise<void> {
+    const studentApplication =
+      await this.applicationService.getApplicationByIdAndUser(
+        applicationId,
+        userToken.userId,
+      );
+
+    if (!studentApplication) {
+      throw new UnprocessableEntityException(
+        `Application ${applicationId} associated with requested student does not exist.`,
+      );
+    }
+    // delete workflow if the payload status is cancelled
+    // workflow doest not exists for draft application
+    if (
+      payload &&
+      ApplicationStatus.cancelled === payload.applicationStatus &&
+      ApplicationStatus.draft !== studentApplication.applicationStatus &&
+      studentApplication.assessmentWorkflowId
+    ) {
+      // Calling the API to stop assessment process
+      await this.workflow.deleteApplicationAssessment(
+        studentApplication.assessmentWorkflowId,
+      );
+    }
+    // updating the application status
+    const updateResult = await this.applicationService.updateApplicationStatus(
+      studentApplication.id,
+      payload.applicationStatus,
+    );
+
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        `Application Status update for Application ${applicationId} failed.`,
       );
     }
   }

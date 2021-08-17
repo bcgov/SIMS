@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import { ApplicationStatus } from "../../../database/entities";
 
 export class SaveApplicationDto {
   /**
@@ -20,8 +21,16 @@ export class SaveApplicationDto {
   @Min(1)
   programYearId: number;
 }
-
 export interface GetApplicationDataDto {
+  /**
+   * Application dynamic data.
+   */
+  data: any;
+  id: number;
+  applicationStatus: ApplicationStatus;
+  applicationStatusUpdatedOn: Date;
+}
+export interface ApplicationDataDto {
   /**
    * Application dynamic data.
    */
@@ -48,6 +57,9 @@ export interface PIRSummaryDTO {
   lastName: string;
 }
 
+export interface ApplicationStatusToBeUpdatedDto {
+  applicationStatus: ApplicationStatus;
+}
 export interface COESummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;

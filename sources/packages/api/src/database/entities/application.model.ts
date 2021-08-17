@@ -141,4 +141,10 @@ export class Application extends RecordDataModel {
     type: "enum",
   })
   coeStatus: COEStatus;
+
+  @Column({
+    name: "application_status_updated_on",
+    nullable: false,
+  })
+  applicationStatusUpdatedOn: Date;
 }

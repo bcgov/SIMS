@@ -4,6 +4,10 @@ import {
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
+import {
+  ApplicationStatusToBeUpdatedDto,
+  GetApplicationDataDto,
+} from "@/types/contracts/students/ApplicationContract";
 
 export class ApplicationService {
   // Share Instance
@@ -17,22 +21,34 @@ export class ApplicationService {
     return ApiClient.Application.getNOA(applicationId);
   }
 
-  public async getApplicationData(applicationId: number): Promise<any> {
-    return ApiClient.Application.getApplicationData(applicationId);
-  }
-
   public async confirmAssessment(applicationId: number): Promise<void> {
     return ApiClient.Application.confirmAssessment(applicationId);
+  }
+
+  public async updateStudentApplicationStatus(
+    applicationId: number,
+    payload: ApplicationStatusToBeUpdatedDto,
+  ): Promise<void> {
+    await ApiClient.Application.updateStudentApplicationStatus(
+      applicationId,
+      payload,
+    );
+  }
+
+  public async getApplicationData(
+    applicationId: number,
+  ): Promise<GetApplicationDataDto> {
+    return ApiClient.Application.getApplicationData(applicationId);
   }
 
   public async createApplicationDraft(
     payload: SaveStudentApplicationDto,
   ): Promise<CreateApplicationDraftResult> {
     try {
-      const appliationId = await ApiClient.Application.createApplicationDraft(
+      const applicationId = await ApiClient.Application.createApplicationDraft(
         payload,
       );
-      return { draftAlreadyExists: false, draftId: appliationId };
+      return { draftAlreadyExists: false, draftId: applicationId };
     } catch (error) {
       if (
         error.response.data?.errorType === MORE_THAN_ONE_APPLICATION_DRAFT_ERROR

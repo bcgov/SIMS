@@ -58,12 +58,12 @@
 import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
+import { ApplicationService } from "@/services/ApplicationService";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
   useToastMessage,
 } from "../../../composables";
-import { ApplicationService } from "@/services/ApplicationService";
 import { WizardNavigationEvent } from "@/types";
 
 export default {
@@ -114,7 +114,7 @@ export default {
         studentHomeAddress: formattedAddress,
         studentEmail: studentInfo.email,
       };
-      initialData.value = { ...studentFormData, ...applicationData };
+      initialData.value = { ...studentFormData, ...applicationData.data };
     });
 
     // Save the current state of the student application skipping all validations.

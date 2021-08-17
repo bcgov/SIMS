@@ -44,4 +44,20 @@ export class WorkflowService {
       },
     });
   }
+
+  /**
+   * Deletes process instance by a given assessmentWorkflowId.
+   * @param assessmentWorkflowId workflow Id to be deleted.
+   * @response status code-204 - Request successful (Status 204. No content.).
+   * status code-404 - Process instance with given id does not exist(api exception).
+   */
+  async delete(assessmentWorkflowId: string): Promise<void> {
+    const deleteURL = `${this.config.ruleEngineUrl}/process-instance/${assessmentWorkflowId}`;
+    const token = await this.tokensService.simsApiClient.getToken();
+    await axios.delete(deleteURL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 }

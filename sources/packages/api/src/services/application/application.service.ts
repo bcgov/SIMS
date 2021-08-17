@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, UpdateResult } from "typeorm";
+import { Connection, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -15,8 +15,8 @@ import {
   COEStatus,
   ProgramYear,
 } from "../../database/entities";
-import { CustomNamedError } from "../../utilities";
-import { SequenceControlService } from "../sequence-control/sequence-control.service";
+import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
+import { CustomNamedError, getUTCNow } from "../../utilities";
 import { StudentFileService } from "../student-file/student-file.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -83,6 +83,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     application.data = applicationData;
     application.applicationStatus = ApplicationStatus.submitted;
+    application.applicationStatusUpdatedOn = getUTCNow();
     application.studentFiles = await this.getSyncedApplicationFiles(
       studentId,
       application.studentFiles,
@@ -176,6 +177,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
       draftApplication.applicationStatus = ApplicationStatus.draft;
+      draftApplication.applicationStatusUpdatedOn = getUTCNow();
     }
 
     // Below data must be always updated.
@@ -315,6 +317,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "application.applicationStatus",
       ])
       .leftJoin("application.offering", "offering")
       .where("application.student_id = :studentId", { studentId })
@@ -452,24 +455,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param status status of the Application.
    * @returns COE status update result.
    */
-  async updateApplicationStatus(
-    applicationId: number,
-    status: ApplicationStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      { id: applicationId },
-      {
-        applicationStatus: status,
-      },
-    );
-  }
-
-  /**
-   * Updates overall Application status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Application.
-   * @returns COE status update result.
-   */
   async studentConfirmAssessment(
     applicationId: number,
     studentId: number,
@@ -572,6 +557,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .addOrderBy("application.applicationNumber")
       .getMany();
+  }
+  /**
+   * Update Student Application status.
+   * Only allow the application with Non Completed status to update the status
+   * @param applicationId application id.
+   * @param applicationStatus application status that need to be updated.
+   * @returns student Application UpdateResult.
+   */
+  async updateApplicationStatus(
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.completed),
+      },
+      {
+        applicationStatus: applicationStatus,
+        applicationStatusUpdatedOn: getUTCNow(),
+      },
+    );
   }
 
   /**
