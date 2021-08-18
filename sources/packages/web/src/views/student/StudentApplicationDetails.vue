@@ -66,6 +66,7 @@ import {
 } from "@/types/contracts/students/ApplicationContract";
 import "@/assets/css/student.css";
 import { useFormatters } from "@/composables";
+import { ProgramYearOfApplicationDto } from "@/types";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -94,7 +95,7 @@ export default {
     const items = ref([] as MenuType[]);
     const menu = ref();
     const { dateString } = useFormatters();
-
+    const programYear = ref({} as ProgramYearOfApplicationDto);
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const showHideCancelApplication = () => {
@@ -105,9 +106,32 @@ export default {
         name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
       });
     };
+    const getProgramYear = async () => {
+      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
+        props.id,
+      );
+    };
+
+    const editApplicaion = async () => {
+      await getProgramYear();
+      router.push({
+        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+        params: {
+          selectedForm: programYear.value.formName,
+          programYearId: programYear.value.programYearId,
+          id: props.id,
+        },
+      });
+    };
     const loadMenu = () => {
       items.value = [
-        { label: "Edit", icon: "pi pi-fw pi-pencil" },
+        {
+          label: "Edit",
+          icon: "pi pi-fw pi-pencil",
+          command: () => {
+            editApplicaion();
+          },
+        },
         { separator: true },
         {
           label: "View",

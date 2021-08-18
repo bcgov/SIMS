@@ -1,4 +1,4 @@
-import { SaveStudentApplicationDto } from "@/types";
+import { SaveStudentApplicationDto, ProgramYearOfApplicationDto } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationStatusToBeUpdatedDto,
@@ -112,6 +112,21 @@ export class ApplicationApi extends HttpBaseClient {
         payload,
         this.addAuthHeader(),
       );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getProgramYearOfApplication(
+    applicationId: number,
+  ): Promise<ProgramYearOfApplicationDto> {
+    try {
+      const response =  await this.apiClient.get(
+        `application/${applicationId}/program-year`,
+        this.addAuthHeader(),
+      );
+      return response.data as ProgramYearOfApplicationDto
     } catch (error) {
       this.handleRequestError(error);
       throw error;

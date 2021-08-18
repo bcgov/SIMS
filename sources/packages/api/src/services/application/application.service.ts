@@ -617,4 +617,25 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .addOrderBy("application.applicationNumber")
       .getMany();
   }
+
+  /**
+   * Gets program year details for a student application
+   * @param studentId student id.
+   * @param applicationId application id.
+   * @returns program year details for a student application.
+   */
+  async getProgramYearOfApplication(
+    studentId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    let query = this.repo
+      .createQueryBuilder("application")
+      .innerJoinAndSelect("application.programYear", "programYear")
+      .where("application.student.id = :studentId", { studentId })
+      .andWhere("programYear.active = true")
+      .andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    return query.getOne();
+  }
 }

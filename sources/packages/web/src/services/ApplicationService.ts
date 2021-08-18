@@ -1,6 +1,7 @@
 import {
   CreateApplicationDraftResult,
   SaveStudentApplicationDto,
+  ProgramYearOfApplicationDto
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -72,4 +73,11 @@ export class ApplicationService {
   ): Promise<void> {
     return ApiClient.Application.submitApplication(applicationId, payload);
   }
+
+  public async getProgramYearOfApplication(
+    applicationId: number,
+  ): Promise<ProgramYearOfApplicationDto> {
+    return ApiClient.Application.getProgramYearOfApplication(applicationId);
+  }
+  
 }
