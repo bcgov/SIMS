@@ -65,6 +65,6 @@ export class StudentService {
   }
 
   async getAllStudentApplications(): Promise<StudentApplication[]> {
-    return await ApiClient.Students.getAllStudentApplications();
+    return ApiClient.Students.getAllStudentApplications();
   }
 }
