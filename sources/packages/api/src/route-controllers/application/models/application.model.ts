@@ -69,3 +69,9 @@ export interface COESummaryDTO {
   firstName: string;
   lastName: string;
 }
+
+export interface ProgramYearOfApplicationDto {
+  applicationId: number;
+  formName: string;
+  programYearId: number;
+}

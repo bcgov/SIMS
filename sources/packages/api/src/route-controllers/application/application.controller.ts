@@ -25,6 +25,7 @@ import {
   SaveApplicationDto,
   GetApplicationDataDto,
   ApplicationStatusToBeUpdatedDto,
+  ProgramYearOfApplicationDto,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -332,5 +333,39 @@ export class ApplicationController extends BaseController {
         `Application Status update for Application ${applicationId} failed.`,
       );
     }
+  }
+
+  /**
+   * Get program year details for the application.
+   * @param applicationId application id to be updated.
+   * @returns program year details of the application
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get(":applicationId/program-year")
+  async programYearOfApplication(
+    @UserToken() userToken: IUserToken,
+    @Param("applicationId") applicationId: number,
+  ): Promise<ProgramYearOfApplicationDto> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+
+    if (!student) {
+      throw new UnprocessableEntityException(
+        "The user is not associated with a student.",
+      );
+    }
+
+    const applicationProgramYear =
+      await this.applicationService.getProgramYearOfApplication(
+        student.id,
+        applicationId,
+      );
+      
+    return {
+      applicationId: applicationId,
+      programYearId: applicationProgramYear.programYear.id,
+      formName: applicationProgramYear.programYear.formName
+    } as ProgramYearOfApplicationDto;
   }
 }

@@ -8,3 +8,9 @@ export interface CreateApplicationDraftResult {
   draftAlreadyExists: boolean;
   draftId?: number;
 }
+
+export interface ProgramYearOfApplicationDto {
+  applicationId: number;
+  formName: string;
+  programYearId: number;
+}

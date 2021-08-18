@@ -54,7 +54,7 @@
                   <v-icon
                     size="25"
                     v-tooltip="'Click To Edit this Application'"
-                    @click="openConfirmCancel(slotProps.data.id)"
+                    @click="editApplicaion(slotProps.data.id)"
                     >mdi-pencil</v-icon
                   ></v-btn
                 >
@@ -62,6 +62,7 @@
                   <v-icon
                     size="25"
                     v-tooltip="'Click To Cancel this Application'"
+                    @click="openConfirmCancel(slotProps.data.id)"
                     >mdi-trash-can-outline</v-icon
                   >
                 </v-btn>
@@ -92,6 +93,8 @@ import { useFormatters } from "@/composables";
 import Tooltip from "primevue/tooltip";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationStatus } from "@/types/contracts/students/ApplicationContract";
+import { ProgramYearOfApplicationDto } from "@/types";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export default {
   components: {
@@ -109,6 +112,8 @@ export default {
     const selectedApplicationId = ref(0);
     const { dateString } = useFormatters();
     const myApplications = ref([] as StudentApplication[]);
+    const programYear = ref({} as ProgramYearOfApplicationDto);
+
     const getApplicationStatusClass = (status: string) => {
       switch (status) {
         case "Draft":
@@ -129,13 +134,16 @@ export default {
           return "";
       }
     };
+
     const openConfirmCancel = (id: number) => {
       showModal.value = true;
       selectedApplicationId.value = id;
     };
+
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
+
     const goToApplication = (id: number) => {
       return router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
@@ -144,12 +152,33 @@ export default {
         },
       });
     };
+
     const loadApplicationSummary = async () => {
       myApplications.value = await StudentService.shared.getAllStudentApplications();
     };
+
+    const getProgramYear = async (applicationId: number) => {
+      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
+        applicationId,
+      );
+    };
+
+    const editApplicaion = async (applicationId: number) => {
+      await getProgramYear(applicationId);
+      router.push({
+        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+        params: {
+          selectedForm: programYear.value.formName,
+          programYearId: programYear.value.programYearId,
+          id: applicationId,
+        },
+      });
+    };
+
     onMounted(async () => {
       await loadApplicationSummary();
     });
+
     return {
       myApplications,
       goToApplication,
@@ -161,6 +190,7 @@ export default {
       showHideCancelApplication,
       loadApplicationSummary,
       ApplicationStatus,
+      editApplicaion,
     };
   },
 };
