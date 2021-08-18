@@ -125,7 +125,7 @@ export class ApplicationController extends BaseController {
         applicationId,
         student.id,
         programYear.id,
-        submissionResult.data,
+        submissionResult.data.data,
         payload.associatedFiles,
       );
 
@@ -361,11 +361,11 @@ export class ApplicationController extends BaseController {
         student.id,
         applicationId,
       );
-      
+
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
-      formName: applicationProgramYear.programYear.formName
+      formName: applicationProgramYear.programYear.formName,
     } as ProgramYearOfApplicationDto;
   }
 }
