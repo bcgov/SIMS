@@ -35,6 +35,10 @@ export interface ApplicationDataDto {
    * Application dynamic data.
    */
   data: any;
+  /**
+   * Program Year is added to integrate the application in camunda workflows
+   */
+  programYear: String;
 }
 
 export interface StudentApplicationDTO {
