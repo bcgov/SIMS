@@ -38,7 +38,7 @@ export interface ApplicationDataDto {
   /**
    * Program Year is added to integrate the application in camunda workflows
    */
-  programYear: String;
+  programYear: string;
 }
 
 export interface StudentApplicationDTO {
