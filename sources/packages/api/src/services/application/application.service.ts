@@ -289,6 +289,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application;
   }
 
+  async getApplicationById(applicationId: number): Promise<Application> {
+    const application = this.repo
+      .createQueryBuilder("application")
+      .select(["application", "programYear.programYear"])
+      .innerJoin("application.programYear", "programYear")
+      .where("programYear.active = true")
+      .andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    return application.getOne();
+  }
+
   async updateAssessmentInApplication(
     applicationId: number,
     assessment: any,
