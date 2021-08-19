@@ -338,8 +338,7 @@ export class StudentController extends BaseController {
         applicationName: "Financial Aid Application",
         // TODO: when award is captured, update the below line
         award: "5500",
-        // TODO: when status is captured, update the below line
-        status: "completed",
+        status: eachApplication.applicationStatus,
       };
     }) as StudentApplicationDTO[];
   }

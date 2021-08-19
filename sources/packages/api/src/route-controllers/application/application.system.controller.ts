@@ -11,7 +11,7 @@ import {
   ApplicationService,
   EducationProgramOfferingService,
 } from "../../services";
-import { GetApplicationDataDto } from "./models/application.model";
+import { ApplicationDataDto } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -40,7 +40,7 @@ export class ApplicationSystemController {
   @Get(":id")
   async getByApplicationId(
     @Param("id") applicationId: number,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<ApplicationDataDto> {
     const application = await this.applicationService.findById(applicationId);
     if (!application) {
       throw new NotFoundException(

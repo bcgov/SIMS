@@ -27,8 +27,8 @@ export enum AppRoutes {
   ManageInstitutionDesignation = "manage-desgination",
   InstitutionManageUsers = "manage-users",
   DisabledUser = "login/disabled-user",
-  StudentApplication = "application-form/:id?/:selectedForm/:programYearId",
+  StudentApplication = "application-form/:selectedForm/programYear/:programYearId/application/:id",
   StudentApplicationSummary = "my-application-summary",
-  StudentEditApplication = "application/:id",
+  StudentApplicationDetails = "application/:id",
   Assessment = "application/:applicationId/assessment",
 }

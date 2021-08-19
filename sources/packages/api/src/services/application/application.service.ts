@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, UpdateResult } from "typeorm";
+import { Connection, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -16,10 +16,14 @@ import {
   ProgramYear,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import { CreateApplicationDto } from "../../route-controllers/application/models/application.model";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError, getUTCNow } from "../../utilities";
+import { StudentFileService } from "../student-file/student-file.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
+export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
+export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
+  "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
+
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
@@ -28,21 +32,81 @@ export class ApplicationService extends RecordDataModelService<Application> {
   constructor(
     @Inject("Connection") connection: Connection,
     private readonly sequenceService: SequenceControlService,
+    private readonly fileService: StudentFileService,
   ) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
   }
 
-  async createApplication(
+  /**
+   * Submits a Student Application.
+   * The system ensures that there is an application draft prior
+   * to the application submission.
+   * @param applicationId application id that must be updated to submitted.
+   * @param studentId student id for authorization validations.
+   * @param programYearId program year associated with the submission.
+   * @param applicationData dynamic data received from Form.IO form.
+   * @param associatedFiles associated uploaded files.
+   * @returns the updated application.
+   */
+  async submitApplication(
+    applicationId: number,
     studentId: number,
     programYearId: number,
-    applicationDto: CreateApplicationDto,
-    studentFiles: StudentFile[],
+    applicationData: any,
+    associatedFiles: string[],
   ): Promise<Application> {
-    // Create the new application.
-    const newApplication = new Application();
+    let application = await this.getApplicationToSave(
+      studentId,
+      ApplicationStatus.draft,
+      applicationId,
+    );
+    // If the application was not found it is because it does not belongs to the
+    // student or it is not in draft state. Either way it will be invalid.
+    if (!application) {
+      throw new Error(
+        "Student Application not found or it is not in the correct status to be submitted.",
+      );
+    }
+    // If the the draft was created under a different program year than
+    // the one being used to submit it, it is not valid.
+    if (application.programYear.id !== programYearId) {
+      throw new Error(
+        "Student Application program year is not the expected one.",
+      );
+    }
+
     // TODO:remove the static program year and add dynamic year, from program year table
-    const sequenceName = "2122";
+    application.applicationNumber = await this.generateApplicationNumber(
+      "2122",
+    );
+
+    application.data = applicationData;
+    application.applicationStatus = ApplicationStatus.submitted;
+    application.applicationStatusUpdatedOn = getUTCNow();
+    application.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      application.studentFiles,
+      associatedFiles,
+    );
+
+    return this.repo.save(application);
+  }
+
+  /**
+   * Generates the unique application number that the application
+   * receives once the application is submitted.
+   * @param sequenceName name of the sequence that controls the
+   * number increment.
+   * @returns new unique application number.
+   */
+  private async generateApplicationNumber(
+    sequenceName: string,
+  ): Promise<string> {
+    const MAX_APPLICATION_NUMBER_LENGTH = 10;
+    const sequenceNumberSize =
+      MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
+
     let nextApplicationSequence: number = NaN;
     await this.sequenceService.consumeNextSequence(
       sequenceName,
@@ -50,23 +114,130 @@ export class ApplicationService extends RecordDataModelService<Application> {
         nextApplicationSequence = nextSequenceNumber;
       },
     );
-    const MAX_APPLICATION_NUMBER_LENGTH = 10;
-    const sequenceNumberSize =
-      MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
-    const applicationNumber =
+
+    return (
       sequenceName +
-      `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0");
-    newApplication.student = { id: studentId } as Student;
-    newApplication.programYear = { id: programYearId } as ProgramYear;
-    newApplication.data = applicationDto.data;
-    newApplication.studentFiles = studentFiles.map((file) => {
-      const newFileAssociation = new ApplicationStudentFile();
-      newFileAssociation.studentFile = { id: file.id } as StudentFile;
-      return newFileAssociation;
+      `${nextApplicationSequence}`.padStart(sequenceNumberSize, "0")
+    );
+  }
+
+  /**
+   * Saves an Student Application in draft state.
+   * If the application id is provided an update is performed,
+   * otheriwse the draft will be created. The validations are also
+   * apllied accordingly to update/create scenarios.
+   * @param studentId student id.
+   * @param programYearId program year associated with the application draft.
+   * @param applicationData dynamic data received from Form.IO form.
+   * @param associatedFiles associated uploaded files.
+   * @param [applicationId] application id used to execute validations.
+   * @returns Student Application saved draft.
+   */
+  async saveDraftApplication(
+    studentId: number,
+    programYearId: number,
+    applicationData: any,
+    associatedFiles: string[],
+    applicationId?: number,
+  ): Promise<Application> {
+    let draftApplication = await this.getApplicationToSave(
+      studentId,
+      ApplicationStatus.draft,
+    );
+    // If an application id is provided it means that an update is supposed to happen,
+    // so an application draft is expected to be find. If not found, thown an error.
+    if (applicationId && !draftApplication) {
+      throw new CustomNamedError(
+        "Not able to find the draft application associated with the student.",
+        APPLICATION_DRAFT_NOT_FOUND,
+      );
+    }
+    // If an application id is not provided, an insert is supposed to happen
+    // but, if an draft application already exists, it means that it is an
+    // attempt to create a second draft and the student is supposed to
+    // have only one draft.
+    if (!applicationId && draftApplication) {
+      throw new CustomNamedError(
+        "There is already an existing draft application associated with the current student.",
+        MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
+      );
+    }
+    // If an application id is provided, an update is supposed to happen
+    // but, if an draft application already exists under a different program year
+    // the operation should not be allowed.
+    if (draftApplication && draftApplication.programYear.id !== programYearId) {
+      throw new Error(
+        "The application is already saved under a different program year.",
+      );
+    }
+    // If there is no draft application, create one
+    // and initialize the necessary data.
+    if (!draftApplication) {
+      draftApplication = new Application();
+      draftApplication.student = { id: studentId } as Student;
+      draftApplication.programYear = { id: programYearId } as ProgramYear;
+      draftApplication.applicationStatus = ApplicationStatus.draft;
+      draftApplication.applicationStatusUpdatedOn = getUTCNow();
+    }
+
+    // Below data must be always updated.
+    draftApplication.data = applicationData;
+    draftApplication.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      draftApplication.studentFiles,
+      associatedFiles,
+    );
+
+    return this.repo.save(draftApplication);
+  }
+
+  /**
+   * Look for files that are already stored for student and
+   * application to define the associations that need to be
+   * created or just kept.
+   * @param studentId student id to check for the files associations.
+   * @param applicationFiles current files associations.
+   * @param [filesToAssociate] files associations that represents the
+   * final state that the associations must have.
+   * @returns an array with the files associations that should be
+   * persisted in the Student Application.
+   */
+  private async getSyncedApplicationFiles(
+    studentId: number,
+    applicationFiles: ApplicationStudentFile[],
+    filesToAssociate?: string[],
+  ): Promise<ApplicationStudentFile[]> {
+    // Check for the existing student files if
+    // some association was provided.
+    let studentStoredFiles: StudentFile[] = [];
+    if (filesToAssociate?.length) {
+      studentStoredFiles = await this.fileService.getStudentFiles(
+        studentId,
+        filesToAssociate,
+      );
+    }
+
+    // Associate uploaded files with the application.
+    return studentStoredFiles.map((studentStoredFile: StudentFile) => {
+      // Use the unique file name to check if the file is already
+      // associated with the current application.
+      const existingAssociation = applicationFiles.find(
+        (applicationFile: ApplicationStudentFile) =>
+          applicationFile.studentFile.uniqueFileName ===
+          studentStoredFile.uniqueFileName,
+      );
+
+      if (existingAssociation) {
+        // Keep the existing association.
+        return existingAssociation;
+      }
+      // Create a new association.
+      const fileAssociation = new ApplicationStudentFile();
+      fileAssociation.studentFile = {
+        id: studentStoredFile.id,
+      } as StudentFile;
+      return fileAssociation;
     });
-    newApplication.applicationNumber = applicationNumber;
-    newApplication.applicationStatus = ApplicationStatus.submitted;
-    return await this.repo.save(newApplication);
   }
 
   async associateAssessmentWorkflow(
@@ -102,9 +273,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
-  async getApplicationByIdAndUserName(
+  async getApplicationByIdAndUser(
     applicationId: number,
-    userName: string,
+    userId: number,
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
@@ -113,7 +284,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
-      .andWhere("user.userName = :userNameParam", { userNameParam: userName })
+      .andWhere("user.id = :userId", { userId })
       .getOne();
     return application;
   }
@@ -146,11 +317,51 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "application.applicationStatus",
       ])
       .leftJoin("application.offering", "offering")
       .where("application.student_id = :studentId", { studentId })
       .getMany();
   }
+
+  /**
+   * Gets a application with the data needed to process
+   * the operations related to save/submitting an
+   * Student Application.
+   * @param studentId student id.
+   * @param status expected status for the application.
+   * @param [applicationId] apllication id, when possible.
+   * @returns application with the data needed to process
+   * the operations related to save/submitting.
+   */
+  private async getApplicationToSave(
+    studentId: number,
+    status: ApplicationStatus,
+    applicationId?: number,
+  ): Promise<Application> {
+    let query = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application",
+        "programYear.id",
+        "studentFiles",
+        "studentFile.uniqueFileName",
+      ])
+      .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.studentFiles", "studentFiles")
+      .leftJoin("studentFiles.studentFile", "studentFile")
+      .where("application.student.id = :studentId", { studentId })
+      .andWhere("programYear.active = true")
+      .andWhere("application.applicationStatus = :status", { status });
+    if (applicationId) {
+      query = query.andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    }
+
+    return query.getOne();
+  }
+
   /**
    * Updates Program Information Request (PIR) related data.
    * @param applicationId application id to be updated.
@@ -234,24 +445,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       { id: applicationId },
       {
         coeStatus: status,
-      },
-    );
-  }
-
-  /**
-   * Updates overall Application status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Application.
-   * @returns COE status update result.
-   */
-  async updateApplicationStatus(
-    applicationId: number,
-    status: ApplicationStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      { id: applicationId },
-      {
-        applicationStatus: status,
       },
     );
   }
@@ -365,6 +558,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .addOrderBy("application.applicationNumber")
       .getMany();
   }
+  /**
+   * Update Student Application status.
+   * Only allow the application with Non Completed status to update the status
+   * @param applicationId application id.
+   * @param applicationStatus application status that need to be updated.
+   * @returns student Application UpdateResult.
+   */
+  async updateApplicationStatus(
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.completed),
+      },
+      {
+        applicationStatus: applicationStatus,
+        applicationStatusUpdatedOn: getUTCNow(),
+      },
+    );
+  }
 
   /**
    * get applications of a institution location
@@ -401,5 +616,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .addOrderBy("application.applicationNumber")
       .getMany();
+  }
+
+  /**
+   * Gets program year details for a student application
+   * @param studentId student id.
+   * @param applicationId application id.
+   * @returns program year details for a student application.
+   */
+  async getProgramYearOfApplication(
+    studentId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    let query = this.repo
+      .createQueryBuilder("application")
+      .innerJoinAndSelect("application.programYear", "programYear")
+      .where("application.student.id = :studentId", { studentId })
+      .andWhere("programYear.active = true")
+      .andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    return query.getOne();
   }
 }
