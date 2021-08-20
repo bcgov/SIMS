@@ -24,6 +24,7 @@ import {
   StudentFileService,
   ProgramYearService,
   SequenceControlService,
+  InstitutionTypeService,
 } from "./services";
 import {
   UserController,
@@ -42,6 +43,7 @@ import {
   ATBCController,
   ProgramInfoRequestController,
   ConfirmationOfEnrollmentController,
+  InstitutionTypeController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -67,6 +69,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     ATBCController,
     ProgramInfoRequestController,
     ConfirmationOfEnrollmentController,
+    InstitutionTypeController,
   ],
   providers: [
     AppService,
@@ -91,6 +94,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     StudentFileService,
     ProgramYearService,
     SequenceControlService,
+    InstitutionTypeService,
   ],
 })
 export class AppModule {}

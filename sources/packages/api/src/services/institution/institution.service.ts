@@ -215,6 +215,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async getInstituteByUserName(userName: string): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
+      .leftJoinAndSelect("institution.institutionType", "institutionType")
       .leftJoin("institution.users", "institutionUsers")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
@@ -330,7 +331,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     );
 
     const user = await this.userService.getActiveUser(userInfo.userName);
-
     const institution = InstitutionDto.fromEntity(institutionEntity);
     institution.userEmail = user?.email;
     institution.userFirstName = user?.firstName;

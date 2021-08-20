@@ -2,14 +2,15 @@
   <Message severity="info">
     Please notice that the read-only information below is retrieved from your
     BCeID account and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
+    information needs to be changed please visit1
     <a href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
   <Card class="p-m-4">
     <template #content>
       <formio
-        formName="institutionprofile"
+        formName="institutionprofiledup"
         :data="initialData"
+        @loaded="formLoaded"
         @submitted="submitted"
       ></formio>
     </template>
@@ -25,6 +26,7 @@ import { UserService } from "../../services/UserService";
 import { InstitutionDto, InstitutionDetailDto } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import { useFormioDropdownLoader } from "../../composables";
 
 export default {
   components: { formio },
@@ -39,6 +41,7 @@ export default {
     // Hooks
     const toast = useToast();
     const router = useRouter();
+    const formioDataLoader = useFormioDropdownLoader();
     // Data-bind
     const initialData = ref({});
 
@@ -116,9 +119,14 @@ export default {
       }
     });
 
+    const formLoaded = async (form: any) => {
+      await formioDataLoader.loadInstitutionTypes(form, "institutionType");
+    };
+
     return {
       initialData,
       submitted,
+      formLoaded,
     };
   },
 };
