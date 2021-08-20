@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from "typeorm";
 import { StudentFile } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { Application } from "./application.model";
@@ -24,6 +30,9 @@ export class ApplicationStudentFile extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+
+  @RelationId((file: ApplicationStudentFile) => file.studentFile)
+  studentFileId: number;
 
   @ManyToOne(() => StudentFile, {
     eager: false,

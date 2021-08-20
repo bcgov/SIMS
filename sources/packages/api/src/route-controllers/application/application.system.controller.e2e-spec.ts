@@ -8,10 +8,14 @@ import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
+  ConfigService,
   EducationProgramOfferingService,
   KeycloakService,
   SequenceControlService,
   StudentFileService,
+  TokensService,
+  WorkflowActionsService,
+  WorkflowService,
 } from "../../services";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import { setGlobalPipes } from "../../utilities/auth-utils";
@@ -29,6 +33,7 @@ import {
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
 } from "../../testHelpers/fake-entities";
+import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 
 describe("Test system-access/application Controller", () => {
   let accesstoken: string;
@@ -46,7 +51,6 @@ describe("Test system-access/application Controller", () => {
       process.env.FORMS_FLOW_BPM_CLIENT_SECRET,
     );
     accesstoken = token.access_token;
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule],
       controllers: [ApplicationSystemController],
@@ -55,6 +59,12 @@ describe("Test system-access/application Controller", () => {
         StudentFileService,
         EducationProgramOfferingService,
         SequenceControlService,
+        WorkflowActionsService,
+        WorkflowService,
+        KeycloakService,
+        ConfigService,
+        TokensService,
+        createMockedJwtService(),
       ],
     }).compile();
 

@@ -9,10 +9,15 @@ import {
   StudentFileService,
   ApplicationService,
   SequenceControlService,
+  WorkflowActionsService,
+  WorkflowService,
+  KeycloakService,
+  TokensService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
 import { DatabaseService } from "../../database/database.service";
+import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 
 describe("StudentController", () => {
   let controller: StudentController;
@@ -29,6 +34,12 @@ describe("StudentController", () => {
         SequenceControlService,
         StudentFileService,
         ApplicationService,
+        WorkflowActionsService,
+        WorkflowService,
+        KeycloakService,
+        ConfigService,
+        TokensService,
+        createMockedJwtService(),
       ],
       controllers: [StudentController],
     }).compile();
