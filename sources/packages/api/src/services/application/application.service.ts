@@ -648,9 +648,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Creates a new Student Application overriding the current one
-   * in order to rollback the process and start the assessment
-   * all over again.
+   * Creates a new Student Application to maintain history,
+   * overriding the current one in order to rollback the
+   * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
    * @param applicationId application to be rolled back.
    * @returns the overridden and the newly created application.
@@ -688,7 +688,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     appToOverride.applicationStatus = ApplicationStatus.overwritten;
     appToOverride.applicationStatusUpdatedOn = getUTCNow();
 
-    // Create a new application based in the previous one.
+    // Create a new application record based off Overwritten
+    // record to rollback state of application.
     const newApplication = new Application();
     newApplication.data = appToOverride.data;
     newApplication.applicationNumber = appToOverride.applicationNumber;

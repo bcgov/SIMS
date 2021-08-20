@@ -53,15 +53,17 @@ export class ConfirmationOfEnrollmentController {
   }
 
   /**
-   * Creates a new Student Application overriding the current one
-   * in order to rollback the process and start the assessment
-   * all over again.
+   * Creates a new Student Application to maintain history,
+   * overriding the current one in order to rollback the
+   * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
    * @param applicationId application to be rolled back.
    * @returns the id of the newly created Student Application.
    */
   @HasLocationAccess("locationId")
-  @Post(":locationId/confirmation-of-enrollment/:applicationId/rollback")
+  @Post(
+    ":locationId/confirmation-of-enrollment/application/:applicationId/rollback",
+  )
   async startCOERollback(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
