@@ -14,15 +14,22 @@ import {
   AssessmentStatus,
   COEStatus,
   ProgramYear,
+  InstitutionLocation,
+  EducationProgram,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CustomNamedError, getUTCNow } from "../../utilities";
 import { StudentFileService } from "../student-file/student-file.service";
+import { ApplicationOverriddenResult } from "./application.models";
+import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
+export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
+export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
+  "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -33,6 +40,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     @Inject("Connection") connection: Connection,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
+    private readonly workflow: WorkflowActionsService,
   ) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
@@ -637,5 +645,119 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       });
     return query.getOne();
+  }
+
+  /**
+   * Creates a new Student Application overriding the current one
+   * in order to rollback the process and start the assessment
+   * all over again.
+   * @param locationId location id executing the COE rollback.
+   * @param applicationId application to be rolled back.
+   * @returns the overridden and the newly created application.
+   */
+  async overrideApplicationForCOE(
+    locationId: number,
+    applicationId: number,
+  ): Promise<ApplicationOverriddenResult> {
+    const appToOverride = await this.repo.findOne({
+      id: applicationId,
+      location: { id: locationId },
+    });
+
+    if (!appToOverride) {
+      throw new CustomNamedError(
+        "Student Application not found or the location does not have access to it",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (
+      appToOverride.applicationStatus !== ApplicationStatus.enrollment ||
+      appToOverride.coeStatus !== COEStatus.required
+    ) {
+      throw new CustomNamedError(
+        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+
+    // Change status of the current application being overwritten.
+    appToOverride.applicationStatus = ApplicationStatus.overwritten;
+    appToOverride.applicationStatusUpdatedOn = getUTCNow();
+
+    // Create a new application based in the previous one.
+    const newApplication = new Application();
+    newApplication.data = appToOverride.data;
+    newApplication.applicationNumber = appToOverride.applicationNumber;
+    newApplication.student = {
+      id: appToOverride.studentId,
+    } as Student;
+    newApplication.location = {
+      id: appToOverride.locationId,
+    } as InstitutionLocation;
+    newApplication.pirProgram = {
+      id: appToOverride.pirProgramId,
+    } as EducationProgram;
+    newApplication.programYear = {
+      id: appToOverride.programYearId,
+    } as ProgramYear;
+    newApplication.offering = {
+      id: appToOverride.offeringId,
+    } as EducationProgramOffering;
+    newApplication.pirStatus = ProgramInfoStatus.required;
+    newApplication.applicationStatus = ApplicationStatus.submitted;
+    newApplication.applicationStatusUpdatedOn = getUTCNow();
+    newApplication.studentFiles = appToOverride.studentFilesIds.map(
+      (applicationFileId: number) =>
+        ({
+          id: applicationFileId,
+        } as ApplicationStudentFile),
+    );
+
+    await this.repo.save([appToOverride, newApplication]);
+
+    return {
+      overriddenApplication: appToOverride,
+      createdApplication: newApplication,
+    };
+  }
+
+  /**
+   * Starts an application assessment workflow associating
+   * the created workflow with the Student Application.
+   * @param applicationId Student Application to have the
+   * workflow started.
+   */
+  async startApplicationAssessment(applicationId: number) {
+    const application = await this.repo.findOneOrFail(applicationId);
+    if (!application) {
+      throw new CustomNamedError(
+        "Student Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (application.applicationStatus !== ApplicationStatus.submitted) {
+      throw new CustomNamedError(
+        `Student Application must be in ${ApplicationStatus.submitted} status to start the assessment workflow.`,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+
+    const assessmentWorkflow = await this.workflow.startApplicationAssessment(
+      application.data.workflowName,
+      application.id,
+    );
+
+    const workflowAssociationResult = await this.associateAssessmentWorkflow(
+      application.id,
+      assessmentWorkflow.id,
+    );
+
+    // 1 means the number of affected rows expected while
+    // associating the workflow id.
+    if (workflowAssociationResult.affected !== 1) {
+      throw new Error("Error while associating the assessment workflow.");
+    }
   }
 }
