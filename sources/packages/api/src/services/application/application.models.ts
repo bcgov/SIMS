@@ -1,4 +1,4 @@
-import { Application } from "src/database/entities";
+import { Application } from "../../database/entities";
 
 export interface ApplicationOverriddenResult {
   overriddenApplication: Application;
