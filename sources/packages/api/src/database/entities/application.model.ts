@@ -6,6 +6,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import {
   EducationProgram,
@@ -46,6 +47,9 @@ export class Application extends RecordDataModel {
   })
   assessment: any;
 
+  @RelationId((application: Application) => application.student)
+  studentId: number;
+
   @OneToOne(() => Student, { eager: false, cascade: true })
   @JoinColumn({
     name: "student_id",
@@ -53,12 +57,18 @@ export class Application extends RecordDataModel {
   })
   student: Student;
 
+  @RelationId((application: Application) => application.location)
+  locationId: number;
+
   @ManyToOne(() => InstitutionLocation, { eager: false, cascade: true })
   @JoinColumn({
     name: "location_id",
     referencedColumnName: ColumnNames.ID,
   })
   location: InstitutionLocation;
+
+  @RelationId((application: Application) => application.pirProgram)
+  pirProgramId?: number;
 
   /**
    * References the program related to the application
@@ -77,6 +87,9 @@ export class Application extends RecordDataModel {
   })
   pirProgram?: EducationProgram;
 
+  @RelationId((application: Application) => application.programYear)
+  programYearId: number;
+
   /**
    * References the program year related to the application.
    * This will be populated only when an active program year application is Submitted
@@ -90,6 +103,9 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   programYear: ProgramYear;
+
+  @RelationId((application: Application) => application.offering)
+  offeringId?: number;
 
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
@@ -112,6 +128,9 @@ export class Application extends RecordDataModel {
     type: "uuid",
   })
   assessmentWorkflowId: string;
+
+  @RelationId((application: Application) => application.studentFiles)
+  studentFilesIds: number[];
 
   @OneToMany(
     () => ApplicationStudentFile,

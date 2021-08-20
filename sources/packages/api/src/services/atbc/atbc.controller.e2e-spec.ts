@@ -10,6 +10,9 @@ import {
   StudentFileService,
   ApplicationService,
   SequenceControlService,
+  WorkflowActionsService,
+  WorkflowService,
+  TokensService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -21,6 +24,7 @@ import { ATBCCreateClientResponse } from "../../types";
 import { StudentController } from "../../route-controllers";
 import { DatabaseModule } from "../../database/database.module";
 import { AuthModule } from "../../auth/auth.module";
+import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 
 describe("Test ATBC Controller", () => {
   const clientId = "student";
@@ -38,7 +42,6 @@ describe("Test ATBC Controller", () => {
       clientId,
     );
     accesstoken = token.access_token;
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule, AuthModule],
       controllers: [StudentController],
@@ -51,6 +54,12 @@ describe("Test ATBC Controller", () => {
         StudentService,
         ApplicationService,
         SequenceControlService,
+        WorkflowActionsService,
+        WorkflowService,
+        KeycloakService,
+        ConfigService,
+        TokensService,
+        createMockedJwtService(),
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

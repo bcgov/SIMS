@@ -30,7 +30,17 @@ export enum ApplicationStatus {
    */
   completed = "Completed",
   /**
-   * TThe application has been cancelled by the student
+   * The application has been cancelled by the student
    */
   cancelled = "Cancelled",
+  /**
+   * The application was replaced by a new version due to some event like
+   * an edit on Confirmation of Enrollment that forces the assessment to
+   * be reevaluated. Is this case the application is cloned and and the
+   * old version is marked as 'Overwritten'.
+   * An Overwritten application should never be modified, once an application
+   * is Overwritten and a clone/new version is created all edits should take
+   * place on new record.
+   */
+  overwritten = "Overwritten",
 }

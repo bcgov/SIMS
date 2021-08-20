@@ -30,7 +30,8 @@ export enum ApplicationStatus {
    */
   completed = "Completed",
   /**
-   * TThe application has been cancelled by the student
+   * The application has been cancelled by the student.
+   * A cancelled Application should never be modified.
    */
   cancelled = "Cancelled",
 }

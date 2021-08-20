@@ -41,14 +41,19 @@ export class ApplicationSystemController {
   async getByApplicationId(
     @Param("id") applicationId: number,
   ): Promise<ApplicationDataDto> {
-    const application = await this.applicationService.findById(applicationId);
+    const application = await this.applicationService.getApplicationById(
+      applicationId,
+    );
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
       );
     }
 
-    return { data: application.data };
+    return {
+      data: application.data,
+      programYear: application.programYear.programYear,
+    };
   }
 
   @Patch(":applicationId/assessment")

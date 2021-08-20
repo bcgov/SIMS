@@ -103,7 +103,7 @@ export class ApplicationController extends BaseController {
     );
     if (!submissionResult.valid) {
       throw new BadRequestException(
-        "Not able to create an applicaion due to an invalid request.",
+        "Not able to create an application due to an invalid request.",
       );
     }
 
@@ -120,38 +120,15 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
 
-    const submittedApplication =
-      await this.applicationService.submitApplication(
-        applicationId,
-        student.id,
-        programYear.id,
-        submissionResult.data.data,
-        payload.associatedFiles,
-      );
-
-    const assessmentWorflow = await this.workflow.startApplicationAssessment(
-      submissionResult.data.data.workflowName,
-      submittedApplication.id,
+    await this.applicationService.submitApplication(
+      applicationId,
+      student.id,
+      programYear.id,
+      submissionResult.data.data,
+      payload.associatedFiles,
     );
 
-    // TODO: Once we have the application status we should run the create/associate
-    // under a DB transation to ensure that, if the workflow fails to start we would
-    // be rolling back the transaction and returning an error to the student.
-    const workflowAssociationResult =
-      await this.applicationService.associateAssessmentWorkflow(
-        submittedApplication.id,
-        assessmentWorflow.id,
-      );
-
-    // 1 means the number of affected rows expected while
-    // associating the workflow id.
-    if (workflowAssociationResult.affected !== 1) {
-      // TODO: Once we add a transaction, this error should force a rollback
-      // and should also cancel the workflow.
-      throw new InternalServerErrorException(
-        "Error while associating the assessment workflow.",
-      );
-    }
+    this.applicationService.startApplicationAssessment(applicationId);
   }
 
   /**
