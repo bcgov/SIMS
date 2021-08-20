@@ -132,8 +132,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Saves an Student Application in draft state.
    * If the application id is provided an update is performed,
-   * otheriwse the draft will be created. The validations are also
-   * apllied accordingly to update/create scenarios.
+   * otherwise the draft will be created. The validations are also
+   * applied accordingly to update/create scenarios.
    * @param studentId student id.
    * @param programYearId program year associated with the application draft.
    * @param applicationData dynamic data received from Form.IO form.
@@ -659,10 +659,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     locationId: number,
     applicationId: number,
   ): Promise<ApplicationOverriddenResult> {
-    const appToOverride = await this.repo.findOne({
-      id: applicationId,
-      location: { id: locationId },
-    });
+    const appToOverride = await this.repo.findOne(
+      {
+        id: applicationId,
+        location: { id: locationId },
+      },
+      { relations: ["studentFiles"] },
+    );
 
     if (!appToOverride) {
       throw new CustomNamedError(
@@ -695,23 +698,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.location = {
       id: appToOverride.locationId,
     } as InstitutionLocation;
-    newApplication.pirProgram = {
-      id: appToOverride.pirProgramId,
-    } as EducationProgram;
+    if (appToOverride.pirProgramId) {
+      newApplication.pirProgram = {
+        id: appToOverride.pirProgramId,
+      } as EducationProgram;
+    }
+    if (appToOverride.offeringId) {
+      newApplication.offering = {
+        id: appToOverride.offeringId,
+      } as EducationProgramOffering;
+    }
     newApplication.programYear = {
       id: appToOverride.programYearId,
     } as ProgramYear;
-    newApplication.offering = {
-      id: appToOverride.offeringId,
-    } as EducationProgramOffering;
     newApplication.pirStatus = ProgramInfoStatus.required;
     newApplication.applicationStatus = ApplicationStatus.submitted;
     newApplication.applicationStatusUpdatedOn = getUTCNow();
-    newApplication.studentFiles = appToOverride.studentFilesIds.map(
-      (applicationFileId: number) =>
-        ({
-          id: applicationFileId,
-        } as ApplicationStudentFile),
+    newApplication.studentFiles = appToOverride.studentFiles.map(
+      (applicationFile: ApplicationStudentFile) => {
+        // Recreate file associations for new application.
+        const fileAssociation = new ApplicationStudentFile();
+        fileAssociation.studentFile = {
+          id: applicationFile.studentFileId,
+        } as StudentFile;
+        return fileAssociation;
+      },
     );
 
     await this.repo.save([appToOverride, newApplication]);
