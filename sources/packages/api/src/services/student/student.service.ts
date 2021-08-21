@@ -10,7 +10,8 @@ import { ArchiveDbService } from "../archive-db/archive-db.service";
 import { StudentLegacyData } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { getUTCNow } from "../../utilities";
+import { common } from "../../utilities";
+const { getUTCNow } = common();
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {

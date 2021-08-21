@@ -22,7 +22,7 @@ export enum AppRoutes {
   LocationUsers = "location-users/",
   LocationProgramInfoRequestSummary = "program-info-request/location/:locationId/summary",
   LocationCOESummary = "confirmation-of-enrollment/location/:locationId/summary",
-  LocationCOEEdit = "confirmation-of-enrollment/location/:locationId/application/:applicationId",
+  LocationCOEDetails = "confirmation-of-enrollment/location/:locationId/application/:applicationId",
   LocationProgramInfoRequestEdit = "program-info-request/location/:locationId/application/:applicationId",
   ManageInstitutionDesignation = "manage-desgination",
   InstitutionManageUsers = "manage-users",

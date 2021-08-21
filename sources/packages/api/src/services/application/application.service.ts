@@ -18,10 +18,12 @@ import {
   EducationProgram,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import { CustomNamedError, getUTCNow } from "../../utilities";
+import { CustomNamedError, common } from "../../utilities";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationOverriddenResult } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
+
+const { getUTCNow } = common();
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
@@ -783,5 +785,36 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (workflowAssociationResult.affected !== 1) {
       throw new Error("Error while associating the assessment workflow.");
     }
+  }
+  /**
+   * Gets Application details for COE of a location
+   * For COE, The source of truth is
+   * offering table (not the data given by student)
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns application details for COE.
+   */
+  async getApplicationDetailsForCOE(
+    locationId: number,
+    applicationId: number,
+  ): Promise<Application> {
+    let query = this.repo
+      .createQueryBuilder("application")
+      .innerJoinAndSelect("application.location", "location")
+      .innerJoinAndSelect("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .innerJoinAndSelect("application.offering", "offering")
+      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus != :applicationStatus", {
+        applicationStatus: ApplicationStatus.overwritten,
+      })
+      .andWhere("application.id = :applicationId", {
+        applicationId,
+      })
+      .andWhere("application.coeStatus != :nonCOEStatus", {
+        nonCOEStatus: COEStatus.notRequired,
+      });
+    return query.getOne();
   }
 }

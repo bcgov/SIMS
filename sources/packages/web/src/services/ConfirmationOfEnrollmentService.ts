@@ -1,4 +1,4 @@
-import { COESummaryDTO } from "@/types";
+import { COESummaryDTO, ApplicationDetailsForCOEDTO } from "@/types";
 import ApiClient from "./http/ApiClient";
 
 export class ConfirmationOfEnrollmentService {
@@ -11,5 +11,15 @@ export class ConfirmationOfEnrollmentService {
 
   public async getCOESummary(locationId: number): Promise<COESummaryDTO[]> {
     return ApiClient.ConfirmationOfEnrollment.getCOESummary(locationId);
+  }
+
+  public async getApplicationForCOE(
+    applicationId: number,
+    locationId: number,
+  ): Promise<ApplicationDetailsForCOEDTO> {
+    return ApiClient.ConfirmationOfEnrollment.getApplicationForCOE(
+      applicationId,
+      locationId,
+    );
   }
 }
