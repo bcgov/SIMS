@@ -18,7 +18,7 @@ export class InstitutionTypeService extends RecordDataModelService<InstitutionTy
    * @returns Location retrieved, if found, otherwise returns null.
    */
   async getById(id: number): Promise<InstitutionType> {
-    return await this.repo.findOne(id);
+    return this.repo.findOne(id);
   }
 
   /**
