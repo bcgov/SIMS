@@ -71,7 +71,7 @@ export class CreateInstitutionDto {
   postalCode: string;
 
   @IsNotEmpty()
-  institutionType: string;
+  institutionType: number;
 }
 
 export class InstitutionDto extends PartialType(CreateInstitutionDto) {
@@ -118,7 +118,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
       country: institutionEntity.institutionAddress.country,
       provinceState: institutionEntity.institutionAddress.provinceState,
       postalCode: institutionEntity.institutionAddress.postalCode,
-      institutionType: institutionEntity.institutionType.name.trim(),
+      institutionType: institutionEntity.institutionType,
     };
   }
 }

@@ -175,6 +175,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.website = institutionDto.website;
     institution.regulatingBody = institutionDto.regulatingBody;
     institution.establishedDate = institutionDto.establishedDate;
+    institution.institutionType = institutionDto.institutionType;
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
@@ -215,7 +216,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async getInstituteByUserName(userName: string): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .leftJoinAndSelect("institution.institutionType", "institutionType")
       .leftJoin("institution.users", "institutionUsers")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
@@ -241,6 +241,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.website = institutionDto.website;
     institution.regulatingBody = institutionDto.regulatingBody;
     institution.establishedDate = institutionDto.establishedDate;
+    institution.institutionType = institutionDto.institutionType;
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
