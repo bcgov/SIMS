@@ -1,4 +1,4 @@
-import { getSQLFileData } from "src/utilities";
+import { getSQLFileData } from "../../utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class UpdateInstitutionAddInstitutionType1629158172220

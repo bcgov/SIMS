@@ -53,7 +53,7 @@ export default {
           toast.add({
             severity: "success",
             summary: "Updated!",
-            detail: "Institution and User successfully updated!",
+            detail: "Institution successfully updated!",
             life: 5000,
           });
         } catch (excp) {
