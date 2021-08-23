@@ -145,7 +145,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   async createInstitution(
     userInfo: UserInfo,
-    institutionDto: CreateInstitutionDto,
+    createInstitutionDto: CreateInstitutionDto,
   ): Promise<Institution> {
     const institution = this.create();
     const user = new User();
@@ -165,43 +165,43 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user.userName = userInfo.userName;
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
-    user.email = institutionDto.primaryEmail;
+    user.email = createInstitutionDto.primaryEmail;
 
     institution.guid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;
-    institution.operatingName = institutionDto.operatingName;
-    institution.primaryPhone = institutionDto.primaryPhone;
-    institution.primaryEmail = institutionDto.primaryEmail;
-    institution.website = institutionDto.website;
-    institution.regulatingBody = institutionDto.regulatingBody;
-    institution.establishedDate = institutionDto.establishedDate;
-    institution.institutionType = institutionDto.institutionType;
+    institution.operatingName = createInstitutionDto.operatingName;
+    institution.primaryPhone = createInstitutionDto.primaryPhone;
+    institution.primaryEmail = createInstitutionDto.primaryEmail;
+    institution.website = createInstitutionDto.website;
+    institution.regulatingBody = createInstitutionDto.regulatingBody;
+    institution.establishedDate = createInstitutionDto.establishedDate;
+    institution.institutionType = createInstitutionDto.institutionType;
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
-      primaryContactFirstName: institutionDto.primaryContactFirstName,
-      primaryContactLastName: institutionDto.primaryContactLastName,
-      primaryContactEmail: institutionDto.primaryContactEmail,
-      primaryContactPhone: institutionDto.primaryContactPhone,
+      primaryContactFirstName: createInstitutionDto.primaryContactFirstName,
+      primaryContactLastName: createInstitutionDto.primaryContactLastName,
+      primaryContactEmail: createInstitutionDto.primaryContactEmail,
+      primaryContactPhone: createInstitutionDto.primaryContactPhone,
     };
 
     //Institution Legal Authority Contact Information
     institution.legalAuthorityContact = {
-      legalAuthorityFirstName: institutionDto.legalAuthorityFirstName,
-      legalAuthorityLastName: institutionDto.legalAuthorityLastName,
-      legalAuthorityEmail: institutionDto.legalAuthorityEmail,
-      legalAuthorityPhone: institutionDto.legalAuthorityPhone,
+      legalAuthorityFirstName: createInstitutionDto.legalAuthorityFirstName,
+      legalAuthorityLastName: createInstitutionDto.legalAuthorityLastName,
+      legalAuthorityEmail: createInstitutionDto.legalAuthorityEmail,
+      legalAuthorityPhone: createInstitutionDto.legalAuthorityPhone,
     };
 
     //Institution Address
     institution.institutionAddress = {
-      addressLine1: institutionDto.addressLine1,
-      addressLine2: institutionDto.addressLine2,
-      city: institutionDto.city,
-      provinceState: institutionDto.provinceState,
-      country: institutionDto.country,
-      postalCode: institutionDto.postalCode,
-      phone: institutionDto.primaryPhone,
+      addressLine1: createInstitutionDto.addressLine1,
+      addressLine2: createInstitutionDto.addressLine2,
+      city: createInstitutionDto.city,
+      provinceState: createInstitutionDto.provinceState,
+      country: createInstitutionDto.country,
+      postalCode: createInstitutionDto.postalCode,
+      phone: createInstitutionDto.primaryPhone,
     };
 
     await this.createAssociation({
