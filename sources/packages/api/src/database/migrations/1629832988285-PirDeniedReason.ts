@@ -1,0 +1,21 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+import { getSQLFileData } from "../../utilities";
+
+export class PirDeniedReason1629832988285 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData("Create-pir-denied-reason.sql", "PirDeniedReason"),
+    );
+
+    // Loading initial values
+    await queryRunner.query(
+      getSQLFileData("Create-initial-pir-denied-reason.sql", "PirDeniedReason"),
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData("Drop-pir-denied-reason.sql", "PirDeniedReason"),
+    );
+  }
+}
