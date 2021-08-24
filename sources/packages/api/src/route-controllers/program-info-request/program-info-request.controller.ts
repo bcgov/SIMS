@@ -13,6 +13,7 @@ import {
 import {
   CompleteProgramInfoRequestDto,
   GetProgramInfoRequestDto,
+  GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -24,6 +25,7 @@ import {
   InstitutionService,
   InstitutionLocationService,
   FormService,
+  PirDeniedReasonService,
 } from "../../services";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
@@ -45,6 +47,7 @@ export class ProgramInfoRequestController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly locationService: InstitutionLocationService,
+    private readonly pirDeniedReasonService: PirDeniedReasonService,
     private readonly formService: FormService,
   ) {}
 
@@ -233,5 +236,25 @@ export class ProgramInfoRequestController {
         lastName: eachApplication.student.user.lastName,
       };
     }) as PIRSummaryDTO[];
+  }
+
+  /**
+   * Get all PIR denied reason ,which are active
+   * @returns PIR denied reason list
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get("program-info-request/denied-reason")
+  async getPIRDeniedReason(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<GetPIRDeniedReasonDto[]> {
+    const pirDeniedReason =
+      await this.pirDeniedReasonService.getPirDeniedReasons();
+    return pirDeniedReason.map((eachPirDeniedReason: GetPIRDeniedReasonDto) => {
+      return {
+        id: eachPirDeniedReason.id,
+        reason: eachPirDeniedReason.reason,
+      };
+    }) as GetPIRDeniedReasonDto[];
   }
 }

@@ -59,7 +59,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO } from "@/types";
+import { PIRSummaryDTO, GetPIRDeniedReasonDto } from "@/types";
 import { useFormatters } from "@/composables";
 
 export default {
@@ -78,6 +78,7 @@ export default {
     const router = useRouter();
     const { dateString } = useFormatters();
     const applications = ref([] as PIRSummaryDTO[]);
+    const pirDeniedReasons = ref([] as GetPIRDeniedReasonDto[]);
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -92,9 +93,13 @@ export default {
       );
     };
 
+    const getPIRDeniedReasonList = async () => {
+      pirDeniedReasons.value = await ProgramInfoRequestService.shared.getPIRDeniedReasonList();
+    };
+
     watch(
       () => props.locationId,
-      async currValue => {
+      async (currValue) => {
         //update the list
         await updateSummaryList(currValue);
       },
@@ -124,6 +129,7 @@ export default {
       dateString,
       goToViewApplication,
       getPirStatusColorClass,
+      getPIRDeniedReasonList,
     };
   },
 };

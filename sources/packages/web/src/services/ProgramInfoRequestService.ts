@@ -2,6 +2,7 @@ import {
   CompleteProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   PIRSummaryDTO,
+  GetPIRDeniedReasonDto,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
 
@@ -37,5 +38,9 @@ export class ProgramInfoRequestService {
 
   public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
     return ApiClient.ProgramInfoRequest.getPIRSummary(locationId);
+  }
+
+  public async getPIRDeniedReasonList(): Promise<GetPIRDeniedReasonDto[]> {
+    return ApiClient.ProgramInfoRequest.getPIRDeniedReasonList();
   }
 }
