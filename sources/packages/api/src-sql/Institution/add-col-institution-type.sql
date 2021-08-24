@@ -1,4 +1,4 @@
--- Add column institution_type_id as we will be storing the institution type of each enstitution created/modified
+-- Add column institution_type_id as we will be storing the institution type of each institution created/modified
 ALTER TABLE
     sims.institutions
 ADD
