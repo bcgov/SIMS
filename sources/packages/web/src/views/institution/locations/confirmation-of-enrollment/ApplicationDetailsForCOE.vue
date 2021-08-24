@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div class="p-m-4">
     <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
@@ -8,9 +8,14 @@
     <p class="font-weight-bold h2 color-blue">
       View Financial Aid Application
     </p>
-    <v-btn color="primary" class="float-right ml-2" @click="toggle"
-      >Application Options
-      <v-icon size="25"> mdi-arrow-down-bold-circle</v-icon></v-btn
+    <v-btn
+      color="primary"
+      class="float-right ml-2"
+      @click="toggle"
+      v-if="COEStatus.required === initialData.applicationCOEStatus"
+    >
+      <v-icon size="25" class="pr-2"> mdi-format-list-bulleted</v-icon
+      >Application Actions</v-btn
     >
     <Menu
       class="mt-n15 coe-menu-option"
@@ -18,31 +23,99 @@
       :model="items"
       :popup="true"
     />
-    <div>
+    <v-container>
+      <div
+        class="bg-white coe-info-border mt-10 mb-4"
+        v-if="COEStatus.submitted === initialData.applicationCOEStatus"
+      >
+        <p>
+          <v-icon color="green darken-2">mdi-information </v-icon
+          ><span class="pl-2 font-weight-bold"
+            >This application has been confirmed</span
+          >
+        </p>
+        <span class="mt-4">
+          This applicant has been confirmed as enrolled at your institution.
+          Funding will be dispersed on the study start date shown below. If the
+          applicant will be recieving after the study start date listed below
+          funds will be dispersed 48 hours after enrolment as been confirmed.
+        </span>
+      </div>
+      <div
+        class="bg-white coe-ocw-info-border mt-10 mb-4"
+        v-if="
+          COEStatus.required === initialData.applicationCOEStatus &&
+            !initialData.applicationWith21DayWindow
+        "
+      >
+        <p>
+          <v-icon color="primary">mdi-information </v-icon
+          ><span class="pl-2 font-weight-bold color-blue"
+            >This application is currently outside the 21 day confirmation
+            window</span
+          >
+        </p>
+        <span class="mt-4"
+          >You will be able to confirm this application when you are within 21
+          days of the study start date. You can edit this application if needed
+          from the Application Actions”.
+        </span>
+      </div>
+      <div
+        class="bg-white coe-icw-info-border  mt-10 mb-4"
+        v-if="
+          COEStatus.required === initialData.applicationCOEStatus &&
+            initialData.applicationWith21DayWindow
+        "
+      >
+        <p>
+          <v-icon color="primary">mdi-information </v-icon
+          ><span class="pl-2 font-weight-bold"
+            >This application requires confirmation of enrollment so funding can
+            be dispersed</span
+          >
+        </p>
+        <span class="mt-4"
+          >Confirm the program and intake information below by confirming,
+          declining or editing this application from the "Application Actions".
+        </span>
+      </div>
       <formio formName="confirmsstudentenrolment" :data="initialData"></formio>
-    </div>
-  </v-container>
+    </v-container>
+    <ConfirmCOE
+      :showModal="showModal"
+      :applicationId="initialData.applicationId"
+      :locationId="initialData.applicationLocationId"
+      @showHideConfirmCOE="showHideConfirmCOE"
+      @reloadData="loadInitialData"
+    />
+  </div>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import formio from "@/components/generic/formio.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
+import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
+import ConfirmCOE from "@/components/institutions/modals/ConfirmCOEModal.vue";
 
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used
  */
+
 export interface MenuType {
   label?: string;
   icon?: string;
   separator?: boolean;
   command?: any;
+  class?: string;
 }
+
 export default {
-  components: { formio, Menu },
+  components: { formio, Menu, ConfirmCOE },
   props: {
     applicationId: {
       type: Number,
@@ -55,45 +128,80 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const initialData = ref({});
+    const initialData = ref({} as ApplicationDetailsForCOEDTO);
     const menu = ref();
     const items = ref([] as MenuType[]);
-
+    const showModal = ref(false);
+    const showHideConfirmCOE = () => {
+      showModal.value = !showModal.value;
+    };
     const goBack = () => {
       router.push({
         name: InstitutionRoutesConst.COE_SUMMARY,
       });
     };
-
-    const loadMenu = () => {
-      items.value = [
-        {
-          label: "Edit",
-          icon: "pi pi-fw pi-pencil",
-        },
-        { separator: true },
-        {
-          label: "View",
-          icon: "pi pi-fw pi-folder-open",
-        },
-        { separator: true },
-        {
-          label: "Cancel",
-          icon: "pi pi-fw pi-trash text-danger",
-        },
-      ];
-    };
-    onMounted(async () => {
-      loadMenu();
+    const loadInitialData = async () => {
       initialData.value = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
         props.applicationId,
         props.locationId,
       );
+    };
+    const loadMenu = () => {
+      items.value = [
+        {
+          label: "Confirm Enrollment",
+          class:
+            COEStatus.required === initialData.value.applicationCOEStatus &&
+            !initialData.value.applicationWith21DayWindow
+              ? "text-muted"
+              : "font-weight-bold",
+          command: () => {
+            if (
+              COEStatus.required === initialData.value.applicationCOEStatus &&
+              initialData.value.applicationWith21DayWindow
+            ) {
+              showHideConfirmCOE();
+            }
+          },
+        },
+        { separator: true },
+        {
+          label: "Decline Request",
+          class: "font-weight-bold",
+        },
+        { separator: true },
+        {
+          label: "Edit Application",
+          class: "font-weight-bold",
+        },
+      ];
+    };
+    watch(
+      () => initialData.value,
+      () => {
+        //update the list
+        loadMenu();
+      },
+    );
+    onMounted(async () => {
+      loadMenu();
+      await loadInitialData();
     });
+
     const toggle = (event: any) => {
       menu?.value?.toggle(event);
     };
-    return { goBack, initialData, toggle, menu, items };
+    return {
+      toggle,
+      goBack,
+      initialData,
+      menu,
+      items,
+      COEStatus,
+      showHideConfirmCOE,
+      showModal,
+      loadInitialData,
+    };
   },
 };
 </script>

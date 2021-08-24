@@ -4,9 +4,37 @@
   padding: 20px;
 }
 .color-blue {
-  color: #1763b5;
+  color: #2965C5;
 }
 .spaced-text{
   letter-spacing: 0.5em !important;
 }
-.coe-menu-option{margin-left: -250px !important;}
+.coe-menu-option{
+  margin-left: -250px !important;
+}
+
+.coe-info-border{
+  padding: 2%;
+  border-style: solid;
+  border-color: #16C92E !important;
+  border-radius: 10px;
+  word-wrap: break-word;
+  background-color: #EDFFEF  !important;
+}
+
+.coe-ocw-info-border{
+  padding: 2%;
+  border-style: solid;
+  border-radius: 10px;
+  word-wrap: break-word;
+}
+
+.coe-icw-info-border{
+  padding: 2%;
+  border-style: solid;
+  border-color: #2965C5 !important;
+  border-radius: 10px;
+  word-wrap: break-word;
+  background-color: #EFF5FF  !important;
+
+}

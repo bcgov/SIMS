@@ -2,17 +2,20 @@
  * commonly used functions
  */
 import * as dayjs from "dayjs";
-import * as utc from "dayjs/plugin/utc"; // import plugin
-import * as localizedFormat from "dayjs/plugin/localizedFormat"; // import plugin
+import * as utc from "dayjs/plugin/utc";
+import * as localizedFormat from "dayjs/plugin/localizedFormat";
+import * as timezone from "dayjs/plugin/timezone";
+
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
+dayjs.extend(timezone);
 
 export function common() {
   /**
    * get utc date time now
    * @returns date now in utc
    */
-  const getUTCNow = () => {
+  const getUTCNow = (): Date => {
     return dayjs().utc().toDate();
   };
 
@@ -31,5 +34,54 @@ export function common() {
     return "";
   };
 
-  return { getUTCNow, dateString };
+  /**
+   * find the date difference in PST(PST: UTC−08:00) from current date
+   * @param firstDate first date.
+   * @param lastDate Last date.
+   * @returns the date difference in number.
+   */
+  const dateDifference = (
+    firstDate: string | Date,
+    lastDate: string | Date,
+  ): number => {
+    const date1 = new Date(firstDate).getTime();
+    const date2 = new Date(lastDate).getTime();
+    const difference = date2 - date1;
+    return difference / (1000 * 60 * 60 * 24);
+  };
+
+  /**
+   * get current PST(PST: UTC−08:00/PDT: UTC−07:00)
+   * @param date date to be converted to PST.
+   * @param local, if local is set to true,
+   * then the offset will be directly append to the date without
+   * converting to the timezone actual date,
+   * if set to false, the date will be converted
+   * to the actual timezone time with offset
+   * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00)
+   */
+  const getPSTPDTDate = (
+    date: string | Date,
+    local: boolean = false,
+  ): string => {
+    return dayjs(new Date(date)).tz("America/Vancouver", local).format();
+  };
+
+  /**
+   * set date to start of the day with PST/PDT offset,
+   * for eg, Aug 24th 2021 will be 2021-08-24T00:00:00-07:00
+   * @param date date to be updated.
+   * @returns date string
+   */
+  const setToStartOfTheDayInPSTPDT = (date: string | Date): string => {
+    return dayjs(date).tz("America/Vancouver", true).startOf("day").format();
+  };
+
+  return {
+    getUTCNow,
+    dateString,
+    dateDifference,
+    getPSTPDTDate,
+    setToStartOfTheDayInPSTPDT,
+  };
 }

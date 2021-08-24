@@ -797,6 +797,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsForCOE(
     locationId: number,
     applicationId: number,
+    requiredCOEApplication: boolean = false,
   ): Promise<Application> {
     let query = this.repo
       .createQueryBuilder("application")
@@ -811,10 +812,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("application.id = :applicationId", {
         applicationId,
-      })
-      .andWhere("application.coeStatus != :nonCOEStatus", {
+      });
+    if (!requiredCOEApplication) {
+      query.andWhere("application.coeStatus != :nonCOEStatus", {
         nonCOEStatus: COEStatus.notRequired,
       });
+    } else {
+      query.andWhere("application.coeStatus = :COEStatus", {
+        COEStatus: COEStatus.required,
+      });
+    }
     return query.getOne();
   }
 }

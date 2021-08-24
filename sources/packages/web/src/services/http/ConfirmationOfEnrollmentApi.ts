@@ -30,4 +30,20 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async confirmCOE(
+    locationId: number,
+    applicationId: number,
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/confirm`,
+        {},
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

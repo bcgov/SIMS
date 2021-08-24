@@ -102,4 +102,8 @@ export interface ApplicationDetailsForCOEDTO {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
+  applicationCOEStatus: string;
+  applicationId: number;
+  applicationWith21DayWindow: boolean;
+  applicationLocationId: number;
 }

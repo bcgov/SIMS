@@ -3,6 +3,7 @@ import {
   Param,
   Get,
   Post,
+  Patch,
   NotFoundException,
   UnprocessableEntityException,
   ForbiddenException,
@@ -25,7 +26,13 @@ import {
 } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import { common } from "../../utilities";
-const { getUTCNow, dateString } = common();
+const {
+  dateString,
+  dateDifference,
+  getPSTPDTDate,
+  setToStartOfTheDayInPSTPDT,
+} = common();
+const COE_WINDOW = 21;
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -167,6 +174,16 @@ export class ConfirmationOfEnrollmentController {
       applicationNumber: application.applicationNumber,
       applicationLocationName: application.location.name,
       applicationStatus: application.applicationStatus,
+      applicationCOEStatus: application.coeStatus,
+      applicationId: application.id,
+      applicationWith21DayWindow:
+        dateDifference(
+          setToStartOfTheDayInPSTPDT(new Date()),
+          getPSTPDTDate(application.offering.studyStartDate, true),
+        ) <= COE_WINDOW
+          ? true
+          : false,
+      applicationLocationId: application.location.id,
     };
   }
 
@@ -175,13 +192,36 @@ export class ConfirmationOfEnrollmentController {
 \   * @param applicationId application to be rolled back.
    */
   @HasLocationAccess("locationId")
-  @Post("confirmation-of-enrollment/application/:applicationId/confirm")
+  @Patch(
+    ":locationId/confirmation-of-enrollment/application/:applicationId/confirm",
+  )
   async confirmEnrollment(
+    @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
   ): Promise<void> {
-    const application = await this.applicationService.getApplicationById(
-      applicationId,
-    );
+    // get application for the location if COE status is `REQUIRED`
+    const application =
+      await this.applicationService.getApplicationDetailsForCOE(
+        locationId,
+        applicationId,
+        true,
+      );
+    if (!application) {
+      throw new UnprocessableEntityException("Application Not Found");
+    }
+    // institution user can only confirm COE, when the student is
+    // within (COE_WINDOW) 21 days of their Program Start date
+    if (
+      dateDifference(
+        setToStartOfTheDayInPSTPDT(new Date()),
+        getPSTPDTDate(application.offering.studyStartDate, true),
+      ) > COE_WINDOW
+    ) {
+      throw new UnprocessableEntityException(
+        `Confirmation of Enrollment window is greater than ${COE_WINDOW} days`,
+      );
+    }
+
     await this.applicationService.updateCOEStatus(
       applicationId,
       COEStatus.submitted,
