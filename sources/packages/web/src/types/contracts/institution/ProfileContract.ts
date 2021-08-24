@@ -9,6 +9,7 @@ export interface InstitutionProfileState {
   primaryContact: ContactInfo;
   legalContact: ContactInfo;
   primaryAddress: Address;
+  institutionType: number;
 }
 
 export interface ContactInfo {

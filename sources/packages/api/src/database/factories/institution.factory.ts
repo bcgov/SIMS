@@ -10,6 +10,7 @@ export async function institutionFactory(
   institution.guid = faker.random.uuid();
   institution.establishedDate = faker.date.past();
   institution.website = faker.internet.url();
+  institution.institutionType = 1;
   institution.institutionAddress = {
     phone: faker.phone.phoneNumber(),
     addressLine1: faker.address.streetAddress(),

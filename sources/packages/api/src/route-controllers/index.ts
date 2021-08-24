@@ -14,3 +14,4 @@ export * from "./application/application.system.controller";
 export * from "./atbc/atbc.system.controller";
 export * from "./program-info-request/program-info-request.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controller";
+export * from "./institution-type/institution-type.controller";

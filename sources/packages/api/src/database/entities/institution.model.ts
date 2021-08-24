@@ -6,7 +6,6 @@ import {
   InstitutionPrimaryContact,
   LegalAuthorityContact,
 } from "../../types";
-import { User } from "./user.model";
 import { InstitutionUser } from "./institution-user.model";
 
 @Entity({ name: TableNames.Institution })
@@ -78,4 +77,10 @@ export class Institution extends RecordDataModel {
     cascade: false,
   })
   users: InstitutionUser[];
+
+  @Column({
+    name: "institution_type_id",
+    nullable: true,
+  })
+  institutionType: number;
 }

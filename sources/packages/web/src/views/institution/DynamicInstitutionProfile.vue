@@ -10,6 +10,7 @@
       <formio
         formName="institutionprofile"
         :data="initialData"
+        @loaded="formLoaded"
         @submitted="submitted"
       ></formio>
     </template>
@@ -25,6 +26,7 @@ import { UserService } from "../../services/UserService";
 import { InstitutionDto, InstitutionDetailDto } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import { useFormioDropdownLoader } from "../../composables";
 
 export default {
   components: { formio },
@@ -39,6 +41,7 @@ export default {
     // Hooks
     const toast = useToast();
     const router = useRouter();
+    const formioDataLoader = useFormioDropdownLoader();
     // Data-bind
     const initialData = ref({});
 
@@ -50,7 +53,7 @@ export default {
           toast.add({
             severity: "success",
             summary: "Updated!",
-            detail: "Institution and User successfully updated!",
+            detail: "Institution successfully updated!",
             life: 5000,
           });
         } catch (excp) {
@@ -116,9 +119,14 @@ export default {
       }
     });
 
+    const formLoaded = async (form: any) => {
+      await formioDataLoader.loadInstitutionTypes(form, "institutionType");
+    };
+
     return {
       initialData,
       submitted,
+      formLoaded,
     };
   },
 };

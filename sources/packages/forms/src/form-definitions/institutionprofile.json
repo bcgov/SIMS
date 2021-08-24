@@ -978,6 +978,119 @@
           "id": "ew6b0sd",
           "dataGridLabel": false,
           "shortcutButtons": []
+        },
+        {
+          "label": "Institution Type",
+          "labelPosition": "top",
+          "widget": "html5",
+          "placeholder": "Select",
+          "description": "",
+          "tooltip": "",
+          "customClass": "",
+          "tabindex": "",
+          "hidden": false,
+          "hideLabel": false,
+          "uniqueOptions": false,
+          "autofocus": false,
+          "disabled": false,
+          "tableView": true,
+          "modalEdit": false,
+          "multiple": false,
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              {
+                "label": "",
+                "value": ""
+              }
+            ],
+            "resource": "",
+            "json": "",
+            "url": "",
+            "custom": ""
+          },
+          "dataType": "",
+          "idPath": "id",
+          "valueProperty": "",
+          "template": "<span>{{ item.label }}</span>",
+          "refreshOn": "",
+          "refreshOnBlur": "",
+          "clearOnRefresh": false,
+          "searchEnabled": true,
+          "selectThreshold": 0.3,
+          "readOnlyValue": false,
+          "customOptions": {},
+          "useExactSearch": false,
+          "persistent": true,
+          "protected": false,
+          "dbIndex": false,
+          "encrypted": false,
+          "clearOnHide": true,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "allowCalculateOverride": false,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "onlyAvailableItems": true,
+            "customMessage": "",
+            "custom": "",
+            "customPrivate": false,
+            "json": "",
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "unique": false,
+          "errorLabel": "",
+          "key": "institutionType",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "select",
+          "indexeddb": {
+            "filter": {}
+          },
+          "selectFields": "",
+          "searchField": "",
+          "minSearch": 0,
+          "filter": "",
+          "limit": 100,
+          "redrawOn": "",
+          "input": true,
+          "prefix": "",
+          "suffix": "",
+          "dataGridLabel": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "lazyLoad": true,
+          "authenticate": false,
+          "ignoreCache": false,
+          "searchThreshold": 0.3,
+          "fuseOptions": {
+            "include": "score",
+            "threshold": 0.3
+          },
+          "id": "em8wua",
+          "defaultValue": ""
         }
       ],
       "id": "emks76p",
@@ -3435,5 +3548,5 @@
   "title": "Institution Profile",
   "machineName": "institutionProfile",
   "created": "2021-06-28T22:07:09.693Z",
-  "modified": "2021-08-13T22:54:34.452Z"
+  "modified": "2021-08-24T18:44:18.555Z"
 }

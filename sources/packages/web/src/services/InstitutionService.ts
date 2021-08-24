@@ -79,6 +79,7 @@ export class InstitutionService {
       provinceState: institutionProfile.primaryAddress.provinceState,
       country: institutionProfile.primaryAddress.coutry,
       postalCode: institutionProfile.primaryAddress.postalCode,
+      institutionType: institutionProfile.institutionType,
     };
     await ApiClient.Institution.createInstitution(institutionDto);
   }
@@ -285,5 +286,9 @@ export class InstitutionService {
 
   public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
     return ApiClient.InstitutionLocation.getOptionsList();
+  }
+
+  public async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
+    return ApiClient.Institution.getInstitutionTypeOptions();
   }
 }

@@ -5,6 +5,7 @@ import {
   UpdateInstitutionDto,
   InstitutionUserResDto,
   InstitutionUserAndAuthDetailsForStore,
+  OptionItemDto,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -87,15 +88,28 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getMyInstitutionDetails(header?:any): Promise<
-    InstitutionUserAndAuthDetailsForStore
-  > {
+  public async getMyInstitutionDetails(
+    header?: any,
+  ): Promise<InstitutionUserAndAuthDetailsForStore> {
     try {
       const res = await this.apiClient.get(
         `institution/my-details`,
         header || this.addAuthHeader(),
       );
       return res?.data as InstitutionUserAndAuthDetailsForStore;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        "institution/type/options-list",
+        this.addAuthHeader(),
+      );
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

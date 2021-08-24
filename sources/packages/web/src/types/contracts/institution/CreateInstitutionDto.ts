@@ -24,6 +24,7 @@ export interface InstitutionDto {
   provinceState: string;
   country: string;
   postalCode: string;
+  institutionType: number;
 }
 
 export interface UpdateInstitutionDto extends Partial<InstitutionDto> {

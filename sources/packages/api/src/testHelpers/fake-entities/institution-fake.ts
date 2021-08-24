@@ -11,6 +11,7 @@ export function createFakeInstitution(): Institution {
   institution.website = faker.internet.url();
   institution.regulatingBody = "Regulating Body";
   institution.establishedDate = faker.date.past(20);
+  institution.institutionType = 1;
   institution.institutionPrimaryContact = {
     primaryContactFirstName: faker.name.firstName(),
     primaryContactLastName: faker.name.lastName(),
