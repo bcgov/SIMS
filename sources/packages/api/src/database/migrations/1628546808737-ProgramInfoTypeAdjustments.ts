@@ -14,7 +14,7 @@ export class ProgramInfoTypeAdjustments1628546808737
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("rollbak-program-info-status.sql", DIR),
+      getSQLFileData("rollback-program-info-status.sql", DIR),
     );
   }
 }
