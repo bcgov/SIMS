@@ -35,7 +35,7 @@ export function common() {
   };
 
   /**
-   * find the date difference in PST(PST: UTC−08:00) from current date
+   * find the date difference
    * @param firstDate first date.
    * @param lastDate Last date.
    * @returns the date difference in number.
@@ -51,7 +51,7 @@ export function common() {
   };
 
   /**
-   * get current PST(PST: UTC−08:00/PDT: UTC−07:00)
+   * convert the date to (PST: UTC−08:00/PDT: UTC−07:00)
    * @param date date to be converted to PST.
    * @param local, if local is set to true,
    * then the offset will be directly append to the date without
