@@ -1033,7 +1033,7 @@
           "validateOn": "change",
           "validate": {
             "required": false,
-            "onlyAvailableItems": false,
+            "onlyAvailableItems": true,
             "customMessage": "",
             "custom": "",
             "customPrivate": false,
@@ -1089,7 +1089,7 @@
             "include": "score",
             "threshold": 0.3
           },
-          "id": "e101e9",
+          "id": "em8wua",
           "defaultValue": ""
         }
       ],
@@ -3548,5 +3548,5 @@
   "title": "Institution Profile",
   "machineName": "institutionProfile",
   "created": "2021-06-28T22:07:09.693Z",
-  "modified": "2021-08-21T00:46:16.918Z"
+  "modified": "2021-08-24T18:44:18.555Z"
 }

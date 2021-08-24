@@ -11,9 +11,9 @@ export class InstitutionTypeController extends BaseController {
   @Get("options-list")
   async getOptionsList(): Promise<OptionItem[]> {
     const institutionTypes = await this.institutionTypeService.getAll();
-    return institutionTypes.map((t) => ({
-      id: t.id,
-      description: t.name,
+    return institutionTypes.map((institutionType) => ({
+      id: institutionType.id,
+      description: institutionType.name,
     }));
   }
 }
