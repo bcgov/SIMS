@@ -189,7 +189,8 @@ export class ConfirmationOfEnrollmentController {
 
   /**
    * Confirm Enrollment
-\   * @param applicationId application to be rolled back.
+   * @param locationId location id of the application
+   * @param applicationId application id to be confirm COE.
    */
   @HasLocationAccess("locationId")
   @Patch(

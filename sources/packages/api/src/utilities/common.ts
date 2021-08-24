@@ -38,7 +38,7 @@ export function common() {
    * find the date difference
    * @param firstDate first date.
    * @param lastDate Last date.
-   * @returns the date difference in number.
+   * @returns the date difference in days.
    */
   const dateDifference = (
     firstDate: string | Date,
