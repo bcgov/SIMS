@@ -60,7 +60,7 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { PIRSummaryDTO } from "@/types";
-import { useFormatters, useFormioDropdownLoader } from "@/composables";
+import { useFormatters } from "@/composables";
 
 export default {
   components: {},
@@ -78,7 +78,6 @@ export default {
     const router = useRouter();
     const { dateString } = useFormatters();
     const applications = ref([] as PIRSummaryDTO[]);
-    const formioDataLoader = useFormioDropdownLoader();
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -120,16 +119,11 @@ export default {
       }
     };
 
-    const formLoaded = async (form: any) => {
-      await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReason");
-    };
-
     return {
       applications,
       dateString,
       goToViewApplication,
       getPirStatusColorClass,
-      formLoaded,
     };
   },
 };

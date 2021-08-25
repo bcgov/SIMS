@@ -108,6 +108,7 @@ export default {
       if (event.changed?.component?.key === PROGRAMS_DROPDOWN_KEY) {
         await loadOfferingsForProgram(form);
       }
+      await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReason");
     };
 
     const submitted = async (data: any) => {
@@ -134,7 +135,6 @@ export default {
         );
       }
     };
-
     return {
       initialData,
       formLoaded,
