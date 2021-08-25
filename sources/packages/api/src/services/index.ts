@@ -24,3 +24,4 @@ export * from "./workflow/workflow-actions.service";
 export * from "./atbc/atbc.service";
 export * from "./student-file/student-file.service";
 export * from "./program-year/program-year.service";
+export * from "./institution-type/institution-type.service";

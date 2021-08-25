@@ -116,6 +116,14 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  const loadInstitutionTypes = async (form: any, dropdownName: string) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      InstitutionService.shared.getInstitutionTypeOptions(),
+    );
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
@@ -123,5 +131,6 @@ export function useFormioDropdownLoader() {
     loadOfferingsForLocation,
     loadSelectedOfferingDate,
     loadOfferingsForLocationForInstitution,
+    loadInstitutionTypes,
   };
 }
