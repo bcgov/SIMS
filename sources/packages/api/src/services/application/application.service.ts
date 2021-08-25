@@ -16,6 +16,7 @@ import {
   ProgramYear,
   InstitutionLocation,
   EducationProgram,
+  PirDeniedReason,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CustomNamedError, getUTCNow } from "../../utilities";
@@ -783,5 +784,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (workflowAssociationResult.affected !== 1) {
       throw new Error("Error while associating the assessment workflow.");
     }
+  }
+  /**
+   * Deny the Program Info Request (PIR) for an Application.
+   * Updates only applications that have the PIR status as required.
+   * @param applicationId application id to be updated.
+   * @param locationId location that is setting the offering.
+   * @param pirDeniedReasonId Denied reason id for a student application.
+   * @param otherReason when other is selected as a PIR denied reason, text for the reason
+   * is populated.
+   * @returns updated application.
+   */
+  async setDeniedReasonForProgramInfoRequest(
+    applicationId: number,
+    locationId: number,
+    pirDeniedReasonId: number,
+    otherReasonDesc?: string,
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      id: applicationId,
+      location: { id: locationId },
+      pirStatus: ProgramInfoStatus.required,
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Not able to find an application that requires a PIR to be completed.",
+        PIR_REQUEST_NOT_FOUND_ERROR,
+      );
+    }
+
+    application.pirDeniedReason = { id: pirDeniedReasonId } as PirDeniedReason;
+    if (otherReasonDesc) {
+      application.pirDeniedOtherDesc = otherReasonDesc;
+    }
+    application.pirStatus = ProgramInfoStatus.declined;
+    return this.repo.save(application);
   }
 }

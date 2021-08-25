@@ -12,6 +12,7 @@ import {
   EducationProgram,
   EducationProgramOffering,
   InstitutionLocation,
+  PirDeniedReason,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
@@ -166,4 +167,22 @@ export class Application extends RecordDataModel {
     nullable: false,
   })
   applicationStatusUpdatedOn: Date;
+
+  @RelationId((application: Application) => application.pirDeniedReason)
+  pirDeniedId: number;
+
+  @ManyToOne(() => PirDeniedReason, {
+    eager: false,
+    cascade: true,
+  })
+  @JoinColumn({
+    name: "pir_denied_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  pirDeniedReason?: PirDeniedReason;
+
+  @Column({
+    name: "pir_denied_other_desc",
+  })
+  pirDeniedOtherDesc: string;
 }

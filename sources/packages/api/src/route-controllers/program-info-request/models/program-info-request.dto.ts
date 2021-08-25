@@ -4,8 +4,8 @@ import { ProgramInfoStatus } from "../../../database/entities";
 export interface CompleteProgramInfoRequestDto
   extends SaveEducationProgramOfferingDto {
   denyProgramInformationRequest?: boolean;
-  pirDenyReason?: GetPIRDeniedReasonDto;
-  otherReason?: string;
+  pirDenyReason?: number;
+  otherReasonDesc?: string;
   selectedProgram?: number;
   selectedOffering?: number;
 }
