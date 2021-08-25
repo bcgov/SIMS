@@ -38,7 +38,7 @@
           This applicant has been confirmed as enrolled at your institution.
           Funding will be dispersed on the study start date shown below. If the
           applicant will be recieving after the study start date listed below
-          funds will be dispersed 48 hours after enrolment as been confirmed.
+          funds will be dispersed 48 hours after enrollment as been confirmed.
         </span>
       </div>
       <div
@@ -80,7 +80,7 @@
           declining or editing this application from the "Application Actions".
         </span>
       </div>
-      <formio formName="confirmsstudentenrolment" :data="initialData"></formio>
+      <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
     </v-container>
     <ConfirmCOE
       :showModal="showModal"

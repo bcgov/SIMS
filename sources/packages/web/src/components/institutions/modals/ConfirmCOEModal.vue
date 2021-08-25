@@ -12,8 +12,8 @@
       </p></template
     >
     <p>
-      Confirming enrolment verifies this applicant as attending your institution
-      and will allow funding to be dispersed.
+      Confirming enrollment verifies this applicant is attending your
+      institution and will allow funding to be dispersed.
     </p>
     <template #footer>
       <v-btn
@@ -65,7 +65,7 @@ export default {
           props.locationId,
           props.applicationId,
         );
-        toast.success("Confirmed", "Confirmation of Enrolment Confirmed!");
+        toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
       } catch (error) {
         toast.error(
           "Unexpected error",
