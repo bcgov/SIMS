@@ -25,6 +25,7 @@ import {
   ProgramYearService,
   SequenceControlService,
   InstitutionTypeService,
+  PirDeniedReasonService,
 } from "./services";
 import {
   UserController,
@@ -95,6 +96,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     ProgramYearService,
     SequenceControlService,
     InstitutionTypeService,
+    PirDeniedReasonService,
   ],
 })
 export class AppModule {}
