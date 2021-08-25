@@ -25,14 +25,14 @@ import {
   ApplicationDetailsForCOEDTO,
 } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
-import { common } from "../../utilities";
+import { common, constants } from "../../utilities";
 const {
   dateString,
   dateDifference,
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
 } = common();
-const COE_WINDOW = 21;
+const { COE_WINDOW } = constants();
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")

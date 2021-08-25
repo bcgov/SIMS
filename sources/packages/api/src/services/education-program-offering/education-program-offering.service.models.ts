@@ -1,6 +1,8 @@
 import * as dayjs from "dayjs";
-import { EXTENDED_DATE_FORMAT } from "../../utilities/constants";
 import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
+
+import { constants } from "../../utilities";
+const { EXTENDED_DATE_FORMAT } = constants();
 
 export class EducationProgramOfferingModel {
   id: number;
