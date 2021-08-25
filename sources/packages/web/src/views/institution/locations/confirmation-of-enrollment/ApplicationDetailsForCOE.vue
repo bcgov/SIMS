@@ -45,7 +45,7 @@
         class="bg-white coe-ocw-info-border mt-10 mb-4"
         v-if="
           COEStatus.required === initialData.applicationCOEStatus &&
-            !initialData.applicationWith21DayWindow
+            !initialData.applicationWithin21DayWindow
         "
       >
         <p>
@@ -65,7 +65,7 @@
         class="bg-white coe-icw-info-border  mt-10 mb-4"
         v-if="
           COEStatus.required === initialData.applicationCOEStatus &&
-            initialData.applicationWith21DayWindow
+            initialData.applicationWithin21DayWindow
         "
       >
         <p>
@@ -152,13 +152,13 @@ export default {
           label: "Confirm Enrollment",
           class:
             COEStatus.required === initialData.value.applicationCOEStatus &&
-            !initialData.value.applicationWith21DayWindow
+            !initialData.value.applicationWithin21DayWindow
               ? "text-muted"
               : "font-weight-bold",
           command: () => {
             if (
               COEStatus.required === initialData.value.applicationCOEStatus &&
-              initialData.value.applicationWith21DayWindow
+              initialData.value.applicationWithin21DayWindow
             ) {
               showHideConfirmCOE();
             }

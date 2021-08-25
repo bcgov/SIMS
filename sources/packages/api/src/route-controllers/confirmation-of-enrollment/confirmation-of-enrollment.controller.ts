@@ -176,7 +176,7 @@ export class ConfirmationOfEnrollmentController {
       applicationStatus: application.applicationStatus,
       applicationCOEStatus: application.coeStatus,
       applicationId: application.id,
-      applicationWith21DayWindow:
+      applicationWithin21DayWindow:
         dateDifference(
           setToStartOfTheDayInPSTPDT(new Date()),
           getPSTPDTDate(application.offering.studyStartDate, true),
