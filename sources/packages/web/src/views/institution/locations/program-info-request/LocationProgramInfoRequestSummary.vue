@@ -59,8 +59,8 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO, GetPIRDeniedReasonDto } from "@/types";
-import { useFormatters } from "@/composables";
+import { PIRSummaryDTO } from "@/types";
+import { useFormatters, useFormioDropdownLoader } from "@/composables";
 
 export default {
   components: {},
@@ -78,7 +78,7 @@ export default {
     const router = useRouter();
     const { dateString } = useFormatters();
     const applications = ref([] as PIRSummaryDTO[]);
-    const pirDeniedReasons = ref([] as GetPIRDeniedReasonDto[]);
+    const formioDataLoader = useFormioDropdownLoader();
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -91,10 +91,6 @@ export default {
       applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
         locationId,
       );
-    };
-
-    const getPIRDeniedReasonList = async () => {
-      pirDeniedReasons.value = await ProgramInfoRequestService.shared.getPIRDeniedReasonList();
     };
 
     watch(
@@ -124,12 +120,16 @@ export default {
       }
     };
 
+    const formLoaded = async (form: any) => {
+      await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReason");
+    };
+
     return {
       applications,
       dateString,
       goToViewApplication,
       getPirStatusColorClass,
-      getPIRDeniedReasonList,
+      formLoaded,
     };
   },
 };

@@ -31,5 +31,5 @@ export interface GetProgramInfoRequestDto
 
 export interface GetPIRDeniedReasonDto {
   id: number;
-  reason: string;
+  description: string;
 }

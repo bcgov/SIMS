@@ -250,10 +250,10 @@ export class ProgramInfoRequestController {
   ): Promise<GetPIRDeniedReasonDto[]> {
     const pirDeniedReason =
       await this.pirDeniedReasonService.getPirDeniedReasons();
-    return pirDeniedReason.map((eachPirDeniedReason: GetPIRDeniedReasonDto) => {
+    return pirDeniedReason.map((eachPirDeniedReason) => {
       return {
         id: eachPirDeniedReason.id,
-        reason: eachPirDeniedReason.reason,
+        description: eachPirDeniedReason.reason,
       };
     }) as GetPIRDeniedReasonDto[];
   }
