@@ -176,7 +176,7 @@ export class ConfirmationOfEnrollmentController {
       applicationStatus: application.applicationStatus,
       applicationCOEStatus: application.coeStatus,
       applicationId: application.id,
-      applicationWithin21DayWindow:
+      applicationWithinCOEWindow:
         dateDifference(
           setToStartOfTheDayInPSTPDT(new Date()),
           getPSTPDTDate(application.offering.studyStartDate, true),
@@ -211,7 +211,7 @@ export class ConfirmationOfEnrollmentController {
       throw new UnprocessableEntityException("Application Not Found");
     }
     // institution user can only confirm COE, when the student is
-    // within (COE_WINDOW) 21 days of their Program Start date
+    // within COE_WINDOW of their Program Start date
     if (
       dateDifference(
         setToStartOfTheDayInPSTPDT(new Date()),
