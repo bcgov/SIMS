@@ -830,12 +830,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets program year details for a student application
-   * @param studentId student id.
-   * @param applicationId application id.
-   * @returns program year details for a student application.
+   * checks if current PST/PDT date from offering
+   * start date is inside or equal to COE window
+   * @param offeringStartDate offering start date
+   * @returns True if current to offering
+   * start date is within COE window else False
    */
-  async withinValidCOEWindow(offeringStartDate: Date): Promise<boolean> {
+  withinValidCOEWindow(offeringStartDate: Date): boolean {
     return (
       dateDifference(
         setToStartOfTheDayInPSTPDT(new Date()),

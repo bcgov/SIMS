@@ -159,7 +159,7 @@ export class ConfirmationOfEnrollmentController {
       applicationCOEStatus: application.coeStatus,
       applicationId: application.id,
       applicationWithinCOEWindow:
-        await this.applicationService.withinValidCOEWindow(
+         this.applicationService.withinValidCOEWindow(
           application.offering.studyStartDate,
         ),
       applicationLocationId: application.location.id,
@@ -192,7 +192,7 @@ export class ConfirmationOfEnrollmentController {
     // institution user can only confirm COE, when the student is
     // within COE_WINDOW of their Program Start date
     if (
-      !(await this.applicationService.withinValidCOEWindow(
+      !( this.applicationService.withinValidCOEWindow(
         application.offering.studyStartDate,
       ))
     ) {
