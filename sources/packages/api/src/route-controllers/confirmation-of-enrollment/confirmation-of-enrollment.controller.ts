@@ -6,7 +6,6 @@ import {
   Patch,
   NotFoundException,
   UnprocessableEntityException,
-  ForbiddenException,
 } from "@nestjs/common";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";

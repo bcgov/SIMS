@@ -18,11 +18,12 @@ import {
   EducationProgram,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import { CustomNamedError, getUTCNow } from "../../utilities";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationOverriddenResult } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import {
+  CustomNamedError,
+  getUTCNow,
   dateDifference,
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
