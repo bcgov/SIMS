@@ -158,10 +158,9 @@ export class ConfirmationOfEnrollmentController {
       applicationStatus: application.applicationStatus,
       applicationCOEStatus: application.coeStatus,
       applicationId: application.id,
-      applicationWithinCOEWindow:
-         this.applicationService.withinValidCOEWindow(
-          application.offering.studyStartDate,
-        ),
+      applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
+        application.offering.studyStartDate,
+      ),
       applicationLocationId: application.location.id,
     };
   }
@@ -192,9 +191,9 @@ export class ConfirmationOfEnrollmentController {
     // institution user can only confirm COE, when the student is
     // within COE_WINDOW of their Program Start date
     if (
-      !( this.applicationService.withinValidCOEWindow(
+      !this.applicationService.withinValidCOEWindow(
         application.offering.studyStartDate,
-      ))
+      )
     ) {
       throw new UnprocessableEntityException(
         `Confirmation of Enrollment window is greater than ${COE_WINDOW} days`,
