@@ -36,9 +36,9 @@
         </p>
         <span class="mt-4">
           This applicant has been confirmed as enrolled at your institution.
-          Funding will be dispersed on the study start date shown below. If the
+          Funding will be disbursed on the study start date shown below. If the
           applicant will be recieving after the study start date listed below
-          funds will be dispersed 48 hours after enrollment as been confirmed.
+          funds will be disbursed 48 hours after enrollment as been confirmed.
         </span>
       </div>
       <div

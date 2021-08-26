@@ -13,7 +13,7 @@
     >
     <p>
       Confirming enrollment verifies this applicant is attending your
-      institution and will allow funding to be dispersed.
+      institution and will allow funding to be disbursed.
     </p>
     <template #footer>
       <v-btn

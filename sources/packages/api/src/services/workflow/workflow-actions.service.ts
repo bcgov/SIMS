@@ -79,7 +79,7 @@ export class WorkflowActionsService {
    * When Confirmation of Enrollment (COE) needs to be confirmed by the institution user,
    * the workflows waits until it receives a message that the institution confirms the COE.
    * This method is going to send a message to the workflow allowing it to proceed.
-   * This message should only be when the institution confirmation COE of an Application
+   * This message should only be sent when the institution confirmation COE of an Application
    * @param processInstanceId workflow instance to receive the message.
    */
      async sendConfirmCOEMessage(

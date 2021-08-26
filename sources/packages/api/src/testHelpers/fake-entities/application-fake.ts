@@ -7,8 +7,7 @@ import {
 import { createFakeEducationProgramOffering } from "./education-program-offering-fake";
 import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
-import { common } from "../../utilities/common";
-const { getUTCNow } = common();
+import { getUTCNow } from "../../utilities/date-utils";
 
 export function createFakeApplication(
   student?: Student,

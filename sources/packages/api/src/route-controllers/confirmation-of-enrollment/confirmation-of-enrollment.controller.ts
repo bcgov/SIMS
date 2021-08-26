@@ -20,19 +20,10 @@ import {
 import { Application, COEStatus } from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import {
-  COESummaryDTO,
-  ApplicationDetailsForCOEDTO,
-} from "../application/models/application.model";
+import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
-import { common, constants } from "../../utilities";
-const {
-  dateString,
-  dateDifference,
-  getPSTPDTDate,
-  setToStartOfTheDayInPSTPDT,
-} = common();
-const { COE_WINDOW } = constants();
+import { dateString, COE_WINDOW } from "../../utilities";
+import { ApplicationDetailsForCOEDTO } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -121,7 +112,6 @@ export class ConfirmationOfEnrollmentController {
    * @param applicationId application id
    * @returns application details for COE
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(":locationId/confirmation-of-enrollment/application/:applicationId")
   async getApplicationForCOE(
@@ -129,14 +119,6 @@ export class ConfirmationOfEnrollmentController {
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<ApplicationDetailsForCOEDTO> {
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      userToken.authorizations.institutionId !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException();
-    }
     const application =
       await this.applicationService.getApplicationDetailsForCOE(
         locationId,
@@ -177,12 +159,9 @@ export class ConfirmationOfEnrollmentController {
       applicationCOEStatus: application.coeStatus,
       applicationId: application.id,
       applicationWithinCOEWindow:
-        dateDifference(
-          setToStartOfTheDayInPSTPDT(new Date()),
-          getPSTPDTDate(application.offering.studyStartDate, true),
-        ) <= COE_WINDOW
-          ? true
-          : false,
+        await this.applicationService.withinValidCOEWindow(
+          application.offering.studyStartDate,
+        ),
       applicationLocationId: application.location.id,
     };
   }
@@ -208,15 +187,14 @@ export class ConfirmationOfEnrollmentController {
         true,
       );
     if (!application) {
-      throw new UnprocessableEntityException("Application Not Found");
+      throw new NotFoundException("Application Not Found");
     }
     // institution user can only confirm COE, when the student is
     // within COE_WINDOW of their Program Start date
     if (
-      dateDifference(
-        setToStartOfTheDayInPSTPDT(new Date()),
-        getPSTPDTDate(application.offering.studyStartDate, true),
-      ) > COE_WINDOW
+      !(await this.applicationService.withinValidCOEWindow(
+        application.offering.studyStartDate,
+      ))
     ) {
       throw new UnprocessableEntityException(
         `Confirmation of Enrollment window is greater than ${COE_WINDOW} days`,

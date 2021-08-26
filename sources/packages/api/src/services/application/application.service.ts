@@ -18,12 +18,16 @@ import {
   EducationProgram,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import { CustomNamedError, common } from "../../utilities";
+import { CustomNamedError, getUTCNow } from "../../utilities";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationOverriddenResult } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
-
-const { getUTCNow } = common();
+import {
+  dateDifference,
+  getPSTPDTDate,
+  setToStartOfTheDayInPSTPDT,
+  COE_WINDOW,
+} from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
@@ -823,5 +827,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
     }
     return query.getOne();
+  }
+
+  /**
+   * Gets program year details for a student application
+   * @param studentId student id.
+   * @param applicationId application id.
+   * @returns program year details for a student application.
+   */
+  async withinValidCOEWindow(offeringStartDate: Date): Promise<boolean> {
+    return (
+      dateDifference(
+        setToStartOfTheDayInPSTPDT(new Date()),
+        getPSTPDTDate(offeringStartDate, true),
+      ) <= COE_WINDOW
+    );
   }
 }
