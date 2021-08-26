@@ -59,7 +59,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import { COESummaryDTO } from "@/types";
+import { COESummaryDTO, COEStatus } from "@/types";
 import { useFormatters } from "@/composables";
 
 export default {
@@ -106,11 +106,11 @@ export default {
 
     const getCOEStatusColorClass = (status: string) => {
       switch (status) {
-        case "Completed":
+        case COEStatus.completed:
           return "bg-success text-white";
-        case "Required":
+        case COEStatus.required:
           return "bg-warning text-white";
-        case "Declined":
+        case COEStatus.declined:
           return "bg-danger text-white";
         default:
           return "";

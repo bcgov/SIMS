@@ -79,5 +79,4 @@ export class ApplicationService {
   ): Promise<ProgramYearOfApplicationDto> {
     return ApiClient.Application.getProgramYearOfApplication(applicationId);
   }
-  
 }
