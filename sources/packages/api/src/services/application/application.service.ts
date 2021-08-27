@@ -801,7 +801,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
    * @param pirDeniedReasonId Denied reason id for a student application.
-   * @param otherReason when other is selected as a PIR denied reason, text for the reason
+   * @param otherReasonDesc when other is selected as a PIR denied reason, text for the reason
    * is populated.
    * @returns updated application.
    */
