@@ -34,9 +34,7 @@ export interface GetPIRDeniedReasonDto {
   description: string;
 }
 
-export interface DenyProgramInfoRequestDto
-  extends CompleteProgramInfoRequestDto {
-  denyProgramInformationRequest?: boolean;
-  pirDenyReasonId?: number;
+export interface DenyProgramInfoRequestDto {
+  pirDenyReasonId: number;
   otherReasonDesc?: string;
 }

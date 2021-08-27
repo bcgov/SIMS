@@ -1,5 +1,6 @@
 import {
   CompleteProgramInfoRequestDto,
+  DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   PIRSummaryDTO,
   GetPIRDeniedReasonDto,
@@ -39,7 +40,7 @@ export class ProgramInfoRequestService {
   public async denyProgramInfoRequest(
     locationId: number,
     applicationId: number,
-    data: CompleteProgramInfoRequestDto,
+    data: DenyProgramInfoRequestDto,
   ): Promise<void> {
     await ApiClient.ProgramInfoRequest.denyProgramInfoRequest(
       locationId,

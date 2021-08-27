@@ -52,7 +52,6 @@ export default {
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const INSTITUTION_DETAILS_PANEL = "institutionEnteredDetails";
-    const DENYProgramInfoRequest = "denyProgramInformationRequest";
 
     const loadOfferingsForProgram = async (form: any) => {
       const programId = formioUtils.getComponentValueByKey(
@@ -109,16 +108,13 @@ export default {
       if (event.changed?.component?.key === PROGRAMS_DROPDOWN_KEY) {
         await loadOfferingsForProgram(form);
       }
-      await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReason");
+      await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
-    const submitted = async (form: any, data: any) => {
+    const submitted = async (data: any) => {
       try {
-        const denyProgramInformationRequest = formioUtils.getComponent(
-          form,
-          DENYProgramInfoRequest,
-        );
-        if (denyProgramInformationRequest) {
+        console.log(data);
+        if (data.denyProgramInformationRequest) {
           await ProgramInfoRequestService.shared.denyProgramInfoRequest(
             props.locationId,
             props.applicationId,

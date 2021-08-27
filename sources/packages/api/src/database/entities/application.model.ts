@@ -168,18 +168,18 @@ export class Application extends RecordDataModel {
   })
   applicationStatusUpdatedOn: Date;
 
-  @RelationId((application: Application) => application.pirDeniedReason)
+  @RelationId((application: Application) => application.pirDeniedReasonId)
   pirDeniedId?: number;
 
   @ManyToOne(() => PIRDeniedReason, {
     eager: false,
-    cascade: true,
+    cascade: false,
   })
   @JoinColumn({
     name: "pir_denied_id",
     referencedColumnName: ColumnNames.ID,
   })
-  pirDeniedReason?: PIRDeniedReason;
+  pirDeniedReasonId?: PIRDeniedReason;
 
   @Column({
     name: "pir_denied_other_desc",

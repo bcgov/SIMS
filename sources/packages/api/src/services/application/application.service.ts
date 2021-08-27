@@ -25,6 +25,8 @@ import { ApplicationOverriddenResult } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
+export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
+  "PIR_DENIED_REASON_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
@@ -813,10 +815,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    application.pirDeniedReason = { id: pirDeniedReasonId } as PIRDeniedReason;
-    if (otherReasonDesc) {
-      application.pirDeniedOtherDesc = otherReasonDesc;
+    application.pirDeniedReasonId = {
+      id: pirDeniedReasonId,
+    } as PIRDeniedReason;
+    if (pirDeniedReasonId === 1 && !otherReasonDesc) {
+      throw new CustomNamedError(
+        "Other is selected as PIR reason, specify the reason for the PIR denial ",
+        PIR_DENIED_REASON_NOT_FOUND_ERROR,
+      );
     }
+    application.pirDeniedOtherDesc = otherReasonDesc;
     application.pirStatus = ProgramInfoStatus.declined;
     return this.repo.save(application);
   }

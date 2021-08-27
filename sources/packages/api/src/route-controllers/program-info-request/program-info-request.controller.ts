@@ -277,9 +277,7 @@ export class ProgramInfoRequestController {
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("program-info-request/denied-reason")
-  async getPIRDeniedReason(
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<GetPIRDeniedReasonDto[]> {
+  async getPIRDeniedReason(): Promise<GetPIRDeniedReasonDto[]> {
     const pirDeniedReason =
       await this.pirDeniedReasonService.getPIRDeniedReasons();
     return pirDeniedReason.map((eachPIRDeniedReason) => {

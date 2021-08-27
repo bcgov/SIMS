@@ -1,13 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
 @Entity({ name: TableNames.PIRDeniedReason })
 export class PIRDeniedReason extends RecordDataModel {
   /**
-   * Auto-generated sequential primary key column.
+   *  Primary key column.
    */
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({
+    name: "id",
+    nullable: false,
+  })
   id: number;
   /**
    * Reason

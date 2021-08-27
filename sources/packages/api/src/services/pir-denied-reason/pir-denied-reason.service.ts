@@ -13,7 +13,7 @@ export class PIRDeniedReasonService extends RecordDataModelService<PIRDeniedReas
     return this.repo
       .createQueryBuilder("pirDeniedReason")
       .where("pirDeniedReason.isActive = true")
-      .orderBy("pirDeniedReason.id", "ASC")
+      .orderBy("pirDeniedReason.id", "DESC")
       .getMany();
   }
 }
