@@ -3,6 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
+import { PIR_DENIED_REASON_OTHER_ID } from "../../utilities/constants";
 import {
   Application,
   ApplicationStudentFile,
@@ -825,7 +826,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.pirDeniedReasonId = {
       id: pirDeniedReasonId,
     } as PIRDeniedReason;
-    if (pirDeniedReasonId === 1 && !otherReasonDesc) {
+    if (PIR_DENIED_REASON_OTHER_ID === pirDeniedReasonId && !otherReasonDesc) {
       throw new CustomNamedError(
         "Other is selected as PIR reason, specify the reason for the PIR denial ",
         PIR_DENIED_REASON_NOT_FOUND_ERROR,
