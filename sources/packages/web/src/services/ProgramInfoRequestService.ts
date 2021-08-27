@@ -36,6 +36,18 @@ export class ProgramInfoRequestService {
     );
   }
 
+  public async denyProgramInfoRequest(
+    locationId: number,
+    applicationId: number,
+    data: CompleteProgramInfoRequestDto,
+  ): Promise<void> {
+    await ApiClient.ProgramInfoRequest.denyProgramInfoRequest(
+      locationId,
+      applicationId,
+      data,
+    );
+  }
+
   public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
     return ApiClient.ProgramInfoRequest.getPIRSummary(locationId);
   }

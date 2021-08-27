@@ -52,6 +52,7 @@ export default {
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const INSTITUTION_DETAILS_PANEL = "institutionEnteredDetails";
+    const DENYProgramInfoRequest = "denyProgramInformationRequest";
 
     const loadOfferingsForProgram = async (form: any) => {
       const programId = formioUtils.getComponentValueByKey(
@@ -111,17 +112,33 @@ export default {
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReason");
     };
 
-    const submitted = async (data: any) => {
+    const submitted = async (form: any, data: any) => {
       try {
-        await ProgramInfoRequestService.shared.completeProgramInfoRequest(
-          props.locationId,
-          props.applicationId,
-          data,
+        const denyProgramInformationRequest = formioUtils.getComponent(
+          form,
+          DENYProgramInfoRequest,
         );
-        toast.success(
-          "Completed!",
-          "Program Information Request completed successfully!",
-        );
+        if (denyProgramInformationRequest) {
+          await ProgramInfoRequestService.shared.denyProgramInfoRequest(
+            props.locationId,
+            props.applicationId,
+            data,
+          );
+          toast.success(
+            "Denied!",
+            "Program Information Request denied successfully!",
+          );
+        } else {
+          await ProgramInfoRequestService.shared.completeProgramInfoRequest(
+            props.locationId,
+            props.applicationId,
+            data,
+          );
+          toast.success(
+            "Completed!",
+            "Program Information Request completed successfully!",
+          );
+        }
         router.push({
           name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
           params: {

@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestDto,
+  DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
@@ -131,6 +132,39 @@ export class ProgramInfoRequestController {
   }
 
   /**
+   * Deny the Program Info Request (PIR), defining the
+   * PIR status as Declined in the student application table.
+   * @param locationId location that is completing the PIR.
+   * @param applicationId application id to be updated.
+   * @param payload contains the offering id to be updated in the
+   * student application or the information to create a new PIR.
+   */
+  @HasLocationAccess("locationId")
+  @Patch(":locationId/program-info-request/application/:applicationId/deny")
+  async denyProgramInfoRequest(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+    @Body() payload: DenyProgramInfoRequestDto,
+  ): Promise<void> {
+    try {
+      await this.applicationService.setDeniedReasonForProgramInfoRequest(
+        applicationId,
+        locationId,
+        payload.pirDenyReasonId,
+        payload.otherReasonDesc,
+      );
+    } catch (error) {
+      if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
+        throw new UnprocessableEntityException(error.message);
+      }
+
+      throw new InternalServerErrorException(
+        "Error while completing a Program Information Request (PIR).",
+      );
+    }
+  }
+
+  /**
    * Completes the Program Info Request (PIR), defining the
    * PIR status as completed in the student application table.
    * The PIR could be completed by select an existing offering,
@@ -148,66 +182,55 @@ export class ProgramInfoRequestController {
     @Param("applicationId") applicationId: number,
     @Body() payload: CompleteProgramInfoRequestDto,
   ): Promise<void> {
-    let updatedApplication;
     try {
-      if (payload.denyProgramInformationRequest) {
-        updatedApplication =
-          await this.applicationService.setDeniedReasonForProgramInfoRequest(
-            applicationId,
-            locationId,
-            payload.pirDenyReasonId,
-            payload.otherReasonDesc,
+      const submissionResult = await this.formService.dryRunSubmission(
+        FormNames.ProgramInformationRequest,
+        payload,
+      );
+
+      if (!submissionResult.valid) {
+        throw new BadRequestException(
+          "Not able to complete the Program Information Request due to an invalid request.",
+        );
+      }
+      let offeringToCompletePIR: EducationProgramOffering;
+      if (payload.selectedOffering) {
+        // Check if the offering belongs to the location.
+        const offeringLocationId =
+          await this.offeringService.getOfferingLocationId(
+            payload.selectedOffering,
           );
+        if (offeringLocationId !== locationId) {
+          throw new UnauthorizedException(
+            "The location does not have access to the offering.",
+          );
+        }
+        // Offering exists, is valid and just need to be associated
+        // with the application to complete the PIR.
+        offeringToCompletePIR = {
+          id: payload.selectedOffering,
+        } as EducationProgramOffering;
       } else {
-        const submissionResult = await this.formService.dryRunSubmission(
-          FormNames.ProgramInformationRequest,
-          payload,
+        // Offering does not exists and it is going to be created and
+        // associated with the application to complete the PIR.
+        offeringToCompletePIR = this.offeringService.populateProgramOffering(
+          locationId,
+          payload.selectedProgram,
+          submissionResult.data.data,
+        );
+      }
+      const updatedApplication =
+        await this.applicationService.setOfferingForProgramInfoRequest(
+          applicationId,
+          locationId,
+          offeringToCompletePIR,
         );
 
-        if (!submissionResult.valid) {
-          throw new BadRequestException(
-            "Not able to complete the Program Information Request due to an invalid request.",
-          );
-        }
-        let offeringToCompletePIR: EducationProgramOffering;
-        if (payload.selectedOffering) {
-          // Check if the offering belongs to the location.
-          const offeringLocationId =
-            await this.offeringService.getOfferingLocationId(
-              payload.selectedOffering,
-            );
-          if (offeringLocationId !== locationId) {
-            throw new UnauthorizedException(
-              "The location does not have access to the offering.",
-            );
-          }
-          // Offering exists, is valid and just need to be associated
-          // with the application to complete the PIR.
-          offeringToCompletePIR = {
-            id: payload.selectedOffering,
-          } as EducationProgramOffering;
-        } else {
-          // Offering does not exists and it is going to be created and
-          // associated with the application to complete the PIR.
-          offeringToCompletePIR = this.offeringService.populateProgramOffering(
-            locationId,
-            payload.selectedProgram,
-            submissionResult.data.data,
-          );
-        }
-        updatedApplication =
-          await this.applicationService.setOfferingForProgramInfoRequest(
-            applicationId,
-            locationId,
-            offeringToCompletePIR,
-          );
-
-        if (updatedApplication) {
-          // Send a message to allow the workflow to proceed.
-          await this.workflowService.sendProgramInfoCompletedMessage(
-            updatedApplication.assessmentWorkflowId,
-          );
-        }
+      if (updatedApplication) {
+        // Send a message to allow the workflow to proceed.
+        await this.workflowService.sendProgramInfoCompletedMessage(
+          updatedApplication.assessmentWorkflowId,
+        );
       }
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {

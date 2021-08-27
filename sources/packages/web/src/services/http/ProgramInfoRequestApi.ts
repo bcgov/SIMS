@@ -1,5 +1,6 @@
 import {
   CompleteProgramInfoRequestDto,
+  DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   PIRSummaryDTO,
   GetPIRDeniedReasonDto,
@@ -25,6 +26,18 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
   ): Promise<void> {
     await this.apiClient.patch(
       `institution/location/${locationId}/program-info-request/application/${applicationId}/complete`,
+      { ...data },
+      this.addAuthHeader(),
+    );
+  }
+
+  public async denyProgramInfoRequest(
+    locationId: number,
+    applicationId: number,
+    data: DenyProgramInfoRequestDto,
+  ): Promise<void> {
+    await this.apiClient.patch(
+      `institution/location/${locationId}/program-info-request/application/${applicationId}/deny`,
       { ...data },
       this.addAuthHeader(),
     );
