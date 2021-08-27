@@ -34,8 +34,6 @@ import {
   ProgramInfoStatus,
   Application,
 } from "../../database/entities";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
 
