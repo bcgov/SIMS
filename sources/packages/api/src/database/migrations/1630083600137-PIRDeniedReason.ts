@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-export class PirDeniedReason1629832988285 implements MigrationInterface {
+export class PIRDeniedReason1630083600137 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData("Create-pir-denied-reason.sql", "PIRDeniedReason"),

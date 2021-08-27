@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-export class UpdateApplicationsAddPIRDeniedId1629833006670
+export class UpdateApplicationsAddPIRDeniedId1630083646136
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
