@@ -46,4 +46,20 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async rollbackCOE(
+    locationId: number,
+    applicationId: number,
+  ): Promise<void> {
+    try {
+      await this.apiClient.post(
+        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/rollback`,
+        null,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

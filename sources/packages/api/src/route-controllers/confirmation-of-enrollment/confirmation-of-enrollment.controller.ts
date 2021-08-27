@@ -76,6 +76,9 @@ export class ConfirmationOfEnrollmentController {
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
   ): Promise<number> {
+    console.log("Rollback COR");
+    return 0;
+
     try {
       const result = await this.applicationService.overrideApplicationForCOE(
         locationId,

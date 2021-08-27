@@ -23,7 +23,23 @@ export class ConfirmationOfEnrollmentService {
     );
   }
 
-  public async confirmCOE(locationId: number, applicationId: number): Promise<void> {
-    await ApiClient.ConfirmationOfEnrollment.confirmCOE(locationId, applicationId);
+  public async confirmCOE(
+    locationId: number,
+    applicationId: number,
+  ): Promise<void> {
+    await ApiClient.ConfirmationOfEnrollment.confirmCOE(
+      locationId,
+      applicationId,
+    );
+  }
+
+  public async rollbackCOE(
+    locationId: number,
+    applicationId: number,
+  ): Promise<void> {
+    await ApiClient.ConfirmationOfEnrollment.rollbackCOE(
+      locationId,
+      applicationId,
+    );
   }
 }
