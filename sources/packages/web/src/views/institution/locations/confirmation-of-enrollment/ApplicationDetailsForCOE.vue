@@ -26,7 +26,10 @@
     <v-container>
       <div
         class="bg-white coe-info-border mt-10 mb-4"
-        v-if="COEStatus.submitted === initialData.applicationCOEStatus"
+        v-if="
+          COEStatus.submitted === initialData.applicationCOEStatus ||
+            COEStatus.completed === initialData.applicationCOEStatus
+        "
       >
         <p>
           <v-icon color="green darken-2">mdi-information </v-icon
