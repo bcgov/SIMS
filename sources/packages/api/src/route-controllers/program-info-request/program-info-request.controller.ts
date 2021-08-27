@@ -25,7 +25,7 @@ import {
   InstitutionService,
   InstitutionLocationService,
   FormService,
-  PirDeniedReasonService,
+  PIRDeniedReasonService,
 } from "../../services";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
@@ -47,7 +47,7 @@ export class ProgramInfoRequestController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly locationService: InstitutionLocationService,
-    private readonly pirDeniedReasonService: PirDeniedReasonService,
+    private readonly pirDeniedReasonService: PIRDeniedReasonService,
     private readonly formService: FormService,
   ) {}
 
@@ -155,7 +155,7 @@ export class ProgramInfoRequestController {
           await this.applicationService.setDeniedReasonForProgramInfoRequest(
             applicationId,
             locationId,
-            payload.pirDenyReason,
+            payload.pirDenyReasonId,
             payload.otherReasonDesc,
           );
       } else {
@@ -201,12 +201,13 @@ export class ProgramInfoRequestController {
             locationId,
             offeringToCompletePIR,
           );
-      }
-      if (updatedApplication) {
-        // Send a message to allow the workflow to proceed.
-        await this.workflowService.sendProgramInfoCompletedMessage(
-          updatedApplication.assessmentWorkflowId,
-        );
+
+        if (updatedApplication) {
+          // Send a message to allow the workflow to proceed.
+          await this.workflowService.sendProgramInfoCompletedMessage(
+            updatedApplication.assessmentWorkflowId,
+          );
+        }
       }
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
@@ -225,12 +226,10 @@ export class ProgramInfoRequestController {
    * @param locationId location that is completing the PIR.
    * @returns student application list of a institution location
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId") locationId: number,
-    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PIRSummaryDTO[]> {
     const applications = await this.applicationService.getPIRApplications(
       locationId,
@@ -259,11 +258,11 @@ export class ProgramInfoRequestController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<GetPIRDeniedReasonDto[]> {
     const pirDeniedReason =
-      await this.pirDeniedReasonService.getPirDeniedReasons();
-    return pirDeniedReason.map((eachPirDeniedReason) => {
+      await this.pirDeniedReasonService.getPIRDeniedReasons();
+    return pirDeniedReason.map((eachPIRDeniedReason) => {
       return {
-        id: eachPirDeniedReason.id,
-        description: eachPirDeniedReason.reason,
+        id: eachPIRDeniedReason.id,
+        description: eachPIRDeniedReason.reason,
       };
     }) as GetPIRDeniedReasonDto[];
   }

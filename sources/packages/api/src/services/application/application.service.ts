@@ -16,7 +16,7 @@ import {
   ProgramYear,
   InstitutionLocation,
   EducationProgram,
-  PirDeniedReason,
+  PIRDeniedReason,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { CustomNamedError, getUTCNow } from "../../utilities";
@@ -813,7 +813,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    application.pirDeniedReason = { id: pirDeniedReasonId } as PirDeniedReason;
+    application.pirDeniedReason = { id: pirDeniedReasonId } as PIRDeniedReason;
     if (otherReasonDesc) {
       application.pirDeniedOtherDesc = otherReasonDesc;
     }

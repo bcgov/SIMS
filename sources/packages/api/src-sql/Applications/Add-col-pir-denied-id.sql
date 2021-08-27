@@ -12,4 +12,4 @@ ALTER TABLE
 ADD
     COLUMN IF NOT EXISTS pir_denied_other_desc VARCHAR(500);
 
-COMMENT ON COLUMN sims.applications.pir_denied_other_desc IS 'When PIR denied reason is other, the Institution user has to input an associated reson, this column will contain the reason text';
+COMMENT ON COLUMN sims.applications.pir_denied_other_desc IS 'When PIR denied reason is other, the Institution user has to input an associated reason, this column will contain the reason text';

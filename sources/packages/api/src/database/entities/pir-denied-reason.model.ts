@@ -3,7 +3,7 @@ import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
 @Entity({ name: TableNames.PIRDeniedReason })
-export class PirDeniedReason extends RecordDataModel {
+export class PIRDeniedReason extends RecordDataModel {
   /**
    * Auto-generated sequential primary key column.
    */
@@ -24,5 +24,5 @@ export class PirDeniedReason extends RecordDataModel {
     name: "is_active",
     nullable: false,
   })
-  active: boolean;
+  isActive: boolean;
 }
