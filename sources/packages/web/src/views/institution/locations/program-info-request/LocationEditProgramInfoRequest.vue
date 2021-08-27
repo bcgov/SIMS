@@ -113,7 +113,6 @@ export default {
 
     const submitted = async (data: any) => {
       try {
-        console.log(data);
         if (data.denyProgramInformationRequest) {
           await ProgramInfoRequestService.shared.denyProgramInfoRequest(
             props.locationId,

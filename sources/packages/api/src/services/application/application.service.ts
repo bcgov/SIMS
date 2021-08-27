@@ -828,7 +828,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } as PIRDeniedReason;
     if (PIR_DENIED_REASON_OTHER_ID === pirDeniedReasonId && !otherReasonDesc) {
       throw new CustomNamedError(
-        "Other is selected as PIR reason, specify the reason for the PIR denial ",
+        "Other is selected as PIR reason, specify the reason for the PIR denial.",
         PIR_DENIED_REASON_NOT_FOUND_ERROR,
       );
     }

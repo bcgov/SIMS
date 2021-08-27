@@ -134,8 +134,8 @@ export class ProgramInfoRequestController {
    * PIR status as Declined in the student application table.
    * @param locationId location that is completing the PIR.
    * @param applicationId application id to be updated.
-   * @param payload contains the offering id to be updated in the
-   * student application or the information to create a new PIR.
+   * @param payload contains the denied reason of the
+   * student application.
    */
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/deny")
@@ -157,7 +157,7 @@ export class ProgramInfoRequestController {
       }
 
       throw new InternalServerErrorException(
-        "Error while completing a Program Information Request (PIR).",
+        "Error while denying a Program Information Request (PIR).",
       );
     }
   }
