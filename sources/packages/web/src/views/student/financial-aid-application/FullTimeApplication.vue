@@ -1,7 +1,5 @@
 <template>
-  <v-container
-    class="center-container application-container fta-form-conatiner"
-  >
+  <v-container class="center-container application-container ff-form-container">
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
         <v-row class="center-container application-container mb-5 text-right">
@@ -162,7 +160,7 @@ export default {
         });
         toast.success(
           "Application saved!",
-          "Thank you, your application as been submitted.",
+          "Thank you, your application has been submitted.",
         );
       } catch (error) {
         toast.error("Unexpected error!", "An unexpected error happen.");
