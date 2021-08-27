@@ -1,5 +1,7 @@
 <template>
-  <v-container class="center-container application-container">
+  <v-container
+    class="center-container application-container fta-form-conatiner"
+  >
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
         <v-row class="center-container application-container mb-5 text-right">
@@ -22,8 +24,13 @@
               @click="wizardSubmit()"
               >{{
                 submittingApplication ? "Submitting..." : "Submit application"
-              }}</v-btn
-            >
+              }}
+              <span v-if="submittingApplication">
+                &nbsp;&nbsp;
+                <ProgressSpinner
+                  style="width:30px;height:25px"
+                  strokeWidth="10"/></span
+            ></v-btn>
           </v-col>
         </v-row>
         <formio
@@ -55,6 +62,7 @@
 </template>
 
 <script lang="ts">
+import { useRouter } from "vue-router";
 import formio from "../../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "../../../services/StudentService";
@@ -65,6 +73,7 @@ import {
   useToastMessage,
 } from "../../../composables";
 import { WizardNavigationEvent } from "@/types";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
@@ -85,6 +94,7 @@ export default {
     },
   },
   setup(props: any) {
+    const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -147,9 +157,12 @@ export default {
           data: args,
           associatedFiles,
         });
+        router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        });
         toast.success(
           "Application saved!",
-          "Application submitted with success.",
+          "Thank you, your application as been submitted.",
         );
       } catch (error) {
         toast.error("Unexpected error!", "An unexpected error happen.");

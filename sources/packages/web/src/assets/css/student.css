@@ -5,3 +5,7 @@
   border-radius: 10px;
   word-wrap: break-word;
 }
+
+.fta-form-conatiner .alert{
+  display: none;
+}
