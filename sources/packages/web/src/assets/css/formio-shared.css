@@ -47,3 +47,7 @@
   font-size: 12px;
   line-height: 18px;
 }
+
+.ff-form-container .alert{
+  display: none;
+}
