@@ -116,19 +116,19 @@ export default {
 
     const getApplicationStatusClass = (status: string) => {
       switch (status) {
-        case "Draft":
+        case ApplicationStatus.draft:
           return "bg-secondary text-white";
-        case "In Progress":
+        case ApplicationStatus.inProgress:
           return "bg-warning text-white";
-        case "Assessment":
+        case ApplicationStatus.assessment:
           return "bg-dark text-white";
-        case "Enrollment":
+        case ApplicationStatus.enrollment:
           return "bg-primary text-white";
-        case "Completed":
+        case ApplicationStatus.completed:
           return "bg-success text-white";
-        case "Cancelled":
+        case ApplicationStatus.cancelled:
           return "bg-danger text-white";
-        case "Submitted":
+        case ApplicationStatus.submitted:
           return "bg-info text-white";
         default:
           return "";

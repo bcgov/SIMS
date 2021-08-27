@@ -7,7 +7,7 @@ import {
 import { createFakeEducationProgramOffering } from "./education-program-offering-fake";
 import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
-import { getUTCNow } from "../../utilities";
+import { getUTCNow } from "../../utilities/date-utils";
 
 export function createFakeApplication(
   student?: Student,

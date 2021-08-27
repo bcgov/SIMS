@@ -23,7 +23,7 @@ import { AuthStatus, AppRoutes } from "../types";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
 import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
-import LocationCOERequest from "../views/institution/locations/confirmation-of-enrollment/LocationEditCOERequest.vue";
+import LocationCOERequest from "../views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
 import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
@@ -182,7 +182,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LocationCOEEdit,
+        path: AppRoutes.LocationCOEDetails,
         name: InstitutionRoutesConst.COE_EDIT,
         components: {
           default: LocationCOERequest,
@@ -427,7 +427,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             }
           }
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
           throw e;
         });

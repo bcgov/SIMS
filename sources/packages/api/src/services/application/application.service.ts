@@ -19,10 +19,17 @@ import {
   PIRDeniedReason,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
-import { CustomNamedError, getUTCNow } from "../../utilities";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationOverriddenResult } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
+import {
+  CustomNamedError,
+  getUTCNow,
+  dateDifference,
+  getPSTPDTDate,
+  setToStartOfTheDayInPSTPDT,
+  COE_WINDOW,
+} from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -827,5 +834,60 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.pirDeniedOtherDesc = otherReasonDesc;
     application.pirStatus = ProgramInfoStatus.declined;
     return this.repo.save(application);
+  }
+
+  /*
+   * Gets Application details for COE of a location
+   * For COE, The source of truth is
+   * offering table (not the data given by student)
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @returns application details for COE.
+   */
+  async getApplicationDetailsForCOE(
+    locationId: number,
+    applicationId: number,
+    requiredCOEApplication: boolean = false,
+  ): Promise<Application> {
+    let query = this.repo
+      .createQueryBuilder("application")
+      .innerJoinAndSelect("application.location", "location")
+      .innerJoinAndSelect("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .innerJoinAndSelect("application.offering", "offering")
+      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus != :applicationStatus", {
+        applicationStatus: ApplicationStatus.overwritten,
+      })
+      .andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    if (!requiredCOEApplication) {
+      query.andWhere("application.coeStatus != :nonCOEStatus", {
+        nonCOEStatus: COEStatus.notRequired,
+      });
+    } else {
+      query.andWhere("application.coeStatus = :COEStatus", {
+        COEStatus: COEStatus.required,
+      });
+    }
+    return query.getOne();
+  }
+
+  /**
+   * checks if current PST/PDT date from offering
+   * start date is inside or equal to COE window
+   * @param offeringStartDate offering start date
+   * @returns True if current to offering
+   * start date is within COE window else False
+   */
+  withinValidCOEWindow(offeringStartDate: Date): boolean {
+    return (
+      dateDifference(
+        setToStartOfTheDayInPSTPDT(new Date()),
+        getPSTPDTDate(offeringStartDate, true),
+      ) <= COE_WINDOW
+    );
   }
 }
