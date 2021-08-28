@@ -4,3 +4,4 @@ export * from "./useFormioUtils";
 export * from "./useAuth";
 export * from "./useFormatters";
 export * from "./useToastMessage";
+export * from "./useModal";

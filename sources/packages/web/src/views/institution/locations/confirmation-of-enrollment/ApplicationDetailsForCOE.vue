@@ -92,7 +92,7 @@
       @showHideConfirmCOE="showHideConfirmCOE"
       @reloadData="loadInitialData"
     />
-    <ConfirmCOEEditModal ref="editModal" />
+    <ConfirmCOEEditModal ref="editCOEModal" />
   </div>
 </template>
 <script lang="ts">
@@ -105,7 +105,7 @@ import Menu from "primevue/menu";
 import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
 import ConfirmCOE from "@/components/institutions/modals/ConfirmCOEModal.vue";
 import ConfirmCOEEditModal from "@/components/institutions/modals/ConfirmCOEEditModal.vue";
-import { useToastMessage } from "@/composables";
+import { useToastMessage, ModalDialog } from "@/composables";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -139,7 +139,7 @@ export default {
     const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
-    const editModal = ref<any>(null);
+    const editCOEModal = ref({} as ModalDialog<boolean>);
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
     };
@@ -158,7 +158,7 @@ export default {
     };
 
     const editProgramInformation = async () => {
-      if (await editModal.value.showModal()) {
+      if (await editCOEModal.value.showModal()) {
         try {
           await ConfirmationOfEnrollmentService.shared.rollbackCOE(
             props.applicationId,
@@ -235,7 +235,7 @@ export default {
       showHideConfirmCOE,
       showModal,
       loadInitialData,
-      editModal,
+      editCOEModal,
     };
   },
 };

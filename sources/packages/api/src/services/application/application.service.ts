@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, Not, UpdateResult } from "typeorm";
+import { Connection, In, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -259,7 +259,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     assessmentWorkflowId: string,
   ): Promise<UpdateResult> {
-    return this.repo.update({ id: applicationId }, { assessmentWorkflowId });
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
+      { assessmentWorkflowId },
+    );
   }
 
   /**
@@ -285,6 +291,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      })
       .getOne();
   }
 
@@ -320,7 +329,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     assessment: any,
   ): Promise<UpdateResult> {
-    return this.repo.update(applicationId, { assessment });
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
+      { assessment },
+    );
   }
 
   async getAssessmentByApplicationId(applicationId: number): Promise<any> {
@@ -348,6 +363,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .leftJoin("application.offering", "offering")
       .where("application.student_id = :studentId", { studentId })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      })
       .getMany();
   }
 
@@ -357,7 +375,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Student Application.
    * @param studentId student id.
    * @param status expected status for the application.
-   * @param [applicationId] apllication id, when possible.
+   * @param [applicationId] application id, when possible.
    * @returns application with the data needed to process
    * the operations related to save/submitting.
    */
@@ -409,7 +427,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     offeringId?: number,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: applicationId },
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
       {
         location: { id: locationId },
         pirProgram: { id: programId },
@@ -431,7 +452,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     status: ProgramInfoStatus,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: applicationId },
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
       {
         pirStatus: status,
       },
@@ -450,7 +474,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     status: AssessmentStatus,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: applicationId },
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
       {
         assessmentStatus: status,
       },
@@ -469,7 +496,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     status: COEStatus,
   ): Promise<UpdateResult> {
     return this.repo.update(
-      { id: applicationId },
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
       {
         coeStatus: status,
       },
@@ -502,7 +532,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Set the offering for Program Info Request (PIR).
-   * Once the offering is set it will be a workflow responsability
+   * Once the offering is set it will be a workflow responsibility
    * to set the PIR status to completed.
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
@@ -519,6 +549,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       id: applicationId,
       location: { id: locationId },
       pirStatus: ProgramInfoStatus.required,
+      applicationStatus: Not(ApplicationStatus.overwritten),
     });
     if (!application) {
       throw new CustomNamedError(
@@ -573,6 +604,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.pirStatus != :nonPirStatus", {
         nonPirStatus: ProgramInfoStatus.notRequired,
       })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      })
       .orderBy(
         `CASE application.pirStatus
             WHEN '${ProgramInfoStatus.required}' THEN 1
@@ -599,7 +633,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.update(
       {
         id: applicationId,
-        applicationStatus: Not(ApplicationStatus.completed),
+        applicationStatus: Not(
+          In([
+            ApplicationStatus.completed,
+            ApplicationStatus.overwritten,
+            ApplicationStatus.cancelled,
+          ]),
+        ),
       },
       {
         applicationStatus: applicationStatus,
@@ -632,6 +672,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.coeStatus is not null")
       .andWhere("application.coeStatus != :nonCOEStatus", {
         nonCOEStatus: COEStatus.notRequired,
+      })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
       })
       .orderBy(
         `CASE application.coeStatus
@@ -760,7 +803,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * workflow started.
    */
   async startApplicationAssessment(applicationId: number) {
-    const application = await this.repo.findOneOrFail(applicationId);
+    const application = await this.repo.findOne({
+      id: applicationId,
+      applicationStatus: Not(ApplicationStatus.overwritten),
+    });
     if (!application) {
       throw new CustomNamedError(
         "Student Application not found.",
@@ -812,8 +858,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoinAndSelect("application.offering", "offering")
       .innerJoinAndSelect("offering.educationProgram", "educationProgram")
       .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus != :applicationStatus", {
-        applicationStatus: ApplicationStatus.overwritten,
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
       })
       .andWhere("application.id = :applicationId", {
         applicationId,
