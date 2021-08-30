@@ -22,6 +22,7 @@ import { setGlobalPipes } from "../../utilities/auth-utils";
 import { Connection, Repository } from "typeorm";
 import {
   Application,
+  ApplicationStatus,
   EducationProgram,
   EducationProgramOffering,
   Institution,
@@ -231,21 +232,15 @@ describe("Test system-access/application Controller", () => {
         .expect(HttpStatus.BAD_REQUEST);
     });
 
-    it("should be able to change the status to 'Required','Not Required','Submitted','Completed','Declined'", async () => {
-      const applicationToCreate = createFakeApplication();
-      const testApplication = await applicationRepository.save(
-        applicationToCreate,
-      );
-      const routeUrl = `/system-access/application/${testApplication.id}/program-info/status`;
-      try {
-        const statuses = [
-          "Required",
-          "Not Required",
-          "Submitted",
-          "Completed",
-          "Declined",
-        ];
-        for (const status of statuses) {
+    ["Required", "Not Required", "Completed", "Declined"].forEach((status) => {
+      it(`should be able to change the status from Submitted to '${status}'`, async () => {
+        const applicationToCreate = createFakeApplication();
+        applicationToCreate.applicationStatus = ApplicationStatus.submitted;
+        const testApplication = await applicationRepository.save(
+          applicationToCreate,
+        );
+        const routeUrl = `/system-access/application/${testApplication.id}/program-info/status`;
+        try {
           await request(app.getHttpServer())
             .patch(routeUrl)
             .auth(accesstoken, { type: "bearer" })
@@ -256,10 +251,10 @@ describe("Test system-access/application Controller", () => {
             testApplication.id,
           );
           expect(updatedApplication.pirStatus).toBe(status);
+        } finally {
+          await applicationRepository.remove(testApplication);
         }
-      } finally {
-        await applicationRepository.remove(testApplication);
-      }
+      });
     });
   });
 

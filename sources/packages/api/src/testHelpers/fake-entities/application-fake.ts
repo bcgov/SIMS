@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationStatus,
   EducationProgramOffering,
   ProgramYear,
   Student,
@@ -20,5 +21,6 @@ export function createFakeApplication(
   application.student = student ?? createFakeStudent();
   application.offering = offering ?? createFakeEducationProgramOffering();
   application.applicationStatusUpdatedOn = getUTCNow();
+  application.applicationStatus = ApplicationStatus.submitted;
   return application;
 }
