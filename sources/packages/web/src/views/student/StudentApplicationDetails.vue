@@ -1,5 +1,5 @@
-<template
-  ><div class="p-m-4">
+<template>
+  <div class="p-m-4">
     <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
@@ -123,6 +123,18 @@ export default {
         },
       });
     };
+    const viewApplicaion = async () => {
+      await getProgramYear();
+      router.push({
+        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
+        params: {
+          selectedForm: programYear.value.formName,
+          programYearId: programYear.value.programYearId,
+          id: props.id,
+          readOnly: "readOnly",
+        },
+      });
+    };
     const loadMenu = () => {
       items.value = [
         {
@@ -136,6 +148,9 @@ export default {
         {
           label: "View",
           icon: "pi pi-fw pi-folder-open",
+          command: () => {
+            viewApplicaion();
+          },
         },
       ];
       if (

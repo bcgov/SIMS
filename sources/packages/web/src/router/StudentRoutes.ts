@@ -93,6 +93,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.StudentApplicationView,
+        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
+        component: DynamicStudentApp,
+        props: true,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
         path: AppRoutes.Assessment,
         name: StudentRoutesConst.ASSESSMENT,
         component: Assessment,
@@ -207,7 +216,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });
