@@ -140,17 +140,13 @@ export default {
         {
           label: "Edit",
           icon: "pi pi-fw pi-pencil",
-          command: () => {
-            editApplicaion();
-          },
+          command: editApplicaion,
         },
         { separator: true },
         {
           label: "View",
           icon: "pi pi-fw pi-folder-open",
-          command: () => {
-            viewApplicaion();
-          },
+          command: viewApplicaion,
         },
       ];
       if (
