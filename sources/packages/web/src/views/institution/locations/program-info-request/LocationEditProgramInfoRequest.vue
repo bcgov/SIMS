@@ -108,19 +108,32 @@ export default {
       if (event.changed?.component?.key === PROGRAMS_DROPDOWN_KEY) {
         await loadOfferingsForProgram(form);
       }
+      await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
     const submitted = async (data: any) => {
       try {
-        await ProgramInfoRequestService.shared.completeProgramInfoRequest(
-          props.locationId,
-          props.applicationId,
-          data,
-        );
-        toast.success(
-          "Completed!",
-          "Program Information Request completed successfully!",
-        );
+        if (data.denyProgramInformationRequest) {
+          await ProgramInfoRequestService.shared.denyProgramInfoRequest(
+            props.locationId,
+            props.applicationId,
+            data,
+          );
+          toast.success(
+            "Denied!",
+            "Program Information Request denied successfully!",
+          );
+        } else {
+          await ProgramInfoRequestService.shared.completeProgramInfoRequest(
+            props.locationId,
+            props.applicationId,
+            data,
+          );
+          toast.success(
+            "Completed!",
+            "Program Information Request completed successfully!",
+          );
+        }
         router.push({
           name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
           params: {
@@ -134,7 +147,6 @@ export default {
         );
       }
     };
-
     return {
       initialData,
       formLoaded,

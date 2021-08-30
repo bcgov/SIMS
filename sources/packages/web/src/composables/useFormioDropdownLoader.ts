@@ -1,5 +1,6 @@
 import { InstitutionService } from "../services/InstitutionService";
 import { EducationProgramService } from "../services/EducationProgramService";
+import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { OptionItemDto } from "../types";
 import { useFormioUtils } from ".";
@@ -19,7 +20,7 @@ export function useFormioDropdownLoader() {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
-    dropdown.component.data.values = optionsItems.map(item => ({
+    dropdown.component.data.values = optionsItems.map((item) => ({
       value: item.id,
       label: item.description,
     }));
@@ -124,6 +125,14 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  const loadPIRDeniedReasonList = async (form: any, dropdownName: string) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      ProgramInfoRequestService.shared.getPIRDeniedReasonList(),
+    );
+  };
+
   return {
     loadLocations,
     loadProgramsForLocation,
@@ -132,5 +141,6 @@ export function useFormioDropdownLoader() {
     loadSelectedOfferingDate,
     loadOfferingsForLocationForInstitution,
     loadInstitutionTypes,
+    loadPIRDeniedReasonList,
   };
 }

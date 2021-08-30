@@ -1,7 +1,9 @@
 import {
   CompleteProgramInfoRequestDto,
+  DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   PIRSummaryDTO,
+  GetPIRDeniedReasonDto,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -29,10 +31,35 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     );
   }
 
+  public async denyProgramInfoRequest(
+    locationId: number,
+    applicationId: number,
+    data: DenyProgramInfoRequestDto,
+  ): Promise<void> {
+    await this.apiClient.patch(
+      `institution/location/${locationId}/program-info-request/application/${applicationId}/deny`,
+      { ...data },
+      this.addAuthHeader(),
+    );
+  }
+
   public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
     try {
       const response = await this.apiClient.get(
         `institution/location/${locationId}/program-info-request`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getPIRDeniedReasonList(): Promise<GetPIRDeniedReasonDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/location/program-info-request/denied-reason`,
         this.addAuthHeader(),
       );
       return response.data;

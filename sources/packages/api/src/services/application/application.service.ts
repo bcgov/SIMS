@@ -3,6 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
+import { PIR_DENIED_REASON_OTHER_ID } from "../../utilities/constants";
 import {
   Application,
   ApplicationStudentFile,
@@ -16,6 +17,7 @@ import {
   ProgramYear,
   InstitutionLocation,
   EducationProgram,
+  PIRDeniedReason,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -31,6 +33,8 @@ import {
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
+export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
+  "PIR_DENIED_REASON_NOT_FOUND_ERROR";
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
@@ -792,6 +796,48 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
   }
   /**
+   * Deny the Program Info Request (PIR) for an Application.
+   * Updates only applications that have the PIR status as required.
+   * @param applicationId application id to be updated.
+   * @param locationId location that is setting the offering.
+   * @param pirDeniedReasonId Denied reason id for a student application.
+   * @param otherReasonDesc when other is selected as a PIR denied reason, text for the reason
+   * is populated.
+   * @returns updated application.
+   */
+  async setDeniedReasonForProgramInfoRequest(
+    applicationId: number,
+    locationId: number,
+    pirDeniedReasonId: number,
+    otherReasonDesc?: string,
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      id: applicationId,
+      location: { id: locationId },
+      pirStatus: ProgramInfoStatus.required,
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Not able to find an application that requires a PIR to be completed.",
+        PIR_REQUEST_NOT_FOUND_ERROR,
+      );
+    }
+
+    application.pirDeniedReasonId = {
+      id: pirDeniedReasonId,
+    } as PIRDeniedReason;
+    if (PIR_DENIED_REASON_OTHER_ID === pirDeniedReasonId && !otherReasonDesc) {
+      throw new CustomNamedError(
+        "Other is selected as PIR reason, specify the reason for the PIR denial.",
+        PIR_DENIED_REASON_NOT_FOUND_ERROR,
+      );
+    }
+    application.pirDeniedOtherDesc = otherReasonDesc;
+    application.pirStatus = ProgramInfoStatus.declined;
+    return this.repo.save(application);
+  }
+
+  /*
    * Gets Application details for COE of a location
    * For COE, The source of truth is
    * offering table (not the data given by student)

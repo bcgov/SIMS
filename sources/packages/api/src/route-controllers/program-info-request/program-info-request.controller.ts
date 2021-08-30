@@ -12,7 +12,9 @@ import {
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestDto,
+  DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
+  GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -24,6 +26,7 @@ import {
   InstitutionService,
   InstitutionLocationService,
   FormService,
+  PIRDeniedReasonService,
 } from "../../services";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
@@ -31,8 +34,6 @@ import {
   ProgramInfoStatus,
   Application,
 } from "../../database/entities";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
 
@@ -45,6 +46,7 @@ export class ProgramInfoRequestController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly locationService: InstitutionLocationService,
+    private readonly pirDeniedReasonService: PIRDeniedReasonService,
     private readonly formService: FormService,
   ) {}
 
@@ -128,6 +130,39 @@ export class ProgramInfoRequestController {
   }
 
   /**
+   * Deny the Program Info Request (PIR), defining the
+   * PIR status as Declined in the student application table.
+   * @param locationId location that is completing the PIR.
+   * @param applicationId application id to be updated.
+   * @param payload contains the denied reason of the
+   * student application.
+   */
+  @HasLocationAccess("locationId")
+  @Patch(":locationId/program-info-request/application/:applicationId/deny")
+  async denyProgramInfoRequest(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+    @Body() payload: DenyProgramInfoRequestDto,
+  ): Promise<void> {
+    try {
+      await this.applicationService.setDeniedReasonForProgramInfoRequest(
+        applicationId,
+        locationId,
+        payload.pirDenyReasonId,
+        payload.otherReasonDesc,
+      );
+    } catch (error) {
+      if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
+        throw new UnprocessableEntityException(error.message);
+      }
+
+      throw new InternalServerErrorException(
+        "Error while denying a Program Information Request (PIR).",
+      );
+    }
+  }
+
+  /**
    * Completes the Program Info Request (PIR), defining the
    * PIR status as completed in the student application table.
    * The PIR could be completed by select an existing offering,
@@ -145,45 +180,43 @@ export class ProgramInfoRequestController {
     @Param("applicationId") applicationId: number,
     @Body() payload: CompleteProgramInfoRequestDto,
   ): Promise<void> {
-    const submissionResult = await this.formService.dryRunSubmission(
-      FormNames.ProgramInformationRequest,
-      payload,
-    );
-
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to complete the Program Information Request due to an invalid request.",
+    try {
+      const submissionResult = await this.formService.dryRunSubmission(
+        FormNames.ProgramInformationRequest,
+        payload,
       );
-    }
 
-    let offeringToCompletePIR: EducationProgramOffering;
-    if (payload.selectedOffering) {
-      // Check if the offering belongs to the location.
-      const offeringLocationId =
-        await this.offeringService.getOfferingLocationId(
-          payload.selectedOffering,
-        );
-      if (offeringLocationId !== locationId) {
-        throw new UnauthorizedException(
-          "The location does not have access to the offering.",
+      if (!submissionResult.valid) {
+        throw new BadRequestException(
+          "Not able to complete the Program Information Request due to an invalid request.",
         );
       }
-      // Offering exists, is valid and just need to be associated
-      // with the application to complete the PIR.
-      offeringToCompletePIR = {
-        id: payload.selectedOffering,
-      } as EducationProgramOffering;
-    } else {
-      // Offering does not exists and it is going to be created and
-      // associated with the application to complete the PIR.
-      offeringToCompletePIR = this.offeringService.populateProgramOffering(
-        locationId,
-        payload.selectedProgram,
-        submissionResult.data.data,
-      );
-    }
-
-    try {
+      let offeringToCompletePIR: EducationProgramOffering;
+      if (payload.selectedOffering) {
+        // Check if the offering belongs to the location.
+        const offeringLocationId =
+          await this.offeringService.getOfferingLocationId(
+            payload.selectedOffering,
+          );
+        if (offeringLocationId !== locationId) {
+          throw new UnauthorizedException(
+            "The location does not have access to the offering.",
+          );
+        }
+        // Offering exists, is valid and just need to be associated
+        // with the application to complete the PIR.
+        offeringToCompletePIR = {
+          id: payload.selectedOffering,
+        } as EducationProgramOffering;
+      } else {
+        // Offering does not exists and it is going to be created and
+        // associated with the application to complete the PIR.
+        offeringToCompletePIR = this.offeringService.populateProgramOffering(
+          locationId,
+          payload.selectedProgram,
+          submissionResult.data.data,
+        );
+      }
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
@@ -191,10 +224,12 @@ export class ProgramInfoRequestController {
           offeringToCompletePIR,
         );
 
-      // Send a message to allow the workflow to proceed.
-      await this.workflowService.sendProgramInfoCompletedMessage(
-        updatedApplication.assessmentWorkflowId,
-      );
+      if (updatedApplication) {
+        // Send a message to allow the workflow to proceed.
+        await this.workflowService.sendProgramInfoCompletedMessage(
+          updatedApplication.assessmentWorkflowId,
+        );
+      }
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);
@@ -212,12 +247,10 @@ export class ProgramInfoRequestController {
    * @param locationId location that is completing the PIR.
    * @returns student application list of a institution location
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId") locationId: number,
-    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PIRSummaryDTO[]> {
     const applications = await this.applicationService.getPIRApplications(
       locationId,
@@ -233,5 +266,22 @@ export class ProgramInfoRequestController {
         lastName: eachApplication.student.user.lastName,
       };
     }) as PIRSummaryDTO[];
+  }
+
+  /**
+   * Get all PIR denied reason ,which are active
+   * @returns PIR denied reason list
+   */
+  @HasLocationAccess("locationId")
+  @Get("program-info-request/denied-reason")
+  async getPIRDeniedReason(): Promise<GetPIRDeniedReasonDto[]> {
+    const pirDeniedReason =
+      await this.pirDeniedReasonService.getPIRDeniedReasons();
+    return pirDeniedReason.map((eachPIRDeniedReason) => {
+      return {
+        id: eachPIRDeniedReason.id,
+        description: eachPIRDeniedReason.reason,
+      };
+    }) as GetPIRDeniedReasonDto[];
   }
 }

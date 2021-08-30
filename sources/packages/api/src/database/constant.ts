@@ -16,4 +16,5 @@ export const TableNames = {
   EducationPrograms: "education_programs",
   EducationProgramsOfferings: "education_programs_offerings",
   ProgramYear: "program_years",
+  PIRDeniedReason: "pir_denied_reason",
 };

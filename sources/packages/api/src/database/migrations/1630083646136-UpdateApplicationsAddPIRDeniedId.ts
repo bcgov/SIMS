@@ -1,20 +1,18 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-const DIR = "Types";
-
-export class ProgramInfoTypeAdjustments1628546808737
+export class UpdateApplicationsAddPIRDeniedId1630083646136
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("alter-program-info-status.sql", DIR),
+      getSQLFileData("Add-col-pir-denied-id.sql", "Applications"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("rollback-program-info-status.sql", DIR),
+      getSQLFileData("Drop-col-pir-denied-id.sql", "Applications"),
     );
   }
 }

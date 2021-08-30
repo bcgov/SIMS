@@ -94,7 +94,7 @@ export default {
 
     watch(
       () => props.locationId,
-      async currValue => {
+      async (currValue) => {
         //update the list
         await updateSummaryList(currValue);
       },

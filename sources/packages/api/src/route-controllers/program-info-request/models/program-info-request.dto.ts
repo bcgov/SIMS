@@ -1,3 +1,4 @@
+import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
 import { SaveEducationProgramOfferingDto } from "../../education-program-offering/models/education-program-offering.dto";
 import { ProgramInfoStatus } from "../../../database/entities";
 
@@ -18,4 +19,18 @@ export interface GetProgramInfoRequestDto
   studentStudyStartDate: string;
   studentStudyEndDate: string;
   pirStatus: ProgramInfoStatus;
+}
+
+export interface GetPIRDeniedReasonDto {
+  id: number;
+  description: string;
+}
+
+export class DenyProgramInfoRequestDto {
+  @IsNotEmpty()
+  @IsInt()
+  @Min(1)
+  pirDenyReasonId: number;
+  @IsOptional()
+  otherReasonDesc?: string;
 }

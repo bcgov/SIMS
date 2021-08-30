@@ -1,7 +1,9 @@
 import {
   CompleteProgramInfoRequestDto,
+  DenyProgramInfoRequestDto,
   GetProgramInfoRequestDto,
   PIRSummaryDTO,
+  GetPIRDeniedReasonDto,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
 
@@ -35,7 +37,23 @@ export class ProgramInfoRequestService {
     );
   }
 
+  public async denyProgramInfoRequest(
+    locationId: number,
+    applicationId: number,
+    data: DenyProgramInfoRequestDto,
+  ): Promise<void> {
+    await ApiClient.ProgramInfoRequest.denyProgramInfoRequest(
+      locationId,
+      applicationId,
+      data,
+    );
+  }
+
   public async getPIRSummary(locationId: number): Promise<PIRSummaryDTO[]> {
     return ApiClient.ProgramInfoRequest.getPIRSummary(locationId);
+  }
+
+  public async getPIRDeniedReasonList(): Promise<GetPIRDeniedReasonDto[]> {
+    return ApiClient.ProgramInfoRequest.getPIRDeniedReasonList();
   }
 }
