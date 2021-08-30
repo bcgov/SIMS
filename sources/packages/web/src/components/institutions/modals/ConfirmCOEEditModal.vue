@@ -31,14 +31,14 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModal } from "@/composables";
+import { useModalDialog } from "@/composables";
 
 export default {
   components: {
     ModalDialogBase,
   },
   setup() {
-    const { showDialog, resolvePromise, showModal } = useModal<boolean>();
+    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
 
     const editProgramInfo = () => {
       showDialog.value = false;

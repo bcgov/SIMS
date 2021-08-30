@@ -4,7 +4,7 @@
       <v-card-header>
         <v-card-title class="text-h5">
           <slot name="header">
-            <v-icon class="mr-2" size="45">{{ icon }}</v-icon>
+            <v-icon v-if="icon" class="mr-2" size="45">{{ icon }}</v-icon>
             {{ title }}
           </slot>
         </v-card-title>
@@ -64,7 +64,7 @@ export default {
         case DialogTypes.warning:
           return "mdi-alert-outline";
         default:
-          return "";
+          return null;
       }
     });
 

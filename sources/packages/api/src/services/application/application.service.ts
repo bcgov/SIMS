@@ -621,7 +621,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
   /**
    * Update Student Application status.
-   * Only allow the application with Non Completed status to update the status
+   * Only allows the update on applications that are not in a final status.
+   * The final statuses of an application are Completed, Overwritten and Cancelled.
    * @param applicationId application id.
    * @param applicationStatus application status that need to be updated.
    * @returns student Application UpdateResult.

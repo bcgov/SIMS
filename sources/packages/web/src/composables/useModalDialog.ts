@@ -1,6 +1,6 @@
 import { ref } from "vue";
 
-export function useModal<T>() {
+export function useModalDialog<T>() {
   const showDialog = ref(false);
   let promise: (value: T) => void;
 
