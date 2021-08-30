@@ -1,12 +1,14 @@
 <template>
   <v-dialog v-model="showHideDialog">
-    <v-card>
-      <v-card-title class="text-h5">
-        <slot name="header">
-          <v-icon class="mr-2" size="45" :color="iconColor">{{ icon }}</v-icon>
-          {{ title }}
-        </slot>
-      </v-card-title>
+    <v-card elevation="10">
+      <v-card-header>
+        <v-card-title class="text-h5">
+          <slot name="header">
+            <v-icon class="mr-2" size="45">{{ icon }}</v-icon>
+            {{ title }}
+          </slot>
+        </v-card-title>
+      </v-card-header>
       <v-card-text>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
@@ -56,29 +58,17 @@ export default {
     const icon = computed(() => {
       switch (props.dialogType) {
         case DialogTypes.info:
-          return "mdi-information";
+          return "mdi-information-outline";
         case DialogTypes.question:
-          return "mdi-comment-question";
+          return "mdi-comment-question-outline";
         case DialogTypes.warning:
-          return "mdi-alert";
+          return "mdi-alert-outline";
         default:
           return "";
       }
     });
 
-    const iconColor = computed(() => {
-      switch (props.dialogType) {
-        case DialogTypes.info:
-        case DialogTypes.question:
-          return "blue";
-        case DialogTypes.warning:
-          return "orange";
-        default:
-          return "";
-      }
-    });
-
-    return { showHideDialog, icon, iconColor };
+    return { showHideDialog, icon };
   },
 };
 </script>

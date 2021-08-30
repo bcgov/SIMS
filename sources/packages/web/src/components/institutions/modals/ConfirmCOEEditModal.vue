@@ -1,5 +1,5 @@
 <template>
-  <ModalBase
+  <ModalDialogBase
     title="Edit Program Information?"
     dialogType="question"
     :showDialog="showDialog"
@@ -26,16 +26,16 @@
         Edit Program Information
       </v-btn>
     </template>
-  </ModalBase>
+  </ModalDialogBase>
 </template>
 
 <script lang="ts">
-import ModalBase from "@/components/generic/ModalBase.vue";
+import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModal } from "@/composables";
 
 export default {
   components: {
-    ModalBase,
+    ModalDialogBase,
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModal<boolean>();

@@ -161,13 +161,16 @@ export default {
       if (await editCOEModal.value.showModal()) {
         try {
           await ConfirmationOfEnrollmentService.shared.rollbackCOE(
-            props.applicationId,
             props.locationId,
+            props.applicationId,
           );
           toast.success(
             "Edit Program Information",
             "Program Information Request is now available to be edited.",
           );
+          router.push({
+            name: InstitutionRoutesConst.COE_SUMMARY,
+          });
         } catch {
           toast.error(
             "Unexpected error",
