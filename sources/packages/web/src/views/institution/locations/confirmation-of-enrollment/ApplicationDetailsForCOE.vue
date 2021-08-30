@@ -92,6 +92,7 @@
       @showHideConfirmCOE="showHideConfirmCOE"
       @reloadData="loadInitialData"
     />
+    <ConfirmCOEEditModal ref="editCOEModal" />
   </div>
 </template>
 <script lang="ts">
@@ -103,6 +104,8 @@ import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnroll
 import Menu from "primevue/menu";
 import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
 import ConfirmCOE from "@/components/institutions/modals/ConfirmCOEModal.vue";
+import ConfirmCOEEditModal from "@/components/institutions/modals/ConfirmCOEEditModal.vue";
+import { useToastMessage, ModalDialog } from "@/composables";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -118,7 +121,7 @@ export interface MenuType {
 }
 
 export default {
-  components: { formio, Menu, ConfirmCOE },
+  components: { formio, Menu, ConfirmCOE, ConfirmCOEEditModal },
   props: {
     applicationId: {
       type: Number,
@@ -131,24 +134,52 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const toast = useToastMessage();
     const initialData = ref({} as ApplicationDetailsForCOEDTO);
     const menu = ref();
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
+    const editCOEModal = ref({} as ModalDialog<boolean>);
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
     };
+
     const goBack = () => {
       router.push({
         name: InstitutionRoutesConst.COE_SUMMARY,
       });
     };
+
     const loadInitialData = async () => {
       initialData.value = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
         props.applicationId,
         props.locationId,
       );
     };
+
+    const editProgramInformation = async () => {
+      if (await editCOEModal.value.showModal()) {
+        try {
+          await ConfirmationOfEnrollmentService.shared.rollbackCOE(
+            props.locationId,
+            props.applicationId,
+          );
+          toast.success(
+            "Edit Program Information",
+            "Program Information Request is now available to be edited.",
+          );
+          router.push({
+            name: InstitutionRoutesConst.COE_SUMMARY,
+          });
+        } catch {
+          toast.error(
+            "Unexpected error",
+            "An error happened while updating Confirmation of Enrollment.",
+          );
+        }
+      }
+    };
+
     const loadMenu = () => {
       items.value = [
         {
@@ -174,11 +205,13 @@ export default {
         },
         { separator: true },
         {
-          label: "Edit Application",
+          label: "Edit Program Information",
           class: "font-weight-bold",
+          command: editProgramInformation,
         },
       ];
     };
+
     watch(
       () => initialData.value,
       () => {
@@ -186,6 +219,7 @@ export default {
         loadMenu();
       },
     );
+
     onMounted(async () => {
       loadMenu();
       await loadInitialData();
@@ -204,6 +238,7 @@ export default {
       showHideConfirmCOE,
       showModal,
       loadInitialData,
+      editCOEModal,
     };
   },
 };

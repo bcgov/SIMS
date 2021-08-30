@@ -1,6 +1,6 @@
 <template>
   <h5 class="text-muted">
-    <span>Edit Program Inforation Request</span>
+    <span>Edit Program Information Request</span>
   </h5>
   <v-sheet elevation="1" class="mx-auto">
     <v-container>
