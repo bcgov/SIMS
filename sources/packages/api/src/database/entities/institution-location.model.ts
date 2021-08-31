@@ -40,4 +40,10 @@ export class InstitutionLocation extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   institution: Institution;
+
+  @Column({
+    name: "institution_code",
+    nullable: false,
+  })
+  institutionCode: string;
 }

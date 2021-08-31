@@ -43,7 +43,6 @@ export const dateDifference = (
   firstDate: string | Date,
   lastDate: string | Date,
 ): number => {
-  console.log(firstDate, lastDate);
   const date1 = new Date(firstDate).getTime();
   const date2 = new Date(lastDate).getTime();
   const difference = date2 - date1;

@@ -7,5 +7,6 @@ export interface ValidatedInstitutionLocation {
     provinceState: string;
     postalZipCode: string;
     country: string;
+    institutionCode: string;
   };
 }

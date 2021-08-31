@@ -14,6 +14,7 @@ export interface InstitutionLocationTypeDto {
   locationName: string;
   postalZipCode: string;
   provinceState: string;
+  institutionCode: string;
 }
 
 export interface InstitutionLocationsDetailsDto {

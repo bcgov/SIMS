@@ -36,7 +36,10 @@ export default {
     const router = useRouter();
     const submitted = async (data: InstitutionLocation) => {
       try {
-        await InstitutionService.shared.updateInstitutionLocation(props.locationId, data);
+        await InstitutionService.shared.updateInstitutionLocation(
+          props.locationId,
+          data,
+        );
         router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
         store.dispatch("institution/getUserInstitutionLocationDetails");
         toast.add({
@@ -56,7 +59,7 @@ export default {
     };
     onMounted(async () => {
       const detail: InstitutionLocationsDetails = await InstitutionService.shared.getInstitutionLocation(
-        props.locationId
+        props.locationId,
       );
       initialData.value = {
         address1: detail.data.address.addressLine1,
@@ -66,6 +69,7 @@ export default {
         locationName: detail.name,
         postalZipCode: detail.data.address.postalCode,
         provinceState: detail.data.address.province,
+        institutionCode: detail.institutionCode,
       };
     });
     return {

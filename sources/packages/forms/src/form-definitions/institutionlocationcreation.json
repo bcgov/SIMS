@@ -73,7 +73,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "emr7e9j"
+      "id": "emr7e9j",
+      "dataGridLabel": false
     },
     {
       "html": "<p>The following information will be used to …</p>",
@@ -143,7 +144,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ededbm"
+      "id": "ededbm",
+      "dataGridLabel": false
     },
     {
       "label": "HTML",
@@ -221,7 +223,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "es5u2c8"
+      "id": "es5u2c8",
+      "dataGridLabel": false
     },
     {
       "label": "Location Info",
@@ -367,7 +370,8 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "etvrhv5"
+          "id": "etvrhv5",
+          "dataGridLabel": false
         },
         {
           "label": "HTML",
@@ -445,7 +449,91 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "exsygur"
+          "id": "exsygur",
+          "dataGridLabel": false
+        },
+        {
+          "label": "Institution Code",
+          "labelPosition": "top",
+          "placeholder": "",
+          "description": "",
+          "tooltip": "",
+          "prefix": "",
+          "suffix": "",
+          "widget": {
+            "type": "input"
+          },
+          "inputMask": "",
+          "allowMultipleMasks": false,
+          "customClass": "",
+          "tabindex": "",
+          "autocomplete": "",
+          "hidden": false,
+          "hideLabel": false,
+          "showWordCount": false,
+          "showCharCount": false,
+          "mask": false,
+          "autofocus": false,
+          "spellcheck": true,
+          "disabled": false,
+          "tableView": true,
+          "modalEdit": false,
+          "multiple": false,
+          "persistent": true,
+          "inputFormat": "plain",
+          "protected": false,
+          "dbIndex": false,
+          "case": "uppercase",
+          "encrypted": false,
+          "redrawOn": "",
+          "clearOnHide": true,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "allowCalculateOverride": false,
+          "validateOn": "change",
+          "validate": {
+            "required": true,
+            "pattern": "[A-Z]*",
+            "customMessage": "",
+            "custom": "",
+            "customPrivate": false,
+            "json": "",
+            "minLength": 4,
+            "maxLength": 4,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "unique": false,
+          "errorLabel": "",
+          "key": "institutionCode",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "textfield",
+          "input": true,
+          "refreshOn": "",
+          "dataGridLabel": false,
+          "inputType": "text",
+          "id": "ex6efvi",
+          "defaultValue": ""
         },
         {
           "label": "Location Name",
@@ -527,7 +615,8 @@
           "refreshOn": "",
           "inputType": "text",
           "id": "e9r3hac",
-          "defaultValue": ""
+          "defaultValue": "",
+          "dataGridLabel": false
         },
         {
           "label": "Address 1",
@@ -609,7 +698,8 @@
           "refreshOn": "",
           "inputType": "text",
           "id": "exmw3eu",
-          "defaultValue": ""
+          "defaultValue": "",
+          "dataGridLabel": false
         },
         {
           "label": "Address 2",
@@ -691,7 +781,8 @@
           "refreshOn": "",
           "inputType": "text",
           "id": "emrgcv",
-          "defaultValue": ""
+          "defaultValue": "",
+          "dataGridLabel": false
         },
         {
           "label": "Columns",
@@ -779,7 +870,8 @@
                   "refreshOn": "",
                   "inputType": "text",
                   "id": "eeodxxt",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "dataGridLabel": false
                 },
                 {
                   "label": "Province/State",
@@ -862,7 +954,8 @@
                   "refreshOn": "",
                   "inputType": "text",
                   "id": "ev86aqq",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "dataGridLabel": false
                 }
               ],
               "width": 6,
@@ -954,7 +1047,8 @@
                   "refreshOn": "",
                   "inputType": "text",
                   "id": "e72esx7",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "dataGridLabel": false
                 },
                 {
                   "label": "Country",
@@ -1037,7 +1131,8 @@
                   "refreshOn": "",
                   "inputType": "text",
                   "id": "emigtml",
-                  "defaultValue": ""
+                  "defaultValue": "",
+                  "dataGridLabel": false
                 }
               ],
               "width": 6,
@@ -1114,10 +1209,12 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "tree": false,
-          "id": "ehusb3l"
+          "id": "ehusb3l",
+          "dataGridLabel": false
         }
       ],
-      "id": "e5h3o6e"
+      "id": "e5h3o6e",
+      "dataGridLabel": false
     },
     {
       "label": "HTML",
@@ -1195,7 +1292,8 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e9ll8h"
+      "id": "e9ll8h",
+      "dataGridLabel": false
     },
     {
       "label": "Submit",
@@ -1345,7 +1443,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "e70rcni"
+      "id": "e70rcni",
+      "dataGridLabel": false
     },
     {
       "label": "pid",
@@ -1416,7 +1515,8 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "exsim6v"
+      "id": "exsim6v",
+      "dataGridLabel": false
     },
     {
       "label": "applicationId",
@@ -1485,7 +1585,8 @@
       "allowMultipleMasks": false,
       "inputType": "hidden",
       "id": "em1y8gd",
-      "defaultValue": ""
+      "defaultValue": "",
+      "dataGridLabel": false
     }
   ],
   "display": "form",
@@ -1494,5 +1595,5 @@
   "path": "institutionlocationcreation",
   "machineName": "institutionLocationCreation",
   "created": "2021-06-28T22:06:38.576Z",
-  "modified": "2021-06-28T22:06:38.582Z"
+  "modified": "2021-08-30T22:38:52.701Z"
 }

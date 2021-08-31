@@ -66,7 +66,6 @@ export class InstitutionLocationsController extends BaseController {
         "Not able to find a institution associated with the current user name.",
       );
     }
-
     // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionLocation =
       await this.locationService.createLocation(

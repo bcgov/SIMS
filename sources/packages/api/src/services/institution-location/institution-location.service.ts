@@ -57,6 +57,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         },
       },
       institution: institution,
+      institutionCode: data.data.institutionCode
     };
 
     return await this.repo.save(newLocation);
@@ -81,6 +82,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         },
       },
       institution: institution,
+      institutionCode: data.institutionCode
     };
 
     return await this.repo.update(locationId, updateLocation);
@@ -127,6 +129,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institution_location.data",
         "institution.institutionPrimaryContact",
         "institution_location.id",
+        "institution_location.institutionCode",
       ])
       .leftJoin("institution_location.institution", "institution")
       .where("institution.id = :id and institution_Location.id = :locationId", {
