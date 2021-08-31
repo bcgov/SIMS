@@ -22,7 +22,9 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, SetupContext } from "vue";
+
+const dialogClosedEvent = "dialogClosed";
 
 enum DialogTypes {
   info = "info",
@@ -46,12 +48,24 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  emits: [dialogClosedEvent],
+  setup(props: any, context: SetupContext) {
     const showHideDialog = ref(false);
     watch(
       () => props.showDialog,
       (currValue: boolean) => {
         showHideDialog.value = currValue;
+      },
+    );
+
+    watch(
+      () => showHideDialog.value,
+      () => {
+        if (!showHideDialog.value) {
+          // Handle events when the user clicks outside
+          // the modal or press ESC to cancel it.
+          context.emit(dialogClosedEvent);
+        }
       },
     );
 
