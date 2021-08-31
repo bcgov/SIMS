@@ -20,6 +20,9 @@ export default {
     data: {
       type: Object,
     },
+    readOnly: {
+      type: String,
+    },
   },
   setup(props: any, context: SetupContext) {
     const formioContainerRef = ref(null);
@@ -76,6 +79,7 @@ export default {
         formDefinition.data,
         {
           fileService: new FormUploadService(),
+          readOnly: props.readOnly,
         },
       );
 

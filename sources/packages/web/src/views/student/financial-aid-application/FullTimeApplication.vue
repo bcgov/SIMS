@@ -3,11 +3,11 @@
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
         <v-row class="center-container application-container mb-5 text-right">
-          <v-col md="12" class="ml-auto ">
+          <v-col md="12" class="ml-auto">
             <v-btn
               color="primary"
               class="mr-5"
-              v-show="!isFirstPage"
+              v-show="!isFirstPage && !readOnly"
               text
               :loading="savingDraft"
               @click="saveDraft()"
@@ -17,7 +17,7 @@
             >
             <v-btn
               :disabled="!isLastPage || submittingApplication"
-              v-show="!isFirstPage"
+              v-show="!isFirstPage && !readOnly"
               color="primary"
               @click="wizardSubmit()"
               >{{
@@ -26,14 +26,15 @@
               <span v-if="submittingApplication">
                 &nbsp;&nbsp;
                 <ProgressSpinner
-                  style="width:30px;height:25px"
-                  strokeWidth="10"/></span
+                  style="width: 30px; height: 25px"
+                  strokeWidth="10" /></span
             ></v-btn>
           </v-col>
         </v-row>
         <formio
           :formName="selectedForm"
           :data="initialData"
+          :readOnly="readOnly"
           @loaded="formLoaded"
           @changed="formChanged"
           @submitted="submitApplication"
@@ -85,6 +86,9 @@ export default {
     selectedForm: {
       type: String,
       required: true,
+    },
+    readOnly: {
+      type: String,
     },
     programYearId: {
       type: Number,
