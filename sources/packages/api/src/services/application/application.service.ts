@@ -370,6 +370,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       })
+      .orderBy(
+        `CASE application.applicationStatus
+            WHEN '${ApplicationStatus.draft}' THEN 1
+            WHEN '${ApplicationStatus.submitted}' THEN 2
+            WHEN '${ApplicationStatus.inProgress}' THEN 3
+            WHEN '${ApplicationStatus.enrollment}' THEN 4
+            WHEN '${ApplicationStatus.completed}' THEN 5
+            WHEN '${ApplicationStatus.cancelled}' THEN 6
+            ELSE 7
+          END`,
+      )
+      .addOrderBy("application.applicationNumber")
       .getMany();
   }
 
