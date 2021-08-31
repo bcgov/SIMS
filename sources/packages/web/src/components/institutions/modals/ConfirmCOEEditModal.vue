@@ -3,6 +3,7 @@
     title="Edit Program Information?"
     dialogType="question"
     :showDialog="showDialog"
+    @dialogClosed="dialogClosed"
   >
     <template v-slot:content>
       You are about to change a students program or offering information.<br />
@@ -11,7 +12,7 @@
       Are you sure you want to change the program or offering information?
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="cancelModal">
+      <v-btn color="primary" outlined @click="dialogClosed">
         Cancel
       </v-btn>
       <v-btn
@@ -45,7 +46,7 @@ export default {
       resolvePromise(true);
     };
 
-    const cancelModal = () => {
+    const dialogClosed = () => {
       showDialog.value = false;
       resolvePromise(false);
     };
@@ -53,8 +54,8 @@ export default {
     return {
       showDialog,
       editProgramInfo,
-      cancelModal,
       showModal,
+      dialogClosed,
     };
   },
 };
