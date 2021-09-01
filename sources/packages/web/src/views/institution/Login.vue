@@ -33,6 +33,10 @@
       Disabled User - you dont have access to the system. Please contact
       Administrator for more informations.
     </Message>
+    <Message severity="error" class="mx-2" v-if="unknownUser">
+      New User - you dont have access to the system. Please contact
+      Administrator for more informations.
+    </Message>
   </v-card>
 </template>
 
@@ -53,17 +57,23 @@ export default {
       required: false,
       default: false,
     },
+    showUnknownUserMessage: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props: any) {
     const basicBCeID = ref(props.showBasicBCeIDMessage);
     const disabledUser = ref(props.showDisabledUserMessage);
+    const unknownUser = ref(props.showUnknownUserMessage);
     const login = () => {
       AppConfigService.shared.authService?.login({
         idpHint: "bceid",
       });
     };
 
-    return { login, basicBCeID, disabledUser };
+    return { login, basicBCeID, disabledUser, unknownUser };
   },
 };
 </script>

@@ -46,6 +46,7 @@ export const InstitutionRoutesConst = {
   LOCATION_STUDENTS: Symbol(),
   LOCATION_USERS: Symbol(),
   DISABLED_LOGIN: Symbol(),
+  UNKNOWN_LOGIN: Symbol(),
 };
 
 export const SharedRouteConst = {

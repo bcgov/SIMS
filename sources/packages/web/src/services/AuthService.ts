@@ -4,6 +4,7 @@ import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
+import { InstitutionService } from "./InstitutionService";
 let keycloak: Keycloak.KeycloakInstance;
 
 export default async function(
@@ -56,6 +57,20 @@ export default async function(
               isForbiddenUser = true;
             } else {
               await store.dispatch("institution/initialize", authHeader);
+            }
+          } else {
+            const institution = InstitutionService.shared.getDetail();
+            if (!institution) {
+              await store.dispatch("institution/initialize", authHeader);
+            } else {
+              await AppConfigService.shared.logout(
+                ClientIdType.INSTITUTION,
+                keycloak,
+                false,
+                false,
+                true,
+              );
+              isForbiddenUser = true;
             }
           }
         } //Institution switch case ends
