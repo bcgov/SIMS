@@ -43,7 +43,6 @@ export class InstitutionLocation extends RecordDataModel {
 
   @Column({
     name: "institution_code",
-    nullable: false,
   })
   institutionCode: string;
 }
