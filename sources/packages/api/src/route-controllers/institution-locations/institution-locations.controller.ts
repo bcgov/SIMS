@@ -48,7 +48,7 @@ export class InstitutionLocationsController extends BaseController {
   ): Promise<number> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocationcreation",
+      "institutionlocation",
       payload,
     );
 
@@ -87,7 +87,7 @@ export class InstitutionLocationsController extends BaseController {
   ): Promise<number> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "editinstitutionlocation",
+      "institutionlocation",
       payload,
     );
 
