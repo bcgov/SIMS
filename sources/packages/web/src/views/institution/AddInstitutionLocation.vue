@@ -1,7 +1,7 @@
 <template>
   <Card class="p-m-4">
     <template #content>
-      <formio formName="institutionlocationcreation" @submitted="submitted"></formio>
+      <formio formName="institutionlocation" @submitted="submitted"></formio>
     </template>
   </Card>
 </template>
