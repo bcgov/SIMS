@@ -1,5 +1,4 @@
 {
-    "_id": "612fa7e794d56e2366d54163",
     "type": "form",
     "tags": [
         "common"
@@ -1596,18 +1595,5 @@
     "path": "institutionlocation",
     "machineName": "institutionlocation",
     "created": "2021-06-28T22:06:38.576Z",
-    "modified": "2021-09-01T16:18:47.856Z",
-    "access": [
-        {
-            "roles": [
-                "60da4337ddbc4901df47dce6",
-                "60da4337ddbc49779347dce7",
-                "60da4337ddbc49616247dce8",
-                "60da4337ddbc4975c047dce9",
-                "60da4337ddbc4993a647dcea"
-            ],
-            "type": "read_all"
-        }
-    ],
-    "submissionAccess": []
+    "modified": "2021-09-01T16:18:47.856Z"
 }
