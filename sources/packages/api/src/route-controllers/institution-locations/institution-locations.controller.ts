@@ -66,6 +66,7 @@ export class InstitutionLocationsController extends BaseController {
         "Not able to find a institution associated with the current user name.",
       );
     }
+
     // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionLocation =
       await this.locationService.createLocation(
@@ -84,6 +85,18 @@ export class InstitutionLocationsController extends BaseController {
     @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
+    // Validate the location data that will be saved to SIMS DB.
+    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
+      "editinstitutionlocation",
+      payload,
+    );
+
+    if (!dryRunSubmissionResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to create the institution location due to an invalid request.",
+      );
+    }
+
     //To retrieve institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
@@ -102,7 +115,7 @@ export class InstitutionLocationsController extends BaseController {
     const updateResult = await this.locationService.updateLocation(
       locationId,
       institutionDetails.id,
-      payload,
+      dryRunSubmissionResult.data.data,
     );
     return updateResult.affected;
   }
