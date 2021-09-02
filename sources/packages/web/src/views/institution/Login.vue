@@ -34,8 +34,8 @@
       Administrator for more informations.
     </Message>
     <Message severity="error" class="mx-2" v-if="unknownUser">
-      New User - you dont have access to the system. Please contact
-      Administrator for more informations.
+      Institution already exists. Please contact Administrator for more
+      information.
     </Message>
   </v-card>
 </template>

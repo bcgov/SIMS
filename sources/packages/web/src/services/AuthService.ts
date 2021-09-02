@@ -5,6 +5,9 @@ import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
 import { InstitutionService } from "./InstitutionService";
+import router from "../router";
+import { institutionRoutes } from "@/router/InstitutionRoutes";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 let keycloak: Keycloak.KeycloakInstance;
 
 export default async function(
@@ -61,7 +64,9 @@ export default async function(
           } else {
             const institution = InstitutionService.shared.getDetail();
             if (!institution) {
-              await store.dispatch("institution/initialize", authHeader);
+              router.push({
+                name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+              });
             } else {
               await AppConfigService.shared.logout(
                 ClientIdType.INSTITUTION,

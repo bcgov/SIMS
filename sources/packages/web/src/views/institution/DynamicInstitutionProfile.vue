@@ -8,7 +8,15 @@
   <Card class="p-m-4">
     <template #content>
       <formio
+        v-if="editMode"
         formName="institutionprofile"
+        :data="initialData"
+        @loaded="formLoaded"
+        @submitted="submitted"
+      ></formio>
+      <formio
+        v-if="!editMode"
+        formName="institutionprofilecreation"
         :data="initialData"
         @loaded="formLoaded"
         @submitted="submitted"

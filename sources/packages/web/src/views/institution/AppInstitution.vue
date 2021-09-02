@@ -92,21 +92,6 @@ export default {
         router.push({
           name: InstitutionRoutesConst.LOGIN,
         });
-      } else {
-        if (await UserService.shared.checkUser()) {
-          if (await UserService.shared.checkActiveUser()) {
-            await InstitutionService.shared.sync();
-            if (route.path === AppRoutes.InstitutionRoot) {
-              router.push({
-                name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-              });
-            }
-          }
-        } else {
-          router.push({
-            name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-          });
-        }
       }
     });
 
