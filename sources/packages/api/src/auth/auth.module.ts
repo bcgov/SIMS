@@ -1,8 +1,12 @@
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
-import { InstitutionUserAuthService, UserService } from "../services";
+import {
+  InstitutionLocationService,
+  InstitutionUserAuthService,
+  UserService,
+} from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
 import { KeycloakConfig } from "./keycloakConfig";
@@ -22,6 +26,7 @@ const jwtModule = JwtModule.register({
   imports: [PassportModule, jwtModule],
   providers: [
     UserService,
+    InstitutionLocationService,
     InstitutionUserAuthService,
     JwtStrategy,
     {

@@ -50,14 +50,6 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      userToken.authorizations.institutionId !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException();
-    }
     const requestProgram = await this.programService.getInstitutionProgram(
       programId,
       userToken.authorizations.institutionId,
@@ -91,29 +83,20 @@ export class EducationProgramOfferingController {
   async getAllEducationProgramOffering(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
-    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramOfferingDto[]> {
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      userToken.authorizations.institutionId !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException();
-    }
-    //To retrive Education program offering corresponding to ProgramId and LocationId
-    const programOferingList =
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
+    const programOfferingList =
       await this.programOfferingService.getAllEducationProgramOffering(
         locationId,
         programId,
         [OfferingTypes.public],
       );
-    if (!programOferingList) {
+    if (!programOfferingList) {
       throw new UnprocessableEntityException(
         "Not able to find a Education Program Offering associated with the current Education Program and Location.",
       );
     }
-    return programOferingList.map((offering) => ({
+    return programOfferingList.map((offering) => ({
       id: offering.id,
       name: offering.name,
       studyDates: offering.studyDates,
@@ -131,15 +114,7 @@ export class EducationProgramOfferingController {
     @Param("offeringId") offeringId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<ProgramOfferingDto> {
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      userToken.authorizations.institutionId !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException();
-    }
-    //To retrive Education program offering corresponding to ProgramId and LocationId
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
     const offering = await this.programOfferingService.getProgramOffering(
       locationId,
       programId,
@@ -184,14 +159,6 @@ export class EducationProgramOfferingController {
     @Param("programId") programId?: number,
     @Param("offeringId") offeringId?: number,
   ): Promise<number> {
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      userToken.authorizations.institutionId !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException();
-    }
     const requestOffering =
       await this.programOfferingService.getProgramOffering(
         locationId,
@@ -260,7 +227,7 @@ export class EducationProgramOfferingController {
    * Get a key/value pair list of all offerings that
    * belongs to a program under a location. Executes the
    * location-based authorization (locations must have
-   * access to their spcific offerings only).
+   * access to their specific offerings only).
    * @param locationId location id.
    * @param programId program id.
    * @returns key/value pair list of programs for students.
@@ -294,7 +261,7 @@ export class EducationProgramOfferingController {
   async getProgramOfferingDetails(
     @Param("offeringId") offeringId: number,
   ): Promise<ProgramOfferingDetailsDto> {
-    //To retrive Education program offering corresponding to ProgramId and LocationId
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
     const offering = await this.programOfferingService.getOfferingById(
       offeringId,
     );
