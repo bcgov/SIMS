@@ -7,7 +7,6 @@ import {
   Post,
   Put,
   UnprocessableEntityException,
-  ForbiddenException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -46,14 +45,6 @@ export class EducationProgramController {
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SummaryEducationProgramDto[]> {
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      userToken.authorizations.institutionId !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException();
-    }
     const programs = await this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
