@@ -35,4 +35,5 @@ export interface InstitutionLocationsDetails {
       primaryContactPhone: string;
     };
   };
+  institutionCode: string;
 }

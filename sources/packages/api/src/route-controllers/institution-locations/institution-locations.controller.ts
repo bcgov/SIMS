@@ -48,7 +48,7 @@ export class InstitutionLocationsController extends BaseController {
   ): Promise<number> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocationcreation",
+      "institutionlocation",
       payload,
     );
 
@@ -85,6 +85,18 @@ export class InstitutionLocationsController extends BaseController {
     @Body() payload: InstitutionLocationTypeDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
+    // Validate the location data that will be saved to SIMS DB.
+    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
+      "institutionlocation",
+      payload,
+    );
+
+    if (!dryRunSubmissionResult.valid) {
+      throw new UnprocessableEntityException(
+        "Not able to create the institution location due to an invalid request.",
+      );
+    }
+
     //To retrieve institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
@@ -103,7 +115,7 @@ export class InstitutionLocationsController extends BaseController {
     const updateResult = await this.locationService.updateLocation(
       locationId,
       institutionDetails.id,
-      payload,
+      dryRunSubmissionResult.data.data,
     );
     return updateResult.affected;
   }
