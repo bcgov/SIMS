@@ -6,7 +6,6 @@ import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
 import { InstitutionService } from "./InstitutionService";
 import router from "../router";
-import { institutionRoutes } from "@/router/InstitutionRoutes";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 let keycloak: Keycloak.KeycloakInstance;
 
@@ -61,22 +60,19 @@ export default async function(
             } else {
               await store.dispatch("institution/initialize", authHeader);
             }
+          } else if (!InstitutionService.shared.getDetail()) {
+            router.push({
+              name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+            });
           } else {
-            const institution = InstitutionService.shared.getDetail();
-            if (!institution) {
-              router.push({
-                name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-              });
-            } else {
-              await AppConfigService.shared.logout(
-                ClientIdType.INSTITUTION,
-                keycloak,
-                false,
-                false,
-                true,
-              );
-              isForbiddenUser = true;
-            }
+            await AppConfigService.shared.logout(
+              ClientIdType.INSTITUTION,
+              keycloak,
+              false,
+              false,
+              true,
+            );
+            isForbiddenUser = true;
           }
         } //Institution switch case ends
       } //Switch block ends
