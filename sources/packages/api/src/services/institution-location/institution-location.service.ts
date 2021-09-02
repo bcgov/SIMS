@@ -57,7 +57,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         },
       },
       institution: institution,
-      institutionCode: data.data.institutionCode
+      institutionCode: data.data.institutionCode,
     };
 
     return await this.repo.save(newLocation);
@@ -82,7 +82,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         },
       },
       institution: institution,
-      institutionCode: data.institutionCode
+      institutionCode: data.institutionCode,
     };
 
     return await this.repo.update(locationId, updateLocation);
@@ -143,5 +143,23 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationIds: number[],
   ): Promise<InstitutionLocation[]> {
     return this.repo.findByIds(locationIds);
+  }
+
+  /**
+   * Gets all locations ids for a particular institution.
+   * This method is used during the login process and should be
+   * as lightweight as possible. Do not expand this query unless
+   * it is related to login/authorization process.
+   * @param institutionId institution id.
+   * @returns institution locations ids.
+   */
+  async getInstitutionLocationsIds(institutionId: number): Promise<number[]> {
+    const allLocations = await this.repo
+      .createQueryBuilder("location")
+      .select("id")
+      .where("location.institution.id = :institutionId", { institutionId })
+      .getMany();
+
+    return allLocations.map((location) => location.id);
   }
 }

@@ -7,6 +7,8 @@ import {
  * Store and provides helper methods to deal with the institution authorizations.
  */
 export class InstitutionUserAuthorizations {
+  public adminLocationsIds: number[] = [];
+
   constructor(
     public readonly institutionId: number = 0,
     public readonly authorizations: Authorizations[] = [],
@@ -25,7 +27,7 @@ export class InstitutionUserAuthorizations {
   }
 
   /**
-   * Determines if the admin use type is present and
+   * Determines if the admin user type is present and
    * it has a specific user role.
    * @param role
    * @returns true if admin role
@@ -42,16 +44,23 @@ export class InstitutionUserAuthorizations {
   /**
    * Determines whether the user is authorized to access
    * a particular location.
+   * Institution Admins will always have full access.
    * @param locationId Location to check the permission.
-   * @returns true if location access is granted.
+   * @returns true if location access is granted or
+   * if the user is an Institution Admin.
    */
   hasLocationAccess(locationId: number): boolean {
+    if (this.isAdmin()) {
+      return this.adminLocationsIds.includes(locationId);
+    }
+
     return this.authorizations.some((auth) => auth.locationId === locationId);
   }
 
   /**
    * Determines whether the user is authorized to access
    * a particular location with a specific user type.
+   * Institution Admins will always have full access.
    * @param locationId Location to check the permission.
    * @param userType User type  to check the permission.
    * @returns true if location user type permission is granted.
@@ -60,6 +69,10 @@ export class InstitutionUserAuthorizations {
     locationId: number,
     userType: InstitutionUserTypes,
   ): boolean {
+    if (this.isAdmin()) {
+      return this.adminLocationsIds.includes(locationId);
+    }
+
     return this.authorizations.some(
       (auth) => auth.locationId === locationId && auth.userType === userType,
     );
@@ -68,11 +81,16 @@ export class InstitutionUserAuthorizations {
   /**
    * Determines whether the user is authorized to access
    * a particular location with a specific user role.
+   * Institution Admins will always have full access.
    * @param locationId Location to check the permission.
    * @param userType User role  to check the permission.
    * @returns true if location user role permission is granted.
    */
   hasLocationRole(locationId: number, role: InstitutionUserRoles): boolean {
+    if (this.isAdmin()) {
+      return this.adminLocationsIds.includes(locationId);
+    }
+
     return this.authorizations.some(
       (auth) => auth.locationId === locationId && auth.userRole === role,
     );
@@ -80,11 +98,15 @@ export class InstitutionUserAuthorizations {
 
   /**
    * Gets a list of all location Ids that the user
-   * is allowed to access. For admins this list will
-   * be empty, what means that all locations are allowed.
+   * is allowed to access. For admins, this list will
+   * contains all the location IDs for the institution.
    * @returns Allowed locations IDs.
    */
   getLocationsIds(): number[] {
+    if (this.isAdmin()) {
+      return this.adminLocationsIds;
+    }
+
     return this.authorizations
       .filter((auth) => auth.locationId)
       .map((auth) => auth.locationId);
