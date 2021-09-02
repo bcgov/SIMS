@@ -3,14 +3,10 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
-import { InstitutionService } from "..";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
-  constructor(
-    @Inject("Connection") private readonly connection: Connection,
-    private readonly institutionService: InstitutionService,
-  ) {
+  constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(InstitutionLocation));
   }
 
@@ -155,9 +151,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    */
   async getInstitutionLocationsIds(institutionId: number): Promise<number[]> {
     const allLocations = await this.repo
-      .createQueryBuilder("location")
-      .select("id")
-      .where("location.institution.id = :institutionId", { institutionId })
+      .createQueryBuilder("locations")
+      .select("locations.id")
+      .leftJoin("locations.institution", "institutions")
+      .where("institutions.id = :institutionId", { institutionId })
       .getMany();
 
     return allLocations.map((location) => location.id);

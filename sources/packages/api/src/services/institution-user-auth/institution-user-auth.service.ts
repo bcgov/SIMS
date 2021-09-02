@@ -52,6 +52,8 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
         userInstitutionAuthorizations.adminLocationsIds =
           await this.locationService.getInstitutionLocationsIds(institutionId);
       }
+
+      return userInstitutionAuthorizations;
     }
 
     return new InstitutionUserAuthorizations();
