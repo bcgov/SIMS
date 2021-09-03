@@ -9,6 +9,30 @@ import router from "../router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 let keycloak: Keycloak.KeycloakInstance;
 
+async function navigateForNewUser(
+  institutionGUID: string,
+  authHeader: any,
+  keycloak: Keycloak.KeycloakInstance,
+) {
+  if (
+    await InstitutionService.shared.checkIfExist(institutionGUID, authHeader)
+  ) {
+    await AppConfigService.shared.logout(
+      ClientIdType.INSTITUTION,
+      keycloak,
+      false,
+      false,
+      true,
+    );
+    return true;
+  } else {
+    router.push({
+      name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+    });
+    return false;
+  }
+}
+
 export default async function(
   config: AppConfig,
   type: ClientIdType,
@@ -40,7 +64,6 @@ export default async function(
           const bceIdAccountDetails = await UserService.shared.getBCeIDAccountDetails(
             authHeader,
           );
-
           if (!bceIdAccountDetails) {
             await AppConfigService.shared.logout(
               ClientIdType.INSTITUTION,
@@ -60,19 +83,12 @@ export default async function(
             } else {
               await store.dispatch("institution/initialize", authHeader);
             }
-          } else if (!InstitutionService.shared.getDetail()) {
-            router.push({
-              name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-            });
           } else {
-            await AppConfigService.shared.logout(
-              ClientIdType.INSTITUTION,
+            isForbiddenUser = await navigateForNewUser(
+              bceIdAccountDetails.institution.guid,
+              authHeader,
               keycloak,
-              false,
-              false,
-              true,
             );
-            isForbiddenUser = true;
           }
         } //Institution switch case ends
       } //Switch block ends

@@ -408,6 +408,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     });
   }
 
+  async doesExist(guid: string): Promise<number> {
+    return this.repo.count({ guid: guid });
+  }
+
   async updateInstitutionUser(
     permissionInfo: InstitutionUserPermissionDto,
     institutionUser: InstitutionUser,

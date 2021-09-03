@@ -115,4 +115,23 @@ export class InstitutionApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  public async checkIfExist(guid: string, headers: any): Promise<boolean> {
+    try {
+      const resp: AxiosResponse<void> = await this.apiClient.head(
+        "institution/" + guid,
+        headers,
+      );
+      if (200 === resp.status) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      if (404 === error.response.status) {
+        return false;
+      }
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }
