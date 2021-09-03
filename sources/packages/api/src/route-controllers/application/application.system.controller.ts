@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Put,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -243,5 +244,13 @@ export class ApplicationSystemController {
         offering.tuitionRemittanceRequestedAmount,
       offeringDelivered: offering.offeringDelivered,
     };
+  }
+
+  @Put(":applicationId/msfaa-number")
+  async generateMSFAANumber(
+    @Param("applicationId") applicationId: number,
+  ): Promise<void> {
+    // TODO: Call application service to create/get the number and associate with the applicationId.
+    console.log(applicationId);
   }
 }
