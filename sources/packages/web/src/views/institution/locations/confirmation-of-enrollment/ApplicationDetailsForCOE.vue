@@ -93,6 +93,7 @@
       @reloadData="loadInitialData"
     />
     <ConfirmCOEEditModal ref="editCOEModal" />
+    <ConfirmCOEDenyModal ref="denyCOEModal" @submitData="submitCOEDeny" />
   </div>
 </template>
 <script lang="ts">
@@ -105,7 +106,9 @@ import Menu from "primevue/menu";
 import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
 import ConfirmCOE from "@/components/institutions/modals/ConfirmCOEModal.vue";
 import ConfirmCOEEditModal from "@/components/institutions/modals/ConfirmCOEEditModal.vue";
+import ConfirmCOEDenyModal from "@/components/institutions/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
+import { DenyConfirmationOfEnrollment } from "@/types";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -121,7 +124,13 @@ export interface MenuType {
 }
 
 export default {
-  components: { formio, Menu, ConfirmCOE, ConfirmCOEEditModal },
+  components: {
+    formio,
+    Menu,
+    ConfirmCOE,
+    ConfirmCOEEditModal,
+    ConfirmCOEDenyModal,
+  },
   props: {
     applicationId: {
       type: Number,
@@ -140,6 +149,7 @@ export default {
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
+    const denyCOEModal = ref({} as ModalDialog<boolean>);
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
     };
@@ -179,7 +189,30 @@ export default {
         }
       }
     };
-
+    const submitCOEDeny = async (
+      submissionData: DenyConfirmationOfEnrollment,
+    ) => {
+      console.log(submissionData, "############");
+      try {
+        await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
+          props.locationId,
+          props.applicationId,
+          submissionData,
+        );
+        toast.success("COE is Denied", "Application Status Has Been Updated.");
+        router.push({
+          name: InstitutionRoutesConst.COE_SUMMARY,
+        });
+      } catch {
+        toast.error(
+          "Unexpected error",
+          "An error happened while denying Confirmation of Enrollment.",
+        );
+      }
+    };
+    const denyProgramInformation = async () => {
+      await denyCOEModal.value.showModal();
+    };
     const loadMenu = () => {
       items.value = [
         {
@@ -202,6 +235,7 @@ export default {
         {
           label: "Decline Request",
           class: "font-weight-bold",
+          command: denyProgramInformation,
         },
         { separator: true },
         {
@@ -239,6 +273,8 @@ export default {
       showModal,
       loadInitialData,
       editCOEModal,
+      denyCOEModal,
+      submitCOEDeny,
     };
   },
 };

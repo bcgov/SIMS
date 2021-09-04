@@ -3,7 +3,6 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { PIR_DENIED_REASON_OTHER_ID } from "../../utilities/constants";
 import {
   Application,
   ApplicationStudentFile,
@@ -18,6 +17,7 @@ import {
   InstitutionLocation,
   EducationProgram,
   PIRDeniedReason,
+  COEDeniedReason,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -30,6 +30,10 @@ import {
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
+  COE_REQUEST_NOT_FOUND_ERROR,
+  COE_DENIED_REASON_OTHER_ID,
+  PIR_DENIED_REASON_OTHER_ID,
+  COE_DENIED_REASON_NOT_FOUND_ERROR,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -949,5 +953,53 @@ export class ApplicationService extends RecordDataModelService<Application> {
         getPSTPDTDate(offeringStartDate, true),
       ) <= COE_WINDOW
     );
+  }
+  /**
+   * Deny the Confirmation Of Enrollment(COE) for an Application.
+   * Updates only applications that have the COE status as required.
+   * @param applicationId application id to be updated.
+   * @param locationId location that is setting the offering.
+   * @param coeDeniedReasonId COE Denied reason id for a student application.
+   * @param otherReasonDesc when other is selected as a COE denied reason, text for the reason
+   * is populated.
+   * @returns updated application.
+   */
+  async setDeniedReasonForConfirmationOfEnrollment(
+    applicationId: number,
+    locationId: number,
+    coeDeniedReasonId: number,
+    otherReasonDesc?: string,
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      id: applicationId,
+      location: { id: locationId },
+      coeStatus: COEStatus.required,
+      applicationStatus: Not(
+        In([
+          ApplicationStatus.completed,
+          ApplicationStatus.overwritten,
+          ApplicationStatus.cancelled,
+        ]),
+      ),
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Not able to find an application that requires a COE to be completed.",
+        COE_REQUEST_NOT_FOUND_ERROR,
+      );
+    }
+
+    application.coeDeniedReasonId = {
+      id: coeDeniedReasonId,
+    } as COEDeniedReason;
+    if (COE_DENIED_REASON_OTHER_ID === coeDeniedReasonId && !otherReasonDesc) {
+      throw new CustomNamedError(
+        "Other is selected as COE reason, specify the reason for the COE denial.",
+        COE_DENIED_REASON_NOT_FOUND_ERROR,
+      );
+    }
+    application.coeDeniedOtherDesc = otherReasonDesc;
+    application.coeStatus = COEStatus.declined;
+    return this.repo.save(application);
   }
 }

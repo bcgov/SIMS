@@ -1,4 +1,9 @@
-import { COESummaryDTO, ApplicationDetailsForCOEDTO } from "@/types";
+import {
+  COESummaryDTO,
+  ApplicationDetailsForCOEDTO,
+  COEDeniedReasonDto,
+  DenyConfirmationOfEnrollment,
+} from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
@@ -55,6 +60,36 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
       await this.apiClient.post(
         `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/rollback`,
         null,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/location/confirmation-of-enrollment/denial-reasons`,
+        this.addAuthHeader(),
+      );
+      return response?.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async denyConfirmationOfEnrollment(
+    locationId: number,
+    applicationId: number,
+    DenyCOEPayload: DenyConfirmationOfEnrollment,
+  ): Promise<void> {
+    try {
+      await this.apiClient.patch(
+        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/deny`,
+        DenyCOEPayload,
         this.addAuthHeader(),
       );
     } catch (error) {

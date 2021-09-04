@@ -60,3 +60,14 @@ export enum COEStatus {
    */
   submitted = "Submitted",
 }
+
+export interface COEDeniedReasonDto {
+  value: number;
+  label: string;
+  shortcut?: string;
+}
+
+export interface DenyConfirmationOfEnrollment {
+  coeDenyReasonId: number;
+  otherReasonDesc?: string;
+}

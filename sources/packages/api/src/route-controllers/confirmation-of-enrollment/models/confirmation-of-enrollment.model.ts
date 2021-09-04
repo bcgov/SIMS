@@ -26,9 +26,10 @@ export interface ApplicationDetailsForCOEDTO {
   applicationLocationId: number;
 }
 
-export interface GetCOEDeniedReasonDto {
-  id: number;
-  description: string;
+export interface COEDeniedReasonDto {
+  value: number;
+  label: string;
+  shortcut?: string;
 }
 
 export class DenyConfirmationOfEnrollmentDto {
