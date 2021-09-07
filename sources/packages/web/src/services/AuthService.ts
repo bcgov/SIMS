@@ -13,7 +13,7 @@ let keycloak: Keycloak.KeycloakInstance;
 async function navigateForInstitution(
   authHeader: any,
   bceIdAccountDetails: BCeIDDetailsDto,
-) {
+): Promise<boolean> {
   if (!bceIdAccountDetails) {
     await AppConfigService.shared.logout(
       ClientIdType.INSTITUTION,

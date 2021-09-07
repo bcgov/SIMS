@@ -34,8 +34,9 @@
       Administrator for more informations.
     </Message>
     <Message severity="error" class="mx-2" v-if="unknownUser">
-      Institution already exists. Please contact Administrator for more
-      information.
+      The user was validated successfully but is not currently allowed to have
+      access to this application. Please contact the Administrator for more
+      information
     </Message>
   </v-card>
 </template>
