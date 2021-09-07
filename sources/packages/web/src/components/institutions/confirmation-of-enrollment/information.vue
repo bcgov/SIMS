@@ -20,8 +20,8 @@ import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
 export default {
   props: {
     data: {
-      type: ApplicationDetailsForCOEDTO,
-      default: {},
+      type: Object,
+      default: {} as ApplicationDetailsForCOEDTO,
     },
   },
   setup(props: any) {
