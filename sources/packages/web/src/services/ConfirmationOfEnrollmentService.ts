@@ -49,7 +49,7 @@ export class ConfirmationOfEnrollmentService {
   }
 
   public async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
-    return await ApiClient.ConfirmationOfEnrollment.getCOEDenialReasons();
+    return ApiClient.ConfirmationOfEnrollment.getCOEDenialReasons();
   }
 
   public async denyConfirmationOfEnrollment(

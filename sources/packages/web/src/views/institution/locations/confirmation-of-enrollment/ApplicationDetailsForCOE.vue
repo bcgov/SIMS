@@ -45,12 +45,15 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import formio from "@/components/generic/formio.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
-import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
+import {
+  COEStatus,
+  ApplicationDetailsForCOEDTO,
+  DenyConfirmationOfEnrollment,
+} from "@/types";
 import ConfirmCOE from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEModal.vue";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
-import { DenyConfirmationOfEnrollment } from "@/types";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
 
 /**

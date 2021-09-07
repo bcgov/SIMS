@@ -52,7 +52,7 @@ export default {
     const formioUtils = useFormioUtils();
     const COEDenialform = ref();
     const submitForm = async () => {
-      return await COEDenialform.value.submit();
+      return COEDenialform.value.submit();
     };
     const denyProgramInfo = async () => {
       const formSubmitted = await submitForm();

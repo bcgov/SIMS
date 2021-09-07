@@ -91,8 +91,7 @@ import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import Tooltip from "primevue/tooltip";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import { ApplicationStatus } from "@/types";
-import { ProgramYearOfApplicationDto, StudentApplication } from "@/types";
+import { ApplicationStatus, ProgramYearOfApplicationDto, StudentApplication } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 
 export default {

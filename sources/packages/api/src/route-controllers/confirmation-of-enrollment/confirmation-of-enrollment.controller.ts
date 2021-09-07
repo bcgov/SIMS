@@ -43,7 +43,7 @@ export class ConfirmationOfEnrollmentController {
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly locationService: InstitutionLocationService,
-    private readonly COEDeniedReasonService: COEDeniedReasonService,
+    private readonly DeniedCOEReasonService: COEDeniedReasonService,
   ) {}
 
   /**
@@ -267,7 +267,7 @@ export class ConfirmationOfEnrollmentController {
   @Get("confirmation-of-enrollment/denial-reasons")
   async getCOEDeniedReason(): Promise<COEDeniedReasonDto[]> {
     const coeDeniedReason =
-      await this.COEDeniedReasonService.getCOEDeniedReasons();
+      await this.DeniedCOEReasonService.getCOEDeniedReasons();
     return coeDeniedReason.map((eachCOEDeniedReason) => {
       return {
         value: eachCOEDeniedReason.id,

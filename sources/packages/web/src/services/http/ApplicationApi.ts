@@ -1,12 +1,10 @@
 import {
   SaveStudentApplicationDto,
   ProgramYearOfApplicationDto,
-} from "@/types";
-import HttpBaseClient from "./common/HttpBaseClient";
-import {
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
 } from "@/types";
+import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ApplicationApi extends HttpBaseClient {
   public async getApplicationData(applicationId: number): Promise<any> {
