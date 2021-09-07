@@ -19,6 +19,19 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
+  public async getInstitutionType(): Promise<number> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/intitution-type`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
   public async createProgram(createProgramDto: any): Promise<void> {
     try {
       await this.apiClient.post(

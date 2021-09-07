@@ -18,8 +18,10 @@
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import formio from "../../../../components/generic/formio.vue";
+import { EducationProgramDto } from "../../../../types";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "../../../../constants/utilities";
 import { onMounted, ref } from "vue";
 
 export default {
@@ -41,11 +43,23 @@ export default {
     const initialData = ref({});
 
     onMounted(async () => {
+      const institutionType = await EducationProgramService.shared.getInstitutionType();
+      let bcPrivate = false;
+      if (INSTITUTION_TYPE_BC_PRIVATE === institutionType) {
+        bcPrivate = true;
+      }
       if (props.programId) {
-        initialData.value = await EducationProgramService.shared.getProgram(
+        const program: EducationProgramDto = await EducationProgramService.shared.getProgram(
           props.programId,
         );
+        initialData.value = {
+          bcPrivate: bcPrivate,
+          ...program,
+        };
       }
+      initialData.value = {
+        bcPrivate: bcPrivate,
+      };
     });
 
     const submitted = async (data: any) => {

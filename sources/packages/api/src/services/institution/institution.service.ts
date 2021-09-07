@@ -223,6 +223,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getOneOrFail();
   }
 
+  async getInstitutionType(institutionId: number): Promise<number> {
+    const institution = await this.repo
+      .createQueryBuilder("institution")
+      .select("institution.institutionType")
+      .where("institution.id = :institutionId", { institutionId })
+      .getOneOrFail();
+
+    return institution.institutionType;
+  }
+
   async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
     const institution: Institution = await this.getInstituteByUserName(
       userInfo.userName,

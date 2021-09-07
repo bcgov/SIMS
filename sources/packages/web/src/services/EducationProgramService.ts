@@ -13,6 +13,10 @@ export class EducationProgramService {
     return ApiClient.EducationProgram.getProgram(programId);
   }
 
+  public async getInstitutionType(): Promise<number> {
+    return ApiClient.EducationProgram.getInstitutionType();
+  }
+
   public async createProgram(data: any): Promise<void> {
     await ApiClient.EducationProgram.createProgram(data);
   }

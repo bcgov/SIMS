@@ -185,6 +185,15 @@ export class InstitutionController extends BaseController {
     return this.institutionService.getUserTypesAndRoles();
   }
 
+  @Get("/intitution-type")
+  async getInstitutionType(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<number> {
+    return this.institutionService.getInstitutionType(
+      userToken?.authorizations?.institutionId,
+    );
+  }
+
   /* Since, below API is called by only Admin user, IsInstitutionAdmin 
     decorator is added, in future, if the API is shared, remove this decorator */
   @IsInstitutionAdmin()
