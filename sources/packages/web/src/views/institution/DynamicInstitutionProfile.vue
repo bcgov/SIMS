@@ -8,7 +8,9 @@
   <Card class="p-m-4">
     <template #content>
       <formio
-        formName="institutionprofile"
+        :formName="
+          editMode ? 'institutionprofile' : 'institutionprofilecreation'
+        "
         :data="initialData"
         @loaded="formLoaded"
         @submitted="submitted"
@@ -27,6 +29,7 @@ import { InstitutionDto, InstitutionDetailDto } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { useFormioDropdownLoader } from "../../composables";
+import { useStore } from "vuex";
 
 export default {
   components: { formio },
@@ -39,6 +42,7 @@ export default {
   },
   setup(props: any) {
     // Hooks
+    const store = useStore();
     const toast = useToast();
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
@@ -68,6 +72,7 @@ export default {
       } else {
         try {
           await InstitutionService.shared.createInstitutionV2(data);
+          await store.dispatch("institution/initialize");
           toast.add({
             severity: "success",
             summary: "Created!",

@@ -291,4 +291,8 @@ export class InstitutionService {
   public async getInstitutionTypeOptions(): Promise<OptionItemDto[]> {
     return ApiClient.Institution.getInstitutionTypeOptions();
   }
+
+  public async checkIfExist(guid: string, headers: any): Promise<boolean> {
+    return ApiClient.Institution.checkIfExist(guid, headers);
+  }
 }
