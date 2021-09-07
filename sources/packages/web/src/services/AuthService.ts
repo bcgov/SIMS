@@ -7,29 +7,53 @@ import { UserService } from "./UserService";
 import { InstitutionService } from "./InstitutionService";
 import router from "../router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { BCeIDDetailsDto } from "@/types";
 let keycloak: Keycloak.KeycloakInstance;
 
-async function navigateForNewUser(
-  institutionGUID: string,
+async function navigateForInstitution(
   authHeader: any,
-  keycloak: Keycloak.KeycloakInstance,
+  bceIdAccountDetails: BCeIDDetailsDto,
 ) {
-  if (
-    await InstitutionService.shared.checkIfExist(institutionGUID, authHeader)
-  ) {
+  if (!bceIdAccountDetails) {
     await AppConfigService.shared.logout(
       ClientIdType.INSTITUTION,
       keycloak,
-      false,
-      false,
       true,
     );
-    return true;
+    return false;
+  } else if (await UserService.shared.checkUser(authHeader)) {
+    if (!(await UserService.shared.checkActiveUser(authHeader))) {
+      await AppConfigService.shared.logout(
+        ClientIdType.INSTITUTION,
+        keycloak,
+        false,
+        true,
+      );
+      return true;
+    }
+    await store.dispatch("institution/initialize", authHeader);
+    return false;
+  } else {
+    if (
+      await InstitutionService.shared.checkIfExist(
+        bceIdAccountDetails.institution.guid,
+        authHeader,
+      )
+    ) {
+      await AppConfigService.shared.logout(
+        ClientIdType.INSTITUTION,
+        keycloak,
+        false,
+        false,
+        true,
+      );
+      return true;
+    }
+    router.push({
+      name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+    });
+    return false;
   }
-  router.push({
-    name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-  });
-  return false;
 }
 
 export default async function(
@@ -63,31 +87,10 @@ export default async function(
           const bceIdAccountDetails = await UserService.shared.getBCeIDAccountDetails(
             authHeader,
           );
-          if (!bceIdAccountDetails) {
-            await AppConfigService.shared.logout(
-              ClientIdType.INSTITUTION,
-              keycloak,
-              true,
-            );
-            isForbiddenUser = true;
-          } else if (await UserService.shared.checkUser(authHeader)) {
-            if (!(await UserService.shared.checkActiveUser(authHeader))) {
-              await AppConfigService.shared.logout(
-                ClientIdType.INSTITUTION,
-                keycloak,
-                false,
-                true,
-              );
-              isForbiddenUser = true;
-            }
-            await store.dispatch("institution/initialize", authHeader);
-          } else {
-            isForbiddenUser = await navigateForNewUser(
-              bceIdAccountDetails.institution.guid,
-              authHeader,
-              keycloak,
-            );
-          }
+          isForbiddenUser = await navigateForInstitution(
+            authHeader,
+            bceIdAccountDetails,
+          );
         } //Institution switch case ends
       } //Switch block ends
     } //KeyCloak Authenticate = true
