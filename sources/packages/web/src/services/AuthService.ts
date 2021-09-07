@@ -25,12 +25,11 @@ async function navigateForNewUser(
       true,
     );
     return true;
-  } else {
-    router.push({
-      name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-    });
-    return false;
   }
+  router.push({
+    name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+  });
+  return false;
 }
 
 export default async function(
