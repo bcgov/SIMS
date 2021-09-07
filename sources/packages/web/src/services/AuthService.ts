@@ -79,9 +79,8 @@ export default async function(
                 true,
               );
               isForbiddenUser = true;
-            } else {
-              await store.dispatch("institution/initialize", authHeader);
             }
+            await store.dispatch("institution/initialize", authHeader);
           } else {
             isForbiddenUser = await navigateForNewUser(
               bceIdAccountDetails.institution.guid,
