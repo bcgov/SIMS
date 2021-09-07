@@ -3,9 +3,9 @@
     <div class="bg-white mt-10 mb-4" :class="containerClass">
       <p>
         <v-icon :color="iconColor">mdi-information </v-icon
-        ><span class="pl-2 font-weight-bold" :class="infoHeaderClass">{{
-          infoHeader
-        }}</span>
+        ><span class="pl-2 font-weight-bold" :class="infoHeaderClass">
+          {{ infoHeader }}
+        </span>
       </p>
       <span class="mt-4">
         {{ content }}

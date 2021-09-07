@@ -272,7 +272,6 @@ export class ConfirmationOfEnrollmentController {
       return {
         value: eachCOEDeniedReason.id,
         label: eachCOEDeniedReason.reason,
-        shortcut: "",
       };
     }) as COEDeniedReasonDto[];
   }

@@ -30,7 +30,6 @@ export interface ApplicationDetailsForCOEDTO {
 export interface COEDeniedReasonDto {
   value: number;
   label: string;
-  shortcut?: string;
 }
 
 export class DenyConfirmationOfEnrollmentDto {

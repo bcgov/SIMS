@@ -65,7 +65,6 @@ export enum COEStatus {
 export interface COEDeniedReasonDto {
   value: number;
   label: string;
-  shortcut?: string;
 }
 
 export interface DenyConfirmationOfEnrollment {
