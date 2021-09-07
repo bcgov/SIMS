@@ -187,7 +187,7 @@ export class Application extends RecordDataModel {
   })
   pirDeniedOtherDesc: string;
 
-  @RelationId((application: Application) => application.coeDeniedReasonId)
+  @RelationId((application: Application) => application.coeDeniedReason)
   coeDeniedId?: number;
 
   @ManyToOne(() => COEDeniedReason, {
@@ -198,7 +198,7 @@ export class Application extends RecordDataModel {
     name: "coe_denied_id",
     referencedColumnName: ColumnNames.ID,
   })
-  coeDeniedReasonId?: COEDeniedReason;
+  coeDeniedReason?: COEDeniedReason;
 
   @Column({
     name: "coe_denied_other_desc",

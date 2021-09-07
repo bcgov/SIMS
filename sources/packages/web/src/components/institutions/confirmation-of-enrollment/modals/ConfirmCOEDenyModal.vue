@@ -8,7 +8,7 @@
     <template v-slot:content>
       <v-container>
         <formio
-          formName="declineconfirmationofenrolment"
+          formName="declineconfirmationofenrollment"
           @loaded="formLoaded"
           @submitted="submitApplication"
         ></formio>
@@ -76,7 +76,7 @@ export default {
       );
     };
 
-    const submitApplication = async (args: any, form: any) => {
+    const submitApplication = async (args: any) => {
       context.emit("submitData", args);
     };
     return {

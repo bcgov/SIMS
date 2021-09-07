@@ -28,6 +28,7 @@ import {
   dateString,
   COE_WINDOW,
   COE_REQUEST_NOT_FOUND_ERROR,
+  COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
@@ -173,6 +174,10 @@ export class ConfirmationOfEnrollmentController {
         application.offering.studyStartDate,
       ),
       applicationLocationId: application.location.id,
+      applicationDeniedReason:
+        COE_DENIED_REASON_OTHER_ID === application.coeDeniedId
+          ? application.coeDeniedOtherDesc
+          : application.coeDeniedReason?.reason,
     };
   }
 

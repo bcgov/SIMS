@@ -920,6 +920,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoinAndSelect("student.user", "user")
       .innerJoinAndSelect("application.offering", "offering")
       .innerJoinAndSelect("offering.educationProgram", "educationProgram")
+      .innerJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
@@ -989,7 +990,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    application.coeDeniedReasonId = {
+    application.coeDeniedReason = {
       id: coeDeniedReasonId,
     } as COEDeniedReason;
     if (COE_DENIED_REASON_OTHER_ID === coeDeniedReasonId && !otherReasonDesc) {

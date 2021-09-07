@@ -24,65 +24,7 @@
       :popup="true"
     />
     <v-container>
-      <div
-        class="bg-white coe-info-border mt-10 mb-4"
-        v-if="
-          COEStatus.submitted === initialData.applicationCOEStatus ||
-            COEStatus.completed === initialData.applicationCOEStatus
-        "
-      >
-        <p>
-          <v-icon color="green darken-2">mdi-information </v-icon
-          ><span class="pl-2 font-weight-bold"
-            >This application has been confirmed</span
-          >
-        </p>
-        <span class="mt-4">
-          This applicant has been confirmed as enrolled at your institution.
-          Funding will be disbursed on the study start date shown below. If the
-          applicant will be recieving after the study start date listed below
-          funds will be disbursed 48 hours after enrollment as been confirmed.
-        </span>
-      </div>
-      <div
-        class="bg-white coe-ocw-info-border mt-10 mb-4"
-        v-if="
-          COEStatus.required === initialData.applicationCOEStatus &&
-            !initialData.applicationWithinCOEWindow
-        "
-      >
-        <p>
-          <v-icon color="primary">mdi-information </v-icon
-          ><span class="pl-2 font-weight-bold color-blue"
-            >This application is currently outside the 21 day confirmation
-            window</span
-          >
-        </p>
-        <span class="mt-4"
-          >You will be able to confirm this application when you are within 21
-          days of the study start date. You can edit this application if needed
-          from the Application Actions”.
-        </span>
-      </div>
-      <div
-        class="bg-white coe-icw-info-border  mt-10 mb-4"
-        v-if="
-          COEStatus.required === initialData.applicationCOEStatus &&
-            initialData.applicationWithinCOEWindow
-        "
-      >
-        <p>
-          <v-icon color="primary">mdi-information </v-icon
-          ><span class="pl-2 font-weight-bold"
-            >This application requires confirmation of enrollment so funding can
-            be dispersed</span
-          >
-        </p>
-        <span class="mt-4"
-          >Confirm the program and intake information below by confirming,
-          declining or editing this application from the "Application Actions".
-        </span>
-      </div>
+      <Information :data="initialData" />
       <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
     </v-container>
     <ConfirmCOE
@@ -104,11 +46,12 @@ import formio from "@/components/generic/formio.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import Menu from "primevue/menu";
 import { COEStatus, ApplicationDetailsForCOEDTO } from "@/types";
-import ConfirmCOE from "@/components/institutions/modals/ConfirmCOEModal.vue";
-import ConfirmCOEEditModal from "@/components/institutions/modals/ConfirmCOEEditModal.vue";
-import ConfirmCOEDenyModal from "@/components/institutions/modals/ConfirmCOEDenyModal.vue";
+import ConfirmCOE from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEModal.vue";
+import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
+import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
 import { DenyConfirmationOfEnrollment } from "@/types";
+import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -130,6 +73,7 @@ export default {
     ConfirmCOE,
     ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
+    Information,
   },
   props: {
     applicationId: {
@@ -192,7 +136,6 @@ export default {
     const submitCOEDeny = async (
       submissionData: DenyConfirmationOfEnrollment,
     ) => {
-      console.log(submissionData, "############");
       try {
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
           props.locationId,

@@ -33,6 +33,7 @@ export interface ApplicationDetailsForCOEDTO {
   applicationId: number;
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
+  applicationDeniedReason?: string;
 }
 
 /**

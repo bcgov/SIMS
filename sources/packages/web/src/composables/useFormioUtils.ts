@@ -1,4 +1,4 @@
-import { Utils, Components } from "formiojs";
+import { Utils } from "formiojs";
 
 /**
  * Form.IO helper methods.
