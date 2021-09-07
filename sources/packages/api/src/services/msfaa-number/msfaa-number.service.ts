@@ -25,7 +25,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @returns Created MSFAA record number.
    */
   async createMSFAANumber(studentId: number): Promise<MSFAANumber> {
-    // TODO: Offering END DATE of the last completed application with a MSFAA Signed DATE
+    // TODO: 1 - Offering END DATE of the last completed application with a MSFAA Signed DATE
+    // TODO: 2 - If there is an record with signed data NULL we can use it
     const newMSFAANumber = new MSFAANumber();
     newMSFAANumber.msfaaNumber = await this.consumeNextSequence();
     newMSFAANumber.student = { id: studentId } as Student;
