@@ -64,7 +64,8 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
 import { AppConfigService } from "../../services/AppConfigService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
@@ -74,9 +75,21 @@ import "@/assets/css/institution.css";
 export default {
   components: {},
   setup() {
+    const router = useRouter();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
     const { isAdmin, isAuthenticated } = useInstitutionAuth();
+
+    // Mounding hook
+    onMounted(async () => {
+      await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
+      const auth = AppConfigService.shared.authService?.authenticated ?? false;
+      if (!auth) {
+        router.push({
+          name: InstitutionRoutesConst.LOGIN,
+        });
+      }
+    });
 
     const logoff = () => {
       AppConfigService.shared.logout(ClientIdType.INSTITUTION);

@@ -346,8 +346,8 @@ export class InstitutionController extends BaseController {
   }
   @Head("/:guid")
   async checkIfInstitutionExist(@Param("guid") guid: string): Promise<void> {
-    const responseCode = await this.institutionService.doesExist(guid);
-    if (responseCode === 0) {
+    const response = await this.institutionService.doesExist(guid);
+    if (!response) {
       throw new NotFoundException(
         `Institution with guid: ${guid} does not exist`,
       );
