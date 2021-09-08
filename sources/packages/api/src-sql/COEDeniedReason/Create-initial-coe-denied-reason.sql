@@ -1,11 +1,11 @@
 -- Inserting initial values for 'coe_denied_reasons' table. This will be part of table creation migration. So, no drop migration sql, this data will destroy with table in drop migration
 INSERT INTO
-  coe_denied_reasons(id, reason)
+  sims.coe_denied_reasons(id, reason)
 VALUES
   (1, 'Other');
 
 INSERT INTO
-  coe_denied_reasons(id, reason)
+  sims.coe_denied_reasons(id, reason)
 VALUES
   (
     2,
@@ -13,7 +13,7 @@ VALUES
   );
 
 INSERT INTO
-  coe_denied_reasons(id, reason)
+  sims.coe_denied_reasons(id, reason)
 VALUES
   (
     3,
@@ -21,7 +21,7 @@ VALUES
   );
 
 INSERT INTO
-  coe_denied_reasons(id, reason)
+  sims.coe_denied_reasons(id, reason)
 VALUES
   (
     4,
@@ -29,7 +29,7 @@ VALUES
   );
 
 INSERT INTO
-  coe_denied_reasons(id, reason)
+  sims.coe_denied_reasons(id, reason)
 VALUES
   (
     5,
@@ -37,7 +37,7 @@ VALUES
   );
 
 INSERT INTO
-  coe_denied_reasons(id, reason)
+  sims.coe_denied_reasons(id, reason)
 VALUES
   (
     6,

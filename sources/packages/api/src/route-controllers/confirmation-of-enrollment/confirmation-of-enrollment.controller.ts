@@ -27,7 +27,6 @@ import { getUserFullName } from "../../utilities/auth-utils";
 import {
   dateString,
   COE_WINDOW,
-  COE_REQUEST_NOT_FOUND_ERROR,
   COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
 import {
@@ -35,6 +34,7 @@ import {
   DenyConfirmationOfEnrollmentDto,
   COEDeniedReasonDto,
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")

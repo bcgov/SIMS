@@ -96,7 +96,7 @@ export default {
     const items = ref([] as MenuType[]);
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
-    const denyCOEModal = ref({} as ModalDialog<boolean>);
+    const denyCOEModal = ref({} as ModalDialog<void>);
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
     };

@@ -39,6 +39,8 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
 import formio from "@/components/generic/formio.vue";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
+import { DenyConfirmationOfEnrollment } from "@/types";
+
 const COE_DENIAL_REASON_RADIO = "coeDenyReasonId";
 
 export default {
@@ -48,7 +50,7 @@ export default {
   },
   emits: ["submitData"],
   setup(props: any, context: any) {
-    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
+    const { showDialog, resolvePromise, showModal } = useModalDialog<void>();
     const formioUtils = useFormioUtils();
     const COEDenialform = ref();
     const submitForm = async () => {
@@ -58,13 +60,11 @@ export default {
       const formSubmitted = await submitForm();
       if (formSubmitted) {
         showDialog.value = false;
-        resolvePromise(true);
       }
     };
 
     const dialogClosed = () => {
       showDialog.value = false;
-      resolvePromise(false);
     };
 
     const formLoaded = async (form: any) => {
@@ -76,7 +76,7 @@ export default {
       );
     };
 
-    const submitApplication = async (args: any) => {
+    const submitApplication = async (args: DenyConfirmationOfEnrollment) => {
       context.emit("submitData", args);
     };
     return {

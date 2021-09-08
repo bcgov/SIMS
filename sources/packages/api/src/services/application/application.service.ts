@@ -32,7 +32,6 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
-  COE_DENIED_REASON_NOT_FOUND_ERROR,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -44,7 +43,9 @@ export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
 export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
-
+  export const COE_DENIED_REASON_NOT_FOUND_ERROR =
+  "COE_DENIED_REASON_NOT_FOUND_ERROR";
+  
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
