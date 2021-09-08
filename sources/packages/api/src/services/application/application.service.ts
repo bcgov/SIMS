@@ -30,7 +30,6 @@ import {
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
-  COE_REQUEST_NOT_FOUND_ERROR,
   COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
   COE_DENIED_REASON_NOT_FOUND_ERROR,
@@ -920,7 +919,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoinAndSelect("student.user", "user")
       .innerJoinAndSelect("application.offering", "offering")
       .innerJoinAndSelect("offering.educationProgram", "educationProgram")
-      .innerJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
+      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
@@ -959,7 +958,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Deny the Confirmation Of Enrollment(COE) for an Application.
    * Updates only applications that have the COE status as required.
    * @param applicationId application id to be updated.
-   * @param locationId location that is setting the offering.
+   * @param locationId location id of the application.
    * @param coeDeniedReasonId COE Denied reason id for a student application.
    * @param otherReasonDesc when other is selected as a COE denied reason, text for the reason
    * is populated.
@@ -986,7 +985,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (!application) {
       throw new CustomNamedError(
         "Not able to find an application that requires a COE to be completed.",
-        COE_REQUEST_NOT_FOUND_ERROR,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
 

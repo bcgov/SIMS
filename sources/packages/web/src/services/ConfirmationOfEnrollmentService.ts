@@ -55,12 +55,12 @@ export class ConfirmationOfEnrollmentService {
   public async denyConfirmationOfEnrollment(
     locationId: number,
     applicationId: number,
-    DenyCOEPayload: DenyConfirmationOfEnrollment,
+    denyCOEPayload: DenyConfirmationOfEnrollment,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.denyConfirmationOfEnrollment(
       locationId,
       applicationId,
-      DenyCOEPayload,
+      denyCOEPayload,
     );
   }
 }

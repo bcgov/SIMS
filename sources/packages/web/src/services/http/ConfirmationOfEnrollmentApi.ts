@@ -71,7 +71,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
     try {
       const response = await this.apiClient.get(
-        `institution/location/confirmation-of-enrollment/denial-reasons`,
+        "institution/location/confirmation-of-enrollment/denial-reasons",
         this.addAuthHeader(),
       );
       return response?.data;
@@ -84,12 +84,12 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async denyConfirmationOfEnrollment(
     locationId: number,
     applicationId: number,
-    DenyCOEPayload: DenyConfirmationOfEnrollment,
+    denyCOEPayload: DenyConfirmationOfEnrollment,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
         `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/deny`,
-        DenyCOEPayload,
+        denyCOEPayload,
         this.addAuthHeader(),
       );
     } catch (error) {

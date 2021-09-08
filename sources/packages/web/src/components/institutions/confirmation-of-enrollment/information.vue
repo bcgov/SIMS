@@ -34,8 +34,9 @@ export default {
     const prepareContent = () => {
       showInfo.value = false;
       if (
-        COEStatus.submitted === props.data.applicationCOEStatus ||
-        COEStatus.completed === props.data.applicationCOEStatus
+        [COEStatus.submitted, COEStatus.completed].includes(
+          props.data.applicationCOEStatus,
+        )
       ) {
         showInfo.value = true;
         content.value = `This applicant has been confirmed as enrolled at your institution.

@@ -185,7 +185,7 @@ export class Application extends RecordDataModel {
   @Column({
     name: "pir_denied_other_desc",
   })
-  pirDeniedOtherDesc: string;
+  pirDeniedOtherDesc?: string;
 
   @RelationId((application: Application) => application.coeDeniedReason)
   coeDeniedId?: number;
@@ -203,5 +203,5 @@ export class Application extends RecordDataModel {
   @Column({
     name: "coe_denied_other_desc",
   })
-  coeDeniedOtherDesc: string;
+  coeDeniedOtherDesc?: string;
 }

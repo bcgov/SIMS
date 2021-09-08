@@ -43,7 +43,7 @@ export class ConfirmationOfEnrollmentController {
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly locationService: InstitutionLocationService,
-    private readonly DeniedCOEReasonService: COEDeniedReasonService,
+    private readonly deniedCOEReasonService: COEDeniedReasonService,
   ) {}
 
   /**
@@ -255,24 +255,22 @@ export class ConfirmationOfEnrollmentController {
       }
 
       throw new InternalServerErrorException(
-        "Error while denying a  Confirmation Of Enrollment (COE).",
+        "Error while denying a Confirmation Of Enrollment (COE).",
       );
     }
   }
 
   /**
-   * Get all COE denied reason ,which are active
+   * Get all COE denied reason, which are active
    * @returns COE denied reason list
    */
   @Get("confirmation-of-enrollment/denial-reasons")
   async getCOEDeniedReason(): Promise<COEDeniedReasonDto[]> {
     const coeDeniedReason =
-      await this.DeniedCOEReasonService.getCOEDeniedReasons();
-    return coeDeniedReason.map((eachCOEDeniedReason) => {
-      return {
-        value: eachCOEDeniedReason.id,
-        label: eachCOEDeniedReason.reason,
-      };
-    }) as COEDeniedReasonDto[];
+      await this.deniedCOEReasonService.getCOEDeniedReasons();
+    return coeDeniedReason.map((eachCOEDeniedReason) => ({
+      value: eachCOEDeniedReason.id,
+      label: eachCOEDeniedReason.reason,
+    }));
   }
 }

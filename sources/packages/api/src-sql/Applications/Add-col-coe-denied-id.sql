@@ -2,7 +2,7 @@
 ALTER TABLE
     sims.applications
 ADD
-    COLUMN IF NOT EXISTS coe_denied_id INT REFERENCES sims.coe_denied_reason(id);
+    COLUMN IF NOT EXISTS coe_denied_id INT REFERENCES sims.coe_denied_reasons(id);
 
 COMMENT ON COLUMN sims.applications.coe_denied_id IS 'References the COE denied id related to the application, this will be populated only when the Institution denies a COE ';
 
