@@ -5,7 +5,7 @@ import { COEDeniedReason } from "../../database/entities/coe-denied-reason.model
 
 @Injectable()
 export class COEDeniedReasonService extends RecordDataModelService<COEDeniedReason> {
-  constructor(@Inject("Connection") private readonly connection: Connection) {
+  constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(COEDeniedReason));
   }
 
