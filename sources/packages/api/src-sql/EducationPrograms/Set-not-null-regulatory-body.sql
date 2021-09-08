@@ -1,0 +1,1 @@
+ALTER TABLE sims.education_programs ALTER COLUMN regulatory_body SET NOT NULL;
