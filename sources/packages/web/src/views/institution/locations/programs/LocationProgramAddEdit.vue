@@ -55,10 +55,11 @@ export default {
           ...program,
           ...{ bcPrivate },
         };
+      } else {
+        initialData.value = {
+          bcPrivate: bcPrivate,
+        };
       }
-      initialData.value = {
-        bcPrivate: bcPrivate,
-      };
     });
 
     const submitted = async (data: any) => {
