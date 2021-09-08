@@ -43,9 +43,9 @@ export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
 export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
-  export const COE_DENIED_REASON_NOT_FOUND_ERROR =
+export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
-  
+
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
@@ -965,7 +965,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * is populated.
    * @returns updated application.
    */
-  async setDeniedReasonForConfirmationOfEnrollment(
+  async setDeniedReasonForCOE(
     applicationId: number,
     locationId: number,
     coeDeniedReasonId: number,

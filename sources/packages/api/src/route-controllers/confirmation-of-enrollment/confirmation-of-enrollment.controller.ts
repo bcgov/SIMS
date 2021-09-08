@@ -243,7 +243,7 @@ export class ConfirmationOfEnrollmentController {
     @Body() payload: DenyConfirmationOfEnrollmentDto,
   ): Promise<void> {
     try {
-      await this.applicationService.setDeniedReasonForConfirmationOfEnrollment(
+      await this.applicationService.setDeniedReasonForCOE(
         applicationId,
         locationId,
         payload.coeDenyReasonId,
