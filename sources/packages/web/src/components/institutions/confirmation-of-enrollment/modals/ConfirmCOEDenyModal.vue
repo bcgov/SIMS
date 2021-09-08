@@ -50,7 +50,7 @@ export default {
   },
   emits: ["submitData"],
   setup(props: any, context: any) {
-    const { showDialog, resolvePromise, showModal } = useModalDialog<void>();
+    const { showDialog, showModal } = useModalDialog<void>();
     const formioUtils = useFormioUtils();
     const COEDenialform = ref();
     const submitForm = async () => {
