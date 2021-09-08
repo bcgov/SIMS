@@ -12,6 +12,7 @@ import {
   EducationProgram,
   EducationProgramOffering,
   InstitutionLocation,
+  MSFAANumber,
   PIRDeniedReason,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -185,4 +186,17 @@ export class Application extends RecordDataModel {
     name: "pir_denied_other_desc",
   })
   pirDeniedOtherDesc: string;
+
+  @RelationId((application: Application) => application.msfaaNumber)
+  msfaaNumberId?: number;
+
+  @ManyToOne(() => MSFAANumber, {
+    eager: false,
+    cascade: true,
+  })
+  @JoinColumn({
+    name: "msfaa_number_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  msfaaNumber?: MSFAANumber;
 }

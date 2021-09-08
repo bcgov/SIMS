@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { configureIdleTransactionSessionSimeout } from "../../utilities/database";
 import { Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { SequenceControl } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { configureIdleTransactionSessionTimeout } from "../../utilities/database";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -30,8 +30,10 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
    * to the database, a process can be executed in the middle, making it possible that
    * the number on database only be incremented if the process in the middle
    * was successfully  executed.
-   * @param sequenceName
-   * @param process
+   * @param sequenceName name of the sequence to be incremented.
+   * @param process process to be executed. Depending on the process
+   * to be executed, in case of an error happen, the sequence could not be
+   * consumed in case of failure.
    */
   public async consumeNextSequence(
     sequenceName: string,
@@ -39,7 +41,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
   ) {
     this.logger.log("Checking next sequence available...");
     const queryRunner = this.connection.createQueryRunner();
-    await configureIdleTransactionSessionSimeout(
+    await configureIdleTransactionSessionTimeout(
       queryRunner,
       TRANSACTION_IDLE_TIMEOUT_SECONDS,
     );

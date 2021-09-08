@@ -3,6 +3,9 @@ import { Connection } from "typeorm";
 import { ApplicationService, SequenceControlService } from "..";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { MSFAANumber, Student } from "../../database/entities";
+import * as dayjs from "dayjs";
+
+const MAX_MFSAA_VALID_DAYS = 730;
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -19,10 +22,9 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   }
 
   /**
-   * Creates a new MSFAA record with a new number
-   * for the specified student.
+   * Creates a new MSFAA record with a new number for the specified student.
    * @param studentId student to have a new MSFAA record created.
-   * @returns Created MSFAA record number.
+   * @returns Created MSFAA record.
    */
   async createMSFAANumber(studentId: number): Promise<MSFAANumber> {
     // TODO: 1 - Offering END DATE of the last completed application with a MSFAA Signed DATE
@@ -31,6 +33,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     newMSFAANumber.msfaaNumber = await this.consumeNextSequence();
     newMSFAANumber.student = { id: studentId } as Student;
     return this.repo.save(newMSFAANumber);
+  }
+
+  async getPendingToSignMSFAANumber(studentId: number): Promise<MSFAANumber> {
+    return this.repo.findOne({ student: { id: studentId }, dateSigned: null });
   }
 
   /**
@@ -46,5 +52,16 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       },
     );
     return nextNumber;
+  }
+
+  isValidMSFAANumberValid(
+    applicationStartDate: Date,
+    lastSignedMSFAA?: Date,
+  ): boolean {
+    return (
+      lastSignedMSFAA &&
+      dayjs(applicationStartDate).diff(lastSignedMSFAA, "days") <
+        MAX_MFSAA_VALID_DAYS
+    );
   }
 }

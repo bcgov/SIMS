@@ -18,11 +18,13 @@ import {
   InstitutionLocation,
   EducationProgram,
   PIRDeniedReason,
+  MSFAANumber,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationOverriddenResult } from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
+import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
   CustomNamedError,
   getUTCNow,
@@ -31,7 +33,6 @@ import {
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
 } from "../../utilities";
-
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
   "PIR_DENIED_REASON_NOT_FOUND_ERROR";
@@ -52,6 +53,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
     private readonly workflow: WorkflowActionsService,
+    private readonly msfaaNumberService: MSFAANumberService,
   ) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
@@ -949,5 +951,99 @@ export class ApplicationService extends RecordDataModelService<Application> {
         getPSTPDTDate(offeringStartDate, true),
       ) <= COE_WINDOW
     );
+  }
+
+  /**
+   * Associates a MSFAA number to the application checking
+   * whatever is needed to create a new MSFAA or use an
+   * existing one instead.
+   * @param applicationId application id to receive a MSFAA.
+   */
+  async associateMSFAANumber(applicationId: number): Promise<Application> {
+    const application = await this.repo.findOne(applicationId, {
+      relations: ["offering"],
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Student Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (application.applicationStatus !== ApplicationStatus.assessment) {
+      throw new CustomNamedError(
+        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' to a MSFAA number be assigned.`,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+
+    let msfaaNumberId: number;
+
+    // Checks if there is already a MSFAA pending from signature.
+    // If there is one, the student must finishes it and this will
+    // be the one to be associated with the application.
+    // As per the current assumption, once the MSFAA is created on
+    // ESDC it will not expire and can be reused.
+    const pendingMSFAANumber =
+      await this.msfaaNumberService.getPendingToSignMSFAANumber(
+        application.studentId,
+      );
+    if (pendingMSFAANumber) {
+      // Reuse the MSFAA that is still pending and avoid creating a new one.
+      msfaaNumberId = pendingMSFAANumber.id;
+    } else {
+      // Get previously completed and signed application for the student
+      // to determine if an existing MSFAA is still valid.
+      const previousSignedApplication = await this.getPreviousSignedApplication(
+        application.studentId,
+        application.offering.studyEndDate,
+      );
+      // checks if the MSFAA number is still valid.
+      const hasValidMSFAANumber =
+        this.msfaaNumberService.isValidMSFAANumberValid(
+          application.offering.studyStartDate,
+          previousSignedApplication?.offering.studyEndDate,
+        );
+
+      if (hasValidMSFAANumber) {
+        // Reuse the MSFAA number.
+        msfaaNumberId = previousSignedApplication.msfaaNumberId;
+      } else {
+        // Create a new MSFAA number case the previous one is no longer valid.
+        const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
+          application.studentId,
+        );
+        msfaaNumberId = newMSFAANumber.id;
+      }
+    }
+
+    // Associate the MSFAA number with the application.
+    application.msfaaNumber = { id: msfaaNumberId } as MSFAANumber;
+
+    return this.repo.save(application);
+  }
+
+  async getPreviousSignedApplication(
+    studentId: number,
+    referenceDate: Date,
+  ): Promise<Partial<Application>> {
+    return this.repo
+      .createQueryBuilder("applications")
+      .select("msfaaNumbers.id")
+      .addSelect("offerings.studyEndDate")
+      .innerJoin("applications.offering", "offerings")
+      .innerJoin("applications.msfaaNumber", "msfaaNumbers")
+      .innerJoin("applications.student", "students")
+      .where("applications.applicationStatus == :completedStatus", {
+        completedStatus: ApplicationStatus.completed,
+      })
+      .andWhere("students.id = :studentId", { studentId })
+      .andWhere("offerings.studyEndDate < :studyEndDate", {
+        studyEndDate: referenceDate,
+      })
+      .andWhere("msfaaNumbers.dateSigned is not null")
+      .orderBy("offerings.studyEndDate", "DESC")
+      .limit(1)
+      .getOne();
   }
 }
