@@ -17,6 +17,7 @@ import {
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
+  InstitutionDetailProgramDto,
 } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -185,11 +186,11 @@ export class InstitutionController extends BaseController {
     return this.institutionService.getUserTypesAndRoles();
   }
 
-  @Get("/intitution-type")
-  async getInstitutionType(
+  @Get("/intitution-program")
+  async getInstitutionDetailForProgram(
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
-    return this.institutionService.getInstitutionType(
+  ): Promise<InstitutionDetailProgramDto> {
+    return this.institutionService.getInstitutionDetailForProgram(
       userToken?.authorizations?.institutionId,
     );
   }

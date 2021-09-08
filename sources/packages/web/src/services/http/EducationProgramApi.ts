@@ -19,10 +19,10 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
-  public async getInstitutionType(): Promise<number> {
+  public async getInstitutionForProgram(): Promise<any> {
     try {
       const response = await this.apiClient.get(
-        `institution/intitution-type`,
+        `institution/intitution-program`,
         this.addAuthHeader(),
       );
       return response.data;
