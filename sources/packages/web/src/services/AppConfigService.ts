@@ -102,6 +102,7 @@ export class AppConfigService {
     authService?: KeyCloak.KeycloakInstance,
     isBasicBCeID?: boolean,
     isUserDisabled?: boolean,
+    isUnknownUser?: boolean,
   ) {
     const auth: KeyCloak.KeycloakInstance | undefined =
       authService || this.authService;
@@ -121,6 +122,8 @@ export class AppConfigService {
             redirectUri = redirectUri + "/login/business-bceid";
           } else if (isUserDisabled) {
             redirectUri = redirectUri + "/login/disabled-user";
+          } else if (isUnknownUser) {
+            redirectUri = redirectUri + "/login/unknown-user";
           }
           const logoutURL = auth.createLogoutUrl({
             redirectUri,

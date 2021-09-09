@@ -9,11 +9,11 @@
 .spaced-text{
   letter-spacing: 0.5em !important;
 }
-.coe-menu-option{
+.coe-menu-option {
   margin-left: -250px !important;
 }
 
-.coe-info-border{
+.coe-info-border {
   padding: 2%;
   border-style: solid;
   border-color: #16C92E !important;
@@ -22,14 +22,14 @@
   background-color: #EDFFEF  !important;
 }
 
-.coe-ocw-info-border{
+.coe-ocw-info-border {
   padding: 2%;
   border-style: solid;
   border-radius: 10px;
   word-wrap: break-word;
 }
 
-.coe-icw-info-border{
+.coe-icw-info-border {
   padding: 2%;
   border-style: solid;
   border-color: #2965C5 !important;
@@ -37,4 +37,12 @@
   word-wrap: break-word;
   background-color: #EFF5FF  !important;
 
+}
+.coe-denied-info-border {
+  padding: 2%;
+  border-style: solid;
+  border-color: #EB5757 !important;
+  border-radius: 10px;
+  word-wrap: break-word;
+  background-color:  #FFF2F1 !important;
 }

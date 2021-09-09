@@ -1,15 +1,12 @@
 import {
   CreateApplicationDraftResult,
   SaveStudentApplicationDto,
-  ProgramYearOfApplicationDto
+  ProgramYearOfApplicationDto,
+  ApplicationStatusToBeUpdatedDto,
+  GetApplicationDataDto,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
-import {
-  ApplicationStatusToBeUpdatedDto,
-  GetApplicationDataDto,
-} from "@/types/contracts/students/ApplicationContract";
-
 export class ApplicationService {
   // Share Instance
   private static instance: ApplicationService;

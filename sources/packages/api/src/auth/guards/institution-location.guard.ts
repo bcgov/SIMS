@@ -11,10 +11,11 @@ export class InstitutionLocationGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const hasLocationUserType = this.reflector.getAllAndOverride<HasLocationAccessParam>(
-      HAS_LOCATION_ACCESS_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const hasLocationUserType =
+      this.reflector.getAllAndOverride<HasLocationAccessParam>(
+        HAS_LOCATION_ACCESS_KEY,
+        [context.getHandler(), context.getClass()],
+      );
 
     if (!hasLocationUserType) {
       return true;
@@ -22,10 +23,6 @@ export class InstitutionLocationGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
     const authorizations = user.authorizations as InstitutionUserAuthorizations;
-
-    if (authorizations.isAdmin()) {
-      return true;
-    }
 
     const request = context.switchToHttp().getRequest();
     const locationId = parseInt(

@@ -13,6 +13,7 @@ import {
   EducationProgramOffering,
   InstitutionLocation,
   PIRDeniedReason,
+  COEDeniedReason,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
@@ -184,5 +185,23 @@ export class Application extends RecordDataModel {
   @Column({
     name: "pir_denied_other_desc",
   })
-  pirDeniedOtherDesc: string;
+  pirDeniedOtherDesc?: string;
+
+  @RelationId((application: Application) => application.coeDeniedReason)
+  coeDeniedId?: number;
+
+  @ManyToOne(() => COEDeniedReason, {
+    eager: false,
+    cascade: false,
+  })
+  @JoinColumn({
+    name: "coe_denied_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  coeDeniedReason?: COEDeniedReason;
+
+  @Column({
+    name: "coe_denied_other_desc",
+  })
+  coeDeniedOtherDesc?: string;
 }

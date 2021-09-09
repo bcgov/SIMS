@@ -60,13 +60,13 @@ import { onMounted, ref, watch } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
-import {
-  GetApplicationDataDto,
-  ApplicationStatus,
-} from "@/types/contracts/students/ApplicationContract";
 import "@/assets/css/student.css";
 import { useFormatters } from "@/composables";
-import { ProgramYearOfApplicationDto } from "@/types";
+import {
+  ProgramYearOfApplicationDto,
+  GetApplicationDataDto,
+  ApplicationStatus,
+} from "@/types";
 
 /**
  * added MenuType interface for prime vue component menu,

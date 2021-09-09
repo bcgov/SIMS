@@ -1,4 +1,9 @@
-import { COESummaryDTO, ApplicationDetailsForCOEDTO } from "@/types";
+import {
+  COESummaryDTO,
+  ApplicationDetailsForCOEDTO,
+  COEDeniedReasonDto,
+  DenyConfirmationOfEnrollment,
+} from "@/types";
 import ApiClient from "./http/ApiClient";
 
 export class ConfirmationOfEnrollmentService {
@@ -40,6 +45,22 @@ export class ConfirmationOfEnrollmentService {
     await ApiClient.ConfirmationOfEnrollment.rollbackCOE(
       locationId,
       applicationId,
+    );
+  }
+
+  public async getCOEDenialReasons(): Promise<COEDeniedReasonDto> {
+    return ApiClient.ConfirmationOfEnrollment.getCOEDenialReasons();
+  }
+
+  public async denyConfirmationOfEnrollment(
+    locationId: number,
+    applicationId: number,
+    denyCOEPayload: DenyConfirmationOfEnrollment,
+  ): Promise<void> {
+    await ApiClient.ConfirmationOfEnrollment.denyConfirmationOfEnrollment(
+      locationId,
+      applicationId,
+      denyCOEPayload,
     );
   }
 }

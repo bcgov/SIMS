@@ -33,6 +33,7 @@ export interface ApplicationDetailsForCOEDTO {
   applicationId: number;
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
+  applicationDeniedReason?: string;
 }
 
 /**
@@ -59,4 +60,14 @@ export enum COEStatus {
    * Confirmation of Enrollment is Submitted, when institution clicks confirm COE, first the application will move to Submitted status
    */
   submitted = "Submitted",
+}
+
+export interface COEDeniedReasonDto {
+  value: number;
+  label: string;
+}
+
+export interface DenyConfirmationOfEnrollment {
+  coeDenyReasonId: number;
+  otherReasonDesc?: string;
 }

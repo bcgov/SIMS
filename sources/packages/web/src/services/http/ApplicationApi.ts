@@ -1,9 +1,10 @@
-import { SaveStudentApplicationDto, ProgramYearOfApplicationDto } from "@/types";
-import HttpBaseClient from "./common/HttpBaseClient";
 import {
+  SaveStudentApplicationDto,
+  ProgramYearOfApplicationDto,
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
-} from "@/types/contracts/students/ApplicationContract";
+} from "@/types";
+import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ApplicationApi extends HttpBaseClient {
   public async getApplicationData(applicationId: number): Promise<any> {
@@ -122,11 +123,11 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
   ): Promise<ProgramYearOfApplicationDto> {
     try {
-      const response =  await this.apiClient.get(
+      const response = await this.apiClient.get(
         `application/${applicationId}/program-year`,
         this.addAuthHeader(),
       );
-      return response.data as ProgramYearOfApplicationDto
+      return response.data as ProgramYearOfApplicationDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

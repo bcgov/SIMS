@@ -3,6 +3,7 @@ module.exports = {
   transform: {
     "^.+\\.vue$": "vue-jest",
   },
+  transformIgnorePatterns: ["/node_modules/(?!primevue)"],
   globals: {
     "ts-jest": {
       babelConfig: "babel.config.js",

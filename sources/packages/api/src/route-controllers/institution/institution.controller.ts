@@ -6,6 +6,8 @@ import {
   Post,
   UnprocessableEntityException,
   Param,
+  Head,
+  NotFoundException,
 } from "@nestjs/common";
 import {
   BCeIDService,
@@ -389,5 +391,14 @@ export class InstitutionController extends BaseController {
         },
       } as InstitutionLocationsDetailsDto;
     });
+  }
+  @Head("/:guid")
+  async checkIfInstitutionExist(@Param("guid") guid: string): Promise<void> {
+    const response = await this.institutionService.doesExist(guid);
+    if (!response) {
+      throw new NotFoundException(
+        `Institution with guid: ${guid} does not exist`,
+      );
+    }
   }
 }

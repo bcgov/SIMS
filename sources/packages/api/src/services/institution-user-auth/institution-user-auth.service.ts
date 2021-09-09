@@ -7,10 +7,14 @@ import {
   InstitutionUserRoles,
   InstitutionUserTypes,
 } from "../../auth/user-types.enum";
+import { InstitutionLocationService } from "..";
 
 @Injectable()
 export class InstitutionUserAuthService extends RecordDataModelService<InstitutionUserAuth> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(
+    @Inject("Connection") connection: Connection,
+    private readonly locationService: InstitutionLocationService,
+  ) {
     super(connection.getRepository(InstitutionUserAuth));
   }
 
@@ -39,7 +43,17 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
         userRole: auth.user_role as InstitutionUserRoles,
       }));
       const institutionId = userAuthorizations[0].institution_id;
-      return new InstitutionUserAuthorizations(institutionId, authorizations);
+
+      const userInstitutionAuthorizations = new InstitutionUserAuthorizations(
+        institutionId,
+        authorizations,
+      );
+      if (userInstitutionAuthorizations.isAdmin()) {
+        userInstitutionAuthorizations.adminLocationsIds =
+          await this.locationService.getInstitutionLocationsIds(institutionId);
+      }
+
+      return userInstitutionAuthorizations;
     }
 
     return new InstitutionUserAuthorizations();

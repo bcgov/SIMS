@@ -3,14 +3,10 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
-import { InstitutionService } from "..";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
-  constructor(
-    @Inject("Connection") private readonly connection: Connection,
-    private readonly institutionService: InstitutionService,
-  ) {
+  constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(InstitutionLocation));
   }
 
@@ -57,7 +53,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         },
       },
       institution: institution,
-      institutionCode: data.data.institutionCode
+      institutionCode: data.data.institutionCode,
     };
 
     return await this.repo.save(newLocation);
@@ -82,7 +78,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         },
       },
       institution: institution,
-      institutionCode: data.institutionCode
+      institutionCode: data.institutionCode,
     };
 
     return await this.repo.update(locationId, updateLocation);
@@ -143,5 +139,24 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationIds: number[],
   ): Promise<InstitutionLocation[]> {
     return this.repo.findByIds(locationIds);
+  }
+
+  /**
+   * Gets all locations ids for a particular institution.
+   * This method is used during the login process and should be
+   * as lightweight as possible. Do not expand this query unless
+   * it is related to login/authorization process.
+   * @param institutionId institution id.
+   * @returns institution locations ids.
+   */
+  async getInstitutionLocationsIds(institutionId: number): Promise<number[]> {
+    const allLocations = await this.repo
+      .createQueryBuilder("locations")
+      .select("locations.id")
+      .leftJoin("locations.institution", "institutions")
+      .where("institutions.id = :institutionId", { institutionId })
+      .getMany();
+
+    return allLocations.map((location) => location.id);
   }
 }

@@ -59,6 +59,8 @@ objects:
         type: Git
       strategy:
         dockerStrategy:
+          pullSecret:
+            name: artifactory-secret-credential
           from:
             kind: ImageStreamTag
             name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
