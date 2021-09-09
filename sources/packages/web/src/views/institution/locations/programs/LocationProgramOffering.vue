@@ -58,7 +58,6 @@ export default {
           ...programDetails,
         };
       }
-      console.log(initialData.value);
     });
 
     const submitted = async (data: any) => {
