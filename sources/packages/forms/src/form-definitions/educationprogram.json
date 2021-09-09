@@ -227,7 +227,7 @@
       "refreshOn": "",
       "dataGridLabel": false,
       "inputType": "text",
-      "id": "epvz8uh",
+      "id": "egv4cp",
       "defaultValue": ""
     },
     {
@@ -1071,7 +1071,7 @@
         "include": "score",
         "threshold": 0.3
       },
-      "id": "epj5bfq",
+      "id": "el9jrur",
       "defaultValue": ""
     },
     {
@@ -3016,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-09-03T20:39:31.917Z"
+  "modified": "2021-09-08T20:08:19.562Z"
 }

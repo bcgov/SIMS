@@ -208,7 +208,7 @@
             "required": true,
             "onlyAvailableItems": true,
             "customMessage": "",
-            "custom": "",
+            "custom": "valid=(data.programIntensity.includes(input))?true:'The program you have selected has only ' +data.programIntensity+ ' offering';",
             "customPrivate": false,
             "json": "",
             "strictDateValidation": false,
@@ -252,7 +252,7 @@
           "allowMultipleMasks": false,
           "inputType": "radio",
           "fieldSet": false,
-          "id": "e3ww0fl",
+          "id": "e0wnaav",
           "defaultValue": ""
         },
         {
@@ -2186,8 +2186,9 @@
           "allowCalculateOverride": false,
           "validate": {
             "required": true,
+            "onlyAvailableItems": false,
             "customMessage": "",
-            "custom": "",
+            "custom": "valid =\n  (data.programDeliveryTypes.deliveredOnSite &&\n    !data.programDeliveryTypes.deliveredOnline &&\n    input === \"onsite\") ||\n  (!data.programDeliveryTypes.deliveredOnSite &&\n    data.programDeliveryTypes.deliveredOnline &&\n    input === \"online\") ||\n  (data.programDeliveryTypes.deliveredOnSite &&\n    data.programDeliveryTypes.deliveredOnline &&\n    (input === \"online\" || input === \"onsite\" || input === \"blended\"))\n    ? true\n    : \"The Program you have selected does not support the offering delivered\";\n\n",
             "customPrivate": false,
             "json": "",
             "strictDateValidation": false,
@@ -2223,6 +2224,7 @@
           "multiple": false,
           "unique": false,
           "refreshOn": "",
+          "dataGridLabel": false,
           "widget": null,
           "validateOn": "change",
           "showCharCount": false,
@@ -2230,9 +2232,8 @@
           "allowMultipleMasks": false,
           "inputType": "radio",
           "fieldSet": false,
-          "id": "e65mv59",
-          "defaultValue": "",
-          "dataGridLabel": false
+          "id": "ec7lr2",
+          "defaultValue": ""
         }
       ],
       "id": "eixv62r0000000000000000",
@@ -2452,5 +2453,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-08-09T19:16:09.012Z"
+  "modified": "2021-09-09T17:07:48.311Z"
 }
