@@ -3,7 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { PIR_DENIED_REASON_OTHER_ID } from "../../utilities/constants";
+import { PIR_DENIED_REASON_OTHER_ID } from "../../utilities/system-configurations-constants";
 import {
   Application,
   ApplicationStudentFile,
@@ -717,15 +717,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId: number,
     applicationId: number,
   ): Promise<Application> {
-    let query = this.repo
+    return this.repo
       .createQueryBuilder("application")
       .innerJoinAndSelect("application.programYear", "programYear")
       .where("application.student.id = :studentId", { studentId })
       .andWhere("programYear.active = true")
       .andWhere("application.id = :applicationId", {
         applicationId,
-      });
-    return query.getOne();
+      })
+      .getOne();
   }
 
   /**
@@ -994,16 +994,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } else {
       // Get previously completed and signed application for the student
       // to determine if an existing MSFAA is still valid.
-      const previousSignedApplication = await this.getPreviousSignedApplication(
-        application.studentId,
-        application.offering.studyEndDate,
-      );
+      const previousSignedApplication =
+        await this.getPreviouslySignedApplication(application.studentId);
       // checks if the MSFAA number is still valid.
-      const hasValidMSFAANumber =
-        this.msfaaNumberService.isValidMSFAANumberValid(
-          application.offering.studyStartDate,
-          previousSignedApplication?.offering.studyEndDate,
-        );
+      const hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
+        // Previously signed and completed application offering end date in considered the start date.
+        previousSignedApplication?.offering.studyEndDate,
+        // Start date of the offering of the current application is considered the end date.
+        application.offering.studyStartDate,
+      );
 
       if (hasValidMSFAANumber) {
         // Reuse the MSFAA number.
@@ -1023,24 +1022,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.save(application);
   }
 
-  async getPreviousSignedApplication(
+  /**
+   * Gets the application that has a MSFAA signed date.
+   * @param studentId student id to filter the applications.
+   * @returns previous signed application if exists, otherwise null.
+   */
+  async getPreviouslySignedApplication(
     studentId: number,
-    referenceDate: Date,
-  ): Promise<Partial<Application>> {
+  ): Promise<Application> {
     return this.repo
       .createQueryBuilder("applications")
-      .select("msfaaNumbers.id")
-      .addSelect("offerings.studyEndDate")
+      .select(["applications.id", "msfaaNumbers.id", "offerings.studyEndDate"])
       .innerJoin("applications.offering", "offerings")
       .innerJoin("applications.msfaaNumber", "msfaaNumbers")
       .innerJoin("applications.student", "students")
-      .where("applications.applicationStatus == :completedStatus", {
+      .where("applications.applicationStatus = :completedStatus", {
         completedStatus: ApplicationStatus.completed,
       })
       .andWhere("students.id = :studentId", { studentId })
-      .andWhere("offerings.studyEndDate < :studyEndDate", {
-        studyEndDate: referenceDate,
-      })
       .andWhere("msfaaNumbers.dateSigned is not null")
       .orderBy("offerings.studyEndDate", "DESC")
       .limit(1)
