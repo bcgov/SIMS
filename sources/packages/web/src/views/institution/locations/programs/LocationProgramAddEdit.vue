@@ -49,11 +49,11 @@ export default {
         );
         initialData.value = {
           ...program,
-          ...{ bcPrivate: institution.bcPrivate },
+          ...{ isBCPrivate: institution.isBCPrivate },
         };
       } else {
         initialData.value = {
-          bcPrivate: institution.bcPrivate,
+          isBCPrivate: institution.isBCPrivate,
         };
       }
     });

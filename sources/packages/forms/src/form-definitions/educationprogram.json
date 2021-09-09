@@ -1035,7 +1035,7 @@
         "eq": "",
         "json": ""
       },
-      "customConditional": "show=data.bcPrivate;",
+      "customConditional": "show=data.isBCPrivate;",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1071,7 +1071,7 @@
         "include": "score",
         "threshold": 0.3
       },
-      "id": "el9jrur",
+      "id": "eyb8cgf",
       "defaultValue": ""
     },
     {
@@ -3016,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-09-09T22:08:51.910Z"
+  "modified": "2021-09-09T22:42:38.400Z"
 }

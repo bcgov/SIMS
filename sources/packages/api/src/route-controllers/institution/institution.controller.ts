@@ -89,7 +89,7 @@ export class InstitutionController extends BaseController {
     const institutionDetail = await this.institutionService.institutionDetail(
       token,
     );
-    const bcPrivate =
+    const isBCPrivate =
       INSTITUTION_TYPE_BC_PRIVATE ===
       institutionDetail.institution.institutionType;
     return {
@@ -137,7 +137,7 @@ export class InstitutionController extends BaseController {
           legalName: institutionDetail.account.institution.legalName,
         },
       },
-      bcPrivate: bcPrivate,
+      isBCPrivate: isBCPrivate,
     };
   }
 
