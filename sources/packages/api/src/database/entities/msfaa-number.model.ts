@@ -20,14 +20,16 @@ export class MSFAANumber extends RecordDataModel {
   id: number;
   /**
    * Unique generated number to be sent to ESDC to identify the MSFAA.
-   * This number has a maximum value of 9,999,999,999 so, even being a
-   * bigint in database, it still can be mapped to a javascript number.
+   * Even that the type on Postgres is a number(bigint), when loaded
+   * it will still be parsed as a string even if the declaration of the type is a number.
+   * Note about bigint type(from Typeorm docs): bigint column type, used in SQL databases,
+   * doesn't fit into the regular number type and maps property to a string instead.
    */
   @Column({
     name: "msfaa_number",
     type: "bigint",
   })
-  msfaaNumber: number;
+  msfaaNumber: string;
   /**
    * Date that the request was generated to ESDC.
    * When null, it indicates that the request was not sent yet.

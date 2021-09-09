@@ -65,20 +65,25 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       if (!sequenceRecord) {
         sequenceRecord = new SequenceControl();
         sequenceRecord.sequenceName = sequenceName;
-        sequenceRecord.sequenceNumber = 0;
+        sequenceRecord.sequenceNumber = "0";
       }
 
       // At this moment it is safe to increment the number because
       // the record with the corresponding sequence name is locked.
-      const nextSequenceNumber = sequenceRecord.sequenceNumber + 1;
+      // Note that the sequenceRecord.sequenceNumber is a string due to the
+      // Typeorm/javascript way to map a bigint. So, the value must be converted
+      // to a number before it is incremented.
+      const nextSequenceNumber = +sequenceRecord.sequenceNumber + 1;
       // Waits for the external process be executed.
       this.logger.log(
         `Executing process using sequence number ${nextSequenceNumber}`,
       );
+      // Even the sequence number being represented as a bigint in Postgres here
+      // we are assuming that the max value will not go beyond the number safe limit.
       await process(nextSequenceNumber);
       // If the external process was successfully execute
       // update the new sequence number to the database.
-      sequenceRecord.sequenceNumber = nextSequenceNumber;
+      sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
       this.logger.log("Persisting new sequence number to database...");
       await queryRunner.manager.save(sequenceRecord);
       await queryRunner.commitTransaction();
