@@ -1298,7 +1298,7 @@
       "allowCalculateOverride": false,
       "validate": {
         "required": true,
-        "onlyAvailableItems": false,
+        "onlyAvailableItems": true,
         "customMessage": "",
         "custom": "",
         "customPrivate": false,
@@ -1344,7 +1344,7 @@
       "allowMultipleMasks": false,
       "inputType": "radio",
       "fieldSet": false,
-      "id": "eof7u7w",
+      "id": "eopxt4ic",
       "defaultValue": ""
     },
     {
@@ -1446,7 +1446,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Warning! This program is ineligible for earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions</strong><br/>\nStudents need to earn academic credits only in the same designated institution in the BC Transfer Guide .",
+      "content": "<strong>Warning! This program is ineligible for earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions</strong><br/>\nStudents need to earn academic credits only in the same designated institution in the BC Transfer Guide.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -1513,7 +1513,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e0npo8a"
+      "id": "e0eksi4"
     },
     {
       "label": "Program course load calculation is:",
@@ -3016,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-09-08T20:08:19.562Z"
+  "modified": "2021-09-09T22:08:51.910Z"
 }
