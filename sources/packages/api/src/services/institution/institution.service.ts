@@ -27,7 +27,6 @@ import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities/constants";
 import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,
@@ -338,13 +337,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.userFirstName = user?.firstName;
     institution.userLastName = user?.lastName;
 
-    const bcPrivate =
-      INSTITUTION_TYPE_BC_PRIVATE === institution.institutionType;
-
     return {
       institution,
       account,
-      bcPrivate,
     };
   }
 

@@ -23,6 +23,7 @@ import {
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities/constants";
 import {
   InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
@@ -88,6 +89,9 @@ export class InstitutionController extends BaseController {
     const institutionDetail = await this.institutionService.institutionDetail(
       token,
     );
+    const bcPrivate =
+      INSTITUTION_TYPE_BC_PRIVATE ===
+      institutionDetail.institution.institutionType;
     return {
       institution: {
         userFirstName: institutionDetail.institution.userFirstName,
@@ -133,7 +137,7 @@ export class InstitutionController extends BaseController {
           legalName: institutionDetail.account.institution.legalName,
         },
       },
-      bcPrivate: institutionDetail.bcPrivate,
+      bcPrivate: bcPrivate,
     };
   }
 
