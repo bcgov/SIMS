@@ -37,11 +37,11 @@ export interface EducationProgramDto {
 
 export enum ApprovalStatus {
   /**
-   * Education Program is approved
+   * Education Program is approved.
    */
   approved = "approved",
   /**
-   * Education Program is pending
+   * Education Program is pending.
    */
   pending = "pending",
 }
