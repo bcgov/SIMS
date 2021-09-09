@@ -126,8 +126,5 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
 export interface InstitutionDetailDto {
   institution: InstitutionDto;
   account: BCeIDDetailsDto;
-}
-
-export interface InstitutionDetailProgramDto {
-  institutionType: number;
+  bcPrivate: boolean;
 }

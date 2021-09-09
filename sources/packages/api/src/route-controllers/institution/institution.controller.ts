@@ -17,7 +17,6 @@ import {
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
-  InstitutionDetailProgramDto,
 } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -80,12 +79,60 @@ export class InstitutionController extends BaseController {
     await this.institutionService.updateInstitution(userToken, payload);
   }
 
-  @IsInstitutionAdmin()
   @Get()
   async institutionDetail(
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionDetailDto> {
-    return this.institutionService.institutionDetail(token);
+    const institutionDetail = await this.institutionService.institutionDetail(
+      token,
+    );
+    return {
+      institution: {
+        userFirstName: institutionDetail.institution.userFirstName,
+        userLastName: institutionDetail.institution.userLastName,
+        userEmail: institutionDetail.institution.userEmail,
+        legalOperatingName: institutionDetail.institution.legalOperatingName,
+        operatingName: institutionDetail.institution.operatingName,
+        primaryPhone: institutionDetail.institution.primaryPhone,
+        primaryEmail: institutionDetail.institution.primaryEmail,
+        website: institutionDetail.institution.website,
+        regulatingBody: institutionDetail.institution.regulatingBody,
+        establishedDate: institutionDetail.institution.establishedDate,
+        primaryContactEmail: institutionDetail.institution.primaryContactEmail,
+        primaryContactFirstName:
+          institutionDetail.institution.primaryContactFirstName,
+        primaryContactLastName:
+          institutionDetail.institution.primaryContactLastName,
+        primaryContactPhone: institutionDetail.institution.primaryContactPhone,
+        legalAuthorityEmail: institutionDetail.institution.legalAuthorityEmail,
+        legalAuthorityFirstName:
+          institutionDetail.institution.legalAuthorityFirstName,
+        legalAuthorityLastName:
+          institutionDetail.institution.legalAuthorityLastName,
+        legalAuthorityPhone: institutionDetail.institution.legalAuthorityPhone,
+        addressLine1: institutionDetail.institution.addressLine1,
+        addressLine2: institutionDetail.institution.addressLine2,
+        city: institutionDetail.institution.city,
+        country: institutionDetail.institution.country,
+        provinceState: institutionDetail.institution.provinceState,
+        postalCode: institutionDetail.institution.postalCode,
+        institutionType: institutionDetail.institution.institutionType,
+      },
+      account: {
+        user: {
+          guid: institutionDetail.account.user.guid,
+          displayName: institutionDetail.account.user.displayName,
+          firstname: institutionDetail.account.user.firstname,
+          surname: institutionDetail.account.user.surname,
+          email: institutionDetail.account.user.email,
+        },
+        institution: {
+          guid: institutionDetail.account.institution.guid,
+          legalName: institutionDetail.account.institution.legalName,
+        },
+      },
+      bcPrivate: institutionDetail.bcPrivate,
+    };
   }
 
   @Patch("/sync")
@@ -184,15 +231,6 @@ export class InstitutionController extends BaseController {
   @Get("/user-types-roles")
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
     return this.institutionService.getUserTypesAndRoles();
-  }
-
-  @Get("/intitution-program")
-  async getInstitutionDetailForProgram(
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionDetailProgramDto> {
-    return this.institutionService.getInstitutionDetailForProgram(
-      userToken?.authorizations?.institutionId,
-    );
   }
 
   /* Since, below API is called by only Admin user, IsInstitutionAdmin 

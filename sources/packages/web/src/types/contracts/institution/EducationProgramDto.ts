@@ -34,3 +34,14 @@ export interface EducationProgramDto {
   approvalStatus: string;
   programIntensity: ProgramIntensity;
 }
+
+export enum ApprovalStatus {
+  /**
+   * Education Program is approved
+   */
+  approved = "approved",
+  /**
+   * Education Program is pending
+   */
+  pending = "pending",
+}

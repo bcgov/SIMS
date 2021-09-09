@@ -1,1 +1,0 @@
-export const INSTITUTION_TYPE_BC_PRIVATE = 2;

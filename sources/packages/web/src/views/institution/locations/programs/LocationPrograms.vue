@@ -55,7 +55,7 @@
 import { useRouter } from "vue-router";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
-import { SummaryEducationProgramDto } from "../../../../types";
+import { SummaryEducationProgramDto, ApprovalStatus } from "../../../../types";
 import { ref, watch, onMounted } from "vue";
 
 export default {
@@ -102,9 +102,9 @@ export default {
 
     const getProgramStatusColorClass = (status: string) => {
       switch (status) {
-        case "approved":
+        case ApprovalStatus.approved:
           return "bg-info text-white";
-        case "pending":
+        case ApprovalStatus.pending:
           return "bg-warning text-white";
         default:
           return "";

@@ -19,19 +19,6 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
-  public async getInstitutionForProgram(): Promise<any> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/intitution-program`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
   public async createProgram(createProgramDto: any): Promise<void> {
     try {
       await this.apiClient.post(

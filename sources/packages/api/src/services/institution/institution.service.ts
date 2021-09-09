@@ -21,13 +21,13 @@ import {
   CreateInstitutionDto,
   InstitutionDto,
   InstitutionDetailDto,
-  InstitutionDetailProgramDto,
 } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities/constants";
 import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,
@@ -224,18 +224,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getOneOrFail();
   }
 
-  async getInstitutionDetailForProgram(
-    institutionId: number,
-  ): Promise<InstitutionDetailProgramDto> {
-    const institution = await this.repo
-      .createQueryBuilder("institution")
-      .select("institution.institutionType")
-      .where("institution.id = :institutionId", { institutionId })
-      .getOneOrFail();
-
-    return { institutionType: institution.institutionType };
-  }
-
   async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
     const institution: Institution = await this.getInstituteByUserName(
       userInfo.userName,
@@ -350,9 +338,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.userFirstName = user?.firstName;
     institution.userLastName = user?.lastName;
 
+    const bcPrivate =
+      INSTITUTION_TYPE_BC_PRIVATE === institution.institutionType;
+
     return {
       institution,
       account,
+      bcPrivate,
     };
   }
 

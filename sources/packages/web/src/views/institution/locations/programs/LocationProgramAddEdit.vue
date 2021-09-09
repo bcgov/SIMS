@@ -20,8 +20,8 @@ import { useToast } from "primevue/usetoast";
 import formio from "../../../../components/generic/formio.vue";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../../../../constants/utilities";
 import { onMounted, ref } from "vue";
+import { InstitutionService } from "@/services/InstitutionService";
 
 export default {
   components: { formio },
@@ -42,22 +42,18 @@ export default {
     const initialData = ref({});
 
     onMounted(async () => {
-      const institution = await EducationProgramService.shared.getInstitutionForProgram();
-      let bcPrivate = false;
-      if (INSTITUTION_TYPE_BC_PRIVATE === institution.institutionType) {
-        bcPrivate = true;
-      }
+      const institution = await InstitutionService.shared.getDetail();
       if (props.programId) {
         const program = await EducationProgramService.shared.getProgram(
           props.programId,
         );
         initialData.value = {
           ...program,
-          ...{ bcPrivate },
+          ...{ bcPrivate: institution.bcPrivate },
         };
       } else {
         initialData.value = {
-          bcPrivate: bcPrivate,
+          bcPrivate: institution.bcPrivate,
         };
       }
     });
