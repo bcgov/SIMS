@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS sims.msfaa_numbers (
   date_signed DATE,
   service_provider_received_date DATE,
   -- Reference Columns
-  student_id INT REFERENCES sims.students(id) ON DELETE CASCADE,
+  student_id INT NOT NULL REFERENCES sims.students(id) ON DELETE CASCADE,
   -- Audit columns
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone NOT NULL DEFAULT now(),
