@@ -15,6 +15,7 @@ import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import formio from "../../../../components/generic/formio.vue";
 import { EducationProgramOfferingService } from "../../../../services/EducationProgramOfferingService";
+import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 import { onMounted, ref } from "vue";
 
@@ -39,13 +40,25 @@ export default {
     const router = useRouter();
     const initialData = ref({});
     onMounted(async () => {
+      const programDetails = await EducationProgramService.shared.getProgram(
+        props.programId,
+      );
       if (props.offeringId) {
-        initialData.value = await EducationProgramOfferingService.shared.getProgramOffering(
+        const programOffering = await EducationProgramOfferingService.shared.getProgramOffering(
           props.locationId,
           props.programId,
           props.offeringId,
         );
+        initialData.value = {
+          ...programOffering,
+          ...programDetails,
+        };
+      } else {
+        initialData.value = {
+          ...programDetails,
+        };
       }
+      console.log(initialData.value);
     });
 
     const submitted = async (data: any) => {
