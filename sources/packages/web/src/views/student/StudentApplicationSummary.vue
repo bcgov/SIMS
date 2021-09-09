@@ -87,13 +87,15 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
-import { StudentApplication } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
 import Tooltip from "primevue/tooltip";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import { ApplicationStatus } from "@/types/contracts/students/ApplicationContract";
-import { ProgramYearOfApplicationDto } from "@/types";
+import {
+  ApplicationStatus,
+  ProgramYearOfApplicationDto,
+  StudentApplication,
+} from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 
 export default {
