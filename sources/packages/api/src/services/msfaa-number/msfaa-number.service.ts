@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { Brackets, Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { MSFAANumber, Student } from "../../database/entities";
 import * as dayjs from "dayjs";
@@ -35,7 +35,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * Generates the next number for a MSFAA.
    * @returns number to be used for the next MSFAA.
    */
-  private async consumeNextSequence(): Promise<number> {
+  private async consumeNextSequence(): Promise<string> {
     let nextNumber: number;
     await this.sequenceService.consumeNextSequence(
       "MSFAA_STUDENT_NUMBER",
@@ -43,16 +43,37 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         nextNumber = nextSequenceNumber;
       },
     );
-    return nextNumber;
+    return nextNumber.toString();
   }
 
   /**
-   * Gets a MSFAA record that was never signed.
+   * Gets a MSFAA record that should be considered as valid.
+   * The record could be either in 'pending' state, when there is no signed
+   * date, or could have a signed date still under the valid period for a MSFAA.
+   * If there is one in 'pending' state (waiting for student signature),
+   * the student must finishes it.
+   * As per the current assumption, once the MSFAA is created on
+   * ESDC it will not expire and can be reused.
    * @param studentId student id to filter.
-   * @returns not signed MSFAA if exists, otherwise, null.
+   * @returns current valid MSFAA record.
    */
-  async getPendingToSignMSFAANumber(studentId: number): Promise<MSFAANumber> {
-    return this.repo.findOne({ student: { id: studentId }, dateSigned: null });
+  async getCurrentValidMSFAANumber(studentId: number): Promise<MSFAANumber> {
+    const minimumValidDate = dayjs()
+      .subtract(MAX_MFSAA_VALID_DAYS, "days")
+      .toDate();
+    return this.repo
+      .createQueryBuilder("msfaaNumber")
+      .innerJoin("msfaaNumber.student", "students")
+      .where("students.id = :studentId", { studentId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("msfaaNumber.dateSigned is null");
+          qb.orWhere("msfaaNumber.dateSigned > :minimumValidDate", {
+            minimumValidDate,
+          });
+        }),
+      )
+      .getOne();
   }
 
   /**

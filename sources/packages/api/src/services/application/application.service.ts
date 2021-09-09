@@ -979,18 +979,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     let msfaaNumberId: number;
 
-    // Checks if there is already a MSFAA pending from signature.
-    // If there is one, the student must finishes it and this will
-    // be the one to be associated with the application.
-    // As per the current assumption, once the MSFAA is created on
-    // ESDC it will not expire and can be reused.
-    const pendingMSFAANumber =
-      await this.msfaaNumberService.getPendingToSignMSFAANumber(
+    // Checks if there is a MSFAA that could be considered valid.
+    const existingValidMSFAANumber =
+      await this.msfaaNumberService.getCurrentValidMSFAANumber(
         application.studentId,
       );
-    if (pendingMSFAANumber) {
-      // Reuse the MSFAA that is still pending and avoid creating a new one.
-      msfaaNumberId = pendingMSFAANumber.id;
+    if (existingValidMSFAANumber) {
+      // Reuse the MSFAA that is still valid and avoid creating a new one.
+      msfaaNumberId = existingValidMSFAANumber.id;
     } else {
       // Get previously completed and signed application for the student
       // to determine if an existing MSFAA is still valid.
