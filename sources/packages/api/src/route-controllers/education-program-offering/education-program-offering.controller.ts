@@ -65,7 +65,7 @@ export class EducationProgramOfferingController {
     if (!requestProgram) {
       throw new NotFoundException();
     }
-    /**const submissionResult = await this.formService.dryRunSubmission(
+    const submissionResult = await this.formService.dryRunSubmission(
       FormNames.EducationProgramOffering,
       payload,
     );
@@ -74,7 +74,7 @@ export class EducationProgramOfferingController {
       throw new UnprocessableEntityException(
         "Not able to a create a program offering due to an invalid request.",
       );
-    }**/
+    }
 
     const createdProgramOffering =
       await this.programOfferingService.createEducationProgramOffering(
@@ -208,7 +208,7 @@ export class EducationProgramOfferingController {
     if (!requestProgram) {
       throw new ForbiddenException();
     }
-    /*const updatingResult = await this.formService.dryRunSubmission(
+    const updatingResult = await this.formService.dryRunSubmission(
       FormNames.EducationProgramOffering,
       payload,
     );
@@ -217,7 +217,7 @@ export class EducationProgramOfferingController {
       throw new UnprocessableEntityException(
         "Not able to a update a program offering due to an invalid request.",
       );
-    }*/
+    }
 
     const updateProgramOffering =
       await this.programOfferingService.updateEducationProgramOffering(
