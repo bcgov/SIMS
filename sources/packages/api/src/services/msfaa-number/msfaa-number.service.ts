@@ -57,9 +57,9 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
 
   /**
    * Determines whether MSFAA number is still valid.
-   * @param [startDate] start date. The start data would be the
+   * @param [startDate] start date. The start date would be the
    * offering end date of a previously completed Student Application that,
-   * in many scenarios could not exist. Is this case, if the start date is
+   * in many scenarios, could not exist. Is this case, if the start date is
    * missing we will assume that there in no current valid MSFAA.
    * @param endDate end date.
    * @returns true if the provided dates shows that the MSFAA is

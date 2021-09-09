@@ -996,6 +996,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       // to determine if an existing MSFAA is still valid.
       const previousSignedApplication =
         await this.getPreviouslySignedApplication(application.studentId);
+
       // checks if the MSFAA number is still valid.
       const hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
         // Previously signed and completed application offering end date in considered the start date.
@@ -1006,7 +1007,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       if (hasValidMSFAANumber) {
         // Reuse the MSFAA number.
-        msfaaNumberId = previousSignedApplication.msfaaNumberId;
+        msfaaNumberId = previousSignedApplication.msfaaNumber.id;
       } else {
         // Create a new MSFAA number case the previous one is no longer valid.
         const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
