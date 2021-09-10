@@ -10,6 +10,8 @@ import {
   InstitutionUserAuth,
   InstitutionUserTypeAndRole,
   User,
+  InstitutionLocation,
+  InstitutionType,
 } from "../../database/entities";
 import { Connection, Repository, getConnection } from "typeorm";
 import {
@@ -26,7 +28,6 @@ import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
-import { InstitutionLocation, InstitutionType } from "../../database/entities";
 import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,

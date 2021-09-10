@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
-import { Institution, InstitutionType } from "../../../database/entities";
+import { Institution } from "../../../database/entities";
 
 export class CreateInstitutionDto {
   @IsOptional()
