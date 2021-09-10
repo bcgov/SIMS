@@ -1697,7 +1697,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Warning! This program is ineligible for 20+ hours of study per week</strong><br/>\nStudents need to have 20 or less than hours of study per week.",
+      "content": "<strong>Warning! This program is ineligible for less than 20 hours of study per week</strong><br/>\nStudents need to have 20 or more hours of study per week.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -1711,7 +1711,7 @@
         "eq": "",
         "json": ""
       },
-      "customConditional": "show=data.averageHoursStudy>20;",
+      "customConditional": "show=data.averageHoursStudy<20;",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1764,7 +1764,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e5ehae3"
+      "id": "exwi1mq"
     },
     {
       "label": "Years required to completed this program",
@@ -2880,7 +2880,7 @@
       "encrypted": false,
       "redrawOn": "",
       "customDefaultValue": "",
-      "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\" || \r\ndata.earnAcademicCreditsOtherInstitution==='yes' || data.averageHoursStudy>20 || \r\ndata.hasMinimunAge==='no') {\r\n  value = \"pending\";\r\n}\r\nelse {\r\n  value = \"approved\";\r\n}",
+      "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\" || \r\ndata.earnAcademicCreditsOtherInstitution==='yes' || data.averageHoursStudy<20 || \r\ndata.hasMinimunAge==='no') {\r\n  value = \"pending\";\r\n}\r\nelse {\r\n  value = \"approved\";\r\n}",
       "calculateServer": true,
       "key": "approvalStatus",
       "tags": [],
@@ -2937,7 +2937,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "ez1fsfj"
+      "id": "eicgxyi"
     },
     {
       "label": "applicationId",
@@ -3016,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-09-09T22:42:38.400Z"
+  "modified": "2021-09-10T17:18:49.961Z"
 }
