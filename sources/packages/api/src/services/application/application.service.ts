@@ -590,7 +590,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * when the application does not exists or there is no
    * offering associated with it at this time.
    */
-  async getOfferingByApplicationId(
+  async getApplicationDetailsByApplicationId(
     applicationId: number,
   ): Promise<Application> {
     const application = await this.repo.findOne(applicationId, {

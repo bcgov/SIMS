@@ -220,11 +220,13 @@ export class ApplicationSystemController {
     @Param("id") applicationId: number,
   ): Promise<ProgramOfferingDto> {
     const application =
-      await this.applicationService.getOfferingByApplicationId(applicationId);
+      await this.applicationService.getApplicationDetailsByApplicationId(
+        applicationId,
+      );
 
     if (!application) {
       throw new NotFoundException(
-        `Not able to find thw details for application ${applicationId}.`,
+        `Not able to find the details for application ${applicationId}.`,
       );
     }
 
@@ -243,6 +245,7 @@ export class ApplicationSystemController {
       offeringDelivered: application.offering.offeringDelivered,
       offeringIntensity: application.offering.offeringIntensity,
       // for now - if credential type is `other`, then the other is send to camunda
+      // update the below code for 'other' credential type, for future requirements
       programCredentialType: application.pirProgram.credentialType,
       programLength: application.pirProgram.completionYears,
       institutionType: application.location.institution.institutionType.name,
