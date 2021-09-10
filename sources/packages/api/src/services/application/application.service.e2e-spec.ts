@@ -40,6 +40,12 @@ const createFakeApplicationInAssessment = (student: Student): Application => {
   return fakeApplication;
 };
 
+const createDateInMSFAAValidPeriod = (increment: number): Date => {
+  return dayjs()
+    .subtract(MAX_MFSAA_VALID_DAYS + increment, "days")
+    .toDate();
+};
+
 describe("ApplicationService", () => {
   let applicationService: ApplicationService;
   let msfaaNumberService: MSFAANumberService;
@@ -120,11 +126,8 @@ describe("ApplicationService", () => {
       const testStudent = await studentRepository.save(createFakeStudent());
       // MSFAA record to be used along this test.
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
-      fakeMSFAANumber.student = testStudent;
       // Enforce that the MSFAA will be in a valid period.
-      fakeMSFAANumber.dateSigned = dayjs()
-        .subtract(MAX_MFSAA_VALID_DAYS - 1, "days")
-        .toDate();
+      fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(-1);
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
@@ -149,9 +152,7 @@ describe("ApplicationService", () => {
       // MSFAA record to be used along this test.
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Make the dateSigned old enough to be considered expired.
-      fakeMSFAANumber.dateSigned = dayjs()
-        .subtract(MAX_MFSAA_VALID_DAYS + 1, "days")
-        .toDate();
+      fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(1);
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
 
       // Create a completed and signed fake application.
@@ -159,9 +160,8 @@ describe("ApplicationService", () => {
       fakeCompletedApplication.student = testStudent;
       fakeCompletedApplication.offering = createFakeEducationProgramOffering();
       // Make the application be considered outside the valid period.
-      fakeCompletedApplication.offering.studyEndDate = dayjs()
-        .subtract(MAX_MFSAA_VALID_DAYS + 1, "days")
-        .toDate();
+      fakeCompletedApplication.offering.studyEndDate =
+        createDateInMSFAAValidPeriod(1);
       fakeCompletedApplication.msfaaNumber = testMSFAANumber;
       fakeCompletedApplication.applicationStatus = ApplicationStatus.completed;
       const testCompletedApplication = await applicationRepository.save(
@@ -196,9 +196,7 @@ describe("ApplicationService", () => {
       // This will force the MSFAA to be considered valid due to the
       // previous application offering end date and current application
       // offering start date, since the MSFAA is expired.
-      fakeMSFAANumber.dateSigned = dayjs()
-        .subtract(MAX_MFSAA_VALID_DAYS * 2, "days")
-        .toDate();
+      fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(1);
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
 
       // Create a completed and signed fake application wth an
@@ -207,9 +205,8 @@ describe("ApplicationService", () => {
       fakeCompletedApplication.student = testStudent;
       fakeCompletedApplication.offering = createFakeEducationProgramOffering();
       // Make the application be considered still in the valid MSFAA period.
-      fakeCompletedApplication.offering.studyEndDate = dayjs()
-        .subtract(MAX_MFSAA_VALID_DAYS - 1, "days")
-        .toDate();
+      fakeCompletedApplication.offering.studyEndDate =
+        createDateInMSFAAValidPeriod(-1);
       fakeCompletedApplication.msfaaNumber = testMSFAANumber;
       fakeCompletedApplication.applicationStatus = ApplicationStatus.completed;
       const testCompletedApplication = await applicationRepository.save(
