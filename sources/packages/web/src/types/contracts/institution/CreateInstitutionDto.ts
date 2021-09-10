@@ -38,4 +38,5 @@ export interface UpdateInstitutionDto extends Partial<InstitutionDto> {
 export interface InstitutionDetailDto {
   institution: UpdateInstitutionDto;
   account: BCeIDDetailsDto;
+  isBCPrivate: boolean;
 }

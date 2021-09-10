@@ -21,6 +21,7 @@ import formio from "../../../../components/generic/formio.vue";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
 import { onMounted, ref } from "vue";
+import { InstitutionService } from "@/services/InstitutionService";
 
 export default {
   components: { formio },
@@ -41,10 +42,19 @@ export default {
     const initialData = ref({});
 
     onMounted(async () => {
+      const institution = await InstitutionService.shared.getDetail();
       if (props.programId) {
-        initialData.value = await EducationProgramService.shared.getProgram(
+        const program = await EducationProgramService.shared.getProgram(
           props.programId,
         );
+        initialData.value = {
+          ...program,
+          ...{ isBCPrivate: institution.isBCPrivate },
+        };
+      } else {
+        initialData.value = {
+          isBCPrivate: institution.isBCPrivate,
+        };
       }
     });
 
