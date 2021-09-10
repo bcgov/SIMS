@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS sims.msfaa_numbers (
   id SERIAL PRIMARY KEY,
   msfaa_number BIGINT NOT NULL,
-  date_requested DATE,
+  date_requested TIMESTAMP WITH TIME ZONE,
   date_signed DATE,
   service_provider_received_date DATE,
   -- Reference Columns

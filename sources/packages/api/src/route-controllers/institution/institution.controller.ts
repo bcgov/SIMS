@@ -23,7 +23,7 @@ import {
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities/constants";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
 import {
   InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
