@@ -1697,7 +1697,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Warning! This program is ineligible for less than 20 hours of study per week</strong><br/>\nStudents need to have 20 or more hours of study per week.",
+      "content": "<strong>Warning! This program is ineligible for less than 20 hours of study per week.</strong><br/>\nStudents need to have 20 or more hours of study per week.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -1764,7 +1764,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "exwi1mq"
+      "id": "exsmlv"
     },
     {
       "label": "Years required to completed this program",
@@ -3016,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-09-10T17:18:49.961Z"
+  "modified": "2021-09-10T17:47:58.611Z"
 }
