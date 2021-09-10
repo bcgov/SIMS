@@ -33,7 +33,7 @@ export class MSFAANumber extends RecordDataModel {
   /**
    * Date that the request was generated to ESDC.
    * When null, it indicates that the request was not sent yet.
-   * This colum does not contains time information, so the time
+   * This column does not contains time information, so the time
    * of this field must be reconsidered on any calculation.
    */
   @Column({
@@ -45,7 +45,7 @@ export class MSFAANumber extends RecordDataModel {
    * Date that the student signed the MSFAA. If null,
    * the response was not returned from ESDC yet or
    * the student did not signed the agreement yet.
-   * This colum does not contains time information, so the time
+   * This column does not contains time information, so the time
    * of this field must be reconsidered on any calculation.
    */
   @Column({
@@ -55,7 +55,7 @@ export class MSFAANumber extends RecordDataModel {
   dateSigned?: Date;
   /**
    * Date that the service provider received the signed student MSFAA.
-   * This colum does not contains time information, so the time
+   * This column does not contains time information, so the time
    * of this field must be reconsidered on any calculation.
    */
   @Column({
