@@ -18,4 +18,5 @@ export const TableNames = {
   ProgramYear: "program_years",
   PIRDeniedReason: "pir_denied_reason",
   MSFAANumbers: "msfaa_numbers",
+  COEDeniedReason: "coe_denied_reasons",
 };

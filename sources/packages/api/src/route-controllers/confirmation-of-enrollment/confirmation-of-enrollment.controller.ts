@@ -6,6 +6,8 @@ import {
   Patch,
   NotFoundException,
   UnprocessableEntityException,
+  InternalServerErrorException,
+  Body,
 } from "@nestjs/common";
 import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -15,14 +17,24 @@ import {
   APPLICATION_NOT_FOUND,
   WorkflowActionsService,
   InstitutionLocationService,
+  COEDeniedReasonService,
 } from "../../services";
 import { Application, COEStatus } from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
-import { dateString, COE_WINDOW } from "../../utilities";
-import { ApplicationDetailsForCOEDTO } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+import {
+  dateString,
+  COE_WINDOW,
+  COE_DENIED_REASON_OTHER_ID,
+} from "../../utilities";
+import {
+  ApplicationDetailsForCOEDTO,
+  DenyConfirmationOfEnrollmentDto,
+  COEDeniedReasonDto,
+} from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -31,6 +43,7 @@ export class ConfirmationOfEnrollmentController {
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly locationService: InstitutionLocationService,
+    private readonly deniedCOEReasonService: COEDeniedReasonService,
   ) {}
 
   /**
@@ -161,6 +174,10 @@ export class ConfirmationOfEnrollmentController {
         application.offering.studyStartDate,
       ),
       applicationLocationId: application.location.id,
+      applicationDeniedReason:
+        COE_DENIED_REASON_OTHER_ID === application.coeDeniedId
+          ? application.coeDeniedOtherDesc
+          : application.coeDeniedReason?.reason,
     };
   }
 
@@ -206,5 +223,54 @@ export class ConfirmationOfEnrollmentController {
 
     // Send a message to allow the workflow to proceed.
     await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
+  }
+
+  /**
+   * Deny the Confirmation Of Enrollment(COE), defining the
+   * COE status as Declined in the student application table.
+   * @param locationId location that is completing the COE.
+   * @param applicationId application id to be updated.
+   * @param payload contains the denied reason of the
+   * student application.
+   */
+  @HasLocationAccess("locationId")
+  @Patch(
+    ":locationId/confirmation-of-enrollment/application/:applicationId/deny",
+  )
+  async denyConfirmationOfEnrollment(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+    @Body() payload: DenyConfirmationOfEnrollmentDto,
+  ): Promise<void> {
+    try {
+      await this.applicationService.setDeniedReasonForCOE(
+        applicationId,
+        locationId,
+        payload.coeDenyReasonId,
+        payload.otherReasonDesc,
+      );
+    } catch (error) {
+      if (error.name === COE_REQUEST_NOT_FOUND_ERROR) {
+        throw new UnprocessableEntityException(error.message);
+      }
+
+      throw new InternalServerErrorException(
+        "Error while denying a Confirmation Of Enrollment (COE).",
+      );
+    }
+  }
+
+  /**
+   * Get all COE denied reason, which are active
+   * @returns COE denied reason list
+   */
+  @Get("confirmation-of-enrollment/denial-reasons")
+  async getCOEDeniedReason(): Promise<COEDeniedReasonDto[]> {
+    const coeDeniedReason =
+      await this.deniedCOEReasonService.getCOEDeniedReasons();
+    return coeDeniedReason.map((eachCOEDeniedReason) => ({
+      value: eachCOEDeniedReason.id,
+      label: eachCOEDeniedReason.reason,
+    }));
   }
 }

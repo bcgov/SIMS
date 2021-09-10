@@ -38,10 +38,7 @@
 import { ApplicationService } from "@/services/ApplicationService";
 import Dialog from "primevue/dialog";
 import { useToastMessage } from "@/composables";
-import {
-  ApplicationStatusToBeUpdatedDto,
-  ApplicationStatus,
-} from "@/types/contracts/students/ApplicationContract";
+import { ApplicationStatusToBeUpdatedDto, ApplicationStatus } from "@/types";
 
 export default {
   components: {

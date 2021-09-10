@@ -73,7 +73,7 @@ export default {
         );
       }
       updateShowConfirmCOEModal();
-      context.emit("reloadData", props.applicationId);
+      context.emit("reloadData");
     };
 
     return {

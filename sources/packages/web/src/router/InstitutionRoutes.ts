@@ -71,6 +71,20 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.UnknownUser,
+        name: InstitutionRoutesConst.UNKNOWN_LOGIN,
+        component: Login,
+        props: {
+          showBasicBCeIDMessage: false,
+          showDisabledUserMessage: false,
+          showUnknownUserMessage: true,
+        },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.INSTITUTION,
+        },
+      },
+      {
         path: AppRoutes.InstitutionDashboard,
         name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
         components: {

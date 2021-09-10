@@ -272,7 +272,6 @@ export class ProgramInfoRequestController {
    * Get all PIR denied reason ,which are active
    * @returns PIR denied reason list
    */
-  @HasLocationAccess("locationId")
   @Get("program-info-request/denied-reason")
   async getPIRDeniedReason(): Promise<GetPIRDeniedReasonDto[]> {
     const pirDeniedReason =

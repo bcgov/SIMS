@@ -1,3 +1,4 @@
+import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
 export interface ApplicationDetailsForCOEDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
@@ -23,4 +24,19 @@ export interface ApplicationDetailsForCOEDTO {
   applicationId: number;
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
+  applicationDeniedReason?: string;
+}
+
+export interface COEDeniedReasonDto {
+  value: number;
+  label: string;
+}
+
+export class DenyConfirmationOfEnrollmentDto {
+  @IsNotEmpty()
+  @IsInt()
+  @Min(1)
+  coeDenyReasonId: number;
+  @IsOptional()
+  otherReasonDesc?: string;
 }

@@ -119,6 +119,12 @@ export function useFormioUtils() {
     });
   };
 
+  const setRadioOptions = (form: any, componentKey: string, options: any) => {
+    const componentObj = getComponent(form, componentKey);
+    componentObj.component.values = options;
+    componentObj.redraw();
+  };
+
   return {
     getComponent,
     redrawComponent,
@@ -129,5 +135,6 @@ export function useFormioUtils() {
     setButtonSettings,
     disableWizardButtons,
     setComponentValue,
+    setRadioOptions,
   };
 }

@@ -3,7 +3,6 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { PIR_DENIED_REASON_OTHER_ID } from "../../utilities/system-configurations-constants";
 import {
   Application,
   ApplicationStudentFile,
@@ -19,6 +18,7 @@ import {
   EducationProgram,
   PIRDeniedReason,
   MSFAANumber,
+  COEDeniedReason,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -32,6 +32,7 @@ import {
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
+  COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -42,6 +43,8 @@ export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
 export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
+export const COE_DENIED_REASON_NOT_FOUND_ERROR =
+  "COE_DENIED_REASON_NOT_FOUND_ERROR";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -918,6 +921,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoinAndSelect("student.user", "user")
       .innerJoinAndSelect("application.offering", "offering")
       .innerJoinAndSelect("offering.educationProgram", "educationProgram")
+      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
       .where("application.location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
@@ -951,6 +955,55 @@ export class ApplicationService extends RecordDataModelService<Application> {
         getPSTPDTDate(offeringStartDate, true),
       ) <= COE_WINDOW
     );
+  }
+
+  /**
+   * Deny the Confirmation Of Enrollment(COE) for an Application.
+   * Updates only applications that have the COE status as required.
+   * @param applicationId application id to be updated.
+   * @param locationId location id of the application.
+   * @param coeDeniedReasonId COE Denied reason id for a student application.
+   * @param otherReasonDesc when other is selected as a COE denied reason, text for the reason
+   * is populated.
+   * @returns updated application.
+   */
+  async setDeniedReasonForCOE(
+    applicationId: number,
+    locationId: number,
+    coeDeniedReasonId: number,
+    otherReasonDesc?: string,
+  ): Promise<Application> {
+    const application = await this.repo.findOne({
+      id: applicationId,
+      location: { id: locationId },
+      coeStatus: COEStatus.required,
+      applicationStatus: Not(
+        In([
+          ApplicationStatus.completed,
+          ApplicationStatus.overwritten,
+          ApplicationStatus.cancelled,
+        ]),
+      ),
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Not able to find an application that requires a COE to be completed.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+
+    application.coeDeniedReason = {
+      id: coeDeniedReasonId,
+    } as COEDeniedReason;
+    if (COE_DENIED_REASON_OTHER_ID === coeDeniedReasonId && !otherReasonDesc) {
+      throw new CustomNamedError(
+        "Other is selected as COE reason, specify the reason for the COE denial.",
+        COE_DENIED_REASON_NOT_FOUND_ERROR,
+      );
+    }
+    application.coeDeniedOtherDesc = otherReasonDesc;
+    application.coeStatus = COEStatus.declined;
+    return this.repo.save(application);
   }
 
   /**

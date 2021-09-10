@@ -27,6 +27,7 @@ import {
   InstitutionTypeService,
   PIRDeniedReasonService,
   MSFAANumberService,
+  COEDeniedReasonService,
 } from "./services";
 import {
   UserController,
@@ -99,6 +100,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     InstitutionTypeService,
     PIRDeniedReasonService,
     MSFAANumberService,
+    COEDeniedReasonService,
   ],
 })
 export class AppModule {}

@@ -21,3 +21,4 @@ export * from "./coe-status.type";
 export * from "./program-year.model";
 export * from "./pir-denied-reason.model";
 export * from "./msfaa-number.model";
+export * from "./coe-denied-reason.model";
