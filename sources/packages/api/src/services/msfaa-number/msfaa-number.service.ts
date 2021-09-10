@@ -86,9 +86,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @returns true if the provided dates shows that the MSFAA is
    * still valid, otherwise, false.
    */
-  isMSFAANumberValid(startDate: Date = null, endDate: Date): boolean {
+  isMSFAANumberValid(startDate?: Date, endDate?: Date): boolean {
     return (
       !!startDate &&
+      !!endDate &&
       dayjs(endDate).diff(startDate, "days") < MAX_MFSAA_VALID_DAYS
     );
   }
