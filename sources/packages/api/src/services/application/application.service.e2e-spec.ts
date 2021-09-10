@@ -149,7 +149,7 @@ describe("ApplicationService", () => {
     it("should create a new MSFAA record when a completed and signed application exists but the MSFAA period is expired", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
-      // MSFAA record to be used along this test.
+      // MSFAA record to be used.
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Make the dateSigned old enough to be considered expired.
       fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(1);
