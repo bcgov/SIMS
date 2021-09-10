@@ -33,7 +33,9 @@ import {
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
+  PIR_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
+
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
   "PIR_DENIED_REASON_NOT_FOUND_ERROR";
@@ -1007,10 +1009,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Associates a MSFAA number to the application checking
+   * Associates an MSFAA number to the application checking
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
-   * @param applicationId application id to receive a MSFAA.
+   * @param applicationId application id to receive an MSFAA.
    */
   async associateMSFAANumber(applicationId: number): Promise<Application> {
     const application = await this.repo.findOne(applicationId, {
@@ -1025,14 +1027,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     if (application.applicationStatus !== ApplicationStatus.assessment) {
       throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' to a MSFAA number be assigned.`,
+        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.assessment}' to an MSFAA number be assigned.`,
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
 
     let msfaaNumberId: number;
 
-    // Checks if there is a MSFAA that could be considered valid.
+    // Checks if there is an MSFAA that could be considered valid.
     const existingValidMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
         application.studentId,
@@ -1073,7 +1075,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the application that has a MSFAA signed date.
+   * Gets the application that has an MSFAA signed date.
    * @param studentId student id to filter the applications.
    * @returns previous signed application if exists, otherwise null.
    */

@@ -116,10 +116,8 @@ describe("ApplicationService", () => {
       fakeMSFAANumber.student = testStudent;
       // Enforce that the MSFAA will be in a valid period.
       fakeMSFAANumber.dateSigned = dayjs()
-        .subtract(MAX_MFSAA_VALID_DAYS - 2, "days")
+        .subtract(MAX_MFSAA_VALID_DAYS - 1, "days")
         .toDate();
-      console.log(dayjs().toDate());
-      console.log("dateSigned:", fakeMSFAANumber.dateSigned);
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplication();

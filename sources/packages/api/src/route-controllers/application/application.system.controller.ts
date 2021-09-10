@@ -248,10 +248,10 @@ export class ApplicationSystemController {
   }
 
   /**
-   * Associates a MSFAA number to the application checking
+   * Associates an MSFAA number to the application checking
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
-   * @param applicationId application id to receive a MSFAA.
+   * @param applicationId application id to receive an MSFAA.
    */
   @Patch(":applicationId/msfaa-number")
   async associateMSFAANumber(

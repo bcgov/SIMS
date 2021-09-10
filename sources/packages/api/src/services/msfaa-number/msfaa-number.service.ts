@@ -32,7 +32,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   }
 
   /**
-   * Generates the next number for a MSFAA.
+   * Generates the next number for an MSFAA.
    * @returns number to be used for the next MSFAA.
    */
   private async consumeNextSequence(): Promise<string> {
@@ -47,9 +47,9 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   }
 
   /**
-   * Gets a MSFAA record that should be considered as valid.
+   * Gets an MSFAA record that should be considered as valid.
    * The record could be either in 'pending' state, when there is no signed
-   * date, or could have a signed date still under the valid period for a MSFAA.
+   * date, or could have a signed date still under the valid period for an MSFAA.
    * If there is one in 'pending' state (waiting for student signature),
    * the student must finishes it.
    * As per the current assumption, once the MSFAA is created on
