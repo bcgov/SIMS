@@ -593,7 +593,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsByApplicationId(
     applicationId: number,
   ): Promise<Application> {
-    return await this.repo.findOne(applicationId, {
+    return this.repo.findOne(applicationId, {
       relations: ["offering", "pirProgram", "location", "student"],
     });
   }
