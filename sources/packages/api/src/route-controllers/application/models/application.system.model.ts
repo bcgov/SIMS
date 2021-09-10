@@ -1,4 +1,6 @@
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
+
 import {
   ProgramInfoStatus,
   AssessmentStatus,
@@ -55,4 +57,10 @@ export interface ProgramOfferingDto {
   exceptionalExpenses: number;
   tuitionRemittanceRequestedAmount: number;
   offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
+  programCredentialType: string;
+  programLength: string;
+  institutionType: string;
+  institutionLocationProvince: string;
+  studentPDStatus: boolean;
 }

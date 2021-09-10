@@ -592,12 +592,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async getOfferingByApplicationId(
     applicationId: number,
-  ): Promise<EducationProgramOffering> {
+  ): Promise<Application> {
     const application = await this.repo.findOne(applicationId, {
-      relations: ["offering"],
+      relations: ["offering", "pirProgram", "location", "student"],
     });
 
-    return application?.offering;
+    return application;
   }
   /**
    * get applications of a institution location

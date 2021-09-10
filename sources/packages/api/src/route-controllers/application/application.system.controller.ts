@@ -216,32 +216,38 @@ export class ApplicationSystemController {
    * there is no offering associated with it at this time.
    */
   @Get(":id/offering")
-  async getApplicationOffering(
+  async getApplicationDetails(
     @Param("id") applicationId: number,
   ): Promise<ProgramOfferingDto> {
-    const offering = await this.applicationService.getOfferingByApplicationId(
-      applicationId,
-    );
+    const application =
+      await this.applicationService.getOfferingByApplicationId(applicationId);
 
-    if (!offering) {
+    if (!application) {
       throw new NotFoundException(
-        `Not able to find an offering for application ${applicationId}.`,
+        `Not able to find thw details for application ${applicationId}.`,
       );
     }
 
     return {
-      id: offering.id,
-      studyStartDate: offering.studyStartDate,
-      studyEndDate: offering.studyEndDate,
-      breakStartDate: offering.breakStartDate,
-      breakEndDate: offering.breakEndDate,
-      actualTuitionCosts: offering.actualTuitionCosts,
-      programRelatedCosts: offering.programRelatedCosts,
-      mandatoryFees: offering.mandatoryFees,
-      exceptionalExpenses: offering.exceptionalExpenses,
+      id: application.offering.id,
+      studyStartDate: application.offering.studyStartDate,
+      studyEndDate: application.offering.studyEndDate,
+      breakStartDate: application.offering.breakStartDate,
+      breakEndDate: application.offering.breakEndDate,
+      actualTuitionCosts: application.offering.actualTuitionCosts,
+      programRelatedCosts: application.offering.programRelatedCosts,
+      mandatoryFees: application.offering.mandatoryFees,
+      exceptionalExpenses: application.offering.exceptionalExpenses,
       tuitionRemittanceRequestedAmount:
-        offering.tuitionRemittanceRequestedAmount,
-      offeringDelivered: offering.offeringDelivered,
+        application.offering.tuitionRemittanceRequestedAmount,
+      offeringDelivered: application.offering.offeringDelivered,
+      offeringIntensity: application.offering.offeringIntensity,
+      // for now - if credential type is `other`, then the other is send to camunda
+      programCredentialType: application.pirProgram.credentialType,
+      programLength: application.pirProgram.completionYears,
+      institutionType: application.location.institution.institutionType.name,
+      institutionLocationProvince: application.location.data.address.province,
+      studentPDStatus: application.student.studentPDVerified,
     };
   }
 }

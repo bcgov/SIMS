@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
-import { Institution } from "../../../database/entities";
+import { Institution, InstitutionType } from "../../../database/entities";
 
 export class CreateInstitutionDto {
   @IsOptional()
@@ -118,7 +118,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
       country: institutionEntity.institutionAddress.country,
       provinceState: institutionEntity.institutionAddress.provinceState,
       postalCode: institutionEntity.institutionAddress.postalCode,
-      institutionType: institutionEntity.institutionType,
+      institutionType: institutionEntity.institutionType.id,
     };
   }
 }
