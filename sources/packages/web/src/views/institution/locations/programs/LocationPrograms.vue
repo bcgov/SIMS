@@ -9,9 +9,7 @@
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewProgram()">
-              <v-icon size="25" left>
-                mdi-open-in-new
-              </v-icon>
+              <v-icon size="25" left> mdi-open-in-new </v-icon>
               Create New Program
             </v-btn>
           </v-col>
@@ -35,7 +33,10 @@
             ><template #body="slotProps">
               <Chip
                 :label="slotProps.data.approvalStatus"
-                class="p-mr-2 p-mb-2 bg-success text-white p-text-uppercase"/></template
+                class="p-mr-2 p-mb-2 p-text-uppercase"
+                :class="
+                  getProgramStatusColorClass(slotProps.data.approvalStatus)
+                " /></template
           ></Column>
           <Column>
             <template #body="slotProps">
@@ -54,7 +55,7 @@
 import { useRouter } from "vue-router";
 import { EducationProgramService } from "../../../../services/EducationProgramService";
 import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
-import { SummaryEducationProgramDto } from "../../../../types";
+import { SummaryEducationProgramDto, ApprovalStatus } from "../../../../types";
 import { ref, watch, onMounted } from "vue";
 
 export default {
@@ -99,7 +100,22 @@ export default {
       });
     };
 
-    return { programs, goToAddNewProgram, goToViewProgram };
+    const getProgramStatusColorClass = (status: string) => {
+      switch (status) {
+        case ApprovalStatus.approved:
+          return "bg-info text-white";
+        case ApprovalStatus.pending:
+          return "bg-warning text-white";
+        default:
+          return "";
+      }
+    };
+    return {
+      programs,
+      goToAddNewProgram,
+      goToViewProgram,
+      getProgramStatusColorClass,
+    };
   },
 };
 </script>

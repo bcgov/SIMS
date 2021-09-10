@@ -16,7 +16,7 @@ export class CreateInstitutionDto {
   @IsNotEmpty()
   website: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   regulatingBody: string;
 
   @IsNotEmpty()
@@ -126,4 +126,5 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
 export interface InstitutionDetailDto {
   institution: InstitutionDto;
   account: BCeIDDetailsDto;
+  isBCPrivate?: boolean;
 }
