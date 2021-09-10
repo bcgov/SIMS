@@ -132,9 +132,9 @@ describe("ApplicationService", () => {
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
-        //await applicationRepository.remove(testApplication);
-        //await msfaaNumberRepository.remove(testMSFAANumber);
-        //await studentRepository.remove(testStudent);
+        await applicationRepository.remove(testApplication);
+        await msfaaNumberRepository.remove(testMSFAANumber);
+        await studentRepository.remove(testStudent);
       }
     });
 
