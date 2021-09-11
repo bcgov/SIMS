@@ -240,4 +240,28 @@ export class ApplicationSystemController {
       );
     }
   }
+
+  /**
+   * Associates an MSFAA number to the application checking
+   * whatever is needed to create a new MSFAA or use an
+   * existing one instead.
+   * @param applicationId application id to receive an MSFAA.
+   */
+  @Patch(":applicationId/msfaa-number")
+  async associateMSFAANumber(
+    @Param("applicationId") applicationId: number,
+  ): Promise<void> {
+    try {
+      await this.applicationService.associateMSFAANumber(applicationId);
+    } catch (error) {
+      switch (error.name) {
+        case APPLICATION_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          throw error;
+      }
+    }
+  }
 }
