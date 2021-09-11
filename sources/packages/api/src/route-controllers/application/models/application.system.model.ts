@@ -44,23 +44,3 @@ export class UpdateApplicationStatusDto {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
 }
-
-export interface ProgramOfferingDto {
-  id: number;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
-  offeringIntensity: OfferingIntensity;
-  programCredentialType: string;
-  programLength: string;
-  institutionType: string;
-  institutionLocationProvince: string;
-  studentPDStatus: boolean;
-}

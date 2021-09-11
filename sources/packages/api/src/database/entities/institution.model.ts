@@ -90,7 +90,7 @@ export class Institution extends RecordDataModel {
   @RelationId((institution: Institution) => institution.institutionType)
   institutionTypeId: number;
 
-  @ManyToOne(() => InstitutionType, { eager: false, cascade: true })
+  @ManyToOne(() => InstitutionType, { eager: false, cascade: false })
   @JoinColumn({
     name: "institution_type_id",
     referencedColumnName: ColumnNames.ID,

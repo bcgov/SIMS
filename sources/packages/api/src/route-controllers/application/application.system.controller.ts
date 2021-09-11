@@ -15,7 +15,6 @@ import { ApplicationDataDto } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  ProgramOfferingDto,
   UpdateProgramInfoDto,
   UpdateProgramInfoStatusDto,
   UpdateAssessmentStatusDto,
