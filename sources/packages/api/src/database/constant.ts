@@ -17,5 +17,6 @@ export const TableNames = {
   EducationProgramsOfferings: "education_programs_offerings",
   ProgramYear: "program_years",
   PIRDeniedReason: "pir_denied_reason",
+  MSFAANumbers: "msfaa_numbers",
   COEDeniedReason: "coe_denied_reasons",
 };

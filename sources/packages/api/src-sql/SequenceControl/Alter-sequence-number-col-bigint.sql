@@ -1,0 +1,1 @@
+ALTER TABLE sims.sequence_controls ALTER COLUMN sequence_number TYPE BIGINT

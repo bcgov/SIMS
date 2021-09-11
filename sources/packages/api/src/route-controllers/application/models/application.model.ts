@@ -109,14 +109,22 @@ export interface StudentApplicationDTO {
   status: string;
 }
 
+export interface ActiveApplicationSummaryDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  applicationId: number;
+  applicationStatus: string;
+  fullName: string;
+}
+
 export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
   pirStatus: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface ApplicationStatusToBeUpdatedDto {
@@ -128,8 +136,7 @@ export interface COESummaryDTO {
   studyEndPeriod: string;
   applicationId: number;
   coeStatus: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface ProgramYearOfApplicationDto {

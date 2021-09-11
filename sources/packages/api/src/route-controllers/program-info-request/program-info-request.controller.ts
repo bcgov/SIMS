@@ -242,10 +242,10 @@ export class ProgramInfoRequestController {
   }
 
   /**
-   * Get all application of a location in a institution
+   * Get all application of a location in an institution
    * with Program Info Request (PIR) status completed and required
    * @param locationId location that is completing the PIR.
-   * @returns student application list of a institution location
+   * @returns student application list of an institution location
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
@@ -262,8 +262,7 @@ export class ProgramInfoRequestController {
         studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
         studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
         pirStatus: eachApplication.pirStatus,
-        firstName: eachApplication.student.user.firstName,
-        lastName: eachApplication.student.user.lastName,
+        fullName: getUserFullName(eachApplication.student.user),
       };
     }) as PIRSummaryDTO[];
   }

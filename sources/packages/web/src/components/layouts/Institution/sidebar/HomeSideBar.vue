@@ -117,6 +117,20 @@ export default {
                     },
                   },
                   {
+                    label: "Active Applications",
+                    icon: "mdi-account-tie-outline",
+                    command: () => {
+                      router.push({
+                        name:
+                          InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+                        params: {
+                          locationId: data.id,
+                          locationName: data.name,
+                        },
+                      });
+                    },
+                  },
+                  {
                     label: "Program Info Requests",
                     icon: "mdi-account-tie-outline",
                     command: () => {

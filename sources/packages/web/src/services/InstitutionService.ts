@@ -16,6 +16,7 @@ import {
   UserAuth,
   InstitutionUserWithUserType,
   OptionItemDto,
+  ApplicationSummaryDTO,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AppConfigService } from "./AppConfigService";
@@ -129,16 +130,16 @@ export class InstitutionService {
   public async users(): Promise<InstitutionUserViewModel[]> {
     const response: InstitutionUserResDto[] = await ApiClient.Institution.getUsers();
     const viewModels: InstitutionUserViewModel[] = response.map(
-      institutionUser => {
+      (institutionUser) => {
         const roleArray = institutionUser.authorizations
-          .map(auth => auth.authType.role || "")
-          .filter(role => role !== "");
+          .map((auth) => auth.authType.role || "")
+          .filter((institutionUserRole) => institutionUserRole !== "");
         const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
         const locationArray = institutionUser.authorizations
-          .map(auth => auth.location?.name || "")
-          .filter(loc => loc !== "");
+          .map((auth) => auth.location?.name || "")
+          .filter((loc) => loc !== "");
         const userType = institutionUser.authorizations
-          .map(auth => auth.authType.type)
+          .map((auth) => auth.authType.type)
           .join(" ");
         const location = userType.toLowerCase().includes("admin")
           ? "All"
@@ -294,5 +295,11 @@ export class InstitutionService {
 
   public async checkIfExist(guid: string, headers: any): Promise<boolean> {
     return ApiClient.Institution.checkIfExist(guid, headers);
+  }
+
+  public async getActiveApplicationsSummary(
+    locationId: number,
+  ): Promise<ApplicationSummaryDTO[]> {
+    return ApiClient.Institution.getActiveApplicationsSummary(locationId);
   }
 }

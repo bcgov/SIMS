@@ -13,6 +13,7 @@ import {
   WorkflowService,
   KeycloakService,
   TokensService,
+  MSFAANumberService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -39,6 +40,7 @@ describe("StudentController", () => {
         KeycloakService,
         ConfigService,
         TokensService,
+        MSFAANumberService,
         createMockedJwtService(),
       ],
       controllers: [StudentController],

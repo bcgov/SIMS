@@ -8,10 +8,11 @@ import { QueryRunner } from "typeorm";
  * It is useful to be defined before the execution of some transaction to handle
  * the worst-case scenario where the commit/rollback was not executed due to a
  * possible catastrophic failure.
- * @param queryRunner
- * @param seconds
+ * @param queryRunner Typeorm query runner executing the operation.
+ * @param seconds amount of seconds before the transaction is released in
+ * case it is idle.
  */
-export async function configureIdleTransactionSessionSimeout(
+export async function configureIdleTransactionSessionTimeout(
   queryRunner: QueryRunner,
   seconds: number,
 ): Promise<void> {

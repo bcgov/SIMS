@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { configureIdleTransactionSessionSimeout } from "../../utilities/database";
 import { Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { SequenceControl } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { configureIdleTransactionSessionTimeout } from "../../utilities/database";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -30,8 +30,10 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
    * to the database, a process can be executed in the middle, making it possible that
    * the number on database only be incremented if the process in the middle
    * was successfully  executed.
-   * @param sequenceName
-   * @param process
+   * @param sequenceName name of the sequence to be incremented.
+   * @param process process to be executed. Depending on the process
+   * to be executed, in case of an error happen, the sequence could not be
+   * consumed in case of failure.
    */
   public async consumeNextSequence(
     sequenceName: string,
@@ -39,7 +41,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
   ) {
     this.logger.log("Checking next sequence available...");
     const queryRunner = this.connection.createQueryRunner();
-    await configureIdleTransactionSessionSimeout(
+    await configureIdleTransactionSessionTimeout(
       queryRunner,
       TRANSACTION_IDLE_TIMEOUT_SECONDS,
     );
@@ -63,20 +65,25 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       if (!sequenceRecord) {
         sequenceRecord = new SequenceControl();
         sequenceRecord.sequenceName = sequenceName;
-        sequenceRecord.sequenceNumber = 0;
+        sequenceRecord.sequenceNumber = "0";
       }
 
       // At this moment it is safe to increment the number because
       // the record with the corresponding sequence name is locked.
-      const nextSequenceNumber = sequenceRecord.sequenceNumber + 1;
+      // Note that the sequenceRecord.sequenceNumber is a string due to the
+      // Typeorm/javascript way to map a bigint. So, the value must be converted
+      // to a number before it is incremented.
+      const nextSequenceNumber = +sequenceRecord.sequenceNumber + 1;
       // Waits for the external process be executed.
       this.logger.log(
         `Executing process using sequence number ${nextSequenceNumber}`,
       );
+      // Even the sequence number being represented as a bigint in Postgres here
+      // we are assuming that the max value will not go beyond the number safe limit.
       await process(nextSequenceNumber);
       // If the external process was successfully execute
       // update the new sequence number to the database.
-      sequenceRecord.sequenceNumber = nextSequenceNumber;
+      sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
       this.logger.log("Persisting new sequence number to database...");
       await queryRunner.manager.save(sequenceRecord);
       await queryRunner.commitTransaction();
