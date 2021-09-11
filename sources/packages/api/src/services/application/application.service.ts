@@ -321,16 +321,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application;
   }
 
+  /**
+   * get student application details with the application Id.
+   * @param applicationId student application id .
+   * @returns student Application Details.
+   */
   async getApplicationById(applicationId: number): Promise<Application> {
-    const application = this.repo
-      .createQueryBuilder("application")
-      .select(["application", "programYear.programYear"])
-      .innerJoin("application.programYear", "programYear")
-      .where("programYear.active = true")
-      .andWhere("application.id = :applicationId", {
-        applicationId,
-      });
-    return application.getOne();
+    return this.repo.findOne(applicationId, {
+      relations: [
+        "offering",
+        "pirProgram",
+        "location",
+        "student",
+        "programYear",
+      ],
+    });
   }
 
   async updateAssessmentInApplication(
@@ -583,20 +588,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.save(application);
   }
 
-  /**
-   * Gets the offering associated with an application.
-   * @param applicationId application id.
-   * @returns offering associated with an application or null
-   * when the application does not exists or there is no
-   * offering associated with it at this time.
-   */
-  async getApplicationDetailsByApplicationId(
-    applicationId: number,
-  ): Promise<Application> {
-    return this.repo.findOne(applicationId, {
-      relations: ["offering", "pirProgram", "location", "student"],
-    });
-  }
   /**
    * get applications of a institution location
    * with PIR status required and completed.

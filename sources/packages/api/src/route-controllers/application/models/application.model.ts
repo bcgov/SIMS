@@ -30,6 +30,39 @@ export interface GetApplicationDataDto {
   applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: Date;
 }
+
+export interface ApplicationOfferingDetails {
+  id: number;
+  studyStartDate: Date;
+  studyEndDate: Date;
+  breakStartDate: Date;
+  breakEndDate: Date;
+  actualTuitionCosts: number;
+  programRelatedCosts: number;
+  mandatoryFees: number;
+  exceptionalExpenses: number;
+  tuitionRemittanceRequestedAmount: number;
+  offeringDelivered: string;
+  offeringIntensity: string;
+}
+
+export interface ApplicationProgramDetails {
+  programCredentialType: string;
+  programLength: string;
+}
+
+export interface ApplicationInstitutionDetails {
+  institutionType: string;
+}
+
+export interface ApplicationLocationDetails {
+  institutionLocationProvince: string;
+}
+
+export interface ApplicationStudentDetails {
+  studentPDStatus: boolean;
+}
+
 export interface ApplicationDataDto {
   /**
    * Application dynamic data.
@@ -39,6 +72,31 @@ export interface ApplicationDataDto {
    * Program Year is added to integrate the application in camunda workflows
    */
   programYear: string;
+
+  /**
+   * Offering details fro student application
+   */
+  offering: ApplicationOfferingDetails;
+
+  /**
+   * Program details fro student application
+   */
+  program: ApplicationProgramDetails;
+
+  /**
+   * Institution details fro student application
+   */
+  institution: ApplicationInstitutionDetails;
+
+  /**
+   * Location details fro student application
+   */
+  location: ApplicationLocationDetails;
+
+  /**
+   * Student details fro student application
+   */
+  student: ApplicationStudentDetails;
 }
 
 export interface StudentApplicationDTO {

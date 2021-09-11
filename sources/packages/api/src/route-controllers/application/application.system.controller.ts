@@ -25,7 +25,7 @@ import {
 
 /**
  * Allow system access to the application data.
- * System access will give the ability to request acess from any
+ * System access will give the ability to request access from any
  * student data. This is required for external systems (e.g. workflow)
  * to process and have access to all data as needed.
  */
@@ -53,6 +53,38 @@ export class ApplicationSystemController {
     return {
       data: application.data,
       programYear: application.programYear.programYear,
+      offering: {
+        id: application.offering.id,
+        studyStartDate: application.offering.studyStartDate,
+        studyEndDate: application.offering.studyEndDate,
+        breakStartDate: application.offering.breakStartDate,
+        breakEndDate: application.offering.breakEndDate,
+        actualTuitionCosts: application.offering.actualTuitionCosts,
+        programRelatedCosts: application.offering.programRelatedCosts,
+        mandatoryFees: application.offering.mandatoryFees,
+        exceptionalExpenses: application.offering.exceptionalExpenses,
+        tuitionRemittanceRequestedAmount:
+          application.offering.tuitionRemittanceRequestedAmount,
+        offeringDelivered: application.offering.offeringDelivered,
+        offeringIntensity: application.offering.offeringIntensity,
+      },
+      program: {
+        /**
+         * for now - if credential type is `other`, then the other is send to camunda
+         * update the below code for 'other' credential type, for future requirements
+         */
+        programCredentialType: application.pirProgram.credentialType,
+        programLength: application.pirProgram.completionYears,
+      },
+      institution: {
+        institutionType: application.location.institution.institutionType.name,
+      },
+      location: {
+        institutionLocationProvince: application.location.data.address.province,
+      },
+      student: {
+        studentPDStatus: application.student.studentPDVerified,
+      },
     };
   }
 
@@ -206,51 +238,5 @@ export class ApplicationSystemController {
         "Not able to update the overall Application status with provided data.",
       );
     }
-  }
-
-  /**
-   * Gets the offering associated with an application.
-   * @param applicationId application id.
-   * @returns offering associated with an application or
-   * a HTTP 404 when the application does not exists or
-   * there is no offering associated with it at this time.
-   */
-  @Get(":id/offering")
-  async getApplicationDetails(
-    @Param("id") applicationId: number,
-  ): Promise<ProgramOfferingDto> {
-    const application =
-      await this.applicationService.getApplicationDetailsByApplicationId(
-        applicationId,
-      );
-
-    if (!application) {
-      throw new NotFoundException(
-        `Not able to find the details for application ${applicationId}.`,
-      );
-    }
-
-    return {
-      id: application.offering.id,
-      studyStartDate: application.offering.studyStartDate,
-      studyEndDate: application.offering.studyEndDate,
-      breakStartDate: application.offering.breakStartDate,
-      breakEndDate: application.offering.breakEndDate,
-      actualTuitionCosts: application.offering.actualTuitionCosts,
-      programRelatedCosts: application.offering.programRelatedCosts,
-      mandatoryFees: application.offering.mandatoryFees,
-      exceptionalExpenses: application.offering.exceptionalExpenses,
-      tuitionRemittanceRequestedAmount:
-        application.offering.tuitionRemittanceRequestedAmount,
-      offeringDelivered: application.offering.offeringDelivered,
-      offeringIntensity: application.offering.offeringIntensity,
-      // for now - if credential type is `other`, then the other is send to camunda
-      // update the below code for 'other' credential type, for future requirements
-      programCredentialType: application.pirProgram.credentialType,
-      programLength: application.pirProgram.completionYears,
-      institutionType: application.location.institution.institutionType.name,
-      institutionLocationProvince: application.location.data.address.province,
-      studentPDStatus: application.student.studentPDVerified,
-    };
   }
 }
