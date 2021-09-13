@@ -188,7 +188,10 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       AppConfigService.shared
         .initAuthService(ClientIdType.STUDENT)
         .then(() => {
-          const status = RouteHelper.authStatus(ClientIdType.STUDENT, to.path);
+          const status = RouteHelper.getNavigationAuthStatus(
+            ClientIdType.STUDENT,
+            to.path,
+          );
           switch (status) {
             case AuthStatus.Continue:
               next();

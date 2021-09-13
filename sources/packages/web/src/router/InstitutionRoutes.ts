@@ -412,7 +412,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       AppConfigService.shared
         .initAuthService(ClientIdType.INSTITUTION)
         .then(() => {
-          const status = RouteHelper.authStatus(
+          const status = RouteHelper.getNavigationAuthStatus(
             ClientIdType.INSTITUTION,
             to.path,
           );

@@ -40,7 +40,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       AppConfigService.shared
         .initAuthService(ClientIdType.AEST)
         .then(() => {
-          const status = RouteHelper.authStatus(ClientIdType.AEST, to.path);
+          const status = RouteHelper.getNavigationAuthStatus(
+            ClientIdType.AEST,
+            to.path,
+          );
           console.log(status);
           switch (status) {
             case AuthStatus.Continue:
