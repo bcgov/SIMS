@@ -51,6 +51,16 @@ export interface StudentApplicationDTO {
   status: string;
 }
 
+export interface ActiveApplicationSummaryDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  applicationId: number;
+  applicationStatus: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;

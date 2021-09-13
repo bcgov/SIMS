@@ -603,6 +603,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application?.offering;
   }
   /**
+   * Get all active applications of a institution location
+   * with application_status is completed
+   * @param locationId location id .
+   * @returns Student Active Application list.
+   */
+  async getActiveApplications(locationId: number): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.applicationStatus",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student",
+      ])
+      .leftJoin("application.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus is not null")
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.completed,
+      })
+      .orderBy("application.applicationNumber", "DESC")
+      .getMany();
+  }
+  /**
    * get applications of a institution location
    * with PIR status required and completed.
    * @param locationId location id .

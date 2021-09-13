@@ -34,7 +34,10 @@ import {
   ProgramInfoStatus,
   Application,
 } from "../../database/entities";
-import { PIRSummaryDTO } from "../application/models/application.model";
+import {
+  PIRSummaryDTO,
+  ActiveApplicationSummaryDTO,
+} from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -239,6 +242,32 @@ export class ProgramInfoRequestController {
         "Error while completing a Program Information Request (PIR).",
       );
     }
+  }
+  /**
+   * Get all active application of a location in a institution
+   * with application_status is completed
+   * @param locationId location that is completing the PIR.
+   * @returns Student active application list of a institution location
+   */
+  @HasLocationAccess("locationId")
+  @Get(":locationId/active-applications")
+  async getActiveApplications(
+    @Param("locationId") locationId: number,
+  ): Promise<ActiveApplicationSummaryDTO[]> {
+    const applications = await this.applicationService.getActiveApplications(
+      locationId,
+    );
+    return applications.map((eachApplication: Application) => {
+      return {
+        applicationNumber: eachApplication.applicationNumber,
+        applicationId: eachApplication.id,
+        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
+        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
+        applicationStatus: eachApplication.applicationStatus,
+        firstName: eachApplication.student.user.firstName,
+        lastName: eachApplication.student.user.lastName,
+      };
+    }) as ActiveApplicationSummaryDTO[];
   }
 
   /**

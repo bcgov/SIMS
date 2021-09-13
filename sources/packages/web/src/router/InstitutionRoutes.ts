@@ -7,6 +7,7 @@ import ManageLocation from "../views/institution/ManageLocations.vue";
 import LocationPrograms from "../views/institution/locations/programs/LocationPrograms.vue";
 import LocationUsers from "../views/institution/LocationUsers.vue";
 import LocationProgramInfoRequestSummary from "../views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
+import ActiveApplicationsSummary from "../views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
 import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
@@ -124,6 +125,25 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
         components: {
           default: LocationProgramView,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: `${AppRoutes.ActiveApplicationsSummary}`,
+        name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+        components: {
+          default: ActiveApplicationsSummary,
           sidebar: InstitutionHomeSideBar,
         },
         props: true,
@@ -441,7 +461,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             }
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });
