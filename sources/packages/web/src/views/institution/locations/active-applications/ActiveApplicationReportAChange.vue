@@ -2,7 +2,7 @@
   <Card class="p-m-4">
     <template #content>
       <h1 class="d-flex justify-content-center">
-        Report A change - Work in Progress
+        Report a change - Work in Progress
       </h1>
       <formio
         formName="reportachange"
