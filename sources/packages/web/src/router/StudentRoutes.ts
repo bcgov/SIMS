@@ -22,6 +22,7 @@ import {
 import { AppConfigService } from "../services/AppConfigService";
 import { AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
+import { RouteHelper } from "@/helpers";
 
 export const studentRoutes: Array<RouteRecordRaw> = [
   {
@@ -187,10 +188,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       AppConfigService.shared
         .initAuthService(ClientIdType.STUDENT)
         .then(() => {
-          const status = AppConfigService.shared.authStatus({
-            type: ClientIdType.STUDENT,
-            path: to.path,
-          });
+          const status = RouteHelper.authStatus(ClientIdType.STUDENT, to.path);
           switch (status) {
             case AuthStatus.Continue:
               next();
@@ -216,7 +214,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
           throw e;
         });

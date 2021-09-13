@@ -7,7 +7,9 @@ export enum AppIDPType {
 }
 
 export interface ApplicationToken extends KeycloakTokenParsed {
-  IDP: AppIDPType;
   userName: string;
-  idp_user_name?: string;
+  /**
+   * Authorized Party.
+   */
+  azp: string;
 }

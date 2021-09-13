@@ -1,5 +1,7 @@
+/**
+ * Student Route Names
+ */
 export const StudentRoutesConst = {
-  //Student
   APP_STUDENT: Symbol(),
   STUDENT_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
@@ -19,8 +21,11 @@ export const StudentRoutesConst = {
   STUDENT_APPLICATION_SUMMARY: Symbol(),
   STUDENT_APPLICATION_DETAILS: Symbol(),
 };
+
+/**
+ * Institution Routes Names
+ */
 export const InstitutionRoutesConst = {
-  //Institution
   APP_INSTITUTION: Symbol(),
   INSTITUTION_DASHBOARD: Symbol(),
   LOGIN: Symbol(),
@@ -31,7 +36,7 @@ export const InstitutionRoutesConst = {
   MANAGE_LOCATIONS: Symbol(),
   ADD_INSTITUTION_LOCATION: Symbol(),
   EDIT_INSTITUTION_LOCATION: Symbol(),
-  MANAGE_DESGINATION: Symbol(),
+  MANAGE_DESIGNATION: Symbol(),
   MANAGE_USERS: Symbol(),
   VIEW_LOCATION_PROGRAMS: Symbol(),
   EDIT_LOCATION_PROGRAMS: Symbol(),
@@ -49,6 +54,18 @@ export const InstitutionRoutesConst = {
   UNKNOWN_LOGIN: Symbol(),
 };
 
+/**
+ * AEST Routes Names
+ */
+export const AESTRoutesConst = {
+  APP_AEST: Symbol(),
+  HOME: Symbol(),
+  LOGIN: Symbol(),
+};
+
+/**
+ * Shred Routes Names
+ */
 export const SharedRouteConst = {
   PAGE_NOT_FOUND: Symbol(),
   FORBIDDEN_USER: Symbol(),

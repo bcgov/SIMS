@@ -63,6 +63,7 @@ export default async function(
   if (keycloak) {
     return keycloak;
   }
+
   keycloak = Keycloak({
     url: config.authConfig.url,
     realm: config.authConfig.realm,
@@ -94,8 +95,8 @@ export default async function(
         } //Institution switch case ends
       } //Switch block ends
     } //KeyCloak Authenticate = true
-  } catch (excp) {
-    console.error(`KC - init excp : ${excp} - ${type}`);
+  } catch (error) {
+    console.error(`Key Cloak - initialization exception: ${error} - ${type}`);
   }
   keycloak.onTokenExpired = () => {
     store.dispatch("auth/logout");

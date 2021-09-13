@@ -10,7 +10,7 @@ import LocationProgramInfoRequestSummary from "../views/institution/locations/pr
 import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
-import ManageDesgination from "../views/institution/ManageDesgination.vue";
+import ManageDesignation from "../views/institution/ManageDesignation.vue";
 import InstitutionUserDetails from "../views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
@@ -28,6 +28,7 @@ import LocationProgramView from "../views/institution/locations/programs/Locatio
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
 import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+import { RouteHelper } from "@/helpers";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -246,9 +247,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.ManageInstitutionDesignation,
-        name: InstitutionRoutesConst.MANAGE_DESGINATION,
+        name: InstitutionRoutesConst.MANAGE_DESIGNATION,
         components: {
-          default: ManageDesgination,
+          default: ManageDesignation,
           sidebar: ManageInstitutionSideBar,
         },
         meta: {
@@ -411,10 +412,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       AppConfigService.shared
         .initAuthService(ClientIdType.INSTITUTION)
         .then(() => {
-          const status = AppConfigService.shared.authStatus({
-            type: ClientIdType.INSTITUTION,
-            path: to.path,
-          });
+          const status = RouteHelper.authStatus(
+            ClientIdType.INSTITUTION,
+            to.path,
+          );
           switch (status) {
             case AuthStatus.Continue:
               next();

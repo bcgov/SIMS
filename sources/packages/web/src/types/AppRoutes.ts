@@ -1,13 +1,18 @@
 export enum AppRoutes {
+  // Student
   StudentRoot = "/student",
-  InstitutionRoot = "/institution",
   StudentDashboard = "student-dashboard",
+  StudentApplication = "application-form/:selectedForm/programYear/:programYearId/application/:id",
+  StudentApplicationView = "application-form/:selectedForm/programYear/:programYearId/application/:id/:readOnly",
+  StudentApplicationSummary = "my-application-summary",
+  StudentApplicationDetails = "application/:id",
+  Assessment = "application/:applicationId/assessment",
+  // Institution
+  InstitutionRoot = "/institution",
   InstitutionDashboard = "institution-dashboard",
   InstitutionProfile = "institution-profile",
   InstitutionUserProfile = "institution-user-profile",
   InstitutionProfileEdit = "institution-profile/edit",
-  Login = "login",
-  ForbiddenUser = "/forbidden-user",
   LoginWithBusinessBCeID = "login/business-bceid",
   InstitutionManageLocations = "manage-locations",
   AddInstitutionLocation = "add-institution-location",
@@ -24,13 +29,14 @@ export enum AppRoutes {
   LocationCOESummary = "confirmation-of-enrollment/location/:locationId/summary",
   LocationCOEDetails = "confirmation-of-enrollment/location/:locationId/application/:applicationId",
   LocationProgramInfoRequestEdit = "program-info-request/location/:locationId/application/:applicationId",
-  ManageInstitutionDesignation = "manage-desgination",
+  ManageInstitutionDesignation = "manage-designation",
   InstitutionManageUsers = "manage-users",
+  // AEST
+  AESTRoot = "/aest",
+  AESTHome = "home",
+  // Shared
+  Login = "login",
   DisabledUser = "login/disabled-user",
   UnknownUser = "login/unknown-user",
-  StudentApplication = "application-form/:selectedForm/programYear/:programYearId/application/:id",
-  StudentApplicationView = "application-form/:selectedForm/programYear/:programYearId/application/:id/:readOnly",
-  StudentApplicationSummary = "my-application-summary",
-  StudentApplicationDetails = "application/:id",
-  Assessment = "application/:applicationId/assessment",
+  ForbiddenUser = "/forbidden-user",
 }

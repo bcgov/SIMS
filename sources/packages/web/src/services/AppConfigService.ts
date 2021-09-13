@@ -2,8 +2,7 @@ import AuthService from "./AuthService";
 import KeyCloak from "keycloak-js";
 import ApiClient from "../services/http/ApiClient";
 import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
-import { AppIDPType, ApplicationToken, AppRoutes, AuthStatus } from "../types";
-import { RouteHelper } from "../helpers";
+import { ApplicationToken } from "../types";
 
 export class AppConfigService {
   // Share Instance
@@ -138,54 +137,6 @@ export class AppConfigService {
       }
     } else {
       throw new Error("No auth unable to logout");
-    }
-  }
-
-  // TODO: Remove this to RouteHelper
-  authStatus(options: { type: ClientIdType; path: string }): AuthStatus {
-    if (options.type === this._authClientType) {
-      const auth = this.authService?.authenticated || false;
-      if (auth) {
-        let validUser = false;
-        if (this.authService?.tokenParsed) {
-          const token = this.authService?.tokenParsed as ApplicationToken;
-          switch (options.type) {
-            case ClientIdType.INSTITUTION: {
-              if (token.IDP === AppIDPType.BCeID) {
-                validUser = true;
-              }
-              break;
-            }
-            case ClientIdType.STUDENT: {
-              if (token.IDP === AppIDPType.BCSC) {
-                validUser = true;
-              }
-              break;
-            }
-            default:
-              validUser = false;
-          }
-        }
-        if (!validUser) {
-          return AuthStatus.ForbiddenUser;
-        }
-        if (RouteHelper.isRootRoute(options.path, options.type)) {
-          return AuthStatus.RedirectHome;
-        }
-        if (options.path.includes(AppRoutes.Login)) {
-          return AuthStatus.RedirectHome;
-        }
-        return AuthStatus.Continue;
-      } else {
-        //If not authenticated through authservice, ie. auth=false
-        if (options.path.includes(AppRoutes.Login)) {
-          return AuthStatus.Continue;
-        }
-        return AuthStatus.RequiredLogin;
-      }
-    } else {
-      //If client type is not as expected from the list
-      return AuthStatus.ForbiddenUser;
     }
   }
 }

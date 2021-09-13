@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { studentRoutes } from "./StudentRoutes";
 import { institutionRoutes } from "./InstitutionRoutes";
+import { aestRoutes } from "./AESTRoutes";
 import { sharedRoutes } from "./SharedRoutes";
 import { AppConfigService } from "../services/AppConfigService";
 
@@ -14,6 +15,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 const routes: Array<RouteRecordRaw> = [
   ...studentRoutes,
   ...institutionRoutes,
+  ...aestRoutes,
   ...sharedRoutes,
 ];
 
