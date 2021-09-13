@@ -63,7 +63,7 @@ export class InstitutionLocationsController extends BaseController {
       await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
-        "Not able to find a institution associated with the current user name.",
+        "Not able to find an institution associated with the current user name.",
       );
     }
 
@@ -108,7 +108,7 @@ export class InstitutionLocationsController extends BaseController {
     }
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
-        "Not able to find a institution associated with the current user name.",
+        "Not able to find an associated with the current user name.",
       );
     }
     // If the data is valid the location is updated to SIMS DB.

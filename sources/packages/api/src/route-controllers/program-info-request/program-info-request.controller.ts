@@ -244,10 +244,10 @@ export class ProgramInfoRequestController {
     }
   }
   /**
-   * Get all active application of a location in a institution
+   * Get all active application of a location in an institution
    * with application_status is completed
    * @param locationId location that is completing the PIR.
-   * @returns Student active application list of a institution location
+   * @returns Student active application list of an institution location
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications")
@@ -271,10 +271,10 @@ export class ProgramInfoRequestController {
   }
 
   /**
-   * Get all application of a location in a institution
+   * Get all application of a location in an institution
    * with Program Info Request (PIR) status completed and required
    * @param locationId location that is completing the PIR.
-   * @returns student application list of a institution location
+   * @returns student application list of an institution location
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")

@@ -47,7 +47,7 @@ export class ConfirmationOfEnrollmentController {
   ) {}
 
   /**
-   * Get all application of a location in a institution
+   * Get all application of a location in an institution
    * with Confirmation Of Enrollment(COE) status completed and required
    * @param locationId location that is completing the COE.
    * @returns student application list of an institution location

@@ -603,7 +603,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application?.offering;
   }
   /**
-   * Get all active applications of a institution location
+   * Get all active applications of an institution location
    * with application_status is completed
    * @param locationId location id .
    * @returns Student Active Application list.
@@ -631,7 +631,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getMany();
   }
   /**
-   * get applications of a institution location
+   * get applications of an institution location
    * with PIR status required and completed.
    * @param locationId location id .
    * @returns student Application list.
@@ -701,7 +701,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * get applications of a institution location
+   * get applications of an institution location
    * with COE status required and completed.
    * @param locationId location id .
    * @returns student Application list.
