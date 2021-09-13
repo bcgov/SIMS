@@ -109,11 +109,8 @@ export default {
     });
 
     const getApplicationStatusColorClass = (status: string) => {
-      switch (status) {
-        case ApplicationStatus.completed:
-          return "bg-success text-white";
-        default:
-          return "";
+      if (ApplicationStatus.completed === status) {
+        return "bg-success text-white";
       }
     };
 
