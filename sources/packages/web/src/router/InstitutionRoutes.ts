@@ -8,6 +8,7 @@ import LocationPrograms from "../views/institution/locations/programs/LocationPr
 import LocationUsers from "../views/institution/LocationUsers.vue";
 import LocationProgramInfoRequestSummary from "../views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "../views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
+import ActiveApplicationEdit from "../views/institution/locations/active-applications/ActiveApplicationReportAChange.vue";
 import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
@@ -140,10 +141,29 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: `${AppRoutes.ActiveApplicationsSummary}`,
+        path: AppRoutes.ActiveApplicationsSummary,
         name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
         components: {
           default: ActiveApplicationsSummary,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: true,
+        meta: {
+          clientType: ClientIdType.INSTITUTION,
+          checkAllowedLocation: {
+            userTypes: [
+              InstitutionUserTypes.admin,
+              InstitutionUserTypes.locationManager,
+              InstitutionUserTypes.user,
+            ],
+          },
+        },
+      },
+      {
+        path: AppRoutes.ActiveApplicationEdit,
+        name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
+        components: {
+          default: ActiveApplicationEdit,
           sidebar: InstitutionHomeSideBar,
         },
         props: true,

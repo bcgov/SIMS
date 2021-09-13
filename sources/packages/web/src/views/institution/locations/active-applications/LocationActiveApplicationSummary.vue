@@ -47,8 +47,8 @@
                 plain
                 color="primary"
                 outlined
-                @click="goToViewApplication(slotProps.data.applicationId)"
-                >view</v-btn
+                @click="goToReportAChange(slotProps.data.applicationId)"
+                >Report a change</v-btn
               >
             </template>
           </Column>
@@ -83,9 +83,9 @@ export default {
     const { dateString } = useFormatters();
     const applications = ref([] as ApplicationSummaryDTO[]);
 
-    const goToViewApplication = (applicationId: number) => {
+    const goToReportAChange = (applicationId: number) => {
       router.push({
-        name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_VIEW,
+        name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
         params: { locationId: props.locationId, applicationId },
       });
     };
@@ -120,7 +120,7 @@ export default {
     return {
       applications,
       dateString,
-      goToViewApplication,
+      goToReportAChange,
       getApplicationStatusColorClass,
     };
   },

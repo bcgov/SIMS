@@ -43,7 +43,7 @@ export const InstitutionRoutesConst = {
   COE_SUMMARY: Symbol(),
   COE_EDIT: Symbol(),
   ACTIVE_APPLICATIONS_SUMMARY: Symbol(),
-  ACTIVE_APPLICATIONS_VIEW: Symbol(),
+  ACTIVE_APPLICATION_EDIT: Symbol(),
   PROGRAM_INFO_REQUEST_EDIT: Symbol(),
   LOCATION_STUDENTS: Symbol(),
   LOCATION_USERS: Symbol(),
