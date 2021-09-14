@@ -5,3 +5,4 @@ export * from "./location-fake";
 export * from "./student-fake";
 export * from "./user-fake";
 export * from "./education-program-offering-fake";
+export * from "./msfaa-number-fake";

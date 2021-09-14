@@ -26,6 +26,7 @@ import {
   SequenceControlService,
   InstitutionTypeService,
   PIRDeniedReasonService,
+  MSFAANumberService,
   COEDeniedReasonService,
 } from "./services";
 import {
@@ -98,6 +99,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     SequenceControlService,
     InstitutionTypeService,
     PIRDeniedReasonService,
+    MSFAANumberService,
     COEDeniedReasonService,
   ],
 })

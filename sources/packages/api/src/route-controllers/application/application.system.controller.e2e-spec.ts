@@ -11,6 +11,7 @@ import {
   ConfigService,
   EducationProgramOfferingService,
   KeycloakService,
+  MSFAANumberService,
   SequenceControlService,
   StudentFileService,
   TokensService,
@@ -65,6 +66,7 @@ describe("Test system-access/application Controller", () => {
         KeycloakService,
         ConfigService,
         TokensService,
+        MSFAANumberService,
         createMockedJwtService(),
       ],
     }).compile();

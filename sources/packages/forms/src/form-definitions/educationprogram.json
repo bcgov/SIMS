@@ -166,7 +166,7 @@
       "hidden": false,
       "hideLabel": false,
       "showWordCount": false,
-      "showCharCount": false,
+      "showCharCount": true,
       "mask": false,
       "autofocus": false,
       "spellcheck": true,
@@ -195,7 +195,7 @@
         "customPrivate": false,
         "json": "",
         "minLength": "",
-        "maxLength": "",
+        "maxLength": 100,
         "strictDateValidation": false,
         "multiple": false,
         "unique": false
@@ -227,7 +227,7 @@
       "refreshOn": "",
       "dataGridLabel": false,
       "inputType": "text",
-      "id": "er15wh",
+      "id": "egv4cp",
       "defaultValue": ""
     },
     {
@@ -1035,7 +1035,7 @@
         "eq": "",
         "json": ""
       },
-      "customConditional": "",
+      "customConditional": "show=data.isBCPrivate;",
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -1071,7 +1071,7 @@
         "include": "score",
         "threshold": 0.3
       },
-      "id": "ey3qq9c",
+      "id": "eyb8cgf",
       "defaultValue": ""
     },
     {
@@ -1259,7 +1259,7 @@
       "dataGridLabel": false
     },
     {
-      "label": "Will the students earn the same number of credits int he same time period as students in other StudentAid BC eligible programs delivered on site",
+      "label": "Will the students earn the same number of credits int he same time period as students in other StudentAid BC eligible programs delivered on site?",
       "labelPosition": "top",
       "optionsLabelPosition": "right",
       "description": "",
@@ -1298,6 +1298,7 @@
       "allowCalculateOverride": false,
       "validate": {
         "required": true,
+        "onlyAvailableItems": true,
         "customMessage": "",
         "custom": "",
         "customPrivate": false,
@@ -1335,6 +1336,7 @@
       "multiple": false,
       "unique": false,
       "refreshOn": "",
+      "dataGridLabel": false,
       "widget": null,
       "validateOn": "change",
       "showCharCount": false,
@@ -1342,12 +1344,11 @@
       "allowMultipleMasks": false,
       "inputType": "radio",
       "fieldSet": false,
-      "id": "ekzol8r",
-      "defaultValue": "",
-      "dataGridLabel": false
+      "id": "eopxt4ic",
+      "defaultValue": ""
     },
     {
-      "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions",
+      "label": "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
       "labelPosition": "top",
       "optionsLabelPosition": "right",
       "description": "",
@@ -1386,6 +1387,7 @@
       "allowCalculateOverride": false,
       "validate": {
         "required": true,
+        "onlyAvailableItems": false,
         "customMessage": "",
         "custom": "",
         "customPrivate": false,
@@ -1400,7 +1402,7 @@
       "properties": {},
       "conditional": {
         "show": true,
-        "when": "willTheStudentsEarnTheSameNumberOfCreditsIntHeSameTimePeriodAsStudentsInOtherStudentAidBcEligibleProgramsDeliveredOnSite",
+        "when": "sameOnlineCreditsEarned",
         "eq": "no",
         "json": ""
       },
@@ -1423,6 +1425,7 @@
       "multiple": false,
       "unique": false,
       "refreshOn": "",
+      "dataGridLabel": false,
       "widget": null,
       "validateOn": "change",
       "showCharCount": false,
@@ -1430,9 +1433,87 @@
       "allowMultipleMasks": false,
       "inputType": "radio",
       "fieldSet": false,
-      "id": "eyg15is",
-      "defaultValue": "",
-      "dataGridLabel": false
+      "id": "e6qnwrk",
+      "defaultValue": ""
+    },
+    {
+      "label": "earnAcademicCreditsOtherInstitutionBanner",
+      "tag": "p",
+      "className": "alert alert-warning",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "<strong>Warning! This program is ineligible for earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions</strong><br/>\nStudents need to earn academic credits only in the same designated institution in the BC Transfer Guide.",
+      "refreshOnChange": false,
+      "customClass": "",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "earnAcademicCreditsOtherInstitutionBanner",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": true,
+        "when": "earnAcademicCreditsOtherInstitution",
+        "eq": "yes",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "defaultValue": null,
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "redrawOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "dbIndex": false,
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "widget": null,
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "allowCalculateOverride": false,
+      "encrypted": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "id": "e0eksi4"
     },
     {
       "label": "Program course load calculation is:",
@@ -1605,6 +1686,85 @@
       "id": "eezoqie",
       "defaultValue": null,
       "dataGridLabel": false
+    },
+    {
+      "label": "averageHoursStudyBanner",
+      "tag": "p",
+      "className": "alert alert-warning",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "<strong>Warning! This program is ineligible for less than 20 hours of study per week.</strong><br/>\nStudents need to have 20 or more hours of study per week.",
+      "refreshOnChange": false,
+      "customClass": "",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "averageHoursStudyBanner",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "show=data.averageHoursStudy<20;",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false,
+      "placeholder": "",
+      "prefix": "",
+      "suffix": "",
+      "multiple": false,
+      "defaultValue": null,
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "clearOnHide": true,
+      "refreshOn": "",
+      "redrawOn": "",
+      "dataGridLabel": false,
+      "labelPosition": "top",
+      "description": "",
+      "errorLabel": "",
+      "tooltip": "",
+      "hideLabel": false,
+      "tabindex": "",
+      "disabled": false,
+      "autofocus": false,
+      "dbIndex": false,
+      "customDefaultValue": "",
+      "calculateValue": "",
+      "calculateServer": false,
+      "widget": null,
+      "validateOn": "change",
+      "validate": {
+        "required": false,
+        "custom": "",
+        "customPrivate": false,
+        "strictDateValidation": false,
+        "multiple": false,
+        "unique": false
+      },
+      "allowCalculateOverride": false,
+      "encrypted": false,
+      "showCharCount": false,
+      "showWordCount": false,
+      "allowMultipleMasks": false,
+      "id": "exsmlv"
     },
     {
       "label": "Years required to completed this program",
@@ -1807,7 +1967,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "egqckc"
+      "id": "eigo6j"
     },
     {
       "label": "What are the admission requirements for this program?",
@@ -1849,6 +2009,7 @@
       "allowCalculateOverride": false,
       "validate": {
         "required": true,
+        "onlyAvailableItems": false,
         "customMessage": "",
         "custom": "",
         "customPrivate": false,
@@ -1886,6 +2047,7 @@
       "multiple": false,
       "unique": false,
       "refreshOn": "",
+      "dataGridLabel": false,
       "widget": null,
       "validateOn": "change",
       "showCharCount": false,
@@ -1893,9 +2055,8 @@
       "allowMultipleMasks": false,
       "inputType": "radio",
       "fieldSet": false,
-      "id": "ew9lf2u",
-      "defaultValue": "",
-      "dataGridLabel": false
+      "id": "ecv8b9e",
+      "defaultValue": ""
     },
     {
       "label": "Is the minimum age 19 and up?",
@@ -1995,7 +2156,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Warning!</strong> Some message",
+      "content": "<strong>Warning! This program is ineligible for StudentAid BC funding.</strong><br/>\nStudents need to be 19 and up.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -2034,6 +2195,7 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -2061,8 +2223,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "eplr6em",
-      "dataGridLabel": false
+      "id": "ey5d70q"
     },
     {
       "html": "<h3><span class=\"text-big\" style=\"color:#3498db;\">English as a Second Language (ESL) content</span></h3><p><strong>All students must have a minimum of high school diploma or equivalent</strong></p>",
@@ -2226,14 +2387,14 @@
     {
       "label": "ESL Error",
       "tag": "p",
-      "className": "alert alert-danger",
+      "className": "alert alert-warning",
       "attrs": [
         {
           "attr": "",
           "value": ""
         }
       ],
-      "content": "<strong>Error!</strong> This program is ineligible for StudentAid BC. ESL Cannot make up more than 20% of course content",
+      "content": "<strong>Warning! This program is ineligible for StudentAid BC funding.</strong><br/>\nESL Cannot make up more than 20% of course content.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -2272,6 +2433,7 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -2299,8 +2461,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e2ezz3",
-      "dataGridLabel": false
+      "id": "e5oqkkb"
     },
     {
       "html": "<h3><span class=\"text-big\" style=\"color:#3498db;\">Program partnerships</span></h3><p><strong>If any portion of this program is offered at a partner institution, that institution must also be designated at SABC. Designated institutions are listed in the \"Appy for a Loan\" section of the SABC website</strong></p>",
@@ -2552,14 +2713,14 @@
     {
       "label": "Join Program Error",
       "tag": "p",
-      "className": "alert alert-danger",
+      "className": "alert alert-warning",
       "attrs": [
         {
           "attr": "",
           "value": ""
         }
       ],
-      "content": "<strong>Error!</strong> This program is ineligible for Student Aid BC, All partner institutions must be designated by StudentAid BC",
+      "content": "<strong>Warning! This program is ineligible for StudentAid BC funding.</strong><br/>\nAll partner institutions must be designated by StudentAid BC.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -2598,6 +2759,7 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -2625,8 +2787,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e27ooyv",
-      "dataGridLabel": false
+      "id": "evjtmjo"
     },
     {
       "label": "Submit",
@@ -2719,7 +2880,7 @@
       "encrypted": false,
       "redrawOn": "",
       "customDefaultValue": "",
-      "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\") {\r\n  value = \"pending\";\r\n}\r\nelse {\r\n  value = \"approved\";\r\n}",
+      "calculateValue": "if (data.hasJointDesignatedInstitution === \"no\" || data.eslEligibility === \"20OrMore\" || \r\ndata.earnAcademicCreditsOtherInstitution==='yes' || data.averageHoursStudy<20 || \r\ndata.hasMinimunAge==='no') {\r\n  value = \"pending\";\r\n}\r\nelse {\r\n  value = \"approved\";\r\n}",
       "calculateServer": true,
       "key": "approvalStatus",
       "tags": [],
@@ -2745,6 +2906,7 @@
       "hidden": false,
       "clearOnHide": true,
       "refreshOn": "",
+      "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
       "errorLabel": "",
@@ -2775,8 +2937,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "em61g4k",
-      "dataGridLabel": false
+      "id": "eicgxyi"
     },
     {
       "label": "applicationId",
@@ -2855,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-08-09T18:39:26.028Z"
+  "modified": "2021-09-10T17:47:58.611Z"
 }
