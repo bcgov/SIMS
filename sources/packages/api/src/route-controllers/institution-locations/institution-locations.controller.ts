@@ -34,6 +34,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { OptionItem } from "../../types";
 import { ActiveApplicationSummaryDTO } from "../application/models/application.model";
+import { getUserFullName } from "../../utilities/auth-utils";
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
@@ -189,8 +190,7 @@ export class InstitutionLocationsController extends BaseController {
         studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
         studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
         applicationStatus: eachApplication.applicationStatus,
-        firstName: eachApplication.student.user.firstName,
-        lastName: eachApplication.student.user.lastName,
+        fullName: getUserFullName(eachApplication.student.user),
       };
     }) as ActiveApplicationSummaryDTO[];
   }

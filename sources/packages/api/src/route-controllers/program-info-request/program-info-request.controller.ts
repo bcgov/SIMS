@@ -262,8 +262,7 @@ export class ProgramInfoRequestController {
         studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
         studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
         pirStatus: eachApplication.pirStatus,
-        firstName: eachApplication.student.user.firstName,
-        lastName: eachApplication.student.user.lastName,
+        fullName: getUserFullName(eachApplication.student.user),
       };
     }) as PIRSummaryDTO[];
   }

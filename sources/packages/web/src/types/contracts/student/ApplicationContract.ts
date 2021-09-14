@@ -72,6 +72,5 @@ export interface ApplicationSummaryDTO {
   studyEndPeriod: string;
   applicationId: number;
   coeStatus: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }

@@ -11,12 +11,9 @@
           :paginator="true"
           :rows="10"
         >
-          <Column field="firstName" header="Name">
+          <Column field="fullName" header="Name">
             <template #body="slotProps">
-              <span
-                >{{ slotProps.data.firstName }}
-                {{ slotProps.data.lastName }}</span
-              >
+              <span>{{ slotProps.data.fullName }}</span>
             </template>
           </Column>
           <Column field="studyStartPeriod" header="Study Period">

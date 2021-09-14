@@ -67,8 +67,7 @@ export class ConfirmationOfEnrollmentController {
         studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
         studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
         coeStatus: eachApplication.coeStatus,
-        firstName: eachApplication.student.user.firstName,
-        lastName: eachApplication.student.user.lastName,
+        fullName: getUserFullName(eachApplication.student.user),
       };
     }) as COESummaryDTO[];
   }
