@@ -47,7 +47,7 @@ export class ConfirmationOfEnrollmentController {
   ) {}
 
   /**
-   * Get all application of a location in a institution
+   * Get all application of a location in an institution
    * with Confirmation Of Enrollment(COE) status completed and required
    * @param locationId location that is completing the COE.
    * @returns student application list of an institution location
@@ -67,8 +67,7 @@ export class ConfirmationOfEnrollmentController {
         studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
         studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
         coeStatus: eachApplication.coeStatus,
-        firstName: eachApplication.student.user.firstName,
-        lastName: eachApplication.student.user.lastName,
+        fullName: getUserFullName(eachApplication.student.user),
       };
     }) as COESummaryDTO[];
   }

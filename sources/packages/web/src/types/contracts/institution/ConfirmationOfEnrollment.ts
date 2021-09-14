@@ -4,8 +4,7 @@ export interface COESummaryDTO {
   studyEndPeriod: string;
   applicationId: number;
   coeStatus: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface ApplicationDetailsForCOEDTO {

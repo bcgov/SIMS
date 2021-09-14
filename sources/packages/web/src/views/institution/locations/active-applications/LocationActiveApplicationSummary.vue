@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <p class="text-muted font-weight-bold h3">{{ locationName }}</p>
-    <p class="font-weight-bold h2">Program Information Requests</p>
+    <p class="font-weight-bold h2">Active Applications</p>
     <v-sheet elevation="1" class="mx-auto mt-2">
       <v-container>
         <DataTable
@@ -25,12 +25,16 @@
             </template></Column
           >
           <Column field="applicationNumber" header="Application #"></Column>
-          <Column field="pirStatus" header="Status">
+          <Column field="applicationStatus" header="Status">
             <template #body="slotProps">
               <Chip
-                :label="slotProps.data.pirStatus"
+                :label="slotProps.data.applicationStatus"
                 class="p-mr-2 p-mb-2 text-uppercase"
-                :class="getPirStatusColorClass(slotProps.data.pirStatus)"
+                :class="
+                  getApplicationStatusColorClass(
+                    slotProps.data.applicationStatus,
+                  )
+                "
               />
             </template>
           </Column>
@@ -40,7 +44,7 @@
                 plain
                 color="primary"
                 outlined
-                @click="goToViewApplication(slotProps.data.applicationId)"
+                @click="goToApplicationView(slotProps.data.applicationId)"
                 >view</v-btn
               >
             </template>
@@ -55,8 +59,8 @@
 import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO } from "@/types";
+import { InstitutionService } from "@/services/InstitutionService";
+import { ApplicationSummaryDTO, ApplicationStatus } from "@/types";
 import { useFormatters } from "@/composables";
 
 export default {
@@ -74,17 +78,17 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateString } = useFormatters();
-    const applications = ref([] as PIRSummaryDTO[]);
+    const applications = ref([] as ApplicationSummaryDTO[]);
 
-    const goToViewApplication = (applicationId: number) => {
+    const goToApplicationView = (applicationId: number) => {
       router.push({
-        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+        name: InstitutionRoutesConst.ACTIVE_APPLICATION_EDIT,
         params: { locationId: props.locationId, applicationId },
       });
     };
 
     const updateSummaryList = async (locationId: number) => {
-      applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
+      applications.value = await InstitutionService.shared.getActiveApplicationsSummary(
         locationId,
       );
     };
@@ -101,26 +105,17 @@ export default {
       await updateSummaryList(props.locationId);
     });
 
-    const getPirStatusColorClass = (status: string) => {
-      switch (status) {
-        case "Submitted":
-          return "bg-info text-white";
-        case "Completed":
-          return "bg-success text-white";
-        case "Required":
-          return "bg-warning text-white";
-        case "Declined":
-          return "bg-danger text-white";
-        default:
-          return "";
+    const getApplicationStatusColorClass = (status: string) => {
+      if (ApplicationStatus.completed === status) {
+        return "bg-success text-white";
       }
     };
 
     return {
       applications,
       dateString,
-      goToViewApplication,
-      getPirStatusColorClass,
+      goToApplicationView,
+      getApplicationStatusColorClass,
     };
   },
 };

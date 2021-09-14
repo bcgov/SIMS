@@ -6,8 +6,7 @@ export interface PIRSummaryDTO {
   studyEndPeriod: string;
   applicationId: number;
   pirStatus: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 export interface CompleteProgramInfoRequestDto
