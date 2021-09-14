@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import {
   BCeIDDetailsDto,
   BCeIDAccountsDto,
@@ -5,6 +6,7 @@ import {
   InstitutionUserPersistDto,
 } from "../../types/contracts/UserContract";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { StatusCodes } from "http-status-codes";
 
 export class UserApi extends HttpBaseClient {
   public async checkUser(headers?: any): Promise<boolean> {
@@ -82,6 +84,35 @@ export class UserApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
     } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Tries to create/update the AEST user.
+   * @returns true if the user was successfully created/updated or
+   * false if the user do not have permission to access the system.
+   */
+  public async syncAESTUser(): Promise<boolean> {
+    try {
+      await this.apiClient.put(
+        "users/aest",
+        // The data to perform the create/update
+        // will come from the authentication token.
+        null,
+        this.addAuthHeader(),
+      );
+      return true;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === StatusCodes.FORBIDDEN) {
+        // If the user do not have a proper authorization
+        // an HTTP error will be raised.
+        return false;
+      }
+      // If it is not an expected error,
+      // handle it the default way.
       this.handleRequestError(error);
       throw error;
     }

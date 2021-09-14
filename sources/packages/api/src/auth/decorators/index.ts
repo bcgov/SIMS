@@ -5,3 +5,4 @@ export * from "./public.decorator";
 export * from "./roles.decorator";
 export * from "./userToken.decorator";
 export * from "./allow-inactive-user.decorator";
+export * from "./groups.decorator";

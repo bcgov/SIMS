@@ -2,8 +2,9 @@ import { Controller, Get } from "@nestjs/common";
 import { UserToken } from "../../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../../auth/userToken.interface";
 import { Public } from "../../../auth/decorators/public.decorator";
-import { Roles } from "../../../auth/decorators/roles.decorator";
+import { Roles, Groups } from "../../../auth/decorators";
 import { Role } from "../../../auth/roles.enum";
+import { UserGroups } from "../../../auth/user-groups.enum";
 
 /**
  * Controller dedicated to test the functionalities around the authentication layer.
@@ -19,6 +20,7 @@ export class AuthTestController {
    */
   @Public()
   @Get("/public-route")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async publicRoute(): Promise<void> {}
 
   /**
@@ -42,6 +44,7 @@ export class AuthTestController {
    */
   @Roles(Role.Student)
   @Get("/authenticated-route-by-role")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async authenticatedRouteByRole(): Promise<void> {}
 
   /**
@@ -51,5 +54,25 @@ export class AuthTestController {
    */
   @Roles()
   @Get("/authenticated-route-by-non-existing-role")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async authenticatedRouteByNonExistingRole(): Promise<void> {}
+
+  /**
+   * Only authenticated users with specific group will have access to this endpoint.
+   * @param userToken
+   */
+  @Groups(UserGroups.aestUser)
+  @Get("/authenticated-route-by-group")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async authenticatedRouteByGroup(): Promise<void> {}
+
+  /**
+   * Only authenticated users with specific role will have access to this endpoint.
+   * In this case, no rule will be provided and therefore no rule will be a valid one.
+   * @param userToken
+   */
+  @Groups()
+  @Get("/authenticated-route-by-non-existing-group")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async authenticatedRouteByNonExistingGroup(): Promise<void> {}
 }

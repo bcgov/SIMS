@@ -3,13 +3,10 @@ import {
   Controller,
   Get,
   Patch,
+  Put,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import {
-  BCeIDService,
-  UserService,
-  InstitutionLocationService,
-} from "../../services";
+import { BCeIDService, UserService } from "../../services";
 import BaseController from "../BaseController";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -21,17 +18,19 @@ import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
 
-@AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
 @Controller("users")
 export class UserController extends BaseController {
   constructor(
     private readonly service: UserService,
     private readonly bceidService: BCeIDService,
-    private readonly institutionLocationService: InstitutionLocationService,
   ) {
     super();
   }
 
+  @AllowAuthorizedParty(
+    AuthorizedParties.institution,
+    AuthorizedParties.student,
+  )
   @AllowInactiveUser()
   @Get("/check-user")
   async checkUser(@UserToken() userToken: IUserToken): Promise<boolean> {
@@ -48,6 +47,7 @@ export class UserController extends BaseController {
     }
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @AllowInactiveUser()
   @Get("bceid-account")
   async getBCeID(
@@ -75,6 +75,7 @@ export class UserController extends BaseController {
     }
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("bceid-accounts")
   async getAllBCeIDs(
     @UserToken() userToken: IUserToken,
@@ -113,6 +114,10 @@ export class UserController extends BaseController {
     };
   }
 
+  @AllowAuthorizedParty(
+    AuthorizedParties.institution,
+    AuthorizedParties.student,
+  )
   @AllowInactiveUser()
   @Get("/check-active-user")
   async checkActiveUser(@UserToken() userToken: IUserToken): Promise<boolean> {
@@ -129,6 +134,7 @@ export class UserController extends BaseController {
     }
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("/institution")
   async institutionDetail(
     @UserToken() userToken: IUserToken,
@@ -144,6 +150,7 @@ export class UserController extends BaseController {
     return institutionUser;
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch("/institution")
   async updateInstitutionUser(
     @UserToken() userToken: IUserToken,
@@ -154,5 +161,20 @@ export class UserController extends BaseController {
       throw new UnprocessableEntityException("No user record found for user");
     }
     this.service.updateUserEmail(user.id, body.userEmail);
+  }
+
+  /**
+   * Creates or updates Ministry user information.
+   * @param userToken user token information to be updated.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Put("aest")
+  async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
+    await this.service.syncAESTUser(
+      userToken.userName,
+      userToken.email,
+      userToken.givenNames,
+      userToken.lastName,
+    );
   }
 }

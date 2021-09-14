@@ -32,16 +32,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // In the future we can decide how to proper handle roles, but the only issue to have
     // then flatten for now is if we create a role with the same name in 2 different
     // clients on Keycloak. For now we just have the Student client and in the future
-    // it would be pretty easy to adpat this method as needed to expose the roles
+    // it would be pretty easy to adapt this method as needed to expose the roles
     // also as needed to be validate using a decorator/annotation.
     userToken.roles = [];
-    Object.keys(payload.resource_access).forEach((value) => {
-      if (Array.isArray(payload.resource_access[value].roles)) {
-        payload.resource_access[value].roles.forEach((roleValue: string) => {
-          userToken.roles.push(roleValue);
-        });
-      }
-    });
+    if (payload.resource_access) {
+      Object.keys(payload.resource_access).forEach((value) => {
+        if (Array.isArray(payload.resource_access[value].roles)) {
+          payload.resource_access[value].roles.forEach((roleValue: string) => {
+            userToken.roles.push(roleValue);
+          });
+        }
+      });
+    }
 
     // Check if it is expected that a user exists on DB for the
     // specific authorized party (only Students and Institution for now).
@@ -68,9 +70,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // from the database that is needed for authorization.
       if (userToken.authorizedParty === AuthorizedParties.institution) {
         const institutionUserToken = userToken as IInstitutionUserToken;
-        institutionUserToken.authorizations = await this.institutionUserAuthService.getAuthorizationsByUserName(
-          userToken.userName,
-        );
+        institutionUserToken.authorizations =
+          await this.institutionUserAuthService.getAuthorizationsByUserName(
+            userToken.userName,
+          );
         return institutionUserToken;
       }
     }
