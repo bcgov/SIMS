@@ -171,9 +171,9 @@ export class InstitutionLocationsController extends BaseController {
 
   /**
    * Get all active application of a location in an institution
-   * with application_status is completed
-   * @param locationId location that is completing the PIR.
-   * @returns Student active application list of an institution location
+   * with application_status is completed.
+   * @param locationId location id.
+   * @returns Student active application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/active-applications")
