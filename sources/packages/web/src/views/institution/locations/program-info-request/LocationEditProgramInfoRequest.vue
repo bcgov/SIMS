@@ -10,6 +10,7 @@
         @loaded="formLoaded"
         @changed="formChanged"
         @submitted="submitted"
+        @custom="customEventCallback"
       ></formio>
     </v-container>
   </v-sheet>
@@ -111,6 +112,14 @@ export default {
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
+    const customEventCallback = async (form: any, event: any) => {
+      if ("routeToCreateProgram" === event.type) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+        });
+      }
+    };
+
     const submitted = async (data: any) => {
       try {
         if (data.denyProgramInformationRequest) {
@@ -152,6 +161,7 @@ export default {
       formLoaded,
       formChanged,
       submitted,
+      customEventCallback,
     };
   },
 };

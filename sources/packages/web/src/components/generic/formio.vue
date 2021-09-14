@@ -11,7 +11,7 @@ import ApiClient from "../../services/http/ApiClient";
 import FormUploadService from "../../services/FormUploadService";
 
 export default {
-  emits: ["submitted", "loaded", "changed"],
+  emits: ["submitted", "loaded", "changed", "custom"],
   props: {
     formName: {
       type: String,
@@ -96,6 +96,10 @@ export default {
 
       form.on("submit", (submision: any) => {
         context.emit("submitted", submision.data, form);
+      });
+
+      form.on("customEvent", (event: any) => {
+        context.emit("custom", form, event);
       });
     });
 
