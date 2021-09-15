@@ -1,4 +1,4 @@
-import { AppConfigService } from "@/services/AppConfigService";
+import { AuthService } from "@/services/AuthService";
 import { AppIDPType, ApplicationToken, AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
@@ -59,13 +59,13 @@ export class RouteHelper {
     clientType: ClientIdType,
     toPath: string,
   ): AuthStatus {
-    if (clientType !== AppConfigService.shared.authClientType) {
+    if (clientType !== AuthService.shared.authClientType) {
       // If config service was not initialized with the same client type,
       // the user is not allowed to proceed.
       return AuthStatus.ForbiddenUser;
     }
 
-    if (!AppConfigService.shared.authService?.authenticated) {
+    if (!AuthService.shared.keycloak?.authenticated) {
       if (toPath.includes(AppRoutes.Login)) {
         // If not authenticated but he is trying to access the login page to authenticate, so allow it.
         return AuthStatus.Continue;
@@ -75,19 +75,11 @@ export class RouteHelper {
       return AuthStatus.RequiredLogin;
     }
 
-    if (AppConfigService.shared.authService?.tokenParsed) {
-      const token = AppConfigService.shared.authService
-        ?.tokenParsed as ApplicationToken;
-      console.dir(token);
-      if (
-        token.azp !== clientType ||
-        !RouteHelper.isAllowedIDP(clientType, token.IDP)
-      ) {
-        // User is not authenticated to the correct Keycloak client.
-        return AuthStatus.ForbiddenUser;
-      }
-    } else {
-      // Not able to parse Keycloak token.
+    if (
+      AuthService.shared.userToken?.azp !== clientType ||
+      !RouteHelper.isAllowedIDP(clientType, AuthService.shared.userToken?.IDP)
+    ) {
+      // User is not authenticated to the correct Keycloak client.
       return AuthStatus.ForbiddenUser;
     }
 

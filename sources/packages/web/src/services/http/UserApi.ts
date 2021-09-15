@@ -94,14 +94,14 @@ export class UserApi extends HttpBaseClient {
    * @returns true if the user was successfully created/updated or
    * false if the user do not have permission to access the system.
    */
-  public async syncAESTUser(): Promise<boolean> {
+  public async syncAESTUser(authHeader?: any): Promise<boolean> {
     try {
       await this.apiClient.put(
         "users/aest",
         // The data to perform the create/update
         // will come from the authentication token.
         null,
-        this.addAuthHeader(),
+        authHeader ?? this.addAuthHeader(),
       );
       return true;
     } catch (error) {

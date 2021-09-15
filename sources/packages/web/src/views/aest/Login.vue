@@ -24,17 +24,16 @@
 </template>
 
 <script lang="ts">
-import { AppConfigService } from "../../services/AppConfigService";
+import { useAuth } from "@/composables";
+import { AppIDPType } from "@/types";
 
 export default {
   components: {},
   setup() {
-    const login = () => {
-      AppConfigService.shared.authService?.login({
-        idpHint: "idir",
-      });
+    const { executeLogin } = useAuth();
+    const login = async () => {
+      await executeLogin(AppIDPType.IDIR);
     };
-
     return { login };
   },
 };

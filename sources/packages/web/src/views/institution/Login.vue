@@ -43,7 +43,8 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import { AppConfigService } from "../../services/AppConfigService";
+import { useAuth } from "@/composables";
+import { AppIDPType } from "@/types";
 
 export default {
   components: {},
@@ -65,13 +66,12 @@ export default {
     },
   },
   setup(props: any) {
+    const { executeLogin } = useAuth();
     const basicBCeID = ref(props.showBasicBCeIDMessage);
     const disabledUser = ref(props.showDisabledUserMessage);
     const unknownUser = ref(props.showUnknownUserMessage);
-    const login = () => {
-      AppConfigService.shared.authService?.login({
-        idpHint: "bceid",
-      });
+    const login = async () => {
+      await executeLogin(AppIDPType.BCeID);
     };
 
     return { login, basicBCeID, disabledUser, unknownUser };

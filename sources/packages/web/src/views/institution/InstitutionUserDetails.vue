@@ -51,7 +51,7 @@
           ></Column>
           <Column field="" header="Actions"
             ><template #body="slotProps">
-              <span v-if="slotProps.data.userName !== logginedUserDetails?.userName">
+              <span v-if="slotProps.data.userName !== parsedToken?.userName">
                 <v-btn plain>
                   <v-icon
                     size="25"
@@ -74,7 +74,9 @@
                 </v-btn>
                 <InputSwitch
                   v-model="slotProps.data.isActive"
-                  v-tooltip="slotProps.data.isActive ? 'Disable User' : 'Enable User'"
+                  v-tooltip="
+                    slotProps.data.isActive ? 'Disable User' : 'Enable User'
+                  "
                   @change="updateUserStatus(slotProps.data)"
                 />
               </span>
@@ -91,13 +93,13 @@ import { ref, onMounted } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { InstitutionService } from "../../services/InstitutionService";
-import { InstitutionUserViewModel, ApplicationToken } from "../../types";
+import { InstitutionUserViewModel } from "../../types";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import InputSwitch from "primevue/inputswitch";
 import Tooltip from "primevue/tooltip";
 import { useToast } from "primevue/usetoast";
-import { AppConfigService } from "../../services/AppConfigService";
+import { useAuth } from "@/composables";
 
 export default {
   components: {
@@ -111,10 +113,8 @@ export default {
     tooltip: Tooltip,
   },
   setup() {
+    const { parsedToken } = useAuth();
     const toast = useToast();
-    const logginedUserDetails = ref(
-      AppConfigService.shared.authService?.tokenParsed as ApplicationToken
-    );
     const showAddUser = ref(false);
     const showEditUser = ref(false);
     const users = ref([] as InstitutionUserViewModel[]);
@@ -142,7 +142,7 @@ export default {
       try {
         await InstitutionService.shared.updateUserStatus(
           userDetails.userName,
-          userDetails.isActive
+          userDetails.isActive,
         );
         await getAllInstitutionUsers();
         toast.add({
@@ -169,7 +169,7 @@ export default {
       userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
       userType.value = userRoleType.value?.userTypes
         ? userRoleType.value.userTypes.map((el: string) =>
-            el !== "admin" ? { name: el, code: el } : null
+            el !== "admin" ? { name: el, code: el } : null,
           )
         : [];
     });
@@ -185,7 +185,7 @@ export default {
       userType,
       institutionUserName,
       updateUserStatus,
-      logginedUserDetails,
+      parsedToken,
     };
   },
 };

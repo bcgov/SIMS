@@ -1,10 +1,23 @@
-import { AppConfigService } from "@/services/AppConfigService";
-import { computed } from "vue";
+import { AuthService } from "@/services/AuthService";
+import { AppIDPType, ApplicationToken, ClientIdType } from "@/types";
+import { computed, ref } from "vue";
 
 export function useAuth() {
   const isAuthenticated = computed(
-    () => AppConfigService.shared.authService?.authenticated === true,
+    () => AuthService.shared.keycloak?.authenticated === true,
   );
 
-  return { isAuthenticated };
+  const parsedToken = computed(() => AuthService.shared.userToken);
+
+  const executeLogin = async (idp: AppIDPType): Promise<void> => {
+    return AuthService.shared.keycloak?.login({
+      idpHint: idp.toLowerCase(),
+    });
+  };
+
+  const executeLogout = async (clientType: ClientIdType): Promise<void> => {
+    return AuthService.shared.logout(clientType);
+  };
+
+  return { isAuthenticated, parsedToken, executeLogin, executeLogout };
 }

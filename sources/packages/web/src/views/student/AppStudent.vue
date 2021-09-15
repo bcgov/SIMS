@@ -58,7 +58,6 @@
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
 import { onMounted, ref } from "vue";
-import { AppConfigService } from "../../services/AppConfigService";
 import { UserService } from "../../services/UserService";
 import { StudentService } from "../../services/StudentService";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
@@ -69,42 +68,31 @@ import { useAuth } from "@/composables";
 export default {
   components: {},
   setup() {
+    const { executeLogout } = useAuth();
     const router = useRouter();
     const route = useRoute();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
 
-    // Mounding hook
     onMounted(async () => {
-      await AppConfigService.shared.initAuthService(ClientIdType.STUDENT);
-      const auth = AppConfigService.shared.authService?.authenticated ?? false;
-
-      if (!auth) {
-        router.push({
-          name: StudentRoutesConst.LOGIN,
-        });
-      } else {
-        // TODO:
-        // - Try to implement a role based processing
-        // Get path
-        if (await UserService.shared.checkUser()) {
-          if (await UserService.shared.checkActiveUser()) {
-            await StudentService.shared.synchronizeFromUserInfo();
-            if (route.path === AppRoutes.StudentRoot) {
-              // Loading student dash board if user try to load /student path
-              router.push({
-                name: StudentRoutesConst.STUDENT_DASHBOARD,
-              });
-            }
+      // Get path
+      if (await UserService.shared.checkUser()) {
+        if (await UserService.shared.checkActiveUser()) {
+          await StudentService.shared.synchronizeFromUserInfo();
+          if (route.path === AppRoutes.StudentRoot) {
+            // Loading student dash board if user try to load /student path
+            router.push({
+              name: StudentRoutesConst.STUDENT_DASHBOARD,
+            });
           }
-        } else {
-          /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
-       where they can provide information and create SABC account */
-          router.push({
-            name: StudentRoutesConst.STUDENT_PROFILE,
-          });
         }
+      } else {
+        /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
+       where they can provide information and create SABC account */
+        router.push({
+          name: StudentRoutesConst.STUDENT_PROFILE,
+        });
       }
     });
 
@@ -134,8 +122,8 @@ export default {
       {
         label: "Log off",
         icon: "pi pi-power-off",
-        command: () => {
-          AppConfigService.shared.logout(ClientIdType.STUDENT);
+        command: async () => {
+          await executeLogout(ClientIdType.STUDENT);
         },
       },
     ];

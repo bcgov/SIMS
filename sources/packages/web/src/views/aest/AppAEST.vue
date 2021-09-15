@@ -41,12 +41,13 @@ import { useAuth } from "@/composables";
 export default {
   components: {},
   setup() {
+    const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
 
-    const logoff = () => {
-      AppConfigService.shared.logout(ClientIdType.AEST);
+    const logoff = async () => {
+      await executeLogout(ClientIdType.AEST);
     };
 
     const togleUserMenu = (event: any) => {
@@ -57,9 +58,7 @@ export default {
       {
         label: "Log off",
         icon: "pi pi-power-off",
-        command: () => {
-          AppConfigService.shared.logout(ClientIdType.AEST);
-        },
+        command: logoff,
       },
     ];
 

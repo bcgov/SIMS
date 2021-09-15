@@ -18,7 +18,7 @@ import {
   OptionItemDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
-import { AppConfigService } from "./AppConfigService";
+import { AuthService } from "./AuthService";
 
 export class InstitutionService {
   // Share Instance
@@ -156,7 +156,7 @@ export class InstitutionService {
           location,
           isActive: institutionUser.user.isActive,
           disableRemove:
-            AppConfigService.shared.userToken?.userName ===
+            AuthService.shared.userToken?.userName ===
             institutionUser.user.userName
               ? true
               : false,

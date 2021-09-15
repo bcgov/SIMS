@@ -7,10 +7,10 @@ import {
   AESTRoutesConst,
   SharedRouteConst,
 } from "../constants/routes/RouteConstants";
-import { AppConfigService } from "../services/AppConfigService";
 import { AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
+import { AuthService } from "@/services/AuthService";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -37,14 +37,13 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       },
     ],
     beforeEnter: (to, _from, next) => {
-      AppConfigService.shared
-        .initAuthService(ClientIdType.AEST)
+      AuthService.shared
+        .initialize(ClientIdType.AEST)
         .then(() => {
           const status = RouteHelper.getNavigationAuthStatus(
             ClientIdType.AEST,
             to.path,
           );
-          console.log(status);
           switch (status) {
             case AuthStatus.Continue:
               next();

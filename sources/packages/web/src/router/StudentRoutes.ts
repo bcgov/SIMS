@@ -19,10 +19,10 @@ import {
   StudentRoutesConst,
   SharedRouteConst,
 } from "../constants/routes/RouteConstants";
-import { AppConfigService } from "../services/AppConfigService";
 import { AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
+import { AuthService } from "@/services/AuthService";
 
 export const studentRoutes: Array<RouteRecordRaw> = [
   {
@@ -45,26 +45,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         meta: {
           requiresAuth: false,
           clientType: ClientIdType.STUDENT,
-        },
-        beforeEnter: (to, from, next) => {
-          // Check Auth service is available or not
-          if (AppConfigService.shared.authService) {
-            const auth =
-              AppConfigService.shared.authService?.authenticated || false;
-            if (!auth) {
-              // Allowing to load login iff when user is not authenticated
-              next();
-            } else {
-              next({
-                name: StudentRoutesConst.STUDENT_DASHBOARD,
-              });
-            }
-          } else {
-            // Auth service is not initialize so loading to student root
-            next({
-              name: StudentRoutesConst.APP_STUDENT,
-            });
-          }
         },
       },
       {
@@ -184,9 +164,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
     ], //Children under /Student
-    beforeEnter: (to, from, next) => {
-      AppConfigService.shared
-        .initAuthService(ClientIdType.STUDENT)
+    beforeEnter: (to, _from, next) => {
+      AuthService.shared
+        .initialize(ClientIdType.STUDENT)
         .then(() => {
           const status = RouteHelper.getNavigationAuthStatus(
             ClientIdType.STUDENT,

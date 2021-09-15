@@ -64,35 +64,23 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
-import { AppConfigService } from "../../services/AppConfigService";
+import { ref } from "vue";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { useInstitutionAuth } from "../../composables/institution/useInstitutionAuth";
+import { useAuth } from "@/composables";
 import "@/assets/css/institution.css";
 
 export default {
   components: {},
   setup() {
-    const router = useRouter();
+    const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
     const { isAdmin, isAuthenticated } = useInstitutionAuth();
 
-    // Mounding hook
-    onMounted(async () => {
-      await AppConfigService.shared.initAuthService(ClientIdType.INSTITUTION);
-      const auth = AppConfigService.shared.authService?.authenticated ?? false;
-      if (!auth) {
-        router.push({
-          name: InstitutionRoutesConst.LOGIN,
-        });
-      }
-    });
-
-    const logoff = () => {
-      AppConfigService.shared.logout(ClientIdType.INSTITUTION);
+    const logoff = async () => {
+      await executeLogout(ClientIdType.INSTITUTION);
     };
 
     const togleUserMenu = (event: any) => {
@@ -107,9 +95,7 @@ export default {
       {
         label: "Log off",
         icon: "pi pi-power-off",
-        command: () => {
-          AppConfigService.shared.logout(ClientIdType.INSTITUTION);
-        },
+        command: logoff,
       },
     ];
 

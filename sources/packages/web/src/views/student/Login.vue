@@ -28,17 +28,16 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import { AppConfigService } from "../../services/AppConfigService";
+import { useAuth } from "@/composables";
+import { AppIDPType } from "@/types";
 
-@Options({
-  components: {},
-})
-export default class Login extends Vue {
-  login() {
-    AppConfigService.shared.authService?.login({
-      idpHint: "bcsc",
-    });
-  }
-}
+export default {
+  setup() {
+    const { executeLogin } = useAuth();
+    const login = async () => {
+      await executeLogin(AppIDPType.BCSC);
+    };
+    return { login };
+  },
+};
 </script>

@@ -17,7 +17,6 @@ import {
   SharedRouteConst,
 } from "../constants/routes/RouteConstants";
 import Login from "../views/institution/Login.vue";
-import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
@@ -29,6 +28,7 @@ import LocationProgramOffering from "../views/institution/locations/programs/Loc
 import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { RouteHelper } from "@/helpers";
+import { AuthService } from "@/services/AuthService";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -408,9 +408,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
     ],
-    beforeEnter: (to, from, next) => {
-      AppConfigService.shared
-        .initAuthService(ClientIdType.INSTITUTION)
+    beforeEnter: (to, _from, next) => {
+      AuthService.shared
+        .initialize(ClientIdType.INSTITUTION)
         .then(() => {
           const status = RouteHelper.getNavigationAuthStatus(
             ClientIdType.INSTITUTION,
