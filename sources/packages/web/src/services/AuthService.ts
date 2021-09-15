@@ -161,7 +161,7 @@ export class AuthService {
       isUnknownUser?: boolean;
       notAllowedUser?: boolean;
     },
-  ) {
+  ): Promise<void> {
     let redirectUri = `${window.location.protocol}//${window.location.host}/${type}`;
     switch (type) {
       case ClientIdType.STUDENT: {

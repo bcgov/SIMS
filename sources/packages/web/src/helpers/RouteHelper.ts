@@ -63,7 +63,7 @@ export class RouteHelper {
 
     if (!AuthService.shared.keycloak?.authenticated) {
       if (toPath.includes(AppRoutes.Login)) {
-        // If not authenticated but he is trying to access the login page to authenticate, so allow it.
+        // If not authenticated but he is trying to access the login page to authenticate, allow it.
         return AuthStatus.Continue;
       }
 

@@ -51,7 +51,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: Login,
         props: {
           showBasicBCeIDMessage: true,
-          showDisabledUserMessage: false,
         },
         meta: {
           requiresAuth: false,
