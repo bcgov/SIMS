@@ -3,6 +3,25 @@ kind: Template
 metadata:
   name: forms-flow-bpm
 objects:
+  - apiVersion: v1
+    data:
+      mail-config.properties: |
+        # send mails via SMTP
+        mail.transport.protocol=smtp
+        mail.smtp.host=${SMTP_SERVER}
+        mail.smtp.port=25
+        mail.smtp.auth=false
+        mail.smtp.ssl.enable=false
+        mail.sender=donotreply@gov.bc.ca
+        mail.sender.alias=DoNotReply
+        mail.attachment.download=true
+        mail.attachment.path=attachments
+    kind: ConfigMap
+    metadata:
+      labels:
+        app: ${NAME}
+      name: ${NAME}-mail-config
+
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
@@ -132,7 +151,7 @@ objects:
                       key: formio_root_password
                       name: ${FORMIO_SECRET}
                 - name: CAMUNDA_JDBC_USER
-                  vvalueFrom:
+                  valueFrom:
                     secretKeyRef:
                       key: db_username
                       name: ${FORMIO_SECRET}
@@ -166,9 +185,14 @@ objects:
                 - name: CAMUNDA_JOB_MAXJOBS_PER_ACQUISITION
                   value: ${CAMUNDA_JOB_MAXJOBS_PER_ACQUISITION}
                 - name: FORMIO_URL
-                  alueFrom:
+                  valueFrom:
                     secretKeyRef:
                       key: FORMS_API_BASE_URL
+                      name: ${FORMIO_SECRET}
+                - name: SIMS_API_BASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: SIMS_API_BASE_URL
                       name: ${FORMIO_SECRET}
                 - name: CAMUNDA_APP_ROOT_LOG_FLAG
                   value: ${CAMUNDA_APP_ROOT_LOG_FLAG}
@@ -247,6 +271,10 @@ parameters:
     description: The image tag to pull for the deployment.
     required: true
     value: ""
+  - name: SMTP_SERVER
+    description: SMTP server configured for the camunda mail-config.
+    required: true
+    value: "apps.smtp.gov.bc.ca"
   - name: TOOLS_NAMESPACE
     description: The location for your image streams (Tools Workspace).
     required: true
