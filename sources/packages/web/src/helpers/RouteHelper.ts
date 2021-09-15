@@ -1,5 +1,5 @@
 import { AuthService } from "@/services/AuthService";
-import { AppIDPType, ApplicationToken, AppRoutes, AuthStatus } from "../types";
+import { AppIDPType, AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
 export class RouteHelper {
@@ -41,10 +41,6 @@ export class RouteHelper {
         allowedIDP = AppIDPType.IDIR;
         break;
     }
-
-    console.log("allowedIDP:", allowedIDP);
-    console.log("idp:", idp);
-
     return allowedIDP === idp;
   }
 

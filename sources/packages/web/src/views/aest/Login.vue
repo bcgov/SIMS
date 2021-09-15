@@ -20,6 +20,11 @@
         </v-btn>
       </v-row>
     </v-card-actions>
+    <Message severity="error" class="mx-2" v-if="showNotAllowedUser">
+      The user was validated successfully but is not currently allowed to have
+      access to this application. Please contact the Administrator for more
+      information.
+    </Message>
   </v-card>
 </template>
 
@@ -29,6 +34,13 @@ import { AppIDPType } from "@/types";
 
 export default {
   components: {},
+  props: {
+    showNotAllowedUser: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {

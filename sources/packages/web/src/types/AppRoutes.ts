@@ -13,7 +13,6 @@ export enum AppRoutes {
   InstitutionProfile = "institution-profile",
   InstitutionUserProfile = "institution-user-profile",
   InstitutionProfileEdit = "institution-profile/edit",
-  LoginWithBusinessBCeID = "login/business-bceid",
   InstitutionManageLocations = "manage-locations",
   AddInstitutionLocation = "add-institution-location",
   EditInstitutionLocation = "edit-institution-location",
@@ -36,7 +35,9 @@ export enum AppRoutes {
   AESTHome = "home",
   // Shared
   Login = "login",
+  LoginWithBusinessBCeID = "login/business-bceid",
   DisabledUser = "login/disabled-user",
   UnknownUser = "login/unknown-user",
   ForbiddenUser = "/forbidden-user",
+  NotAllowedUser = "login/not-allowed-user",
 }

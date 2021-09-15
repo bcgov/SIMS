@@ -28,6 +28,18 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.NotAllowedUser,
+        name: AESTRoutesConst.LOGIN_WITH_NOT_ALLOWED_USER,
+        component: Login,
+        props: {
+          showNotAllowedUser: true,
+        },
+        meta: {
+          requiresAuth: false,
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
         path: AppRoutes.AESTHome,
         name: AESTRoutesConst.HOME,
         component: Home,
@@ -44,6 +56,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             ClientIdType.AEST,
             to.path,
           );
+          console.log("status:", status.toString());
           switch (status) {
             case AuthStatus.Continue:
               next();

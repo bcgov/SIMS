@@ -17,12 +17,25 @@ export class AuthService {
    * Keycloak instance available after the method initialize is called.
    */
   keycloak?: Keycloak.KeycloakInstance = undefined;
-  authClientType?: ClientIdType = undefined;
 
+  private clientType?: ClientIdType = undefined;
+  /**
+   * Type of Keycloak client used for initialization.
+   */
+  get authClientType(): ClientIdType | undefined {
+    return this.clientType;
+  }
+
+  /**
+   * Parsed user token.
+   */
   get userToken(): ApplicationToken | undefined {
     return this.keycloak?.tokenParsed as ApplicationToken;
   }
 
+  /**
+   * Indicates that Keycloak is already initialized.
+   */
   get initialized(): boolean {
     return !!this.keycloak;
   }
@@ -35,12 +48,17 @@ export class AuthService {
     return this.instance || (this.instance = new this());
   }
 
+  /**
+   * Initializes the authentication service with the proper client type.
+   * @param clientType Keycloak client type to be used.
+   */
   async initialize(clientType: ClientIdType): Promise<void> {
     if (this.initialized) {
       return;
     }
-    this.authClientType = clientType;
+    this.clientType = clientType;
     const config = await AppConfigService.shared.config();
+
     this.keycloak = Keycloak({
       url: config.authConfig.url,
       realm: config.authConfig.realm,
@@ -50,13 +68,16 @@ export class AuthService {
     let isForbiddenUser = false;
 
     try {
+      console.log("before init");
       await this.keycloak.init({
         onLoad: "check-sso",
         responseMode: "query",
         checkLoginIframe: false,
       });
+      console.log("after init");
 
       if (this.keycloak.authenticated) {
+        console.log("authenticated:", this.keycloak.authenticated);
         switch (clientType) {
           case ClientIdType.STUDENT:
             store.dispatch("student/setStudentProfileData", this.keycloak);
@@ -74,7 +95,6 @@ export class AuthService {
             );
             break;
           }
-
           case ClientIdType.AEST: {
             const authHeader = HttpBaseClient.createAuthHeader(
               this.keycloak.token,
@@ -83,16 +103,16 @@ export class AuthService {
               authHeader,
             );
             if (!isAuthorized) {
-              await this.logout(ClientIdType.AEST, { isNotAllowedUser: true });
+              isForbiddenUser = true;
+              await this.logout(ClientIdType.AEST, { notAllowedUser: true });
             }
             break;
           }
         }
       }
     } catch (error) {
-      console.error(
-        `Key Cloak - initialization exception: ${error} - ${clientType}`,
-      );
+      console.error(`Keycloak initialization error - ${clientType}`);
+      console.log(error);
     }
     this.keycloak.onTokenExpired = () => {
       store.dispatch("auth/logout");
@@ -139,7 +159,7 @@ export class AuthService {
       isBasicBCeID?: boolean;
       isUserDisabled?: boolean;
       isUnknownUser?: boolean;
-      isNotAllowedUser?: boolean;
+      notAllowedUser?: boolean;
     },
   ) {
     let redirectUri = `${window.location.protocol}//${window.location.host}/${type}`;
@@ -158,29 +178,30 @@ export class AuthService {
         } else if (options?.isUnknownUser) {
           redirectUri += "/login/unknown-user";
         }
-        const logoutURL = this.keycloak!.createLogoutUrl({
-          redirectUri,
-        });
-        const config = await AppConfigService.shared.config();
-        const externalLogoutUrl = config.authConfig.externalSiteMinderLogoutUrl;
-        const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
-        window.location.href = siteMinderLogoutURL;
+        console.log("redirectUri:", redirectUri);
+        await this.executeSiteminderLogoff(redirectUri);
         break;
       }
       case ClientIdType.AEST: {
-        if (options?.isNotAllowedUser) {
+        if (options?.notAllowedUser) {
           redirectUri += "/login/not-allowed-user";
-          await this.keycloak!.logout({
-            redirectUri,
-          });
-        } else {
-          await this.keycloak!.logout();
         }
+        await this.executeSiteminderLogoff(redirectUri);
         break;
       }
       default:
         await this.keycloak!.logout();
         break;
     }
+  }
+
+  private async executeSiteminderLogoff(redirectUri: string) {
+    const logoutURL = this.keycloak!.createLogoutUrl({
+      redirectUri,
+    });
+    const config = await AppConfigService.shared.config();
+    const externalLogoutUrl = config.authConfig.externalSiteMinderLogoutUrl;
+    const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
+    window.location.href = siteMinderLogoutURL;
   }
 }

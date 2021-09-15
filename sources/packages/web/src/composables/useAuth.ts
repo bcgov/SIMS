@@ -1,6 +1,6 @@
 import { AuthService } from "@/services/AuthService";
-import { AppIDPType, ApplicationToken, ClientIdType } from "@/types";
-import { computed, ref } from "vue";
+import { AppIDPType, ClientIdType } from "@/types";
+import { computed } from "vue";
 
 export function useAuth() {
   const isAuthenticated = computed(

@@ -16,7 +16,12 @@ import { InstitutionUserPersistDto } from "./models/institution-user-persist.dto
 import { SearchAccountOptions } from "../../services/bceid/search-bceid.model";
 import { BCeIDAccountsDto } from "./models/bceid-accounts.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, AllowInactiveUser } from "../../auth/decorators";
+import { UserGroups } from "../../auth/user-groups.enum";
+import {
+  AllowAuthorizedParty,
+  AllowInactiveUser,
+  Groups,
+} from "../../auth/decorators";
 
 @Controller("users")
 export class UserController extends BaseController {
@@ -168,6 +173,7 @@ export class UserController extends BaseController {
    * @param userToken user token information to be updated.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.aestUser)
   @Put("aest")
   async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
     await this.service.syncAESTUser(

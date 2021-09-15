@@ -61,6 +61,7 @@ export const AESTRoutesConst = {
   APP_AEST: Symbol(),
   HOME: Symbol(),
   LOGIN: Symbol(),
+  LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),
 };
 
 /**

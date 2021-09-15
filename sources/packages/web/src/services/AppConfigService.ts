@@ -1,6 +1,5 @@
-import { AuthService } from "./AuthService";
 import ApiClient from "../services/http/ApiClient";
-import { AppConfig, ClientIdType } from "../types/contracts/ConfigContract";
+import { AppConfig } from "../types/contracts/ConfigContract";
 
 export class AppConfigService {
   // Share Instance
