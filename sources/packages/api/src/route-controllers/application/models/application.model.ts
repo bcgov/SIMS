@@ -69,32 +69,32 @@ export interface ApplicationDataDto {
    */
   data: any;
   /**
-   * Program Year is added to integrate the application in camunda workflows
+   * Program Year is added to integrate the application in camunda workflows.
    */
   programYear: string;
 
   /**
-   * Offering details fro student application
+   * Offering details for student application.
    */
   offering: ApplicationOfferingDetails;
 
   /**
-   * Program details fro student application
+   * Program details for student application.
    */
   program: ApplicationProgramDetails;
 
   /**
-   * Institution details fro student application
+   * Institution details for student application.
    */
   institution: ApplicationInstitutionDetails;
 
   /**
-   * Location details fro student application
+   * Location details for student application.
    */
   location: ApplicationLocationDetails;
 
   /**
-   * Student details fro student application
+   * Student details for student application.
    */
   student: ApplicationStudentDetails;
 }

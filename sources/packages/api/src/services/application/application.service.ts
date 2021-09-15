@@ -325,20 +325,35 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * get student application details with the application Id.
+   * Get student application details with the application Id.
    * @param applicationId student application id .
    * @returns student Application Details.
    */
   async getApplicationById(applicationId: number): Promise<Application> {
-    return this.repo.findOne(applicationId, {
-      relations: [
+    const application = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.data",
+        "programYear.programYear",
         "offering",
-        "pirProgram",
-        "location",
+        "pirProgram.credentialType",
+        "pirProgram.completionYears",
+        "location.data",
+        "institution",
+        "institutionType",
         "student",
-        "programYear",
-      ],
-    });
+      ])
+      .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.pirProgram", "pirProgram")
+      .innerJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
+      .leftJoin("institution.institutionType", "institutionType")
+      .innerJoin("application.student", "student")
+      .andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    return application.getOne();
   }
 
   async updateAssessmentInApplication(
