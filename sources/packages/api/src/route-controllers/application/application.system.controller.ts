@@ -70,10 +70,6 @@ export class ApplicationSystemController {
         offeringIntensity: application.offering.offeringIntensity,
       },
       program: {
-        /**
-         * if credential type is other, then the string 'other' is sent to camunda.
-         * we are not sending the free text credential type when 'other' is selected
-         */
         programCredentialType: application.pirProgram.credentialType,
         programLength: application.pirProgram.completionYears,
       },
