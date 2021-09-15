@@ -27,7 +27,7 @@
                 &nbsp;&nbsp;
                 <ProgressSpinner
                   style="width: 30px; height: 25px"
-                  strokeWidth="10" /></span
+                  strokeWidth="10"/></span
             ></v-btn>
           </v-col>
         </v-row>
@@ -38,6 +38,7 @@
           @loaded="formLoaded"
           @changed="formChanged"
           @submitted="submitApplication"
+          @custom="customEventCallback"
         ></formio>
         <v-row>
           <v-col md="6">
@@ -254,6 +255,14 @@ export default {
       }
     };
 
+    const customEventCallback = async (form: any, event: any) => {
+      if ("routeToStudentProfile" === event.type) {
+        router.push({
+          name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
+        });
+      }
+    };
+
     const wizardGoPrevious = () => {
       applicationWizard.prevPage();
     };
@@ -279,6 +288,7 @@ export default {
       submitApplication,
       savingDraft,
       submittingApplication,
+      customEventCallback,
     };
   },
 };
