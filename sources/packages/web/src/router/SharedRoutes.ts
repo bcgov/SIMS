@@ -3,10 +3,8 @@ import { RouteRecordRaw } from "vue-router";
 import PageNotFound from "../views/PageNotFound.vue";
 import ForbiddenUser from "../views/ForbiddenUser.vue";
 import { AppRoutes, ClientIdType } from "../types";
-
 import FormList from "../components/generic/FormList.vue";
 import FormContainer from "../components/generic/FormContainer.vue";
-import { AppConfigService } from "@/services/AppConfigService";
 import { AuthService } from "@/services/AuthService";
 
 export const sharedRoutes: Array<RouteRecordRaw> = [

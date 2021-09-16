@@ -21,7 +21,10 @@ export class AuthTestController {
   @Public()
   @Get("/public-route")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  publicRoute(): void {}
+  publicRoute(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 
   /**
    * Only authenticated users will have access to this endpoint
@@ -43,7 +46,10 @@ export class AuthTestController {
   @Roles(Role.Student)
   @Get("/authenticated-route-by-role")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  authenticatedRouteByRole(): void {}
+  authenticatedRouteByRole(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
@@ -53,7 +59,10 @@ export class AuthTestController {
   @Roles()
   @Get("/authenticated-route-by-non-existing-role")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  authenticatedRouteByNonExistingRole(): void {}
+  authenticatedRouteByNonExistingRole(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 
   /**
    * Only authenticated users with specific group will have access to this endpoint.
@@ -62,7 +71,10 @@ export class AuthTestController {
   @Groups(UserGroups.aestUser)
   @Get("/authenticated-route-by-group")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  authenticatedRouteByGroup(): void {}
+  authenticatedRouteByGroup(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
@@ -72,5 +84,8 @@ export class AuthTestController {
   @Groups()
   @Get("/authenticated-route-by-non-existing-group")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  authenticatedRouteByNonExistingGroup(): void {}
+  authenticatedRouteByNonExistingGroup(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 }
