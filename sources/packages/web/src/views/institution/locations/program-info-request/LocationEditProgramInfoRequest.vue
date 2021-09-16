@@ -10,6 +10,7 @@
         @loaded="formLoaded"
         @changed="formChanged"
         @submitted="submitted"
+        @customEvent="customEventCallback"
       ></formio>
     </v-container>
   </v-sheet>
@@ -27,6 +28,7 @@ import {
   useToastMessage,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 
 export default {
   components: { formio },
@@ -111,6 +113,14 @@ export default {
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
+    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
+      if (FormIOCustomEventTypes.RouteToCreateProgram === event.type) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+        });
+      }
+    };
+
     const submitted = async (data: any) => {
       try {
         if (data.denyProgramInformationRequest) {
@@ -152,6 +162,7 @@ export default {
       formLoaded,
       formChanged,
       submitted,
+      customEventCallback,
     };
   },
 };
