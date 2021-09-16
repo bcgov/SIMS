@@ -324,12 +324,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application;
   }
 
+  /**
+   * Get student application details with the application Id.
+   * @param applicationId student application id .
+   * @returns student Application Details.
+   */
   async getApplicationById(applicationId: number): Promise<Application> {
     const application = this.repo
       .createQueryBuilder("application")
-      .select(["application", "programYear.programYear"])
+      .select([
+        "application.data",
+        "programYear.programYear",
+        "offering",
+        "pirProgram.credentialType",
+        "pirProgram.completionYears",
+        "location.data",
+        "institution",
+        "institutionType",
+        "student",
+      ])
       .innerJoin("application.programYear", "programYear")
-      .where("programYear.active = true")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.pirProgram", "pirProgram")
+      .innerJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
+      .leftJoin("institution.institutionType", "institutionType")
+      .innerJoin("application.student", "student")
       .andWhere("application.id = :applicationId", {
         applicationId,
       });
@@ -587,23 +607,36 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the offering associated with an application.
-   * @param applicationId application id.
-   * @returns offering associated with an application or null
-   * when the application does not exists or there is no
-   * offering associated with it at this time.
+   * Get all active applications of an institution location
+   * with application_status is completed
+   * @param locationId location id .
+   * @returns Student Active Application list.
    */
-  async getOfferingByApplicationId(
-    applicationId: number,
-  ): Promise<EducationProgramOffering> {
-    const application = await this.repo.findOne(applicationId, {
-      relations: ["offering"],
-    });
-
-    return application?.offering;
+  async getActiveApplications(locationId: number): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.applicationStatus",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student",
+      ])
+      .leftJoin("application.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus is not null")
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.completed,
+      })
+      .orderBy("application.applicationNumber", "DESC")
+      .getMany();
   }
+
   /**
-   * get applications of a institution location
+   * get applications of an institution location
    * with PIR status required and completed.
    * @param locationId location id .
    * @returns student Application list.
@@ -673,7 +706,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * get applications of a institution location
+   * get applications of an institution location
    * with COE status required and completed.
    * @param locationId location id .
    * @returns student Application list.

@@ -16,6 +16,7 @@ import {
   UserAuth,
   InstitutionUserWithUserType,
   OptionItemDto,
+  ApplicationSummaryDTO,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -132,7 +133,7 @@ export class InstitutionService {
       institutionUser => {
         const roleArray = institutionUser.authorizations
           .map(auth => auth.authType.role || "")
-          .filter(authRole => authRole !== "");
+          .filter(institutionUserRole => institutionUserRole !== "");
         const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
         const locationArray = institutionUser.authorizations
           .map(auth => auth.location?.name || "")
@@ -294,5 +295,11 @@ export class InstitutionService {
 
   public async checkIfExist(guid: string, headers: any): Promise<boolean> {
     return ApiClient.Institution.checkIfExist(guid, headers);
+  }
+
+  public async getActiveApplicationsSummary(
+    locationId: number,
+  ): Promise<ApplicationSummaryDTO[]> {
+    return ApiClient.Institution.getActiveApplicationsSummary(locationId);
   }
 }

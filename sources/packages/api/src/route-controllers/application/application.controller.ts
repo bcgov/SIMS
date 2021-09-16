@@ -54,7 +54,6 @@ export class ApplicationController extends BaseController {
       applicationId,
       userToken.userId,
     );
-
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,

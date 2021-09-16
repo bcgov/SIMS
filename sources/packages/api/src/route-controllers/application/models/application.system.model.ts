@@ -1,4 +1,5 @@
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+
 import {
   ProgramInfoStatus,
   AssessmentStatus,
@@ -41,18 +42,4 @@ export class UpdateCOEStatusDto {
 export class UpdateApplicationStatusDto {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
-}
-
-export interface ProgramOfferingDto {
-  id: number;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
 }

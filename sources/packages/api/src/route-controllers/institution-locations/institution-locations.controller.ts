@@ -19,18 +19,26 @@ import {
   IInstitutionUserToken,
   IUserToken,
 } from "../../auth/userToken.interface";
-import { FormsFlowService, InstitutionService } from "../../services";
+import {
+  FormsFlowService,
+  InstitutionService,
+  ApplicationService,
+} from "../../services";
 import {
   HasLocationAccess,
   IsInstitutionAdmin,
   AllowAuthorizedParty,
 } from "../../auth/decorators";
+import { Application } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { OptionItem } from "../../types";
+import { ActiveApplicationSummaryDTO } from "../application/models/application.model";
+import { getUserFullName } from "../../utilities/auth-utils";
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
+    private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
     private readonly formsFlowService: FormsFlowService,
@@ -63,7 +71,7 @@ export class InstitutionLocationsController extends BaseController {
       await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
-        "Not able to find a institution associated with the current user name.",
+        "Not able to find an institution associated with the current user name.",
       );
     }
 
@@ -108,7 +116,7 @@ export class InstitutionLocationsController extends BaseController {
     }
     if (!institutionDetails) {
       throw new UnprocessableEntityException(
-        "Not able to find a institution associated with the current user name.",
+        "Not able to find an associated with the current user name.",
       );
     }
     // If the data is valid the location is updated to SIMS DB.
@@ -159,6 +167,32 @@ export class InstitutionLocationsController extends BaseController {
         },
       } as InstitutionLocationsDetailsDto;
     });
+  }
+
+  /**
+   * Get all active application of a location in an institution
+   * with application_status is completed.
+   * @param locationId location id.
+   * @returns Student active application list of an institution location.
+   */
+  @HasLocationAccess("locationId")
+  @Get(":locationId/active-applications")
+  async getActiveApplications(
+    @Param("locationId") locationId: number,
+  ): Promise<ActiveApplicationSummaryDTO[]> {
+    const applications = await this.applicationService.getActiveApplications(
+      locationId,
+    );
+    return applications.map((eachApplication: Application) => {
+      return {
+        applicationNumber: eachApplication.applicationNumber,
+        applicationId: eachApplication.id,
+        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
+        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
+        applicationStatus: eachApplication.applicationStatus,
+        fullName: getUserFullName(eachApplication.student.user),
+      };
+    }) as ActiveApplicationSummaryDTO[];
   }
 
   /**

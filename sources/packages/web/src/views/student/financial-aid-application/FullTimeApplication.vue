@@ -27,7 +27,7 @@
                 &nbsp;&nbsp;
                 <ProgressSpinner
                   style="width: 30px; height: 25px"
-                  strokeWidth="10" /></span
+                  strokeWidth="10"/></span
             ></v-btn>
           </v-col>
         </v-row>
@@ -38,6 +38,7 @@
           @loaded="formLoaded"
           @changed="formChanged"
           @submitted="submitApplication"
+          @customEvent="customEventCallback"
         ></formio>
         <v-row>
           <v-col md="6">
@@ -71,7 +72,11 @@ import {
   useFormioUtils,
   useToastMessage,
 } from "../../../composables";
-import { WizardNavigationEvent } from "@/types";
+import {
+  WizardNavigationEvent,
+  FormIOCustomEvent,
+  FormIOCustomEventTypes,
+} from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
@@ -254,6 +259,14 @@ export default {
       }
     };
 
+    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
+      if (FormIOCustomEventTypes.RouteToStudentProfile === event.type) {
+        router.push({
+          name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
+        });
+      }
+    };
+
     const wizardGoPrevious = () => {
       applicationWizard.prevPage();
     };
@@ -279,6 +292,7 @@ export default {
       submitApplication,
       savingDraft,
       submittingApplication,
+      customEventCallback,
     };
   },
 };

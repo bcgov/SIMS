@@ -65,3 +65,12 @@ export interface GetApplicationDataDto {
   applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: string;
 }
+
+export interface ApplicationSummaryDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  applicationId: number;
+  coeStatus: string;
+  fullName: string;
+}
