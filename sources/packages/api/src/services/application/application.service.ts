@@ -343,13 +343,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "institutionType",
         "student",
       ])
-      .leftJoin("application.programYear", "programYear")
+      .innerJoin("application.programYear", "programYear")
       .leftJoin("application.offering", "offering")
       .leftJoin("application.pirProgram", "pirProgram")
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
-      .leftJoin("application.student", "student")
+      .innerJoin("application.student", "student")
       .andWhere("application.id = :applicationId", {
         applicationId,
       })
