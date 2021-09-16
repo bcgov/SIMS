@@ -9,9 +9,10 @@ import { Formio } from "formiojs";
 import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
 import FormUploadService from "../../services/FormUploadService";
+import { FormIOCustomEvent } from "@/types";
 
 export default {
-  emits: ["submitted", "loaded", "changed"],
+  emits: ["submitted", "loaded", "changed", "customEvent"],
   props: {
     formName: {
       type: String,
@@ -96,6 +97,10 @@ export default {
 
       form.on("submit", (submision: any) => {
         context.emit("submitted", submision.data, form);
+      });
+
+      form.on("customEvent", (event: FormIOCustomEvent) => {
+        context.emit("customEvent", form, event);
       });
     });
 

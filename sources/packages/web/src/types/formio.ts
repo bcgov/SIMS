@@ -6,3 +6,18 @@
 export interface WizardNavigationEvent {
   page: number;
 }
+
+/**
+ * Custom event object type.
+ */
+export interface FormIOCustomEvent {
+  type: FormIOCustomEventTypes;
+}
+
+/**
+ *Enumeration for custom event types emitted from FormIO.
+ */
+export enum FormIOCustomEventTypes {
+  RouteToStudentProfile = "routeToStudentProfile",
+  RouteToCreateProgram = "routeToCreateProgram",
+}
