@@ -126,6 +126,8 @@ objects:
                       name: ${FORMIO_SECRET}
                 - name: DEBUG
                   value: "False"
+                - name: MAIL_CONFIG
+                  value: /app/mail-config.properties
                 - name: TZ
                   value: UTC
                 - name: CAMUNDA_MAX_POOLSIZE
@@ -240,11 +242,23 @@ objects:
                   memory: "${MEMORY_LIMIT}"
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
+              volumeMounts:
+                - mountPath: /app/mail-config.properties
+                  name: ${NAME}-mail-volume
+                  subPath: mail-config.properties
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           schedulerName: default-scheduler
           securityContext: {}
           terminationGracePeriodSeconds: 30
+          volumes:
+            - configMap:
+                defaultMode: 420
+                items:
+                  - key: mail-config.properties
+                    path: mail-config.properties
+                name: ${NAME}-mail-config
+              name: ${NAME}-mail-volume
       test: false
       triggers:
         - type: ConfigChange
