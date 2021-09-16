@@ -160,10 +160,13 @@ export class AuthService {
       notAllowedUser?: boolean;
     },
   ): Promise<void> {
+    if (!this.keycloak) {
+      throw new Error("Keycloak not initialized.");
+    }
     let redirectUri = RouteHelper.getAbsoluteRootRoute(type);
     switch (type) {
       case ClientIdType.STUDENT: {
-        await this.keycloak!.logout({
+        await this.keycloak.logout({
           redirectUri,
         });
         break;
@@ -187,13 +190,16 @@ export class AuthService {
         break;
       }
       default:
-        await this.keycloak!.logout();
+        await this.keycloak.logout();
         break;
     }
   }
 
   private async executeSiteminderLogoff(redirectUri: string) {
-    const logoutURL = this.keycloak!.createLogoutUrl({
+    if (!this.keycloak) {
+      throw new Error("Keycloak not initialized.");
+    }
+    const logoutURL = this.keycloak.createLogoutUrl({
       redirectUri,
     });
     const config = await AppConfigService.shared.config();

@@ -1,6 +1,5 @@
 import { AuthService } from "@/services/AuthService";
 import { AxiosRequestConfig } from "axios";
-import { AppConfigService } from "../../AppConfigService";
 import HttpClient from "./HttpClient";
 
 export default abstract class HttpBaseClient {

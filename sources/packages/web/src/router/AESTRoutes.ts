@@ -71,11 +71,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
                 name: AESTRoutesConst.HOME,
               });
               break;
-            case AuthStatus.ForbiddenUser:
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
-              break;
             default:
               next({
                 name: SharedRouteConst.FORBIDDEN_USER,

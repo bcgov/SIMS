@@ -132,7 +132,7 @@ export class InstitutionService {
       institutionUser => {
         const roleArray = institutionUser.authorizations
           .map(auth => auth.authType.role || "")
-          .filter(role => role !== "");
+          .filter(authRole => authRole !== "");
         const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
         const locationArray = institutionUser.authorizations
           .map(auth => auth.location?.name || "")

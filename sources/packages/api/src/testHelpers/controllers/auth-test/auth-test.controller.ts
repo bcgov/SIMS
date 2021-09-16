@@ -21,7 +21,7 @@ export class AuthTestController {
   @Public()
   @Get("/public-route")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async publicRoute(): Promise<void> {}
+  publicRoute(): void {}
 
   /**
    * Only authenticated users will have access to this endpoint
@@ -32,9 +32,7 @@ export class AuthTestController {
    * @returns UserToken.
    */
   @Get("/global-authenticated-route")
-  async authenticatedRoute(
-    @UserToken() userToken: IUserToken,
-  ): Promise<IUserToken> {
+  authenticatedRoute(@UserToken() userToken: IUserToken): IUserToken {
     return userToken;
   }
 
@@ -45,7 +43,7 @@ export class AuthTestController {
   @Roles(Role.Student)
   @Get("/authenticated-route-by-role")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async authenticatedRouteByRole(): Promise<void> {}
+  authenticatedRouteByRole(): void {}
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
@@ -55,7 +53,7 @@ export class AuthTestController {
   @Roles()
   @Get("/authenticated-route-by-non-existing-role")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async authenticatedRouteByNonExistingRole(): Promise<void> {}
+  authenticatedRouteByNonExistingRole(): void {}
 
   /**
    * Only authenticated users with specific group will have access to this endpoint.
@@ -64,7 +62,7 @@ export class AuthTestController {
   @Groups(UserGroups.aestUser)
   @Get("/authenticated-route-by-group")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async authenticatedRouteByGroup(): Promise<void> {}
+  authenticatedRouteByGroup(): void {}
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
@@ -74,5 +72,5 @@ export class AuthTestController {
   @Groups()
   @Get("/authenticated-route-by-non-existing-group")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async authenticatedRouteByNonExistingGroup(): Promise<void> {}
+  authenticatedRouteByNonExistingGroup(): void {}
 }
