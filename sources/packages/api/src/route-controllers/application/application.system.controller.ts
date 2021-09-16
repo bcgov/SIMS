@@ -53,34 +53,36 @@ export class ApplicationSystemController {
 
     return {
       data: application.data,
-      programYear: application.programYear.programYear,
+      programYear: application.programYear?.programYear,
       offering: {
-        id: application.offering.id,
-        studyStartDate: application.offering.studyStartDate,
-        studyEndDate: application.offering.studyEndDate,
-        breakStartDate: application.offering.breakStartDate,
-        breakEndDate: application.offering.breakEndDate,
-        actualTuitionCosts: application.offering.actualTuitionCosts,
-        programRelatedCosts: application.offering.programRelatedCosts,
-        mandatoryFees: application.offering.mandatoryFees,
-        exceptionalExpenses: application.offering.exceptionalExpenses,
+        id: application.offering?.id,
+        studyStartDate: application.offering?.studyStartDate,
+        studyEndDate: application.offering?.studyEndDate,
+        breakStartDate: application.offering?.breakStartDate,
+        breakEndDate: application.offering?.breakEndDate,
+        actualTuitionCosts: application.offering?.actualTuitionCosts,
+        programRelatedCosts: application.offering?.programRelatedCosts,
+        mandatoryFees: application.offering?.mandatoryFees,
+        exceptionalExpenses: application.offering?.exceptionalExpenses,
         tuitionRemittanceRequestedAmount:
-          application.offering.tuitionRemittanceRequestedAmount,
-        offeringDelivered: application.offering.offeringDelivered,
-        offeringIntensity: application.offering.offeringIntensity,
+          application.offering?.tuitionRemittanceRequestedAmount,
+        offeringDelivered: application.offering?.offeringDelivered,
+        offeringIntensity: application.offering?.offeringIntensity,
       },
       program: {
-        programCredentialType: application.pirProgram.credentialType,
-        programLength: application.pirProgram.completionYears,
+        programCredentialType: application.pirProgram?.credentialType,
+        programLength: application.pirProgram?.completionYears,
       },
       institution: {
-        institutionType: application.location.institution.institutionType.name,
+        institutionType:
+          application.location?.institution?.institutionType?.name,
       },
       location: {
-        institutionLocationProvince: application.location.data.address.province,
+        institutionLocationProvince:
+          application.location?.data?.address?.province,
       },
       student: {
-        studentPDStatus: application.student.studentPDVerified,
+        studentPDStatus: application.student?.studentPDVerified,
       },
     };
   }
