@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { useAuth } from "@/composables";
-import { AppIDPType } from "@/types";
+import { AppIDPType, ClientIdType } from "@/types";
 
 export default {
   components: {},
@@ -44,7 +44,7 @@ export default {
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(AppIDPType.IDIR);
+      await executeLogin(ClientIdType.AEST, AppIDPType.IDIR);
     };
     return { login };
   },

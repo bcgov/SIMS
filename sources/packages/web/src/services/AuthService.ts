@@ -8,6 +8,7 @@ import { InstitutionService } from "./InstitutionService";
 import router from "../router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationToken, BCeIDDetailsDto } from "@/types";
+import { RouteHelper } from "@/helpers";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -68,16 +69,13 @@ export class AuthService {
     let isForbiddenUser = false;
 
     try {
-      console.log("before init");
       await this.keycloak.init({
         onLoad: "check-sso",
         responseMode: "query",
         checkLoginIframe: false,
       });
-      console.log("after init");
 
       if (this.keycloak.authenticated) {
-        console.log("authenticated:", this.keycloak.authenticated);
         switch (clientType) {
           case ClientIdType.STUDENT:
             store.dispatch("student/setStudentProfileData", this.keycloak);
@@ -162,7 +160,7 @@ export class AuthService {
       notAllowedUser?: boolean;
     },
   ): Promise<void> {
-    let redirectUri = `${window.location.protocol}//${window.location.host}/${type}`;
+    let redirectUri = RouteHelper.getAbsoluteRootRoute(type);
     switch (type) {
       case ClientIdType.STUDENT: {
         await this.keycloak!.logout({
@@ -178,7 +176,6 @@ export class AuthService {
         } else if (options?.isUnknownUser) {
           redirectUri += "/login/unknown-user";
         }
-        console.log("redirectUri:", redirectUri);
         await this.executeSiteminderLogoff(redirectUri);
         break;
       }

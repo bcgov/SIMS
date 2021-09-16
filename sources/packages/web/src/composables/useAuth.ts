@@ -1,3 +1,4 @@
+import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import { AppIDPType, ClientIdType } from "@/types";
 import { computed } from "vue";
@@ -9,9 +10,13 @@ export function useAuth() {
 
   const parsedToken = computed(() => AuthService.shared.userToken);
 
-  const executeLogin = async (idp: AppIDPType): Promise<void> => {
+  const executeLogin = async (
+    clientType: ClientIdType,
+    idp: AppIDPType,
+  ): Promise<void> => {
     return AuthService.shared.keycloak?.login({
       idpHint: idp.toLowerCase(),
+      redirectUri: RouteHelper.getAbsoluteRootRoute(clientType),
     });
   };
 

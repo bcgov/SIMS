@@ -25,15 +25,15 @@
         </v-btn>
       </v-row>
     </v-card-actions>
-    <Message severity="error" class="mx-2" v-if="basicBCeID">
+    <Message severity="error" class="mx-2" v-if="showBasicBCeIDMessage">
       No such Business account has been found with BCeID. Please login with your
       Business BCeId
     </Message>
-    <Message severity="error" class="mx-2" v-if="disabledUser">
+    <Message severity="error" class="mx-2" v-if="showDisabledUserMessage">
       Disabled User - you dont have access to the system. Please contact
       Administrator for more informations.
     </Message>
-    <Message severity="error" class="mx-2" v-if="unknownUser">
+    <Message severity="error" class="mx-2" v-if="showUnknownUserMessage">
       The user was validated successfully but is not currently allowed to have
       access to this application. Please contact the Administrator for more
       information
@@ -42,9 +42,8 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
 import { useAuth } from "@/composables";
-import { AppIDPType } from "@/types";
+import { AppIDPType, ClientIdType } from "@/types";
 
 export default {
   components: {},
@@ -65,16 +64,12 @@ export default {
       default: false,
     },
   },
-  setup(props: any) {
+  setup() {
     const { executeLogin } = useAuth();
-    const basicBCeID = ref(props.showBasicBCeIDMessage);
-    const disabledUser = ref(props.showDisabledUserMessage);
-    const unknownUser = ref(props.showUnknownUserMessage);
     const login = async () => {
-      await executeLogin(AppIDPType.BCeID);
+      await executeLogin(ClientIdType.INSTITUTION, AppIDPType.BCeID);
     };
-
-    return { login, basicBCeID, disabledUser, unknownUser };
+    return { login };
   },
 };
 </script>

@@ -3,6 +3,12 @@ import { AppIDPType, AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
 export class RouteHelper {
+  static getAbsoluteRootRoute(clientType: ClientIdType): string {
+    return `${window.location.protocol}//${
+      window.location.host
+    }${this.getRootRoute(clientType)}`;
+  }
+
   private static getRootRoute(clientType: ClientIdType): AppRoutes {
     switch (clientType) {
       case ClientIdType.STUDENT:

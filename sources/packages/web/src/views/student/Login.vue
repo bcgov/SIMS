@@ -29,13 +29,13 @@
 
 <script lang="ts">
 import { useAuth } from "@/composables";
-import { AppIDPType } from "@/types";
+import { AppIDPType, ClientIdType } from "@/types";
 
 export default {
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(AppIDPType.BCSC);
+      await executeLogin(ClientIdType.STUDENT, AppIDPType.BCSC);
     };
     return { login };
   },
