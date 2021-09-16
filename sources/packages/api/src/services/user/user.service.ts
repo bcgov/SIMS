@@ -81,7 +81,6 @@ export class UserService extends DataModelService<User> {
     user.email = email;
     user.firstName = givenNames;
     user.lastName = lastName;
-    user.isActive = true;
     return this.repo.save(user);
   }
 }

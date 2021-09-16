@@ -155,7 +155,7 @@ export class UserController extends BaseController {
     return institutionUser;
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Patch("/institution")
   async updateInstitutionUser(
     @UserToken() userToken: IUserToken,
