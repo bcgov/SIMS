@@ -2634,7 +2634,7 @@
               "value": ""
             }
           ],
-          "content": "Select the program that the applicant will be attending. If you know the program the student would like to attend does not exist in StudentAid BC you will need to create an approved program entry.\nClick the button below to create a program",
+          "content": "Select the program that the applicant will be attending. If you know the program the student would like to attend does not exist in StudentAid BC you will need to create an approved program entry.\nClick the button below to create a program.",
           "refreshOnChange": false,
           "customClass": "",
           "hidden": false,

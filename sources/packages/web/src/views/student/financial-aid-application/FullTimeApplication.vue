@@ -38,7 +38,7 @@
           @loaded="formLoaded"
           @changed="formChanged"
           @submitted="submitApplication"
-          @custom="customEventCallback"
+          @customEvent="customEventCallback"
         ></formio>
         <v-row>
           <v-col md="6">
@@ -72,7 +72,11 @@ import {
   useFormioUtils,
   useToastMessage,
 } from "../../../composables";
-import { WizardNavigationEvent } from "@/types";
+import {
+  WizardNavigationEvent,
+  FormIOCustomEvent,
+  FormIOCustomEventTypes,
+} from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
@@ -255,8 +259,8 @@ export default {
       }
     };
 
-    const customEventCallback = async (form: any, event: any) => {
-      if ("routeToStudentProfile" === event.type) {
+    const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
+      if (FormIOCustomEventTypes.RouteToStudentProfile === event.type) {
         router.push({
           name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
         });
