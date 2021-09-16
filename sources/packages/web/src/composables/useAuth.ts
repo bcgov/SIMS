@@ -14,14 +14,14 @@ export function useAuth() {
     clientType: ClientIdType,
     idp: AppIDPType,
   ): Promise<void> => {
-    return AuthService.shared.keycloak?.login({
+    await AuthService.shared.keycloak?.login({
       idpHint: idp.toLowerCase(),
       redirectUri: RouteHelper.getAbsoluteRootRoute(clientType),
     });
   };
 
   const executeLogout = async (clientType: ClientIdType): Promise<void> => {
-    return AuthService.shared.logout(clientType);
+    await AuthService.shared.logout(clientType);
   };
 
   return { isAuthenticated, parsedToken, executeLogin, executeLogout };

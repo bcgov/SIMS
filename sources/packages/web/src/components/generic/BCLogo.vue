@@ -42,20 +42,3 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.logo-main-text {
-  color: #002c71;
-  font-size: 24px;
-  line-height: 25px;
-  font-style: normal;
-  font-weight: normal;
-  user-select: none;
-}
-
-.logo-subtitle {
-  color: #454f5b;
-  font-size: 12px;
-  font-weight: 400;
-  user-select: none;
-}
-</style>

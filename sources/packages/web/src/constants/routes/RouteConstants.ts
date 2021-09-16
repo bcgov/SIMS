@@ -67,7 +67,7 @@ export const AESTRoutesConst = {
 };
 
 /**
- * Shred Routes Names
+ * Shared Routes Names
  */
 export const SharedRouteConst = {
   PAGE_NOT_FOUND: Symbol(),

@@ -5,7 +5,7 @@ import HttpClient from "./HttpClient";
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
 
-  static createAuthHeader(token: any) {
+  static createAuthHeader(token?: string) {
     if (token) {
       const authorization = `Bearer ${token}`;
       return { headers: { Authorization: authorization } };
@@ -13,6 +13,7 @@ export default abstract class HttpBaseClient {
       throw new Error("User is not authenticated!");
     }
   }
+
   protected addAuthHeader(): AxiosRequestConfig {
     return HttpBaseClient.createAuthHeader(AuthService.shared.keycloak?.token);
   }

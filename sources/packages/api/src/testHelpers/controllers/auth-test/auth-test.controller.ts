@@ -31,7 +31,7 @@ export class AuthTestController {
    * due to the JwtAuthGuard global guard in place (see src/auth/auth.module.ts).
    * Any endpoint that is not explicit decorated with the Public
    * decorator will be considered as an endpoint that needs at least a valid token.
-   * @param userToken
+   * @param userToken token from the authenticated user.
    * @returns UserToken.
    */
   @Get("/global-authenticated-route")
@@ -41,7 +41,6 @@ export class AuthTestController {
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
-   * @param userToken
    */
   @Roles(Role.Student)
   @Get("/authenticated-route-by-role")
@@ -54,7 +53,6 @@ export class AuthTestController {
   /**
    * Only authenticated users with specific role will have access to this endpoint.
    * In this case, no rule will be provided and therefore no rule will be a valid one.
-   * @param userToken
    */
   @Roles()
   @Get("/authenticated-route-by-non-existing-role")
@@ -66,7 +64,6 @@ export class AuthTestController {
 
   /**
    * Only authenticated users with specific group will have access to this endpoint.
-   * @param userToken
    */
   @Groups(UserGroups.aestUser)
   @Get("/authenticated-route-by-group")
@@ -79,7 +76,6 @@ export class AuthTestController {
   /**
    * Only authenticated users with specific role will have access to this endpoint.
    * In this case, no rule will be provided and therefore no rule will be a valid one.
-   * @param userToken
    */
   @Groups()
   @Get("/authenticated-route-by-non-existing-group")

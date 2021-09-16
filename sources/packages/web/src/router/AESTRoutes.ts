@@ -56,7 +56,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             ClientIdType.AEST,
             to.path,
           );
-          console.log("status:", status.toString());
           switch (status) {
             case AuthStatus.Continue:
               next();
