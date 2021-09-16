@@ -455,33 +455,39 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             ClientIdType.INSTITUTION,
             to.path,
           );
-          switch (status) {
-            case AuthStatus.Continue:
-              next();
-              break;
-            case AuthStatus.RequiredLogin:
-              next({
-                name: InstitutionRoutesConst.LOGIN,
-              });
-              break;
-            case AuthStatus.RedirectHome:
-              next({
-                name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-              });
-              break;
-            case AuthStatus.ForbiddenUser:
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
-              break;
-            default: {
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
+
+          if (AuthService.shared.priorityRedirect) {
+            next(AuthService.shared.priorityRedirect);
+            AuthService.shared.priorityRedirect = undefined;
+          } else {
+            switch (status) {
+              case AuthStatus.Continue:
+                next();
+                break;
+              case AuthStatus.RequiredLogin:
+                next({
+                  name: InstitutionRoutesConst.LOGIN,
+                });
+                break;
+              case AuthStatus.RedirectHome:
+                next({
+                  name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+                });
+                break;
+              case AuthStatus.ForbiddenUser:
+                next({
+                  name: SharedRouteConst.FORBIDDEN_USER,
+                });
+                break;
+              default: {
+                next({
+                  name: SharedRouteConst.FORBIDDEN_USER,
+                });
+              }
             }
           }
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
           throw e;
         });

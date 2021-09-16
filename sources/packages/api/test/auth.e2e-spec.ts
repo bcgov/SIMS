@@ -42,7 +42,6 @@ describe("Authentication (e2e)", () => {
 
     studentAccessToken = studentToken.access_token;
     aestAccessToken = aestToken.access_token;
-    console.log(aestAccessToken);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],

@@ -5,10 +5,10 @@ import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
 import { InstitutionService } from "./InstitutionService";
-import router from "../router";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationToken, BCeIDDetailsDto } from "@/types";
 import { RouteHelper } from "@/helpers";
+import { LocationAsRelativeRaw } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -48,6 +48,14 @@ export class AuthService {
   static get shared(): AuthService {
     return this.instance || (this.instance = new this());
   }
+
+  /**
+   * When populated, indicates that there is a route that
+   * must take priority over all the others ones.
+   * After the redirect happens this variable must
+   * be set to undefined.
+   */
+  priorityRedirect?: LocationAsRelativeRaw = undefined;
 
   /**
    * Initializes the authentication service with the proper client type.
@@ -144,9 +152,9 @@ export class AuthService {
         await this.logout(ClientIdType.INSTITUTION, { isUnknownUser: true });
         return true;
       }
-      router.push({
+      this.priorityRedirect = {
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
-      });
+      };
       return false;
     }
   }
