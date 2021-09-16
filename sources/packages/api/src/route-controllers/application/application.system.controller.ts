@@ -53,7 +53,7 @@ export class ApplicationSystemController {
 
     return {
       data: application.data,
-      programYear: application.programYear?.programYear,
+      programYear: application.programYear.programYear,
       offering: {
         id: application.offering?.id,
         studyStartDate: application.offering?.studyStartDate,
@@ -82,7 +82,7 @@ export class ApplicationSystemController {
           application.location?.data?.address?.province,
       },
       student: {
-        studentPDStatus: application.student?.studentPDVerified,
+        studentPDStatus: application.student.studentPDVerified,
       },
     };
   }
