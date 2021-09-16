@@ -1,12 +1,8 @@
 <template>
   <v-app-bar dense flat app style="overflow:visible">
-    <v-img
-      class="ml-5"
-      max-width="379px"
-      height="40px"
-      alt="logo"
-      src="../../assets/images/bc_institution_logo.svg"
-    />
+    <BCLogo
+      subtitle="Ministry of Advanced Education and Skills Training"
+    ></BCLogo>
     <v-spacer></v-spacer>
     <v-btn
       v-if="isAuthenticated"
@@ -34,12 +30,12 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import { AppConfigService } from "../../services/AppConfigService";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { useAuth } from "@/composables";
+import BCLogo from "@/components/generic/BCLogo.vue";
 
 export default {
-  components: {},
+  components: { BCLogo },
   setup() {
     const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();

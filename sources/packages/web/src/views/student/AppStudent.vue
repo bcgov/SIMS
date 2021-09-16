@@ -2,14 +2,7 @@
   <!-- Adding overflow:visible to allow the use of the Prime Vue
   floating menu while Veutify component is not ready.  -->
   <v-app-bar dense flat app style="overflow:visible">
-    <v-img
-      class="ml-5"
-      max-width="311px"
-      height="40px"
-      alt="logo"
-      src="../../assets/images/bc_student_logo.svg"
-      @click="logoClick"
-    />
+    <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
     <v-spacer></v-spacer
     ><v-btn
       v-if="isAuthenticated"
@@ -64,9 +57,10 @@ import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { AppRoutes } from "../../types";
 import { useAuth } from "@/composables";
+import BCLogo from "@/components/generic/BCLogo.vue";
 
 export default {
-  components: {},
+  components: { BCLogo },
   setup() {
     const { executeLogout } = useAuth();
     const router = useRouter();
