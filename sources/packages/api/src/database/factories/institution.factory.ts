@@ -1,5 +1,5 @@
 import * as faker from "faker";
-import { Institution } from "../entities";
+import { Institution, InstitutionType } from "../entities";
 
 export async function institutionFactory(
   incoming?: Partial<Institution>,
@@ -10,7 +10,10 @@ export async function institutionFactory(
   institution.guid = faker.random.uuid();
   institution.establishedDate = faker.date.past();
   institution.website = faker.internet.url();
-  institution.institutionType = 1;
+  institution.institutionType = {
+    id: 1,
+    name: "BC Private",
+  } as InstitutionType;
   institution.institutionAddress = {
     phone: faker.phone.phoneNumber(),
     addressLine1: faker.address.streetAddress(),

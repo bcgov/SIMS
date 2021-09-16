@@ -118,7 +118,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
       country: institutionEntity.institutionAddress.country,
       provinceState: institutionEntity.institutionAddress.provinceState,
       postalCode: institutionEntity.institutionAddress.postalCode,
-      institutionType: institutionEntity.institutionType,
+      institutionType: institutionEntity.institutionType.id,
     };
   }
 }

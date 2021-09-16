@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TableNames } from "../constant";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  RelationId,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
+import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
   InstitutionAddress,
@@ -7,6 +15,7 @@ import {
   LegalAuthorityContact,
 } from "../../types";
 import { InstitutionUser } from "./institution-user.model";
+import { InstitutionType } from "./institution-type.model";
 
 @Entity({ name: TableNames.Institution })
 export class Institution extends RecordDataModel {
@@ -78,9 +87,13 @@ export class Institution extends RecordDataModel {
   })
   users: InstitutionUser[];
 
-  @Column({
+  @RelationId((institution: Institution) => institution.institutionType)
+  institutionTypeId: number;
+
+  @ManyToOne(() => InstitutionType, { eager: false, cascade: false })
+  @JoinColumn({
     name: "institution_type_id",
-    nullable: true,
+    referencedColumnName: ColumnNames.ID,
   })
-  institutionType: number;
+  institutionType: InstitutionType;
 }

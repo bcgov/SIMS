@@ -10,6 +10,8 @@ import {
   InstitutionUserAuth,
   InstitutionUserTypeAndRole,
   User,
+  InstitutionLocation,
+  InstitutionType,
 } from "../../database/entities";
 import { Connection, Repository, getConnection } from "typeorm";
 import {
@@ -26,7 +28,6 @@ import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
 import { UserService } from "../user/user.service";
-import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,
@@ -175,7 +176,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.website = createInstitutionDto.website;
     institution.regulatingBody = createInstitutionDto.regulatingBody;
     institution.establishedDate = createInstitutionDto.establishedDate;
-    institution.institutionType = createInstitutionDto.institutionType;
+    institution.institutionType = {
+      id: createInstitutionDto.institutionType,
+    } as InstitutionType;
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
@@ -217,6 +220,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return this.repo
       .createQueryBuilder("institution")
       .leftJoin("institution.users", "institutionUsers")
+      .leftJoinAndSelect("institution.institutionType", "institutionType")
       .leftJoin("institutionUsers.user", "user")
       .where("user.userName = :userName", { userName })
       .andWhere("user.isActive = :isActive", { isActive: true })
@@ -241,7 +245,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.website = institutionDto.website;
     institution.regulatingBody = institutionDto.regulatingBody;
     institution.establishedDate = institutionDto.establishedDate;
-    institution.institutionType = institutionDto.institutionType;
+    institution.institutionType = {
+      id: institutionDto.institutionType,
+    } as InstitutionType;
 
     //Institution Primary Contact Information
     institution.institutionPrimaryContact = {
@@ -330,13 +336,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const institutionEntity = await this.getInstituteByUserName(
       userInfo.userName,
     );
-
     const user = await this.userService.getActiveUser(userInfo.userName);
     const institution = InstitutionDto.fromEntity(institutionEntity);
     institution.userEmail = user?.email;
     institution.userFirstName = user?.firstName;
     institution.userLastName = user?.lastName;
-
     return {
       institution,
       account,

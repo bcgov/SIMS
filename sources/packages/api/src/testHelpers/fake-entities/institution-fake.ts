@@ -1,5 +1,5 @@
 import * as faker from "faker";
-import { Institution } from "../../database/entities";
+import { Institution, InstitutionType } from "../../database/entities";
 
 export function createFakeInstitution(): Institution {
   const institution = new Institution();
@@ -11,7 +11,10 @@ export function createFakeInstitution(): Institution {
   institution.website = faker.internet.url();
   institution.regulatingBody = "Regulating Body";
   institution.establishedDate = faker.date.past(20);
-  institution.institutionType = 1;
+  institution.institutionType = {
+    id: 1,
+    name: "BC Private",
+  } as InstitutionType;
   institution.institutionPrimaryContact = {
     primaryContactFirstName: faker.name.firstName(),
     primaryContactLastName: faker.name.lastName(),
