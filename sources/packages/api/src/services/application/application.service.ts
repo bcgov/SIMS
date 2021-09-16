@@ -324,12 +324,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return application;
   }
 
+  /**
+   * Get student application details with the application Id.
+   * @param applicationId student application id .
+   * @returns student Application Details.
+   */
   async getApplicationById(applicationId: number): Promise<Application> {
     const application = this.repo
       .createQueryBuilder("application")
-      .select(["application", "programYear.programYear"])
+      .select([
+        "application.data",
+        "programYear.programYear",
+        "offering",
+        "pirProgram.credentialType",
+        "pirProgram.completionYears",
+        "location.data",
+        "institution",
+        "institutionType",
+        "student",
+      ])
       .innerJoin("application.programYear", "programYear")
-      .where("programYear.active = true")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.pirProgram", "pirProgram")
+      .innerJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
+      .leftJoin("institution.institutionType", "institutionType")
+      .innerJoin("application.student", "student")
       .andWhere("application.id = :applicationId", {
         applicationId,
       });
@@ -587,22 +607,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the offering associated with an application.
-   * @param applicationId application id.
-   * @returns offering associated with an application or null
-   * when the application does not exists or there is no
-   * offering associated with it at this time.
-   */
-  async getOfferingByApplicationId(
-    applicationId: number,
-  ): Promise<EducationProgramOffering> {
-    const application = await this.repo.findOne(applicationId, {
-      relations: ["offering"],
-    });
-
-    return application?.offering;
-  }
-  /**
    * Get all active applications of an institution location
    * with application_status is completed
    * @param locationId location id .
@@ -630,6 +634,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .orderBy("application.applicationNumber", "DESC")
       .getMany();
   }
+
   /**
    * get applications of an institution location
    * with PIR status required and completed.
