@@ -288,11 +288,14 @@ parameters:
   - name: KEYCLOAK_REALM
     required: true
   - name: KEYCLOAK_CLIENT_STUDENT
-    value: student
+    value: "student"
+    required: true
   - name: KEYCLOAK_CLIENT_INSTITUTION
-    value: institution
+    value: "institution"
+    required: true
   - name: KEYCLOAK_CLIENT_AEST
-    value: aest
+    value: "aest"
+    required: true
   - name: KEYCLOAK_AUTH_URL
     required: true
   - name: BCeID_WEB_SERVICE_WSDL
