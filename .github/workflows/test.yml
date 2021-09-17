@@ -5,7 +5,7 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  # Print variables for logging and debugging purposes
+  # Print variables for logging and debugging purposes.
   checkEnv:
     name: Check Env variables
     runs-on: ubuntu-latest
