@@ -1,4 +1,4 @@
-import { StudentPDStatus } from "src/types/pdStatus";
+import { StudentPDStatus } from "src/types";
 import { Student } from "src/database/entities";
 
 /**
