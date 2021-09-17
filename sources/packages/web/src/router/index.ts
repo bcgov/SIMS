@@ -1,19 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { studentRoutes } from "./StudentRoutes";
 import { institutionRoutes } from "./InstitutionRoutes";
+import { aestRoutes } from "./AESTRoutes";
 import { sharedRoutes } from "./SharedRoutes";
-import { AppConfigService } from "../services/AppConfigService";
-
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
 } from "../constants/routes/RouteConstants";
 import { UserAuthorizationService } from "@/services/UserAuthorizationService";
+import { AuthService } from "@/services/AuthService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
 const routes: Array<RouteRecordRaw> = [
   ...studentRoutes,
   ...institutionRoutes,
+  ...aestRoutes,
   ...sharedRoutes,
 ];
 
@@ -29,11 +30,11 @@ function forEachInstitutionRoutes(
   clientType: ClientIdType,
 ) {
   // MANAGE INSTITUTION ROUTES
-  AppConfigService.shared
-    .initAuthService(clientType)
+  AuthService.shared
+    .initialize(clientType)
     .then(() => {
       if (to.meta.requiresAuth !== false) {
-        if (AppConfigService.shared?.authService?.authenticated) {
+        if (AuthService.shared.keycloak?.authenticated) {
           if (to.meta?.userTypes || to.meta?.checkAllowedLocation) {
             if (
               UserAuthorizationService.shared.isUserTypeAllowed(
@@ -61,7 +62,7 @@ function forEachInstitutionRoutes(
         next();
       }
     })
-    .catch(e => {
+    .catch((e: any) => {
       console.error(e);
       throw e;
     });

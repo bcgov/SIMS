@@ -12,14 +12,13 @@ import ActiveApplicationEdit from "../views/institution/locations/active-applica
 import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
-import ManageDesgination from "../views/institution/ManageDesgination.vue";
+import ManageDesignation from "../views/institution/ManageDesignation.vue";
 import InstitutionUserDetails from "../views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
 } from "../constants/routes/RouteConstants";
 import Login from "../views/institution/Login.vue";
-import { AppConfigService } from "../services/AppConfigService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AuthStatus, AppRoutes } from "../types";
 import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
@@ -30,6 +29,8 @@ import LocationProgramView from "../views/institution/locations/programs/Locatio
 import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
 import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+import { RouteHelper } from "@/helpers";
+import { AuthService } from "@/services/AuthService";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -52,7 +53,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: Login,
         props: {
           showBasicBCeIDMessage: true,
-          showDisabledUserMessage: false,
         },
         meta: {
           requiresAuth: false,
@@ -286,9 +286,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.ManageInstitutionDesignation,
-        name: InstitutionRoutesConst.MANAGE_DESGINATION,
+        name: InstitutionRoutesConst.MANAGE_DESIGNATION,
         components: {
-          default: ManageDesgination,
+          default: ManageDesignation,
           sidebar: ManageInstitutionSideBar,
         },
         meta: {
@@ -447,41 +447,47 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
     ],
-    beforeEnter: (to, from, next) => {
-      AppConfigService.shared
-        .initAuthService(ClientIdType.INSTITUTION)
+    beforeEnter: (to, _from, next) => {
+      AuthService.shared
+        .initialize(ClientIdType.INSTITUTION)
         .then(() => {
-          const status = AppConfigService.shared.authStatus({
-            type: ClientIdType.INSTITUTION,
-            path: to.path,
-          });
-          switch (status) {
-            case AuthStatus.Continue:
-              next();
-              break;
-            case AuthStatus.RequiredLogin:
-              next({
-                name: InstitutionRoutesConst.LOGIN,
-              });
-              break;
-            case AuthStatus.RedirectHome:
-              next({
-                name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-              });
-              break;
-            case AuthStatus.ForbiddenUser:
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
-              break;
-            default: {
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
+          const status = RouteHelper.getNavigationAuthStatus(
+            ClientIdType.INSTITUTION,
+            to.path,
+          );
+
+          if (AuthService.shared.priorityRedirect) {
+            next(AuthService.shared.priorityRedirect);
+            AuthService.shared.priorityRedirect = undefined;
+          } else {
+            switch (status) {
+              case AuthStatus.Continue:
+                next();
+                break;
+              case AuthStatus.RequiredLogin:
+                next({
+                  name: InstitutionRoutesConst.LOGIN,
+                });
+                break;
+              case AuthStatus.RedirectHome:
+                next({
+                  name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+                });
+                break;
+              case AuthStatus.ForbiddenUser:
+                next({
+                  name: SharedRouteConst.FORBIDDEN_USER,
+                });
+                break;
+              default: {
+                next({
+                  name: SharedRouteConst.FORBIDDEN_USER,
+                });
+              }
             }
           }
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
           throw e;
         });

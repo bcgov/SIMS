@@ -18,6 +18,7 @@ export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.c
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
 export KEYCLOAK_CLIENT_STUDENT := $(or $(KEYCLOAK_CLIENT_STUDENT), student)
 export KEYCLOAK_CLIENT_INSTITUTION := $(or $(KEYCLOAK_CLIENT_INSTITUTION), institution)
+export KEYCLOAK_CLIENT_AEST := $(or $(KEYCLOAK_CLIENT_AEST), aest)
 # E2E Test
 export E2E_TEST_STUDENT_USERNAME := $(or $(E2E_TEST_STUDENT_USERNAME), student_e2e_test)
 export E2E_TEST_BCeID_USERNAME := $(or $(E2E_TEST_BCeID_USERNAME), SIMS_E2ETests)

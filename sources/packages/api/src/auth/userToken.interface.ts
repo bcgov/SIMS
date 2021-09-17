@@ -2,7 +2,7 @@ import { InstitutionUserAuthorizations } from "../services/institution-user-auth
 import { AuthorizedParties } from "./authorized-parties.enum";
 
 /**
- * User information extraced from the token during the
+ * User information extracted from the token during the
  * authentication process on JwtStrategy validate method.
  */
 export interface IUserToken {
@@ -19,6 +19,7 @@ export interface IUserToken {
   givenNames: string;
   identity_assurance_level: string;
   roles: string[];
+  groups: string[];
   idp_user_name: string;
   authorizedParty: AuthorizedParties;
 }

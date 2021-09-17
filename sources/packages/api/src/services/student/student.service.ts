@@ -29,7 +29,7 @@ export class StudentService extends RecordDataModelService<Student> {
       .createQueryBuilder("student")
       .leftJoinAndSelect("student.user", "user")
       .where("user.userName = :userNameParam", { userNameParam: userName })
-      .getOneOrFail();
+      .getOne();
     return student;
   }
 

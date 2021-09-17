@@ -5,7 +5,7 @@ import { IUserToken } from "../userToken.interface";
 
 /**
  * Block non-active users to have access to the API,
- * with some exceptions. Expections are allowed using
+ * with some exceptions. Exceptions are allowed using
  * the decorator @AllowInactiveUser.
  */
 @Injectable()

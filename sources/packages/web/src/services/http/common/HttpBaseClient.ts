@@ -1,11 +1,11 @@
+import { AuthService } from "@/services/AuthService";
 import { AxiosRequestConfig } from "axios";
-import { AppConfigService } from "../../AppConfigService";
 import HttpClient from "./HttpClient";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
 
-  static createAuthHeader(token: any) {
+  static createAuthHeader(token?: string) {
     if (token) {
       const authorization = `Bearer ${token}`;
       return { headers: { Authorization: authorization } };
@@ -13,9 +13,9 @@ export default abstract class HttpBaseClient {
       throw new Error("User is not authenticated!");
     }
   }
+
   protected addAuthHeader(): AxiosRequestConfig {
-    const token = AppConfigService.shared.authService?.token;
-    return HttpBaseClient.createAuthHeader(token);
+    return HttpBaseClient.createAuthHeader(AuthService.shared.keycloak?.token);
   }
 
   protected handleRequestError(e: any) {

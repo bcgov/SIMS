@@ -55,7 +55,7 @@ export default {
         icon: "mdi-certificate-outline",
         command: () => {
           router.push({
-            name: InstitutionRoutesConst.MANAGE_DESGINATION,
+            name: InstitutionRoutesConst.MANAGE_DESIGNATION,
           });
         },
       },

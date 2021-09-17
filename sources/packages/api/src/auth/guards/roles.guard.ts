@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { ROLES_KEY } from "./decorators/roles.decorator";
-import { Role } from "./roles.enum";
+import { ROLES_KEY } from "../decorators/roles.decorator";
+import { Role } from "../roles.enum";
 
 /**
  * Allow the authorization based on roles making use

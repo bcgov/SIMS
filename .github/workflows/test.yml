@@ -32,8 +32,6 @@ jobs:
       APP_PORT: 8080
       DB_SCHEMA: sims
       KEYCLOAK_REALM: "jxoe2o46"
-      KEYCLOAK_CLIENT_STUDENT: "student"
-      KEYCLOAK_CLIENT_INSTITUTION: "institution"
       KEYCLOAK_AUTH_URL: "https://dev.oidc.gov.bc.ca/auth/"
       BCeID_WEB_SERVICE_WSDL: "https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl"
       E2E_TEST_STUDENT_USERNAME: student_e2e_test

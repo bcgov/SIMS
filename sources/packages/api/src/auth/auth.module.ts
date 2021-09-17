@@ -15,8 +15,9 @@ import {
   AuthorizedPartiesGuard,
   InstitutionAdminGuard,
   ActiveUserGuard,
+  GroupsGuard,
 } from "./guards";
-import { RolesGuard } from "./roles.guard";
+import { RolesGuard } from "./guards/roles.guard";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -41,7 +42,10 @@ const jwtModule = JwtModule.register({
       provide: APP_GUARD,
       useClass: ActiveUserGuard,
     },
-
+    {
+      provide: APP_GUARD,
+      useClass: GroupsGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

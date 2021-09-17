@@ -1,10 +1,28 @@
-import { AppConfigService } from "@/services/AppConfigService";
+import { RouteHelper } from "@/helpers";
+import { AuthService } from "@/services/AuthService";
+import { AppIDPType, ClientIdType } from "@/types";
 import { computed } from "vue";
 
 export function useAuth() {
   const isAuthenticated = computed(
-    () => AppConfigService.shared.authService?.authenticated === true,
+    () => AuthService.shared.keycloak?.authenticated === true,
   );
 
-  return { isAuthenticated };
+  const parsedToken = computed(() => AuthService.shared.userToken);
+
+  const executeLogin = async (
+    clientType: ClientIdType,
+    idp: AppIDPType,
+  ): Promise<void> => {
+    await AuthService.shared.keycloak?.login({
+      idpHint: idp.toLowerCase(),
+      redirectUri: RouteHelper.getAbsoluteRootRoute(clientType),
+    });
+  };
+
+  const executeLogout = async (clientType: ClientIdType): Promise<void> => {
+    await AuthService.shared.logout(clientType);
+  };
+
+  return { isAuthenticated, parsedToken, executeLogin, executeLogout };
 }

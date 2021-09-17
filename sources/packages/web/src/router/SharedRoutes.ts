@@ -3,10 +3,9 @@ import { RouteRecordRaw } from "vue-router";
 import PageNotFound from "../views/PageNotFound.vue";
 import ForbiddenUser from "../views/ForbiddenUser.vue";
 import { AppRoutes, ClientIdType } from "../types";
-
 import FormList from "../components/generic/FormList.vue";
 import FormContainer from "../components/generic/FormContainer.vue";
-import { AppConfigService } from "@/services/AppConfigService";
+import { AuthService } from "@/services/AuthService";
 
 export const sharedRoutes: Array<RouteRecordRaw> = [
   {
@@ -30,14 +29,14 @@ export const sharedRoutes: Array<RouteRecordRaw> = [
         component: FormContainer,
       },
     ],
-    beforeEnter: (to, from, next) => {
+    beforeEnter: (to, _from, next) => {
       const toPath = to.path;
       if (toPath.includes("student") || toPath.includes("institution")) {
         const type: ClientIdType = toPath.includes("student")
           ? ClientIdType.STUDENT
           : ClientIdType.INSTITUTION;
-        AppConfigService.shared.initAuthService(type).then(() => {
-          if (AppConfigService.shared.authService?.authenticated) {
+        AuthService.shared.initialize(type).then(() => {
+          if (AuthService.shared.keycloak?.authenticated) {
             next();
           } else {
             next({

@@ -19,7 +19,7 @@ import {
   ApplicationSummaryDTO,
 } from "../types";
 import ApiClient from "./http/ApiClient";
-import { AppConfigService } from "./AppConfigService";
+import { AuthService } from "./AuthService";
 
 export class InstitutionService {
   // Share Instance
@@ -130,16 +130,16 @@ export class InstitutionService {
   public async users(): Promise<InstitutionUserViewModel[]> {
     const response: InstitutionUserResDto[] = await ApiClient.Institution.getUsers();
     const viewModels: InstitutionUserViewModel[] = response.map(
-      (institutionUser) => {
+      institutionUser => {
         const roleArray = institutionUser.authorizations
-          .map((auth) => auth.authType.role || "")
-          .filter((institutionUserRole) => institutionUserRole !== "");
+          .map(auth => auth.authType.role || "")
+          .filter(institutionUserRole => institutionUserRole !== "");
         const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
         const locationArray = institutionUser.authorizations
-          .map((auth) => auth.location?.name || "")
-          .filter((loc) => loc !== "");
+          .map(auth => auth.location?.name || "")
+          .filter(loc => loc !== "");
         const userType = institutionUser.authorizations
-          .map((auth) => auth.authType.type)
+          .map(auth => auth.authType.type)
           .join(" ");
         const location = userType.toLowerCase().includes("admin")
           ? "All"
@@ -157,7 +157,7 @@ export class InstitutionService {
           location,
           isActive: institutionUser.user.isActive,
           disableRemove:
-            AppConfigService.shared.userToken?.userName ===
+            AuthService.shared.userToken?.userName ===
             institutionUser.user.userName
               ? true
               : false,

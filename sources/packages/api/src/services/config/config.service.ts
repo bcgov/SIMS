@@ -11,6 +11,7 @@ export class ConfigService {
         clientIds: {
           student: process.env.KEYCLOAK_CLIENT_STUDENT,
           institution: process.env.KEYCLOAK_CLIENT_INSTITUTION,
+          aest: process.env.KEYCLOAK_CLIENT_AEST,
         },
         openIdConfigurationUrl: this.getOpenIdConfigurationUrl(),
         externalSiteMinderLogoutUrl: process.env.SITE_MINDER_LOGOUT_URL,

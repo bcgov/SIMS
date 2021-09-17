@@ -14,25 +14,34 @@ import { KeycloakService } from "../src/services/auth/keycloak/keycloak.service"
 jest.setTimeout(10000);
 
 describe("Authentication (e2e)", () => {
-  // Use the student client to retrieve the token from
-  // Keycloak since it is the only one that we have currently.
-  const clientId = "student";
   // Nest application to be shared for all e2e tests
   // that need execute a HTTP request.
   let app: INestApplication;
-  // Token to be used for all e2e tests that need test
+  // Token to be used for student e2e tests that need test
   // the authentication endpoints.
-  // This token is retrieved from Keyclock.
-  let accesstoken: string;
+  // This token is retrieved from KeyCloak.
+  let studentAccessToken: string;
+  // Token to be used for AEST e2e tests that need test
+  // the authentication endpoints.
+  // This token is retrieved from KeyCloak.
+  let aestAccessToken: string;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
-    const token = await KeycloakService.shared.getToken(
+    const studentToken = await KeycloakService.shared.getToken(
       process.env.E2E_TEST_STUDENT_USERNAME,
       process.env.E2E_TEST_STUDENT_PASSWORD,
-      clientId,
+      "student",
     );
-    accesstoken = token.access_token;
+
+    const aestToken = await KeycloakService.shared.getToken(
+      process.env.E2E_TEST_STUDENT_USERNAME,
+      process.env.E2E_TEST_STUDENT_PASSWORD,
+      "aest",
+    );
+
+    studentAccessToken = studentToken.access_token;
+    aestAccessToken = aestToken.access_token;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -79,7 +88,7 @@ describe("Authentication (e2e)", () => {
     it("Should return a HttpStatus OK(200) when bearer token is present", () => {
       return request(app.getHttpServer())
         .get("/auth-test/global-authenticated-route")
-        .auth(accesstoken, { type: "bearer" })
+        .auth(studentAccessToken, { type: "bearer" })
         .expect(HttpStatus.OK);
     });
 
@@ -93,21 +102,35 @@ describe("Authentication (e2e)", () => {
     it("Should return a HttpStatus OK(200) when the Role decorator is present and the role is present and it is the expected one", () => {
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-route-by-role")
-        .auth(accesstoken, { type: "bearer" })
+        .auth(studentAccessToken, { type: "bearer" })
         .expect(HttpStatus.OK);
     });
 
     it("Should return a HttpStatus FORBIDDEN(403) when the Role decorator is present but the role it is not the expected one", () => {
       return request(app.getHttpServer())
         .get("/auth-test/authenticated-route-by-non-existing-role")
-        .auth(accesstoken, { type: "bearer" })
+        .auth(studentAccessToken, { type: "bearer" })
+        .expect(HttpStatus.FORBIDDEN);
+    });
+
+    it("Should return a HttpStatus OK(200) when the Group decorator is present and the group is present and it is the expected one", () => {
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-route-by-group")
+        .auth(aestAccessToken, { type: "bearer" })
+        .expect(HttpStatus.OK);
+    });
+
+    it("Should return a HttpStatus FORBIDDEN(403) when the Group decorator is present but the group it is not the expected one", () => {
+      return request(app.getHttpServer())
+        .get("/auth-test/authenticated-route-by-non-existing-group")
+        .auth(aestAccessToken, { type: "bearer" })
         .expect(HttpStatus.FORBIDDEN);
     });
 
     it("Can parse the UserToken", () => {
       return request(app.getHttpServer())
         .get("/auth-test/global-authenticated-route")
-        .auth(accesstoken, { type: "bearer" })
+        .auth(studentAccessToken, { type: "bearer" })
         .expect(HttpStatus.OK)
         .then((resp) => {
           // Only the basic properties that are present in a basic

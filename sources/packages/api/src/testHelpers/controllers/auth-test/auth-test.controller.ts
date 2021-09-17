@@ -2,8 +2,9 @@ import { Controller, Get } from "@nestjs/common";
 import { UserToken } from "../../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../../auth/userToken.interface";
 import { Public } from "../../../auth/decorators/public.decorator";
-import { Roles } from "../../../auth/decorators/roles.decorator";
+import { Roles, Groups } from "../../../auth/decorators";
 import { Role } from "../../../auth/roles.enum";
+import { UserGroups } from "../../../auth/user-groups.enum";
 
 /**
  * Controller dedicated to test the functionalities around the authentication layer.
@@ -19,37 +20,68 @@ export class AuthTestController {
    */
   @Public()
   @Get("/public-route")
-  async publicRoute(): Promise<void> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  publicRoute(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 
   /**
    * Only authenticated users will have access to this endpoint
    * due to the JwtAuthGuard global guard in place (see src/auth/auth.module.ts).
    * Any endpoint that is not explicit decorated with the Public
    * decorator will be considered as an endpoint that needs at least a valid token.
-   * @param userToken
+   * @param userToken token from the authenticated user.
    * @returns UserToken.
    */
   @Get("/global-authenticated-route")
-  async authenticatedRoute(
-    @UserToken() userToken: IUserToken,
-  ): Promise<IUserToken> {
+  authenticatedRoute(@UserToken() userToken: IUserToken): IUserToken {
     return userToken;
   }
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
-   * @param userToken
    */
   @Roles(Role.Student)
   @Get("/authenticated-route-by-role")
-  async authenticatedRouteByRole(): Promise<void> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  authenticatedRouteByRole(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 
   /**
    * Only authenticated users with specific role will have access to this endpoint.
    * In this case, no rule will be provided and therefore no rule will be a valid one.
-   * @param userToken
    */
   @Roles()
   @Get("/authenticated-route-by-non-existing-role")
-  async authenticatedRouteByNonExistingRole(): Promise<void> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  authenticatedRouteByNonExistingRole(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
+
+  /**
+   * Only authenticated users with specific group will have access to this endpoint.
+   */
+  @Groups(UserGroups.AESTUser)
+  @Get("/authenticated-route-by-group")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  authenticatedRouteByGroup(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
+
+  /**
+   * Only authenticated users with specific role will have access to this endpoint.
+   * In this case, no rule will be provided and therefore no rule will be a valid one.
+   */
+  @Groups()
+  @Get("/authenticated-route-by-non-existing-group")
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  authenticatedRouteByNonExistingGroup(): void {
+    // Intentionally blank. The goal is to test the
+    // decorator and the HTTP response only.
+  }
 }

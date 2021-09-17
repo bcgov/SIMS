@@ -58,4 +58,29 @@ export class UserService extends DataModelService<User> {
   async getActiveUser(userName: string) {
     return this.repo.findOne({ userName: userName, isActive: true });
   }
+
+  /**
+   * Creates or updates Ministry user information.
+   * @param userName user name as it is on KeyCloak.
+   * @param email email received from identity provider.
+   * @param givenNames givenNames received from identity provider.
+   * @param lastName lastName received from identity provider.
+   * @returns created/updated user.
+   */
+  async syncAESTUser(
+    userName: string,
+    email: string,
+    givenNames: string,
+    lastName: string,
+  ) {
+    let user = await this.getUser(userName);
+    if (!user) {
+      user = new User();
+      user.userName = userName;
+    }
+    user.email = email;
+    user.firstName = givenNames;
+    user.lastName = lastName;
+    return this.repo.save(user);
+  }
 }
