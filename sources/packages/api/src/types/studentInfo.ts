@@ -1,3 +1,4 @@
+import { StudentPDStatus } from "./pdStatus";
 import { StudentContact } from "./studentContact";
 
 export interface StudentInfo {
@@ -11,4 +12,5 @@ export interface StudentInfo {
   validSin: boolean;
   pdSentDate?: Date;
   pdUpdatedDate?: Date;
+  pdStatus: StudentPDStatus;
 }

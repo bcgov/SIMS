@@ -38,6 +38,7 @@ import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
 import { Application } from "../../database/entities";
+import { determinePDStatus } from "../../utilities/student-utils";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -95,6 +96,7 @@ export class StudentController extends BaseController {
       validSin: existingStudent.validSIN,
       pdSentDate: existingStudent.studentPDSentAt,
       pdUpdatedDate: existingStudent.studentPDUpdateAt,
+      pdStatus: determinePDStatus(existingStudent),
     };
     return studentInfo;
   }
