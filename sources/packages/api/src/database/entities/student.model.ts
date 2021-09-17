@@ -34,8 +34,9 @@ export class Student extends RecordDataModel {
 
   @Column({
     name: "pd_verified",
+    nullable: true,
   })
-  studentPDVerified: boolean;
+  studentPDVerified?: boolean;
 
   @Column({
     name: "gender",
