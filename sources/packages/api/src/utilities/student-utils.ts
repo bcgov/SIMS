@@ -1,5 +1,5 @@
-import { StudentPDStatus } from "src/types";
-import { Student } from "src/database/entities";
+import { StudentPDStatus } from "../types/pdStatus";
+import { Student } from "../database/entities";
 
 /**
  * Determines the permanent disablility status from Student Entity.
