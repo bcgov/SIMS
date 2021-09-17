@@ -3,12 +3,22 @@ import { AppIDPType, AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 
 export class RouteHelper {
+  /**
+   * Gets absolute root route for a client (e.g. http://domain.bc.gov.ca/student).
+   * @param clientType client type to have the root route defined.
+   * @returns absolute root route
+   */
   static getAbsoluteRootRoute(clientType: ClientIdType): string {
     return `${window.location.protocol}//${
       window.location.host
     }${this.getRootRoute(clientType)}`;
   }
 
+  /**
+   * Gets the root route based on the client type.
+   * @param clientType client type to be verified.
+   * @returns root route for the client type.
+   */
   private static getRootRoute(clientType: ClientIdType): AppRoutes {
     switch (clientType) {
       case ClientIdType.STUDENT:
@@ -20,6 +30,13 @@ export class RouteHelper {
     }
   }
 
+  /**
+   * Determines whether the user is navigating to the root of some
+   * application (e.g. /institution, /student, /aest).
+   * @param path path to be verified.
+   * @param clientType client type to be verified.
+   * @returns true if root route
+   */
   private static isRootRoute(path: string, clientType: ClientIdType): boolean {
     const root = RouteHelper.getRootRoute(clientType);
     return path === root;
