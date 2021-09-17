@@ -575,6 +575,7 @@ db-backup-deploy-delete-mongodb:
 # pvc/$(BACKUP_MONGODB_APP_NAME)-verification-pvc
 
 deploy-forms:
+	test -n "$(FORMS_URL_DEPLOY)"
 	docker build \
 	--build-arg FORMS_URL=$(FORMS_URL_DEPLOY) \
 	--build-arg FORMS_SA_USER_NAME=$(FORMS_SA_USER_NAME_DEPLOY) \
