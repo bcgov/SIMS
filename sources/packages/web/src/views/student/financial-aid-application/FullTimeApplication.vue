@@ -130,8 +130,9 @@ export default {
         studentPhoneNumber: studentInfo.contact.phone,
         studentHomeAddress: formattedAddress,
         studentEmail: studentInfo.email,
+        pdStatus: studentInfo.pdStatus,
       };
-      initialData.value = { ...studentFormData, ...applicationData.data };
+      initialData.value = { ...applicationData.data, ...studentFormData };
     });
 
     // Save the current state of the student application skipping all validations.
