@@ -65,7 +65,7 @@ export class AuthTestController {
   /**
    * Only authenticated users with specific group will have access to this endpoint.
    */
-  @Groups(UserGroups.aestUser)
+  @Groups(UserGroups.AESTUser)
   @Get("/authenticated-route-by-group")
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByGroup(): void {

@@ -37,11 +37,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     userToken.roles = [];
     if (payload.resource_access) {
       Object.keys(payload.resource_access).forEach((value) => {
-        if (Array.isArray(payload.resource_access[value].roles)) {
-          payload.resource_access[value].roles.forEach((roleValue: string) => {
-            userToken.roles.push(roleValue);
-          });
-        }
+        payload.resource_access[value].roles.forEach((roleValue: string) => {
+          userToken.roles.push(roleValue);
+        });
       });
     }
 
