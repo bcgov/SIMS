@@ -51,7 +51,7 @@ export class AuthService {
 
   /**
    * When populated, indicates that there is a route that
-   * must take priority over all the others ones.
+   * must take priority over all the other ones.
    * After the redirect happens this variable must
    * be set to undefined.
    */

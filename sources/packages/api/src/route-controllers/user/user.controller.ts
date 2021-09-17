@@ -173,7 +173,7 @@ export class UserController extends BaseController {
    * @param userToken user token information to be updated.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.aestUser)
+  @Groups(UserGroups.AESTUser)
   @Put("aest")
   async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
     await this.service.syncAESTUser(
