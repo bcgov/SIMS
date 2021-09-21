@@ -27,7 +27,7 @@ export class CRAFileIVRequestRecord implements CRARequestFileLine {
     record.repeatAppend(SPACE_FILLER, 4);
     record.append(TransactionSubCodes.IVRequest);
     record.appendWithEndFiller(this.individualSurname, 30, SPACE_FILLER);
-    // Monoymous names will not have a first name/given name.
+    // Mononymous names will not have a first name/given name.
     record.appendWithEndFiller(
       this.individualGivenName ?? "",
       30,

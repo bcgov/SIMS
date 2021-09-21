@@ -52,7 +52,7 @@ export enum MatchStatusCodes {
 
 /**
  * Required personal information to a
- * CRA verification be processsed.
+ * CRA verification be processed.
  */
 export interface CRAPersonRecord {
   sin: string;
@@ -97,7 +97,7 @@ export class ProcessSftpResponseResult {
    */
   processSummary: string[] = [];
   /**
-   * Errors found uring the processing.
+   * Errors found during the processing.
    */
   errorsSummary: string[] = [];
 }

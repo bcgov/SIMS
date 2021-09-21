@@ -47,12 +47,38 @@ export class CRAIntegrationService {
     records: CRAPersonRecord[],
     sequence: number,
   ): CRARequestFileLine[] {
+    return this.createCRARequestFile(
+      records,
+      sequence,
+      TransactionCodes.MatchingRunHeader,
+      TransactionCodes.MatchingRunRecord,
+    );
+  }
+
+  public createIncomeValidationContent(
+    records: CRAPersonRecord[],
+    sequence: number,
+  ): CRARequestFileLine[] {
+    return this.createCRARequestFile(
+      records,
+      sequence,
+      TransactionCodes.IncomeRequestHeader,
+      TransactionCodes.IncomeRequestRecord,
+    );
+  }
+
+  private createCRARequestFile(
+    records: CRAPersonRecord[],
+    sequence: number,
+    headerTransactionCode: TransactionCodes,
+    recordTransactionCode: TransactionCodes,
+  ): CRARequestFileLine[] {
     const processDate = new Date();
     const craFileLines: CRARequestFileLine[] = [];
 
     // Header
     const fileHeader = this.createHeader(
-      TransactionCodes.MatchingRunHeader,
+      headerTransactionCode,
       processDate,
       sequence,
     );
@@ -60,7 +86,7 @@ export class CRAIntegrationService {
     // Records
     const fileRecords = records.map((record) => {
       const craRecord = new CRAFileIVRequestRecord();
-      craRecord.transactionCode = TransactionCodes.MatchingRunRecord;
+      craRecord.transactionCode = recordTransactionCode;
       craRecord.sin = record.sin;
       craRecord.individualSurname = record.surname;
       craRecord.individualGivenName = record.givenName;
@@ -167,13 +193,13 @@ export class CRAIntegrationService {
       await SshService.closeQuietly(client);
     }
 
-    // Creates all porcesses to be executed in parallel.
+    // Creates all processes to be executed in parallel.
     const processes = filesToProcess.map((file) =>
       this.downloadResponseFile(file.name),
     );
     // Wait for all parallel processes to be executed.
     const allFiles = await Promise.all(processes);
-    // Flat the array of arrays retuned.
+    // Flat the array of arrays returned.
     return ([] as CRAsFtpResponseFile[]).concat(...allFiles);
   }
 
@@ -202,7 +228,7 @@ export class CRAIntegrationService {
         this.logger.error(
           `The CRA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
         );
-        // If the header is not the expcted one, just ignore the file.
+        // If the header is not the expected one, just ignore the file.
         return null;
       }
 
@@ -211,7 +237,7 @@ export class CRAIntegrationService {
 
       // Generate the records.
       const records = fileLines.map((line) => {
-        var craRecord = new CRARecordIdentification(line);
+        const craRecord = new CRARecordIdentification(line);
         switch (craRecord.transactionSubCode) {
           case TransactionSubCodes.ResponseRecord:
             return new CRAResponseFileLine(line);
@@ -246,7 +272,7 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Gnerates a new connected sFTP client ready to be used.
+   * Generates a new connected sFTP client ready to be used.
    * @returns client
    */
   private async getClient(): Promise<Client> {

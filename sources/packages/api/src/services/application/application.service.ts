@@ -1130,4 +1130,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .limit(1)
       .getOne();
   }
+
+  /**
+   * Gets all applications that have an pending income verification.
+   * @returns applications that have an pending income verification.
+   */
+  async getPendingIncomeVerifications(): Promise<Application[]> {
+    return this.repo
+      .createQueryBuilder("applications")
+      .select(["applications.id", "students"])
+      .innerJoinAndSelect("applications.student", "students")
+      .where("applications.applicationStatus = :completedStatus", {
+        completedStatus: ApplicationStatus.completed,
+      })
+      .getMany();
+  }
 }

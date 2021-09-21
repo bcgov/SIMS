@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Student } from "src/database/entities";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
 import {
@@ -6,6 +7,7 @@ import {
   StudentService,
   SequenceControlService,
   ConfigService,
+  ApplicationService,
 } from "../services";
 import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
 import {
@@ -19,6 +21,7 @@ import {
 } from "./cra-integration.models";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
+const STUDENT_INCOME_VALIDATION = "STUDENT_INCOME_VALIDATION";
 
 /**
  * Manages the retrieval of students or parents or another
@@ -29,6 +32,7 @@ const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
 export class CRAPersonalVerificationService {
   constructor(
     private readonly craService: CRAIntegrationService,
+    private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
@@ -44,7 +48,8 @@ export class CRAPersonalVerificationService {
    */
   public async createSinValidationRequest(): Promise<CRAUploadResult> {
     this.logger.log("Retrieving students with pending SIN validation...");
-    const students = await this.studentService.getStudentsPendingSinValidation();
+    const students =
+      await this.studentService.getStudentsPendingSinValidation();
     if (!students.length) {
       return {
         generatedFile: "none",
@@ -54,22 +59,15 @@ export class CRAPersonalVerificationService {
 
     this.logger.log(`Found ${students.length} student(s).`);
     const craRecords = students.map((student) => {
-      return {
-        sin: student.sin,
-        surname: student.user.lastName,
-        givenName: student.user.firstName,
-        birthDate: student.birthdate,
-        freeProjectArea: STUDENT_SIN_VALIDATION_TAG,
-      } as CRAPersonRecord;
+      return this.createCRARecordFromStudent(
+        student,
+        STUDENT_SIN_VALIDATION_TAG,
+      );
     });
-
-    const sequenceName = `CRA_${
-      this.configService.getConfig().CRAIntegration.programAreaCode
-    }`;
 
     let uploadResult: CRAUploadResult;
     await this.sequenceService.consumeNextSequence(
-      sequenceName,
+      this.getCRAFileSequenceName(),
       async (nextSequenceNumber: number) => {
         try {
           this.logger.log("Creating matching run content...");
@@ -77,9 +75,8 @@ export class CRAPersonalVerificationService {
             craRecords,
             nextSequenceNumber,
           );
-          const fileName = this.craService.createRequestFileName(
-            nextSequenceNumber,
-          );
+          const fileName =
+            this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
           uploadResult = await this.craService.uploadContent(
             fileContent,
@@ -95,6 +92,96 @@ export class CRAPersonalVerificationService {
     );
 
     return uploadResult;
+  }
+
+  /**
+   * Identifies all the student applications that have a pending
+   * income verification and generate the request file to be
+   * processed by CRA.
+   * @returns Processing result log.
+   */
+  public async createIncomeValidationRequest(): Promise<CRAUploadResult> {
+    this.logger.log(
+      "Retrieving student applications that need income validation...",
+    );
+    const applications =
+      await this.applicationService.getPendingIncomeVerifications();
+    if (!applications.length) {
+      return {
+        generatedFile: "none",
+        uploadedRecords: 0,
+      };
+    }
+
+    this.logger.log(`Found ${applications.length} (s).`);
+    const craRecords = applications.map((application) => {
+      return this.createCRARecordFromStudent(
+        application.student,
+        STUDENT_INCOME_VALIDATION,
+      );
+    });
+
+    let uploadResult: CRAUploadResult;
+    await this.sequenceService.consumeNextSequence(
+      this.getCRAFileSequenceName(),
+      async (nextSequenceNumber: number) => {
+        try {
+          this.logger.log("Creating income validation content...");
+          const fileContent = this.craService.createIncomeValidationContent(
+            craRecords,
+            nextSequenceNumber,
+          );
+          const fileName =
+            this.craService.createRequestFileName(nextSequenceNumber);
+          this.logger.log("Uploading content...");
+          uploadResult = await this.craService.uploadContent(
+            fileContent,
+            fileName,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Error while uploading content for income validation: ${error}`,
+          );
+          throw error;
+        }
+      },
+    );
+
+    return uploadResult;
+  }
+
+  /**
+   * Use the information on the Student and User objects
+   * to generate the record to be send to CRA.
+   * @param student student and user information.
+   * @param freeProjectArea free text to be send together
+   * with each record that could be used for process the
+   * response file, where this information will also be
+   * send back.
+   * @returns CRA record for the student.
+   */
+  private createCRARecordFromStudent(
+    student: Student,
+    freeProjectArea: string,
+  ): CRAPersonRecord {
+    return {
+      sin: student.sin,
+      surname: student.user.lastName,
+      givenName: student.user.firstName,
+      birthDate: student.birthdate,
+      freeProjectArea,
+    } as CRAPersonRecord;
+  }
+
+  /**
+   * Name of the group that controls the sequence number of the
+   * CRA file to be generated on table sims.sequence_controls.
+   * @returns Sequence group name for the CRA file.
+   */
+  private getCRAFileSequenceName(): string {
+    return `CRA_${
+      this.configService.getConfig().CRAIntegration.programAreaCode
+    }`;
   }
 
   /**
