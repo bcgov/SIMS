@@ -115,6 +115,12 @@ export class ApplicationController extends BaseController {
       throw new NotFoundException("Student Application not found.");
     }
 
+    if (ApplicationStatus.draft !== applicationToSubmit.applicationStatus) {
+      throw new UnprocessableEntityException(
+        "Application in draft status can only be submitted",
+      );
+    }
+
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );

@@ -7,7 +7,8 @@
             <v-btn
               color="primary"
               class="mr-5"
-              v-show="!isFirstPage && !readOnly"
+              v-if="!isReadOnly"
+              v-show="!isFirstPage"
               text
               :loading="savingDraft"
               @click="saveDraft()"
@@ -16,8 +17,9 @@
               >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
             >
             <v-btn
+              v-if="!isReadOnly"
               :disabled="!isLastPage || submittingApplication"
-              v-show="!isFirstPage && !readOnly"
+              v-show="!isFirstPage"
               color="primary"
               @click="wizardSubmit()"
               >{{
@@ -34,7 +36,7 @@
         <formio
           :formName="selectedForm"
           :data="initialData"
-          :readOnly="readOnly"
+          :readOnly="isReadOnly"
           @loaded="formLoaded"
           @changed="formChanged"
           @submitted="submitApplication"
@@ -76,6 +78,7 @@ import {
   WizardNavigationEvent,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
+  ApplicationStatus,
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -111,6 +114,7 @@ export default {
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     let applicationWizard: any;
+    const isReadOnly = ref(false);
 
     onMounted(async () => {
       //Get the student information and application information.
@@ -120,6 +124,9 @@ export default {
       ]);
       // TODO: Move formatted address to a common place in Vue app or API.
       // Adjust the spaces when optional fields are not present.
+      isReadOnly.value =
+        applicationData.applicationStatus !== ApplicationStatus.draft ||
+        props.readOnly;
       const address = studentInfo.contact;
       const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
       const studentFormData = {
@@ -294,6 +301,7 @@ export default {
       savingDraft,
       submittingApplication,
       customEventCallback,
+      isReadOnly,
     };
   },
 };
