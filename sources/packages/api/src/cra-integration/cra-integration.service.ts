@@ -55,6 +55,13 @@ export class CRAIntegrationService {
     );
   }
 
+  /**
+   * Creates an income validation request.
+   * @param records Personal/individual records to be processed.
+   * @param sequence File request sequence number that is required
+   * by CRA server processing.
+   * @returns Income validation request.
+   */
   public createIncomeValidationContent(
     records: CRAPersonRecord[],
     sequence: number,
@@ -67,6 +74,15 @@ export class CRAIntegrationService {
     );
   }
 
+  /**
+   * Creates the CRA file with header, records and footer
+   * as expected to be later converted to a text file.
+   * @param records records that represents each person (student).
+   * @param sequence sequence number present on header/footer.
+   * @param headerTransactionCode header code.
+   * @param recordTransactionCode record code.
+   * @returns CRA request file.
+   */
   private createCRARequestFile(
     records: CRAPersonRecord[],
     sequence: number,
@@ -171,6 +187,11 @@ export class CRAIntegrationService {
     return footer;
   }
 
+  /**
+   * Expected file name of the CRA request file.
+   * @param sequence file sequence number.
+   * @returns Full file path of the file to be saved on the SFTP.
+   */
   public createRequestFileName(sequence: number): string {
     const sequenceFile = sequence.toString().padStart(5, "0");
     return `${this.craConfig.ftpRequestFolder}\\CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
