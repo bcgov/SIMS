@@ -10,6 +10,6 @@ export class CRAResponseT4EarningsRecord extends CRAResponseRecordIdentification
   }
 
   public get T4EarningsValue(): number {
-    return Number(this.line.substr(31, 9));
+    return Number(this.line.substr(21, 9));
   }
 }

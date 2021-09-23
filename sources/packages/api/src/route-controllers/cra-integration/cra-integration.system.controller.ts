@@ -35,10 +35,10 @@ export class CRAIntegrationController {
    * processed by CRA.
    * @returns Processing result log.
    */
-  @Post("income-validation")
-  async createIncomeValidation(): Promise<CRAValidationResultDto> {
+  @Post("income-verification")
+  async createIncomeVerification(): Promise<CRAValidationResultDto> {
     this.logger.log("Executing income validation...");
-    const uploadResult = await this.cra.createIncomeValidationRequest();
+    const uploadResult = await this.cra.createIncomeVerificationRequest();
     this.logger.log("Income validation executed.");
     return {
       generatedFile: uploadResult.generatedFile,

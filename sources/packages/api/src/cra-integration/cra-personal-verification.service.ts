@@ -100,9 +100,9 @@ export class CRAPersonalVerificationService {
    * processed by CRA.
    * @returns Processing result log.
    */
-  public async createIncomeValidationRequest(): Promise<CRAUploadResult> {
+  public async createIncomeVerificationRequest(): Promise<CRAUploadResult> {
     this.logger.log(
-      "Retrieving student applications that need income validation...",
+      "Retrieving student applications that need income verification...",
     );
     const applications =
       await this.applicationService.getPendingIncomeVerifications();
@@ -126,7 +126,7 @@ export class CRAPersonalVerificationService {
       this.getCRAFileSequenceName(),
       async (nextSequenceNumber: number) => {
         try {
-          this.logger.log("Creating income validation content...");
+          this.logger.log("Creating income verification content...");
           const fileContent = this.craService.createIncomeValidationContent(
             craRecords,
             nextSequenceNumber,
@@ -140,7 +140,7 @@ export class CRAPersonalVerificationService {
           );
         } catch (error) {
           this.logger.error(
-            `Error while uploading content for income validation: ${error}`,
+            `Error while uploading content for income verification: ${error}`,
           );
           throw error;
         }
@@ -206,7 +206,7 @@ export class CRAPersonalVerificationService {
   ): Promise<ProcessSftpResponseResult> {
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(
-      `Processing file ${responseFile.filePath} with ${responseFile.statusRecords.length} records.`,
+      `Processing file ${responseFile.filePath} with ${responseFile.statusRecords.length} verifications.`,
     );
 
     for (const statusRecord of responseFile.statusRecords) {
@@ -278,12 +278,12 @@ export class CRAPersonalVerificationService {
    */
   private async processIncomeVerification(
     statusRecord: CRAResponseStatusRecord,
-    t4EarningsRecords: CRAResponseT4EarningsRecord,
+    t4EarningsRecords?: CRAResponseT4EarningsRecord,
   ): Promise<void> {
     // TODO: Temporary code.
     // This will be replace in the upcoming PR when the migrations will be added.
-    console.log(statusRecord);
-    console.log(t4EarningsRecords);
+    console.log("Executing income verification");
+    console.log("T4EarningsValue:", t4EarningsRecords?.T4EarningsValue);
   }
 
   @InjectLogger()

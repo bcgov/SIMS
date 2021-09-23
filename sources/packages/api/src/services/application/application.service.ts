@@ -335,6 +335,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.data",
         "programYear.programYear",
+        "programYear.startDate",
+        "programYear.endDate",
         "offering",
         "pirProgram.credentialType",
         "pirProgram.completionYears",

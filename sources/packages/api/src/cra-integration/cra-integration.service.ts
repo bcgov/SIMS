@@ -53,6 +53,7 @@ export class CRAIntegrationService {
       sequence,
       TransactionCodes.MatchingRunHeader,
       TransactionCodes.MatchingRunRecord,
+      TransactionCodes.MatchingRunFooter,
     );
   }
 
@@ -72,6 +73,8 @@ export class CRAIntegrationService {
       sequence,
       TransactionCodes.IncomeRequestHeader,
       TransactionCodes.IncomeRequestRecord,
+      TransactionCodes.IncomeRequestFooter,
+      2019, // TODO: Retrieve from database on upcoming PR.
     );
   }
 
@@ -89,17 +92,19 @@ export class CRAIntegrationService {
     sequence: number,
     headerTransactionCode: TransactionCodes,
     recordTransactionCode: TransactionCodes,
+    footerTransactionCode: TransactionCodes,
+    taxYear?: number,
   ): CRARequestFileLine[] {
     const processDate = new Date();
     const craFileLines: CRARequestFileLine[] = [];
-
     // Header
-    const fileHeader = this.createHeader(
-      headerTransactionCode,
-      processDate,
-      sequence,
-    );
-    craFileLines.push(fileHeader);
+    const header = new CRAFileHeader();
+    header.transactionCode = headerTransactionCode;
+    header.processDate = processDate;
+    header.programAreaCode = this.craConfig.programAreaCode;
+    header.environmentCode = this.craConfig.environmentCode;
+    header.sequence = sequence;
+    craFileLines.push(header);
     // Records
     const fileRecords = records.map((record) => {
       const craRecord = new CRAFileIVRequestRecord();
@@ -109,18 +114,20 @@ export class CRAIntegrationService {
       craRecord.individualGivenName = record.givenName;
       craRecord.individualBirthDate = record.birthDate;
       craRecord.programAreaCode = this.craConfig.programAreaCode;
+      craRecord.taxYear = taxYear;
       craRecord.freeProjectArea = record.freeProjectArea;
       return craRecord;
     });
     craFileLines.push(...fileRecords);
     // Footer
-    const fileFooter = this.createFooter(
-      TransactionCodes.MatchingRunFooter,
-      processDate,
-      sequence,
-      records.length,
-    );
-    craFileLines.push(fileFooter);
+    const footer = new CRAFileFooter();
+    footer.transactionCode = footerTransactionCode;
+    footer.processDate = processDate;
+    footer.programAreaCode = this.craConfig.programAreaCode;
+    footer.environmentCode = this.craConfig.environmentCode;
+    footer.sequence = sequence;
+    footer.recordCount = records.length + 2; // Must be the number of records + header + footer.
+    craFileLines.push(footer);
 
     return craFileLines;
   }
@@ -156,20 +163,6 @@ export class CRAIntegrationService {
       await SshService.closeQuietly(client);
       this.logger.log("sFTP client finalized.");
     }
-  }
-
-  private createHeader(
-    code: TransactionCodes,
-    processDate: Date,
-    sequence: number,
-  ): CRAFileHeader {
-    const header = new CRAFileHeader();
-    header.transactionCode = code;
-    header.processDate = processDate;
-    header.programAreaCode = this.craConfig.programAreaCode;
-    header.environmentCode = this.craConfig.environmentCode;
-    header.sequence = sequence;
-    return header;
   }
 
   private createFooter(
