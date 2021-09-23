@@ -1136,12 +1136,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns applications that have an pending income verification.
    */
   async getPendingIncomeVerifications(): Promise<Application[]> {
+    // TODO: This method will be replaced for the correct one once
+    // we have the database migrations in place. For now the only
+    // purpose will be retrieve some applications with students
+    // data to make it possible to generate an income verification
+    // file to be send to CRA.
+    // This query will be updated in the upcoming PR for CRA Income verification.
     return this.repo
       .createQueryBuilder("applications")
-      .select(["applications.id", "students"])
+      .select(["applications.id", "students", "users"])
       .innerJoinAndSelect("applications.student", "students")
-      .where("applications.applicationStatus = :completedStatus", {
-        completedStatus: ApplicationStatus.completed,
+      .innerJoinAndSelect("students.user", "users")
+      .where("applications.applicationStatus = :inProgressStatus", {
+        inProgressStatus: ApplicationStatus.inProgress,
       })
       .getMany();
   }

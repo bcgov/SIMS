@@ -11,9 +11,9 @@ import {
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { IConfig } from "../types/config";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
-import { CRAFileIVRequestRecord } from "./cra-files/cra-file-request-record";
+import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import SshServiceMock from "./__mocks__/SshServiceMock";
-import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 
 describe("CRAIntegrationService", () => {
   // Dependencies of the service being tested.
@@ -103,16 +103,16 @@ describe("CRAIntegrationService", () => {
     expect(sftpDownloadedFiles.length).toBe(2);
     // Sample file available at __mocks__\response-folder\CCRA_RESPONSE_ABCSL00001.TXT
     const firstFile = sftpDownloadedFiles.shift();
-    expect(firstFile.records.length).toBe(2);
+    expect(firstFile.statusRecords.length).toBe(2);
     // Validate basic record identification: Transaction Code/SIN/Transaction Sub Code.
-    const firstRecord = firstFile.records.shift();
+    const firstRecord = firstFile.statusRecords.shift();
     expect(firstRecord.transactionCode).toBe(TransactionCodes.ResponseRecord);
     expect(firstRecord.sin).toBe("111111111");
     expect(firstRecord.transactionSubCode).toBe(
-      TransactionSubCodes.ResponseRecord,
+      TransactionSubCodes.ResponseStatusRecord,
     );
     // Validate specific record info: SIN validation.
-    const responseFileLine = firstRecord as CRAResponseFileLine;
+    const responseFileLine = firstRecord as CRAResponseStatusRecord;
     expect(responseFileLine.requestStatusCode).toBe(
       RequestStatusCodes.successfulRequest,
     );

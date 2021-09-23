@@ -8,7 +8,7 @@ import {
 import { CRARequestFileLine } from "./cra-file";
 
 /**
- * Record of a CRA request file (0020).
+ * Record of a CRA IV(income verification) request file (0020).
  */
 export class CRAFileIVRequestRecord implements CRARequestFileLine {
   transactionCode: TransactionCodes;

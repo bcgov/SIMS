@@ -9,13 +9,13 @@ import {
   ConfigService,
   ApplicationService,
 } from "../services";
-import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
+import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
 import {
   CRAPersonRecord,
   CRAUploadResult,
   MatchStatusCodes,
   RequestStatusCodes,
-  TransactionSubCodes,
   CRAsFtpResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
@@ -32,10 +32,10 @@ const STUDENT_INCOME_VALIDATION = "STUDENT_INCOME_VALIDATION";
 export class CRAPersonalVerificationService {
   constructor(
     private readonly craService: CRAIntegrationService,
-    private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   /**
@@ -206,32 +206,32 @@ export class CRAPersonalVerificationService {
   ): Promise<ProcessSftpResponseResult> {
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(
-      `Processing file ${responseFile.filePath} with ${responseFile.records.length} records.`,
+      `Processing file ${responseFile.filePath} with ${responseFile.statusRecords.length} records.`,
     );
 
-    for (let index = 0; index < responseFile.records.length; index++) {
+    for (const statusRecord of responseFile.statusRecords) {
       try {
-        const record = responseFile.records[index];
-        // Checks the type of record to define if must be processed.
-        // If the record type is 0022, it should process the SIN validation.
-        if (record.transactionSubCode === TransactionSubCodes.ResponseRecord) {
-          const craRecord = record as CRAResponseFileLine;
-          // 0022 could be present in a SIN validation response or income verification response.
-          // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
-          // request was made specifically for SIN validation.
-          if (craRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
-            await this.processSINStatus(craRecord);
-            result.processSummary.push(
-              `Processed SIN validation for record line ${index + 1}.`,
-            );
-          }
-          // TODO: Add the check to process income verification.
+        // 0022 could be present in a SIN validation response or income verification response.
+        // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
+        // request was made specifically for SIN validation.
+        if (statusRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
+          await this.processSINStatus(statusRecord);
+          result.processSummary.push(
+            `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
+          );
+        } else {
+          // Find the T4 record associated with the status record.
+          const t4Earnings = responseFile.t4EarningsRecords.find(
+            (t4) => t4.sin === statusRecord.sin,
+          );
+          await this.processIncomeVerification(statusRecord, t4Earnings);
+          result.processSummary.push(
+            `Processed income verification for record line ${t4Earnings.lineNumber} with status record from line ${statusRecord.lineNumber}.`,
+          );
         }
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${
-          index + 1
-        } from file ${responseFile.filePath}`;
+        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${responseFile.filePath}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }
@@ -253,10 +253,10 @@ export class CRAPersonalVerificationService {
 
   /**
    * Process a 0022 record to update the SIN status.
-   * @param craRecord
+   * @param craRecord CRA status record to be processed.
    */
   private async processSINStatus(
-    craRecord: CRAResponseFileLine,
+    craRecord: CRAResponseStatusRecord,
   ): Promise<void> {
     const isValidSIN =
       craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
@@ -266,6 +266,24 @@ export class CRAPersonalVerificationService {
       craRecord.sin,
       isValidSIN,
     );
+  }
+
+  /**
+   * Process the income verification using the T4 earnings
+   * record (0101) received from CRA alongside with the
+   * status record (0022).
+   * @param statusRecord Status record (0022) received from CRA.
+   * @param t4EarningsRecords T4 earnings record (0101) received from CRA.
+   * @returns save the result of the income verification to database.
+   */
+  private async processIncomeVerification(
+    statusRecord: CRAResponseStatusRecord,
+    t4EarningsRecords: CRAResponseT4EarningsRecord,
+  ): Promise<void> {
+    // TODO: Temporary code.
+    // This will be replace in the upcoming PR when the migrations will be added.
+    console.log(statusRecord);
+    console.log(t4EarningsRecords);
   }
 
   @InjectLogger()

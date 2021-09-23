@@ -15,9 +15,10 @@ import { CRAIntegrationConfig, SFTPConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
 import { CRARequestFileLine } from "./cra-files/cra-file";
-import { CRAFileIVRequestRecord } from "./cra-files/cra-file-request-record";
-import { CRARecordIdentification } from "./cra-files/cra-file-response-record-id";
-import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
+import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
+import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
+import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -257,22 +258,28 @@ export class CRAIntegrationService {
       fileLines.pop();
 
       // Generate the records.
-      const records = fileLines.map((line) => {
-        const craRecord = new CRARecordIdentification(line);
+      let lineNumber = 1;
+      const statusRecords: CRAResponseStatusRecord[] = [];
+      const t4EarningsRecords: CRAResponseT4EarningsRecord[] = [];
+      for (const line of fileLines) {
+        const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
         switch (craRecord.transactionSubCode) {
-          case TransactionSubCodes.ResponseRecord:
-            return new CRAResponseFileLine(line);
-          case TransactionSubCodes.IVRequest:
-            // TODO: Change this to the specific 'Income Request Record'.
-            return craRecord;
-          default:
-            return craRecord;
+          case TransactionSubCodes.ResponseStatusRecord:
+            statusRecords.push(new CRAResponseStatusRecord(line, lineNumber));
+            break;
+          case TransactionSubCodes.T4Earnings:
+            t4EarningsRecords.push(
+              new CRAResponseT4EarningsRecord(line, lineNumber),
+            );
+            break;
         }
-      });
+        lineNumber++;
+      }
 
       return {
         filePath,
-        records,
+        statusRecords,
+        t4EarningsRecords,
       };
     } finally {
       await SshService.closeQuietly(client);
