@@ -8,7 +8,7 @@
               color="primary"
               class="mr-5"
               v-if="!isReadOnly"
-              v-show="!isFirstPage"
+              v-show="!isFirstPage && !submittingApplication"
               text
               :loading="savingDraft"
               @click="saveDraft()"
@@ -126,7 +126,7 @@ export default {
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         applicationData.applicationStatus !== ApplicationStatus.draft ||
-        props.readOnly;
+        !!props.readOnly;
       const address = studentInfo.contact;
       const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
       const studentFormData = {
