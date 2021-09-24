@@ -5,7 +5,7 @@ import {
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
-import { CRARequestFileLine } from "./cra-file";
+import { CRARequestFileLine } from "./cra-request-file-line";
 
 /**
  * Record of a CRA IV(income verification) request file (0020).

@@ -112,7 +112,7 @@ describe("CRAIntegrationService", () => {
       TransactionSubCodes.ResponseStatusRecord,
     );
     // Validate specific record info: SIN validation.
-    const responseFileLine = firstRecord as CRAResponseStatusRecord;
+    const responseFileLine = firstRecord;
     expect(responseFileLine.requestStatusCode).toBe(
       RequestStatusCodes.successfulRequest,
     );

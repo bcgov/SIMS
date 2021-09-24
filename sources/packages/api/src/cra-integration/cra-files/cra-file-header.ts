@@ -6,7 +6,7 @@ import {
   NUMBER_FILLER,
   TransactionCodes,
 } from "../cra-integration.models";
-import { CRARequestFileLine } from "./cra-file";
+import { CRARequestFileLine } from "./cra-request-file-line";
 
 /**
  * Header of a CRA request/response file.

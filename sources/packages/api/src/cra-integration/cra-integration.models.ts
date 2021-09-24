@@ -105,7 +105,7 @@ export interface CRAsFtpResponseFile {
    */
   filePath: string;
   /**
-   * Response statuses record present on the file.
+   * Response statuses records present on the file.
    */
   statusRecords: CRAResponseStatusRecord[];
   /**

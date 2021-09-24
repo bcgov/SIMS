@@ -101,9 +101,7 @@ export class CRAPersonalVerificationService {
    * @returns Processing result log.
    */
   public async createIncomeVerificationRequest(): Promise<CRAUploadResult> {
-    this.logger.log(
-      "Retrieving student applications that need income verification...",
-    );
+    this.logger.log("Retrieving records that need income verification...");
     const applications =
       await this.applicationService.getPendingIncomeVerifications();
     if (!applications.length) {
@@ -113,7 +111,9 @@ export class CRAPersonalVerificationService {
       };
     }
 
-    this.logger.log(`Found ${applications.length} (s).`);
+    this.logger.log(
+      `Found ${applications.length} income verification(s) to be executed.`,
+    );
     const craRecords = applications.map((application) => {
       return this.createCRARecordFromStudent(
         application.student,

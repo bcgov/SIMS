@@ -14,7 +14,7 @@ import {
 import { CRAIntegrationConfig, SFTPConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
-import { CRARequestFileLine } from "./cra-files/cra-file";
+import { CRARequestFileLine } from "./cra-files/cra-request-file-line";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
