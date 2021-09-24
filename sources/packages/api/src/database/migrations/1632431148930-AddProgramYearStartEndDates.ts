@@ -6,7 +6,7 @@ export class AddProgramYearStartEndDates1632431148930
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-col-start-end-dates copy.sql", "ProgramYear"),
+      getSQLFileData("Add-col-start-end-dates.sql", "ProgramYear"),
     );
 
     await queryRunner.query(
