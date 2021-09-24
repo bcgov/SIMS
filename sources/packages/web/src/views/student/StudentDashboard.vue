@@ -1,21 +1,15 @@
 <template>
-  <div class="p-m-4">
-    <h1>Student Dashboard</h1>
-  </div>
-  <Card class="p-m-4">
-    <template #title>
-      Welcome {{ user.givenNames }}, let's get started
-    </template>
-    <template #content>
-      Student Dashboard Work in Progress
-    </template>
-  </Card>
+  <v-container>
+    <formio formName="studentdashboard"></formio>
+  </v-container>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { computed } from "vue";
 import { useStore } from "vuex";
+import formio from "@/components/generic/formio.vue";
 export default {
+  components: { formio },
   setup() {
     const store = useStore();
     const user = computed(() => store.state.student.profile);

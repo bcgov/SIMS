@@ -48,6 +48,10 @@
   line-height: 18px;
 }
 
-.ff-form-container .alert-success{
+.ff-form-container .alert-success {
   display: none;
+}
+
+.align-bullets ul {
+  padding-left: 20px;
 }
