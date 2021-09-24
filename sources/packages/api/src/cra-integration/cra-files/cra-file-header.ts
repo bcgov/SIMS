@@ -10,6 +10,10 @@ import { CRARequestFileLine } from "./cra-request-file-line";
 
 /**
  * Header of a CRA request/response file.
+ * Please note that the numbers below (e.g. repeatAppend(SPACE_FILLER, 99))
+ * represents the position of the information in a fixed text file format.
+ * The documentation about it is available on the document
+ * 'Income Verification Data Exchange Technical Guide BC'.
  */
 export class CRAFileHeader implements CRARequestFileLine {
   transactionCode: TransactionCodes;

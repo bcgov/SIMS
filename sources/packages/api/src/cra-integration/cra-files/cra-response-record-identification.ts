@@ -5,6 +5,10 @@ import {
 
 /**
  * Common identification info for a CRA response file record.
+ * Please note that the numbers below (e.g. line.substr(0, 4)) represents
+ * the position of the information in a fixed text file format.
+ * The documentation about it is available on the document
+ * 'Income Verification Data Exchange Technical Guide BC'.
  */
 export class CRAResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {

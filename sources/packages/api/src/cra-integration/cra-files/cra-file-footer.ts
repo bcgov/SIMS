@@ -9,6 +9,10 @@ import { CRARequestFileLine } from "./cra-request-file-line";
 
 /**
  * Footer of a CRA request/response file.
+ * Please note that the numbers below (e.g. repeatAppend(SPACE_FILLER, 6))
+ * represents the position of the information in a fixed text file format.
+ * The documentation about it is available on the document
+ * 'Income Verification Data Exchange Technical Guide BC'.
  */
 export class CRAFileFooter implements CRARequestFileLine {
   transactionCode: TransactionCodes;

@@ -64,9 +64,11 @@ export enum RequestStatusCodes {
 }
 
 /**
- * Match status codes (MATCH-STATUS-CODE)
- * presents on CRA Response Record
- * (Trans Sub Code - 0022)
+ * Match status codes (MATCH-STATUS-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ * 'The match' means that, when we send the first name,
+ * last name, DOB and SIN, CRA will check if the personal
+ * information matches with its own data.
  */
 export enum MatchStatusCodes {
   matchStatusCodeNotSet = "00",
