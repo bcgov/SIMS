@@ -18,7 +18,6 @@ import {
 } from "../../services";
 import { DatabaseModule } from "../../database/database.module";
 import { CRAIntegrationController } from "./cra-integration.system.controller";
-import { AuthModule } from "../../auth/auth.module";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 
 describe("CRAIntegrationController", () => {

@@ -13,7 +13,6 @@ import { IConfig } from "../types/config";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import SshServiceMock from "./__mocks__/SshServiceMock";
-import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 
 describe("CRAIntegrationService", () => {
   // Dependencies of the service being tested.
