@@ -32,7 +32,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
   }
 
   /**
-   * Indicates if the match is successful. 'The mach' means that
+   * Indicates if the match is successful. 'The match' means that
    * when we send the first name, last name, DOB and SIN, CRA will
    * check if the personal information matches with its own data.
    * Named as MATCH-STATUS-CODE on CRA documentation.

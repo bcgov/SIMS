@@ -39,12 +39,12 @@ export class CRAIntegrationService {
   /**
    * Creates a matching run request used, for instance, to validate
    * the SIN information.
-   * @param records Personal/individual records to be processed.
-   * @param sequence File request sequence number that is required
+   * @param records personal/individual records to be processed.
+   * @param sequence file request sequence number that is required
    * by CRA server processing.
    * @returns Matching run content.
    */
-  public createMatchingRunContent(
+  createMatchingRunContent(
     records: CRAPersonRecord[],
     sequence: number,
   ): CRARequestFileLine[] {
@@ -59,12 +59,12 @@ export class CRAIntegrationService {
 
   /**
    * Creates an income validation request.
-   * @param records Personal/individual records to be processed.
-   * @param sequence File request sequence number that is required
+   * @param records personal/individual records to be processed.
+   * @param sequence file request sequence number that is required
    * by CRA server processing.
    * @returns Income validation request.
    */
-  public createIncomeValidationContent(
+  createIncomeValidationContent(
     records: CRAPersonRecord[],
     sequence: number,
   ): CRARequestFileLine[] {
@@ -85,6 +85,8 @@ export class CRAIntegrationService {
    * @param sequence sequence number present on header/footer.
    * @param headerTransactionCode header code.
    * @param recordTransactionCode record code.
+   * @param [taxYear] needed if requesting information for a specific
+   * tax year, for instance, for an income verification.
    * @returns CRA request file.
    */
   private createCRARequestFile(
@@ -138,7 +140,7 @@ export class CRAIntegrationService {
    * @param remoteFilePath Remote location to upload the file (path + file name).
    * @returns Upload result.
    */
-  public async uploadContent(
+  async uploadContent(
     craFileLines: CRARequestFileLine[],
     remoteFilePath: string,
   ): Promise<CRAUploadResult> {
@@ -186,7 +188,7 @@ export class CRAIntegrationService {
    * @param sequence file sequence number.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  public createRequestFileName(sequence: number): string {
+  createRequestFileName(sequence: number): string {
     const sequenceFile = sequence.toString().padStart(5, "0");
     return `${this.craConfig.ftpRequestFolder}\\CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
   }
@@ -196,7 +198,7 @@ export class CRAIntegrationService {
    * the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
    * @returns File records for all response files present on sFTP.
    */
-  public async downloadResponseFiles(): Promise<CRAsFtpResponseFile[]> {
+  async downloadResponseFiles(): Promise<CRAsFtpResponseFile[]> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
@@ -283,7 +285,7 @@ export class CRAIntegrationService {
    * Delete a file from sFTP.
    * @param filePath Full path of the file to be deleted.
    */
-  public async deleteFile(filePath: string): Promise<void> {
+  async deleteFile(filePath: string): Promise<void> {
     const client = await this.getClient();
     try {
       await client.delete(filePath);
