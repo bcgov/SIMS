@@ -768,7 +768,7 @@
     ],
     "display": "form",
     "title": "Student Dashboard",
-    "name": "studentDashboard",
+    "name": "studentdashboard",
     "path": "studentdashboard",
     "machineName": "studentDashboard",
     "created": "2021-06-28T22:05:34.844Z",

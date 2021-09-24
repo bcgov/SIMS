@@ -1,5 +1,7 @@
 <template>
-  <formio :formName="'studentDashboard'"></formio>
+  <v-container>
+    <formio formName="studentdashboard"></formio>
+  </v-container>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";

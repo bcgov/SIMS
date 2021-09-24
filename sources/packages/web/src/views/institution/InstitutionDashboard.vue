@@ -1,5 +1,7 @@
 <template>
-  <formio :formName="'institutionDashboard'"></formio>
+  <v-container>
+    <formio formName="institutiondashboard"></formio>
+  </v-container>
 </template>
 
 <script lang="ts">

@@ -776,7 +776,7 @@
     ],
     "display": "form",
     "title": "Institution Dashboard",
-    "name": "institutionDashboard",
+    "name": "institutiondashboard",
     "path": "institutiondashboard",
     "machineName": "institutionDashboard",
     "created": "2021-06-28T22:05:34.844Z",
