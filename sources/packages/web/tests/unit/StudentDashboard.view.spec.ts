@@ -25,6 +25,6 @@ describe("Test StudentDashboard.vue", () => {
       },
       shallow: true,
     });
-    expect(wrapper.html()).toContain("studentDashboard");
+    expect(wrapper.html()).toContain("studentdashboard");
   });
 });
