@@ -50,6 +50,10 @@
           <a class="text-primary"> View application </a>
         </span>
       </div>
+      <ApplicationDetails
+        v-if="applicationDetails?.applicationStatus"
+        :applicationDetails="applicationDetails"
+      />
     </v-container>
   </div>
 </template>
@@ -67,6 +71,7 @@ import {
   GetApplicationDataDto,
   ApplicationStatus,
 } from "@/types";
+import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -83,6 +88,7 @@ export default {
   components: {
     Menu,
     CancelApplication,
+    ApplicationDetails,
   },
   props: {
     id: {

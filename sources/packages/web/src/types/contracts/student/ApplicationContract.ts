@@ -1,3 +1,4 @@
+import { ProgramInfoStatus, AssessmentStatus, COEStatus } from "@/types";
 export interface SaveStudentApplicationDto {
   programYearId: number;
   data: any;
@@ -64,6 +65,14 @@ export interface GetApplicationDataDto {
   id: number;
   applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: string;
+  applicationNumber: string;
+  applicationOfferingType: string;
+  applicationStartDate: string;
+  applicationEndDate: string;
+  applicationInstitutionName: string;
+  applicationPIRStatus: ProgramInfoStatus;
+  applicationAssessmentStatus: AssessmentStatus;
+  applicationCOEStatus: COEStatus;
 }
 
 export interface ApplicationSummaryDTO {
@@ -73,4 +82,21 @@ export interface ApplicationSummaryDTO {
   applicationId: number;
   coeStatus: string;
   fullName: string;
+}
+
+export interface StudentApplicationDetails {
+  applicationStatusUpdatedOn: string;
+  applicationNumber: string;
+  applicationOfferingType: string;
+  applicationStartDate: string;
+  applicationEndDate: string;
+  applicationInstitutionName: string;
+  applicationStatus: ApplicationStatus;
+}
+
+export interface StudentApplicationDetailsForTracking {
+  applicationPIRStatus: ProgramInfoStatus;
+  applicationAssessmentStatus: AssessmentStatus;
+  applicationCOEStatus: COEStatus;
+  applicationStatus: ApplicationStatus;
 }

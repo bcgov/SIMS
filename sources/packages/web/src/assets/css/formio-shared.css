@@ -51,3 +51,15 @@
 .ff-form-container .alert-success{
   display: none;
 }
+
+.btn-formio-primary-outlined {
+  background: #FFFFFF;
+  color: #2965C5;
+}
+
+.panel-error .card-body {
+  border: 2px solid #DC2525;
+} 
+.panel-warning .card-body {
+  border: 2px solid #F3B229;
+}

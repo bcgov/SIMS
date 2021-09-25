@@ -314,6 +314,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
+      .select([
+        "application.data",
+        "application.id",
+        "application.applicationStatus",
+        "application.pirStatus",
+        "application.assessmentStatus",
+        "application.coeStatus",
+        "application.applicationStatusUpdatedOn",
+        "application.applicationNumber",
+        "offering",
+        "location",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
+      .leftJoin("institution.institutionType", "institutionType")
       .leftJoin("application.student", "student")
       .leftJoin("student.user", "user")
       .where("application.id = :applicationIdParam", {
@@ -947,9 +963,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsForCOE(
     locationId: number,
     applicationId: number,
-    requiredCOEApplication: boolean = false,
+    requiredCOEApplication = false,
   ): Promise<Application> {
-    let query = this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .innerJoinAndSelect("application.location", "location")
       .innerJoinAndSelect("application.student", "student")

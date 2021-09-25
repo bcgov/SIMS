@@ -31,6 +31,7 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
+import { dateString } from "../../utilities";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -59,12 +60,20 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-
+    console.log(application, "+application");
     return {
       data: application.data,
       id: application.id,
       applicationStatus: application.applicationStatus,
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
+      applicationNumber: application.applicationNumber,
+      applicationOfferingType: application.offering?.offeringIntensity,
+      applicationStartDate: dateString(application.offering?.studyStartDate),
+      applicationEndDate: dateString(application.offering?.studyEndDate),
+      applicationInstitutionName: application.location?.name,
+      applicationPIRStatus: application.pirStatus,
+      applicationAssessmentStatus: application.assessmentStatus,
+      applicationCOEStatus: application.coeStatus,
     };
   }
 
