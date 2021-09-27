@@ -177,7 +177,7 @@ export class ApplicationSystemController {
   /**
    * Updates overall Application status and Assessment workflowId.
    * @param applicationId application id to be updated.
-   * @param payload contains the applicaitonstatus and the workflowId.
+   * @param payload contains the applicaiton status and the workflowId.
    */
   @Patch(":id/application-status-workflowId")
   async updateApplicationStatusWorkflowId(
