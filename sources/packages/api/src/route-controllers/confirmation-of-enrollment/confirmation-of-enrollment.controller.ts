@@ -219,14 +219,14 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    const updatedCoeStatus =
+    const updatedCOEStatus =
       await this.applicationService.updateApplicationCOEStatus(
         applicationId,
         COEStatus.completed,
         ApplicationStatus.completed,
       );
 
-    if (updatedCoeStatus) {
+    if (updatedCOEStatus) {
       // Send a message to allow the workflow to proceed.
       await this.workflow.sendConfirmCOEMessage(
         application.assessmentWorkflowId,
