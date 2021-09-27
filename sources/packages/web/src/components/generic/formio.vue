@@ -22,7 +22,7 @@ export default {
       type: Object,
     },
     readOnly: {
-      type: String,
+      type: Boolean,
     },
   },
   setup(props: any, context: SetupContext) {
@@ -108,6 +108,15 @@ export default {
       () => props.data,
       () => {
         updateFormSubmissionData();
+      },
+    );
+
+    watch(
+      () => props.readOnly,
+      () => {
+        if (form) {
+          form.options.readOnly = props.readOnly;
+        }
       },
     );
 
