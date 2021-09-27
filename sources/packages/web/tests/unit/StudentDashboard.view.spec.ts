@@ -3,7 +3,9 @@ import store from "../../src/store";
 
 // Target Vue
 import StudentDashboard from "../../src/views/student/StudentDashboard.vue";
-
+/**
+ * Student dashboard test expecting the form name in html
+ */
 describe("Test StudentDashboard.vue", () => {
   beforeAll(() => {
     store.dispatch("student/setStudentProfileData", {
@@ -23,6 +25,6 @@ describe("Test StudentDashboard.vue", () => {
       },
       shallow: true,
     });
-    expect(wrapper.html()).toContain("Student Dashboard");
+    expect(wrapper.html()).toContain("studentdashboard");
   });
 });

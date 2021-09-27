@@ -79,6 +79,12 @@ export interface ApplicationStudentDetails {
   studentPDStatus: boolean;
 }
 
+export interface ProgramYearDetails {
+  programYear: string;
+  startDate: Date;
+  endDate: Date;
+}
+
 export interface ApplicationDataDto {
   /**
    * Application dynamic data.
@@ -86,14 +92,17 @@ export interface ApplicationDataDto {
   data: any;
   /**
    * Program Year is added to integrate the application in camunda workflows.
+   * Kept for backward compatibility. To be removed in upcoming PR.
    */
   programYear: string;
-
+  /**
+   * Details of the program year associated with the student application.
+   */
+  programYearDetail: ProgramYearDetails;
   /**
    * Offering details for student application.
    */
   offering: ApplicationOfferingDetails;
-
   /**
    * Program details for student application.
    */

@@ -43,6 +43,7 @@ export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
   "ONLY_ONE_APPLICATION_DRAFT_PER_STUDENT_ALLOWED";
 export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
+export const APPLICATION_NOT_VALID = "APPLICATION_NOT_VALID";
 export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
 export const COE_DENIED_REASON_NOT_FOUND_ERROR =
@@ -82,7 +83,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationData: any,
     associatedFiles: string[],
   ): Promise<Application> {
-    let application = await this.getApplicationToSave(
+    const application = await this.getApplicationToSave(
       studentId,
       ApplicationStatus.draft,
       applicationId,
@@ -90,15 +91,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // If the application was not found it is because it does not belongs to the
     // student or it is not in draft state. Either way it will be invalid.
     if (!application) {
-      throw new Error(
+      throw new CustomNamedError(
         "Student Application not found or it is not in the correct status to be submitted.",
+        APPLICATION_NOT_FOUND,
       );
     }
     // If the the draft was created under a different program year than
     // the one being used to submit it, it is not valid.
     if (application.programYear.id !== programYearId) {
-      throw new Error(
+      throw new CustomNamedError(
         "Student Application program year is not the expected one.",
+        APPLICATION_NOT_VALID,
       );
     }
 
@@ -361,6 +364,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.data",
         "programYear.programYear",
+        "programYear.startDate",
+        "programYear.endDate",
         "offering",
         "pirProgram.credentialType",
         "pirProgram.completionYears",
@@ -1156,5 +1161,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .orderBy("offerings.studyEndDate", "DESC")
       .limit(1)
       .getOne();
+  }
+
+  /**
+   * Gets all applications that have an pending income verification.
+   * @returns applications that have an pending income verification.
+   */
+  async getPendingIncomeVerifications(): Promise<Application[]> {
+    // TODO: This method will be replaced for the correct one once
+    // we have the database migrations in place. For now the only
+    // purpose will be retrieve some applications with students
+    // data to make it possible to generate an income verification
+    // file to be send to CRA.
+    // This query will be updated in the upcoming PR for CRA Income verification.
+    return this.repo
+      .createQueryBuilder("applications")
+      .select(["applications.id", "students", "users"])
+      .innerJoinAndSelect("applications.student", "students")
+      .innerJoinAndSelect("students.user", "users")
+      .where("applications.applicationStatus = :inProgressStatus", {
+        inProgressStatus: ApplicationStatus.inProgress,
+      })
+      .getMany();
   }
 }

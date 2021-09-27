@@ -1,4 +1,5 @@
-import { CRARecordIdentification } from "./cra-files/cra-file-response-record-id";
+import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
+import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
 
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
@@ -20,10 +21,33 @@ export enum TransactionCodes {
 
 /**
  * Secondary codes used alongside the records.
+ * They could be part of the request or response,
+ * as described below.
  */
 export enum TransactionSubCodes {
+  /**
+   * Sub code used to request a status or a
+   * income verification. This record will be part
+   * of the request and will contain the personal
+   * data to be validated (first name, last name,
+   * DON and SIN).
+   */
   IVRequest = "0020",
-  ResponseRecord = "0022",
+  /**
+   * This record wll be part of the response and
+   * contains validation statuses about the person data
+   * (e.g. first name, last name, DOB, SIN) and
+   * about the CRA tax files.
+   * This record is part of the standard records
+   * that comprise the response file.
+   */
+  ResponseStatusRecord = "0022",
+  /**
+   * This record will be part of the response and
+   * contains information about a T4 earnings filed
+   * on CRA for a particular year.
+   */
+  T4Earnings = "0101",
 }
 
 /**
@@ -40,9 +64,11 @@ export enum RequestStatusCodes {
 }
 
 /**
- * Match status codes (MATCH-STATUS-CODE)
- * presents on CRA Response Record
- * (Trans Sub Code - 0022)
+ * Match status codes (MATCH-STATUS-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ * 'The match' means that, when we send the first name,
+ * last name, DOB and SIN, CRA will check if the personal
+ * information matches with its own data.
  */
 export enum MatchStatusCodes {
   matchStatusCodeNotSet = "00",
@@ -52,7 +78,7 @@ export enum MatchStatusCodes {
 
 /**
  * Required personal information to a
- * CRA verification be processsed.
+ * CRA verification be processed.
  */
 export interface CRAPersonRecord {
   sin: string;
@@ -81,10 +107,13 @@ export interface CRAsFtpResponseFile {
    */
   filePath: string;
   /**
-   * Parsed object from the CRA response files.
-   * Each object represents a line from the file.
+   * Response statuses records present on the file.
    */
-  records: CRARecordIdentification[];
+  statusRecords: CRAResponseStatusRecord[];
+  /**
+   * T4 earning records present on the file.
+   */
+  t4EarningsRecords: CRAResponseT4EarningsRecord[];
 }
 
 /**
@@ -97,7 +126,7 @@ export class ProcessSftpResponseResult {
    */
   processSummary: string[] = [];
   /**
-   * Errors found uring the processing.
+   * Errors found during the processing.
    */
   errorsSummary: string[] = [];
 }

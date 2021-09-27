@@ -53,7 +53,13 @@ export class ApplicationSystemController {
 
     return {
       data: application.data,
+      // Kept for backward compatibility. To be removed in upcoming PR.
       programYear: application.programYear.programYear,
+      programYearDetail: {
+        programYear: application.programYear.programYear,
+        startDate: application.programYear.startDate,
+        endDate: application.programYear.endDate,
+      },
       offering: {
         id: application.offering?.id,
         studyStartDate: application.offering?.studyStartDate,

@@ -1,7 +1,7 @@
 import { TransactionCodes } from "../cra-integration.models";
 import { CRAFileFooter } from "./cra-file-footer";
 import { CRAFileHeader } from "./cra-file-header";
-import { CRAFileIVRequestRecord } from "./cra-file-request-record";
+import { CRAFileIVRequestRecord } from "./cra-file-iv-request-record";
 
 describe("CRA Integration", () => {
   describe("Matching Run Request", () => {

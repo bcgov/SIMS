@@ -48,7 +48,7 @@
   line-height: 18px;
 }
 
-.ff-form-container .alert-success{
+.ff-form-container .alert-success {
   display: none;
 }
 
@@ -59,7 +59,12 @@
 
 .panel-error .card-body {
   border: 2px solid #DC2525;
-} 
+}
+
 .panel-warning .card-body {
   border: 2px solid #F3B229;
+}
+
+.align-bullets ul {
+  padding-left: 20px;
 }

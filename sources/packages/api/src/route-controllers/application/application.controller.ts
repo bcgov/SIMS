@@ -18,6 +18,8 @@ import {
   ProgramYearService,
   APPLICATION_DRAFT_NOT_FOUND,
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
+  APPLICATION_NOT_FOUND,
+  APPLICATION_NOT_VALID,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -127,26 +129,28 @@ export class ApplicationController extends BaseController {
       );
     }
 
-    const applicationToSubmit =
-      await this.applicationService.getApplicationByIdAndUser(
-        applicationId,
-        userToken.userId,
-      );
-    if (!applicationToSubmit) {
-      throw new NotFoundException("Student Application not found.");
-    }
-
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
-
-    await this.applicationService.submitApplication(
-      applicationId,
-      student.id,
-      programYear.id,
-      submissionResult.data.data,
-      payload.associatedFiles,
-    );
+    try {
+      await this.applicationService.submitApplication(
+        applicationId,
+        student.id,
+        programYear.id,
+        submissionResult.data.data,
+        payload.associatedFiles,
+      );
+    } catch (error) {
+      if (error.name === APPLICATION_NOT_FOUND) {
+        throw new NotFoundException(error.message);
+      }
+      if (error.name === APPLICATION_NOT_VALID) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw new InternalServerErrorException(
+        "Unexpected error while updating the draft application.",
+      );
+    }
 
     this.applicationService.startApplicationAssessment(applicationId);
   }

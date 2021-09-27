@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Student } from "src/database/entities";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
 import {
@@ -6,19 +7,21 @@ import {
   StudentService,
   SequenceControlService,
   ConfigService,
+  ApplicationService,
 } from "../services";
-import { CRAResponseFileLine } from "./cra-files/cra-file-response-record";
+import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
+import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
 import {
   CRAPersonRecord,
   CRAUploadResult,
   MatchStatusCodes,
   RequestStatusCodes,
-  TransactionSubCodes,
   CRAsFtpResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
+const STUDENT_INCOME_VALIDATION = "STUDENT_INCOME_VALIDATION";
 
 /**
  * Manages the retrieval of students or parents or another
@@ -32,6 +35,7 @@ export class CRAPersonalVerificationService {
     private readonly studentService: StudentService,
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   /**
@@ -44,7 +48,8 @@ export class CRAPersonalVerificationService {
    */
   public async createSinValidationRequest(): Promise<CRAUploadResult> {
     this.logger.log("Retrieving students with pending SIN validation...");
-    const students = await this.studentService.getStudentsPendingSinValidation();
+    const students =
+      await this.studentService.getStudentsPendingSinValidation();
     if (!students.length) {
       return {
         generatedFile: "none",
@@ -54,22 +59,15 @@ export class CRAPersonalVerificationService {
 
     this.logger.log(`Found ${students.length} student(s).`);
     const craRecords = students.map((student) => {
-      return {
-        sin: student.sin,
-        surname: student.user.lastName,
-        givenName: student.user.firstName,
-        birthDate: student.birthdate,
-        freeProjectArea: STUDENT_SIN_VALIDATION_TAG,
-      } as CRAPersonRecord;
+      return this.createCRARecordFromStudent(
+        student,
+        STUDENT_SIN_VALIDATION_TAG,
+      );
     });
-
-    const sequenceName = `CRA_${
-      this.configService.getConfig().CRAIntegration.programAreaCode
-    }`;
 
     let uploadResult: CRAUploadResult;
     await this.sequenceService.consumeNextSequence(
-      sequenceName,
+      this.getCRAFileSequenceName(),
       async (nextSequenceNumber: number) => {
         try {
           this.logger.log("Creating matching run content...");
@@ -77,9 +75,8 @@ export class CRAPersonalVerificationService {
             craRecords,
             nextSequenceNumber,
           );
-          const fileName = this.craService.createRequestFileName(
-            nextSequenceNumber,
-          );
+          const fileName =
+            this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
           uploadResult = await this.craService.uploadContent(
             fileContent,
@@ -95,6 +92,96 @@ export class CRAPersonalVerificationService {
     );
 
     return uploadResult;
+  }
+
+  /**
+   * Identifies all the student applications that have a pending
+   * income verification and generate the request file to be
+   * processed by CRA.
+   * @returns Processing result log.
+   */
+  public async createIncomeVerificationRequest(): Promise<CRAUploadResult> {
+    this.logger.log("Retrieving records that need income verification...");
+    const applications =
+      await this.applicationService.getPendingIncomeVerifications();
+    if (!applications.length) {
+      return {
+        generatedFile: "none",
+        uploadedRecords: 0,
+      };
+    }
+
+    this.logger.log(
+      `Found ${applications.length} income verification(s) to be executed.`,
+    );
+    const craRecords = applications.map((application) => {
+      return this.createCRARecordFromStudent(
+        application.student,
+        STUDENT_INCOME_VALIDATION,
+      );
+    });
+
+    let uploadResult: CRAUploadResult;
+    await this.sequenceService.consumeNextSequence(
+      this.getCRAFileSequenceName(),
+      async (nextSequenceNumber: number) => {
+        try {
+          this.logger.log("Creating income verification content...");
+          const fileContent = this.craService.createIncomeValidationContent(
+            craRecords,
+            nextSequenceNumber,
+          );
+          const fileName =
+            this.craService.createRequestFileName(nextSequenceNumber);
+          this.logger.log("Uploading content...");
+          uploadResult = await this.craService.uploadContent(
+            fileContent,
+            fileName,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Error while uploading content for income verification: ${error}`,
+          );
+          throw error;
+        }
+      },
+    );
+
+    return uploadResult;
+  }
+
+  /**
+   * Use the information on the Student and User objects
+   * to generate the record to be send to CRA.
+   * @param student student and user information.
+   * @param freeProjectArea free text to be send together
+   * with each record that could be used for process the
+   * response file, where this information will also be
+   * send back.
+   * @returns CRA record for the student.
+   */
+  private createCRARecordFromStudent(
+    student: Student,
+    freeProjectArea: string,
+  ): CRAPersonRecord {
+    return {
+      sin: student.sin,
+      surname: student.user.lastName,
+      givenName: student.user.firstName,
+      birthDate: student.birthdate,
+      freeProjectArea,
+    } as CRAPersonRecord;
+  }
+
+  /**
+   * Name of the group that controls the sequence number of the
+   * CRA file to be generated on table sims.sequence_controls.
+   * @returns Sequence group name for the CRA file.
+   */
+  private getCRAFileSequenceName(): string {
+    return `CRA_${
+      this.configService.getConfig().CRAIntegration.programAreaCode
+    }`;
   }
 
   /**
@@ -119,32 +206,32 @@ export class CRAPersonalVerificationService {
   ): Promise<ProcessSftpResponseResult> {
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(
-      `Processing file ${responseFile.filePath} with ${responseFile.records.length} records.`,
+      `Processing file ${responseFile.filePath} with ${responseFile.statusRecords.length} verifications.`,
     );
 
-    for (let index = 0; index < responseFile.records.length; index++) {
+    for (const statusRecord of responseFile.statusRecords) {
       try {
-        const record = responseFile.records[index];
-        // Checks the type of record to define if must be processed.
-        // If the record type is 0022, it should process the SIN validation.
-        if (record.transactionSubCode === TransactionSubCodes.ResponseRecord) {
-          const craRecord = record as CRAResponseFileLine;
-          // 0022 could be present in a SIN validation response or income verification response.
-          // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
-          // request was made specifically for SIN validation.
-          if (craRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
-            await this.processSINStatus(craRecord);
-            result.processSummary.push(
-              `Processed SIN validation for record line ${index + 1}.`,
-            );
-          }
-          // TODO: Add the check to process income verification.
+        // 0022 could be present in a SIN validation response or income verification response.
+        // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
+        // request was made specifically for SIN validation.
+        if (statusRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
+          await this.processSINStatus(statusRecord);
+          result.processSummary.push(
+            `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
+          );
+        } else {
+          // Find the T4 record associated with the status record.
+          const t4Earnings = responseFile.t4EarningsRecords.find(
+            (t4) => t4.sin === statusRecord.sin,
+          );
+          await this.processIncomeVerification(statusRecord, t4Earnings);
+          result.processSummary.push(
+            `Processed income verification for record line ${t4Earnings.lineNumber} with status record from line ${statusRecord.lineNumber}.`,
+          );
         }
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${
-          index + 1
-        } from file ${responseFile.filePath}`;
+        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${responseFile.filePath}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }
@@ -166,10 +253,10 @@ export class CRAPersonalVerificationService {
 
   /**
    * Process a 0022 record to update the SIN status.
-   * @param craRecord
+   * @param craRecord CRA status record to be processed.
    */
   private async processSINStatus(
-    craRecord: CRAResponseFileLine,
+    craRecord: CRAResponseStatusRecord,
   ): Promise<void> {
     const isValidSIN =
       craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
@@ -179,6 +266,24 @@ export class CRAPersonalVerificationService {
       craRecord.sin,
       isValidSIN,
     );
+  }
+
+  /**
+   * Process the income verification using the T4 earnings
+   * record (0101) received from CRA alongside with the
+   * status record (0022).
+   * @param statusRecord Status record (0022) received from CRA.
+   * @param t4EarningsRecords T4 earnings record (0101) received from CRA.
+   * @returns save the result of the income verification to database.
+   */
+  private async processIncomeVerification(
+    statusRecord: CRAResponseStatusRecord,
+    t4EarningsRecords?: CRAResponseT4EarningsRecord,
+  ): Promise<void> {
+    // TODO: Temporary code.
+    // This will be replace in the upcoming PR when the migrations will be added.
+    console.log("Executing income verification");
+    console.log("T4EarningsValue:", t4EarningsRecords?.T4EarningsValue);
   }
 
   @InjectLogger()
