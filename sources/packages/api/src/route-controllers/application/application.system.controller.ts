@@ -184,7 +184,6 @@ export class ApplicationSystemController {
     @Param("id") applicationId: number,
     @Body() payload: UpdateApplicationStatusWorkflowIdDto,
   ): Promise<void> {
-    console.log(payload.workflowId);
     const updateResult =
       await this.applicationService.updateApplicationStatusWorkflowId(
         applicationId,

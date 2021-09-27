@@ -533,6 +533,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Updates Confirmation of Enrollment(COE) and application status.
+   * @param applicationId application id to be updated.
+   * @param coeStatus status of the Confirmation of Enrollment.
+   * @param applicationStatus status of the application
+   * Confirmation of Enrollment and application status need to happen.
+   * @returns Status update result.
+   */
+  async updateApplicationCOEStatus(
+    applicationId: number,
+    coeStatus: COEStatus,
+    applicationStatus: ApplicationStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
+      {
+        coeStatus: coeStatus,
+        applicationStatus: applicationStatus,
+      },
+    );
+  }
+
+  /**
    * Updates Confirmation of Enrollment(COE) status.
    * @param applicationId application id to be updated.
    * @param status status of the Confirmation of Enrollment.
@@ -541,7 +566,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async updateCOEStatus(
     applicationId: number,
-    status: COEStatus,
+    coeStatus: COEStatus,
   ): Promise<UpdateResult> {
     return this.repo.update(
       {
@@ -549,7 +574,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.overwritten),
       },
       {
-        coeStatus: status,
+        coeStatus: coeStatus,
       },
     );
   }
@@ -723,7 +748,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationStatus: ApplicationStatus,
     workflowId: string,
   ): Promise<UpdateResult> {
-    console.log(workflowId);
     return this.repo.update(
       {
         id: applicationId,
