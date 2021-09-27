@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, Not, UpdateResult } from "typeorm";
+import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -607,7 +607,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     application.offering = offering;
-    application.pirStatus = ProgramInfoStatus.submitted;
+    application.pirStatus = ProgramInfoStatus.completed;
     return this.repo.save(application);
   }
 
@@ -705,6 +705,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       {
         applicationStatus: applicationStatus,
+        applicationStatusUpdatedOn: getUTCNow(),
+      },
+    );
+  }
+
+  /**
+   * Update Student Application status.
+   * Only allows the update on applications that are not in a final status.
+   * The final statuses of an application are Completed, Overwritten and Cancelled.
+   * @param applicationId application id.
+   * @param applicationStatus application status that need to be updated.
+   * @returns student Application UpdateResult.
+   */
+  async updateApplicationStatusWorkflowId(
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+    workflowId: string,
+  ): Promise<UpdateResult> {
+    console.log(workflowId);
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(
+          In([
+            ApplicationStatus.completed,
+            ApplicationStatus.overwritten,
+            ApplicationStatus.cancelled,
+          ]),
+        ),
+        assessmentWorkflowId: IsNull(),
+      },
+      {
+        applicationStatus: applicationStatus,
+        assessmentWorkflowId: workflowId,
         applicationStatusUpdatedOn: getUTCNow(),
       },
     );

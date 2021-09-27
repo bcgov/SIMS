@@ -22,6 +22,7 @@ import {
   UpdateAssessmentStatusDto,
   UpdateCOEStatusDto,
   UpdateApplicationStatusDto,
+  UpdateApplicationStatusWorkflowIdDto,
 } from "./models/application.system.model";
 
 /**
@@ -169,6 +170,33 @@ export class ApplicationSystemController {
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         "Not able to update the program information request status with provided data.",
+      );
+    }
+  }
+
+  /**
+   * Updates overall Application status and Assessment workflowId.
+   * @param applicationId application id to be updated.
+   * @param payload contains the applicaitonstatus and the workflowId.
+   */
+  @Patch(":id/application-status-workflowId")
+  async updateApplicationStatusWorkflowId(
+    @Param("id") applicationId: number,
+    @Body() payload: UpdateApplicationStatusWorkflowIdDto,
+  ): Promise<void> {
+    console.log(payload.workflowId);
+    const updateResult =
+      await this.applicationService.updateApplicationStatusWorkflowId(
+        applicationId,
+        payload.status,
+        payload.workflowId,
+      );
+
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        "Not able to update the overall Application status and workflowId with provided data.",
       );
     }
   }

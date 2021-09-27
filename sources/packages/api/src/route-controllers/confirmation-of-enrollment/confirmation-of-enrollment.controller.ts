@@ -19,7 +19,11 @@ import {
   InstitutionLocationService,
   COEDeniedReasonService,
 } from "../../services";
-import { Application, COEStatus } from "../../database/entities";
+import {
+  Application,
+  COEStatus,
+  ApplicationStatus,
+} from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { COESummaryDTO } from "../application/models/application.model";
@@ -215,13 +219,23 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    await this.applicationService.updateCOEStatus(
+    const updatedCoeStatus = await this.applicationService.updateCOEStatus(
       applicationId,
-      COEStatus.submitted,
+      COEStatus.completed,
     );
 
-    // Send a message to allow the workflow to proceed.
-    await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
+    if (updatedCoeStatus) {
+      const updatedApplication =
+        await this.applicationService.updateApplicationStatus(
+          applicationId,
+          ApplicationStatus.completed,
+        );
+
+      // Send a message to allow the workflow to proceed.
+      await this.workflow.sendConfirmCOEMessage(
+        application.assessmentWorkflowId,
+      );
+    }
   }
 
   /**
