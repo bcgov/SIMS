@@ -28,12 +28,11 @@ export class WorkflowActionsService {
         },
       });
     } catch (error) {
-      const errorMessage = `Error while starting application assessment workflow: ${workflowName}, error: ${error}`;
+      this.logger.error(
+        `Error while starting application assessment workflow: ${workflowName}`,
+      );
       this.logger.error(error);
-      this.logger.error(errorMessage);
-      /**
-       *The error is not thrown here, as we are failing silently
-       */
+      //The error is not thrown here, as we are failing silently
     }
   }
 
@@ -55,12 +54,11 @@ export class WorkflowActionsService {
         all: false, // false means that the message is correlated to exactly one entity.
       });
     } catch (error) {
-      const errorMessage = `Error while sending Program Info completed message to instance id: ${processInstanceId}`;
+      this.logger.error(
+        `Error while sending Program Info completed message to instance id: ${processInstanceId}`,
+      );
       this.logger.error(error);
-      this.logger.error(errorMessage);
-      /**
-       *The error is not thrown here, as we are failing silently
-       */
+      //The error is not thrown here, as we are failing silently
     }
   }
 
@@ -74,12 +72,11 @@ export class WorkflowActionsService {
     try {
       await this.workflowService.delete(assessmentWorkflowId);
     } catch (error) {
-      const errorMessage = `Error while deleting application assessment workflow: ${assessmentWorkflowId}, error: ${error}`;
+      this.logger.error(
+        `Error while deleting application assessment workflow: ${assessmentWorkflowId}, error: ${error}`,
+      );
       this.logger.error(error);
-      this.logger.error(errorMessage);
-      /**
-       *The error is not thrown here, as we are failing silently
-       */
+      //The error is not thrown here, as we are failing silently
     }
   }
 
@@ -98,12 +95,11 @@ export class WorkflowActionsService {
         all: false, // false means that the message is correlated to exactly one entity.
       });
     } catch (error) {
-      const errorMessage = `Error while sending Confirm Confirmation of Enrollment (COE) message to instance id: ${processInstanceId}`;
+      this.logger.error(
+        `Error while sending Confirm Confirmation of Enrollment (COE) message to instance id: ${processInstanceId}`,
+      );
       this.logger.error(error);
-      this.logger.error(errorMessage);
-      /**
-       *The error is not thrown here, as we are failing silently
-       */
+      //The error is not thrown here, as we are failing silently
     }
   }
 
