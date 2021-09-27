@@ -928,7 +928,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    const assessmentWorkflow = await this.workflow.startApplicationAssessment(
+    await this.workflow.startApplicationAssessment(
       application.data.workflowName,
       application.id,
     );
