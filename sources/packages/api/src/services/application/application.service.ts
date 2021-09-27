@@ -269,19 +269,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
   }
 
-  async associateAssessmentWorkflow(
-    applicationId: number,
-    assessmentWorkflowId: string,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      { assessmentWorkflowId },
-    );
-  }
-
   /**
    * Gets the Program Information Request
    * associated with the application.
@@ -945,17 +932,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.data.workflowName,
       application.id,
     );
-
-    const workflowAssociationResult = await this.associateAssessmentWorkflow(
-      application.id,
-      assessmentWorkflow.id,
-    );
-
-    // 1 means the number of affected rows expected while
-    // associating the workflow id.
-    if (workflowAssociationResult.affected !== 1) {
-      throw new Error("Error while associating the assessment workflow.");
-    }
   }
   /**
    * Deny the Program Info Request (PIR) for an Application.
