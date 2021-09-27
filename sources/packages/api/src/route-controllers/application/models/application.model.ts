@@ -41,6 +41,10 @@ export interface GetApplicationDataDto {
   applicationPIRStatus: ProgramInfoStatus;
   applicationAssessmentStatus: AssessmentStatus;
   applicationCOEStatus: COEStatus;
+  applicationFormName: string;
+  applicationProgramYearID: number;
+  applicationPIRDeniedReason?: string;
+  applicationCOEDeniedReason?: string;
 }
 
 export interface ApplicationOfferingDetails {

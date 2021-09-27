@@ -31,7 +31,11 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
-import { dateString } from "../../utilities";
+import {
+  dateString,
+  COE_DENIED_REASON_OTHER_ID,
+  PIR_DENIED_REASON_OTHER_ID,
+} from "../../utilities";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -60,7 +64,6 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    console.log(application, "+application");
     return {
       data: application.data,
       id: application.id,
@@ -74,9 +77,18 @@ export class ApplicationController extends BaseController {
       applicationPIRStatus: application.pirStatus,
       applicationAssessmentStatus: application.assessmentStatus,
       applicationCOEStatus: application.coeStatus,
+      applicationFormName: application.programYear.formName,
+      applicationProgramYearID: application.programYear.id,
+      applicationPIRDeniedReason:
+        application.pirDeniedReasonId?.id === PIR_DENIED_REASON_OTHER_ID
+          ? application.pirDeniedOtherDesc
+          : application.pirDeniedReasonId?.reason,
+      applicationCOEDeniedReason:
+        application.coeDeniedReason?.id === COE_DENIED_REASON_OTHER_ID
+          ? application.coeDeniedOtherDesc
+          : application.coeDeniedReason?.reason,
     };
   }
-
   /**
    * Submit an existing student application changing the status
    * to submitted and triggering the necessary processes.

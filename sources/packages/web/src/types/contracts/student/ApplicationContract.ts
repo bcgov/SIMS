@@ -73,6 +73,10 @@ export interface GetApplicationDataDto {
   applicationPIRStatus: ProgramInfoStatus;
   applicationAssessmentStatus: AssessmentStatus;
   applicationCOEStatus: COEStatus;
+  applicationFormName: string;
+  applicationProgramYearID: number;
+  applicationPIRDeniedReason?: string;
+  applicationCOEDeniedReason?: string;
 }
 
 export interface ApplicationSummaryDTO {
@@ -99,4 +103,7 @@ export interface StudentApplicationDetailsForTracking {
   applicationAssessmentStatus: AssessmentStatus;
   applicationCOEStatus: COEStatus;
   applicationStatus: ApplicationStatus;
+  applicationInstitutionName: string;
+  applicationPIRDeniedReason?: string;
+  applicationCOEDeniedReason?: string;
 }

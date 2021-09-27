@@ -325,6 +325,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationNumber",
         "offering",
         "location",
+        "programYear",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+        "pirDeniedReasonId.id",
+        "pirDeniedReasonId.reason",
+        "application.coeDeniedOtherDesc",
+        "application.pirDeniedOtherDesc",
       ])
       .leftJoin("application.offering", "offering")
       .leftJoin("application.location", "location")
@@ -332,6 +339,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("institution.institutionType", "institutionType")
       .leftJoin("application.student", "student")
       .leftJoin("student.user", "user")
+      .leftJoin("application.programYear", "programYear")
+      .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
+      .leftJoin("application.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
@@ -418,10 +428,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
             WHEN '${ApplicationStatus.draft}' THEN 1
             WHEN '${ApplicationStatus.submitted}' THEN 2
             WHEN '${ApplicationStatus.inProgress}' THEN 3
-            WHEN '${ApplicationStatus.enrollment}' THEN 4
-            WHEN '${ApplicationStatus.completed}' THEN 5
-            WHEN '${ApplicationStatus.cancelled}' THEN 6
-            ELSE 7
+            WHEN '${ApplicationStatus.assessment}' THEN 4
+            WHEN '${ApplicationStatus.enrollment}' THEN 5
+            WHEN '${ApplicationStatus.completed}' THEN 6
+            WHEN '${ApplicationStatus.cancelled}' THEN 7
+            ELSE 8
           END`,
       )
       .addOrderBy("application.applicationNumber")

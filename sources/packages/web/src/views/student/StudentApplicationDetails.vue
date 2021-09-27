@@ -12,6 +12,13 @@
     >
     <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <v-btn
+      v-if="
+        [
+          ApplicationStatus.assessment,
+          ApplicationStatus.enrollment,
+          ApplicationStatus.completed,
+        ].includes(applicationDetails.applicationStatus)
+      "
       color="primary"
       class="p-button-raised ml-2 float-right"
       @click="
@@ -142,19 +149,26 @@ export default {
       });
     };
     const loadMenu = () => {
-      items.value = [
-        {
-          label: "Edit",
-          icon: "pi pi-fw pi-pencil",
-          command: editApplicaion,
-        },
-        { separator: true },
-        {
-          label: "View",
-          icon: "pi pi-fw pi-folder-open",
-          command: viewApplicaion,
-        },
-      ];
+      if (
+        applicationDetails.value.applicationStatus !==
+          ApplicationStatus.cancelled &&
+        applicationDetails.value.applicationStatus !==
+          ApplicationStatus.completed
+      ) {
+        items.value.push(
+          {
+            label: "Edit",
+            icon: "pi pi-fw pi-pencil",
+            command: editApplicaion,
+          },
+          { separator: true },
+        );
+      }
+      items.value.push({
+        label: "View",
+        icon: "pi pi-fw pi-folder-open",
+        command: viewApplicaion,
+      });
       if (
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&

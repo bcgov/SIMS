@@ -5,7 +5,7 @@ import { ArchiveDbService } from "../src/services/archive-db/archive-db.service"
  * Main Async Execution method
  */
 (async () => {
-  // 1. Get Service and create connection 
+  // 1. Get Service and create connection
   const service = new ArchiveDbService();
   await service.init();
   const connection: Connection = service.connection;

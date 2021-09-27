@@ -4,7 +4,7 @@
       <formio
         formName="studentapplicationdetails"
         :data="initialData"
-        :@customEvent="customEventCallback"
+        @customEvent="customEventCallback"
       ></formio>
     </v-card>
     <v-card>
@@ -37,11 +37,12 @@
             <i class="mr-2" :class="completeIconClass" aria-hidden="true"></i
           ></v-col>
         </v-row>
+
         <formio
           formName="trackstudentapplication"
           :data="dataForTracking"
           @customEvent="customEventCallback"
-        ></formio> </v-container
+        ></formio></v-container
     ></v-card>
   </v-container>
 </template>
@@ -58,7 +59,6 @@ import {
   StudentApplicationDetails,
   StudentApplicationDetailsForTracking,
   COEStatus,
-  AssessmentStatus,
   ProgramInfoStatus,
 } from "@/types";
 
@@ -70,6 +70,7 @@ export default {
     applicationDetails: {
       type: Object,
       required: true,
+      default: {} as GetApplicationDataDto,
     },
   },
   setup(props: any) {
@@ -82,27 +83,36 @@ export default {
     const enrollmentIconClass = ref();
     const completeIconClass = ref();
     const getTrackingClass = () => {
-      if (ApplicationStatus.draft === props.applicationDetails.applicationStatus) {
+      if (
+        ApplicationStatus.draft === props.applicationDetails.applicationStatus
+      ) {
         progressBarStyle.value = "";
         progressBarLabel.value = "";
         return "bg-secondary";
       }
-      if (ApplicationStatus.submitted === props.applicationDetails.applicationStatus) {
+      if (
+        ApplicationStatus.submitted ===
+        props.applicationDetails.applicationStatus
+      ) {
         progressBarStyle.value = "width: 10%";
         progressBarLabel.value = ApplicationStatus.submitted;
         return "bg-warning text-white";
       }
       if (
-        ApplicationStatus.inProgress === props.applicationDetails.applicationStatus &&
-        ProgramInfoStatus.required === props.applicationDetails.applicationPIRStatus
+        ApplicationStatus.inProgress ===
+          props.applicationDetails.applicationStatus &&
+        ProgramInfoStatus.declined !==
+          props.applicationDetails.applicationPIRStatus
       ) {
         progressBarStyle.value = "width: 30%";
         progressBarLabel.value = ApplicationStatus.inProgress;
         return "bg-warning text-white";
       }
       if (
-        ApplicationStatus.inProgress === props.applicationDetails.applicationStatus &&
-        ProgramInfoStatus.declined === props.applicationDetails.applicationPIRStatus
+        ApplicationStatus.inProgress ===
+          props.applicationDetails.applicationStatus &&
+        ProgramInfoStatus.declined ===
+          props.applicationDetails.applicationPIRStatus
       ) {
         progressBarStyle.value = "width: 100%";
         progressBarLabel.value = ApplicationStatus.inProgress;
@@ -110,21 +120,16 @@ export default {
         return "bg-danger text-white";
       }
       if (
-        ApplicationStatus.assessment === props.applicationDetails.applicationStatus &&
-        AssessmentStatus.required === props.applicationDetails.applicationAssessmentStatus
+        ApplicationStatus.assessment ===
+        props.applicationDetails.applicationStatus
       ) {
-        progressBarStyle.value = "width: 55%";
+        progressBarStyle.value = "width: 50%";
         progressBarLabel.value = ApplicationStatus.assessment;
         return "bg-warning text-white";
       }
-      if (ApplicationStatus.completed === props.applicationDetails.applicationStatus) {
-        progressBarStyle.value = "width: 100%";
-        progressBarLabel.value = ApplicationStatus.completed;
-        completeIconClass.value = "fa fa-check-circle text-success";
-        return "bg-success text-white";
-      }
       if (
-        ApplicationStatus.enrollment === props.applicationDetails.applicationStatus &&
+        ApplicationStatus.enrollment ===
+          props.applicationDetails.applicationStatus &&
         COEStatus.declined === props.applicationDetails.applicationCOEStatus
       ) {
         progressBarStyle.value = "width: 100%";
@@ -132,14 +137,23 @@ export default {
         enrollmentIconClass.value = "fa fa-exclamation-circle text-danger ";
         return "bg-danger text-white";
       }
-      // TODO: check all these conditions with Andrew
       if (
-        ApplicationStatus.enrollment === props.applicationDetails.applicationStatus &&
-        COEStatus.required === props.applicationDetails.applicationCOEStatus
+        ApplicationStatus.enrollment ===
+          props.applicationDetails.applicationStatus &&
+        COEStatus.declined !== props.applicationDetails.applicationCOEStatus
       ) {
-        progressBarStyle.value = "width: 80%";
+        progressBarStyle.value = "width: 70%";
         progressBarLabel.value = ApplicationStatus.enrollment;
         return "bg-warning text-white";
+      }
+      if (
+        ApplicationStatus.completed ===
+        props.applicationDetails.applicationStatus
+      ) {
+        progressBarStyle.value = "width: 100%";
+        progressBarLabel.value = ApplicationStatus.completed;
+        completeIconClass.value = "fa fa-check-circle text-success";
+        return "bg-success text-white";
       }
     };
 
@@ -148,8 +162,8 @@ export default {
         router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: programYear.value.formName,
-            programYearId: programYear.value.programYearId,
+            selectedForm: props.applicationDetails.applicationFormName,
+            programYearId: props.applicationDetails.applicationProgramYearID,
             id: props.id,
           },
         });
@@ -158,7 +172,7 @@ export default {
         router.push({
           name: StudentRoutesConst.ASSESSMENT,
           params: {
-            applicationId: id,
+            applicationId: props.applicationDetails.id,
           },
         });
       }
@@ -166,8 +180,8 @@ export default {
         router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
           params: {
-            selectedForm: programYear.value.formName,
-            programYearId: programYear.value.programYearId,
+            selectedForm: props.applicationDetails.applicationFormName,
+            programYearId: props.applicationDetails.applicationProgramYearID,
             id: props.id,
             readOnly: "readOnly",
           },
@@ -176,20 +190,29 @@ export default {
     };
     onMounted(async () => {
       initialData.value = {
-        applicationStatusUpdatedOn: props.applicationDetails.applicationStatusUpdatedOn,
+        applicationStatusUpdatedOn:
+          props.applicationDetails.applicationStatusUpdatedOn,
         applicationNumber: props.applicationDetails.applicationNumber ?? "-",
-        applicationOfferingType: props.applicationDetails.applicationOfferingType ?? "-",
+        applicationOfferingType:
+          props.applicationDetails.applicationOfferingType ?? "-",
         applicationStartDate: props.applicationDetails.applicationStartDate,
         applicationEndDate: props.applicationDetails.applicationEndDate,
         applicationInstitutionName:
           props.applicationDetails.applicationInstitutionName ?? "-",
         applicationStatus: props.applicationDetails.applicationStatus,
-      } as StudentApplicationDetails;
+      };
       dataForTracking.value = {
         applicationStatus: props.applicationDetails.applicationStatus,
         applicationPIRStatus: props.applicationDetails.applicationPIRStatus,
-        applicationAssessmentStatus: props.applicationDetails.applicationAssessmentStatus,
+        applicationAssessmentStatus:
+          props.applicationDetails.applicationAssessmentStatus,
         applicationCOEStatus: props.applicationDetails.applicationCOEStatus,
+        applicationInstitutionName:
+          props.applicationDetails.applicationInstitutionName,
+        applicationPIRDeniedReason:
+          props.applicationDetails.applicationPIRDeniedReason,
+        applicationCOEDeniedReason:
+          props.applicationDetails.applicationCOEDeniedReason,
       };
     });
     return {
