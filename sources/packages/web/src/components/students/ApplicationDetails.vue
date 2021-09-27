@@ -50,10 +50,10 @@
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import formio from "@/components/generic/formio.vue";
-import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-
 import {
+  FormIOCustomEvent,
+  FormIOCustomEventTypes,
   ApplicationStatus,
   GetApplicationDataDto,
   StudentApplicationDetails,

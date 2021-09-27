@@ -56,9 +56,8 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO } from "@/types";
+import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
 import { useFormatters } from "@/composables";
-import { ProgramInfoStatus } from "@/types";
 
 export default {
   components: {},
