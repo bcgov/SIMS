@@ -1,7 +1,7 @@
 /**
  * Possible status for an Assessment, when the Application_status is in Assessment
  */
- export enum AssessmentStatus {
+export enum AssessmentStatus {
   /**
    * An Assessment is required
    */
