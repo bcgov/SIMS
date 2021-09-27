@@ -41,4 +41,22 @@ export class ProgramYear extends RecordDataModel {
     nullable: false,
   })
   active: boolean;
+  /**
+   * Inclusive start date that this program year
+   * should be considered valid.
+   */
+  @Column({
+    name: "start_date",
+    type: "date",
+  })
+  startDate: Date;
+  /**
+   * Inclusive end date that this program year
+   * should be considered valid.
+   */
+  @Column({
+    name: "end_date",
+    type: "date",
+  })
+  endDate: Date;
 }
