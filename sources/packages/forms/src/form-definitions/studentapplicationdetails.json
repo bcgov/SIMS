@@ -368,7 +368,7 @@
                                     "id": "ee9w6jln"
                                 },
                                 {
-                                    "label": "applicationOfferingType",
+                                    "label": "applicationOfferingIntensity",
                                     "tag": "p",
                                     "className": "",
                                     "attrs": [
@@ -377,12 +377,12 @@
                                             "value": ""
                                         }
                                     ],
-                                    "content": "{{ data.applicationOfferingType }}",
+                                    "content": "{{ data.applicationOfferingIntensity }}",
                                     "refreshOnChange": true,
                                     "customClass": "",
                                     "hidden": false,
                                     "modalEdit": false,
-                                    "key": "applicationOfferingType",
+                                    "key": "applicationOfferingIntensity",
                                     "tags": [],
                                     "properties": {},
                                     "conditional": {
@@ -445,7 +445,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "e9goo8"
+                                    "id": "ebcewk"
                                 }
                             ],
                             "offset": 0,
@@ -869,7 +869,7 @@
                         {
                             "components": [
                                 {
-                                    "label": "Date submitted",
+                                    "label": "Date Submitted",
                                     "tag": "p",
                                     "className": "font-weight-bold",
                                     "attrs": [
@@ -883,7 +883,7 @@
                                     "customClass": "",
                                     "hidden": false,
                                     "modalEdit": false,
-                                    "key": "datesubmitted",
+                                    "key": "dateSubmitted",
                                     "tags": [],
                                     "properties": {},
                                     "conditional": {
@@ -946,7 +946,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "efluyhk"
+                                    "id": "eqtfdpq"
                                 },
                                 {
                                     "label": "Date Submitted",
@@ -1026,7 +1026,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "e4nibq"
+                                    "id": "ewzcw3k"
                                 }
                             ],
                             "width": 4,
@@ -1635,6 +1635,6 @@
     "name": "studentApplicationDetails",
     "path": "studentapplicationdetails",
     "created": "2021-09-21T22:28:08.371Z",
-    "modified": "2021-09-24T23:14:29.947Z",
+    "modified": "2021-09-27T22:31:21.349Z",
     "machineName": "studentApplicationDetails"
 }

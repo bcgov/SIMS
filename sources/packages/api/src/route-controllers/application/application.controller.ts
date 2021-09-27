@@ -72,7 +72,7 @@ export class ApplicationController extends BaseController {
       applicationStatus: application.applicationStatus,
       applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
       applicationNumber: application.applicationNumber,
-      applicationOfferingType: application.offering?.offeringIntensity,
+      applicationOfferingIntensity: application.offering?.offeringIntensity,
       applicationStartDate: dateString(application.offering?.studyStartDate),
       applicationEndDate: dateString(application.offering?.studyEndDate),
       applicationInstitutionName: application.location?.name,

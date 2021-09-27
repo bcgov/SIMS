@@ -13,7 +13,7 @@
         <div class="progress">
           <div
             class="progress-bar bg-secondary"
-            :class="getTrackingClass()"
+            :class="progressBarClass"
             role="progressbar"
             :style="progressBarStyle"
             aria-valuemax="100"
@@ -82,13 +82,15 @@ export default {
     const inProgressIconClass = ref();
     const enrollmentIconClass = ref();
     const completeIconClass = ref();
-    const getTrackingClass = () => {
+    const progressBarClass = ref();
+
+    const setStyles = () => {
       if (
         ApplicationStatus.draft === props.applicationDetails.applicationStatus
       ) {
         progressBarStyle.value = "";
         progressBarLabel.value = "";
-        return "bg-secondary";
+        progressBarClass.value = "bg-secondary";
       }
       if (
         ApplicationStatus.submitted ===
@@ -96,7 +98,7 @@ export default {
       ) {
         progressBarStyle.value = "width: 10%";
         progressBarLabel.value = ApplicationStatus.submitted;
-        return "bg-warning text-white";
+        progressBarClass.value = "bg-warning text-white";
       }
       if (
         ApplicationStatus.inProgress ===
@@ -106,7 +108,7 @@ export default {
       ) {
         progressBarStyle.value = "width: 30%";
         progressBarLabel.value = ApplicationStatus.inProgress;
-        return "bg-warning text-white";
+        progressBarClass.value = "bg-warning text-white";
       }
       if (
         ApplicationStatus.inProgress ===
@@ -117,7 +119,7 @@ export default {
         progressBarStyle.value = "width: 100%";
         progressBarLabel.value = ApplicationStatus.inProgress;
         inProgressIconClass.value = "fa fa-exclamation-circle text-danger";
-        return "bg-danger text-white";
+        progressBarClass.value = "bg-danger text-white";
       }
       if (
         ApplicationStatus.assessment ===
@@ -125,7 +127,7 @@ export default {
       ) {
         progressBarStyle.value = "width: 50%";
         progressBarLabel.value = ApplicationStatus.assessment;
-        return "bg-warning text-white";
+        progressBarClass.value = "bg-warning text-white";
       }
       if (
         ApplicationStatus.enrollment ===
@@ -135,7 +137,7 @@ export default {
         progressBarStyle.value = "width: 100%";
         progressBarLabel.value = ApplicationStatus.enrollment;
         enrollmentIconClass.value = "fa fa-exclamation-circle text-danger ";
-        return "bg-danger text-white";
+        progressBarClass.value = "bg-danger text-white";
       }
       if (
         ApplicationStatus.enrollment ===
@@ -144,7 +146,7 @@ export default {
       ) {
         progressBarStyle.value = "width: 70%";
         progressBarLabel.value = ApplicationStatus.enrollment;
-        return "bg-warning text-white";
+        progressBarClass.value = "bg-warning text-white";
       }
       if (
         ApplicationStatus.completed ===
@@ -153,7 +155,7 @@ export default {
         progressBarStyle.value = "width: 100%";
         progressBarLabel.value = ApplicationStatus.completed;
         completeIconClass.value = "fa fa-check-circle text-success";
-        return "bg-success text-white";
+        progressBarClass.value = "bg-success text-white";
       }
     };
 
@@ -193,8 +195,8 @@ export default {
         applicationStatusUpdatedOn:
           props.applicationDetails.applicationStatusUpdatedOn,
         applicationNumber: props.applicationDetails.applicationNumber ?? "-",
-        applicationOfferingType:
-          props.applicationDetails.applicationOfferingType ?? "-",
+        applicationOfferingIntensity:
+          props.applicationDetails.applicationOfferingIntensity ?? "-",
         applicationStartDate: props.applicationDetails.applicationStartDate,
         applicationEndDate: props.applicationDetails.applicationEndDate,
         applicationInstitutionName:
@@ -214,18 +216,19 @@ export default {
         applicationCOEDeniedReason:
           props.applicationDetails.applicationCOEDeniedReason,
       };
+      setStyles()
     });
     return {
       ApplicationStatus,
       initialData,
       dataForTracking,
       progressBarStyle,
-      getTrackingClass,
       progressBarLabel,
       inProgressIconClass,
       enrollmentIconClass,
       completeIconClass,
       customEventCallback,
+      progressBarClass,
     };
   },
 };

@@ -66,7 +66,7 @@ export interface GetApplicationDataDto {
   applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: string;
   applicationNumber: string;
-  applicationOfferingType: string;
+  applicationOfferingIntensity: string;
   applicationStartDate: string;
   applicationEndDate: string;
   applicationInstitutionName: string;
@@ -91,7 +91,7 @@ export interface ApplicationSummaryDTO {
 export interface StudentApplicationDetails {
   applicationStatusUpdatedOn: string;
   applicationNumber: string;
-  applicationOfferingType: string;
+  applicationOfferingIntensity: string;
   applicationStartDate: string;
   applicationEndDate: string;
   applicationInstitutionName: string;

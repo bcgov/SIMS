@@ -34,7 +34,7 @@ export interface GetApplicationDataDto {
   applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: Date;
   applicationNumber: string;
-  applicationOfferingType: string;
+  applicationOfferingIntensity: string;
   applicationStartDate: string;
   applicationEndDate: string;
   applicationInstitutionName: string;
