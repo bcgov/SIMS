@@ -188,9 +188,17 @@ export class CRAIntegrationService {
    * @param sequence file sequence number.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  createRequestFileName(sequence: number): string {
+  createRequestFileName(sequence: number): {
+    fileName: string;
+    filePath: string;
+  } {
     const sequenceFile = sequence.toString().padStart(5, "0");
-    return `${this.craConfig.ftpRequestFolder}\\CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
+    const fileName = `CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
+    const filePath = `${this.craConfig.ftpRequestFolder}\\${fileName}`;
+    return {
+      fileName,
+      filePath,
+    };
   }
 
   /**

@@ -68,6 +68,12 @@ export class CRAIntegrationController {
     });
   }
 
+  /**
+   * Creates a CRA Income Verification record that will be waiting
+   * to be send to CRA and receive a response.
+   * @param payload information needed to create the CRA Income Verification record.
+   * @returns the id of the new CRA Verification record created.
+   */
   @Post("income-verification")
   async createIncomeVerification(
     @Body() payload: CreateIncomeVerificationDto,

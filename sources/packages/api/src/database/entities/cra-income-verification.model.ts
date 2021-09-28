@@ -105,9 +105,9 @@ export class CRAIncomeVerification extends RecordDataModel {
   /**
    * Student Application that requires the income verification.
    */
-  @ManyToOne(() => Application, { eager: false, cascade: true })
+  @ManyToOne(() => Application, { eager: false, cascade: false })
   @JoinColumn({
-    name: "application_Id",
+    name: "application_id",
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;

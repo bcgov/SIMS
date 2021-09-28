@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS sims.cra_income_verifications (
   match_status VARCHAR(50),
   request_status VARCHAR(50),
   -- Reference Columns
-  application_Id INT REFERENCES sims.applications(id) ON DELETE CASCADE,
+  application_Id INT UNIQUE NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   -- Audit columns
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone NOT NULL DEFAULT now(),

@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { Student } from "src/database/entities";
+import { CRAIncomeVerification, Student } from "../database/entities";
+import { getUTCNow } from "src/utilities";
+import { EntityManager } from "typeorm";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
 import {
@@ -7,7 +9,7 @@ import {
   StudentService,
   SequenceControlService,
   ConfigService,
-  ApplicationService,
+  CRAIncomeVerificationService,
 } from "../services";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
@@ -21,7 +23,7 @@ import {
 } from "./cra-integration.models";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
-const STUDENT_INCOME_VALIDATION = "STUDENT_INCOME_VALIDATION";
+const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
 /**
  * Manages the retrieval of students or parents or another
@@ -35,7 +37,7 @@ export class CRAPersonalVerificationService {
     private readonly studentService: StudentService,
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
-    private readonly applicationService: ApplicationService,
+    private readonly incomeVerificationService: CRAIncomeVerificationService,
   ) {}
 
   /**
@@ -75,12 +77,12 @@ export class CRAPersonalVerificationService {
             craRecords,
             nextSequenceNumber,
           );
-          const fileName =
+          const fileInfo =
             this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
           uploadResult = await this.craService.uploadContent(
             fileContent,
-            fileName,
+            fileInfo.filePath,
           );
         } catch (error) {
           this.logger.error(
@@ -102,9 +104,9 @@ export class CRAPersonalVerificationService {
    */
   public async createIncomeVerificationRequest(): Promise<CRAUploadResult> {
     this.logger.log("Retrieving records that need income verification...");
-    const applications =
-      await this.applicationService.getPendingIncomeVerifications();
-    if (!applications.length) {
+    const incomeVerifications =
+      await this.incomeVerificationService.getPendingIncomeVerifications();
+    if (!incomeVerifications.length) {
       return {
         generatedFile: "none",
         uploadedRecords: 0,
@@ -112,31 +114,48 @@ export class CRAPersonalVerificationService {
     }
 
     this.logger.log(
-      `Found ${applications.length} income verification(s) to be executed.`,
+      `Found ${incomeVerifications.length} income verification(s) to be executed.`,
     );
-    const craRecords = applications.map((application) => {
+    const craRecords = incomeVerifications.map((incomeVerification) => {
       return this.createCRARecordFromStudent(
-        application.student,
-        STUDENT_INCOME_VALIDATION,
+        incomeVerification.application.student,
+        this.getIncomeVerificationTag(incomeVerification.id),
       );
     });
+
+    const verificationsIds = incomeVerifications.map(
+      (incomeVerification) => incomeVerification.id,
+    );
 
     let uploadResult: CRAUploadResult;
     await this.sequenceService.consumeNextSequence(
       this.getCRAFileSequenceName(),
-      async (nextSequenceNumber: number) => {
+      async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log("Creating income verification content...");
           const fileContent = this.craService.createIncomeValidationContent(
             craRecords,
             nextSequenceNumber,
           );
-          const fileName =
+          const fileInfo =
             this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
           uploadResult = await this.craService.uploadContent(
             fileContent,
-            fileName,
+            fileInfo.filePath,
+          );
+
+          // Creates the repository based on the entity manager that
+          // holds the transaction already created to manage the
+          // sequence number.
+          const incomeVerificationRepo = entityManager.getRepository(
+            CRAIncomeVerification,
+          );
+          this.incomeVerificationService.updateSentFile(
+            verificationsIds,
+            new Date(),
+            fileInfo.fileName,
+            incomeVerificationRepo,
           );
         } catch (error) {
           this.logger.error(
@@ -148,6 +167,23 @@ export class CRAPersonalVerificationService {
     );
 
     return uploadResult;
+  }
+
+  private getIncomeVerificationTag(id: number): string {
+    return `${INCOME_VERIFICATION_TAG}:${id}`;
+  }
+
+  private getIdFromIncomeVerificationIdTag(tag: string): number | null {
+    if (!tag?.length) {
+      return null;
+    }
+
+    const splittedTag = tag.split(":");
+    if (splittedTag.length === 2) {
+      return +splittedTag[1];
+    }
+
+    return null;
   }
 
   /**

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { Connection, EntityManager } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { SequenceControl } from "../../database/entities";
 import { InjectLogger } from "../../common";
@@ -37,7 +37,10 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
    */
   public async consumeNextSequence(
     sequenceName: string,
-    process: (sequenceNumber: number) => Promise<void>,
+    process: (
+      sequenceNumber: number,
+      entityManager: EntityManager,
+    ) => Promise<void>,
   ) {
     this.logger.log("Checking next sequence available...");
     const queryRunner = this.connection.createQueryRunner();
@@ -80,7 +83,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       );
       // Even the sequence number being represented as a bigint in Postgres here
       // we are assuming that the max value will not go beyond the number safe limit.
-      await process(nextSequenceNumber);
+      await process(nextSequenceNumber, queryRunner.manager);
       // If the external process was successfully execute
       // update the new sequence number to the database.
       sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
