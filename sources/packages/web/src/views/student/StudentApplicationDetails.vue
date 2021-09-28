@@ -12,13 +12,7 @@
     >
     <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <v-btn
-      v-if="
-        [
-          ApplicationStatus.assessment,
-          ApplicationStatus.enrollment,
-          ApplicationStatus.completed,
-        ].includes(applicationDetails.applicationStatus)
-      "
+      :if="showViewAssessment"
       color="primary"
       class="p-button-raised ml-2 float-right"
       @click="
@@ -67,7 +61,7 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import Menu from "primevue/menu";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -114,6 +108,13 @@ export default {
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
+    const showViewAssessment = computed(() =>
+      [
+        ApplicationStatus.assessment,
+        ApplicationStatus.enrollment,
+        ApplicationStatus.completed,
+      ].includes(applicationDetails.value?.applicationStatus),
+    );
     const goBack = () => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
@@ -218,6 +219,7 @@ export default {
       getApplicationDetails,
       dateString,
       ApplicationStatus,
+      showViewAssessment,
     };
   },
 };

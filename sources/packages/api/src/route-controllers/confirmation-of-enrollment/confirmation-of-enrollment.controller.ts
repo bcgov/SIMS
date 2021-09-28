@@ -24,11 +24,7 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
-import {
-  dateString,
-  COE_WINDOW,
-  COE_DENIED_REASON_OTHER_ID,
-} from "../../utilities";
+import { dateString, COE_WINDOW, getCOEDeniedReason } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollmentDto,
@@ -173,10 +169,7 @@ export class ConfirmationOfEnrollmentController {
         application.offering.studyStartDate,
       ),
       applicationLocationId: application.location.id,
-      applicationDeniedReason:
-        COE_DENIED_REASON_OTHER_ID === application.coeDeniedId
-          ? application.coeDeniedOtherDesc
-          : application.coeDeniedReason?.reason,
+      applicationDeniedReason: getCOEDeniedReason(application),
     };
   }
 

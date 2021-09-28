@@ -35,8 +35,8 @@ import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
 import {
   dateString,
-  COE_DENIED_REASON_OTHER_ID,
-  PIR_DENIED_REASON_OTHER_ID,
+  getPIRDeniedReason,
+  getCOEDeniedReason,
 } from "../../utilities";
 
 @Controller("application")
@@ -81,14 +81,8 @@ export class ApplicationController extends BaseController {
       applicationCOEStatus: application.coeStatus,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
-      applicationPIRDeniedReason:
-        application.pirDeniedReasonId?.id === PIR_DENIED_REASON_OTHER_ID
-          ? application.pirDeniedOtherDesc
-          : application.pirDeniedReasonId?.reason,
-      applicationCOEDeniedReason:
-        application.coeDeniedReason?.id === COE_DENIED_REASON_OTHER_ID
-          ? application.coeDeniedOtherDesc
-          : application.coeDeniedReason?.reason,
+      applicationPIRDeniedReason: getPIRDeniedReason(application),
+      applicationCOEDeniedReason: getCOEDeniedReason(application),
     };
   }
   /**

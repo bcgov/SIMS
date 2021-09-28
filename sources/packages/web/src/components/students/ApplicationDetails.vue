@@ -25,16 +25,16 @@
           <v-col>{{ ApplicationStatus.submitted }}</v-col>
           <v-col
             >{{ ApplicationStatus.inProgress }}
-            <i class="mr-2" :class="inProgressIconClass" aria-hidden="true"></i
+            <i class="mr-2" :class="inProgressIconClass"></i
           ></v-col>
           <v-col>{{ ApplicationStatus.assessment }} </v-col>
           <v-col
             >{{ ApplicationStatus.enrollment }}
-            <i class="mr-2" :class="enrollmentIconClass" aria-hidden="true"></i
+            <i class="mr-2" :class="enrollmentIconClass"></i
           ></v-col>
           <v-col
             >{{ ApplicationStatus.completed }}
-            <i class="mr-2" :class="completeIconClass" aria-hidden="true"></i
+            <i class="mr-2" :class="completeIconClass"></i
           ></v-col>
         </v-row>
 
@@ -160,34 +160,38 @@ export default {
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
-      if (FormIOCustomEventTypes.RouteToContinueApplication === event.type) {
-        router.push({
-          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-          params: {
-            selectedForm: props.applicationDetails.applicationFormName,
-            programYearId: props.applicationDetails.applicationProgramYearID,
-            id: props.id,
-          },
-        });
-      }
-      if (FormIOCustomEventTypes.RouteToConfirmAssessment === event.type) {
-        router.push({
-          name: StudentRoutesConst.ASSESSMENT,
-          params: {
-            applicationId: props.applicationDetails.id,
-          },
-        });
-      }
-      if (FormIOCustomEventTypes.RouteToViewStudentApplication === event.type) {
-        router.push({
-          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
-          params: {
-            selectedForm: props.applicationDetails.applicationFormName,
-            programYearId: props.applicationDetails.applicationProgramYearID,
-            id: props.id,
-            readOnly: "readOnly",
-          },
-        });
+      switch (event.type) {
+        case FormIOCustomEventTypes.RouteToContinueApplication:
+          router.push({
+            name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+            params: {
+              selectedForm: props.applicationDetails.applicationFormName,
+              programYearId: props.applicationDetails.applicationProgramYearID,
+              id: props.applicationDetails.id,
+            },
+          });
+          break;
+        case FormIOCustomEventTypes.RouteToConfirmAssessment:
+          router.push({
+            name: StudentRoutesConst.ASSESSMENT,
+            params: {
+              applicationId: props.applicationDetails.id,
+            },
+          });
+          break;
+        case FormIOCustomEventTypes.RouteToViewStudentApplication:
+          router.push({
+            name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
+            params: {
+              selectedForm: props.applicationDetails.applicationFormName,
+              programYearId: props.applicationDetails.applicationProgramYearID,
+              id: props.applicationDetails.id,
+              readOnly: "readOnly",
+            },
+          });
+          break;
+        default:
+          return null;
       }
     };
     onMounted(async () => {
@@ -216,7 +220,7 @@ export default {
         applicationCOEDeniedReason:
           props.applicationDetails.applicationCOEDeniedReason,
       };
-      setStyles()
+      setStyles();
     });
     return {
       ApplicationStatus,
