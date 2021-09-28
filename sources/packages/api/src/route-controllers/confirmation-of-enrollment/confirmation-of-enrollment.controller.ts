@@ -228,7 +228,7 @@ export class ConfirmationOfEnrollmentController {
 
     if (updatedCOEStatus.affected === 0) {
       throw new UnprocessableEntityException(
-        `Confirmation of Enrollment and application status update to completed is failed`,
+        "Confirmation of Enrollment and application status update to completed is failed",
       );
     }
     // Send a message to allow the workflow to proceed.
