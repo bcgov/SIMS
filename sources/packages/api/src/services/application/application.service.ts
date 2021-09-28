@@ -538,8 +538,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.overwritten),
       },
       {
-        coeStatus: coeStatus,
-        applicationStatus: applicationStatus,
+        coeStatus,
+        applicationStatus,
       },
     );
   }
@@ -561,7 +561,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.overwritten),
       },
       {
-        coeStatus: coeStatus,
+        coeStatus,
       },
     );
   }
