@@ -25,16 +25,16 @@
           <v-col>{{ ApplicationStatus.submitted }}</v-col>
           <v-col
             >{{ ApplicationStatus.inProgress }}
-            <i class="mr-2" :class="inProgressIconClass"></i
+            <i class="mr-2" :class="inProgressIconClass" aria-hidden="true"></i
           ></v-col>
           <v-col>{{ ApplicationStatus.assessment }} </v-col>
           <v-col
             >{{ ApplicationStatus.enrollment }}
-            <i class="mr-2" :class="enrollmentIconClass"></i
+            <i class="mr-2" :class="enrollmentIconClass" aria-hidden="true"></i
           ></v-col>
           <v-col
             >{{ ApplicationStatus.completed }}
-            <i class="mr-2" :class="completeIconClass"></i
+            <i class="mr-2" :class="completeIconClass" aria-hidden="true"></i
           ></v-col>
         </v-row>
 
