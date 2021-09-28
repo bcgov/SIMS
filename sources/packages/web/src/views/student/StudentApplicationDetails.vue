@@ -12,7 +12,7 @@
     >
     <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <v-btn
-      :if="showViewAssessment"
+      v-if="showViewAssessment"
       color="primary"
       class="p-button-raised ml-2 float-right"
       @click="
