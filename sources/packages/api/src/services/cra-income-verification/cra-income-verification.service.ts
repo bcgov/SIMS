@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Connection, EntityManager, In, Repository } from "typeorm";
+import { Connection, In, IsNull, Repository, UpdateResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Application, CRAIncomeVerification } from "../../database/entities";
 
@@ -89,32 +89,45 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
     );
   }
 
+  /**
+   * Once the CRA response file is processed, updates the
+   * CRA income verification record on the database with the
+   * information received. If the information was already received
+   * the record will not b updated.
+   * @param craVerificationId CRA verification record to be updated.
+   * @param fileReceived name of the response file received.
+   * @param dateReceived date that the file was received.
+   * @param matchStatus CRA match status for first name, last name
+   * DOB and SIN.
+   * @param requestStatus CRA request status for the income
+   * verification request executed.
+   * @param craReportedIncome if present, the total income for
+   * the requested tax year returned by CRA.
+   * @returns update result. Only one row is supposed to be affected.
+   */
   async updateReceivedFile(
     craVerificationId: number,
-    craReportedIncome: number,
     fileReceived: string,
     dateReceived: Date,
     matchStatus: string,
     requestStatus: string,
-  ) {
-    if (
-      !craReportedIncome ||
-      !fileReceived ||
-      !dateReceived ||
-      !matchStatus ||
-      !requestStatus
-    ) {
+    craReportedIncome?: number,
+  ): Promise<UpdateResult> {
+    if (!fileReceived || !dateReceived || !matchStatus || !requestStatus) {
       throw new Error(
         "Not all required fields to update a received income verification file were provided.",
       );
     }
 
-    return this.repo.update(craVerificationId, {
-      craReportedIncome,
-      fileReceived,
-      dateReceived,
-      matchStatus,
-      requestStatus,
-    });
+    return this.repo.update(
+      { id: craVerificationId, dateReceived: IsNull() },
+      {
+        craReportedIncome,
+        fileReceived,
+        dateReceived,
+        matchStatus,
+        requestStatus,
+      },
+    );
   }
 }

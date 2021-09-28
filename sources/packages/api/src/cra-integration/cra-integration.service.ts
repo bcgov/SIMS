@@ -202,11 +202,11 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Downloads all files contents present on CRA response file that follows
-   * the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
-   * @returns File records for all response files present on sFTP.
+   * Get the list of all response files waiting to be downloaded from the
+   * sFTP filtering by the the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
+   * @returns file names for all response files present on sFTP.
    */
-  async downloadResponseFiles(): Promise<CRAsFtpResponseFile[]> {
+  async getResponseFilesNames(): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
@@ -218,14 +218,7 @@ export class CRAIntegrationService {
       await SshService.closeQuietly(client);
     }
 
-    // Creates all processes to be executed in parallel.
-    const processes = filesToProcess.map((file) =>
-      this.downloadResponseFile(file.name),
-    );
-    // Wait for all parallel processes to be executed.
-    const allFiles = await Promise.all(processes);
-    // Flat the array of arrays returned.
-    return ([] as CRAsFtpResponseFile[]).concat(...allFiles);
+    return filesToProcess.map((file) => file.name);
   }
 
   /**
@@ -234,9 +227,7 @@ export class CRAIntegrationService {
    * @param fileName File to be downloaded.
    * @returns Parsed records from the file.
    */
-  private async downloadResponseFile(
-    fileName: string,
-  ): Promise<CRAsFtpResponseFile> {
+  async downloadResponseFile(fileName: string): Promise<CRAsFtpResponseFile> {
     const client = await this.getClient();
     try {
       const filePath = `${this.craConfig.ftpResponseFolder}/${fileName}`;
@@ -280,6 +271,7 @@ export class CRAIntegrationService {
       }
 
       return {
+        fileName,
         filePath,
         statusRecords,
         totalIncomeRecords,

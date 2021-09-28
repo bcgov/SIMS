@@ -20,6 +20,7 @@ import {
   CRAsFtpResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
+import { getUTCNow } from "../utilities";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
@@ -47,7 +48,7 @@ export class CRAPersonalVerificationService {
    * be send as one single batch for CRA processing.
    * @returns SIN validation request.
    */
-  public async createSinValidationRequest(): Promise<CRAUploadResult> {
+  async createSinValidationRequest(): Promise<CRAUploadResult> {
     this.logger.log("Retrieving students with pending SIN validation...");
     const students =
       await this.studentService.getStudentsPendingSinValidation();
@@ -101,7 +102,7 @@ export class CRAPersonalVerificationService {
    * processed by CRA.
    * @returns Processing result log.
    */
-  public async createIncomeVerificationRequest(): Promise<CRAUploadResult> {
+  async createIncomeVerificationRequest(): Promise<CRAUploadResult> {
     this.logger.log("Retrieving records that need income verification...");
     const incomeVerifications =
       await this.incomeVerificationService.getPendingIncomeVerifications();
@@ -152,7 +153,7 @@ export class CRAPersonalVerificationService {
           );
           this.incomeVerificationService.updateSentFile(
             verificationsIds,
-            new Date(),
+            getUTCNow(),
             fileInfo.fileName,
             incomeVerificationRepo,
           );
@@ -223,12 +224,17 @@ export class CRAPersonalVerificationService {
    * Download all files from CRA Response folder on sFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  public async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const files = await this.craService.downloadResponseFiles();
-    // Executes the processing of each file in parallel.
-    const filesProcess = files.map((file) => this.processResponse(file));
-    // Waits for all the parallel processes to be finished.
-    return Promise.all(filesProcess);
+  async processResponses(): Promise<ProcessSftpResponseResult[]> {
+    const fileNames = await this.craService.getResponseFilesNames();
+    const processResult: ProcessSftpResponseResult[] = [];
+    for (const fileName of fileNames) {
+      const craResponseFile = await this.craService.downloadResponseFile(
+        fileName,
+      );
+      processResult.push(await this.processResponse(craResponseFile));
+    }
+
+    return processResult;
   }
 
   /**
@@ -239,6 +245,7 @@ export class CRAPersonalVerificationService {
   private async processResponse(
     responseFile: CRAsFtpResponseFile,
   ): Promise<ProcessSftpResponseResult> {
+    const now = getUTCNow();
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(
       `Processing file ${responseFile.filePath} with ${responseFile.statusRecords.length} verifications.`,
@@ -255,11 +262,16 @@ export class CRAPersonalVerificationService {
             `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
           );
         } else {
-          // Find the T4 record associated with the status record.
+          // Find the 'Total Income' record associated with the status record.
           const totalIncomeRecord = responseFile.totalIncomeRecords.find(
             (incomeRecord) => incomeRecord.sin === statusRecord.sin,
           );
-          await this.processIncomeVerification(statusRecord, totalIncomeRecord);
+          await this.processIncomeVerification(
+            statusRecord,
+            now,
+            responseFile.fileName,
+            totalIncomeRecord,
+          );
           result.processSummary.push(
             `Processed income verification for record line ${totalIncomeRecord.lineNumber} with status record from line ${statusRecord.lineNumber}.`,
           );
@@ -295,7 +307,7 @@ export class CRAPersonalVerificationService {
   ): Promise<void> {
     const isValidSIN =
       craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
-      craRecord.matchStatusCode == MatchStatusCodes.successfulMatch;
+      craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
 
     await this.studentService.updatePendingSinValidation(
       craRecord.sin,
@@ -308,17 +320,52 @@ export class CRAPersonalVerificationService {
    * record (0150) received from CRA alongside with the
    * status record (0022).
    * @param statusRecord status record (0022) received from CRA.
-   * @param totalIncomeRecord total income record (0150) received from CRA.
-   * @returns save the result of the income verification to database.
+   * @param receivedDate date to be set as received.
+   * @param receivedFileName file name of the file that was processed.
+   * @param [totalIncomeRecord] when available, it means that the personal
+   * data (first name, last name, DOB and SIN) were considered valid by
+   * CRA and the income record is present for the requested tax year.
    */
   private async processIncomeVerification(
     statusRecord: CRAResponseStatusRecord,
+    receivedDate: Date,
+    receivedFileName: string,
     totalIncomeRecord?: CRAResponseTotalIncomeRecord,
   ): Promise<void> {
-    // TODO: Temporary code.
-    // This will be replace in the upcoming PR when the migrations will be added.
-    console.log("Executing income verification");
-    console.log("T4EarningsValue:", totalIncomeRecord?.totalIncomeValue);
+    // The id to be used to find and update the CRA income verification record
+    // must be on the 'freeProjectArea' (e.g. VERIFICATION_ID:12345) that was
+    // generated during the file creation to execute the request to CRA.
+    const verificationId = this.getIdFromIncomeVerificationIdTag(
+      statusRecord.freeProjectArea,
+    );
+    if (!verificationId) {
+      throw new Error(
+        `Not able to extract the CRA income verification id from the freeProjectArea ${statusRecord.freeProjectArea}`,
+      );
+    }
+
+    const isValidResponse =
+      statusRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
+      statusRecord.matchStatusCode === MatchStatusCodes.successfulMatch &&
+      !!totalIncomeRecord;
+    const income = isValidResponse ? totalIncomeRecord.totalIncomeValue : null;
+
+    const updateResult =
+      await this.incomeVerificationService.updateReceivedFile(
+        verificationId,
+        receivedFileName,
+        receivedDate,
+        statusRecord.matchStatusCode,
+        statusRecord.requestStatusCode,
+        income,
+      );
+
+    // Expected to update 1 and only 1 record.
+    if (updateResult.affected !== 1) {
+      throw new Error(
+        `Error while updating CRA income verification id: ${verificationId}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+      );
+    }
   }
 
   @InjectLogger()
