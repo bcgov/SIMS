@@ -2,7 +2,7 @@ import { Application } from "../database/entities";
 import {
   COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
-} from "../utilities";
+} from ".";
 
 /**
  * Gets PIR denied reason
