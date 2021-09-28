@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { CRAIncomeVerification, Student } from "../database/entities";
-import { getUTCNow } from "src/utilities";
 import { EntityManager } from "typeorm";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
@@ -12,7 +11,7 @@ import {
   CRAIncomeVerificationService,
 } from "../services";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
-import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
+import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import {
   CRAPersonRecord,
   CRAUploadResult,
@@ -257,12 +256,12 @@ export class CRAPersonalVerificationService {
           );
         } else {
           // Find the T4 record associated with the status record.
-          const t4Earnings = responseFile.t4EarningsRecords.find(
-            (t4) => t4.sin === statusRecord.sin,
+          const totalIncomeRecord = responseFile.totalIncomeRecords.find(
+            (incomeRecord) => incomeRecord.sin === statusRecord.sin,
           );
-          await this.processIncomeVerification(statusRecord, t4Earnings);
+          await this.processIncomeVerification(statusRecord, totalIncomeRecord);
           result.processSummary.push(
-            `Processed income verification for record line ${t4Earnings.lineNumber} with status record from line ${statusRecord.lineNumber}.`,
+            `Processed income verification for record line ${totalIncomeRecord.lineNumber} with status record from line ${statusRecord.lineNumber}.`,
           );
         }
       } catch (error) {
@@ -305,21 +304,21 @@ export class CRAPersonalVerificationService {
   }
 
   /**
-   * Process the income verification using the T4 earnings
-   * record (0101) received from CRA alongside with the
+   * Process the income verification using the total income
+   * record (0150) received from CRA alongside with the
    * status record (0022).
-   * @param statusRecord Status record (0022) received from CRA.
-   * @param t4EarningsRecords T4 earnings record (0101) received from CRA.
+   * @param statusRecord status record (0022) received from CRA.
+   * @param totalIncomeRecord total income record (0150) received from CRA.
    * @returns save the result of the income verification to database.
    */
   private async processIncomeVerification(
     statusRecord: CRAResponseStatusRecord,
-    t4EarningsRecords?: CRAResponseT4EarningsRecord,
+    totalIncomeRecord?: CRAResponseTotalIncomeRecord,
   ): Promise<void> {
     // TODO: Temporary code.
     // This will be replace in the upcoming PR when the migrations will be added.
     console.log("Executing income verification");
-    console.log("T4EarningsValue:", t4EarningsRecords?.T4EarningsValue);
+    console.log("T4EarningsValue:", totalIncomeRecord?.totalIncomeValue);
   }
 
   @InjectLogger()

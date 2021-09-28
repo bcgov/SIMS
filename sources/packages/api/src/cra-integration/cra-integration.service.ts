@@ -18,7 +18,7 @@ import { CRARequestFileLine } from "./cra-files/cra-request-file-line";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
-import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
+import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -263,16 +263,16 @@ export class CRAIntegrationService {
       // Generate the records.
       let lineNumber = 1;
       const statusRecords: CRAResponseStatusRecord[] = [];
-      const t4EarningsRecords: CRAResponseT4EarningsRecord[] = [];
+      const totalIncomeRecords: CRAResponseTotalIncomeRecord[] = [];
       for (const line of fileLines) {
         const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
         switch (craRecord.transactionSubCode) {
           case TransactionSubCodes.ResponseStatusRecord:
             statusRecords.push(new CRAResponseStatusRecord(line, lineNumber));
             break;
-          case TransactionSubCodes.T4Earnings:
-            t4EarningsRecords.push(
-              new CRAResponseT4EarningsRecord(line, lineNumber),
+          case TransactionSubCodes.TotalIncome:
+            totalIncomeRecords.push(
+              new CRAResponseTotalIncomeRecord(line, lineNumber),
             );
             break;
         }
@@ -282,7 +282,7 @@ export class CRAIntegrationService {
       return {
         filePath,
         statusRecords,
-        t4EarningsRecords,
+        totalIncomeRecords,
       };
     } finally {
       await SshService.closeQuietly(client);

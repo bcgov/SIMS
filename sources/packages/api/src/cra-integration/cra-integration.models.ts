@@ -1,5 +1,5 @@
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
-import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
+import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
@@ -44,10 +44,10 @@ export enum TransactionSubCodes {
   ResponseStatusRecord = "0022",
   /**
    * This record will be part of the response and
-   * contains information about a T4 earnings filed
+   * contains information about the total income
    * on CRA for a particular year.
    */
-  T4Earnings = "0101",
+  TotalIncome = "0150",
 }
 
 /**
@@ -111,9 +111,9 @@ export interface CRAsFtpResponseFile {
    */
   statusRecords: CRAResponseStatusRecord[];
   /**
-   * T4 earning records present on the file.
+   * Total income records present on the file.
    */
-  t4EarningsRecords: CRAResponseT4EarningsRecord[];
+  totalIncomeRecords: CRAResponseTotalIncomeRecord[];
 }
 
 /**
