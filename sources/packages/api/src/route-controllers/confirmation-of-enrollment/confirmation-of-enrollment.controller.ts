@@ -226,12 +226,13 @@ export class ConfirmationOfEnrollmentController {
         ApplicationStatus.completed,
       );
 
-    if (updatedCOEStatus) {
-      // Send a message to allow the workflow to proceed.
-      await this.workflow.sendConfirmCOEMessage(
-        application.assessmentWorkflowId,
+    if (updatedCOEStatus.affected === 0) {
+      throw new UnprocessableEntityException(
+        `Confirmation of Enrollment and application status update to completed is failed`,
       );
     }
+    // Send a message to allow the workflow to proceed.
+    await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
   }
 
   /**
