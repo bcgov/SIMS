@@ -304,8 +304,37 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
-      .leftJoin("application.student", "student")
-      .leftJoin("student.user", "user")
+      .select([
+        "application.data",
+        "application.id",
+        "application.applicationStatus",
+        "application.pirStatus",
+        "application.assessmentStatus",
+        "application.coeStatus",
+        "application.applicationStatusUpdatedOn",
+        "application.applicationNumber",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.name",
+        "programYear.formName",
+        "programYear.id",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+        "pirDeniedReasonId.id",
+        "pirDeniedReasonId.reason",
+        "application.coeDeniedOtherDesc",
+        "application.pirDeniedOtherDesc",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
+      .leftJoin("institution.institutionType", "institutionType")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
+      .leftJoin("application.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
@@ -394,10 +423,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
             WHEN '${ApplicationStatus.draft}' THEN 1
             WHEN '${ApplicationStatus.submitted}' THEN 2
             WHEN '${ApplicationStatus.inProgress}' THEN 3
-            WHEN '${ApplicationStatus.enrollment}' THEN 4
-            WHEN '${ApplicationStatus.completed}' THEN 5
-            WHEN '${ApplicationStatus.cancelled}' THEN 6
-            ELSE 7
+            WHEN '${ApplicationStatus.assessment}' THEN 4
+            WHEN '${ApplicationStatus.enrollment}' THEN 5
+            WHEN '${ApplicationStatus.completed}' THEN 6
+            WHEN '${ApplicationStatus.cancelled}' THEN 7
+            ELSE 8
           END`,
       )
       .addOrderBy("application.applicationNumber")
@@ -986,9 +1016,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsForCOE(
     locationId: number,
     applicationId: number,
-    requiredCOEApplication: boolean = false,
+    requiredCOEApplication = false,
   ): Promise<Application> {
-    let query = this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .innerJoinAndSelect("application.location", "location")
       .innerJoinAndSelect("application.student", "student")

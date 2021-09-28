@@ -1,6 +1,10 @@
 import { IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
-import { ApplicationStatus } from "../../../database/entities";
-
+import {
+  ApplicationStatus,
+  ProgramInfoStatus,
+  AssessmentStatus,
+  COEStatus,
+} from "../../../database/entities";
 export class SaveApplicationDto {
   /**
    * Application dynamic data.
@@ -29,6 +33,18 @@ export interface GetApplicationDataDto {
   id: number;
   applicationStatus: ApplicationStatus;
   applicationStatusUpdatedOn: Date;
+  applicationNumber: string;
+  applicationOfferingIntensity: string;
+  applicationStartDate: string;
+  applicationEndDate: string;
+  applicationInstitutionName: string;
+  applicationPIRStatus: ProgramInfoStatus;
+  applicationAssessmentStatus: AssessmentStatus;
+  applicationCOEStatus: COEStatus;
+  applicationFormName: string;
+  applicationProgramYearID: number;
+  applicationPIRDeniedReason?: string;
+  applicationCOEDeniedReason?: string;
 }
 
 export interface ApplicationOfferingDetails {
