@@ -19,7 +19,11 @@ import {
   InstitutionLocationService,
   COEDeniedReasonService,
 } from "../../services";
-import { Application, COEStatus } from "../../database/entities";
+import {
+  Application,
+  COEStatus,
+  ApplicationStatus,
+} from "../../database/entities";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { COESummaryDTO } from "../application/models/application.model";
@@ -215,11 +219,18 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    await this.applicationService.updateCOEStatus(
-      applicationId,
-      COEStatus.submitted,
-    );
+    const updatedCOEStatus =
+      await this.applicationService.updateApplicationCOEStatus(
+        applicationId,
+        COEStatus.completed,
+        ApplicationStatus.completed,
+      );
 
+    if (updatedCOEStatus.affected === 0) {
+      throw new UnprocessableEntityException(
+        "Confirmation of Enrollment and application status update to completed is failed",
+      );
+    }
     // Send a message to allow the workflow to proceed.
     await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
   }

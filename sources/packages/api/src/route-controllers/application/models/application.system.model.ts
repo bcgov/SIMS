@@ -43,3 +43,8 @@ export class UpdateApplicationStatusDto {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
 }
+
+export class UpdateApplicationStatusWorkflowIdDto extends UpdateApplicationStatusDto {
+  @IsNotEmpty()
+  workflowId: string;
+}
