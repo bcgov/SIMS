@@ -57,7 +57,6 @@ export default {
         applicationNumber: ApplicationDetails.applicationNumber,
         applicationLocationName: ApplicationDetails.applicationLocationName,
         applicationStatus: ApplicationDetails.applicationStatus,
-        applicationId: ApplicationDetails.applicationId,
       };
     };
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {

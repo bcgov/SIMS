@@ -9,5 +9,4 @@ export interface ApplicationDetails {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
-  applicationId: number;
 }
