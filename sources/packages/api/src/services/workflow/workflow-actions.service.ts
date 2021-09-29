@@ -28,9 +28,11 @@ export class WorkflowActionsService {
         },
       });
     } catch (error) {
-      throw new Error(
-        `Error while starting application assessment workflow: ${workflowName}, error: ${error}`,
+      this.logger.error(
+        `Error while starting application assessment workflow: ${workflowName}`,
       );
+      this.logger.error(error);
+      //The error is not thrown here, as we are failing silently
     }
   }
 
@@ -52,10 +54,11 @@ export class WorkflowActionsService {
         all: false, // false means that the message is correlated to exactly one entity.
       });
     } catch (error) {
-      const errorMessage = `Error while sending Program Info completed message to instance id: ${processInstanceId}`;
+      this.logger.error(
+        `Error while sending Program Info completed message to instance id: ${processInstanceId}`,
+      );
       this.logger.error(error);
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      //The error is not thrown here, as we are failing silently
     }
   }
 
@@ -69,35 +72,36 @@ export class WorkflowActionsService {
     try {
       await this.workflowService.delete(assessmentWorkflowId);
     } catch (error) {
-      throw new Error(
+      this.logger.error(
         `Error while deleting application assessment workflow: ${assessmentWorkflowId}, error: ${error}`,
       );
+      this.logger.error(error);
+      //The error is not thrown here, as we are failing silently
     }
   }
 
-    /**
+  /**
    * When Confirmation of Enrollment (COE) needs to be confirmed by the institution user,
    * the workflows waits until it receives a message that the institution confirms the COE.
    * This method is going to send a message to the workflow allowing it to proceed.
    * This message should only be sent when the institution confirmation COE of an Application
    * @param processInstanceId workflow instance to receive the message.
    */
-     async sendConfirmCOEMessage(
-      processInstanceId: string,
-    ): Promise<void> {
-      try {
-        await this.workflowService.sendMessage({
-          messageName: "sims-coe-complete",
-          processInstanceId,
-          all: false, // false means that the message is correlated to exactly one entity.
-        });
-      } catch (error) {
-        const errorMessage = `Error while sending Confirm Confirmation of Enrollment (COE) message to instance id: ${processInstanceId}`;
-        this.logger.error(error);
-        this.logger.error(errorMessage);
-        throw new Error(errorMessage);
-      }
+  async sendConfirmCOEMessage(processInstanceId: string): Promise<void> {
+    try {
+      await this.workflowService.sendMessage({
+        messageName: "sims-coe-complete",
+        processInstanceId,
+        all: false, // false means that the message is correlated to exactly one entity.
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error while sending Confirm Confirmation of Enrollment (COE) message to instance id: ${processInstanceId}`,
+      );
+      this.logger.error(error);
+      //The error is not thrown here, as we are failing silently
     }
+  }
 
   @InjectLogger()
   logger: LoggerService;

@@ -56,7 +56,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { PIRSummaryDTO } from "@/types";
+import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
 import { useFormatters } from "@/composables";
 
 export default {
@@ -85,7 +85,7 @@ export default {
 
     const updateSummaryList = async (locationId: number) => {
       applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
-        locationId,
+        locationId
       );
     };
 
@@ -94,7 +94,7 @@ export default {
       async (currValue) => {
         //update the list
         await updateSummaryList(currValue);
-      },
+      }
     );
 
     onMounted(async () => {
@@ -103,13 +103,13 @@ export default {
 
     const getPirStatusColorClass = (status: string) => {
       switch (status) {
-        case "Submitted":
+        case ProgramInfoStatus.submitted:
           return "bg-info text-white";
-        case "Completed":
+        case ProgramInfoStatus.completed:
           return "bg-success text-white";
-        case "Required":
+        case ProgramInfoStatus.required:
           return "bg-warning text-white";
-        case "Declined":
+        case ProgramInfoStatus.declined:
           return "bg-danger text-white";
         default:
           return "";

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, Not, UpdateResult } from "typeorm";
+import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -269,19 +269,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
   }
 
-  async associateAssessmentWorkflow(
-    applicationId: number,
-    assessmentWorkflowId: string,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      { assessmentWorkflowId },
-    );
-  }
-
   /**
    * Gets the Program Information Request
    * associated with the application.
@@ -317,8 +304,37 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
-      .leftJoin("application.student", "student")
-      .leftJoin("student.user", "user")
+      .select([
+        "application.data",
+        "application.id",
+        "application.applicationStatus",
+        "application.pirStatus",
+        "application.assessmentStatus",
+        "application.coeStatus",
+        "application.applicationStatusUpdatedOn",
+        "application.applicationNumber",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.name",
+        "programYear.formName",
+        "programYear.id",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+        "pirDeniedReasonId.id",
+        "pirDeniedReasonId.reason",
+        "application.coeDeniedOtherDesc",
+        "application.pirDeniedOtherDesc",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
+      .leftJoin("institution.institutionType", "institutionType")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
+      .leftJoin("application.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
@@ -407,10 +423,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
             WHEN '${ApplicationStatus.draft}' THEN 1
             WHEN '${ApplicationStatus.submitted}' THEN 2
             WHEN '${ApplicationStatus.inProgress}' THEN 3
-            WHEN '${ApplicationStatus.enrollment}' THEN 4
-            WHEN '${ApplicationStatus.completed}' THEN 5
-            WHEN '${ApplicationStatus.cancelled}' THEN 6
-            ELSE 7
+            WHEN '${ApplicationStatus.assessment}' THEN 4
+            WHEN '${ApplicationStatus.enrollment}' THEN 5
+            WHEN '${ApplicationStatus.completed}' THEN 6
+            WHEN '${ApplicationStatus.cancelled}' THEN 7
+            ELSE 8
           END`,
       )
       .addOrderBy("application.applicationNumber")
@@ -533,6 +550,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Updates Confirmation of Enrollment(COE) and application status.
+   * @param applicationId application id to be updated.
+   * @param coeStatus status of the Confirmation of Enrollment.
+   * @param applicationStatus status of the application
+   * Confirmation of Enrollment and application status need to happen.
+   * @returns Status update result.
+   */
+  async updateApplicationCOEStatus(
+    applicationId: number,
+    coeStatus: COEStatus,
+    applicationStatus: ApplicationStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(ApplicationStatus.overwritten),
+      },
+      {
+        coeStatus,
+        applicationStatus,
+      },
+    );
+  }
+
+  /**
    * Updates Confirmation of Enrollment(COE) status.
    * @param applicationId application id to be updated.
    * @param status status of the Confirmation of Enrollment.
@@ -541,7 +583,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async updateCOEStatus(
     applicationId: number,
-    status: COEStatus,
+    coeStatus: COEStatus,
   ): Promise<UpdateResult> {
     return this.repo.update(
       {
@@ -549,7 +591,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.overwritten),
       },
       {
-        coeStatus: status,
+        coeStatus,
       },
     );
   }
@@ -607,7 +649,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     application.offering = offering;
-    application.pirStatus = ProgramInfoStatus.submitted;
+    application.pirStatus = ProgramInfoStatus.completed;
     return this.repo.save(application);
   }
 
@@ -705,6 +747,39 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       {
         applicationStatus: applicationStatus,
+        applicationStatusUpdatedOn: getUTCNow(),
+      },
+    );
+  }
+
+  /**
+   * Update Student Application status.
+   * Only allows the update on applications that are not in a final status.
+   * The final statuses of an application are Completed, Overwritten and Cancelled.
+   * @param applicationId application id.
+   * @param applicationStatus application status that need to be updated.
+   * @returns student Application UpdateResult.
+   */
+  async updateApplicationStatusWorkflowId(
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+    workflowId: string,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationStatus: Not(
+          In([
+            ApplicationStatus.completed,
+            ApplicationStatus.overwritten,
+            ApplicationStatus.cancelled,
+          ]),
+        ),
+        assessmentWorkflowId: IsNull(),
+      },
+      {
+        applicationStatus: applicationStatus,
+        assessmentWorkflowId: workflowId,
         applicationStatusUpdatedOn: getUTCNow(),
       },
     );
@@ -883,21 +958,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    const assessmentWorkflow = await this.workflow.startApplicationAssessment(
+    await this.workflow.startApplicationAssessment(
       application.data.workflowName,
       application.id,
     );
-
-    const workflowAssociationResult = await this.associateAssessmentWorkflow(
-      application.id,
-      assessmentWorkflow.id,
-    );
-
-    // 1 means the number of affected rows expected while
-    // associating the workflow id.
-    if (workflowAssociationResult.affected !== 1) {
-      throw new Error("Error while associating the assessment workflow.");
-    }
   }
   /**
    * Deny the Program Info Request (PIR) for an Application.
@@ -952,9 +1016,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsForCOE(
     locationId: number,
     applicationId: number,
-    requiredCOEApplication: boolean = false,
+    requiredCOEApplication = false,
   ): Promise<Application> {
-    let query = this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .innerJoinAndSelect("application.location", "location")
       .innerJoinAndSelect("application.student", "student")
