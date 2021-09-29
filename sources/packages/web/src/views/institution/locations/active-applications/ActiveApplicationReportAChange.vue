@@ -16,6 +16,7 @@ import {
   ApplicationDetailsForCOEDTO,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
+  ApplicationDetails,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -35,15 +36,35 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const initialData = ref({} as ApplicationDetailsForCOEDTO);
+    const initialData = ref({} as ApplicationDetails);
     const loadInitialData = async () => {
-      initialData.value = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
+      const ApplicationDetails: ApplicationDetailsForCOEDTO = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
         props.applicationId,
         props.locationId,
       );
+      initialData.value = {
+        applicationProgramName: ApplicationDetails.applicationProgramName,
+        applicationProgramDescription:
+          ApplicationDetails.applicationProgramDescription,
+        applicationOfferingName: ApplicationDetails.applicationOfferingName,
+        applicationOfferingIntensity:
+          ApplicationDetails.applicationOfferingIntensity,
+        applicationOfferingStartDate:
+          ApplicationDetails.applicationOfferingStartDate,
+        applicationOfferingEndDate:
+          ApplicationDetails.applicationOfferingEndDate,
+        applicationStudentName: ApplicationDetails.applicationStudentName,
+        applicationNumber: ApplicationDetails.applicationNumber,
+        applicationLocationName: ApplicationDetails.applicationLocationName,
+        applicationStatus: ApplicationDetails.applicationStatus,
+        applicationId: ApplicationDetails.applicationId,
+      };
     };
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
-      if (FormIOCustomEventTypes.RouteToInstitutionActiveSummaryPage === event.type) {
+      if (
+        FormIOCustomEventTypes.RouteToInstitutionActiveSummaryPage ===
+        event.type
+      ) {
         router.push({
           name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
           params: {
