@@ -7,8 +7,9 @@ CREATE TABLE IF NOT EXISTS sims.cra_income_verifications (
   date_received TIMESTAMP WITH TIME ZONE,
   file_sent VARCHAR(50),
   file_received VARCHAR(50),
-  match_status VARCHAR(50),
-  request_status VARCHAR(50),
+  match_status_code VARCHAR(50),
+  request_status_code VARCHAR(50),
+  inactive_code VARCHAR(50),
   -- Reference Columns
   application_Id INT UNIQUE NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   -- Audit columns
@@ -41,9 +42,11 @@ COMMENT ON COLUMN sims.cra_income_verifications.file_sent IS 'Name of the file s
 
 COMMENT ON COLUMN sims.cra_income_verifications.file_received IS 'Name of the file received from CRA with the response for an income verification.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.match_status IS 'Match status code returned from CRA (e.g. 01 - SUCCESSFUL-MATCH).';
+COMMENT ON COLUMN sims.cra_income_verifications.match_status_code IS 'Match status code returned from CRA (e.g. 01 - SUCCESSFUL-MATCH).';
 
-COMMENT ON COLUMN sims.cra_income_verifications.request_status IS 'Request status code returned from CRA (e.g. 01 - SUCCESSFUL-REQUEST).';
+COMMENT ON COLUMN sims.cra_income_verifications.request_status_code IS 'Request status code returned from CRA (e.g. 01 - SUCCESSFUL-REQUEST).';
+
+COMMENT ON COLUMN sims.cra_income_verifications.inactive_code IS 'Request status code returned from CRA (00 - INACTIVE CODE NOT SET, 01 - INACTIVE CODE SET).';
 
 COMMENT ON COLUMN sims.cra_income_verifications.application_Id IS 'Student Application id that requires the income verification.';
 

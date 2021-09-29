@@ -74,7 +74,6 @@ export class CRAIntegrationService {
       TransactionCodes.IncomeRequestHeader,
       TransactionCodes.IncomeRequestRecord,
       TransactionCodes.IncomeRequestFooter,
-      2019, // TODO: Retrieve from database on upcoming PR.
     );
   }
 
@@ -85,8 +84,6 @@ export class CRAIntegrationService {
    * @param sequence sequence number present on header/footer.
    * @param headerTransactionCode header code.
    * @param recordTransactionCode record code.
-   * @param [taxYear] needed if requesting information for a specific
-   * tax year, for instance, for an income verification.
    * @returns CRA request file.
    */
   private createCRARequestFile(
@@ -95,7 +92,6 @@ export class CRAIntegrationService {
     headerTransactionCode: TransactionCodes,
     recordTransactionCode: TransactionCodes,
     footerTransactionCode: TransactionCodes,
-    taxYear?: number,
   ): CRARequestFileLine[] {
     const processDate = new Date();
     const craFileLines: CRARequestFileLine[] = [];
@@ -116,7 +112,7 @@ export class CRAIntegrationService {
       craRecord.individualGivenName = record.givenName;
       craRecord.individualBirthDate = record.birthDate;
       craRecord.programAreaCode = this.craConfig.programAreaCode;
-      craRecord.taxYear = taxYear;
+      craRecord.taxYear = record.taxYear;
       craRecord.freeProjectArea = record.freeProjectArea;
       return craRecord;
     });

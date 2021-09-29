@@ -82,18 +82,27 @@ export class CRAIncomeVerification extends RecordDataModel {
    * Match status code returned from CRA (e.g. 01 - SUCCESSFUL-MATCH).
    */
   @Column({
-    name: "match_status",
+    name: "match_status_code",
     nullable: true,
   })
-  matchStatus?: string;
+  matchStatusCode?: string;
   /**
    * Request status code returned from CRA (e.g. 01 - SUCCESSFUL-REQUEST).
    */
   @Column({
-    name: "request_status",
+    name: "request_status_code",
     nullable: true,
   })
-  requestStatus?: string;
+  requestStatusCode?: string;
+  /**
+   * Request status code returned from CRA
+   * (00 - INACTIVE CODE NOT SET, 01 - INACTIVE CODE SET).
+   */
+  @Column({
+    name: "inactive_code",
+    nullable: true,
+  })
+  inactiveCode?: string;
   /**
    * Student Application id that requires the income verification.
    */

@@ -22,6 +22,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
       .createQueryBuilder("incomeVerifications")
       .select([
         "incomeVerifications.id",
+        "incomeVerifications.taxYear",
         "applications.id",
         "students.birthdate",
         "students.sin",
@@ -101,6 +102,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * DOB and SIN.
    * @param requestStatus CRA request status for the income
    * verification request executed.
+   * @param inactiveCode CRA record inactive code for the tax payer.
    * @param craReportedIncome if present, the total income for
    * the requested tax year returned by CRA.
    * @returns update result. Only one row is supposed to be affected.
@@ -109,11 +111,18 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
     craVerificationId: number,
     fileReceived: string,
     dateReceived: Date,
-    matchStatus: string,
-    requestStatus: string,
+    matchStatusCode: string,
+    requestStatusCode: string,
+    inactiveCode: string,
     craReportedIncome?: number,
   ): Promise<UpdateResult> {
-    if (!fileReceived || !dateReceived || !matchStatus || !requestStatus) {
+    if (
+      !fileReceived ||
+      !dateReceived ||
+      !matchStatusCode ||
+      !requestStatusCode ||
+      !inactiveCode
+    ) {
       throw new Error(
         "Not all required fields to update a received income verification file were provided.",
       );
@@ -125,8 +134,9 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         craReportedIncome,
         fileReceived,
         dateReceived,
-        matchStatus,
-        requestStatus,
+        matchStatusCode,
+        requestStatusCode,
+        inactiveCode,
       },
     );
   }

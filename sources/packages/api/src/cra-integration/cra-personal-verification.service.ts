@@ -117,10 +117,12 @@ export class CRAPersonalVerificationService {
       `Found ${incomeVerifications.length} income verification(s) to be executed.`,
     );
     const craRecords = incomeVerifications.map((incomeVerification) => {
-      return this.createCRARecordFromStudent(
+      const craRecord = this.createCRARecordFromStudent(
         incomeVerification.application.student,
         this.getIncomeVerificationTag(incomeVerification.id),
       );
+      craRecord.taxYear = incomeVerification.taxYear;
+      return craRecord;
     });
 
     const verificationsIds = incomeVerifications.map(
@@ -167,23 +169,6 @@ export class CRAPersonalVerificationService {
     );
 
     return uploadResult;
-  }
-
-  private getIncomeVerificationTag(id: number): string {
-    return `${INCOME_VERIFICATION_TAG}:${id}`;
-  }
-
-  private getIdFromIncomeVerificationIdTag(tag: string): number | null {
-    if (!tag?.length) {
-      return null;
-    }
-
-    const splittedTag = tag.split(":");
-    if (splittedTag.length === 2) {
-      return +splittedTag[1];
-    }
-
-    return null;
   }
 
   /**
@@ -263,6 +248,7 @@ export class CRAPersonalVerificationService {
           );
         } else {
           // Find the 'Total Income' record associated with the status record.
+          // This record may not be present if there is no data for the tax year, for instance.
           const totalIncomeRecord = responseFile.totalIncomeRecords.find(
             (incomeRecord) => incomeRecord.sin === statusRecord.sin,
           );
@@ -272,8 +258,11 @@ export class CRAPersonalVerificationService {
             responseFile.fileName,
             totalIncomeRecord,
           );
+          const totalRecordLog = totalIncomeRecord
+            ? `Total income record line ${totalIncomeRecord?.lineNumber}`
+            : "Total income record not present";
           result.processSummary.push(
-            `Processed income verification for record line ${totalIncomeRecord.lineNumber} with status record from line ${statusRecord.lineNumber}.`,
+            `Processed income verification. ${totalRecordLog}. Status record from line ${statusRecord.lineNumber}.`,
           );
         }
       } catch (error) {
@@ -357,6 +346,7 @@ export class CRAPersonalVerificationService {
         receivedDate,
         statusRecord.matchStatusCode,
         statusRecord.requestStatusCode,
+        statusRecord.inactiveCode,
         income,
       );
 
@@ -366,6 +356,33 @@ export class CRAPersonalVerificationService {
         `Error while updating CRA income verification id: ${verificationId}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
     }
+  }
+
+  /**
+   * Gets income verification tag used on the freeProjectArea of the
+   * request file. This tag contains the id of the record on table
+   * sims.cra_income_verifications that will be used during the
+   * interpretation of the response to find the exact record that
+   * must be updated.
+   * @param id CRA income verification id.
+   * @returns income verification tag.
+   */
+  private getIncomeVerificationTag(id: number): string {
+    return `${INCOME_VERIFICATION_TAG}:${id}`;
+  }
+
+  /**
+   * Gets the id from the income verification that identifies
+   * the record on sims.cra_income_verifications that must be
+   * updated with the response data from CRA.
+   * @param tag tag that contains the id to be extracted.
+   * @returns id from income verification id tag
+   */
+  private getIdFromIncomeVerificationIdTag(tag: string): number | null {
+    if (!tag?.includes(":")) {
+      return null;
+    }
+    return +tag.split(":").pop();
   }
 
   @InjectLogger()

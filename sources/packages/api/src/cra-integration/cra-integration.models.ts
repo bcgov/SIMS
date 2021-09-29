@@ -77,6 +77,16 @@ export enum MatchStatusCodes {
 }
 
 /**
+ * Inactive codes (INACTIVE-CRA-INDIVIDUAL-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ * Examples of inactive could be the taxpayer is deceased or emigrant.
+ */
+export enum InactiveCodes {
+  inactiveCodeNotSet = "00",
+  inactiveCodeSet = "01",
+}
+
+/**
  * Required personal information to a
  * CRA verification be processed.
  */
