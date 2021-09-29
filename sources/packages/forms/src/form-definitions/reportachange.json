@@ -119,7 +119,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ebjdchb"
+                    "id": "ebmc2zf"
                 },
                 {
                     "label": "Application Number | Location Name | Study Dates",
@@ -198,7 +198,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eg2or2v"
+                    "id": "e83l52q"
                 },
                 {
                     "title": "Application Details Panel",
@@ -350,7 +350,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "e1ixugf"
+                            "id": "ehhs32s"
                         },
                         {
                             "title": "Program Details Panel",
@@ -437,7 +437,7 @@
                                     ],
                                     "content": "Program Details",
                                     "refreshOnChange": false,
-                                    "customClass": "font-weight-bold h4",
+                                    "customClass": "font-weight-bold category-header-small",
                                     "hidden": false,
                                     "modalEdit": false,
                                     "key": "programDetailsLabel",
@@ -502,7 +502,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "eqazn07"
+                                    "id": "embb1cf"
                                 },
                                 {
                                     "label": "Program Name",
@@ -516,7 +516,7 @@
                                     ],
                                     "content": "{{ data.applicationProgramName }}",
                                     "refreshOnChange": true,
-                                    "customClass": "font-weight-bold color-blue h4",
+                                    "customClass": "font-weight-bold category-header-medium primary-color mt-2",
                                     "hidden": false,
                                     "modalEdit": false,
                                     "key": "programName",
@@ -581,7 +581,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "erm4mco"
+                                    "id": "ereishl"
                                 },
                                 {
                                     "label": "Program Description",
@@ -660,7 +660,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "e3bxxcu"
+                                    "id": "ekae25"
                                 }
                             ],
                             "id": "ekcmmcb"
@@ -750,7 +750,7 @@
                                     ],
                                     "content": "Offering Details",
                                     "refreshOnChange": false,
-                                    "customClass": "font-weight-bold h4",
+                                    "customClass": "font-weight-bold category-header-small",
                                     "hidden": false,
                                     "modalEdit": false,
                                     "key": "offeringDetails",
@@ -775,6 +775,7 @@
                                     },
                                     "type": "htmlelement",
                                     "input": false,
+                                    "tableView": false,
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -786,7 +787,6 @@
                                     "clearOnHide": true,
                                     "refreshOn": "",
                                     "redrawOn": "",
-                                    "tableView": false,
                                     "dataGridLabel": false,
                                     "labelPosition": "top",
                                     "description": "",
@@ -815,7 +815,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "eul5lw"
+                                    "id": "ev90bim"
                                 },
                                 {
                                     "label": "HTML",
@@ -829,7 +829,7 @@
                                     ],
                                     "content": "{{ data.applicationOfferingName }}",
                                     "refreshOnChange": true,
-                                    "customClass": "font-weight-bold color-blue h4",
+                                    "customClass": "font-weight-bold category-header-medium mt-2 primary-color",
                                     "hidden": false,
                                     "modalEdit": false,
                                     "key": "html1",
@@ -894,7 +894,7 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "ele9b85"
+                                    "id": "eyug3rm"
                                 },
                                 {
                                     "label": "Columns",
@@ -2125,7 +2125,7 @@
                             ],
                             "content": "Report a change in student circumstance",
                             "refreshOnChange": false,
-                            "customClass": "category-header-medium primary-color font-weight-bold h2",
+                            "customClass": "category-header-medium primary-color font-weight-bold",
                             "hidden": false,
                             "modalEdit": false,
                             "key": "reportAChangeInStudentCircumstance",
@@ -2150,6 +2150,7 @@
                             },
                             "type": "htmlelement",
                             "input": false,
+                            "tableView": false,
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -2161,7 +2162,6 @@
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "tableView": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -2190,7 +2190,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ek4u3mj"
+                            "id": "ev95hox"
                         },
                         {
                             "label": "HTML",
@@ -2535,6 +2535,8 @@
                                 },
                                 {
                                     "label": "Final Study Costs",
+                                    "tag": "p",
+                                    "className": "",
                                     "attrs": [
                                         {
                                             "attr": "",
@@ -2543,8 +2545,29 @@
                                     ],
                                     "content": "Final Study Costs",
                                     "refreshOnChange": true,
-                                    "customClass": "font-weight-bold color-blue h4",
+                                    "customClass": "font-weight-bold color-blue category-header-medium",
+                                    "hidden": false,
+                                    "modalEdit": false,
                                     "key": "finalStudyCosts",
+                                    "tags": [],
+                                    "properties": {},
+                                    "conditional": {
+                                        "show": null,
+                                        "when": null,
+                                        "eq": "",
+                                        "json": ""
+                                    },
+                                    "customConditional": "",
+                                    "logic": [],
+                                    "attributes": {},
+                                    "overlay": {
+                                        "style": "",
+                                        "page": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
                                     "type": "htmlelement",
                                     "input": false,
                                     "tableView": false,
@@ -2556,11 +2579,9 @@
                                     "protected": false,
                                     "unique": false,
                                     "persistent": false,
-                                    "hidden": false,
                                     "clearOnHide": true,
                                     "refreshOn": "",
                                     "redrawOn": "",
-                                    "modalEdit": false,
                                     "dataGridLabel": false,
                                     "labelPosition": "top",
                                     "description": "",
@@ -2575,7 +2596,6 @@
                                     "calculateValue": "",
                                     "calculateServer": false,
                                     "widget": null,
-                                    "attributes": {},
                                     "validateOn": "change",
                                     "validate": {
                                         "required": false,
@@ -2585,26 +2605,12 @@
                                         "multiple": false,
                                         "unique": false
                                     },
-                                    "conditional": {
-                                        "show": null,
-                                        "when": null,
-                                        "eq": ""
-                                    },
-                                    "overlay": {
-                                        "style": "",
-                                        "left": "",
-                                        "top": "",
-                                        "width": "",
-                                        "height": ""
-                                    },
                                     "allowCalculateOverride": false,
                                     "encrypted": false,
                                     "showCharCount": false,
                                     "showWordCount": false,
-                                    "properties": {},
                                     "allowMultipleMasks": false,
-                                    "tag": "p",
-                                    "id": "ecu5gbl"
+                                    "id": "e5fcq9r"
                                 },
                                 {
                                     "label": "HTML",
@@ -2785,6 +2791,8 @@
                                     "components": [
                                         {
                                             "label": "HTML",
+                                            "tag": "p",
+                                            "className": "",
                                             "attrs": [
                                                 {
                                                     "attr": "",
@@ -2793,8 +2801,29 @@
                                             ],
                                             "content": "Total Costs",
                                             "refreshOnChange": false,
-                                            "customClass": "font-weight-bold color-blue h4",
+                                            "customClass": "font-weight-bold color-blue category-header-medium",
+                                            "hidden": false,
+                                            "modalEdit": false,
                                             "key": "html7",
+                                            "tags": [],
+                                            "properties": {},
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": "",
+                                                "json": ""
+                                            },
+                                            "customConditional": "",
+                                            "logic": [],
+                                            "attributes": {},
+                                            "overlay": {
+                                                "style": "",
+                                                "page": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
                                             "type": "htmlelement",
                                             "input": false,
                                             "tableView": false,
@@ -2806,11 +2835,9 @@
                                             "protected": false,
                                             "unique": false,
                                             "persistent": false,
-                                            "hidden": false,
                                             "clearOnHide": true,
                                             "refreshOn": "",
                                             "redrawOn": "",
-                                            "modalEdit": false,
                                             "dataGridLabel": false,
                                             "labelPosition": "top",
                                             "description": "",
@@ -2825,7 +2852,6 @@
                                             "calculateValue": "",
                                             "calculateServer": false,
                                             "widget": null,
-                                            "attributes": {},
                                             "validateOn": "change",
                                             "validate": {
                                                 "required": false,
@@ -2835,26 +2861,12 @@
                                                 "multiple": false,
                                                 "unique": false
                                             },
-                                            "conditional": {
-                                                "show": null,
-                                                "when": null,
-                                                "eq": ""
-                                            },
-                                            "overlay": {
-                                                "style": "",
-                                                "left": "",
-                                                "top": "",
-                                                "width": "",
-                                                "height": ""
-                                            },
                                             "allowCalculateOverride": false,
                                             "encrypted": false,
                                             "showCharCount": false,
                                             "showWordCount": false,
-                                            "properties": {},
                                             "allowMultipleMasks": false,
-                                            "tag": "p",
-                                            "id": "exkucj"
+                                            "id": "e16l2mj"
                                         },
                                         {
                                             "label": "Actual tuition",
@@ -4480,6 +4492,6 @@
     "name": "reportachange",
     "path": "reportachange",
     "created": "2021-09-13T18:48:47.454Z",
-    "modified": "2021-09-29T22:35:55.452Z",
+    "modified": "2021-09-29T23:12:06.164Z",
     "machineName": "reportAChange"
 }
