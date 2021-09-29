@@ -38,25 +38,25 @@ export default {
     const router = useRouter();
     const initialData = ref({} as ApplicationDetails);
     const loadInitialData = async () => {
-      const ApplicationDetails: ApplicationDetailsForCOEDTO = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
+      const applicationDetails: ApplicationDetailsForCOEDTO = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
         props.applicationId,
         props.locationId,
       );
       initialData.value = {
-        applicationProgramName: ApplicationDetails.applicationProgramName,
+        applicationProgramName: applicationDetails.applicationProgramName,
         applicationProgramDescription:
-          ApplicationDetails.applicationProgramDescription,
-        applicationOfferingName: ApplicationDetails.applicationOfferingName,
+          applicationDetails.applicationProgramDescription,
+        applicationOfferingName: applicationDetails.applicationOfferingName,
         applicationOfferingIntensity:
-          ApplicationDetails.applicationOfferingIntensity,
+          applicationDetails.applicationOfferingIntensity,
         applicationOfferingStartDate:
-          ApplicationDetails.applicationOfferingStartDate,
+          applicationDetails.applicationOfferingStartDate,
         applicationOfferingEndDate:
-          ApplicationDetails.applicationOfferingEndDate,
-        applicationStudentName: ApplicationDetails.applicationStudentName,
-        applicationNumber: ApplicationDetails.applicationNumber,
-        applicationLocationName: ApplicationDetails.applicationLocationName,
-        applicationStatus: ApplicationDetails.applicationStatus,
+          applicationDetails.applicationOfferingEndDate,
+        applicationStudentName: applicationDetails.applicationStudentName,
+        applicationNumber: applicationDetails.applicationNumber,
+        applicationLocationName: applicationDetails.applicationLocationName,
+        applicationStatus: applicationDetails.applicationStatus,
       };
     };
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
