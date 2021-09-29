@@ -67,6 +67,18 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  // Get Program description for the selected program and set to the field (programDesc) in formio
+  const loadProgramDesc = async (
+    form: any,
+    programId: number,
+    fieldId: string,
+  ) => {
+    const valueToBeLoaded = await EducationProgramService.shared.getStudentEducationProgram(
+      programId,
+    );
+    formioUtils.setComponentValue(form, fieldId, valueToBeLoaded);
+  };
+
   // Retrieve the list of offerings for a particular location.
   const loadOfferingsForLocation = async (
     form: any,
@@ -142,5 +154,6 @@ export function useFormioDropdownLoader() {
     loadOfferingsForLocationForInstitution,
     loadInstitutionTypes,
     loadPIRDeniedReasonList,
+    loadProgramDesc,
   };
 }

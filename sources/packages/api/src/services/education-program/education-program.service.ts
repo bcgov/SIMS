@@ -10,6 +10,7 @@ import {
   SaveEducationProgram,
   EducationProgramsSummary,
   EducationProgramModel,
+  StudentEducationProgramSummary,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
 
@@ -38,6 +39,46 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.id = :programId", { programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .getOne();
+  }
+
+  /**
+   * Gets a program details for a student
+   * This returns only a subset of the educationProgram
+   * id in the query.
+   * @param programId Program id.
+   * @returns program
+   */
+  async getStudentEducationProgram(
+    programId: number,
+  ): Promise<StudentEducationProgramSummary> {
+    const studentEducationProgram = await this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.description",
+        "programs.credentialType",
+        "programs.credentialTypeOther",
+        "programs.deliveredOnSite",
+        "programs.deliveredOnline",
+      ])
+      .where("programs.id = :programId", { programId })
+      .getOne();
+
+    const studentEducationProgramSummary = new StudentEducationProgramSummary();
+    studentEducationProgramSummary.id = studentEducationProgram.id;
+    studentEducationProgramSummary.name = studentEducationProgram.name;
+    studentEducationProgramSummary.description =
+      studentEducationProgram.description;
+    studentEducationProgramSummary.credentialType =
+      studentEducationProgram.credentialType;
+    studentEducationProgramSummary.credentialTypeOther =
+      studentEducationProgram.credentialTypeOther;
+    studentEducationProgramSummary.deliveredOnSite =
+      studentEducationProgram.deliveredOnSite;
+    studentEducationProgramSummary.deliveredOnline =
+      studentEducationProgram.deliveredOnline;
+    return studentEducationProgramSummary;
   }
 
   /**

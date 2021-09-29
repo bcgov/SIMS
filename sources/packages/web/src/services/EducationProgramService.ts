@@ -1,4 +1,8 @@
-import { EducationProgramDto, OptionItemDto } from "../types";
+import {
+  EducationProgramDto,
+  OptionItemDto,
+  StudentEducationProgramDto,
+} from "../types";
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
@@ -29,6 +33,12 @@ export class EducationProgramService {
     programId: number,
   ): Promise<EducationProgramDto> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
+  }
+
+  public async getStudentEducationProgram(
+    programId: number,
+  ): Promise<StudentEducationProgramDto> {
+    return ApiClient.EducationProgram.getStudentEducationProgram(programId);
   }
 
   /**

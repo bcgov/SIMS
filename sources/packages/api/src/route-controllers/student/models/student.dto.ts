@@ -52,3 +52,16 @@ export interface FileCreateDto {
   size: number;
   mimetype: string;
 }
+
+export class StudentEducationProgramDto {
+  @IsNotEmpty()
+  id: number;
+  @IsNotEmpty()
+  name: string;
+  @IsNotEmpty()
+  description: string;
+  @IsNotEmpty()
+  credentialType: string;
+  @IsNotEmpty()
+  deliveryMethod: string;
+}

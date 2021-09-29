@@ -19,12 +19,14 @@ import {
   UserService,
   ATBCService,
   ApplicationService,
+  EducationProgramService,
 } from "../../services";
 import {
   CreateStudentDto,
   FileCreateDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
+  StudentEducationProgramDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -55,6 +57,7 @@ export class StudentController extends BaseController {
     private readonly atbcService: ATBCService,
     private readonly fileService: StudentFileService,
     private readonly applicationService: ApplicationService,
+    private readonly programService: EducationProgramService,
   ) {
     super();
   }
@@ -144,6 +147,27 @@ export class StudentController extends BaseController {
       userToken.userName,
       payload,
     );
+  }
+
+  /**
+   * This returns only a part of the EducationProgram details to fetch
+   * for the of Student
+   * @param programId
+   * @returns
+   */
+  @Get("/education-program/:programId/summary")
+  async get(
+    @Param("programId") programId: number,
+  ): Promise<StudentEducationProgramDto> {
+    const educationProgram =
+      await this.programService.getStudentEducationProgram(programId);
+    return {
+      id: educationProgram.id,
+      name: educationProgram.name,
+      description: educationProgram.description,
+      credentialType: educationProgram.credentialTypeToDisplay,
+      deliveryMethod: educationProgram.deliveryMethod,
+    };
   }
 
   @Post()

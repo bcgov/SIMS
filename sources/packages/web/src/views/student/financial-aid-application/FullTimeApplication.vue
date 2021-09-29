@@ -29,7 +29,7 @@
                 &nbsp;&nbsp;
                 <ProgressSpinner
                   style="width: 30px; height: 25px"
-                  strokeWidth="10"/></span
+                  strokeWidth="10" /></span
             ></v-btn>
           </v-col>
         </v-row>
@@ -191,6 +191,7 @@ export default {
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
@@ -228,6 +229,11 @@ export default {
         PROGRAMS_DROPDOWN_KEY,
       );
       if (selectedProgramId) {
+        await formioDataLoader.loadProgramDesc(
+          form,
+          selectedProgramId,
+          SELECTED_PROGRAM_DESC_KEY,
+        );
         await formioDataLoader.loadOfferingsForLocation(
           form,
           selectedProgramId,
@@ -251,6 +257,13 @@ export default {
           form,
           LOCATIONS_DROPDOWN_KEY,
         );
+        if (+event.changed.value > 0) {
+          await formioDataLoader.loadProgramDesc(
+            form,
+            +event.changed.value,
+            SELECTED_PROGRAM_DESC_KEY,
+          );
+        }
         await formioDataLoader.loadOfferingsForLocation(
           form,
           +event.changed.value,

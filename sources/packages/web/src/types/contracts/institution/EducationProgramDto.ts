@@ -35,6 +35,14 @@ export interface EducationProgramDto {
   programIntensity: ProgramIntensity;
 }
 
+export interface StudentEducationProgramDto {
+  id: number;
+  name: string;
+  description: string;
+  credentialType: string;
+  deliveryMethod: string;
+}
+
 export enum ApprovalStatus {
   /**
    * Education Program is approved.
