@@ -356,6 +356,11 @@ export class CRAPersonalVerificationService {
         `Error while updating CRA income verification id: ${verificationId}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
     }
+
+    // Send a message to the associated workflow to proceed.
+    await this.incomeVerificationService.reportIncomeVerificationToWorkflow(
+      verificationId,
+    );
   }
 
   /**

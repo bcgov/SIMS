@@ -2,13 +2,17 @@ import { Injectable, Inject } from "@nestjs/common";
 import { Connection, In, IsNull, Repository, UpdateResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Application, CRAIncomeVerification } from "../../database/entities";
+import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 
 /**
  * Service layer for CRA income verifications.
  */
 @Injectable()
 export class CRAIncomeVerificationService extends RecordDataModelService<CRAIncomeVerification> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(
+    @Inject("Connection") connection: Connection,
+    private readonly workflowService: WorkflowActionsService,
+  ) {
     super(connection.getRepository(CRAIncomeVerification));
   }
 
@@ -138,6 +142,34 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         requestStatusCode,
         inactiveCode,
       },
+    );
+  }
+
+  /**
+   * Reports to the workflow that the income verification
+   * requested is ready to be retrieved.
+   * @param incomeVerificationId CRA verification id.
+   */
+  async reportIncomeVerificationToWorkflow(
+    incomeVerificationId: number,
+  ): Promise<void> {
+    const queryResult = await this.repo
+      .createQueryBuilder("incomeVerifications")
+      .select("applications.assessmentWorkflowId", "workflowId")
+      .innerJoin("incomeVerifications.application", "applications")
+      .where("incomeVerifications.id = :incomeVerificationId", {
+        incomeVerificationId,
+      })
+      .getRawOne();
+
+    if (!queryResult?.workflowId) {
+      throw new Error(
+        `CRA income verification id ${incomeVerificationId} does not have an associated assessmentWorkflowId.`,
+      );
+    }
+
+    this.workflowService.sendCRAIncomeVerificationCompletedMessage(
+      queryResult.workflowId,
     );
   }
 }
