@@ -1,7 +1,7 @@
 <template>
   <v-card class="p-m-4">
     <formio
-      formName="reportachange"
+      formName="reportscholasticstandingchange"
       :data="initialData"
       @customEvent="customEventCallback"
     ></formio>
