@@ -17,6 +17,29 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   }
 
   /**
+   * Gets the student income verification for the application.
+   * The application id has a unique constraint in database so
+   * only one record is expected to be returned.
+   * @param applicationId application id to retrieve the student income.
+   * @returns student income verification for application.
+   */
+  async getIncomeVerificationForApplication(
+    applicationId: number,
+  ): Promise<CRAIncomeVerification> {
+    return this.repo
+      .createQueryBuilder("incomeVerifications")
+      .select([
+        "incomeVerifications.reportedIncome",
+        "incomeVerifications.craReportedIncome",
+        "incomeVerifications.dateReceived",
+      ])
+      .where("incomeVerifications.application.id = :applicationId", {
+        applicationId,
+      })
+      .getOne();
+  }
+
+  /**
    * Gets income verifications that were never sent to CRA (dateSent is null).
    * Once sent, there is no mechanism in place for a retry logic.
    * @returns pending income verifications.

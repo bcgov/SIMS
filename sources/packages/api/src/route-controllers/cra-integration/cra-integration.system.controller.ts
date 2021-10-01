@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Controller, Post } from "@nestjs/common";
 import {
   CRAIncomeVerificationService,
   CRAPersonalVerificationService,
@@ -9,15 +9,11 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { CreateIncomeVerificationDto } from "./models/create-income-verification.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/cra-integration")
 export class CRAIntegrationController {
-  constructor(
-    private readonly cra: CRAPersonalVerificationService,
-    private readonly incomeVerificationService: CRAIncomeVerificationService,
-  ) {}
+  constructor(private readonly cra: CRAPersonalVerificationService) {}
 
   /**
    * Identifies all the students that still do not have their SIN
@@ -66,25 +62,6 @@ export class CRAIntegrationController {
         errorsSummary: result.errorsSummary,
       };
     });
-  }
-
-  /**
-   * Creates a CRA Income Verification record that will be waiting
-   * to be send to CRA and receive a response.
-   * @param payload information needed to create the CRA Income Verification record.
-   * @returns the id of the new CRA Verification record created.
-   */
-  @Post("income-verification")
-  async createIncomeVerification(
-    @Body() payload: CreateIncomeVerificationDto,
-  ): Promise<number> {
-    const incomeVerification =
-      await this.incomeVerificationService.createIncomeVerification(
-        payload.applicationId,
-        payload.taxYear,
-        payload.reportedIncome,
-      );
-    return incomeVerification.id;
   }
 
   @InjectLogger()

@@ -48,3 +48,22 @@ export class UpdateApplicationStatusWorkflowIdDto extends UpdateApplicationStatu
   @IsNotEmpty()
   workflowId: string;
 }
+
+export interface StudentIncomeDetails {
+  /**
+   * Income manually reported by the Student in the Application.
+   */
+  reported: number;
+  /**
+   * If available, income returned from the CRA.
+   */
+  craReported?: number;
+  /**
+   * Indicates if the CRA verification is done.
+   * Even after the CRA verification is executed the
+   * value of the craReported can still be null,
+   * for instance, when the person data is not valid or
+   * when there is no tax filed for the requested year.
+   */
+  verifiedOnCRA: boolean;
+}
