@@ -1,5 +1,6 @@
 export * from "./institution/useInstitutionAuth";
 export * from "./useFormioDropdownLoader";
+export * from "./useFormioComponentLoader";
 export * from "./useFormioUtils";
 export * from "./useAuth";
 export * from "./useFormatters";

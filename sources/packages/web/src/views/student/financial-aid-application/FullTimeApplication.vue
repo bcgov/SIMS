@@ -73,6 +73,7 @@ import {
   useFormioDropdownLoader,
   useFormioUtils,
   useToastMessage,
+  useFormioComponentLoader,
 } from "../../../composables";
 import {
   WizardNavigationEvent,
@@ -108,6 +109,7 @@ export default {
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
+    const formioComponentLoader = useFormioComponentLoader();
     const toast = useToastMessage();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
@@ -229,7 +231,7 @@ export default {
         PROGRAMS_DROPDOWN_KEY,
       );
       if (selectedProgramId) {
-        await formioDataLoader.loadProgramDesc(
+        await formioComponentLoader.loadProgramDesc(
           form,
           selectedProgramId,
           SELECTED_PROGRAM_DESC_KEY,
@@ -258,7 +260,7 @@ export default {
           LOCATIONS_DROPDOWN_KEY,
         );
         if (+event.changed.value > 0) {
-          await formioDataLoader.loadProgramDesc(
+          await formioComponentLoader.loadProgramDesc(
             form,
             +event.changed.value,
             SELECTED_PROGRAM_DESC_KEY,
@@ -272,7 +274,7 @@ export default {
         );
       }
       if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
-        await formioDataLoader.loadSelectedOfferingDate(
+        await formioComponentLoader.loadSelectedOfferingDate(
           form,
           +event.changed.value,
           SELECTED_OFFERING_DATE_KEY,
