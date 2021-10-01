@@ -45,7 +45,7 @@
                 color="primary"
                 outlined
                 @click="goToApplicationView(slotProps.data.applicationId)"
-                >view</v-btn
+                >Report a Change</v-btn
               >
             </template>
           </Column>
