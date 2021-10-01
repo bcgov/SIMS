@@ -48,7 +48,7 @@ COMMENT ON COLUMN sims.cra_income_verifications.request_status_code IS 'Request 
 
 COMMENT ON COLUMN sims.cra_income_verifications.inactive_code IS 'Request status code returned from CRA (00 - INACTIVE CODE NOT SET, 01 - INACTIVE CODE SET).';
 
-COMMENT ON COLUMN sims.cra_income_verifications.application_Id IS 'Student Application id that requires the income verification.';
+COMMENT ON COLUMN sims.cra_income_verifications.application_Id IS 'Student Application id that requires the income verification. Only one application id is allowed per student application.';
 
 COMMENT ON COLUMN sims.cra_income_verifications.created_at IS 'Record creation timestamp';
 

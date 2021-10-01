@@ -1,8 +1,5 @@
 import { Controller, Post } from "@nestjs/common";
-import {
-  CRAIncomeVerificationService,
-  CRAPersonalVerificationService,
-} from "../../services";
+import { CRAPersonalVerificationService } from "../../services";
 import { CRAValidationResultDto } from "./models/cra-validation-result.dto";
 import { ProcessResponseResDto } from "./models/process-response.res.dto";
 import { InjectLogger } from "../../common";

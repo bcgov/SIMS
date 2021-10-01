@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { CRAIncomeVerificationService } from "../services";
 import { AuthModule } from "../auth/auth.module";
 import {
   ApplicationService,
@@ -16,6 +15,7 @@ import {
   TokensService,
   WorkflowActionsService,
   WorkflowService,
+  CRAIncomeVerificationService,
 } from "../services";
 
 @Module({

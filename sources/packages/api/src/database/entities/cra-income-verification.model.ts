@@ -105,6 +105,7 @@ export class CRAIncomeVerification extends RecordDataModel {
   inactiveCode?: string;
   /**
    * Student Application id that requires the income verification.
+   * Only one application id is allowed per student application.
    */
   @RelationId(
     (carIncomeVerification: CRAIncomeVerification) =>

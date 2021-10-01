@@ -1,13 +1,7 @@
 import { ConfigService } from "../services";
 import { CRAIntegrationService } from "./cra-integration.service";
 import * as faker from "faker";
-import {
-  CRAPersonRecord,
-  MatchStatusCodes,
-  RequestStatusCodes,
-  TransactionCodes,
-  TransactionSubCodes,
-} from "./cra-integration.models";
+import { CRAPersonRecord, TransactionCodes } from "./cra-integration.models";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { IConfig } from "../types/config";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
