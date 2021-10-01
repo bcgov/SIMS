@@ -26,30 +26,15 @@ export function useFormioComponentLoader() {
   };
 
   // Get Program description for the selected program and set to the field (programDesc) in formio
-  const loadProgramDesc = async (form: any, programId: number) => {
+  const loadProgramDesc = async (
+    form: any,
+    programId: number,
+    fieldId: string,
+  ) => {
     const valueToBeLoaded = await EducationProgramService.shared.getStudentEducationProgram(
       programId,
     );
-    formioUtils.setComponentValue(
-      form,
-      "selectedProgramName",
-      valueToBeLoaded.name,
-    );
-    formioUtils.setComponentValue(
-      form,
-      "selectedProgramDescription",
-      valueToBeLoaded.description,
-    );
-    formioUtils.setComponentValue(
-      form,
-      "selectedProgramCredentialType",
-      valueToBeLoaded.credentialType,
-    );
-    formioUtils.setComponentValue(
-      form,
-      "selectedProgramDeliveryMethod",
-      valueToBeLoaded.deliveryMethod,
-    );
+    formioUtils.setComponentValue(form, fieldId, valueToBeLoaded);
   };
 
   return {
