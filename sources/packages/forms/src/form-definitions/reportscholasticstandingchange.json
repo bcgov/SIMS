@@ -133,7 +133,7 @@
                     ],
                     "content": "{{ data.applicationNumber + \" | \" + data.applicationLocationName + \" | \" + data.applicationOfferingStartDate + \" - \" + data.applicationOfferingEndDate }}",
                     "refreshOnChange": true,
-                    "customClass": "category-header-medium secondary-color  mt-5 mb-5",
+                    "customClass": "category-header-medium secondary-color mt-5 mb-5",
                     "hidden": false,
                     "modalEdit": false,
                     "key": "applicationNumberLocationNameStudyDates",
@@ -198,7 +198,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e83l52q"
+                    "id": "esnvwf"
                 },
                 {
                     "title": "Application Details Panel",
@@ -285,7 +285,7 @@
                             ],
                             "content": "Application Details",
                             "refreshOnChange": false,
-                            "customClass": "category-header-medium primary-color font-weight-bold h2",
+                            "customClass": "category-header-medium primary-color font-weight-bold",
                             "hidden": false,
                             "modalEdit": false,
                             "key": "html",
@@ -350,7 +350,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ehhs32s"
+                            "id": "efkhtqq"
                         },
                         {
                             "title": "Program Details Panel",
@@ -2417,7 +2417,7 @@
                                     "placeholder": "",
                                     "description": "",
                                     "tooltip": "",
-                                    "customClass": "font-weight-bold  w-50",
+                                    "customClass": "font-weight-bold w-50",
                                     "tabindex": "",
                                     "hidden": false,
                                     "hideLabel": false,
@@ -2531,7 +2531,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "datepickerMode": "day",
-                                    "id": "elg6vm"
+                                    "id": "ee8bpr"
                                 },
                                 {
                                     "label": "Final Study Costs",
@@ -2879,7 +2879,7 @@
                                             "widget": {
                                                 "type": "input"
                                             },
-                                            "customClass": "font-weight-bold  w-50",
+                                            "customClass": "font-weight-bold w-50",
                                             "tabindex": "",
                                             "autocomplete": "",
                                             "hidden": false,
@@ -2949,7 +2949,7 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
-                                            "id": "ey4mke",
+                                            "id": "e9tixoi",
                                             "defaultValue": null
                                         },
                                         {
@@ -2963,7 +2963,7 @@
                                             "widget": {
                                                 "type": "input"
                                             },
-                                            "customClass": "font-weight-bold  w-50",
+                                            "customClass": "font-weight-bold w-50",
                                             "tabindex": "",
                                             "autocomplete": "",
                                             "hidden": false,
@@ -3033,7 +3033,7 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
-                                            "id": "eef6igk",
+                                            "id": "e846qbq",
                                             "defaultValue": null
                                         },
                                         {
@@ -3047,7 +3047,7 @@
                                             "widget": {
                                                 "type": "input"
                                             },
-                                            "customClass": "font-weight-bold  w-50",
+                                            "customClass": "font-weight-bold w-50",
                                             "tabindex": "",
                                             "autocomplete": "",
                                             "hidden": false,
@@ -3117,7 +3117,7 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
-                                            "id": "epfwpi5",
+                                            "id": "egdisuk",
                                             "defaultValue": null
                                         },
                                         {
@@ -3131,7 +3131,7 @@
                                             "widget": {
                                                 "type": "input"
                                             },
-                                            "customClass": "font-weight-bold  w-50",
+                                            "customClass": "font-weight-bold w-50",
                                             "tabindex": "",
                                             "autocomplete": "",
                                             "hidden": false,
@@ -3201,7 +3201,7 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
-                                            "id": "ec8apv",
+                                            "id": "egifbm8w",
                                             "defaultValue": null
                                         }
                                     ],
@@ -3309,7 +3309,7 @@
                             "placeholder": "",
                             "description": "",
                             "tooltip": "",
-                            "customClass": "font-weight-bold  w-50",
+                            "customClass": "font-weight-bold w-50",
                             "tabindex": "",
                             "hidden": false,
                             "hideLabel": false,
@@ -3423,7 +3423,7 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "datepickerMode": "day",
-                            "id": "esb8be7"
+                            "id": "ec1qenp"
                         },
                         {
                             "title": "Student did not successfully complete their studies Panel",
@@ -3896,8 +3896,8 @@
                                     "inputType": "text",
                                     "inputMask": "",
                                     "fixedSize": true,
-                                    "id": "eyyjw3t",
-                                    "defaultValue": ""
+                                    "id": "eiykq2",
+                                    "defaultValue": null
                                 }
                             ],
                             "placeholder": "",
@@ -4058,7 +4058,7 @@
                                     "placeholder": "",
                                     "description": "",
                                     "tooltip": "",
-                                    "customClass": "font-weight-bold  w-50",
+                                    "customClass": "font-weight-bold w-50",
                                     "tabindex": "",
                                     "hidden": false,
                                     "hideLabel": false,
@@ -4172,7 +4172,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "datepickerMode": "day",
-                                    "id": "eslcqkk"
+                                    "id": "eutfs99"
                                 }
                             ],
                             "placeholder": "",
@@ -4492,6 +4492,6 @@
     "name": "reportscholasticstandingchange",
     "path": "reportscholasticstandingchange",
     "created": "2021-09-13T18:48:47.454Z",
-    "modified": "2021-09-30T00:30:02.756Z",
+    "modified": "2021-10-01T15:47:21.212Z",
     "machineName": "reportScholasticStandingChange"
 }
