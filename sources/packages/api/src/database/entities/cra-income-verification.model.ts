@@ -62,7 +62,7 @@ export class CRAIncomeVerification extends RecordDataModel {
   })
   dateReceived?: Date;
   /**
-   * Name of the file sent to CRA to request a income verification.
+   * Name of the file sent to CRA to request an income verification.
    */
   @Column({
     name: "file_sent",

@@ -38,7 +38,7 @@ COMMENT ON COLUMN sims.cra_income_verifications.date_sent IS 'Date and time that
 
 COMMENT ON COLUMN sims.cra_income_verifications.date_received IS 'Date and time that the CRA sent a response for an income verification.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.file_sent IS 'Name of the file sent to CRA to request a income verification.';
+COMMENT ON COLUMN sims.cra_income_verifications.file_sent IS 'Name of the file sent to CRA to request an income verification.';
 
 COMMENT ON COLUMN sims.cra_income_verifications.file_received IS 'Name of the file received from CRA with the response for an income verification.';
 
