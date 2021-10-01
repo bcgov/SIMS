@@ -4,8 +4,6 @@ import {
   ApplicationService,
   ArchiveDbService,
   ConfigService,
-  CRAIntegrationService,
-  CRAPersonalVerificationService,
   KeycloakService,
   MSFAANumberService,
   SequenceControlService,
@@ -19,17 +17,17 @@ import {
 import { DatabaseModule } from "../../database/database.module";
 import { CRAIntegrationController } from "./cra-integration.system.controller";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
+import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
+import { JwtStrategy } from "../../auth/jwt.strategy";
 
 describe("CRAIntegrationController", () => {
   let controller: CRAIntegrationController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule],
+      imports: [DatabaseModule, CraIntegrationModule],
       providers: [
         SshService,
-        CRAIntegrationService,
-        CRAPersonalVerificationService,
         SequenceControlService,
         StudentService,
         ArchiveDbService,
@@ -44,7 +42,10 @@ describe("CRAIntegrationController", () => {
         createMockedJwtService(),
       ],
       controllers: [CRAIntegrationController],
-    }).compile();
+    })
+      .overrideProvider(JwtStrategy)
+      .useValue({})
+      .compile();
 
     controller = module.get<CRAIntegrationController>(CRAIntegrationController);
   });

@@ -93,31 +93,4 @@ describe("CRAIntegrationService", () => {
     expect(footer.environmentCode).toBe(environmentCode);
     expect(footer.sequence).toBe(sequence);
   });
-
-  it("should download and process CRA files using mocked files contents", async () => {
-    // Act
-    const sftpDownloadedFiles = await service.downloadResponseFiles();
-
-    // Assert
-    expect(sftpDownloadedFiles.length).toBe(2);
-    // Sample file available at __mocks__\response-folder\CCRA_RESPONSE_ABCSL00001.TXT
-    const firstFile = sftpDownloadedFiles.shift();
-    expect(firstFile.statusRecords.length).toBe(2);
-    // Validate basic record identification: Transaction Code/SIN/Transaction Sub Code.
-    const firstRecord = firstFile.statusRecords.shift();
-    expect(firstRecord.transactionCode).toBe(TransactionCodes.ResponseRecord);
-    expect(firstRecord.sin).toBe("111111111");
-    expect(firstRecord.transactionSubCode).toBe(
-      TransactionSubCodes.ResponseStatusRecord,
-    );
-    // Validate specific record info: SIN validation.
-    const responseFileLine = firstRecord;
-    expect(responseFileLine.requestStatusCode).toBe(
-      RequestStatusCodes.successfulRequest,
-    );
-    expect(responseFileLine.matchStatusCode).toBe(
-      MatchStatusCodes.successfulMatch,
-    );
-    expect(responseFileLine.freeProjectArea).toBe("STUDENT_SIN_VALIDATION");
-  });
 });

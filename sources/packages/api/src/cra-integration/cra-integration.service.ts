@@ -163,22 +163,6 @@ export class CRAIntegrationService {
     }
   }
 
-  private createFooter(
-    code: TransactionCodes,
-    processDate: Date,
-    sequence: number,
-    recordCount: number,
-  ): CRAFileFooter {
-    const footer = new CRAFileFooter();
-    footer.transactionCode = code;
-    footer.processDate = processDate;
-    footer.programAreaCode = this.craConfig.programAreaCode;
-    footer.environmentCode = this.craConfig.environmentCode;
-    footer.sequence = sequence;
-    footer.recordCount = recordCount + 2; // Must be the number of records + header + footer.
-    return footer;
-  }
-
   /**
    * Expected file name of the CRA request file.
    * @param sequence file sequence number.

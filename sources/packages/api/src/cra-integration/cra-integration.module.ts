@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { CRAIncomeVerificationService } from "src/services/cra-income-verification/cra-income-verification.service";
+import { CRAIncomeVerificationService } from "../services";
 import { AuthModule } from "../auth/auth.module";
 import {
   ApplicationService,
@@ -37,6 +37,10 @@ import {
     KeycloakService,
     CRAIncomeVerificationService,
   ],
-  exports: [CRAPersonalVerificationService, CRAIntegrationService],
+  exports: [
+    CRAPersonalVerificationService,
+    CRAIntegrationService,
+    CRAIncomeVerificationService,
+  ],
 })
 export class CraIntegrationModule {}
