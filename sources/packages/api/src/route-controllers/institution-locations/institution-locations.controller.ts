@@ -260,18 +260,17 @@ export class InstitutionLocationsController extends BaseController {
     return {
       applicationStatus: application.applicationStatus,
       applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: application.offering?.offeringIntensity,
+      applicationOfferingIntensity: application.offering.offeringIntensity,
       applicationOfferingStartDate: dateString(
-        application.offering?.studyStartDate,
+        application.offering.studyStartDate,
       ),
-      applicationOfferingEndDate: dateString(
-        application.offering?.studyEndDate,
-      ),
-      applicationLocationName: application.location?.name,
-      applicationStudentName: getUserFullName(application.student?.user),
-      applicationOfferingName: application.offering?.name,
-      applicationProgramDescription: application.pirProgram?.description,
-      applicationProgramName: application.pirProgram?.name,
+      applicationOfferingEndDate: dateString(application.offering.studyEndDate),
+      applicationLocationName: application.location.name,
+      applicationStudentName: getUserFullName(application.student.user),
+      applicationOfferingName: application.offering.name,
+      applicationProgramDescription:
+        application.offering.educationProgram.description,
+      applicationProgramName: application.offering.educationProgram.name,
     };
   }
 }

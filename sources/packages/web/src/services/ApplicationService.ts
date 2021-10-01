@@ -3,7 +3,7 @@ import {
   SaveStudentApplicationDto,
   ProgramYearOfApplicationDto,
   ApplicationStatusToBeUpdatedDto,
-  GetApplicationDataDto
+  GetApplicationDataDto,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";

@@ -1222,12 +1222,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getMany();
   }
   /**
-   * Gets active application.
+   * Gets active application - Active application are applications
+   * with coe status completed and application status completed.
    * @param applicationId application id.
    * @param locationId location id.
    * @returns active application details.
    */
-
   async getActiveApplication(
     applicationId: number,
     locationId: number,
@@ -1242,20 +1242,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.studyEndDate",
         "location.name",
         "offering.name",
-        "pirProgram.name",
-        "pirProgram.description",
         "student",
         "user.firstName",
         "user.lastName",
       ])
-      .leftJoin("application.offering", "offering")
-      .leftJoin("application.pirProgram", "pirProgram")
-      .leftJoin("application.location", "location")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.location", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where("application.id = :applicationIdParam", {
-        applicationIdParam: applicationId,
-      })
+      .where("application.id = :applicationId", { applicationId })
       .andWhere("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
