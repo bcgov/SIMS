@@ -36,16 +36,23 @@ export function useFormioComponentLoader() {
     );
     formioUtils.setComponentValue(
       form,
-      fieldId,
-      `<h3><span style="background-color:transparent;color:#2965c5;"><strong>${valueToBeLoaded.name}</strong></span></h3>${valueToBeLoaded.description}
-      <table style="width:100%">
-      <tr>
-      <th>Credential</th><th>Delivery Method</th>
-      </tr>
-      <tr>
-      <td>${valueToBeLoaded.credentialType}</td><td>${valueToBeLoaded.deliveryMethod}</td>
-      </tr>
-      </table>`,
+      "selectedProgramName",
+      valueToBeLoaded.name,
+    );
+    formioUtils.setComponentValue(
+      form,
+      "selectedProgramDescription",
+      valueToBeLoaded.description,
+    );
+    formioUtils.setComponentValue(
+      form,
+      "selectedProgramCredentialType",
+      valueToBeLoaded.credentialType,
+    );
+    formioUtils.setComponentValue(
+      form,
+      "selectedProgramDeliveryMethod",
+      valueToBeLoaded.deliveryMethod,
     );
   };
 
