@@ -193,7 +193,6 @@ export default {
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
-    const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
@@ -231,11 +230,7 @@ export default {
         PROGRAMS_DROPDOWN_KEY,
       );
       if (selectedProgramId) {
-        await formioComponentLoader.loadProgramDesc(
-          form,
-          selectedProgramId,
-          SELECTED_PROGRAM_DESC_KEY,
-        );
+        await formioComponentLoader.loadProgramDesc(form, selectedProgramId);
         await formioDataLoader.loadOfferingsForLocation(
           form,
           selectedProgramId,
@@ -263,7 +258,6 @@ export default {
           await formioComponentLoader.loadProgramDesc(
             form,
             +event.changed.value,
-            SELECTED_PROGRAM_DESC_KEY,
           );
         }
         await formioDataLoader.loadOfferingsForLocation(

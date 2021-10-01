@@ -26,11 +26,7 @@ export function useFormioComponentLoader() {
   };
 
   // Get Program description for the selected program and set to the field (programDesc) in formio
-  const loadProgramDesc = async (
-    form: any,
-    programId: number,
-    fieldId: string,
-  ) => {
+  const loadProgramDesc = async (form: any, programId: number) => {
     const valueToBeLoaded = await EducationProgramService.shared.getStudentEducationProgram(
       programId,
     );
