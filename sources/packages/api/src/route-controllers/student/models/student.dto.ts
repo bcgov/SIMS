@@ -53,15 +53,10 @@ export interface FileCreateDto {
   mimetype: string;
 }
 
-export class StudentEducationProgramDto {
-  @IsNotEmpty()
+export interface StudentEducationProgramDto {
   id: number;
-  @IsNotEmpty()
   name: string;
-  @IsNotEmpty()
   description: string;
-  @IsNotEmpty()
   credentialType: string;
-  @IsNotEmpty()
   deliveryMethod: string;
 }

@@ -150,8 +150,7 @@ export class StudentController extends BaseController {
   }
 
   /**
-   * This returns only a part of the EducationProgram details to fetch
-   * for the of Student
+   * This returns only a part of the EducationProgram details for the student
    * @param programId
    * @returns
    */
