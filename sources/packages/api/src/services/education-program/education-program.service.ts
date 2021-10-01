@@ -63,6 +63,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.deliveredOnline",
       ])
       .where("programs.id = :programId", { programId })
+      .andWhere("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
       .getOne();
 
     const studentEducationProgramSummary = new StudentEducationProgramSummary();
