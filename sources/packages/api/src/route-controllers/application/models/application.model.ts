@@ -177,3 +177,16 @@ export class CreateIncomeVerificationDto {
   @Min(0)
   reportedIncome: number;
 }
+
+export interface ActiveApplicationDataDto {
+  applicationProgramName: string;
+  applicationProgramDescription: string;
+  applicationOfferingName: string;
+  applicationOfferingIntensity: string;
+  applicationOfferingStartDate: string;
+  applicationOfferingEndDate: string;
+  applicationStudentName: string;
+  applicationNumber: string;
+  applicationLocationName: string;
+  applicationStatus: string;
+}

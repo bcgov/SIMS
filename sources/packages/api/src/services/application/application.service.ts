@@ -1199,4 +1199,47 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .limit(1)
       .getOne();
   }
+
+  /**
+   * Gets active application - Active application are applications
+   * with coe status completed and application status completed.
+   * @param applicationId application id.
+   * @param locationId location id.
+   * @returns active application details.
+   */
+  async getActiveApplication(
+    applicationId: number,
+    locationId: number,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationStatus",
+        "application.applicationNumber",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "educationProgram.name",
+        "educationProgram.description",
+        "location.name",
+        "offering.name",
+        "student",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("application.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.completed,
+      })
+      .andWhere("application.coeStatus = :coeStatus", {
+        coeStatus: COEStatus.completed,
+      })
+      .getOne();
+  }
 }
