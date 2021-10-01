@@ -2156,7 +2156,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Warning! This program is ineligible for StudentAid BC funding.</strong><br/>\nStudents need to be 19 and up.",
+      "content": "<strong>Warning! This program is ineligible for StudentAid BC funding.</strong><br/>\nStudents need to be 19 and up. If you require an appeal, please continue and complete this application. StudentAidBC will review your application.",
       "refreshOnChange": false,
       "customClass": "",
       "hidden": false,
@@ -2223,7 +2223,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "ey5d70q"
+      "id": "e0pdzdn"
     },
     {
       "html": "<h3><span class=\"text-big\" style=\"color:#3498db;\">English as a Second Language (ESL) content</span></h3><p><strong>All students must have a minimum of high school diploma or equivalent</strong></p>",
@@ -2937,7 +2937,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "eicgxyi"
+      "id": "exfees"
     },
     {
       "label": "applicationId",
@@ -3016,5 +3016,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-09-10T17:47:58.611Z"
+  "modified": "2021-09-28T21:55:29.253Z"
 }
