@@ -58,7 +58,6 @@ export class StudentEducationProgramDto {
   id: number;
   @IsNotEmpty()
   name: string;
-  @IsNotEmpty()
   description: string;
   @IsNotEmpty()
   credentialType: string;
