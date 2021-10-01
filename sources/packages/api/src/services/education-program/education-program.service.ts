@@ -50,7 +50,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getStudentEducationProgram(
     programId: number,
   ): Promise<EducationProgram> {
-    return await this.repo
+    return this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
