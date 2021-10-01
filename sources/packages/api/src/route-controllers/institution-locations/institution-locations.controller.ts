@@ -7,6 +7,7 @@ import {
   Body,
   UnprocessableEntityException,
   ForbiddenException,
+  NotFoundException,
 } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { InstitutionLocationService, FormService } from "../../services";
@@ -29,12 +30,15 @@ import {
   IsInstitutionAdmin,
   AllowAuthorizedParty,
 } from "../../auth/decorators";
-import { Application } from "../../database/entities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { OptionItem } from "../../types";
-import { ActiveApplicationSummaryDTO } from "../application/models/application.model";
-import { getUserFullName } from "../../utilities/auth-utils";
+import {
+  ActiveApplicationSummaryDTO,
+  ActiveApplicationDataDto,
+} from "../application/models/application.model";
+import { getUserFullName, dateString } from "../../utilities";
+import { InstitutionLocation, Application } from "../../database/entities";
+
 @Controller("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
@@ -230,5 +234,44 @@ export class InstitutionLocationsController extends BaseController {
       institutionDetails.id,
       locationId,
     );
+  }
+
+  /**
+   * Get active application details.
+   * @param applicationId application id.
+   * @returns application Details
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Get(":locationId/active-application/:applicationId")
+  async getActiveApplication(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+  ): Promise<ActiveApplicationDataDto> {
+    const application = await this.applicationService.getActiveApplication(
+      applicationId,
+      locationId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    return {
+      applicationStatus: application.applicationStatus,
+      applicationNumber: application.applicationNumber,
+      applicationOfferingIntensity: application.offering?.offeringIntensity,
+      applicationOfferingStartDate: dateString(
+        application.offering?.studyStartDate,
+      ),
+      applicationOfferingEndDate: dateString(
+        application.offering?.studyEndDate,
+      ),
+      applicationLocationName: application.location?.name,
+      applicationStudentName: getUserFullName(application.student?.user),
+      applicationOfferingName: application.offering?.name,
+      applicationProgramDescription: application.pirProgram?.description,
+      applicationProgramName: application.pirProgram?.name,
+    };
   }
 }

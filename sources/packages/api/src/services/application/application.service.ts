@@ -1221,4 +1221,43 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .getMany();
   }
+  /**
+   * Gets active application.
+   * @param applicationId application id.
+   * @param locationId location id.
+   * @returns active application details.
+   */
+
+  async getActiveApplication(
+    applicationId: number,
+    locationId: number,
+  ): Promise<Application> {
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationStatus",
+        "application.applicationNumber",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.name",
+        "offering.name",
+        "pirProgram.name",
+        "pirProgram.description",
+        "student",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .leftJoin("application.offering", "offering")
+      .leftJoin("application.pirProgram", "pirProgram")
+      .leftJoin("application.location", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.id = :applicationIdParam", {
+        applicationIdParam: applicationId,
+      })
+      .andWhere("location.id = :locationId", { locationId })
+      .getOne();
+    return application;
+  }
 }

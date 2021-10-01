@@ -17,6 +17,7 @@ import {
   InstitutionUserWithUserType,
   OptionItemDto,
   ApplicationSummaryDTO,
+  ApplicationDetails,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -301,5 +302,15 @@ export class InstitutionService {
     locationId: number,
   ): Promise<ApplicationSummaryDTO[]> {
     return ApiClient.Institution.getActiveApplicationsSummary(locationId);
+  }
+
+  public async getActiveApplication(
+    applicationId: number,
+    locationId: number,
+  ): Promise<ApplicationDetails> {
+    return ApiClient.InstitutionLocation.getActiveApplication(
+      applicationId,
+      locationId,
+    );
   }
 }

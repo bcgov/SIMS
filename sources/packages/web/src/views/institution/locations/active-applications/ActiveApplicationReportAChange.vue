@@ -11,9 +11,8 @@
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import formio from "@/components/generic/formio.vue";
-import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
+import { InstitutionService } from "@/services/InstitutionService";
 import {
-  ApplicationDetailsForCOEDTO,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationDetails,
@@ -38,26 +37,10 @@ export default {
     const router = useRouter();
     const initialData = ref({} as ApplicationDetails);
     const loadInitialData = async () => {
-      const applicationDetails: ApplicationDetailsForCOEDTO = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
+      initialData.value = await InstitutionService.shared.getActiveApplication(
         props.applicationId,
         props.locationId,
       );
-      initialData.value = {
-        applicationProgramName: applicationDetails.applicationProgramName,
-        applicationProgramDescription:
-          applicationDetails.applicationProgramDescription,
-        applicationOfferingName: applicationDetails.applicationOfferingName,
-        applicationOfferingIntensity:
-          applicationDetails.applicationOfferingIntensity,
-        applicationOfferingStartDate:
-          applicationDetails.applicationOfferingStartDate,
-        applicationOfferingEndDate:
-          applicationDetails.applicationOfferingEndDate,
-        applicationStudentName: applicationDetails.applicationStudentName,
-        applicationNumber: applicationDetails.applicationNumber,
-        applicationLocationName: applicationDetails.applicationLocationName,
-        applicationStatus: applicationDetails.applicationStatus,
-      };
     };
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
       if (
