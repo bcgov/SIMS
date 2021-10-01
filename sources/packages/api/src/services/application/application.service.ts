@@ -1257,6 +1257,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationIdParam: applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.completed,
+      })
+      .andWhere("application.coeStatus = :coeStatus", {
+        coeStatus: COEStatus.completed,
+      })
       .getOne();
   }
 }
