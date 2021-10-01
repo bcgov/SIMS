@@ -1232,7 +1232,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     locationId: number,
   ): Promise<Application> {
-    return await this.repo
+    return this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationStatus",
