@@ -1240,6 +1240,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "educationProgram.name",
+        "educationProgram.description",
         "location.name",
         "offering.name",
         "student",
@@ -1247,6 +1249,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
       ])
       .innerJoin("application.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.location", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
