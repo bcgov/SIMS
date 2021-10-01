@@ -41,6 +41,8 @@ import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
 import { Application } from "../../database/entities";
 import { determinePDStatus } from "../../utilities/student-utils";
+import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+import { deliveryMethod } from "src/utilities/delivery-method-utils";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -164,8 +166,14 @@ export class StudentController extends BaseController {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
-      credentialType: educationProgram.credentialTypeToDisplay,
-      deliveryMethod: educationProgram.deliveryMethod,
+      credentialType: credentialTypeToDisplay(
+        educationProgram.credentialType,
+        educationProgram.credentialTypeOther,
+      ),
+      deliveryMethod: deliveryMethod(
+        educationProgram.deliveredOnline,
+        educationProgram.deliveredOnSite,
+      ),
     };
   }
 

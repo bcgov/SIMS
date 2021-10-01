@@ -67,28 +67,3 @@ export class EducationProgramModel {
     );
   }
 }
-
-export class StudentEducationProgramSummary {
-  id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeOther: string;
-  deliveredOnSite: boolean;
-  deliveredOnline: boolean;
-  get credentialTypeToDisplay(): string {
-    return credentialTypeToDisplay(
-      this.credentialType,
-      this.credentialTypeOther,
-    );
-  }
-  get deliveryMethod(): string {
-    if (this.deliveredOnline && this.deliveredOnSite) {
-      return "Blended";
-    } else if (this.deliveredOnSite) {
-      return "Onsite";
-    } else {
-      return "Online";
-    }
-  }
-}

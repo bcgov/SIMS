@@ -10,7 +10,6 @@ import {
   SaveEducationProgram,
   EducationProgramsSummary,
   EducationProgramModel,
-  StudentEducationProgramSummary,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
 
@@ -50,8 +49,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    */
   async getStudentEducationProgram(
     programId: number,
-  ): Promise<StudentEducationProgramSummary> {
-    const studentEducationProgram = await this.repo
+  ): Promise<EducationProgram> {
+    return await this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
@@ -67,21 +66,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         approvalStatus: ApprovalStatus.approved,
       })
       .getOne();
-
-    const studentEducationProgramSummary = new StudentEducationProgramSummary();
-    studentEducationProgramSummary.id = studentEducationProgram.id;
-    studentEducationProgramSummary.name = studentEducationProgram.name;
-    studentEducationProgramSummary.description =
-      studentEducationProgram.description;
-    studentEducationProgramSummary.credentialType =
-      studentEducationProgram.credentialType;
-    studentEducationProgramSummary.credentialTypeOther =
-      studentEducationProgram.credentialTypeOther;
-    studentEducationProgramSummary.deliveredOnSite =
-      studentEducationProgram.deliveredOnSite;
-    studentEducationProgramSummary.deliveredOnline =
-      studentEducationProgram.deliveredOnline;
-    return studentEducationProgramSummary;
   }
 
   /**
