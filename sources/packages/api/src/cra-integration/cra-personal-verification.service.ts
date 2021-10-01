@@ -210,30 +210,42 @@ export class CRAPersonalVerificationService {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const fileNames = await this.craService.getResponseFilesNames();
-    const processResult: ProcessSftpResponseResult[] = [];
-    for (const fileName of fileNames) {
-      const craResponseFile = await this.craService.downloadResponseFile(
-        fileName,
-      );
-      processResult.push(await this.processResponse(craResponseFile));
+    const filePaths = await this.craService.getResponseFilesFullPath();
+    const processFiles: ProcessSftpResponseResult[] = [];
+    for (const filePath of filePaths) {
+      processFiles.push(await this.processFile(filePath));
     }
-
-    return processResult;
+    return processFiles;
   }
 
   /**
-   * Process each individual CRA response file downloaded from the the sFTP.
-   * @param responseFile CRA response file to be processed.
+   * Process each individual CRA response file from the sFTP.
+   * @param filePath CRA response file to be processed.
    * @returns Process summary and errors summary.
    */
-  private async processResponse(
-    responseFile: CRAsFtpResponseFile,
+  private async processFile(
+    filePath: string,
   ): Promise<ProcessSftpResponseResult> {
     const now = getUTCNow();
     const result = new ProcessSftpResponseResult();
+    result.processSummary.push(`Processing file ${filePath}.`);
+
+    let responseFile: CRAsFtpResponseFile;
+
+    try {
+      responseFile = await this.craService.downloadResponseFile(filePath);
+    } catch (error) {
+      this.logger.error(error);
+      result.errorsSummary.push(
+        `Error downloading file ${filePath}. Error: ${error}`,
+      );
+      // Abort the process nicely not throwing an exception and
+      // allowing other response files to be processed.
+      return result;
+    }
+
     result.processSummary.push(
-      `Processing file ${responseFile.filePath} with ${responseFile.statusRecords.length} verifications.`,
+      `File contains ${responseFile.statusRecords.length} verifications.`,
     );
 
     for (const statusRecord of responseFile.statusRecords) {

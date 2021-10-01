@@ -200,9 +200,9 @@ export class CRAIntegrationService {
   /**
    * Get the list of all response files waiting to be downloaded from the
    * sFTP filtering by the the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
-   * @returns file names for all response files present on sFTP.
+   * @returns full file paths for all response files present on sFTP.
    */
-  async getResponseFilesNames(): Promise<string[]> {
+  async getResponseFilesFullPath(): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
