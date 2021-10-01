@@ -1232,7 +1232,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     locationId: number,
   ): Promise<Application> {
-    const application = await this.repo
+    return await this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationStatus",
@@ -1258,6 +1258,5 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("location.id = :locationId", { locationId })
       .getOne();
-    return application;
   }
 }
