@@ -84,7 +84,7 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<StudentEducationProgramDto> {
     try {
       const response = await this.apiClient.get(
-        `students/education-program/${programId}/summary`,
+        `students/education-program/${programId}`,
         this.addAuthHeader(),
       );
       return response.data as StudentEducationProgramDto;

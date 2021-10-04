@@ -156,9 +156,9 @@ export class StudentController extends BaseController {
   /**
    * This returns only a part of the EducationProgram details for the student
    * @param programId
-   * @returns
+   * @returns StudentEducationProgramDto
    */
-  @Get("/education-program/:programId/summary")
+  @Get("/education-program/:programId")
   async getStudentEducationProgram(
     @Param("programId") programId: number,
   ): Promise<StudentEducationProgramDto> {
