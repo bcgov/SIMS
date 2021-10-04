@@ -25,9 +25,9 @@ export const deliveryMethod = (
 ): string => {
   if (deliveredOnline && deliveredOnSite) {
     return "Blended";
-  } else if (deliveredOnSite) {
-    return "Onsite";
-  } else {
-    return "Online";
   }
+  if (deliveredOnSite) {
+    return "Onsite";
+  }
+  return "Online";
 };

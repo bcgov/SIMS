@@ -168,7 +168,7 @@ export class StudentController extends BaseController {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
-      credentialType: credentialTypeToDisplay(
+      credentialTypeToDisplay: credentialTypeToDisplay(
         educationProgram.credentialType,
         educationProgram.credentialTypeOther,
       ),

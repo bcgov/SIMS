@@ -9,7 +9,7 @@ import { useFormioUtils } from ".";
  */
 export function useFormioComponentLoader() {
   const formioUtils = useFormioUtils();
-  // get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio
+  // Get offering date of the selected offering and set to the hidden field (selectedOfferingDate) in formio.
   const loadSelectedOfferingDate = async (
     form: any,
     offeringId: number,
@@ -25,7 +25,7 @@ export function useFormioComponentLoader() {
     );
   };
 
-  // Get Program description for the selected program and set to the field (programDesc) in formio
+  // Get Program description for the selected program and set to the field (programDesc) in formio.
   const loadProgramDesc = async (
     form: any,
     programId: number,
