@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS sims.cra_income_verifications (
 -- ## Comments
 COMMENT ON TABLE sims.cra_income_verifications IS 'Income verifications that must be performed with CRA.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.id IS 'Auto-generated sequential primary key column';
+COMMENT ON COLUMN sims.cra_income_verifications.id IS 'Auto-generated sequential primary key column.';
 
 COMMENT ON COLUMN sims.cra_income_verifications.tax_year IS 'Tax year to perform the income verification.';
 
@@ -50,10 +50,10 @@ COMMENT ON COLUMN sims.cra_income_verifications.inactive_code IS 'Request status
 
 COMMENT ON COLUMN sims.cra_income_verifications.application_Id IS 'Student Application id that requires the income verification. Only one application id is allowed per student application.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.created_at IS 'Record creation timestamp';
+COMMENT ON COLUMN sims.cra_income_verifications.created_at IS 'Record creation timestamp.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.updated_at IS 'Record update timestamp';
+COMMENT ON COLUMN sims.cra_income_verifications.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.creator IS 'Creator of the record. Null specified the record is created by system';
+COMMENT ON COLUMN sims.cra_income_verifications.creator IS 'Creator of the record. Null specified the record is created by system.';
 
-COMMENT ON COLUMN sims.cra_income_verifications.modifier IS 'Modifier of the record. Null specified the record is modified by system';
+COMMENT ON COLUMN sims.cra_income_verifications.modifier IS 'Modifier of the record. Null specified the record is modified by system.';
