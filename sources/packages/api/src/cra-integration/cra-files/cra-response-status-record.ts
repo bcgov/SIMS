@@ -42,6 +42,16 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
   }
 
   /**
+   * This field will always have a value of "00" unless the client is
+   * inactive with CRA. Examples of inactive could be the taxpayer is
+   * deceased or emigrant.
+   * Named as INACTIVE-CRA-INDIVIDUAL-CODE on CRA documentation.
+   */
+  public get inactiveCode(): MatchStatusCodes {
+    return this.line.substr(39, 2) as MatchStatusCodes;
+  }
+
+  /**
    * Free text that could be used for any application specific purpose.
    * This text will be send to CRA on the request file and returned in
    * the same record on the response file.

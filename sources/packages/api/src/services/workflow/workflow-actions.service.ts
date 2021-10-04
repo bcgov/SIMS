@@ -10,7 +10,7 @@ export class WorkflowActionsService {
 
   /**
    * Starts application assessment.
-   * @param workflowName wrokflow to be started.
+   * @param workflowName workflow to be started.
    * @param applicationId application id to be processed.
    * @returns result of the application start.
    */
@@ -32,7 +32,7 @@ export class WorkflowActionsService {
         `Error while starting application assessment workflow: ${workflowName}`,
       );
       this.logger.error(error);
-      //The error is not thrown here, as we are failing silently
+      // The error is not thrown here, as we are failing silently.
     }
   }
 
@@ -58,7 +58,32 @@ export class WorkflowActionsService {
         `Error while sending Program Info completed message to instance id: ${processInstanceId}`,
       );
       this.logger.error(error);
-      //The error is not thrown here, as we are failing silently
+      // The error is not thrown here, as we are failing silently.
+    }
+  }
+
+  /**
+   * When a CRA income verification is requested, the workflow needs to wait
+   * until the request in sent to CRA and a response is received.
+   * This method is going to send a message to the workflow allowing it to proceed
+   * when the data in available on database to be retrieved.
+   * @param processInstanceId workflow instance to receive the message.
+   */
+  async sendCRAIncomeVerificationCompletedMessage(
+    processInstanceId: string,
+  ): Promise<void> {
+    try {
+      await this.workflowService.sendMessage({
+        messageName: "sims-cra-income-verification-complete",
+        processInstanceId,
+        all: false, // false means that the message is correlated to exactly one entity.
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error while sending CRA income verification completed message to instance id: ${processInstanceId}`,
+      );
+      this.logger.error(error);
+      // The error is not thrown here, as we are failing silently.
     }
   }
 

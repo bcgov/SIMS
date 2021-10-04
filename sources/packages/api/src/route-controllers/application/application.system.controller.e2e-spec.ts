@@ -36,6 +36,7 @@ import {
   createFakeEducationProgramOffering,
 } from "../../testHelpers/fake-entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
+import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
 
 describe("Test system-access/application Controller", () => {
   let accesstoken: string;
@@ -54,7 +55,7 @@ describe("Test system-access/application Controller", () => {
     );
     accesstoken = token.access_token;
     const module: TestingModule = await Test.createTestingModule({
-      imports: [DatabaseModule, AuthModule],
+      imports: [DatabaseModule, AuthModule, CraIntegrationModule],
       controllers: [ApplicationSystemController],
       providers: [
         ApplicationService,

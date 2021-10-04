@@ -1,5 +1,5 @@
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
-import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
+import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
@@ -44,10 +44,10 @@ export enum TransactionSubCodes {
   ResponseStatusRecord = "0022",
   /**
    * This record will be part of the response and
-   * contains information about a T4 earnings filed
+   * contains information about the total income
    * on CRA for a particular year.
    */
-  T4Earnings = "0101",
+  TotalIncome = "0150",
 }
 
 /**
@@ -77,6 +77,16 @@ export enum MatchStatusCodes {
 }
 
 /**
+ * Inactive codes (INACTIVE-CRA-INDIVIDUAL-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ * Examples of inactive could be the taxpayer is deceased or emigrant.
+ */
+export enum InactiveCodes {
+  inactiveCodeNotSet = "00",
+  inactiveCodeSet = "01",
+}
+
+/**
  * Required personal information to a
  * CRA verification be processed.
  */
@@ -103,6 +113,10 @@ export interface CRAUploadResult {
  */
 export interface CRAsFtpResponseFile {
   /**
+   * File name. Useful for log.
+   */
+  fileName: string;
+  /**
    * Full file path of the file on the sFTP.
    */
   filePath: string;
@@ -111,9 +125,9 @@ export interface CRAsFtpResponseFile {
    */
   statusRecords: CRAResponseStatusRecord[];
   /**
-   * T4 earning records present on the file.
+   * Total income records present on the file.
    */
-  t4EarningsRecords: CRAResponseT4EarningsRecord[];
+  totalIncomeRecords: CRAResponseTotalIncomeRecord[];
 }
 
 /**
