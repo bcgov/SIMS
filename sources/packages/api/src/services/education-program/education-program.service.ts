@@ -41,6 +41,34 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
+   * Gets a program details for a student
+   * This returns only a subset of the educationProgram
+   * id in the query.
+   * @param programId Program id.
+   * @returns program
+   */
+  async getStudentEducationProgram(
+    programId: number,
+  ): Promise<EducationProgram> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.description",
+        "programs.credentialType",
+        "programs.credentialTypeOther",
+        "programs.deliveredOnSite",
+        "programs.deliveredOnline",
+      ])
+      .where("programs.id = :programId", { programId })
+      .andWhere("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
+      .getOne();
+  }
+
+  /**
    * Insert/update an education program at institution level
    * that will be available for all locations.
    * @param educationProgram Information used to save the program.

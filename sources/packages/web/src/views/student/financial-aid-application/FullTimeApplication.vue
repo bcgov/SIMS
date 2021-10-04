@@ -29,7 +29,7 @@
                 &nbsp;&nbsp;
                 <ProgressSpinner
                   style="width: 30px; height: 25px"
-                  strokeWidth="10"/></span
+                  strokeWidth="10" /></span
             ></v-btn>
           </v-col>
         </v-row>
@@ -73,6 +73,7 @@ import {
   useFormioDropdownLoader,
   useFormioUtils,
   useToastMessage,
+  useFormioComponentLoader,
 } from "../../../composables";
 import {
   WizardNavigationEvent,
@@ -108,6 +109,7 @@ export default {
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
+    const formioComponentLoader = useFormioComponentLoader();
     const toast = useToastMessage();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
@@ -191,6 +193,7 @@ export default {
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
@@ -228,6 +231,11 @@ export default {
         PROGRAMS_DROPDOWN_KEY,
       );
       if (selectedProgramId) {
+        await formioComponentLoader.loadProgramDesc(
+          form,
+          selectedProgramId,
+          SELECTED_PROGRAM_DESC_KEY,
+        );
         await formioDataLoader.loadOfferingsForLocation(
           form,
           selectedProgramId,
@@ -251,6 +259,13 @@ export default {
           form,
           LOCATIONS_DROPDOWN_KEY,
         );
+        if (+event.changed.value > 0) {
+          await formioComponentLoader.loadProgramDesc(
+            form,
+            +event.changed.value,
+            SELECTED_PROGRAM_DESC_KEY,
+          );
+        }
         await formioDataLoader.loadOfferingsForLocation(
           form,
           +event.changed.value,
@@ -259,7 +274,7 @@ export default {
         );
       }
       if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
-        await formioDataLoader.loadSelectedOfferingDate(
+        await formioComponentLoader.loadSelectedOfferingDate(
           form,
           +event.changed.value,
           SELECTED_OFFERING_DATE_KEY,

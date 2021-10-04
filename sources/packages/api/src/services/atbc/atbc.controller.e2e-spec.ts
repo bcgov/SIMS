@@ -14,6 +14,7 @@ import {
   WorkflowService,
   TokensService,
   MSFAANumberService,
+  EducationProgramService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -61,6 +62,7 @@ describe("Test ATBC Controller", () => {
         ConfigService,
         TokensService,
         MSFAANumberService,
+        EducationProgramService,
         createMockedJwtService(),
       ],
     }).compile();

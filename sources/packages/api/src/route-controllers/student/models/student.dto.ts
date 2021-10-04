@@ -52,3 +52,11 @@ export interface FileCreateDto {
   size: number;
   mimetype: string;
 }
+
+export interface StudentEducationProgramDto {
+  id: number;
+  name: string;
+  description: string;
+  credentialTypeToDisplay: string;
+  deliveryMethod: string;
+}

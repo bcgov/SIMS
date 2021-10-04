@@ -2,6 +2,7 @@ import {
   SummaryEducationProgramDto,
   EducationProgramDto,
   OptionItemDto,
+  StudentEducationProgramDto,
 } from "../../types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -72,6 +73,21 @@ export class EducationProgramApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data as EducationProgramDto;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getStudentEducationProgram(
+    programId: number,
+  ): Promise<StudentEducationProgramDto> {
+    try {
+      const response = await this.apiClient.get(
+        `students/education-program/${programId}`,
+        this.addAuthHeader(),
+      );
+      return response.data as StudentEducationProgramDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

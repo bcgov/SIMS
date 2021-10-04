@@ -334,7 +334,7 @@
           "inputType": "checkbox",
           "customClass": "",
           "tabindex": "",
-          "hidden": false,
+          "hidden": true,
           "hideLabel": false,
           "autofocus": false,
           "disabled": false,
@@ -346,7 +346,7 @@
           "dbIndex": false,
           "encrypted": false,
           "redrawOn": "",
-          "clearOnHide": true,
+          "clearOnHide": false,
           "customDefaultValue": "",
           "calculateValue": "",
           "calculateServer": false,
@@ -392,14 +392,14 @@
           "multiple": false,
           "unique": false,
           "refreshOn": "",
+          "dataGridLabel": true,
           "labelPosition": "right",
           "widget": null,
           "validateOn": "change",
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "dataGridLabel": true,
-          "id": "e1mpfpe"
+          "id": "e54dtsg"
         },
         {
           "label": "Columns",
@@ -1313,7 +1313,7 @@
           "inputType": "checkbox",
           "customClass": "",
           "tabindex": "",
-          "hidden": false,
+          "hidden": true,
           "hideLabel": false,
           "autofocus": false,
           "disabled": false,
@@ -1325,7 +1325,7 @@
           "dbIndex": false,
           "encrypted": false,
           "redrawOn": "",
-          "clearOnHide": true,
+          "clearOnHide": false,
           "customDefaultValue": "",
           "calculateValue": "",
           "calculateServer": false,
@@ -1371,14 +1371,14 @@
           "multiple": false,
           "unique": false,
           "refreshOn": "",
+          "dataGridLabel": true,
           "labelPosition": "right",
           "widget": null,
           "validateOn": "change",
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "dataGridLabel": true,
-          "id": "e9b014f"
+          "id": "ejtd92t"
         },
         {
           "label": "Columns",
@@ -2453,5 +2453,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-09-09T22:09:18.431Z"
+  "modified": "2021-09-28T22:06:33.187Z"
 }

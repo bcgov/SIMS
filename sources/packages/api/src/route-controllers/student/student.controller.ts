@@ -19,12 +19,14 @@ import {
   UserService,
   ATBCService,
   ApplicationService,
+  EducationProgramService,
 } from "../../services";
 import {
   CreateStudentDto,
   FileCreateDto,
   GetStudentContactDto,
   UpdateStudentContactDto,
+  StudentEducationProgramDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -38,7 +40,11 @@ import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
 import { Application } from "../../database/entities";
-import { determinePDStatus } from "../../utilities/student-utils";
+import {
+  determinePDStatus,
+  deliveryMethod,
+} from "../../utilities/student-utils";
+import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -55,6 +61,7 @@ export class StudentController extends BaseController {
     private readonly atbcService: ATBCService,
     private readonly fileService: StudentFileService,
     private readonly applicationService: ApplicationService,
+    private readonly programService: EducationProgramService,
   ) {
     super();
   }
@@ -144,6 +151,32 @@ export class StudentController extends BaseController {
       userToken.userName,
       payload,
     );
+  }
+
+  /**
+   * This returns only a part of the EducationProgram details for the student
+   * @param programId
+   * @returns StudentEducationProgramDto
+   */
+  @Get("/education-program/:programId")
+  async getStudentEducationProgram(
+    @Param("programId") programId: number,
+  ): Promise<StudentEducationProgramDto> {
+    const educationProgram =
+      await this.programService.getStudentEducationProgram(programId);
+    return {
+      id: educationProgram.id,
+      name: educationProgram.name,
+      description: educationProgram.description,
+      credentialTypeToDisplay: credentialTypeToDisplay(
+        educationProgram.credentialType,
+        educationProgram.credentialTypeOther,
+      ),
+      deliveryMethod: deliveryMethod(
+        educationProgram.deliveredOnline,
+        educationProgram.deliveredOnSite,
+      ),
+    };
   }
 
   @Post()
