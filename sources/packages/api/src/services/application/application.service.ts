@@ -841,13 +841,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.location.id = :locationId", { locationId })
       .andWhere(
-        new Brackets((whereStatus) =>
-          whereStatus
+        new Brackets((deniedStatus) =>
+          deniedStatus
             .where("application.pirStatus = :pirStatus", {
               pirStatus: ProgramInfoStatus.declined,
             })
             .orWhere("application.coeStatus = :coeStatus", {
-              coeStatus: ProgramInfoStatus.declined,
+              coeStatus: COEStatus.declined,
             }),
         ),
       )
