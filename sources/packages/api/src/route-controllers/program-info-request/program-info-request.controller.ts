@@ -23,8 +23,6 @@ import {
   EducationProgramOfferingService,
   WorkflowActionsService,
   PIR_REQUEST_NOT_FOUND_ERROR,
-  InstitutionService,
-  InstitutionLocationService,
   FormService,
   PIRDeniedReasonService,
 } from "../../services";
@@ -44,8 +42,6 @@ export class ProgramInfoRequestController {
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly institutionService: InstitutionService,
-    private readonly locationService: InstitutionLocationService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
     private readonly workflow: WorkflowActionsService,
     private readonly formService: FormService,
