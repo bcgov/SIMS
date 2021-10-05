@@ -42,7 +42,6 @@ export class ConfirmationOfEnrollmentController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
-    private readonly locationService: InstitutionLocationService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
   ) {}
 
@@ -246,21 +245,15 @@ export class ConfirmationOfEnrollmentController {
     @Body() payload: DenyConfirmationOfEnrollmentDto,
   ): Promise<void> {
     try {
-      await this.applicationService.setDeniedReasonForCOE(
+      const application = await this.applicationService.setDeniedReasonForCOE(
         applicationId,
         locationId,
         payload.coeDenyReasonId,
         payload.otherReasonDesc,
       );
-      const result =
-        await this.applicationService.getWorkflowIdOfDeniedApplication(
-          locationId,
-          applicationId,
-        );
-
-      if (result.assessmentWorkflowId) {
+      if (application.assessmentWorkflowId) {
         await this.workflow.deleteApplicationAssessment(
-          result.assessmentWorkflowId,
+          application.assessmentWorkflowId,
         );
       }
     } catch (error) {

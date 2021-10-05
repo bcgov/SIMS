@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, Connection, In, IsNull, Not, UpdateResult } from "typeorm";
+import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -823,35 +823,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .addOrderBy("application.applicationNumber")
       .getMany();
-  }
-
-  /**
-   * Get assessment workflowId for a particular application.
-   * @param locationId location id executing the call.
-   * @param applicationId application id to be fetched.
-   * @returns assessmentWorkflowId for a particular application.
-   */
-  async getWorkflowIdOfDeniedApplication(
-    locationId: number,
-    applicationId: number,
-  ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select(["application.assessmentWorkflowId"])
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("application.location.id = :locationId", { locationId })
-      .andWhere(
-        new Brackets((deniedStatus) =>
-          deniedStatus
-            .where("application.pirStatus = :pirStatus", {
-              pirStatus: ProgramInfoStatus.declined,
-            })
-            .orWhere("application.coeStatus = :coeStatus", {
-              coeStatus: COEStatus.declined,
-            }),
-        ),
-      )
-      .getOne();
   }
 
   /**

@@ -43,7 +43,6 @@ export class ProgramInfoRequestController {
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
-    private readonly workflow: WorkflowActionsService,
     private readonly formService: FormService,
   ) {}
 
@@ -142,21 +141,16 @@ export class ProgramInfoRequestController {
     @Body() payload: DenyProgramInfoRequestDto,
   ): Promise<void> {
     try {
-      await this.applicationService.setDeniedReasonForProgramInfoRequest(
-        applicationId,
-        locationId,
-        payload.pirDenyReasonId,
-        payload.otherReasonDesc,
-      );
-      const result =
-        await this.applicationService.getWorkflowIdOfDeniedApplication(
-          locationId,
+      const application =
+        await this.applicationService.setDeniedReasonForProgramInfoRequest(
           applicationId,
+          locationId,
+          payload.pirDenyReasonId,
+          payload.otherReasonDesc,
         );
-
-      if (result.assessmentWorkflowId) {
-        await this.workflow.deleteApplicationAssessment(
-          result.assessmentWorkflowId,
+      if (application.assessmentWorkflowId) {
+        await this.workflowService.deleteApplicationAssessment(
+          application.assessmentWorkflowId,
         );
       }
     } catch (error) {
