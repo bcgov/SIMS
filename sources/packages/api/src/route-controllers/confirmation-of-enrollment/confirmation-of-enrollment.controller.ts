@@ -16,7 +16,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   APPLICATION_NOT_FOUND,
   WorkflowActionsService,
-  InstitutionLocationService,
   COEDeniedReasonService,
 } from "../../services";
 import {
