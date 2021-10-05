@@ -47,6 +47,7 @@ export class ProgramInfoRequestController {
     private readonly institutionService: InstitutionService,
     private readonly locationService: InstitutionLocationService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
+    private readonly workflow: WorkflowActionsService,
     private readonly formService: FormService,
   ) {}
 
@@ -151,6 +152,17 @@ export class ProgramInfoRequestController {
         payload.pirDenyReasonId,
         payload.otherReasonDesc,
       );
+      const result =
+        await this.applicationService.getWorkflowIdOfDeniedApplication(
+          locationId,
+          applicationId,
+        );
+
+      if (result.assessmentWorkflowId) {
+        await this.workflow.deleteApplicationAssessment(
+          result.assessmentWorkflowId,
+        );
+      }
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);

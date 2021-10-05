@@ -252,6 +252,17 @@ export class ConfirmationOfEnrollmentController {
         payload.coeDenyReasonId,
         payload.otherReasonDesc,
       );
+      const result =
+        await this.applicationService.getWorkflowIdOfDeniedApplication(
+          locationId,
+          applicationId,
+        );
+
+      if (result.assessmentWorkflowId) {
+        await this.workflow.deleteApplicationAssessment(
+          result.assessmentWorkflowId,
+        );
+      }
     } catch (error) {
       if (error.name === COE_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);
