@@ -23,8 +23,6 @@ import {
   EducationProgramOfferingService,
   WorkflowActionsService,
   PIR_REQUEST_NOT_FOUND_ERROR,
-  InstitutionService,
-  InstitutionLocationService,
   FormService,
   PIRDeniedReasonService,
 } from "../../services";
@@ -44,8 +42,6 @@ export class ProgramInfoRequestController {
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly institutionService: InstitutionService,
-    private readonly locationService: InstitutionLocationService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
     private readonly formService: FormService,
   ) {}
@@ -145,12 +141,18 @@ export class ProgramInfoRequestController {
     @Body() payload: DenyProgramInfoRequestDto,
   ): Promise<void> {
     try {
-      await this.applicationService.setDeniedReasonForProgramInfoRequest(
-        applicationId,
-        locationId,
-        payload.pirDenyReasonId,
-        payload.otherReasonDesc,
-      );
+      const application =
+        await this.applicationService.setDeniedReasonForProgramInfoRequest(
+          applicationId,
+          locationId,
+          payload.pirDenyReasonId,
+          payload.otherReasonDesc,
+        );
+      if (application.assessmentWorkflowId) {
+        await this.workflowService.deleteApplicationAssessment(
+          application.assessmentWorkflowId,
+        );
+      }
     } catch (error) {
       if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);
