@@ -213,6 +213,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.educationProgram", "programs")
       .select("offerings.id")
       .addSelect("offerings.name")
+      .addSelect("offerings.studyStartDate")
+      .addSelect("offerings.studyEndDate")
       .where("offerings.educationProgram.id = :programId", { programId })
       .andWhere("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,

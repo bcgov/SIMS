@@ -31,6 +31,7 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes } from "../../database/entities";
+import { dateString } from "../../utilities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -211,6 +212,15 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<OptionItem[]> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active, not able to create a draft application.",
+      );
+    }
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
@@ -219,7 +229,9 @@ export class EducationProgramOfferingController {
 
     return offerings.map((offering) => ({
       id: offering.id,
-      description: offering.name,
+      description: `${offering.name} (${dateString(
+        offering.studyStartDate,
+      )} - ${dateString(offering.studyEndDate)})`,
     }));
   }
 

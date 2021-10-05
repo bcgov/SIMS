@@ -29,7 +29,7 @@
                 &nbsp;&nbsp;
                 <ProgressSpinner
                   style="width: 30px; height: 25px"
-                  strokeWidth="10" /></span
+                  strokeWidth="10"/></span
             ></v-btn>
           </v-col>
         </v-row>

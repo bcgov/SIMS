@@ -236,10 +236,7 @@ export class EducationProgramController {
   async getLocationProgramsOptionListForInstitution(
     @Param("locationId") locationId: number,
   ): Promise<OptionItem[]> {
-    const programs = await this.programService.getProgramsForLocation(
-      locationId,
-    );
-
+    const programs = await this.programService.getPrograms(locationId);
     return programs.map((program) => ({
       id: program.id,
       description: program.name,

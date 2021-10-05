@@ -228,4 +228,23 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .orderBy("programs.name")
       .getMany();
   }
+
+  /**
+   * Get programs for a particular location.
+   * @param locationId id of the location that should have the
+   * offering associated with.
+   * @returns programs under the specified location.
+   */
+  async getPrograms(locationId: number): Promise<Partial<EducationProgram>[]> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .where("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
+      .select("programs.id")
+      .addSelect("programs.name")
+      .setParameter("locationId", locationId)
+      .orderBy("programs.name")
+      .getMany();
+  }
 }
