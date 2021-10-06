@@ -11,6 +11,10 @@ import {
   RequestStatusCodes,
 } from "../../cra-integration/cra-integration.models";
 
+// Dummy files names for CRA income send/receive simulation process.
+const DUMMY_BYPASS_CRA_SENT_FILE = "DUMMY_BYPASS_CRA_SENT_FILE.txt";
+const DUMMY_BYPASS_CRA_RECEIVED_FILE = "DUMMY_BYPASS_CRA_RECEIVED_FILE.txt";
+
 /**
  * Service layer for CRA income verifications.
  */
@@ -218,11 +222,11 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
       await this.updateSentFile(
         [verificationId],
         now,
-        "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+        DUMMY_BYPASS_CRA_SENT_FILE,
       );
       await this.updateReceivedFile(
         verificationId,
-        "DUMMY_BYPASS_CRA_RECEIVED_FILE.txt",
+        DUMMY_BYPASS_CRA_RECEIVED_FILE,
         now,
         MatchStatusCodes.successfulMatch,
         RequestStatusCodes.successfulRequest,

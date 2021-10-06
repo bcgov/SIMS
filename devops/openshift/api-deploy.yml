@@ -373,4 +373,4 @@ parameters:
   - name: ATBC_APP_NAME_KEY
     value: atbc-app
   - name: BYPASS_CRA_INCOME_VERIFICATION
-    value: false
+    value: "false"
