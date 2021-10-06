@@ -65,7 +65,7 @@ import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
-import "@/assets/css/student.css";
+import "@/assets/css/student.scss";
 import { useFormatters } from "@/composables";
 import {
   ProgramYearOfApplicationDto,
