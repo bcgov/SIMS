@@ -3,6 +3,13 @@ import { Connection, In, IsNull, Repository, UpdateResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Application, CRAIncomeVerification } from "../../database/entities";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
+import { getUTCNow } from "../../utilities";
+import { ConfigService } from "..";
+import {
+  InactiveCodes,
+  MatchStatusCodes,
+  RequestStatusCodes,
+} from "../../cra-integration/cra-integration.models";
 
 /**
  * Service layer for CRA income verifications.
@@ -12,6 +19,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   constructor(
     @Inject("Connection") connection: Connection,
     private readonly workflowService: WorkflowActionsService,
+    private readonly configService: ConfigService,
   ) {
     super(connection.getRepository(CRAIncomeVerification));
   }
@@ -194,5 +202,33 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
     this.workflowService.sendCRAIncomeVerificationCompletedMessage(
       queryResult.workflowId,
     );
+  }
+
+  /**
+   * This method allows the simulation of a complete cycle of the CRA send/response
+   * process that allows the workflow to proceed without the need of the actual
+   * CRA verification happens. This is enabled based in a environment variable,
+   * that is by default disabled and should ne enabled only for DEV purposes on
+   * local developer machine or on an environment where the CRA process is not enabled.
+   * @param verificationId CRA verification id waiting to be processed.
+   */
+  async checkForCRAIncomeVerificationBypass(verificationId: number) {
+    if (this.configService.getConfig().bypassCRAIncomeVerification) {
+      const now = getUTCNow();
+      await this.updateSentFile(
+        [verificationId],
+        now,
+        "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+      );
+      await this.updateReceivedFile(
+        verificationId,
+        "DUMMY_BYPASS_CRA_RECEIVED_FILE.txt",
+        now,
+        MatchStatusCodes.successfulMatch,
+        RequestStatusCodes.successfulRequest,
+        InactiveCodes.inactiveCodeNotSet,
+      );
+      await this.reportIncomeVerificationToWorkflow(verificationId);
+    }
   }
 }

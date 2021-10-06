@@ -73,6 +73,7 @@ jobs:
       FORMS_FLOW_API_URL: "https://dev-aest-ffa-api.apps.silver.devops.gov.bc.ca"
       ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
       ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
+      BYPASS_CRA_INCOME_VERIFICATION: true
     needs:
       - build
     steps:

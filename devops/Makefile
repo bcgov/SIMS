@@ -17,6 +17,7 @@ export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logonte
 export BACKUP_POSTGRESQL_APP_NAME := $(or $(BACKUP_POSTGRESQL_APP_NAME), postgresql-backup)
 export BACKUP_MONGODB_APP_NAME := $(or $(BACKUP_MONGODB_APP_NAME), mongodb-backup)
 export BACKUP_CONFIGMAP_NAME := $(or $(BACKUP_CONFIGMAP_NAME), backup-conf)
+export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
 
 define BUILD_TAG
 "$(BUILD_REF)-$(BUILD_ID)"
@@ -189,10 +190,10 @@ oc-deploy-forms-flow-ai: | print-status deploy-forms-flow-forms deploy-forms-flo
 # Create/delete config map shared accross postgresql and mongodb.
 oc-db-backup-configmap-init: | print-status db-backup-configmap
 oc-db-backup-configmap-delete: | print-status db-backup-configmap-delete
-# Create/delete structire for postgresql.
+# Create/delete structure for postgresql.
 oc-db-backup-init-postgresql: | print-status db-backup-build-postgresql db-backup-deploy-postgresql
 oc-db-backup-delete-postgresql: | print-status db-backup-build-delete-postgresql db-backup-deploy-delete-postgresql
-# Create/delete structire for mongodb.
+# Create/delete structure for mongodb.
 oc-db-backup-init-mongodb: | print-status db-backup-build-mongodb db-backup-deploy-mongodb
 oc-db-backup-delete-mongodb: | print-status db-backup-build-delete-mongodb db-backup-deploy-delete-mongodb
 
@@ -342,6 +343,7 @@ deploy-api:
 		-p FORMS_FLOW_API_URL=$(FORMS_FLOW_API_URL) \
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
+		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(API))
 
