@@ -320,6 +320,11 @@ export class ApplicationSystemController {
         payload.taxYear,
         payload.reportedIncome,
       );
+
+    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+      incomeVerification.id,
+    );
+
     return incomeVerification.id;
   }
 

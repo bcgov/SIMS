@@ -189,6 +189,8 @@ objects:
                     secretKeyRef:
                       key: ${ATBC_APP_NAME_KEY}
                       name: ${API_SECRET_NAME}
+                - name: BYPASS_CRA_INCOME_VERIFICATION
+                  value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -370,3 +372,5 @@ parameters:
     value: atbc-password
   - name: ATBC_APP_NAME_KEY
     value: atbc-app
+  - name: BYPASS_CRA_INCOME_VERIFICATION
+    value: "false"
