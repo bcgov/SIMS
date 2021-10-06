@@ -6,7 +6,7 @@ export interface IConfig {
   workflow: WorkflowConfig;
   forms: FormsConfig;
   formFlowApiUrl: string;
-  zoneBsFTP: SFTPConfig;
+  zoneBSFTP: SFTPConfig;
   CRAIntegration: CRAIntegrationConfig;
   simsApiClientCredential: ClientCredential;
   ATBCIntegration: ATBCIntegrationConfig;
