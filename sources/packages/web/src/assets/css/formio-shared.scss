@@ -7,12 +7,15 @@ $formio-content-color: #333a47;
 $panel-warning-color: #f3b229;
 $panel-error-color: #dc2525;
 
-/** SCSS Font variables **/
+/** SCSS Font Size variables **/
 $font-header-big: 27px;
 $font-header-medium: 20px;
 $font-header-small: 17px;
 $formio-content: 16px;
 $formio-content-lh: 24px;
+$formio-header-lh-lg: 34px;
+$formio-header-lh-md: 27px;
+$formio-header-lh-sm: 18px;
 
 .primary-color {
   color: $primary-header-color;
@@ -85,41 +88,39 @@ $formio-content-lh: 24px;
   padding-left: 20px;
 }
 
-.formio-component-content h2 strong {
+.formio-component-content h2 strong,
+.formio-component-htmlelement h2 {
   font-style: normal;
   font-weight: 700;
   font-size: $font-header-big;
-  line-height: 34px;
+  line-height: $formio-header-lh-lg;
 }
 
-.formio-component-content h3 strong {
+.formio-component-content h3 strong,
+.formio-component-htmlelement h3 {
   font-style: normal;
   font-weight: 700;
   font-size: $font-header-medium;
-  line-height: 27px;
+  line-height: $formio-header-lh-md;
 }
 
-.formio-component-content h4 strong {
+.formio-component-content h4 strong,
+.formio-component-htmlelement h4 {
   font-style: normal;
   font-weight: 700;
   font-size: $font-header-small;
-  line-height: 18px;
+  line-height: $formio-header-lh-sm;
 }
 
+.formio-component-htmlelement p,
+.formio-component-htmlelement ul li,
+.formio-component label,
 .formio-component-content p {
-  color: $formio-content-color;
-}
-
-.formio-component label {
   color: $formio-content-color;
   line-height: $formio-content-lh;
 }
 
-.formio-component-htmlelement p {
-  color: $formio-content-color;
-}
-
-.primary-color p {
+.formio-component .primary-color p {
   color: $fromio-header-color;
 }
 
