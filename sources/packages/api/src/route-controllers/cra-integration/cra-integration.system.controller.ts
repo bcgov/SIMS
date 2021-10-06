@@ -47,7 +47,7 @@ export class CRAIntegrationController {
   }
 
   /**
-   * Download all files from CRA Response folder on sFTP and process them all.
+   * Download all files from CRA Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-responses")

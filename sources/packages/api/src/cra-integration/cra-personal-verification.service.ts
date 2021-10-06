@@ -206,7 +206,7 @@ export class CRAPersonalVerificationService {
   }
 
   /**
-   * Download all files from CRA Response folder on sFTP and process them all.
+   * Download all files from CRA Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
@@ -219,7 +219,7 @@ export class CRAPersonalVerificationService {
   }
 
   /**
-   * Process each individual CRA response file from the sFTP.
+   * Process each individual CRA response file from the SFTP.
    * @param filePath CRA response file to be processed.
    * @returns Process summary and errors summary.
    */

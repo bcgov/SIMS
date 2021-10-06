@@ -109,7 +109,7 @@ export interface CRAUploadResult {
 
 /**
  * Represents the parsed content of a file
- * downloaded from the CRA sFTP response folder.
+ * downloaded from the CRA SFTP response folder.
  */
 export interface CRAsFtpResponseFile {
   /**
@@ -117,7 +117,7 @@ export interface CRAsFtpResponseFile {
    */
   fileName: string;
   /**
-   * Full file path of the file on the sFTP.
+   * Full file path of the file on the SFTP.
    */
   filePath: string;
   /**
@@ -132,7 +132,7 @@ export interface CRAsFtpResponseFile {
 
 /**
  * Represents the output of the processing of
- * one CRA response file from the. sFTP
+ * one CRA response file from the. SFTP
  */
 export class ProcessSftpResponseResult {
   /**

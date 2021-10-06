@@ -33,7 +33,7 @@ export class CRAIntegrationService {
 
   constructor(config: ConfigService, private readonly sshService: SshService) {
     this.craConfig = config.getConfig().CRAIntegration;
-    this.ftpConfig = config.getConfig().zoneBsFTP;
+    this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
   /**
@@ -147,7 +147,7 @@ export class CRAIntegrationService {
     const craFileContent = fixedFormattedLines.join("\r\n");
 
     // Send the file to ftp.
-    this.logger.log("Creating new sFTP client to start upload...");
+    this.logger.log("Creating new SFTP client to start upload...");
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
@@ -157,9 +157,9 @@ export class CRAIntegrationService {
         uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
       };
     } finally {
-      this.logger.log("Finalizing sFTP client...");
+      this.logger.log("Finalizing SFTP client...");
       await SshService.closeQuietly(client);
-      this.logger.log("sFTP client finalized.");
+      this.logger.log("SFTP client finalized.");
     }
   }
 
@@ -183,8 +183,8 @@ export class CRAIntegrationService {
 
   /**
    * Get the list of all response files waiting to be downloaded from the
-   * sFTP filtering by the the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
-   * @returns full file paths for all response files present on sFTP.
+   * SFTP filtering by the the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
+   * @returns full file paths for all response files present on SFTP.
    */
   async getResponseFilesFullPath(): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
@@ -203,7 +203,7 @@ export class CRAIntegrationService {
 
   /**
    * Downloads the file specified on 'fileName' parameter from the
-   * CRA response folder on the sFTP.
+   * CRA response folder on the SFTP.
    * @param fileName File to be downloaded.
    * @returns Parsed records from the file.
    */
@@ -262,7 +262,7 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Delete a file from sFTP.
+   * Delete a file from SFTP.
    * @param filePath Full path of the file to be deleted.
    */
   async deleteFile(filePath: string): Promise<void> {
@@ -275,7 +275,7 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Generates a new connected sFTP client ready to be used.
+   * Generates a new connected SFTP client ready to be used.
    * @returns client
    */
   private async getClient(): Promise<Client> {

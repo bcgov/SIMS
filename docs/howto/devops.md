@@ -124,7 +124,7 @@ We have created a setup of make helper commands, Now we can perform following st
 
 - Setup API prerequisites (e.g. secrets): `make init-api`
 
-- Setup Zone B sFTP secrets: `make init-zone-b-sftp-secret`
+- Setup Zone B SFTP secrets: `make init-zone-b-sftp-secret`
 
 - Build API: `make oc-build-api`
 
