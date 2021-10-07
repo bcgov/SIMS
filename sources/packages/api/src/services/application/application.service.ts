@@ -435,6 +435,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * get draft student applications.
+   * @param studentId student id .
+   * @returns student Application which is in draft.
+   */
+  async getDraftStudentApplication(studentId: number): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select(["application.id"])
+      .where("application.student_id = :studentId", { studentId })
+      .andWhere("application.applicationStatus = :draftStatus", {
+        draftStatus: ApplicationStatus.draft,
+      })
+      .getOne();
+  }
+
+  /**
    * Gets a application with the data needed to process
    * the operations related to save/submitting an
    * Student Application.

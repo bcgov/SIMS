@@ -8,6 +8,7 @@ import SelectProgram from "../views/student/financial-aid-application/SelectProg
 import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
 import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "../views/student/financial-aid-application/FullTimeApplication.vue";
+import StudentApplication from "../views/student/financial-aid-application/StudentApplication.vue";
 import Assessment from "../views/student/NoticeOfAssessment.vue";
 import StudentProfile from "../views/student/StudentProfile.vue";
 import Notifications from "../views/student/Notifications.vue";
@@ -60,6 +61,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "student-profile/edit",
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
         component: StudentProfile,
+        meta: {
+          clientType: ClientIdType.STUDENT,
+        },
+      },
+      {
+        path: AppRoutes.StartStudentApplication,
+        name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
+        component: StudentApplication,
+        props: true,
         meta: {
           clientType: ClientIdType.STUDENT,
         },
@@ -197,7 +207,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });

@@ -15,6 +15,7 @@ export const StudentRoutesConst = {
   FINANCIAL_INFO: Symbol(),
   CONFIRM_SUBMISSION: Symbol(),
   DYNAMIC_FINANCIAL_APP_FORM: Symbol(),
+  STUDENT_APPLICATION_FORM: Symbol(),
   DYNAMIC_FINANCIAL_APP_FORM_VIEW: Symbol(),
   NOTIFICATIONS: Symbol(),
   NOTIFICATIONS_SETTINGS: Symbol(),

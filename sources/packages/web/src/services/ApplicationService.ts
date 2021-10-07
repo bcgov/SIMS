@@ -39,6 +39,10 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationData(applicationId);
   }
 
+  public async hasDraftApplication(): Promise<boolean> {
+    return ApiClient.Application.hasDraftApplication();
+  }
+
   public async createApplicationDraft(
     payload: SaveStudentApplicationDto,
   ): Promise<CreateApplicationDraftResult> {
