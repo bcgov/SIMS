@@ -209,13 +209,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    */
   async getProgramsForLocation(
     locationId: number,
+    startDate: Date,
+    endDate: Date,
   ): Promise<Partial<EducationProgram>[]> {
     const offeringExistsQuery = this.offeringsRepo
       .createQueryBuilder("offerings")
       .where("offerings.educationProgram.id = programs.id")
       .andWhere("offerings.institutionLocation.id = :locationId")
+      .andWhere("offerings.studyStartDate BETWEEN :startDate AND :endDate")
       .select("1");
-
     return this.repo
       .createQueryBuilder("programs")
       .where("programs.approvalStatus = :approvalStatus", {
@@ -224,7 +226,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")
-      .setParameter("locationId", locationId)
+      .setParameters({ locationId, startDate, endDate })
       .orderBy("programs.name")
       .getMany();
   }

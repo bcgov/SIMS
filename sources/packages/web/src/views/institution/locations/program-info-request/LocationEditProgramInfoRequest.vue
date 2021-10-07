@@ -49,6 +49,7 @@ export default {
     const initialData = ref({});
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
+    const programRequestData = ref();
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -67,29 +68,36 @@ export default {
           programId,
           props.locationId,
           OFFERINGS_DROPDOWN_KEY,
+          programRequestData.value.programYearId,
         );
       }
       formioUtils.redrawComponent(form, OFFERINGS_DROPDOWN_KEY);
     };
 
     const formLoaded = async (form: any) => {
-      const programRequestData = await ProgramInfoRequestService.shared.getProgramInfoRequest(
+      programRequestData.value = await ProgramInfoRequestService.shared.getProgramInfoRequest(
         props.locationId,
         props.applicationId,
       );
 
       initialData.value = {
-        ...programRequestData,
+        ...programRequestData.value,
         studentStudyStartDate: dateString(
-          programRequestData.studentStudyStartDate,
+          programRequestData.value.studentStudyStartDate,
         ),
-        studentStudyEndDate: dateString(programRequestData.studentStudyEndDate),
+        studentStudyEndDate: dateString(
+          programRequestData.value.studentStudyEndDate,
+        ),
       };
 
       // While loading a PIR that is in the some readonly status
       // the editable area of the form should be disabled.
       const readonlyStatus = ["submitted", "completed", "declined"];
-      if (readonlyStatus.includes(programRequestData.pirStatus.toLowerCase())) {
+      if (
+        readonlyStatus.includes(
+          programRequestData.value.pirStatus.toLowerCase(),
+        )
+      ) {
         const institutionEnteredDetails = formioUtils.getComponent(
           form,
           INSTITUTION_DETAILS_PANEL,

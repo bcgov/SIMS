@@ -86,7 +86,6 @@ export class ProgramInfoRequestController {
         "Program Information Request (PIR) not found.",
       );
     }
-
     const result = {} as GetProgramInfoRequestDto;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
@@ -105,6 +104,7 @@ export class ProgramInfoRequestController {
       application.data.programDescription;
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
+    result.programYearId = application.programYear.id;
 
     if (application.offering) {
       result.name = application.offering.name;

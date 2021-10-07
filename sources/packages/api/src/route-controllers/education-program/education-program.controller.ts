@@ -19,7 +19,7 @@ import { EducationProgramDto } from "./models/save-education-program.dto";
 import {
   EducationProgramService,
   FormService,
-  InstitutionLocationService,
+  ProgramYearService,
 } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
@@ -35,7 +35,7 @@ export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
-    private readonly locationService: InstitutionLocationService,
+    private readonly programYearService: ProgramYearService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -208,12 +208,23 @@ export class EducationProgramController {
    * @returns key/value pair list of programs.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/options-list")
+  @Get("location/:locationId/program-year/:programYearId/options-list")
   async getLocationProgramsOptionList(
     @Param("locationId") locationId: number,
+    @Param("programYearId") programYearId: number,
   ): Promise<OptionItem[]> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      programYearId,
+    );
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active, not able to create a draft application.",
+      );
+    }
     const programs = await this.programService.getProgramsForLocation(
       locationId,
+      programYear.startDate,
+      programYear.endDate,
     );
 
     return programs.map((program) => ({

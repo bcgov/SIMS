@@ -25,12 +25,12 @@ import { FormNames } from "../../services/form/constants";
 import {
   EducationProgramOfferingService,
   FormService,
-  InstitutionLocationService,
+  ProgramYearService,
   EducationProgramService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { OfferingTypes } from "../../database/entities";
+import { OfferingTypes, OfferingIntensity } from "../../database/entities";
 import { dateString } from "../../utilities";
 
 @Controller("institution/offering")
@@ -38,8 +38,8 @@ export class EducationProgramOfferingController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
-    private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
+    private readonly programYearService: ProgramYearService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -207,15 +207,18 @@ export class EducationProgramOfferingController {
    * @returns key/value pair list of programs for students.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/education-program/:programId/options-list")
+  @Get(
+    "location/:locationId/education-program/:programId/program-year/:programYearId/program-intensity/:selectedIntensity/options-list",
+  )
   async getProgramOfferingsByLocation(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
+    @Param("programYearId") programYearId: number,
+    @Param("selectedIntensity") selectedIntensity: OfferingIntensity,
   ): Promise<OptionItem[]> {
     const programYear = await this.programYearService.getActiveProgramYear(
-      payload.programYearId,
+      programYearId,
     );
-
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active, not able to create a draft application.",
@@ -225,6 +228,9 @@ export class EducationProgramOfferingController {
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
+        programYear.startDate,
+        programYear.endDate,
+        selectedIntensity,
       );
 
     return offerings.map((offering) => ({
@@ -246,20 +252,35 @@ export class EducationProgramOfferingController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
-  @Get("location/:locationId/education-program/:programId/offerings-list")
+  @Get(
+    "location/:locationId/education-program/:programId/program-year/:programYearId/offerings-list",
+  )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
+    @Param("programYearId") programYearId: number,
   ): Promise<OptionItem[]> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      programYearId,
+    );
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active, not able to create a draft application.",
+      );
+    }
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
+        programYear.startDate,
+        programYear.endDate,
       );
 
     return offerings.map((offering) => ({
       id: offering.id,
-      description: offering.name,
+      description: `${offering.name} (${dateString(
+        offering.studyStartDate,
+      )} - ${dateString(offering.studyEndDate)})`,
     }));
   }
 

@@ -48,8 +48,9 @@ export class EducationProgramService {
    */
   public async getLocationProgramsOptionList(
     locationId: number,
+    programYearId: number
   ): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgram.getLocationProgramsOptionList(locationId);
+    return ApiClient.EducationProgram.getLocationProgramsOptionList(locationId, programYearId);
   }
 
   /**

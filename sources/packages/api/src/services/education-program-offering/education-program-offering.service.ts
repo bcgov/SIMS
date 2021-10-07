@@ -4,6 +4,7 @@ import {
   EducationProgram,
   InstitutionLocation,
   OfferingTypes,
+  OfferingIntensity,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -207,8 +208,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
+    startDate: Date,
+    endDate: Date,
+    selectedIntensity?: OfferingIntensity,
   ): Promise<Partial<EducationProgramOffering>[]> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("offerings")
       .innerJoin("offerings.educationProgram", "programs")
       .select("offerings.id")
@@ -225,8 +229,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere("offerings.offeringType = :offeringType", {
         offeringType: OfferingTypes.public,
       })
-      .orderBy("offerings.name")
-      .getMany();
+      .andWhere("offerings.studyStartDate BETWEEN :startDate AND :endDate", {
+        startDate,
+        endDate,
+      });
+    if (selectedIntensity) {
+      query.andWhere("offerings.offeringIntensity = :selectedIntensity", {
+        selectedIntensity,
+      });
+    }
+    return query.orderBy("offerings.name").getMany();
   }
 
   /**

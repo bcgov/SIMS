@@ -101,10 +101,11 @@ export class EducationProgramApi extends HttpBaseClient {
    */
   public async getLocationProgramsOptionList(
     locationId: number,
+    programYearId: number,
   ): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/education-program/location/${locationId}/options-list`,
+        `institution/education-program/location/${locationId}/program-year/${programYearId}/options-list`,
         this.addAuthHeader(),
       );
       return response.data;

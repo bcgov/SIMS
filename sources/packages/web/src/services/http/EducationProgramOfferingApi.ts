@@ -1,9 +1,11 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
+  EducationProgramOfferingDto,
+  OptionItemDto,
+  OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
-} from "../../types/contracts/OfferingContact";
-import { EducationProgramOfferingDto, OptionItemDto } from "../../types";
+} from "../../types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
@@ -91,10 +93,12 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   public async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
+    programYearId: number,
+    selectedIntensity: OfferingIntensity,
   ): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}/options-list`,
+        `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/program-intensity/${selectedIntensity}/options-list`,
         this.addAuthHeader(),
       );
       return response.data;
@@ -135,10 +139,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   public async getProgramOfferingsForLocationForInstitution(
     locationId: number,
     programId: number,
+    programYearId: number,
   ): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}/offerings-list`,
+        `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list`,
         this.addAuthHeader(),
       );
       return response.data;

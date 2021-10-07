@@ -282,12 +282,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")
-      .leftJoinAndSelect("application.pirProgram", "pirProgram")
-      .leftJoinAndSelect("application.student", "student")
-      .leftJoinAndSelect("application.location", "location")
-      .leftJoinAndSelect("application.offering", "offering")
-      .leftJoinAndSelect("offering.educationProgram", "offeringProgram")
-      .leftJoinAndSelect("student.user", "user")
+      .select([
+        "application.applicationNumber",
+        "programYear",
+        "location.name",
+        "student",
+        "user.firstName",
+        "user.lastName",
+        "pirProgram.name",
+        "pirProgram.id",
+        "offering.id",
+        "application.pirStatus",
+        "offering",
+        "educationProgram.id",
+        "application.data",
+        "programYear.id",
+      ])
+      .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.pirProgram", "pirProgram")
+      .leftJoin("application.student", "student")
+      .leftJoin("application.location", "location")
+      .leftJoin("application.offering", "offering")
+      .leftJoin("offering.educationProgram", "educationProgram")
+      .leftJoin("student.user", "user")
       .where("application.id = :applicationId", {
         applicationId,
       })
