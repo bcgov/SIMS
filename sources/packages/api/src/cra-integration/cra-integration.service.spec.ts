@@ -16,7 +16,7 @@ describe("CRAIntegrationService", () => {
   const programAreaCode = "ABCD";
   jest.spyOn(configServiceMock, "getConfig").mockImplementation(() => {
     const config = {} as IConfig;
-    config.zoneBsFTP = {
+    config.zoneBSFTP = {
       host: "HOST",
       port: 22,
       username: "FTP_USER_NAME",

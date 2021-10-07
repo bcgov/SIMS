@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { IConfig } from "src/types/config";
+import { IConfig } from "../../types/config";
 
 @Injectable()
 export class ConfigService {
   getConfig(): IConfig {
     return {
+      bypassCRAIncomeVerification:
+        process.env.BYPASS_CRA_INCOME_VERIFICATION === "true",
       auth: {
         url: process.env.KEYCLOAK_AUTH_URL,
         realm: process.env.KEYCLOAK_REALM,
@@ -44,7 +46,7 @@ export class ConfigService {
         clientId: process.env.SIMS_API_CLIENT_ID,
         clientSecret: process.env.SIMS_API_CLIENT_SECRET,
       },
-      zoneBsFTP: {
+      zoneBSFTP: {
         host: process.env.ZONE_B_SFTP_SERVER,
         port: parseInt(process.env.ZONE_B_SFTP_SERVER_PORT),
         username: process.env.ZONE_B_SFTP_USER_NAME,
