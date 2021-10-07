@@ -84,8 +84,9 @@ export class ApplicationSystemController {
         offeringIntensity: application.offering?.offeringIntensity,
       },
       program: {
-        programCredentialType: application.pirProgram?.credentialType,
-        programLength: application.pirProgram?.completionYears,
+        programCredentialType:
+          application.offering?.educationProgram?.credentialType,
+        programLength: application.offering?.educationProgram?.completionYears,
       },
       institution: {
         institutionType:
