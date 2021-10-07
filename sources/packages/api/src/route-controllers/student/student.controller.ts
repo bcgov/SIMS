@@ -377,26 +377,4 @@ export class StudentController extends BaseController {
       };
     }) as StudentApplicationDTO[];
   }
-
-  @Get("hasDraftApplication")
-  async getStudentDraftApplication(
-    @UserToken() userToken: IUserToken,
-  ): Promise<boolean> {
-    const existingStudent = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    if (!existingStudent) {
-      throw new NotFoundException(
-        `No student was found with the student id ${userToken.userId}`,
-      );
-    }
-    const application =
-      await this.applicationService.getDraftStudentApplication(
-        existingStudent.id,
-      );
-    if (application) {
-      return true;
-    }
-    return false;
-  }
 }

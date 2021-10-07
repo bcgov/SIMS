@@ -20,19 +20,6 @@ export class ApplicationApi extends HttpBaseClient {
     }
   }
 
-  public async hasDraftApplication(): Promise<boolean> {
-    try {
-      const response = await this.apiClient.get(
-        `students/hasDraftApplication`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
   /**
    * Retrieve the Notice of Assessment (NOA) for a particular application.
    */
