@@ -357,8 +357,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.startDate",
         "programYear.endDate",
         "offering",
-        "pirProgram.credentialType",
-        "pirProgram.completionYears",
+        "offering.educationProgram",
+        "educationProgram.credentialType",
+        "educationProgram.completionYears",
         "location.data",
         "institution",
         "institutionType",
@@ -366,7 +367,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.offering", "offering")
-      .leftJoin("application.pirProgram", "pirProgram")
+      .leftJoin("offering.educationProgram", "educationProgram")
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
