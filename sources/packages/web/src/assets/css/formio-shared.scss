@@ -1,0 +1,216 @@
+/** SCSS Color variables **/
+$primary-header-color: #0053a4;
+$secondary-header-color: #485363;
+$secondary-header-color-lt: #0053a4;
+$fromio-header-color: #2965c5;
+$formio-content-color: #333a47;
+$panel-warning-color: #f3b229;
+$panel-error-color: #dc2525;
+
+/** SCSS Font Size variables **/
+$font-header-big: 27px;
+$font-header-medium: 20px;
+$font-header-small: 17px;
+$formio-header-lh-lg: 34px;
+$formio-header-lh-md: 27px;
+$formio-header-lh-sm: 22px;
+$formio-content: 16px;
+$formio-content-lh: 24px;
+$formio-header-margin: 0.5rem;
+$formio-header-wt: 700;
+
+/** SCSS Banner size variables **/
+$background-alert: rgba(217, 37, 48, 0.05);
+$background-warning: rgba(243, 178, 41, 0.1);
+$background-info: rgba(101, 84, 192, 0.1);
+$border-color-alert: #d92530;
+$border-color-warning: #f3b229;
+$border-color-info: #6554c0;
+
+.primary-color {
+  color: $primary-header-color;
+}
+
+.secondary-color {
+  color: $secondary-header-color;
+}
+
+.secondary-color-light {
+  color: $secondary-header-color-lt;
+}
+
+.category-header-small {
+  height: 18px;
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.category-header-medium {
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: 20px;
+  line-height: 27px;
+}
+
+.category-header-large {
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: 27px;
+  line-height: 34px;
+}
+
+.label-medium {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.label-small {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.ff-form-container .alert-success {
+  display: none;
+}
+
+.btn-formio-primary-outlined {
+  background: #ffffff;
+  color: #2965c5;
+}
+
+.panel-error .card-body {
+  border: 2px solid $panel-error-color;
+}
+
+.panel-warning .card-body {
+  border: 2px solid $panel-warning-color;
+}
+
+.align-bullets ul {
+  padding-left: 20px;
+}
+
+/**Todo: formio-component-content stlyes must be removed once content component is
+ removed from all the forms  **/
+
+.formio-component-content h2 strong {
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-big;
+  line-height: $formio-header-lh-lg;
+}
+
+.formio-component-content h3 strong {
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-medium;
+  line-height: $formio-header-lh-md;
+}
+
+.formio-component-content h4 strong {
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-small;
+  line-height: $formio-header-lh-sm;
+}
+
+.formio-component-htmlelement p,
+.formio-component-htmlelement div,
+.formio-component-htmlelement ul li,
+.formio-component label,
+.formio-component-content p {
+  line-height: $formio-content-lh;
+}
+.formio-component,
+.banner-alert strong,
+.banner-info strong,
+.banner-warning strong {
+  color: $formio-content-color;
+}
+
+.formio-component .primary-color p {
+  color: $fromio-header-color;
+}
+
+.formio-component .fa {
+  font-family: "FontAwesome", "BCSans", sans-serif;
+  font-size: $formio-content;
+  line-height: $formio-content-lh;
+  font-weight: 400;
+}
+
+.formio-component-htmlelement.header-lg p,
+.formio-component-htmlelement.header-lg div {
+  line-height: $formio-header-lh-lg;
+  margin-bottom: $formio-header-margin;
+}
+
+.formio-component-htmlelement.header-md p,
+.formio-component-htmlelement.header-md div {
+  line-height: $formio-header-lh-md;
+  margin-bottom: $formio-header-margin;
+}
+
+.formio-component-htmlelement.header-sm p,
+.formio-component-htmlelement.header-sm div {
+  line-height: $formio-header-lh-sm;
+  margin-bottom: $formio-header-margin;
+}
+
+.header-lg {
+  color: $fromio-header-color;
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-big;
+  line-height: $formio-header-lh-lg;
+  margin-bottom: $formio-header-margin;
+}
+
+.header-md {
+  color: $fromio-header-color;
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-medium;
+  line-height: $formio-header-lh-md;
+  margin-bottom: $formio-header-margin;
+}
+
+.header-sm {
+  color: $fromio-header-color;
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-small;
+  line-height: $formio-header-lh-sm;
+  margin-bottom: $formio-header-margin;
+}
+
+.banner-alert p,
+.banner-alert div {
+  background: $background-alert;
+  border: 2px solid $border-color-alert;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+.banner-warning p,
+.banner-warning div {
+  background: $background-warning;
+  border: 2px solid $border-color-warning;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.banner-info p,
+.banner-info div {
+  background: $background-info;
+  border: 2px solid $border-color-info;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
