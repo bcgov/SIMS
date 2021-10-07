@@ -18,8 +18,8 @@ export class CRAIntegrationController {
    * to be processed by CRA.
    * @returns Processing result log.
    */
-  @Post("sin-validation")
-  async createSinValidation(): Promise<CRAValidationResultDto> {
+  @Post("process-sin-validation")
+  async processSinValidation(): Promise<CRAValidationResultDto> {
     this.logger.log("Executing SIN validation...");
     const uploadResult = await this.cra.createSinValidationRequest();
     this.logger.log("SIN validation executed.");
@@ -35,8 +35,8 @@ export class CRAIntegrationController {
    * processed by CRA.
    * @returns Processing result log.
    */
-  @Post("income-verification")
-  async createIncomeVerification(): Promise<CRAValidationResultDto> {
+  @Post("process-income-verification")
+  async processIncomeVerification(): Promise<CRAValidationResultDto> {
     this.logger.log("Executing income validation...");
     const uploadResult = await this.cra.createIncomeVerificationRequest();
     this.logger.log("Income validation executed.");
@@ -47,7 +47,7 @@ export class CRAIntegrationController {
   }
 
   /**
-   * Download all files from CRA Response folder on sFTP and process them all.
+   * Download all files from CRA Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   @Post("process-responses")

@@ -16,7 +16,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   APPLICATION_NOT_FOUND,
   WorkflowActionsService,
-  InstitutionLocationService,
   COEDeniedReasonService,
 } from "../../services";
 import {
@@ -42,7 +41,6 @@ export class ConfirmationOfEnrollmentController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
-    private readonly locationService: InstitutionLocationService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
   ) {}
 
@@ -246,12 +244,17 @@ export class ConfirmationOfEnrollmentController {
     @Body() payload: DenyConfirmationOfEnrollmentDto,
   ): Promise<void> {
     try {
-      await this.applicationService.setDeniedReasonForCOE(
+      const application = await this.applicationService.setDeniedReasonForCOE(
         applicationId,
         locationId,
         payload.coeDenyReasonId,
         payload.otherReasonDesc,
       );
+      if (application.assessmentWorkflowId) {
+        await this.workflow.deleteApplicationAssessment(
+          application.assessmentWorkflowId,
+        );
+      }
     } catch (error) {
       if (error.name === COE_REQUEST_NOT_FOUND_ERROR) {
         throw new UnprocessableEntityException(error.message);

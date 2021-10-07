@@ -189,6 +189,8 @@ objects:
                     secretKeyRef:
                       key: ${ATBC_APP_NAME_KEY}
                       name: ${API_SECRET_NAME}
+                - name: BYPASS_CRA_INCOME_VERIFICATION
+                  value: ${BYPASS_CRA_INCOME_VERIFICATION}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -359,7 +361,7 @@ parameters:
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
-    value: ".pdf,.doc,.docx,.jpg,.png"
+    value: ".pdf,.doc,.docx,.jpg,.png,.txt"
   - name: ATBC_LOGIN_ENDPOINT
     require: true
   - name: ATBC_ENDPOINT
@@ -370,3 +372,5 @@ parameters:
     value: atbc-password
   - name: ATBC_APP_NAME_KEY
     value: atbc-app
+  - name: BYPASS_CRA_INCOME_VERIFICATION
+    value: "false"

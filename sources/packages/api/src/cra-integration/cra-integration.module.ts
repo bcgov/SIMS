@@ -15,6 +15,7 @@ import {
   TokensService,
   WorkflowActionsService,
   WorkflowService,
+  CRAIncomeVerificationService,
 } from "../services";
 
 @Module({
@@ -34,7 +35,12 @@ import {
     MSFAANumberService,
     TokensService,
     KeycloakService,
+    CRAIncomeVerificationService,
   ],
-  exports: [CRAPersonalVerificationService, CRAIntegrationService],
+  exports: [
+    CRAPersonalVerificationService,
+    CRAIntegrationService,
+    CRAIncomeVerificationService,
+  ],
 })
 export class CraIntegrationModule {}

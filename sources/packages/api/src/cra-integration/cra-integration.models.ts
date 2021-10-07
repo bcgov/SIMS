@@ -1,5 +1,5 @@
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
-import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
+import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
@@ -44,10 +44,10 @@ export enum TransactionSubCodes {
   ResponseStatusRecord = "0022",
   /**
    * This record will be part of the response and
-   * contains information about a T4 earnings filed
+   * contains information about the total income
    * on CRA for a particular year.
    */
-  T4Earnings = "0101",
+  TotalIncome = "0150",
 }
 
 /**
@@ -77,6 +77,16 @@ export enum MatchStatusCodes {
 }
 
 /**
+ * Inactive codes (INACTIVE-CRA-INDIVIDUAL-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ * Examples of inactive could be the taxpayer is deceased or emigrant.
+ */
+export enum InactiveCodes {
+  inactiveCodeNotSet = "00",
+  inactiveCodeSet = "01",
+}
+
+/**
  * Required personal information to a
  * CRA verification be processed.
  */
@@ -99,11 +109,15 @@ export interface CRAUploadResult {
 
 /**
  * Represents the parsed content of a file
- * downloaded from the CRA sFTP response folder.
+ * downloaded from the CRA SFTP response folder.
  */
 export interface CRAsFtpResponseFile {
   /**
-   * Full file path of the file on the sFTP.
+   * File name. Useful for log.
+   */
+  fileName: string;
+  /**
+   * Full file path of the file on the SFTP.
    */
   filePath: string;
   /**
@@ -111,14 +125,14 @@ export interface CRAsFtpResponseFile {
    */
   statusRecords: CRAResponseStatusRecord[];
   /**
-   * T4 earning records present on the file.
+   * Total income records present on the file.
    */
-  t4EarningsRecords: CRAResponseT4EarningsRecord[];
+  totalIncomeRecords: CRAResponseTotalIncomeRecord[];
 }
 
 /**
  * Represents the output of the processing of
- * one CRA response file from the. sFTP
+ * one CRA response file from the. SFTP
  */
 export class ProcessSftpResponseResult {
   /**

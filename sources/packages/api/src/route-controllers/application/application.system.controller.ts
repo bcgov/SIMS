@@ -5,15 +5,20 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  CRAIncomeVerificationService,
   EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../../services";
-import { ApplicationDataDto } from "./models/application.model";
+import {
+  ApplicationDataDto,
+  CreateIncomeVerificationDto,
+} from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -23,6 +28,7 @@ import {
   UpdateCOEStatusDto,
   UpdateApplicationStatusDto,
   UpdateApplicationStatusWorkflowIdDto,
+  StudentIncomeDetails,
 } from "./models/application.system.model";
 
 /**
@@ -37,6 +43,7 @@ export class ApplicationSystemController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly incomeVerificationService: CRAIncomeVerificationService,
   ) {}
 
   @Get(":id")
@@ -294,5 +301,55 @@ export class ApplicationSystemController {
           throw error;
       }
     }
+  }
+
+  /**
+   * Creates a CRA Income Verification record that will be waiting
+   * to be send to CRA and receive a response.
+   * @param payload information needed to create the CRA Income Verification record.
+   * @returns the id of the new CRA Verification record created.
+   */
+  @Post(":applicationId/income-verification")
+  async createIncomeVerification(
+    @Param("applicationId") applicationId: number,
+    @Body() payload: CreateIncomeVerificationDto,
+  ): Promise<number> {
+    const incomeVerification =
+      await this.incomeVerificationService.createIncomeVerification(
+        applicationId,
+        payload.taxYear,
+        payload.reportedIncome,
+      );
+
+    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+      incomeVerification.id,
+    );
+
+    return incomeVerification.id;
+  }
+
+  /**
+   * Gets the student income verification associated with the application.
+   * @param applicationId application id to retrieve the student income.
+   * @returns student income verification for application.
+   */
+  @Get(":applicationId/income-verification")
+  async getIncomeVerification(
+    @Param("applicationId") applicationId: number,
+  ): Promise<StudentIncomeDetails> {
+    const income =
+      await this.incomeVerificationService.getIncomeVerificationForApplication(
+        applicationId,
+      );
+
+    if (!income) {
+      throw new NotFoundException("Income verification not found.");
+    }
+
+    return {
+      reported: income.reportedIncome,
+      craReported: income.craReportedIncome,
+      verifiedOnCRA: !!income.dateReceived,
+    };
   }
 }

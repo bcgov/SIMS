@@ -18,7 +18,7 @@ import { CRARequestFileLine } from "./cra-files/cra-request-file-line";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
-import { CRAResponseT4EarningsRecord } from "./cra-files/cra-response-t4earnings-record";
+import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -33,7 +33,7 @@ export class CRAIntegrationService {
 
   constructor(config: ConfigService, private readonly sshService: SshService) {
     this.craConfig = config.getConfig().CRAIntegration;
-    this.ftpConfig = config.getConfig().zoneBsFTP;
+    this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
   /**
@@ -74,7 +74,6 @@ export class CRAIntegrationService {
       TransactionCodes.IncomeRequestHeader,
       TransactionCodes.IncomeRequestRecord,
       TransactionCodes.IncomeRequestFooter,
-      2019, // TODO: Retrieve from database on upcoming PR.
     );
   }
 
@@ -85,8 +84,6 @@ export class CRAIntegrationService {
    * @param sequence sequence number present on header/footer.
    * @param headerTransactionCode header code.
    * @param recordTransactionCode record code.
-   * @param [taxYear] needed if requesting information for a specific
-   * tax year, for instance, for an income verification.
    * @returns CRA request file.
    */
   private createCRARequestFile(
@@ -95,7 +92,6 @@ export class CRAIntegrationService {
     headerTransactionCode: TransactionCodes,
     recordTransactionCode: TransactionCodes,
     footerTransactionCode: TransactionCodes,
-    taxYear?: number,
   ): CRARequestFileLine[] {
     const processDate = new Date();
     const craFileLines: CRARequestFileLine[] = [];
@@ -116,7 +112,7 @@ export class CRAIntegrationService {
       craRecord.individualGivenName = record.givenName;
       craRecord.individualBirthDate = record.birthDate;
       craRecord.programAreaCode = this.craConfig.programAreaCode;
-      craRecord.taxYear = taxYear;
+      craRecord.taxYear = record.taxYear;
       craRecord.freeProjectArea = record.freeProjectArea;
       return craRecord;
     });
@@ -151,7 +147,7 @@ export class CRAIntegrationService {
     const craFileContent = fixedFormattedLines.join("\r\n");
 
     // Send the file to ftp.
-    this.logger.log("Creating new sFTP client to start upload...");
+    this.logger.log("Creating new SFTP client to start upload...");
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
@@ -161,26 +157,10 @@ export class CRAIntegrationService {
         uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
       };
     } finally {
-      this.logger.log("Finalizing sFTP client...");
+      this.logger.log("Finalizing SFTP client...");
       await SshService.closeQuietly(client);
-      this.logger.log("sFTP client finalized.");
+      this.logger.log("SFTP client finalized.");
     }
-  }
-
-  private createFooter(
-    code: TransactionCodes,
-    processDate: Date,
-    sequence: number,
-    recordCount: number,
-  ): CRAFileFooter {
-    const footer = new CRAFileFooter();
-    footer.transactionCode = code;
-    footer.processDate = processDate;
-    footer.programAreaCode = this.craConfig.programAreaCode;
-    footer.environmentCode = this.craConfig.environmentCode;
-    footer.sequence = sequence;
-    footer.recordCount = recordCount + 2; // Must be the number of records + header + footer.
-    return footer;
   }
 
   /**
@@ -188,17 +168,25 @@ export class CRAIntegrationService {
    * @param sequence file sequence number.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  createRequestFileName(sequence: number): string {
+  createRequestFileName(sequence: number): {
+    fileName: string;
+    filePath: string;
+  } {
     const sequenceFile = sequence.toString().padStart(5, "0");
-    return `${this.craConfig.ftpRequestFolder}\\CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
+    const fileName = `CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
+    const filePath = `${this.craConfig.ftpRequestFolder}\\${fileName}`;
+    return {
+      fileName,
+      filePath,
+    };
   }
 
   /**
-   * Downloads all files contents present on CRA response file that follows
-   * the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
-   * @returns File records for all response files present on sFTP.
+   * Get the list of all response files waiting to be downloaded from the
+   * SFTP filtering by the the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
+   * @returns full file paths for all response files present on SFTP.
    */
-  async downloadResponseFiles(): Promise<CRAsFtpResponseFile[]> {
+  async getResponseFilesFullPath(): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
@@ -210,25 +198,16 @@ export class CRAIntegrationService {
       await SshService.closeQuietly(client);
     }
 
-    // Creates all processes to be executed in parallel.
-    const processes = filesToProcess.map((file) =>
-      this.downloadResponseFile(file.name),
-    );
-    // Wait for all parallel processes to be executed.
-    const allFiles = await Promise.all(processes);
-    // Flat the array of arrays returned.
-    return ([] as CRAsFtpResponseFile[]).concat(...allFiles);
+    return filesToProcess.map((file) => file.name);
   }
 
   /**
    * Downloads the file specified on 'fileName' parameter from the
-   * CRA response folder on the sFTP.
+   * CRA response folder on the SFTP.
    * @param fileName File to be downloaded.
    * @returns Parsed records from the file.
    */
-  private async downloadResponseFile(
-    fileName: string,
-  ): Promise<CRAsFtpResponseFile> {
+  async downloadResponseFile(fileName: string): Promise<CRAsFtpResponseFile> {
     const client = await this.getClient();
     try {
       const filePath = `${this.craConfig.ftpResponseFolder}/${fileName}`;
@@ -255,16 +234,16 @@ export class CRAIntegrationService {
       // Generate the records.
       let lineNumber = 1;
       const statusRecords: CRAResponseStatusRecord[] = [];
-      const t4EarningsRecords: CRAResponseT4EarningsRecord[] = [];
+      const totalIncomeRecords: CRAResponseTotalIncomeRecord[] = [];
       for (const line of fileLines) {
         const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
         switch (craRecord.transactionSubCode) {
           case TransactionSubCodes.ResponseStatusRecord:
             statusRecords.push(new CRAResponseStatusRecord(line, lineNumber));
             break;
-          case TransactionSubCodes.T4Earnings:
-            t4EarningsRecords.push(
-              new CRAResponseT4EarningsRecord(line, lineNumber),
+          case TransactionSubCodes.TotalIncome:
+            totalIncomeRecords.push(
+              new CRAResponseTotalIncomeRecord(line, lineNumber),
             );
             break;
         }
@@ -272,9 +251,10 @@ export class CRAIntegrationService {
       }
 
       return {
+        fileName,
         filePath,
         statusRecords,
-        t4EarningsRecords,
+        totalIncomeRecords,
       };
     } finally {
       await SshService.closeQuietly(client);
@@ -282,7 +262,7 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Delete a file from sFTP.
+   * Delete a file from SFTP.
    * @param filePath Full path of the file to be deleted.
    */
   async deleteFile(filePath: string): Promise<void> {
@@ -295,7 +275,7 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Generates a new connected sFTP client ready to be used.
+   * Generates a new connected SFTP client ready to be used.
    * @returns client
    */
   private async getClient(): Promise<Client> {

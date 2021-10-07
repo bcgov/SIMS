@@ -19,4 +19,5 @@ export const TableNames = {
   PIRDeniedReason: "pir_denied_reason",
   MSFAANumbers: "msfaa_numbers",
   COEDeniedReason: "coe_denied_reasons",
+  CRAIncomeVerification: "cra_income_verifications",
 };

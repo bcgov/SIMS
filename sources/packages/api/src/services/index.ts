@@ -16,6 +16,7 @@ export * from "./forms-flow/forms-flow.service";
 export * from "./ssh/ssh.service";
 export * from "./sequence-control/sequence-control.service";
 export * from "../cra-integration/cra-integration.service";
+export * from "./cra-income-verification/cra-income-verification.service";
 export * from "../cra-integration/cra-personal-verification.service";
 export * from "./institution-user-auth/institution-user-auth.service";
 export * from "./education-program/education-program.service";
