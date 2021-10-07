@@ -31,7 +31,7 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import { dateString } from "../../utilities";
+import { dateString, getOfferingDetailsForDropdown } from "../../utilities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -232,13 +232,7 @@ export class EducationProgramOfferingController {
         programYear.endDate,
         selectedIntensity,
       );
-
-    return offerings.map((offering) => ({
-      id: offering.id,
-      description: `${offering.name} (${dateString(
-        offering.studyStartDate,
-      )} - ${dateString(offering.studyEndDate)})`,
-    }));
+    return getOfferingDetailsForDropdown(offerings);
   }
 
   /**
@@ -275,13 +269,7 @@ export class EducationProgramOfferingController {
         programYear.startDate,
         programYear.endDate,
       );
-
-    return offerings.map((offering) => ({
-      id: offering.id,
-      description: `${offering.name} (${dateString(
-        offering.studyStartDate,
-      )} - ${dateString(offering.studyEndDate)})`,
-    }));
+    return getOfferingDetailsForDropdown(offerings);
   }
 
   /**
