@@ -36,6 +36,8 @@ objects:
                   value: ${KEYCLOAK_CLIENT_INSTITUTION}
                 - name: KEYCLOAK_CLIENT_AEST
                   value: ${KEYCLOAK_CLIENT_AEST}
+                - name: KEYCLOAK_CLIENT_SUPPORTING_USERS
+                  value: ${KEYCLOAK_CLIENT_SUPPORTING_USERS}
                 - name: KEYCLOAK_AUTH_URL
                   value: ${KEYCLOAK_AUTH_URL}
                 - name: BCeID_WEB_SERVICE_WSDL
@@ -297,6 +299,9 @@ parameters:
     required: true
   - name: KEYCLOAK_CLIENT_AEST
     value: "aest"
+    required: true
+  - name: KEYCLOAK_CLIENT_SUPPORTING_USERS
+    value: "supporting-users"
     required: true
   - name: KEYCLOAK_AUTH_URL
     required: true

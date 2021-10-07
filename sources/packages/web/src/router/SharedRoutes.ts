@@ -33,8 +33,8 @@ export const sharedRoutes: Array<RouteRecordRaw> = [
       const toPath = to.path;
       if (toPath.includes("student") || toPath.includes("institution")) {
         const type: ClientIdType = toPath.includes("student")
-          ? ClientIdType.STUDENT
-          : ClientIdType.INSTITUTION;
+          ? ClientIdType.Student
+          : ClientIdType.Institution;
         AuthService.shared.initialize(type).then(() => {
           if (AuthService.shared.keycloak?.authenticated) {
             next();

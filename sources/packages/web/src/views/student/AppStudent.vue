@@ -117,7 +117,7 @@ export default {
         label: "Log off",
         icon: "pi pi-power-off",
         command: async () => {
-          await executeLogout(ClientIdType.STUDENT);
+          await executeLogout(ClientIdType.Student);
         },
       },
     ];

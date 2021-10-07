@@ -85,10 +85,10 @@ export class AuthService {
 
       if (this.keycloak.authenticated) {
         switch (clientType) {
-          case ClientIdType.STUDENT:
+          case ClientIdType.Student:
             store.dispatch("student/setStudentProfileData", this.keycloak);
             break;
-          case ClientIdType.INSTITUTION: {
+          case ClientIdType.Institution: {
             const authHeader = HttpBaseClient.createAuthHeader(
               this.keycloak.token,
             );
@@ -133,11 +133,11 @@ export class AuthService {
     bceIdAccountDetails: BCeIDDetailsDto,
   ): Promise<boolean> {
     if (!bceIdAccountDetails) {
-      await this.logout(ClientIdType.INSTITUTION, { isBasicBCeID: true });
+      await this.logout(ClientIdType.Institution, { isBasicBCeID: true });
       return false;
     } else if (await UserService.shared.checkUser(authHeader)) {
       if (!(await UserService.shared.checkActiveUser(authHeader))) {
-        await this.logout(ClientIdType.INSTITUTION, { isUserDisabled: true });
+        await this.logout(ClientIdType.Institution, { isUserDisabled: true });
         return true;
       }
       await store.dispatch("institution/initialize", authHeader);
@@ -149,7 +149,7 @@ export class AuthService {
           authHeader,
         )
       ) {
-        await this.logout(ClientIdType.INSTITUTION, { isUnknownUser: true });
+        await this.logout(ClientIdType.Institution, { isUnknownUser: true });
         return true;
       }
       this.priorityRedirect = {
@@ -173,13 +173,7 @@ export class AuthService {
     }
     let redirectUri = RouteHelper.getAbsoluteRootRoute(type);
     switch (type) {
-      case ClientIdType.STUDENT: {
-        await this.keycloak.logout({
-          redirectUri,
-        });
-        break;
-      }
-      case ClientIdType.INSTITUTION: {
+      case ClientIdType.Institution: {
         if (options?.isBasicBCeID) {
           redirectUri += "/login/business-bceid";
         } else if (options?.isUserDisabled) {
@@ -198,7 +192,9 @@ export class AuthService {
         break;
       }
       default:
-        await this.keycloak.logout();
+        await this.keycloak.logout({
+          redirectUri,
+        });
         break;
     }
   }
