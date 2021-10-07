@@ -26680,7 +26680,7 @@
                             ],
                             "content": "Declarations",
                             "refreshOnChange": false,
-                            "customClass": "",
+                            "customClass": "header-md",
                             "hidden": false,
                             "modalEdit": false,
                             "key": "html108",
@@ -26705,6 +26705,7 @@
                             },
                             "type": "htmlelement",
                             "input": false,
+                            "tableView": false,
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -26716,7 +26717,6 @@
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "tableView": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -26745,10 +26745,12 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ewn4pn"
+                            "id": "enc1aod"
                         },
                         {
                             "label": "HTML",
+                            "tag": "p",
+                            "className": "",
                             "attrs": [
                                 {
                                     "attr": "",
@@ -26757,8 +26759,29 @@
                             ],
                             "content": "StudentAid BC consent",
                             "refreshOnChange": false,
-                            "customClass": "fa-section-header",
+                            "customClass": "header-sm",
+                            "hidden": false,
+                            "modalEdit": false,
                             "key": "html1",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": "",
+                                "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                                "style": "",
+                                "page": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
                             "type": "htmlelement",
                             "input": false,
                             "tableView": false,
@@ -26770,11 +26793,9 @@
                             "protected": false,
                             "unique": false,
                             "persistent": false,
-                            "hidden": false,
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "modalEdit": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -26789,7 +26810,6 @@
                             "calculateValue": "",
                             "calculateServer": false,
                             "widget": null,
-                            "attributes": {},
                             "validateOn": "change",
                             "validate": {
                                 "required": false,
@@ -26799,26 +26819,12 @@
                                 "multiple": false,
                                 "unique": false
                             },
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            },
-                            "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                            },
                             "allowCalculateOverride": false,
                             "encrypted": false,
                             "showCharCount": false,
                             "showWordCount": false,
-                            "properties": {},
                             "allowMultipleMasks": false,
-                            "tag": "p",
-                            "id": "eh3ht1q"
+                            "id": "ecfv4os"
                         },
                         {
                             "label": "HTML",
@@ -27190,5 +27196,5 @@
     "name": "SFAA2021-22",
     "machineName": "SFAA2021-22",
     "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2021-10-07T17:03:26.357Z"
+    "modified": "2021-10-07T18:16:21.253Z"
 }
