@@ -8,6 +8,7 @@ import {
   UnprocessableEntityException,
   ForbiddenException,
   NotFoundException,
+  Query,
 } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -31,7 +32,7 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import { getOfferingDetailsForDropdown } from "../../utilities";
+import { getOfferingNameAndPeriod, dateString } from "../../utilities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -208,31 +209,25 @@ export class EducationProgramOfferingController {
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(
-    "location/:locationId/education-program/:programId/program-year/:programYearId/program-intensity/:selectedIntensity/options-list",
+    "location/:locationId/education-program/:programId/program-year/:programYearId/options-list",
   )
   async getProgramOfferingsByLocation(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Param("selectedIntensity") selectedIntensity: OfferingIntensity,
+    @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
   ): Promise<OptionItem[]> {
-    const programYear = await this.programYearService.getActiveProgramYear(
-      programYearId,
-    );
-    if (!programYear) {
-      throw new UnprocessableEntityException(
-        "Program Year is not active, not able to create a draft application.",
-      );
-    }
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
-        programYear.startDate,
-        programYear.endDate,
+        programYearId,
         selectedIntensity,
       );
-    return getOfferingDetailsForDropdown(offerings);
+    return offerings.map((offering) => ({
+      id: offering.id,
+      description: getOfferingNameAndPeriod(offering),
+    }));
   }
 
   /**
@@ -254,22 +249,16 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
   ): Promise<OptionItem[]> {
-    const programYear = await this.programYearService.getActiveProgramYear(
-      programYearId,
-    );
-    if (!programYear) {
-      throw new UnprocessableEntityException(
-        "Program Year is not active, not able to create a draft application.",
-      );
-    }
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
-        programYear.startDate,
-        programYear.endDate,
+        programYearId,
       );
-    return getOfferingDetailsForDropdown(offerings);
+    return offerings.map((offering) => ({
+      id: offering.id,
+      description: getOfferingNameAndPeriod(offering),
+    }));
   }
 
   /**

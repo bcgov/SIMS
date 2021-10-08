@@ -14,6 +14,7 @@ import {
   ProgramOfferingModel,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
+import { ProgramYear } from "../../database/entities/program-year.model";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -208,13 +209,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
-    startDate: Date,
-    endDate: Date,
+    programYearId: number,
     selectedIntensity?: OfferingIntensity,
   ): Promise<Partial<EducationProgramOffering>[]> {
     const query = this.repo
       .createQueryBuilder("offerings")
       .innerJoin("offerings.educationProgram", "programs")
+      .innerJoin(
+        ProgramYear,
+        "programYear",
+        `programYear.id = ${programYearId}`,
+      )
       .select("offerings.id")
       .addSelect("offerings.name")
       .addSelect("offerings.studyStartDate")
@@ -229,10 +234,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere("offerings.offeringType = :offeringType", {
         offeringType: OfferingTypes.public,
       })
-      .andWhere("offerings.studyStartDate BETWEEN :startDate AND :endDate", {
-        startDate,
-        endDate,
-      });
+      .andWhere(
+        "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
+      )
+      .andWhere("programYear.active = true");
     if (selectedIntensity) {
       query.andWhere("offerings.offeringIntensity = :selectedIntensity", {
         selectedIntensity,
