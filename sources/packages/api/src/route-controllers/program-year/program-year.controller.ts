@@ -43,9 +43,6 @@ export class ProgramYearController extends BaseController {
       programYear: programYear.programYear,
       programYearDesc: programYear.programYearDesc,
       formName: programYear.formName,
-      active: programYear.active,
-      startDate: programYear.startDate,
-      endDate: programYear.endDate,
     };
   }
 }

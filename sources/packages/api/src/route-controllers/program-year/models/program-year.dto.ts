@@ -3,7 +3,4 @@ export interface ProgramYearDto {
   programYearDesc: string;
   formName: string;
   id: number;
-  active: boolean;
-  startDate: Date;
-  endDate: Date;
 }
