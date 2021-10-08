@@ -4,6 +4,7 @@ import {
   EducationProgram,
   InstitutionLocation,
   OfferingTypes,
+  OfferingIntensity,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, UpdateResult } from "typeorm";
@@ -13,6 +14,7 @@ import {
   ProgramOfferingModel,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
+import { ProgramYear } from "../../database/entities/program-year.model";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -207,12 +209,22 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
+    programYearId: number,
+    selectedIntensity?: OfferingIntensity,
   ): Promise<Partial<EducationProgramOffering>[]> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("offerings")
       .innerJoin("offerings.educationProgram", "programs")
+      .innerJoin(
+        ProgramYear,
+        "programYear",
+        "programYear.id = :programYearId",
+        { programYearId },
+      )
       .select("offerings.id")
       .addSelect("offerings.name")
+      .addSelect("offerings.studyStartDate")
+      .addSelect("offerings.studyEndDate")
       .where("offerings.educationProgram.id = :programId", { programId })
       .andWhere("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,
@@ -223,8 +235,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere("offerings.offeringType = :offeringType", {
         offeringType: OfferingTypes.public,
       })
-      .orderBy("offerings.name")
-      .getMany();
+      .andWhere(
+        "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
+      )
+      .andWhere("programYear.active = true");
+    if (selectedIntensity) {
+      query.andWhere("offerings.offeringIntensity = :selectedIntensity", {
+        selectedIntensity,
+      });
+    }
+    return query.orderBy("offerings.name").getMany();
   }
 
   /**

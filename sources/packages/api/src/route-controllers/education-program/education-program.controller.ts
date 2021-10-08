@@ -19,7 +19,6 @@ import { EducationProgramDto } from "./models/save-education-program.dto";
 import {
   EducationProgramService,
   FormService,
-  InstitutionLocationService,
 } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
@@ -35,7 +34,6 @@ export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
-    private readonly locationService: InstitutionLocationService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -208,12 +206,14 @@ export class EducationProgramController {
    * @returns key/value pair list of programs.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/options-list")
+  @Get("location/:locationId/program-year/:programYearId/options-list")
   async getLocationProgramsOptionList(
     @Param("locationId") locationId: number,
+    @Param("programYearId") programYearId: number,
   ): Promise<OptionItem[]> {
     const programs = await this.programService.getProgramsForLocation(
       locationId,
+      programYearId,
     );
 
     return programs.map((program) => ({
@@ -236,10 +236,7 @@ export class EducationProgramController {
   async getLocationProgramsOptionListForInstitution(
     @Param("locationId") locationId: number,
   ): Promise<OptionItem[]> {
-    const programs = await this.programService.getProgramsForLocation(
-      locationId,
-    );
-
+    const programs = await this.programService.getPrograms(locationId);
     return programs.map((program) => ({
       id: program.id,
       description: program.name,

@@ -12,6 +12,7 @@ import {
   EducationProgramModel,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
+import { ProgramYear } from "../../database/entities/program-year.model";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -209,19 +210,43 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    */
   async getProgramsForLocation(
     locationId: number,
+    programYearId: number,
   ): Promise<Partial<EducationProgram>[]> {
     const offeringExistsQuery = this.offeringsRepo
       .createQueryBuilder("offerings")
+      .innerJoin(ProgramYear, "programYear", "programYear.id = :programYearId")
       .where("offerings.educationProgram.id = programs.id")
       .andWhere("offerings.institutionLocation.id = :locationId")
+      .andWhere(
+        "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
+      )
+      .andWhere("programYear.active = true")
       .select("1");
-
     return this.repo
       .createQueryBuilder("programs")
       .where("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,
       })
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
+      .select("programs.id")
+      .addSelect("programs.name")
+      .setParameters({ locationId, programYearId })
+      .orderBy("programs.name")
+      .getMany();
+  }
+
+  /**
+   * Get programs for a particular location.
+   * @param locationId id of the location that should have the
+   * offering associated with.
+   * @returns programs under the specified location.
+   */
+  async getPrograms(locationId: number): Promise<Partial<EducationProgram>[]> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .where("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
       .select("programs.id")
       .addSelect("programs.name")
       .setParameter("locationId", locationId)

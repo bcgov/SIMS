@@ -8,6 +8,7 @@ import {
   UnprocessableEntityException,
   ForbiddenException,
   NotFoundException,
+  Query,
 } from "@nestjs/common";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -25,19 +26,18 @@ import { FormNames } from "../../services/form/constants";
 import {
   EducationProgramOfferingService,
   FormService,
-  InstitutionLocationService,
   EducationProgramService,
 } from "../../services";
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import { OfferingTypes } from "../../database/entities";
+import { OfferingTypes, OfferingIntensity } from "../../database/entities";
+import { getOfferingNameAndPeriod } from "../../utilities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
-    private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
   ) {}
 
@@ -206,20 +206,25 @@ export class EducationProgramOfferingController {
    * @returns key/value pair list of programs for students.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("location/:locationId/education-program/:programId/options-list")
+  @Get(
+    "location/:locationId/education-program/:programId/program-year/:programYearId/options-list",
+  )
   async getProgramOfferingsByLocation(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
+    @Param("programYearId") programYearId: number,
+    @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
   ): Promise<OptionItem[]> {
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
+        programYearId,
+        selectedIntensity,
       );
-
     return offerings.map((offering) => ({
       id: offering.id,
-      description: offering.name,
+      description: getOfferingNameAndPeriod(offering),
     }));
   }
 
@@ -234,20 +239,23 @@ export class EducationProgramOfferingController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
-  @Get("location/:locationId/education-program/:programId/offerings-list")
+  @Get(
+    "location/:locationId/education-program/:programId/program-year/:programYearId/offerings-list",
+  )
   async getProgramOfferingsForLocationForInstitution(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
+    @Param("programYearId") programYearId: number,
   ): Promise<OptionItem[]> {
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
+        programYearId,
       );
-
     return offerings.map((offering) => ({
       id: offering.id,
-      description: offering.name,
+      description: getOfferingNameAndPeriod(offering),
     }));
   }
 

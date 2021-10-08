@@ -1,9 +1,11 @@
 import ApiClient from "./http/ApiClient";
 import {
+  EducationProgramOfferingDto,
+  OptionItemDto,
+  OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
-} from "../types/contracts/OfferingContact";
-import { EducationProgramOfferingDto, OptionItemDto } from "../types";
+} from "../types";
 
 export class EducationProgramOfferingService {
   // Share Instance
@@ -77,10 +79,14 @@ export class EducationProgramOfferingService {
   public async getProgramOfferingsForLocation(
     locationId: number,
     programId: number,
+    programYearId: number,
+    selectedIntensity: OfferingIntensity,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocation(
       locationId,
       programId,
+      programYearId,
+      selectedIntensity
     );
   }
 
@@ -108,10 +114,12 @@ export class EducationProgramOfferingService {
   public async getProgramOfferingsForLocationForInstitution(
     locationId: number,
     programId: number,
+    programYearId: number,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgramOffering.getProgramOfferingsForLocationForInstitution(
       locationId,
       programId,
+      programYearId,
     );
   }
 }
