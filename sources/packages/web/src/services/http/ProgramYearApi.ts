@@ -13,7 +13,7 @@ export class ProgramYearApi extends HttpBaseClient {
     programYearId: number,
   ): Promise<ProgramYear> {
     const response = await this.apiClient.get(
-      `program-year/${programYearId}`,
+      `program-year/${programYearId}/active`,
       this.addAuthHeader(),
     );
     return response.data;

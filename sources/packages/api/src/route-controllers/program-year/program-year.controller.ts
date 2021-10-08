@@ -26,7 +26,7 @@ export class ProgramYearController extends BaseController {
     }));
   }
 
-  @Get(":id")
+  @Get(":id/active")
   async getActiveProgramYearById(
     @Param("id") programYearId: number,
   ): Promise<ProgramYearDto> {
