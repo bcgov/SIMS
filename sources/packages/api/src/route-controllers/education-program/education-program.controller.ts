@@ -19,7 +19,6 @@ import { EducationProgramDto } from "./models/save-education-program.dto";
 import {
   EducationProgramService,
   FormService,
-  ProgramYearService,
 } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
@@ -35,7 +34,6 @@ export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
-    private readonly programYearService: ProgramYearService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)

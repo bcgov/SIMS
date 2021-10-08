@@ -26,7 +26,6 @@ import { FormNames } from "../../services/form/constants";
 import {
   EducationProgramOfferingService,
   FormService,
-  ProgramYearService,
   EducationProgramService,
 } from "../../services";
 import { OptionItem } from "../../types";
@@ -40,7 +39,6 @@ export class EducationProgramOfferingController {
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
-    private readonly programYearService: ProgramYearService,
   ) {}
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
