@@ -29,7 +29,7 @@
                 &nbsp;&nbsp;
                 <ProgressSpinner
                   style="width: 30px; height: 25px"
-                  strokeWidth="10" /></span
+                  strokeWidth="10"/></span
             ></v-btn>
           </v-col>
         </v-row>
@@ -80,6 +80,7 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationStatus,
+  OfferingIntensity,
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
@@ -117,6 +118,7 @@ export default {
     const isLastPage = ref(false);
     let applicationWizard: any;
     const isReadOnly = ref(false);
+    const educationProgramIdFromForm = ref();
 
     onMounted(async () => {
       //Get the student information and application information.
@@ -194,6 +196,7 @@ export default {
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
     const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
     const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
+    const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
@@ -223,6 +226,7 @@ export default {
           form,
           +selectedLocationId,
           PROGRAMS_DROPDOWN_KEY,
+          props.programYearId,
         );
       }
 
@@ -230,7 +234,11 @@ export default {
         form,
         PROGRAMS_DROPDOWN_KEY,
       );
-      if (selectedProgramId) {
+      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
+        form,
+        OFFERING_INTENSITY_KEY,
+      );
+      if (selectedProgramId && selectedIntensity) {
         await formioComponentLoader.loadProgramDesc(
           form,
           selectedProgramId,
@@ -241,24 +249,28 @@ export default {
           selectedProgramId,
           selectedLocationId,
           OFFERINGS_DROPDOWN_KEY,
+          props.programYearId,
+          selectedIntensity,
         );
       }
     };
 
     const formChanged = async (form: any, event: any) => {
+      const locationId = +formioUtils.getComponentValueByKey(
+        form,
+        LOCATIONS_DROPDOWN_KEY,
+      );
       if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
         await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
           PROGRAMS_DROPDOWN_KEY,
+          props.programYearId,
         );
       }
 
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        const locationId = +formioUtils.getComponentValueByKey(
-          form,
-          LOCATIONS_DROPDOWN_KEY,
-        );
+        educationProgramIdFromForm.value = +event.changed.value;
         if (+event.changed.value > 0) {
           await formioComponentLoader.loadProgramDesc(
             form,
@@ -266,11 +278,22 @@ export default {
             SELECTED_PROGRAM_DESC_KEY,
           );
         }
+      }
+      if (
+        event.changed.component.key === OFFERING_INTENSITY_KEY &&
+        educationProgramIdFromForm.value
+      ) {
+        const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
+          form,
+          OFFERING_INTENSITY_KEY,
+        );
         await formioDataLoader.loadOfferingsForLocation(
           form,
-          +event.changed.value,
+          educationProgramIdFromForm.value,
           locationId,
           OFFERINGS_DROPDOWN_KEY,
+          props.programYearId,
+          selectedIntensity,
         );
       }
       if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {

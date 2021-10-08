@@ -23,4 +23,5 @@ export * from "./pir-denied-reason.model";
 export * from "./msfaa-number.model";
 export * from "./coe-denied-reason.model";
 export * from "./institution-type.model";
+export * from "./offering-intensity.type";
 export * from "./cra-income-verification.model";

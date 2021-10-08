@@ -3,7 +3,7 @@ import { EducationProgramService } from "../services/EducationProgramService";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { ProgramYearService } from "@/services/ProgramYearService";
-import { OptionItemDto } from "../types";
+import { OptionItemDto, OfferingIntensity } from "../types";
 import { useFormioUtils } from ".";
 
 /**
@@ -25,6 +25,7 @@ export function useFormioDropdownLoader() {
       value: item.id,
       label: item.description,
     }));
+    dropdown.redraw();
   };
 
   // Retrieve the list of locations from the API and
@@ -43,11 +44,15 @@ export function useFormioDropdownLoader() {
     form: any,
     locationId: number,
     dropdownName: string,
+    programYearId: number,
   ) => {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramService.shared.getLocationProgramsOptionList(locationId),
+      EducationProgramService.shared.getLocationProgramsOptionList(
+        locationId,
+        programYearId,
+      ),
     );
   };
 
@@ -74,6 +79,8 @@ export function useFormioDropdownLoader() {
     programId: number,
     locationId: number,
     dropdownName: string,
+    programYearId: number,
+    selectedIntensity: OfferingIntensity,
   ) => {
     return loadDropdown(
       form,
@@ -81,6 +88,8 @@ export function useFormioDropdownLoader() {
       EducationProgramOfferingService.shared.getProgramOfferingsForLocation(
         locationId,
         programId,
+        programYearId,
+        selectedIntensity,
       ),
     );
   };
@@ -91,6 +100,7 @@ export function useFormioDropdownLoader() {
     programId: number,
     locationId: number,
     dropdownName: string,
+    programYearId: number,
   ) => {
     return loadDropdown(
       form,
@@ -98,6 +108,7 @@ export function useFormioDropdownLoader() {
       EducationProgramOfferingService.shared.getProgramOfferingsForLocationForInstitution(
         locationId,
         programId,
+        programYearId,
       ),
     );
   };
