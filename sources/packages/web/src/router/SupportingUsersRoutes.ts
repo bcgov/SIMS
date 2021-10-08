@@ -1,13 +1,13 @@
 import { RouteRecordRaw } from "vue-router";
-import AppSupportingUsers from "../views/supporting-users/AppSupportingUsers.vue";
-import Login from "../views/supporting-users/Login.vue";
-import Home from "../views/supporting-users/Home.vue";
+import AppSupportingUsers from "@/views/supporting-users/AppSupportingUsers.vue";
+import Login from "@/views/supporting-users/Login.vue";
+import Home from "@/views/supporting-users/Home.vue";
 import {
   SupportingUsersRoutesConst,
   SharedRouteConst,
-} from "../constants/routes/RouteConstants";
-import { AppRoutes, AuthStatus } from "../types";
-import { ClientIdType } from "../types/contracts/ConfigContract";
+} from "@/constants/routes/RouteConstants";
+import { AppRoutes, AuthStatus } from "@/types";
+import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 

@@ -66,8 +66,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-.body-background {
-  background: #f2f2f2;
-}
-</style>
