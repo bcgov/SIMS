@@ -218,7 +218,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin(
         ProgramYear,
         "programYear",
-        `programYear.id = ${programYearId}`,
+        "programYear.id = :programYearId",
+        { programYearId },
       )
       .select("offerings.id")
       .addSelect("offerings.name")

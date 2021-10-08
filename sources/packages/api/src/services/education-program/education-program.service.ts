@@ -214,11 +214,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   ): Promise<Partial<EducationProgram>[]> {
     const offeringExistsQuery = this.offeringsRepo
       .createQueryBuilder("offerings")
-      .innerJoin(
-        ProgramYear,
-        "programYear",
-        `programYear.id = ${programYearId}`,
-      )
+      .innerJoin(ProgramYear, "programYear", "programYear.id = :programYearId")
       .where("offerings.educationProgram.id = programs.id")
       .andWhere("offerings.institutionLocation.id = :locationId")
       .andWhere(
@@ -234,7 +230,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")
-      .setParameters({ locationId })
+      .setParameters({ locationId, programYearId })
       .orderBy("programs.name")
       .getMany();
   }
