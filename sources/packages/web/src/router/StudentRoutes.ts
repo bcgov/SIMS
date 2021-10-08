@@ -69,7 +69,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StartStudentApplication,
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
         component: StudentApplication,
-        props: true,
         meta: {
           clientType: ClientIdType.STUDENT,
         },

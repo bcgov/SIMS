@@ -1,6 +1,6 @@
 import { Controller, Get, NotFoundException } from "@nestjs/common";
 import { ProgramYearService } from "../../services";
-import { ProgramYearDto } from "./models/program-year.dto";
+import { OptionItem } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -11,8 +11,8 @@ export class ProgramYearController extends BaseController {
     super();
   }
 
-  @Get()
-  async getProgramYears(): Promise<ProgramYearDto[]> {
+  @Get("/options-list")
+  async getProgramYears(): Promise<OptionItem[]> {
     const programYears = await this.programYearService.getProgramYears();
 
     if (!programYears) {
@@ -20,10 +20,8 @@ export class ProgramYearController extends BaseController {
     }
 
     return programYears.map((programYear) => ({
-      programYear: programYear.programYear,
-      programYearDesc: programYear.programYearDesc,
-      formName: programYear.formName,
       id: programYear.id,
+      description: `(${programYear.programYear}) - ${programYear.programYearDesc}`,
     }));
   }
 }

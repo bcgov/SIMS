@@ -18,7 +18,6 @@ import { useRouter } from "vue-router";
 import { useToastMessage } from "@/composables";
 
 export default {
-  emits: ["update:programYear", "change"],
   setup(props: any, context: SetupContext) {
     const router = useRouter();
     const toast = useToastMessage();

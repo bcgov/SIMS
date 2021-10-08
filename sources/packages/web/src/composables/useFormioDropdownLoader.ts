@@ -2,6 +2,7 @@ import { InstitutionService } from "../services/InstitutionService";
 import { EducationProgramService } from "../services/EducationProgramService";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
+import { ProgramYearService } from "@/services/ProgramYearService";
 import { OptionItemDto } from "../types";
 import { useFormioUtils } from ".";
 
@@ -109,6 +110,14 @@ export function useFormioDropdownLoader() {
     );
   };
 
+  const loadProgramYear = async (form: any, dropdownName: string) => {
+    return loadDropdown(
+      form,
+      dropdownName,
+      ProgramYearService.shared.getProgramYearOptions(),
+    );
+  };
+
   const loadPIRDeniedReasonList = async (form: any, dropdownName: string) => {
     return loadDropdown(
       form,
@@ -125,5 +134,6 @@ export function useFormioDropdownLoader() {
     loadOfferingsForLocationForInstitution,
     loadInstitutionTypes,
     loadPIRDeniedReasonList,
+    loadProgramYear,
   };
 }

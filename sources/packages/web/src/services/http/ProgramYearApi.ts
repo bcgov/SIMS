@@ -1,12 +1,12 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { ProgramYear } from "../../types/contracts/ProgramYearContract";
+import { OptionItemDto } from "../../types";
 
 export class ProgramYearApi extends HttpBaseClient {
-  public async getProgramYears(): Promise<ProgramYear[]> {
+  public async getProgramYears(): Promise<OptionItemDto[]> {
     const response = await this.apiClient.get(
-      "program-year",
+      "program-year/options-list",
       this.addAuthHeader(),
     );
-    return response.data as ProgramYear[];
+    return response.data;
   }
 }
