@@ -1,20 +1,22 @@
 <template>
-  <v-dialog v-model="showOnlyOneDraftDialog">
-    <v-card>
-      <v-card-title class="text-h6">
-        <v-icon class="mr-2" size="35" color="orange">mdi-alert</v-icon>
-        Application already in progress
-      </v-card-title>
-      <v-card-text>
-        <p>There is already a draft of an application in progress.</p>
-        <p>Please continue your draft application or cancel it.</p>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="showOnlyOneDraftDialog = false"> Close </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <ModalDialogBase
+    title="Application already in progress"
+    dialogType="warning"
+    :showDialog="showDialog"
+    @dialogClosed="dialogClosed"
+  >
+    <template v-slot:content>
+      <v-container>
+        <form>
+          <p>There is already a draft of an application in progress.</p>
+          <p>Please continue your draft application or cancel it.</p>
+        </form>
+      </v-container>
+    </template>
+    <template v-slot:footer>
+      <v-btn color="primary" outlined @click="dialogClosed"> Close </v-btn>
+    </template>
+  </ModalDialogBase>
   <v-sheet elevation="1" class="mx-auto">
     <v-container>
       <formio
@@ -29,11 +31,13 @@
 </template>
 <script lang="ts">
 import { ref } from "vue";
+import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import formio from "../../../components/generic/formio.vue";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
   useToastMessage,
+  useModalDialog,
 } from "@/composables";
 import { useRouter } from "vue-router";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
@@ -42,20 +46,23 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 
 export default {
-  components: { formio },
+  components: { formio, ModalDialogBase },
   setup(props: any) {
     const initialData = ref({});
     const router = useRouter();
     const toast = useToastMessage();
     const formioDataLoader = useFormioDropdownLoader();
     const formioUtils = useFormioUtils();
+    const { showDialog, showModal } = useModalDialog<void>();
     const showOnlyOneDraftDialog = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
 
     const formLoaded = async (form: any) => {
       await formioDataLoader.loadProgramYear(form, PROGRAM_YEAR_DROPDOWN_KEY);
     };
-
+    const dialogClosed = () => {
+      showDialog.value = false;
+    };
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
       try {
         const programYearId = formioUtils.getComponentValueByKey(
@@ -70,7 +77,7 @@ export default {
           },
         );
         if (createDraftResult.draftAlreadyExists) {
-          showOnlyOneDraftDialog.value = true;
+          showDialog.value = true;
           return;
         }
         const programYear = await ProgramYearService.shared.getActiveProgramYear(
@@ -102,7 +109,10 @@ export default {
     return {
       initialData,
       formLoaded,
+      showModal,
       showOnlyOneDraftDialog,
+      showDialog,
+      dialogClosed,
       customEventCallback,
     };
   },

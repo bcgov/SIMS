@@ -1,10 +1,9 @@
 <template>
   <div>
-    <br />
     <v-btn
       color="primary"
       class="p-button-raised float-right"
-      @click="gotoStudentApplication()"
+      @click="goToStudentApplication()"
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
       Start New Application
@@ -21,7 +20,7 @@ export default {
   setup(props: any, context: SetupContext) {
     const router = useRouter();
     const toast = useToastMessage();
-    const gotoStudentApplication = async () => {
+    const goToStudentApplication = async () => {
       try {
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
@@ -35,7 +34,7 @@ export default {
     };
     return {
       StudentRoutesConst,
-      gotoStudentApplication,
+      goToStudentApplication,
     };
   },
 };
