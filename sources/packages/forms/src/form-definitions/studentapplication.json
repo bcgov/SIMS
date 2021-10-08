@@ -6,27 +6,54 @@
   "owner": "external",
   "components": [
     {
-      "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Select an application to begin</strong></span></h2>",
-      "label": "Content",
+      "label": "HTML",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Select an application to begin",
       "refreshOnChange": false,
-      "key": "content",
-      "type": "content",
+      "customClass": "header-lg",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html1",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
       "input": false,
       "tableView": false,
       "placeholder": "",
       "prefix": "",
-      "customClass": "",
       "suffix": "",
       "multiple": false,
       "defaultValue": null,
       "protected": false,
       "unique": false,
-      "persistent": true,
-      "hidden": false,
+      "persistent": false,
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "modalEdit": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -41,7 +68,6 @@
       "calculateValue": "",
       "calculateServer": false,
       "widget": null,
-      "attributes": {},
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -51,25 +77,12 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "overlay": {
-        "style": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
       "allowCalculateOverride": false,
       "encrypted": false,
       "showCharCount": false,
       "showWordCount": false,
-      "properties": {},
       "allowMultipleMasks": false,
-      "id": "e12grql"
+      "id": "eagrvx"
     },
     {
       "label": "HTML",
@@ -151,27 +164,54 @@
       "id": "eetfqm"
     },
     {
-      "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Apply for new funding/grants</strong></span></h2>",
-      "label": "Content",
+      "label": "HTML",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Apply for new funding/grants",
       "refreshOnChange": false,
-      "key": "content1",
-      "type": "content",
+      "customClass": "header-md",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html5",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
       "input": false,
       "tableView": false,
       "placeholder": "",
       "prefix": "",
-      "customClass": "",
       "suffix": "",
       "multiple": false,
       "defaultValue": null,
       "protected": false,
       "unique": false,
-      "persistent": true,
-      "hidden": false,
+      "persistent": false,
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "modalEdit": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -186,7 +226,6 @@
       "calculateValue": "",
       "calculateServer": false,
       "widget": null,
-      "attributes": {},
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -196,25 +235,12 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "overlay": {
-        "style": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
       "allowCalculateOverride": false,
       "encrypted": false,
       "showCharCount": false,
       "showWordCount": false,
-      "properties": {},
       "allowMultipleMasks": false,
-      "id": "ensxinb"
+      "id": "e0gpk5q"
     },
     {
       "title": "Full-time/Part-time Application Panel",
@@ -254,13 +280,21 @@
       "tableView": false,
       "components": [
         {
-          "html": "<p><span class=\"text-big\"><strong>Full-time/Part-time Application</strong></span></p><p>Loans and grant funding is applicable to students attending post-secondary studies fill-time or part-time.</p>",
-          "label": "Content",
-          "customClass": "",
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Full-time/Part-time Application",
           "refreshOnChange": false,
+          "customClass": "header-sm header-color-secondary",
           "hidden": false,
           "modalEdit": false,
-          "key": "content2",
+          "key": "html2",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -280,7 +314,7 @@
             "width": "",
             "height": ""
           },
-          "type": "content",
+          "type": "htmlelement",
           "input": false,
           "tableView": false,
           "placeholder": "",
@@ -290,7 +324,7 @@
           "defaultValue": null,
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
@@ -322,7 +356,165 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e1pkxy"
+          "id": "evtjlfc"
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Loans and grant funding is applicable to students attending post-secondary studies fill-time or part-time.",
+          "refreshOnChange": false,
+          "customClass": "",
+          "hidden": false,
+          "modalEdit": false,
+          "key": "html3",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "htmlelement",
+          "input": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "tableView": false,
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "hideLabel": false,
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "id": "esob4q"
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Select Study Year",
+          "refreshOnChange": false,
+          "customClass": "header-sm header-color-secondary",
+          "hidden": false,
+          "modalEdit": false,
+          "key": "html4",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "hideLabel": false,
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "id": "egjmohe"
         },
         {
           "label": "Select Study Year",
@@ -334,7 +526,7 @@
           "customClass": "",
           "tabindex": "",
           "hidden": false,
-          "hideLabel": false,
+          "hideLabel": true,
           "uniqueOptions": false,
           "autofocus": false,
           "disabled": false,
@@ -434,7 +626,7 @@
             "include": "score",
             "threshold": 0.3
           },
-          "id": "e6apai",
+          "id": "elrgia",
           "defaultValue": ""
         },
         {
@@ -558,27 +750,54 @@
       "id": "et7bi7d"
     },
     {
-      "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Grants, scholarships, and other financial supports</strong></span></h2>",
-      "label": "Content",
+      "label": "HTML",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Grants, scholarships, and other financial supports",
       "refreshOnChange": false,
-      "key": "content6",
-      "type": "content",
+      "customClass": "header-md",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html6",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
       "input": false,
       "tableView": false,
       "placeholder": "",
       "prefix": "",
-      "customClass": "",
       "suffix": "",
       "multiple": false,
       "defaultValue": null,
       "protected": false,
       "unique": false,
-      "persistent": true,
-      "hidden": false,
+      "persistent": false,
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "modalEdit": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -593,7 +812,6 @@
       "calculateValue": "",
       "calculateServer": false,
       "widget": null,
-      "attributes": {},
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -603,25 +821,12 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "overlay": {
-        "style": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
       "allowCalculateOverride": false,
       "encrypted": false,
       "showCharCount": false,
       "showWordCount": false,
-      "properties": {},
       "allowMultipleMasks": false,
-      "id": "e3bebfd"
+      "id": "epkw3wa"
     },
     {
       "title": "Grants, scholarships, and other financial supports Panel",
@@ -661,13 +866,21 @@
       "tableView": false,
       "components": [
         {
-          "html": "<p><span class=\"text-big\"><strong>Tuition waiver program</strong></span></p><p><span class=\"text-big\"><strong>(Youth educational assistance fund for former youth in care)</strong></span></p><p>This program provides grants of up to $5,500 per program year to former B.C. youth in care students between 19 and 24 years of age. Students may receive a maximum of four grants.</p>",
-          "label": "Content",
-          "customClass": "",
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Tuition waiver program<br>\n(Youth educational assistance fund for former youth in care)",
           "refreshOnChange": false,
+          "customClass": "header-sm header-color-secondary",
           "hidden": false,
           "modalEdit": false,
-          "key": "content3",
+          "key": "html9",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -687,7 +900,7 @@
             "width": "",
             "height": ""
           },
-          "type": "content",
+          "type": "htmlelement",
           "input": false,
           "tableView": false,
           "placeholder": "",
@@ -697,7 +910,7 @@
           "defaultValue": null,
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
@@ -729,7 +942,86 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eydkzd2"
+          "id": "eoofnhm"
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "This program provides grants of up to $5,500 per program year to former B.C. youth in care students between 19 and 24 years of age. Students may receive a maximum of four grants.",
+          "refreshOnChange": false,
+          "customClass": "",
+          "hidden": false,
+          "modalEdit": false,
+          "key": "html10",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "hideLabel": false,
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "id": "eazclee"
         },
         {
           "label": "Start Application",
@@ -852,27 +1144,54 @@
       "id": "eedca8i"
     },
     {
-      "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Loan Forgiveness</strong></span></h2>",
-      "label": "Content",
+      "label": "HTML",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Loan Forgiveness",
       "refreshOnChange": false,
-      "key": "content7",
-      "type": "content",
+      "customClass": "header-md",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html7",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
       "input": false,
-      "tableView": false,
       "placeholder": "",
       "prefix": "",
-      "customClass": "",
       "suffix": "",
       "multiple": false,
       "defaultValue": null,
       "protected": false,
       "unique": false,
-      "persistent": true,
-      "hidden": false,
+      "persistent": false,
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "modalEdit": false,
+      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -887,7 +1206,6 @@
       "calculateValue": "",
       "calculateServer": false,
       "widget": null,
-      "attributes": {},
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -897,25 +1215,12 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "overlay": {
-        "style": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
       "allowCalculateOverride": false,
       "encrypted": false,
       "showCharCount": false,
       "showWordCount": false,
-      "properties": {},
       "allowMultipleMasks": false,
-      "id": "elrz88"
+      "id": "eevorym"
     },
     {
       "title": "Loan Forgiveness Panel",
@@ -955,13 +1260,21 @@
       "tableView": false,
       "components": [
         {
-          "html": "<p><span class=\"text-big\"><strong>B.C. loan forgiveness program</strong></span></p><p>Recent graduates in select in-demand occupations can have their B.C. student loans forgiven by agreeing to work at publicly-funded facilities in underserved communities in B.C., or working with children in occupations where there is an identified shortage in B.C.</p>",
-          "label": "Content",
-          "customClass": "",
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "B.C. loan forgiveness program",
           "refreshOnChange": false,
+          "customClass": "header-sm header-color-secondary",
           "hidden": false,
           "modalEdit": false,
-          "key": "content4",
+          "key": "html11",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -981,7 +1294,7 @@
             "width": "",
             "height": ""
           },
-          "type": "content",
+          "type": "htmlelement",
           "input": false,
           "tableView": false,
           "placeholder": "",
@@ -991,7 +1304,7 @@
           "defaultValue": null,
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
@@ -1023,7 +1336,86 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "egwxx4"
+          "id": "ef36jng"
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Recent graduates in select in-demand occupations can have their B.C. student loans forgiven by agreeing to work at publicly-funded facilities in underserved communities in B.C., or working with children in occupations where there is an identified shortage in B.C.",
+          "refreshOnChange": false,
+          "customClass": "",
+          "hidden": false,
+          "modalEdit": false,
+          "key": "html12",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "hideLabel": false,
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "id": "e2r0afm"
         },
         {
           "label": "Start Application",
@@ -1156,13 +1548,21 @@
       "tableView": false,
       "components": [
         {
-          "html": "<p><span class=\"text-big\"><strong>Pacific Leaders Loan Forgiveness</strong></span></p><p>This program promotes the B.C. public service as a potential employer to new post-secondary graduates, and a progressive employer to current employees.</p>",
-          "label": "Content",
-          "customClass": "",
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Pacific Leaders Loan Forgiveness",
           "refreshOnChange": false,
+          "customClass": "header-sm header-color-secondary",
           "hidden": false,
           "modalEdit": false,
-          "key": "content9",
+          "key": "html13",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -1182,7 +1582,7 @@
             "width": "",
             "height": ""
           },
-          "type": "content",
+          "type": "htmlelement",
           "input": false,
           "tableView": false,
           "placeholder": "",
@@ -1192,7 +1592,7 @@
           "defaultValue": null,
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
@@ -1224,7 +1624,86 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eb9n9zh"
+          "id": "e14mktt"
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "This program promotes the B.C. public service as a potential employer to new post-secondary graduates, and a progressive employer to current employees.",
+          "refreshOnChange": false,
+          "customClass": "",
+          "hidden": false,
+          "modalEdit": false,
+          "key": "html15",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "hideLabel": false,
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "id": "emygpbo"
         },
         {
           "label": "Start Application",
@@ -1369,27 +1848,54 @@
       "id": "ensfaa"
     },
     {
-      "html": "<h2><span style=\"background-color:transparent;color:#2965c5;\"><strong>Interest Free</strong></span></h2>",
-      "label": "Content",
+      "label": "HTML",
+      "tag": "p",
+      "className": "",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Interest Free",
       "refreshOnChange": false,
-      "key": "content8",
-      "type": "content",
+      "customClass": "header-md",
+      "hidden": false,
+      "modalEdit": false,
+      "key": "html8",
+      "tags": [],
+      "properties": {},
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
+      "customConditional": "",
+      "logic": [],
+      "attributes": {},
+      "overlay": {
+        "style": "",
+        "page": "",
+        "left": "",
+        "top": "",
+        "width": "",
+        "height": ""
+      },
+      "type": "htmlelement",
       "input": false,
       "tableView": false,
       "placeholder": "",
       "prefix": "",
-      "customClass": "",
       "suffix": "",
       "multiple": false,
       "defaultValue": null,
       "protected": false,
       "unique": false,
-      "persistent": true,
-      "hidden": false,
+      "persistent": false,
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "modalEdit": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -1404,7 +1910,6 @@
       "calculateValue": "",
       "calculateServer": false,
       "widget": null,
-      "attributes": {},
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -1414,25 +1919,12 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": {
-        "show": null,
-        "when": null,
-        "eq": ""
-      },
-      "overlay": {
-        "style": "",
-        "left": "",
-        "top": "",
-        "width": "",
-        "height": ""
-      },
       "allowCalculateOverride": false,
       "encrypted": false,
       "showCharCount": false,
       "showWordCount": false,
-      "properties": {},
       "allowMultipleMasks": false,
-      "id": "e4pflxo"
+      "id": "exvgu7"
     },
     {
       "title": "Interest Free Panel",
@@ -1472,13 +1964,21 @@
       "tableView": false,
       "components": [
         {
-          "html": "<p><span class=\"text-big\"><strong>Interest Free Status</strong></span></p><p>While students are enrolled in full-time studies, the government can help you pay the interest on your StudentAidBC Loans.</p>",
-          "label": "Content",
-          "customClass": "",
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Interest Free Status",
           "refreshOnChange": false,
+          "customClass": "header-sm header-color-secondary",
           "hidden": false,
           "modalEdit": false,
-          "key": "content5",
+          "key": "html14",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -1498,7 +1998,7 @@
             "width": "",
             "height": ""
           },
-          "type": "content",
+          "type": "htmlelement",
           "input": false,
           "tableView": false,
           "placeholder": "",
@@ -1508,7 +2008,7 @@
           "defaultValue": null,
           "protected": false,
           "unique": false,
-          "persistent": true,
+          "persistent": false,
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
@@ -1540,7 +2040,86 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ek5yqto"
+          "id": "e8n01dc"
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "While students are enrolled in full-time studies, the government can help you pay the interest on your StudentAidBC Loans.",
+          "refreshOnChange": false,
+          "customClass": "",
+          "hidden": false,
+          "modalEdit": false,
+          "key": "html16",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "placeholder": "",
+          "prefix": "",
+          "suffix": "",
+          "multiple": false,
+          "defaultValue": null,
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "clearOnHide": true,
+          "refreshOn": "",
+          "redrawOn": "",
+          "dataGridLabel": false,
+          "labelPosition": "top",
+          "description": "",
+          "errorLabel": "",
+          "tooltip": "",
+          "hideLabel": false,
+          "tabindex": "",
+          "disabled": false,
+          "autofocus": false,
+          "dbIndex": false,
+          "customDefaultValue": "",
+          "calculateValue": "",
+          "calculateServer": false,
+          "widget": null,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "custom": "",
+            "customPrivate": false,
+            "strictDateValidation": false,
+            "multiple": false,
+            "unique": false
+          },
+          "allowCalculateOverride": false,
+          "encrypted": false,
+          "showCharCount": false,
+          "showWordCount": false,
+          "allowMultipleMasks": false,
+          "id": "ejteqe"
         },
         {
           "label": "Start Application",
@@ -1738,6 +2317,6 @@
   "name": "studentapplication",
   "path": "studentapplication",
   "created": "2021-10-08T16:56:47.715Z",
-  "modified": "2021-10-08T19:30:49.155Z",
+  "modified": "2021-10-08T21:55:19.812Z",
   "machineName": "studentapplication"
 }

@@ -214,3 +214,8 @@ $border-color-info: #6554c0;
   box-sizing: border-box;
   border-radius: 8px;
 }
+
+.formio-component-htmlelement.header-color-secondary p,
+.formio-component-htmlelement.header-color-secondary div {
+  color: $formio-content-color;
+}
