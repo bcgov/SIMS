@@ -64,7 +64,7 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { useInstitutionAuth } from "../../composables/institution/useInstitutionAuth";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
-import "@/assets/css/institution.css";
+import "@/assets/css/institution.scss";
 
 export default {
   components: { BCLogo },

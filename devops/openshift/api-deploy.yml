@@ -366,7 +366,7 @@ parameters:
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "4194304"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
-    value: ".pdf,.doc,.docx,.jpg,.png"
+    value: ".pdf,.doc,.docx,.jpg,.png,.txt"
   - name: ATBC_LOGIN_ENDPOINT
     require: true
   - name: ATBC_ENDPOINT
