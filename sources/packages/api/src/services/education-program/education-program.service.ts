@@ -12,6 +12,7 @@ import {
   EducationProgramModel,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
+import { ProgramYear } from "../../database/entities/program-year.model";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -209,14 +210,21 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    */
   async getProgramsForLocation(
     locationId: number,
-    startDate: Date,
-    endDate: Date,
+    programYearId: number,
   ): Promise<Partial<EducationProgram>[]> {
     const offeringExistsQuery = this.offeringsRepo
       .createQueryBuilder("offerings")
+      .innerJoin(
+        ProgramYear,
+        "programYear",
+        `programYear.id = ${programYearId}`,
+      )
       .where("offerings.educationProgram.id = programs.id")
       .andWhere("offerings.institutionLocation.id = :locationId")
-      .andWhere("offerings.studyStartDate BETWEEN :startDate AND :endDate")
+      .andWhere(
+        "offerings.studyStartDate BETWEEN programYear.startDate AND programYear.endDate",
+      )
+      .andWhere("programYear.active = true")
       .select("1");
     return this.repo
       .createQueryBuilder("programs")
@@ -226,7 +234,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")
-      .setParameters({ locationId, startDate, endDate })
+      .setParameters({ locationId })
       .orderBy("programs.name")
       .getMany();
   }

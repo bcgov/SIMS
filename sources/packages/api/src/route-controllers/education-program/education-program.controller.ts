@@ -213,18 +213,9 @@ export class EducationProgramController {
     @Param("locationId") locationId: number,
     @Param("programYearId") programYearId: number,
   ): Promise<OptionItem[]> {
-    const programYear = await this.programYearService.getActiveProgramYear(
-      programYearId,
-    );
-    if (!programYear) {
-      throw new UnprocessableEntityException(
-        "Program Year is not active, not able to create a draft application.",
-      );
-    }
     const programs = await this.programService.getProgramsForLocation(
       locationId,
-      programYear.startDate,
-      programYear.endDate,
+      programYearId,
     );
 
     return programs.map((program) => ({
