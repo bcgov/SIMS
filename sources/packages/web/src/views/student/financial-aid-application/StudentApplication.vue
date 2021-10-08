@@ -30,10 +30,13 @@
 <script lang="ts">
 import { ref } from "vue";
 import formio from "../../../components/generic/formio.vue";
-import { useFormioDropdownLoader, useFormioUtils } from "@/composables";
+import {
+  useFormioDropdownLoader,
+  useFormioUtils,
+  useToastMessage,
+} from "@/composables";
 import { useRouter } from "vue-router";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
-import { useToastMessage } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
