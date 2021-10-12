@@ -70,7 +70,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
         component: StudentApplication,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
