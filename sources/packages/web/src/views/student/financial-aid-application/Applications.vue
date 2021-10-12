@@ -1,12 +1,14 @@
 <template>
-  <v-btn
-    color="primary"
-    class="p-button-raised float-right"
-    @click="goToStudentApplication()"
-  >
-    <v-icon size="25">mdi-text-box-plus</v-icon>
-    Start New Application
-  </v-btn>
+  <v-container>
+    <v-btn
+      color="primary"
+      class="p-button-raised float-right"
+      @click="goToStudentApplication()"
+    >
+      <v-icon size="25">mdi-text-box-plus</v-icon>
+      Start New Application
+    </v-btn>
+  </v-container>
 </template>
 <script lang="ts">
 import { SetupContext } from "vue";
