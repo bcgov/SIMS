@@ -68,6 +68,15 @@ export const AESTRoutesConst = {
 };
 
 /**
+ * Supporting Users Routes Names
+ */
+export const SupportingUsersRoutesConst = {
+  APP_SUPPORTING_USERS: Symbol(),
+  HOME: Symbol(),
+  LOGIN: Symbol(),
+};
+
+/**
  * Shared Routes Names
  */
 export const SharedRouteConst = {

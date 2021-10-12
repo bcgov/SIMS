@@ -7,4 +7,5 @@ export enum AuthorizedParties {
   student = "student",
   formsFlowBPM = "forms-flow-bpm",
   aest = "aest",
+  supportingUsers = "supporting-users",
 }

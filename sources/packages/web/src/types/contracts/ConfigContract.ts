@@ -3,9 +3,10 @@ export interface GetConfig {
 }
 
 export enum ClientIdType {
-  STUDENT = "student",
-  INSTITUTION = "institution",
+  Student = "student",
+  Institution = "institution",
   AEST = "aest",
+  SupportingUsers = "supportingUsers",
 }
 
 export interface AuthConfig {

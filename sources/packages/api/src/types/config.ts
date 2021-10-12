@@ -1,4 +1,4 @@
-export type ClientType = "student" | "institution" | "aest";
+export type ClientType = "student" | "institution" | "aest" | "supportingUsers";
 
 export interface IConfig {
   auth: IAuthConfig;
