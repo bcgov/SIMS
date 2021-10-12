@@ -175,7 +175,7 @@
       ],
       "content": "Apply for new funding/grants",
       "refreshOnChange": false,
-      "customClass": "header-md",
+      "customClass": "category-header-medium primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "html5",
@@ -240,7 +240,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e0gpk5q"
+      "id": "e45m9m"
     },
     {
       "title": "Full-time/Part-time Application Panel",
@@ -291,7 +291,7 @@
           ],
           "content": "Full-time/Part-time Application",
           "refreshOnChange": false,
-          "customClass": "header-sm header-color-secondary",
+          "customClass": "category-header-medium secondary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html2",
@@ -356,7 +356,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "evtjlfc"
+          "id": "e9qunzx"
         },
         {
           "label": "HTML",
@@ -449,7 +449,7 @@
           ],
           "content": "Select Study Year",
           "refreshOnChange": false,
-          "customClass": "header-sm header-color-secondary",
+          "customClass": "category-header-medium secondary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html4",
@@ -514,7 +514,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "egjmohe"
+          "id": "e4qkh9l"
         },
         {
           "label": "Select Study Year",
@@ -761,7 +761,7 @@
       ],
       "content": "Grants, scholarships, and other financial supports",
       "refreshOnChange": false,
-      "customClass": "header-md",
+      "customClass": "category-header-medium primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "html6",
@@ -826,7 +826,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "epkw3wa"
+      "id": "e5hdbwi"
     },
     {
       "title": "Grants, scholarships, and other financial supports Panel",
@@ -877,7 +877,7 @@
           ],
           "content": "Tuition waiver program<br>\n(Youth educational assistance fund for former youth in care)",
           "refreshOnChange": false,
-          "customClass": "header-sm header-color-secondary",
+          "customClass": "category-header-medium secondary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html9",
@@ -942,7 +942,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eoofnhm"
+          "id": "ekih76b"
         },
         {
           "label": "HTML",
@@ -1155,7 +1155,7 @@
       ],
       "content": "Loan Forgiveness",
       "refreshOnChange": false,
-      "customClass": "header-md",
+      "customClass": "category-header-medium primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "html7",
@@ -1180,6 +1180,7 @@
       },
       "type": "htmlelement",
       "input": false,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -1191,7 +1192,6 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -1220,7 +1220,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "eevorym"
+      "id": "ershh8s"
     },
     {
       "title": "Loan Forgiveness Panel",
@@ -1271,7 +1271,7 @@
           ],
           "content": "B.C. loan forgiveness program",
           "refreshOnChange": false,
-          "customClass": "header-sm header-color-secondary",
+          "customClass": "category-header-medium secondary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html11",
@@ -1336,7 +1336,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ef36jng"
+          "id": "eei4u06"
         },
         {
           "label": "HTML",
@@ -1559,7 +1559,7 @@
           ],
           "content": "Pacific Leaders Loan Forgiveness",
           "refreshOnChange": false,
-          "customClass": "header-sm header-color-secondary",
+          "customClass": "category-header-medium secondary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html13",
@@ -1624,7 +1624,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e14mktt"
+          "id": "emdefm"
         },
         {
           "label": "HTML",
@@ -1859,7 +1859,7 @@
       ],
       "content": "Interest Free",
       "refreshOnChange": false,
-      "customClass": "header-md",
+      "customClass": "category-header-medium primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "html8",
@@ -1924,7 +1924,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "exvgu7"
+      "id": "ejfhxk"
     },
     {
       "title": "Interest Free Panel",
@@ -1975,7 +1975,7 @@
           ],
           "content": "Interest Free Status",
           "refreshOnChange": false,
-          "customClass": "header-sm header-color-secondary",
+          "customClass": "category-header-medium secondary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html14",
@@ -2040,7 +2040,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e8n01dc"
+          "id": "ebguzvpa"
         },
         {
           "label": "HTML",
@@ -2317,6 +2317,6 @@
   "name": "studentapplication",
   "path": "studentapplication",
   "created": "2021-10-08T16:56:47.715Z",
-  "modified": "2021-10-08T21:55:19.812Z",
+  "modified": "2021-10-08T23:43:36.065Z",
   "machineName": "studentapplication"
 }
