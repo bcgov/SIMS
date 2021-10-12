@@ -3,7 +3,8 @@
     <v-card-header>
       <v-card-header-text>
         <v-card-title class="my-6 bold-text" style="font-size: 27px;"
-          >Welcome to StudentAid BC</v-card-title
+          >Welcome to Student Application Supporting Information
+          Portal</v-card-title
         >
         <v-card-subtitle>Welcome text goes here…</v-card-subtitle>
       </v-card-header-text>
@@ -35,7 +36,7 @@ export default {
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(ClientIdType.Student, AppIDPType.BCSC);
+      await executeLogin(ClientIdType.SupportingUsers, AppIDPType.BCSC);
     };
     return { login };
   },

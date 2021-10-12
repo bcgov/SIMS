@@ -117,7 +117,7 @@ export default {
         label: "Log off",
         icon: "pi pi-power-off",
         command: async () => {
-          await executeLogout(ClientIdType.STUDENT);
+          await executeLogout(ClientIdType.Student);
         },
       },
     ];
@@ -133,9 +133,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.body-background {
-  background: #f2f2f2;
-}
-</style>

@@ -35,6 +35,9 @@ export enum AppRoutes {
   // AEST
   AESTRoot = "/aest",
   AESTHome = "home",
+  // Supporting Users
+  SupportingUsersRoot = "/supporting-users",
+  SupportingUsersHome = "home",
   // Shared
   Login = "login",
   LoginWithBusinessBCeID = "login/business-bceid",

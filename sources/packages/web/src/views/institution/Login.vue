@@ -67,7 +67,7 @@ export default {
   setup() {
     const { executeLogin } = useAuth();
     const login = async () => {
-      await executeLogin(ClientIdType.INSTITUTION, AppIDPType.BCeID);
+      await executeLogin(ClientIdType.Institution, AppIDPType.BCeID);
     };
     return { login };
   },

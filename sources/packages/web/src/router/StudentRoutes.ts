@@ -35,7 +35,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_DASHBOARD,
         component: StudentDashboard,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -44,7 +44,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: Login,
         meta: {
           requiresAuth: false,
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -53,7 +53,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentProfile,
         props: { editMode: false },
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -61,7 +61,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
         component: StudentProfile,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -70,7 +70,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: DynamicStudentApp,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -79,7 +79,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: DynamicStudentApp,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -88,7 +88,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: Assessment,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -96,7 +96,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.NOTIFICATIONS,
         component: Notifications,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -104,7 +104,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
         component: NotificationsSettings,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -117,7 +117,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.PERSONAL_INFO,
             component: PersonalInfoQuestionnaire,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
           {
@@ -125,7 +125,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.SELECT_PROGRAM,
             component: SelectProgram,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
           {
@@ -133,7 +133,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.FINANCIAL_INFO,
             component: FinancialInfo,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
           {
@@ -141,7 +141,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.CONFIRM_SUBMISSION,
             component: ConfirmSubmission,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
         ], //Children under /Student/FinancialAidApplication
@@ -151,7 +151,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         component: StudentApplicationSummary,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -160,16 +160,16 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentApplicationDetails,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
     ], //Children under /Student
     beforeEnter: (to, _from, next) => {
       AuthService.shared
-        .initialize(ClientIdType.STUDENT)
+        .initialize(ClientIdType.Student)
         .then(() => {
           const status = RouteHelper.getNavigationAuthStatus(
-            ClientIdType.STUDENT,
+            ClientIdType.Student,
             to.path,
           );
           switch (status) {
