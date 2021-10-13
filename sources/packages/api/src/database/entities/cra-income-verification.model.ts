@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Application } from ".";
+import { Application, SupportingUser } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
@@ -121,4 +121,21 @@ export class CRAIncomeVerification extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+  /**
+   * Supporting user id that requires a CRA income verification.
+   */
+  @RelationId(
+    (carIncomeVerification: CRAIncomeVerification) =>
+      carIncomeVerification.supportingUser,
+  )
+  supportingUserId: number;
+  /**
+   * Supporting user that requires a CRA income verification.
+   */
+  @ManyToOne(() => SupportingUser, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "supporting_user_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  supportingUser?: SupportingUser;
 }

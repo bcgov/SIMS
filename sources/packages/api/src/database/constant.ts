@@ -20,4 +20,5 @@ export const TableNames = {
   MSFAANumbers: "msfaa_numbers",
   COEDeniedReason: "coe_denied_reasons",
   CRAIncomeVerification: "cra_income_verifications",
+  SupportingUsers: "supporting_users",
 };
