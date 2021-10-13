@@ -21,12 +21,14 @@ export class RouteHelper {
    */
   private static getRootRoute(clientType: ClientIdType): AppRoutes {
     switch (clientType) {
-      case ClientIdType.STUDENT:
+      case ClientIdType.Student:
         return AppRoutes.StudentRoot;
-      case ClientIdType.INSTITUTION:
+      case ClientIdType.Institution:
         return AppRoutes.InstitutionRoot;
       case ClientIdType.AEST:
         return AppRoutes.AESTRoot;
+      case ClientIdType.SupportingUsers:
+        return AppRoutes.SupportingUsersRoot;
     }
   }
 
@@ -54,10 +56,11 @@ export class RouteHelper {
   ): boolean {
     let allowedIDP = AppIDPType.UNKNOWN;
     switch (clientType) {
-      case ClientIdType.STUDENT:
+      case ClientIdType.Student:
+      case ClientIdType.SupportingUsers:
         allowedIDP = AppIDPType.BCSC;
         break;
-      case ClientIdType.INSTITUTION:
+      case ClientIdType.Institution:
         allowedIDP = AppIDPType.BCeID;
         break;
       case ClientIdType.AEST:
@@ -95,10 +98,10 @@ export class RouteHelper {
     }
 
     if (
-      AuthService.shared.userToken?.azp !== clientType ||
-      !RouteHelper.isAllowedIDP(clientType, AuthService.shared.userToken?.IDP)
+      !AuthService.shared.userToken ||
+      !RouteHelper.isAllowedIDP(clientType, AuthService.shared.userToken.IDP)
     ) {
-      // User is not authenticated to the correct Keycloak client.
+      // User is not authenticated to the correct Keycloak client/IDP.
       return AuthStatus.ForbiddenUser;
     }
 

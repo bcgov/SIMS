@@ -20,6 +20,7 @@ export interface FormIOCustomEvent {
 export enum FormIOCustomEventTypes {
   RouteToStudentProfile = "routeToStudentProfile",
   RouteToCreateProgram = "routeToCreateProgram",
+  RouteToStartFullTimePartTimeApplication = "routeToStartFullTimePartTimeApplication",
   RouteToContinueApplication = "routeToStudentContinueApplication",
   RouteToConfirmAssessment = "routeToConfirmAssessment",
   RouteToViewStudentApplication = "routeToViewStudentApplication",

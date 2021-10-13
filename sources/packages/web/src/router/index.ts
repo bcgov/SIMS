@@ -10,12 +10,14 @@ import {
 import { UserAuthorizationService } from "@/services/UserAuthorizationService";
 import { AuthService } from "@/services/AuthService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
+import { supportingUsersRoutes } from "./SupportingUsersRoutes";
 
 const routes: Array<RouteRecordRaw> = [
   ...studentRoutes,
   ...institutionRoutes,
   ...aestRoutes,
   ...sharedRoutes,
+  ...supportingUsersRoutes,
 ];
 
 const router = createRouter({
@@ -25,7 +27,7 @@ const router = createRouter({
 
 function forEachInstitutionRoutes(
   to: any,
-  from: any,
+  _from: any,
   next: any,
   clientType: ClientIdType,
 ) {
@@ -69,8 +71,8 @@ function forEachInstitutionRoutes(
 }
 
 router.beforeEach((to, from, next) => {
-  if (to.meta?.clientType === ClientIdType.INSTITUTION)
-    forEachInstitutionRoutes(to, from, next, ClientIdType.INSTITUTION);
+  if (to.meta?.clientType === ClientIdType.Institution)
+    forEachInstitutionRoutes(to, from, next, ClientIdType.Institution);
   else next();
 });
 

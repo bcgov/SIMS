@@ -1,17 +1,18 @@
 import { RouteRecordRaw } from "vue-router";
-import StudentDashboard from "../views/student/StudentDashboard.vue";
-import Login from "../views/student/Login.vue";
-import AppStudent from "../views/student/AppStudent.vue";
-import FinancialAidApplication from "../views/student/financial-aid-application/FinancialAidApplication.vue";
-import PersonalInfoQuestionnaire from "../views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";
-import SelectProgram from "../views/student/financial-aid-application/SelectProgram.vue";
-import FinancialInfo from "../views/student/financial-aid-application/FinancialInfo.vue";
-import ConfirmSubmission from "../views/student/financial-aid-application/ConfirmSubmission.vue";
-import DynamicStudentApp from "../views/student/financial-aid-application/FullTimeApplication.vue";
-import Assessment from "../views/student/NoticeOfAssessment.vue";
-import StudentProfile from "../views/student/StudentProfile.vue";
-import Notifications from "../views/student/Notifications.vue";
-import NotificationsSettings from "../views/student/NotificationsSettings.vue";
+import StudentDashboard from "@/views/student/StudentDashboard.vue";
+import Login from "@/views/student/Login.vue";
+import AppStudent from "@/views/student/AppStudent.vue";
+import FinancialAidApplication from "@/views/student/financial-aid-application/FinancialAidApplication.vue";
+import PersonalInfoQuestionnaire from "@/views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";
+import SelectProgram from "@/views/student/financial-aid-application/SelectProgram.vue";
+import FinancialInfo from "@/views/student/financial-aid-application/FinancialInfo.vue";
+import ConfirmSubmission from "@/views/student/financial-aid-application/ConfirmSubmission.vue";
+import DynamicStudentApp from "@/views/student/financial-aid-application/FullTimeApplication.vue";
+import StudentApplication from "@/views/student/financial-aid-application/StudentApplication.vue";
+import Assessment from "@/views/student/NoticeOfAssessment.vue";
+import StudentProfile from "@/views/student/StudentProfile.vue";
+import Notifications from "@/views/student/Notifications.vue";
+import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 
@@ -35,7 +36,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_DASHBOARD,
         component: StudentDashboard,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -44,7 +45,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: Login,
         meta: {
           requiresAuth: false,
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -53,7 +54,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentProfile,
         props: { editMode: false },
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -61,7 +62,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
         component: StudentProfile,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StartStudentApplication,
+        name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
+        component: StudentApplication,
+        meta: {
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -70,7 +79,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: DynamicStudentApp,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -79,7 +88,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: DynamicStudentApp,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -88,7 +97,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: Assessment,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -96,7 +105,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.NOTIFICATIONS,
         component: Notifications,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -104,7 +113,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
         component: NotificationsSettings,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -117,7 +126,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.PERSONAL_INFO,
             component: PersonalInfoQuestionnaire,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
           {
@@ -125,7 +134,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.SELECT_PROGRAM,
             component: SelectProgram,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
           {
@@ -133,7 +142,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.FINANCIAL_INFO,
             component: FinancialInfo,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
           {
@@ -141,7 +150,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.CONFIRM_SUBMISSION,
             component: ConfirmSubmission,
             meta: {
-              clientType: ClientIdType.STUDENT,
+              clientType: ClientIdType.Student,
             },
           },
         ], //Children under /Student/FinancialAidApplication
@@ -151,7 +160,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         component: StudentApplicationSummary,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
       {
@@ -160,16 +169,16 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentApplicationDetails,
         props: true,
         meta: {
-          clientType: ClientIdType.STUDENT,
+          clientType: ClientIdType.Student,
         },
       },
     ], //Children under /Student
     beforeEnter: (to, _from, next) => {
       AuthService.shared
-        .initialize(ClientIdType.STUDENT)
+        .initialize(ClientIdType.Student)
         .then(() => {
           const status = RouteHelper.getNavigationAuthStatus(
-            ClientIdType.STUDENT,
+            ClientIdType.Student,
             to.path,
           );
           switch (status) {
@@ -197,7 +206,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });

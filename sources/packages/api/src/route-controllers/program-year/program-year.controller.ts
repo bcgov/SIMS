@@ -1,9 +1,10 @@
-import { Controller, Get, NotFoundException } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
 import { ProgramYearService } from "../../services";
-import { ProgramYearDto } from "./models/program-year.dto";
+import { OptionItem } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { ProgramYearDto } from "./models/program-year.dto";
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("program-year")
 export class ProgramYearController extends BaseController {
@@ -11,8 +12,8 @@ export class ProgramYearController extends BaseController {
     super();
   }
 
-  @Get()
-  async getProgramYears(): Promise<ProgramYearDto[]> {
+  @Get("/options-list")
+  async getProgramYears(): Promise<OptionItem[]> {
     const programYears = await this.programYearService.getProgramYears();
 
     if (!programYears) {
@@ -20,10 +21,28 @@ export class ProgramYearController extends BaseController {
     }
 
     return programYears.map((programYear) => ({
+      id: programYear.id,
+      description: `(${programYear.programYear}) - ${programYear.programYearDesc}`,
+    }));
+  }
+
+  @Get(":id/active")
+  async getActiveProgramYearById(
+    @Param("id") programYearId: number,
+  ): Promise<ProgramYearDto> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      programYearId,
+    );
+    if (!programYear) {
+      throw new NotFoundException(
+        `Program Year Id ${programYearId} was not found.`,
+      );
+    }
+    return {
+      id: programYear.id,
       programYear: programYear.programYear,
       programYearDesc: programYear.programYearDesc,
       formName: programYear.formName,
-      id: programYear.id,
-    }));
+    };
   }
 }

@@ -15,6 +15,7 @@ export const StudentRoutesConst = {
   FINANCIAL_INFO: Symbol(),
   CONFIRM_SUBMISSION: Symbol(),
   DYNAMIC_FINANCIAL_APP_FORM: Symbol(),
+  STUDENT_APPLICATION_FORM: Symbol(),
   DYNAMIC_FINANCIAL_APP_FORM_VIEW: Symbol(),
   NOTIFICATIONS: Symbol(),
   NOTIFICATIONS_SETTINGS: Symbol(),
@@ -64,6 +65,15 @@ export const AESTRoutesConst = {
   HOME: Symbol(),
   LOGIN: Symbol(),
   LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),
+};
+
+/**
+ * Supporting Users Routes Names
+ */
+export const SupportingUsersRoutesConst = {
+  APP_SUPPORTING_USERS: Symbol(),
+  HOME: Symbol(),
+  LOGIN: Symbol(),
 };
 
 /**
