@@ -28,6 +28,7 @@ import {
   GetApplicationDataDto,
   ApplicationStatusToBeUpdatedDto,
   ProgramYearOfApplicationDto,
+  NOAApplicationDto,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -37,6 +38,7 @@ import {
   dateString,
   getPIRDeniedReason,
   getCOEDeniedReason,
+  getUserFullName,
 } from "../../utilities";
 
 @Controller("application")
@@ -238,16 +240,37 @@ export class ApplicationController extends BaseController {
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
-  ): Promise<any> {
-    const assessment =
+  ): Promise<NOAApplicationDto> {
+    const application =
       await this.applicationService.getAssessmentByApplicationId(applicationId);
-    if (!assessment) {
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    if (!application.assessment) {
       throw new NotFoundException(
         `Assessment for the application id ${applicationId} was not calculated.`,
       );
     }
 
-    return assessment;
+    return {
+      assessment: {
+        weeks: application.assessment.weeks,
+        totalFederalAward: application.assessment.totalFederalAward,
+        totalProvincialAward: application.assessment.totalFederalAward,
+        federalAssessmentNeed: application.assessment.federalAssessmentNeed,
+        provincialAssessmentNeed:
+          application.assessment.provincialAssessmentNeed,
+      },
+      applicationNumber: application.applicationNumber,
+      fullName: getUserFullName(application.student.user),
+      programName: application.offering.educationProgram.name,
+      locationName: application.location.name,
+      offeringStudyStartDate: dateString(application.offering.studyStartDate),
+      offeringStudyEndDate: dateString(application.offering.studyEndDate),
+      msfaaNumber: application.msfaaNumber.msfaaNumber,
+    };
   }
 
   /**

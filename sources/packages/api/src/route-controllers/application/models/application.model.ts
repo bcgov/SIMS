@@ -190,3 +190,22 @@ export interface ActiveApplicationDataDto {
   applicationLocationName: string;
   applicationStatus: string;
 }
+
+export interface NOAApplicationDto {
+  assessment: AssessmentDto;
+  applicationNumber: string;
+  fullName: string;
+  programName: string;
+  locationName: string;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  msfaaNumber: string;
+}
+
+export interface AssessmentDto {
+  weeks: number;
+  totalFederalAward: number;
+  totalProvincialAward: number;
+  federalAssessmentNeed: number;
+  provincialAssessmentNeed: number;
+}
