@@ -144,6 +144,7 @@ export default {
         pdStatus: studentInfo.pdStatus,
       };
       initialData.value = { ...applicationData.data, ...studentFormData };
+      educationProgramIdFromForm.value = applicationData.data?.selectedProgram;
     });
 
     // Save the current state of the student application skipping all validations.
@@ -255,6 +256,21 @@ export default {
       }
     };
 
+    const getOfferingDetails = async (form: any, locationId: number) => {
+      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
+        form,
+        OFFERING_INTENSITY_KEY,
+      );
+      await formioDataLoader.loadOfferingsForLocation(
+        form,
+        educationProgramIdFromForm.value,
+        locationId,
+        OFFERINGS_DROPDOWN_KEY,
+        props.programYearId,
+        selectedIntensity,
+      );
+    };
+
     const formChanged = async (form: any, event: any) => {
       const locationId = +formioUtils.getComponentValueByKey(
         form,
@@ -278,23 +294,13 @@ export default {
             SELECTED_PROGRAM_DESC_KEY,
           );
         }
+        getOfferingDetails(form, locationId);
       }
       if (
         event.changed.component.key === OFFERING_INTENSITY_KEY &&
         educationProgramIdFromForm.value
       ) {
-        const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-          form,
-          OFFERING_INTENSITY_KEY,
-        );
-        await formioDataLoader.loadOfferingsForLocation(
-          form,
-          educationProgramIdFromForm.value,
-          locationId,
-          OFFERINGS_DROPDOWN_KEY,
-          props.programYearId,
-          selectedIntensity,
-        );
+        getOfferingDetails(form, locationId);
       }
       if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
         await formioComponentLoader.loadSelectedOfferingDate(
