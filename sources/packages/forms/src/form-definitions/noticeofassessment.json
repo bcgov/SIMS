@@ -2128,7 +2128,7 @@
       ],
       "content": "How your amount was calculated",
       "refreshOnChange": false,
-      "customClass": "header-md secondary-color",
+      "customClass": "category-header-medium primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "howYourAmountWasCalculated",
@@ -2193,7 +2193,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "e8v8erk"
+      "id": "e1fc94t"
     },
     {
       "title": "how total was calculated",
@@ -8780,6 +8780,6 @@
   "name": "noticeofassessment",
   "path": "noticeofassessment",
   "created": "2021-07-14T17:56:22.162Z",
-  "modified": "2021-10-14T21:32:08.701Z",
+  "modified": "2021-10-14T21:45:55.738Z",
   "machineName": "noticeOfAssessment"
 }
