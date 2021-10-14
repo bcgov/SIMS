@@ -36,7 +36,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * Get one income verification record associated
    * with a Student Application. The records could
    * be related to a student income or some other
-   * supporting uer (e.g. parent/partner).
+   * supporting user (e.g. parent/partner).
    * @param applicationId application id to retrieve the income.
    * @returns one income verification for the application.
    */

@@ -325,9 +325,9 @@ export class ApplicationSystemController {
         payload.supportingUserId,
       );
 
-    // await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
-    //   incomeVerification.id,
-    // );
+    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+      incomeVerification.id,
+    );
 
     return incomeVerification.id;
   }
@@ -335,7 +335,7 @@ export class ApplicationSystemController {
   /**
    * Gets the CRA income verification associated with the application.
    * The records could be related to a student income or some other
-   * supporting uer (e.g. parent/partner).
+   * supporting user (e.g. parent/partner).
    * @param applicationId application id to retrieve the student income.
    * @param incomeVerificationId income verification associated with
    * the application.

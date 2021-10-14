@@ -128,7 +128,7 @@ export class CRAIncomeVerification extends RecordDataModel {
     (carIncomeVerification: CRAIncomeVerification) =>
       carIncomeVerification.supportingUser,
   )
-  supportingUserId: number;
+  supportingUserId?: number;
   /**
    * Supporting user that requires a CRA income verification.
    */

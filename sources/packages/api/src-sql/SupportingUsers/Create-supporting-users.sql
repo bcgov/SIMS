@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS sims.supporting_users (
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
-    UNIQUE (application_Id, user_id, supporting_user_type)
+    UNIQUE (application_Id, user_id)
 );
 
 -- ## Comments
@@ -38,7 +38,7 @@ COMMENT ON COLUMN sims.supporting_users.supporting_data IS 'Dynamic data that wi
 
 COMMENT ON COLUMN sims.supporting_users.supporting_user_type IS 'Type of the supporting user (e.g. Parent/Partner).';
 
-COMMENT ON COLUMN sims.supporting_users.user_id IS 'User id of the authenticated user providing the information as a Parent/Partner.';
+COMMENT ON COLUMN sims.supporting_users.user_id IS 'User id of the authenticated user providing the information as a parent or partner.';
 
 COMMENT ON COLUMN sims.supporting_users.application_Id IS 'Application id that needs additional information.';
 

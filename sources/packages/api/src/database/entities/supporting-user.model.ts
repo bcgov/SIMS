@@ -19,7 +19,7 @@ import { Application, SupportingUserType } from ".";
  * the parent/partner to login to the system and provide the information
  * for that particular Student Application. So, along the years the same
  * parent/partner could be having different entries for different applications
- * or even be a parent for on Student Application and a partner another one.
+ * or even be a parent for on Student Application and a partner on another one.
  */
 @Entity({ name: TableNames.SupportingUsers })
 export class SupportingUser extends RecordDataModel {
@@ -49,7 +49,7 @@ export class SupportingUser extends RecordDataModel {
     name: "birth_date",
     nullable: true,
   })
-  birthdate?: Date;
+  birthDate?: Date;
   /**
    * Gender as received from BCSC authentication.
    */
