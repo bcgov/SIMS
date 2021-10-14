@@ -256,14 +256,7 @@ export class ApplicationController extends BaseController {
     }
 
     return {
-      assessment: {
-        weeks: application.assessment.weeks,
-        totalFederalAward: application.assessment.totalFederalAward,
-        totalProvincialAward: application.assessment.totalFederalAward,
-        federalAssessmentNeed: application.assessment.federalAssessmentNeed,
-        provincialAssessmentNeed:
-          application.assessment.provincialAssessmentNeed,
-      },
+      assessment: application.assessment,
       applicationNumber: application.applicationNumber,
       fullName: getUserFullName(application.student.user),
       programName: application.offering.educationProgram.name,

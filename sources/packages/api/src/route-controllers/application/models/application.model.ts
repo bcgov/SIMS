@@ -192,7 +192,7 @@ export interface ActiveApplicationDataDto {
 }
 
 export interface NOAApplicationDto {
-  assessment: AssessmentDto;
+  assessment: any;
   applicationNumber: string;
   fullName: string;
   programName: string;
@@ -200,12 +200,4 @@ export interface NOAApplicationDto {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
-}
-
-export interface AssessmentDto {
-  weeks: number;
-  totalFederalAward: number;
-  totalProvincialAward: number;
-  federalAssessmentNeed: number;
-  provincialAssessmentNeed: number;
 }
