@@ -237,6 +237,7 @@ export class ApplicationController extends BaseController {
     }
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
