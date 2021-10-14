@@ -1,7 +1,11 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { Connection, In, IsNull, Repository, UpdateResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Application, CRAIncomeVerification } from "../../database/entities";
+import {
+  Application,
+  CRAIncomeVerification,
+  SupportingUser,
+} from "../../database/entities";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { getUTCNow } from "../../utilities";
 import { ConfigService } from "..";
@@ -29,14 +33,16 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   }
 
   /**
-   * Gets the student income verification for the application.
-   * The application id has a unique constraint in database so
-   * only one record is expected to be returned.
-   * @param applicationId application id to retrieve the student income.
-   * @returns student income verification for application.
+   * Get one income verification record associated
+   * with a Student Application. The records could
+   * be related to a student income or some other
+   * supporting uer (e.g. parent/partner).
+   * @param applicationId application id to retrieve the income.
+   * @returns one income verification for the application.
    */
   async getIncomeVerificationForApplication(
     applicationId: number,
+    incomeVerificationId: number,
   ): Promise<CRAIncomeVerification> {
     return this.repo
       .createQueryBuilder("incomeVerifications")
@@ -45,7 +51,10 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         "incomeVerifications.craReportedIncome",
         "incomeVerifications.dateReceived",
       ])
-      .where("incomeVerifications.application.id = :applicationId", {
+      .where("incomeVerifications.id = :incomeVerificationId", {
+        incomeVerificationId,
+      })
+      .andWhere("incomeVerifications.application.id = :applicationId", {
         applicationId,
       })
       .getOne();
@@ -83,17 +92,25 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * @param taxYear tax year to retrieve the income information.
    * @param reportedIncome income reported by the user in the Student
    * Application. This is the income that will be verified on CRA.
-   * @returns Income Verification record created.
+   * @param [supportingUserId] when the income is not related to the
+   * student itself it will belong to a supporting user (e.g. parent/partner).
+   * @returns income Verification record created.
    */
   async createIncomeVerification(
     applicationId: number,
     taxYear: number,
     reportedIncome: number,
+    supportingUserId?: number,
   ): Promise<CRAIncomeVerification> {
     const newVerification = new CRAIncomeVerification();
     newVerification.application = { id: applicationId } as Application;
     newVerification.taxYear = taxYear;
     newVerification.reportedIncome = reportedIncome;
+    if (supportingUserId) {
+      newVerification.supportingUser = {
+        id: supportingUserId,
+      } as SupportingUser;
+    }
     return this.repo.save(newVerification);
   }
 

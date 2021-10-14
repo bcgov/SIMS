@@ -29,3 +29,4 @@ export * from "./pir-denied-reason/pir-denied-reason.service";
 export * from "./institution-type/institution-type.service";
 export * from "./msfaa-number/msfaa-number.service";
 export * from "./coe-denied-reason/coe-denied-reason.service";
+export * from "./supporting-user/supporting-user.service";
