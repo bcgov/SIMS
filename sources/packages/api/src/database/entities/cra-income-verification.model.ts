@@ -108,8 +108,8 @@ export class CRAIncomeVerification extends RecordDataModel {
    * Only one application id is allowed per student application.
    */
   @RelationId(
-    (carIncomeVerification: CRAIncomeVerification) =>
-      carIncomeVerification.application,
+    (craIncomeVerification: CRAIncomeVerification) =>
+      craIncomeVerification.application,
   )
   applicationId: number;
   /**
