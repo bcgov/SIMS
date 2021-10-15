@@ -118,7 +118,6 @@ export default {
     const isLastPage = ref(false);
     let applicationWizard: any;
     const isReadOnly = ref(false);
-    const educationProgramIdFromForm = ref();
 
     onMounted(async () => {
       //Get the student information and application information.
@@ -144,7 +143,6 @@ export default {
         pdStatus: studentInfo.pdStatus,
       };
       initialData.value = { ...applicationData.data, ...studentFormData };
-      educationProgramIdFromForm.value = applicationData.data?.selectedProgram;
     });
 
     // Save the current state of the student application skipping all validations.
@@ -264,9 +262,13 @@ export default {
         form,
         OFFERING_INTENSITY_KEY,
       );
+      const educationProgramIdFromForm: number = formioUtils.getComponentValueByKey(
+        form,
+        PROGRAMS_DROPDOWN_KEY,
+      );
       await formioDataLoader.loadOfferingsForLocation(
         form,
-        educationProgramIdFromForm.value,
+        educationProgramIdFromForm,
         locationId,
         OFFERINGS_DROPDOWN_KEY,
         props.programYearId,
@@ -280,9 +282,9 @@ export default {
         LOCATIONS_DROPDOWN_KEY,
       );
       if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
-        /* 
-          If `programnotListed` is already checked in the draft and 
-          when student edit the draft application and changes the 
+        /*
+          If `programnotListed` is already checked in the draft and
+          when student edit the draft application and changes the
           location then `programnotListed` checkbox will reset/uncheck.
         */
         await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
@@ -296,7 +298,6 @@ export default {
         );
       }
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        educationProgramIdFromForm.value = +event.changed.value;
         if (+event.changed.value > 0) {
           await formioComponentLoader.loadProgramDesc(
             form,
@@ -305,13 +306,10 @@ export default {
           );
         }
       }
-      if (
-        event.changed.component.key === OFFERING_INTENSITY_KEY &&
-        educationProgramIdFromForm.value
-      ) {
-        /* 
-          If `offeringnotListed` is already checked in the draft and 
-          when student edit the draft application and changes the 
+      if (event.changed.component.key === OFFERING_INTENSITY_KEY) {
+        /*
+          If `offeringnotListed` is already checked in the draft and
+          when student edit the draft application and changes the
           offering intensity then `programnotListed` checkbox will reset/uncheck.
         */
         await formioUtils.resetCheckBox(form, OFFERING_NOT_LISTED, {
