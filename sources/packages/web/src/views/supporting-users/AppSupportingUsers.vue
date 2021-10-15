@@ -5,6 +5,17 @@
     <v-btn
       v-if="isAuthenticated"
       class="mr-5"
+      text
+      @click="
+        $router.push({
+          name: SupportingUsersRoutesConst.HOME,
+        })
+      "
+      >Home</v-btn
+    >
+    <v-btn
+      v-if="isAuthenticated"
+      class="mr-5"
       icon="mdi-account"
       outlined
       elevation="1"
@@ -31,6 +42,7 @@ import { ref } from "vue";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
+import { SupportingUsersRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: { BCLogo },
@@ -62,6 +74,7 @@ export default {
       logoff,
       userOptionsMenuRef,
       togleUserMenu,
+      SupportingUsersRoutesConst,
     };
   },
 };

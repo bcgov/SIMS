@@ -2,6 +2,8 @@ import { RouteRecordRaw } from "vue-router";
 import AppSupportingUsers from "@/views/supporting-users/AppSupportingUsers.vue";
 import Login from "@/views/supporting-users/Login.vue";
 import Home from "@/views/supporting-users/Home.vue";
+import ParentInformation from "@/views/supporting-users/ParentInformation.vue";
+import PartnerInformation from "@/views/supporting-users/PartnerInformation.vue";
 import {
   SupportingUsersRoutesConst,
   SharedRouteConst,
@@ -30,6 +32,22 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.SupportingUsersHome,
         name: SupportingUsersRoutesConst.HOME,
         component: Home,
+        meta: {
+          clientType: ClientIdType.SupportingUsers,
+        },
+      },
+      {
+        path: AppRoutes.ParentSupportingInfo,
+        name: SupportingUsersRoutesConst.PARENT_INFORMATION,
+        component: ParentInformation,
+        meta: {
+          clientType: ClientIdType.SupportingUsers,
+        },
+      },
+      {
+        path: AppRoutes.PartnerSupportingInfo,
+        name: SupportingUsersRoutesConst.PARTNER_INFORMATION,
+        component: PartnerInformation,
         meta: {
           clientType: ClientIdType.SupportingUsers,
         },

@@ -74,6 +74,8 @@ export const SupportingUsersRoutesConst = {
   APP_SUPPORTING_USERS: Symbol(),
   HOME: Symbol(),
   LOGIN: Symbol(),
+  PARENT_INFORMATION: Symbol(),
+  PARTNER_INFORMATION: Symbol(),
 };
 
 /**

@@ -1,11 +1,9 @@
 <template>
   <v-container>
-    <v-card class="p-4">
-      <formio
-        formName="supportingusersdashboard"
-        @customEvent="customEventCallback"
-      ></formio>
-    </v-card>
+    <formio
+      formName="supportingusersdashboard"
+      @customEvent="customEventCallback"
+    ></formio>
   </v-container>
 </template>
 
@@ -30,7 +28,7 @@ export default {
           routeName = SupportingUsersRoutesConst.PARENT_INFORMATION;
           break;
         case FormIOCustomEventTypes.RouteToPartnerInformation:
-          routeName = SupportingUsersRoutesConst.PARENT_INFORMATION;
+          routeName = SupportingUsersRoutesConst.PARTNER_INFORMATION;
           break;
         default:
           throw new Error("Invalid route value");

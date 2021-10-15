@@ -39,6 +39,8 @@ export enum AppRoutes {
   // Supporting Users
   SupportingUsersRoot = "/supporting-users",
   SupportingUsersHome = "home",
+  ParentSupportingInfo = "parent-supporting-info",
+  PartnerSupportingInfo = "partner-supporting-info",
   // Shared
   Login = "login",
   LoginWithBusinessBCeID = "login/business-bceid",

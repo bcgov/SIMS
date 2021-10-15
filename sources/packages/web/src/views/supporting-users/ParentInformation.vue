@@ -1,11 +1,9 @@
 <template>
   <v-container>
-    <v-card class="p-4">
-      <formio
-        formName="supportingusersdashboard"
-        @customEvent="customEventCallback"
-      ></formio>
-    </v-card>
+    <formio
+      formName="supportingusersdashboard"
+      @customEvent="customEventCallback"
+    ></formio>
   </v-container>
 </template>
 
