@@ -28,6 +28,7 @@ import {
   GetApplicationDataDto,
   ApplicationStatusToBeUpdatedDto,
   ProgramYearOfApplicationDto,
+  NOAApplicationDto,
 } from "./models/application.model";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -37,6 +38,7 @@ import {
   dateString,
   getPIRDeniedReason,
   getCOEDeniedReason,
+  getUserFullName,
 } from "../../utilities";
 
 @Controller("application")
@@ -235,19 +237,47 @@ export class ApplicationController extends BaseController {
     }
   }
 
+  /**
+   * Fetch the NOA screen values for a student application.
+   * @param applicationId application id to fetch the NOA values.
+   * @param userToken associated student of the application.
+   * @returns NOA and application data.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
-  ): Promise<any> {
-    const assessment =
-      await this.applicationService.getAssessmentByApplicationId(applicationId);
-    if (!assessment) {
+    @UserToken() userToken: IUserToken,
+  ): Promise<NOAApplicationDto> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    const application =
+      await this.applicationService.getAssessmentByApplicationId(
+        applicationId,
+        student.id,
+      );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    if (!application.assessment) {
       throw new NotFoundException(
         `Assessment for the application id ${applicationId} was not calculated.`,
       );
     }
 
-    return assessment;
+    return {
+      assessment: application.assessment,
+      applicationNumber: application.applicationNumber,
+      fullName: getUserFullName(application.student.user),
+      programName: application.offering.educationProgram.name,
+      locationName: application.location.name,
+      offeringStudyStartDate: dateString(application.offering.studyStartDate),
+      offeringStudyEndDate: dateString(application.offering.studyEndDate),
+      msfaaNumber: application.msfaaNumber.msfaaNumber,
+    };
   }
 
   /**
