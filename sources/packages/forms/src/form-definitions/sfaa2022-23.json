@@ -1363,7 +1363,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false);\r\n\r\n",
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false);\r\n\r\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -1442,7 +1442,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false);\r\n\r\n",
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false);\r\n\r\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -1573,7 +1573,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false);\r\n\r\n",
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false);\r\n\r\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -1792,7 +1792,7 @@
                   "key": "programDesc",
                   "tags": [],
                   "properties": {},
-                  "customConditional": "show =\n  (!!data.selectedProgram &&\n  !!data.selectedLocation &&\n  !!!data.mySchoolIsNotListed &&\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );",
+                  "customConditional": "show =\n  (!!data.selectedProgram &&\n  !!data.selectedLocation &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );",
                   "conditional": {
                       "json": "",
                       "show": null,
@@ -2497,7 +2497,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -2576,7 +2576,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -2709,7 +2709,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -2822,7 +2822,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !!data.howWillYouBeAttendingTheProgram &&\n  !!!(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) \n  );\n\n",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !!data.howWillYouBeAttendingTheProgram &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) \n  );\n\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -2916,7 +2916,7 @@
                       "eq": "",
                       "json": ""
                   },
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !!!(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !!data.howWillYouBeAttendingTheProgram\n  );\n\n",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !!data.howWillYouBeAttendingTheProgram\n  );\n\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
