@@ -1,42 +1,41 @@
 <template>
   <v-container>
-    <formio
-      formName="supportingusersdashboard"
-      @customEvent="customEventCallback"
-    ></formio>
+    <v-card class="p-4">
+      <formio
+        formName="supportingusersprofile"
+        :data="initialData"
+        @submitted="submitted"
+      ></formio>
+    </v-card>
   </v-container>
 </template>
 
 <script lang="ts">
 import formio from "@/components/generic/formio.vue";
-import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { useRouter } from "vue-router";
+import { useAuthBCSC, useFormatters } from "@/composables";
 import { SupportingUsersRoutesConst } from "@/constants/routes/RouteConstants";
+import { ref } from "vue";
 export default {
   components: {
     formio,
   },
   setup() {
     const router = useRouter();
-    const customEventCallback = async (
-      _form: any,
-      event: FormIOCustomEvent,
-    ) => {
-      let routeName: symbol;
-      switch (event.type) {
-        case FormIOCustomEventTypes.RouteToParentInformation:
-          routeName = SupportingUsersRoutesConst.PARENT_INFORMATION;
-          break;
-        case FormIOCustomEventTypes.RouteToPartnerInformation:
-          routeName = SupportingUsersRoutesConst.PARENT_INFORMATION;
-          break;
-        default:
-          throw new Error("Invalid route value");
-      }
-      router.push({ name: routeName });
+    const { dateOnlyLongString } = useFormatters();
+    const { bcscParsedToken } = useAuthBCSC();
+    const initialData = ref();
+    console.log(bcscParsedToken);
+    initialData.value = {
+      ...bcscParsedToken,
+      dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
     };
 
-    return { customEventCallback };
+    const submitted = (formData: any) => {
+      console.log(formData);
+    };
+
+    return { initialData, submitted };
   },
 };
 </script>

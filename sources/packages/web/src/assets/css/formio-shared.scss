@@ -28,7 +28,7 @@ $border-color-warning: #f3b229;
 $border-color-info: #6554c0;
 
 .primary-color {
-  color: $primary-header-color;
+  color: $primary-header-color !important;
 }
 
 .secondary-color {
@@ -96,6 +96,10 @@ $border-color-info: #6554c0;
 
 .panel-warning .card-body {
   border: 2px solid $panel-warning-color;
+}
+
+[id^="error-list"] ul {
+  padding-left: 20px;
 }
 
 .align-bullets ul {

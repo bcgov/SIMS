@@ -15,3 +15,15 @@ export interface ApplicationToken extends KeycloakTokenParsed {
    */
   azp: string;
 }
+
+export interface BCSCParsedToken extends ApplicationToken {
+  name: string;
+  birthdate: string;
+  givenNames: string;
+  lastName: string;
+  email: string;
+  emailVerified: string;
+  familyName: string;
+  gender: string;
+  givenName: string;
+}

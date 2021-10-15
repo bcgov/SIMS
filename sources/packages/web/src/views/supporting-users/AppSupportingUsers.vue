@@ -30,7 +30,7 @@
     />
   </v-app-bar>
   <router-view name="sidebar"></router-view>
-  <v-main class="body-background">
+  <v-main class="body-background ff-form-container">
     <v-container fluid>
       <router-view></router-view>
     </v-container>
