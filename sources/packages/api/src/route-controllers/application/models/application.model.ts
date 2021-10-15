@@ -169,14 +169,6 @@ export interface ProgramYearOfApplicationDto {
   formName: string;
   programYearId: number;
 }
-export class CreateIncomeVerificationDto {
-  @IsInt()
-  @Min(2000)
-  taxYear: number;
-  @IsInt()
-  @Min(0)
-  reportedIncome: number;
-}
 
 export interface ActiveApplicationDataDto {
   applicationProgramName: string;

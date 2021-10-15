@@ -1,0 +1,1 @@
+CREATE TYPE sims.supporting_user_types AS ENUM ('Parent', 'Partner');

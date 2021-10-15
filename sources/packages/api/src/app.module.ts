@@ -29,6 +29,7 @@ import {
   MSFAANumberService,
   COEDeniedReasonService,
   CRAIncomeVerificationService,
+  SupportingUserService,
 } from "./services";
 import {
   UserController,
@@ -103,6 +104,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     MSFAANumberService,
     COEDeniedReasonService,
     CRAIncomeVerificationService,
+    SupportingUserService,
   ],
 })
 export class AppModule {}

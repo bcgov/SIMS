@@ -14,11 +14,9 @@ import {
   CRAIncomeVerificationService,
   EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  SupportingUserService,
 } from "../../services";
-import {
-  ApplicationDataDto,
-  CreateIncomeVerificationDto,
-} from "./models/application.model";
+import { ApplicationDataDto } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -28,7 +26,10 @@ import {
   UpdateCOEStatusDto,
   UpdateApplicationStatusDto,
   UpdateApplicationStatusWorkflowIdDto,
-  StudentIncomeDetails,
+  SupportingUserDto,
+  CreateSupportingUsersDto,
+  CreateIncomeVerificationDto,
+  CRAVerificationIncomeDetailsDto,
 } from "./models/application.system.model";
 
 /**
@@ -44,6 +45,7 @@ export class ApplicationSystemController {
     private readonly applicationService: ApplicationService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
+    private readonly supportingUserService: SupportingUserService,
   ) {}
 
   @Get(":id")
@@ -320,6 +322,7 @@ export class ApplicationSystemController {
         applicationId,
         payload.taxYear,
         payload.reportedIncome,
+        payload.supportingUserId,
       );
 
     await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
@@ -330,21 +333,29 @@ export class ApplicationSystemController {
   }
 
   /**
-   * Gets the student income verification associated with the application.
+   * Gets the CRA income verification associated with the application.
+   * The records could be related to a student income or some other
+   * supporting user (e.g. parent/partner).
    * @param applicationId application id to retrieve the student income.
+   * @param incomeVerificationId income verification associated with
+   * the application.
    * @returns student income verification for application.
    */
-  @Get(":applicationId/income-verification")
+  @Get(":applicationId/income-verification/:incomeVerificationId")
   async getIncomeVerification(
     @Param("applicationId") applicationId: number,
-  ): Promise<StudentIncomeDetails> {
+    @Param("incomeVerificationId") incomeVerificationId: number,
+  ): Promise<CRAVerificationIncomeDetailsDto> {
     const income =
       await this.incomeVerificationService.getIncomeVerificationForApplication(
         applicationId,
+        incomeVerificationId,
       );
 
     if (!income) {
-      throw new NotFoundException("Income verification not found.");
+      throw new NotFoundException(
+        `Income verification id ${incomeVerificationId} not found for application id ${applicationId}.`,
+      );
     }
 
     return {
@@ -352,5 +363,56 @@ export class ApplicationSystemController {
       craReported: income.craReportedIncome,
       verifiedOnCRA: !!income.dateReceived,
     };
+  }
+
+  /**
+   * Creates a new supporting user with minimal information
+   * required to allow the supporting users (e.g. parent/partner)
+   * to populate the remaining columns later.
+   * @param applicationId application id that requires supporting
+   * information.
+   * @param payload type of the user that need provide
+   * the supporting information for a particular application.
+   * @returns id of the newly created supporting user.
+   */
+  @Post(":applicationId/supporting-user")
+  async createSupportingUser(
+    @Param("applicationId") applicationId: number,
+    @Body() payload: CreateSupportingUsersDto,
+  ): Promise<number> {
+    const createdUser = await this.supportingUserService.createSupportingUser(
+      applicationId,
+      payload.supportingUserType,
+    );
+    return createdUser.id;
+  }
+
+  /**
+   * Gets a supporting user (e.g. parent/partner) associated
+   * with a Student Application.
+   * @param applicationId application id that contains the
+   * supporting user.
+   * @param supportingUserId supporting user from the
+   * Student Application.
+   * @returns supporting user or an HTTP not found exception.
+   */
+  @Get(":applicationId/supporting-user/:supportingUserId")
+  async getSupportingUser(
+    @Param("applicationId") applicationId: number,
+    @Param("supportingUserId") supportingUserId: number,
+  ): Promise<SupportingUserDto> {
+    const supportingUser =
+      await this.supportingUserService.getSupportingUserById(
+        applicationId,
+        supportingUserId,
+      );
+
+    if (!supportingUser) {
+      throw new NotFoundException(
+        `Not able to find the supporting user id ${supportingUserId} for application id ${applicationId}.`,
+      );
+    }
+
+    return { supportingData: supportingUser.supportingData };
   }
 }
