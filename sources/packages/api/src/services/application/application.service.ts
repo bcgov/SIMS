@@ -410,13 +410,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   async getAssessmentByApplicationId(
     applicationId: number,
+    studentId: number,
   ): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")
       .select([
         "application.assessment",
         "application.applicationNumber",
-        "student",
+        "student.id",
         "user.firstName",
         "user.lastName",
         "educationProgram.name",
@@ -432,6 +433,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.location", "location")
       .innerJoin("application.msfaaNumber", "msfaaNumber")
       .where("application.id = :applicationId", { applicationId })
+      .andWhere("student.id = :studentId", { studentId })
       .getOne();
   }
 

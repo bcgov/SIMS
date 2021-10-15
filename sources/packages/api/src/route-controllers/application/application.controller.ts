@@ -241,9 +241,16 @@ export class ApplicationController extends BaseController {
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
+    @UserToken() userToken: IUserToken,
   ): Promise<NOAApplicationDto> {
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
     const application =
-      await this.applicationService.getAssessmentByApplicationId(applicationId);
+      await this.applicationService.getAssessmentByApplicationId(
+        applicationId,
+        student.id,
+      );
     if (!application) {
       throw new NotFoundException(
         `Application id ${applicationId} was not found.`,
