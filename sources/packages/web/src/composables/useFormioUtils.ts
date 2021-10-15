@@ -126,7 +126,7 @@ export function useFormioUtils() {
   };
 
   /**
-   * reset the checkboxes/select boxes to its initial
+   * Reset the checkboxes/select boxes to its initial
    * or default value.
    * @param form form.
    * @param componentName checkbox or select box component name.
