@@ -31,11 +31,11 @@ export function useFormioDropdownLoader() {
   const resetCheckBox = async (
     form: any,
     componentName: string,
-    newValue: any,
+    defaultValue: any,
   ) => {
     // Find the checkbox component.
     const checkbox = formioUtils.getComponent(form, componentName);
-    checkbox.setValue(newValue);
+    checkbox.setValue(defaultValue);
     checkbox.redraw();
   };
   // Retrieve the list of locations from the API and
