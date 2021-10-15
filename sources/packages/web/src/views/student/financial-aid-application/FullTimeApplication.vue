@@ -285,7 +285,7 @@ export default {
           when student edit the draft application and changes the 
           location then `programnotListed` checkbox will reset/uncheck.
         */
-        await formioDataLoader.resetCheckBox(form, PROGRAM_NOT_LISTED, {
+        await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
           programnotListed: false,
         });
         await formioDataLoader.loadProgramsForLocation(
@@ -304,7 +304,6 @@ export default {
             SELECTED_PROGRAM_DESC_KEY,
           );
         }
-        getOfferingDetails(form, locationId);
       }
       if (
         event.changed.component.key === OFFERING_INTENSITY_KEY &&
@@ -315,7 +314,7 @@ export default {
           when student edit the draft application and changes the 
           offering intensity then `programnotListed` checkbox will reset/uncheck.
         */
-        await formioDataLoader.resetCheckBox(form, OFFERING_NOT_LISTED, {
+        await formioUtils.resetCheckBox(form, OFFERING_NOT_LISTED, {
           offeringnotListed: false,
         });
         getOfferingDetails(form, locationId);

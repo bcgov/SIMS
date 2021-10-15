@@ -28,16 +28,6 @@ export function useFormioDropdownLoader() {
     dropdown.redraw();
   };
 
-  const resetCheckBox = async (
-    form: any,
-    componentName: string,
-    defaultValue: any,
-  ) => {
-    // Find the checkbox component.
-    const checkbox = formioUtils.getComponent(form, componentName);
-    checkbox.setValue(defaultValue);
-    checkbox.redraw();
-  };
   // Retrieve the list of locations from the API and
   // populate a dropdown in a Form.IO component.
   const loadLocations = async (form: any, dropdownName: string) => {
@@ -156,6 +146,5 @@ export function useFormioDropdownLoader() {
     loadInstitutionTypes,
     loadPIRDeniedReasonList,
     loadProgramYear,
-    resetCheckBox,
   };
 }
