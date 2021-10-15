@@ -1,4 +1,4 @@
--- Add the new column to create the relationship with supporting users table (parent/patner).
+-- Add the new column to create the relationship with supporting users table (parent/partner).
 ALTER TABLE
   sims.cra_income_verifications
 ADD

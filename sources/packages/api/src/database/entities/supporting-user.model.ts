@@ -17,9 +17,9 @@ import { Application, SupportingUserType } from ".";
  * (e.g. parents and partners). For every application that requires a
  * parent/partner information, a new entry will be created to allow
  * the parent/partner to login to the system and provide the information
- * for that particular Student Application. So, along the years the same
- * parent/partner could be having different entries for different applications
- * or even be a parent for on Student Application and a partner on another one.
+ * for that particular Student Application. The same parent/partner
+ * could be having different entries for different applications or even
+ * be a parent for on Student Application and a partner on another one.
  */
 @Entity({ name: TableNames.SupportingUsers })
 export class SupportingUser extends RecordDataModel {
