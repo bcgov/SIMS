@@ -408,6 +408,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
   }
 
+  /**
+   * Fetch the NOA screen values for a student application.
+   * @param applicationId application id to fetch the NOA values.
+   * @param studentId associated student of the application.
+   * @returns NOA and application data.
+   */
   async getAssessmentByApplicationId(
     applicationId: number,
     studentId: number,

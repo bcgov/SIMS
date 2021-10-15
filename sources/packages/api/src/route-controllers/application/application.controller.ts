@@ -237,6 +237,12 @@ export class ApplicationController extends BaseController {
     }
   }
 
+  /**
+   * Fetch the NOA screen values for a student application.
+   * @param applicationId application id to fetch the NOA values.
+   * @param userToken associated student of the application.
+   * @returns NOA and application data.
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
