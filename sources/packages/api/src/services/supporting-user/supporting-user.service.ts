@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { ContactInfo } from "../../types";
+import { Connection, IsNull, UpdateResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
@@ -31,6 +32,27 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     newSupportingUser.application = { id: applicationId } as Application;
     newSupportingUser.supportingUserType = supportingUserType;
     return this.repo.save(newSupportingUser);
+  }
+
+  async updateSupportingUser(
+    applicationId: number,
+    supportingUserType: SupportingUserType,
+    contactInfo: ContactInfo,
+    sin: string,
+    birthDate: Date,
+    gender: string,
+    supportingData: any,
+    userId: number,
+  ): Promise<UpdateResult> {
+    // TODO: If there are 2 parents must update only one.
+    return this.repo.update(
+      {
+        applicationId,
+        supportingUserType,
+        userId: IsNull(),
+      },
+      { contactInfo, sin, birthDate, gender, supportingData, userId },
+    );
   }
 
   /**
