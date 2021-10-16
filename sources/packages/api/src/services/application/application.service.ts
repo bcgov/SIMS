@@ -408,11 +408,38 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
   }
 
-  async getAssessmentByApplicationId(applicationId: number): Promise<any> {
+  /**
+   * Fetch the NOA screen values for a student application.
+   * @param applicationId application id to fetch the NOA values.
+   * @param studentId associated student of the application.
+   * @returns NOA and application data.
+   */
+  async getAssessmentByApplicationId(
+    applicationId: number,
+    studentId: number,
+  ): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")
-      .select("application.assessment")
+      .select([
+        "application.assessment",
+        "application.applicationNumber",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "educationProgram.name",
+        "location.name",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "msfaaNumber.msfaaNumber",
+      ])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.msfaaNumber", "msfaaNumber")
       .where("application.id = :applicationId", { applicationId })
+      .andWhere("student.id = :studentId", { studentId })
       .getOne();
   }
 

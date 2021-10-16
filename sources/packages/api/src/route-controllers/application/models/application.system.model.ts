@@ -5,6 +5,7 @@ import {
   AssessmentStatus,
   COEStatus,
   ApplicationStatus,
+  SupportingUserType,
 } from "../../../database/entities";
 
 export class UpdateProgramInfoDto {
@@ -49,7 +50,7 @@ export class UpdateApplicationStatusWorkflowIdDto extends UpdateApplicationStatu
   workflowId: string;
 }
 
-export interface StudentIncomeDetails {
+export interface CRAVerificationIncomeDetailsDto {
   /**
    * Income manually reported by the Student in the Application.
    */
@@ -66,4 +67,26 @@ export interface StudentIncomeDetails {
    * when there is no tax filed for the requested year.
    */
   verifiedOnCRA: boolean;
+}
+
+export class CreateIncomeVerificationDto {
+  @IsInt()
+  @Min(2000)
+  taxYear: number;
+  @IsInt()
+  @Min(0)
+  reportedIncome: number;
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  supportingUserId?: number;
+}
+
+export class CreateSupportingUsersDto {
+  @IsEnum(SupportingUserType)
+  supportingUserType: SupportingUserType;
+}
+
+export interface SupportingUserDto {
+  supportingData: any;
 }

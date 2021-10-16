@@ -169,14 +169,6 @@ export interface ProgramYearOfApplicationDto {
   formName: string;
   programYearId: number;
 }
-export class CreateIncomeVerificationDto {
-  @IsInt()
-  @Min(2000)
-  taxYear: number;
-  @IsInt()
-  @Min(0)
-  reportedIncome: number;
-}
 
 export interface ActiveApplicationDataDto {
   applicationProgramName: string;
@@ -189,4 +181,15 @@ export interface ActiveApplicationDataDto {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
+}
+
+export interface NOAApplicationDto {
+  assessment: any;
+  applicationNumber: string;
+  fullName: string;
+  programName: string;
+  locationName: string;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  msfaaNumber: string;
 }
