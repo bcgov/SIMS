@@ -118,7 +118,6 @@ export default {
     const isLastPage = ref(false);
     let applicationWizard: any;
     const isReadOnly = ref(false);
-    const educationProgramIdFromForm = ref();
 
     onMounted(async () => {
       //Get the student information and application information.
@@ -197,6 +196,9 @@ export default {
     const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
     const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
     const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
+    const PROGRAM_NOT_LISTED = "myProgramNotListed";
+    const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
+
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       // Disable internal submit button.
@@ -255,12 +257,39 @@ export default {
       }
     };
 
+    const getOfferingDetails = async (form: any, locationId: number) => {
+      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
+        form,
+        OFFERING_INTENSITY_KEY,
+      );
+      const educationProgramIdFromForm: number = formioUtils.getComponentValueByKey(
+        form,
+        PROGRAMS_DROPDOWN_KEY,
+      );
+      await formioDataLoader.loadOfferingsForLocation(
+        form,
+        educationProgramIdFromForm,
+        locationId,
+        OFFERINGS_DROPDOWN_KEY,
+        props.programYearId,
+        selectedIntensity,
+      );
+    };
+
     const formChanged = async (form: any, event: any) => {
       const locationId = +formioUtils.getComponentValueByKey(
         form,
         LOCATIONS_DROPDOWN_KEY,
       );
       if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
+        /*
+          If `programnotListed` is already checked in the draft and
+          when student edit the draft application and changes the
+          location then `programnotListed` checkbox will reset/uncheck.
+        */
+        await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
+          programnotListed: false,
+        });
         await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
@@ -268,9 +297,7 @@ export default {
           props.programYearId,
         );
       }
-
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        educationProgramIdFromForm.value = +event.changed.value;
         if (+event.changed.value > 0) {
           await formioComponentLoader.loadProgramDesc(
             form,
@@ -279,22 +306,16 @@ export default {
           );
         }
       }
-      if (
-        event.changed.component.key === OFFERING_INTENSITY_KEY &&
-        educationProgramIdFromForm.value
-      ) {
-        const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-          form,
-          OFFERING_INTENSITY_KEY,
-        );
-        await formioDataLoader.loadOfferingsForLocation(
-          form,
-          educationProgramIdFromForm.value,
-          locationId,
-          OFFERINGS_DROPDOWN_KEY,
-          props.programYearId,
-          selectedIntensity,
-        );
+      if (event.changed.component.key === OFFERING_INTENSITY_KEY) {
+        /*
+          If `offeringnotListed` is already checked in the draft and
+          when student edit the draft application and changes the
+          offering intensity then `programnotListed` checkbox will reset/uncheck.
+        */
+        await formioUtils.resetCheckBox(form, OFFERING_NOT_LISTED, {
+          offeringnotListed: false,
+        });
+        getOfferingDetails(form, locationId);
       }
       if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
         await formioComponentLoader.loadSelectedOfferingDate(
