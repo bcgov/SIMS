@@ -55,7 +55,7 @@ export default {
         },
         {
           label: "Settings",
-          icon: "mdi-setting",
+          icon: "mdi-wrench",
         },
       ];
     };
