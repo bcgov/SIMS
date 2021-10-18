@@ -35,7 +35,7 @@ export enum AppRoutes {
   InstitutionManageUsers = "manage-users",
   // AEST
   AESTRoot = "/aest",
-  AESTHome = "home",
+  AESTDashboard = "aest-dashboard",
   // Supporting Users
   SupportingUsersRoot = "/supporting-users",
   SupportingUsersHome = "home",

@@ -4,7 +4,11 @@ import { FormService } from "../../services";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 
-@AllowAuthorizedParty(AuthorizedParties.institution, AuthorizedParties.student)
+@AllowAuthorizedParty(
+  AuthorizedParties.institution,
+  AuthorizedParties.student,
+  AuthorizedParties.aest,
+)
 @Controller("dynamic-form")
 export class DynamicFormController extends BaseController {
   constructor(private readonly formService: FormService) {

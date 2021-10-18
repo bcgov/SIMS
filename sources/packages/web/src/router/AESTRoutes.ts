@@ -1,14 +1,14 @@
 import { RouteRecordRaw } from "vue-router";
-import AppAEST from "../views/aest/AppAEST.vue";
-import Login from "../views/aest/Login.vue";
-import Home from "../views/aest/Home.vue";
-
+import AppAEST from "@/views/aest/AppAEST.vue";
+import Login from "@/views/aest/Login.vue";
+import AESTDashboard from "@/views/aest/AESTDashboard.vue";
+import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import {
   AESTRoutesConst,
   SharedRouteConst,
-} from "../constants/routes/RouteConstants";
-import { AppRoutes, AuthStatus } from "../types";
-import { ClientIdType } from "../types/contracts/ConfigContract";
+} from "@/constants/routes/RouteConstants";
+import { AppRoutes, AuthStatus } from "@/types";
+import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 
@@ -40,9 +40,12 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.AESTHome,
-        name: AESTRoutesConst.HOME,
-        component: Home,
+        path: AppRoutes.AESTDashboard,
+        name: AESTRoutesConst.AEST_DASHBOARD,
+        components: {
+          default: AESTDashboard,
+          sidebar: AESTHomeSideBar,
+        },
         meta: {
           clientType: ClientIdType.AEST,
         },
@@ -67,7 +70,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               break;
             case AuthStatus.RedirectHome:
               next({
-                name: AESTRoutesConst.HOME,
+                name: AESTRoutesConst.AEST_DASHBOARD,
               });
               break;
             default:
