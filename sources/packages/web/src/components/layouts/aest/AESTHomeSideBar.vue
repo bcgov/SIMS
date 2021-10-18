@@ -25,16 +25,14 @@ interface MenuModel {
   label: string;
   icon?: string;
   command?: () => void;
-  items?: MenuModel[];
 }
 
 export default {
-  components: {},
   setup() {
     const router = useRouter();
     const items = ref<MenuModel[]>([]);
 
-    const getuserLocationList = () => {
+    const getAESTSideBar = () => {
       items.value = [
         {
           label: "Dashboard",
@@ -60,8 +58,8 @@ export default {
       ];
     };
     onMounted(() => {
-      // get user details
-      getuserLocationList();
+      // get AEST SideBar
+      getAESTSideBar();
     });
 
     return {
