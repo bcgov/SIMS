@@ -1,9 +1,11 @@
 <template>
   <v-container>
-    <formio
-      formName="supportingusersdashboard"
-      @customEvent="customEventCallback"
-    ></formio>
+    <v-card class="p-4">
+      <formio
+        formName="supportingusersdashboard"
+        @customEvent="customEventCallback"
+      ></formio>
+    </v-card>
   </v-container>
 </template>
 
@@ -11,7 +13,7 @@
 import formio from "@/components/generic/formio.vue";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { useRouter } from "vue-router";
-import { SupportingUsersRoutesConst } from "@/constants/routes/RouteConstants";
+import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 export default {
   components: {
     formio,
@@ -25,10 +27,10 @@ export default {
       let routeName: symbol;
       switch (event.type) {
         case FormIOCustomEventTypes.RouteToParentInformation:
-          routeName = SupportingUsersRoutesConst.PARENT_INFORMATION;
+          routeName = SupportingUserRoutesConst.PARENT_INFORMATION;
           break;
         case FormIOCustomEventTypes.RouteToPartnerInformation:
-          routeName = SupportingUsersRoutesConst.PARTNER_INFORMATION;
+          routeName = SupportingUserRoutesConst.PARENT_INFORMATION;
           break;
         default:
           throw new Error("Invalid route value");

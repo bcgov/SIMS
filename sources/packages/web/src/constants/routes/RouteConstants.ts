@@ -70,7 +70,7 @@ export const AESTRoutesConst = {
 /**
  * Supporting Users Routes Names
  */
-export const SupportingUsersRoutesConst = {
+export const SupportingUserRoutesConst = {
   APP_SUPPORTING_USERS: Symbol(),
   HOME: Symbol(),
   LOGIN: Symbol(),

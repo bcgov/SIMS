@@ -8,7 +8,7 @@
       text
       @click="
         $router.push({
-          name: SupportingUsersRoutesConst.HOME,
+          name: SupportingUserRoutesConst.HOME,
         })
       "
       >Home</v-btn
@@ -42,7 +42,7 @@ import { ref } from "vue";
 import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
-import { SupportingUsersRoutesConst } from "@/constants/routes/RouteConstants";
+import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: { BCLogo },
@@ -74,7 +74,7 @@ export default {
       logoff,
       userOptionsMenuRef,
       togleUserMenu,
-      SupportingUsersRoutesConst,
+      SupportingUserRoutesConst,
     };
   },
 };

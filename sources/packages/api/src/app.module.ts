@@ -49,6 +49,7 @@ import {
   ProgramInfoRequestController,
   ConfirmationOfEnrollmentController,
   InstitutionTypeController,
+  SupportingUserController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -75,6 +76,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     ProgramInfoRequestController,
     ConfirmationOfEnrollmentController,
     InstitutionTypeController,
+    SupportingUserController,
   ],
   providers: [
     AppService,

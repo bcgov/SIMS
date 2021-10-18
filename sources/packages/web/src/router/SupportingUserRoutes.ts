@@ -1,11 +1,11 @@
 import { RouteRecordRaw } from "vue-router";
-import AppSupportingUsers from "@/views/supporting-users/AppSupportingUsers.vue";
-import Login from "@/views/supporting-users/Login.vue";
-import Home from "@/views/supporting-users/Home.vue";
-import ParentInformation from "@/views/supporting-users/ParentInformation.vue";
-import PartnerInformation from "@/views/supporting-users/PartnerInformation.vue";
+import AppSupportingUsers from "@/views/supporting-user/AppSupportingUser.vue";
+import Login from "@/views/supporting-user/Login.vue";
+import Home from "@/views/supporting-user/Home.vue";
+import ParentInformation from "@/views/supporting-user/ParentInformation.vue";
+import PartnerInformation from "@/views/supporting-user/PartnerInformation.vue";
 import {
-  SupportingUsersRoutesConst,
+  SupportingUserRoutesConst,
   SharedRouteConst,
 } from "@/constants/routes/RouteConstants";
 import { AppRoutes, AuthStatus } from "@/types";
@@ -16,12 +16,12 @@ import { AuthService } from "@/services/AuthService";
 export const supportingUsersRoutes: Array<RouteRecordRaw> = [
   {
     path: AppRoutes.SupportingUsersRoot,
-    name: SupportingUsersRoutesConst.APP_SUPPORTING_USERS,
+    name: SupportingUserRoutesConst.APP_SUPPORTING_USERS,
     component: AppSupportingUsers,
     children: [
       {
         path: AppRoutes.Login,
-        name: SupportingUsersRoutesConst.LOGIN,
+        name: SupportingUserRoutesConst.LOGIN,
         component: Login,
         meta: {
           requiresAuth: false,
@@ -30,7 +30,7 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.SupportingUsersHome,
-        name: SupportingUsersRoutesConst.HOME,
+        name: SupportingUserRoutesConst.HOME,
         component: Home,
         meta: {
           clientType: ClientIdType.SupportingUsers,
@@ -38,7 +38,7 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.ParentSupportingInfo,
-        name: SupportingUsersRoutesConst.PARENT_INFORMATION,
+        name: SupportingUserRoutesConst.PARENT_INFORMATION,
         component: ParentInformation,
         meta: {
           clientType: ClientIdType.SupportingUsers,
@@ -46,7 +46,7 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.PartnerSupportingInfo,
-        name: SupportingUsersRoutesConst.PARTNER_INFORMATION,
+        name: SupportingUserRoutesConst.PARTNER_INFORMATION,
         component: PartnerInformation,
         meta: {
           clientType: ClientIdType.SupportingUsers,
@@ -67,12 +67,12 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
               break;
             case AuthStatus.RequiredLogin:
               next({
-                name: SupportingUsersRoutesConst.LOGIN,
+                name: SupportingUserRoutesConst.LOGIN,
               });
               break;
             case AuthStatus.RedirectHome:
               next({
-                name: SupportingUsersRoutesConst.HOME,
+                name: SupportingUserRoutesConst.HOME,
               });
               break;
             default:

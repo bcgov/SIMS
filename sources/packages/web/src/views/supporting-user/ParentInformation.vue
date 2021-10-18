@@ -14,8 +14,10 @@
 import formio from "@/components/generic/formio.vue";
 import { useRouter } from "vue-router";
 import { useAuthBCSC, useFormatters } from "@/composables";
-import { SupportingUsersRoutesConst } from "@/constants/routes/RouteConstants";
+import { SupportingUsersService } from "@/services/SupportingUserService";
+import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import { ref } from "vue";
+import { SupportingUserType } from "@/types";
 export default {
   components: {
     formio,
@@ -31,7 +33,12 @@ export default {
       dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
     };
 
-    const submitted = (formData: any) => {
+    const submitted = async (formData: any) => {
+      await SupportingUsersService.shared.updateSupportingInformation(
+        formData.applicationNumber,
+        SupportingUserType.Parent,
+        formData,
+      );
       console.log(formData);
     };
 

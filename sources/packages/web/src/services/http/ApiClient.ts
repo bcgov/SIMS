@@ -1,17 +1,18 @@
-import { ConfigApi } from "./ConfigApi";
-import { StudentApi } from "./StudentApi";
-import { ProgramYearApi } from "./ProgramYearApi";
-import { UserApi } from "./UserApi";
-import { InstitutionApi } from "./Institution";
-import { DynamicFormsApi } from "./DynamicForms";
-import { WorkflowApi } from "./WorkflowApi";
-import { ApplicationApi } from "./ApplicationApi";
-import { InstitutionLocationApi } from "./InstitutionLocation";
-import { EducationProgramApi } from "./EducationProgramApi";
-import { EducationProgramOfferingApi } from "./EducationProgramOfferingApi";
-import { FileUploadApi } from "./FileUploadApi";
-import { ProgramInfoRequestApi } from "./ProgramInfoRequestApi";
-import { ConfirmationOfEnrollmentApi } from "./ConfirmationOfEnrollmentApi";
+import { ConfigApi } from "@/services/http/ConfigApi";
+import { StudentApi } from "@/services/http/StudentApi";
+import { ProgramYearApi } from "@/services/http/ProgramYearApi";
+import { UserApi } from "@/services/http/UserApi";
+import { InstitutionApi } from "@/services/http/Institution";
+import { DynamicFormsApi } from "@/services/http/DynamicForms";
+import { WorkflowApi } from "@/services/http/WorkflowApi";
+import { ApplicationApi } from "@/services/http/ApplicationApi";
+import { InstitutionLocationApi } from "@/services/http/InstitutionLocation";
+import { EducationProgramApi } from "@/services/http/EducationProgramApi";
+import { EducationProgramOfferingApi } from "@/services/http/EducationProgramOfferingApi";
+import { FileUploadApi } from "@/services/http/FileUploadApi";
+import { ProgramInfoRequestApi } from "@/services/http/ProgramInfoRequestApi";
+import { ConfirmationOfEnrollmentApi } from "@/services/http/ConfirmationOfEnrollmentApi";
+import { SupportingUserApi } from "@/services/http/SupportingUserApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -28,6 +29,7 @@ const ApiClient = {
   FileUpload: new FileUploadApi(),
   ProgramInfoRequest: new ProgramInfoRequestApi(),
   ConfirmationOfEnrollment: new ConfirmationOfEnrollmentApi(),
+  SupportingUserApi: new SupportingUserApi(),
 };
 
 export default ApiClient;
