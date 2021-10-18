@@ -20,12 +20,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-
-interface MenuModel {
-  label: string;
-  icon: string;
-  command?: () => void;
-}
+import { MenuModel } from "@/types";
 
 export default {
   components: {},

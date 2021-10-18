@@ -18,50 +18,36 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-
-interface MenuModel {
-  label: string;
-  icon?: string;
-  command?: () => void;
-}
+import { MenuModel } from "@/types"
 
 export default {
   setup() {
     const router = useRouter();
-    const items = ref<MenuModel[]>([]);
-
-    const getAESTSideBar = () => {
-      items.value = [
-        {
-          label: "Dashboard",
-          icon: "mdi-home-outline",
-          command: () => {
-            router.push({
-              name: AESTRoutesConst.AEST_DASHBOARD,
-            });
-          },
+    const items = ref<MenuModel[]>([
+      {
+        label: "Dashboard",
+        icon: "mdi-home-outline",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.AEST_DASHBOARD,
+          });
         },
-        {
-          label: "Students",
-          icon: "mdi-account-multiple-outline",
-        },
-        {
-          label: "Institutions",
-          icon: "mdi-city",
-        },
-        {
-          label: "Settings",
-          icon: "mdi-wrench",
-        },
-      ];
-    };
-    onMounted(() => {
-      // get AEST SideBar
-      getAESTSideBar();
-    });
-
+      },
+      {
+        label: "Students",
+        icon: "mdi-account-multiple-outline",
+      },
+      {
+        label: "Institutions",
+        icon: "mdi-city",
+      },
+      {
+        label: "Settings",
+        icon: "mdi-wrench",
+      },
+    ]);
     return {
       items,
     };
