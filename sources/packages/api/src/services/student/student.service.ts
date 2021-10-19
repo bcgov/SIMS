@@ -1,7 +1,7 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Student, User } from "../../database/entities";
-import { Connection } from "typeorm";
+import { Application, Student, User } from "../../database/entities";
+import { Connection, Repository } from "typeorm";
 import { UserInfo } from "../../types";
 import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
 import { StudentContact } from "../../types/studentContact";
@@ -14,6 +14,7 @@ import { getUTCNow } from "../../utilities";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
+  private readonly applicationRepo: Repository<Application>;
   @InjectLogger()
   logger: LoggerService;
   constructor(
@@ -21,6 +22,7 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly archiveDB: ArchiveDbService,
   ) {
     super(connection.getRepository(Student));
+    this.applicationRepo = connection.getRepository(Application);
     this.logger.log("[Created]");
   }
 
@@ -223,5 +225,44 @@ export class StudentService extends RecordDataModelService<Student> {
       .andWhere("student.studentPDUpdateAt is null")
       .andWhere("student.studentPDVerified is null")
       .getMany();
+  }
+
+  /**
+   * Search the student based on the search criteria.
+   * @param firstName firsName of the student.
+   * @param lastName lastName of the student.
+   * @param appNumber application number of the student.
+   * @returns Searched student details.
+   */
+  async searchStudentApplication(
+    firstName: string,
+    lastName: string,
+    appNumber: string,
+  ): Promise<Student[]> {
+    const applicationExistsQuery = this.applicationRepo
+      .createQueryBuilder("application")
+      .where("application.applicationNumber = :appNumber")
+      .select("1");
+    let searchQuery = this.repo
+      .createQueryBuilder("student")
+      .select(["student.birthdate", "user.firstName", "user.lastName"])
+      .innerJoin("student.user", "user")
+      .where("user.isActive = true");
+    if (firstName) {
+      searchQuery = searchQuery.andWhere("user.firstName = :firstName", {
+        firstName,
+      });
+    }
+    if (lastName) {
+      searchQuery = searchQuery.andWhere("user.lastName = :lastName", {
+        lastName,
+      });
+    }
+    if (appNumber) {
+      searchQuery = searchQuery
+        .andWhere(`exists(${applicationExistsQuery.getQuery()})`)
+        .setParameters({ appNumber });
+    }
+    return searchQuery.getMany();
   }
 }

@@ -27,6 +27,7 @@ import {
   GetStudentContactDto,
   UpdateStudentContactDto,
   StudentEducationProgramDto,
+  SearchStudentRespDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -39,12 +40,14 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
-import { Application } from "../../database/entities";
+import { Application, Student } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
 } from "../../utilities/student-utils";
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+import { UserGroups } from "src/auth/user-groups.enum";
+import { Groups } from "src/auth/decorators";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -376,5 +379,38 @@ export class StudentController extends BaseController {
         status: eachApplication.applicationStatus,
       };
     }) as StudentApplicationDTO[];
+  }
+
+  /**
+   * Search the student based on the search criteria.
+   * @param firstName firsName of the student.
+   * @param lastName lastName of the student.
+   * @param appNumber application number of the student.
+   * @returns Searched student details.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("/firstName/:firstName/lastName/:lastName/appNumber/:appNumber")
+  async searchStudents(
+    @Param("firstName") firstName: string,
+    @Param("lastName") lastName: string,
+    @Param("appNumber") appNumber: string,
+  ): Promise<SearchStudentRespDto[]> {
+    if (!appNumber && !firstName && !lastName) {
+      throw new UnprocessableEntityException(
+        "Search with atleast one search criteria",
+      );
+    }
+    const searchStudentApplications =
+      await this.studentService.searchStudentApplication(
+        firstName,
+        lastName,
+        appNumber,
+      );
+    return searchStudentApplications.map((eachStudent: Student) => ({
+      firstName: eachStudent.user.firstName,
+      lastName: eachStudent.user.lastName,
+      birthDate: eachStudent.birthdate,
+    }));
   }
 }
