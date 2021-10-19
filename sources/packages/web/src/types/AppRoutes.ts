@@ -1,7 +1,7 @@
 export enum AppRoutes {
   // Student
   StudentRoot = "/student",
-  StudentDashboard = "student-dashboard",
+  StudentDashboard = "dashboard",
   StartStudentApplication = "application-form/start",
   StudentApplication = "application-form/:selectedForm/programYear/:programYearId/application/:id",
   StudentApplicationView = "application-form/:selectedForm/programYear/:programYearId/application/:id/:readOnly",
@@ -10,7 +10,7 @@ export enum AppRoutes {
   Assessment = "application/:applicationId/assessment",
   // Institution
   InstitutionRoot = "/institution",
-  InstitutionDashboard = "institution-dashboard",
+  InstitutionDashboard = "dashboard",
   InstitutionProfile = "institution-profile",
   InstitutionUserProfile = "institution-user-profile",
   InstitutionProfileEdit = "institution-profile/edit",
@@ -35,7 +35,7 @@ export enum AppRoutes {
   InstitutionManageUsers = "manage-users",
   // AEST
   AESTRoot = "/aest",
-  AESTHome = "home",
+  AESTDashboard = "dashboard",
   // Supporting Users
   SupportingUsersRoot = "/supporting-users",
   SupportingUsersHome = "home",

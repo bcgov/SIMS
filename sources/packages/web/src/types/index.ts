@@ -25,3 +25,4 @@ export * from "./contracts/institution/ConfirmationOfEnrollment";
 export * from "./formio";
 export * from "./contracts/Assessment";
 export * from "./contracts/institution/Application";
+export * from "./contracts/Common";
