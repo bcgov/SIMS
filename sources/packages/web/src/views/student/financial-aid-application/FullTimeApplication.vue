@@ -317,7 +317,10 @@ export default {
         });
         getOfferingDetails(form, locationId);
       }
-      if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
+      if (
+        event.changed.component.key === OFFERINGS_DROPDOWN_KEY &&
+        +event.changed.value > 0
+      ) {
         await formioComponentLoader.loadSelectedOfferingDate(
           form,
           +event.changed.value,
