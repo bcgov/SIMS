@@ -32,7 +32,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
     component: AppStudent,
     children: [
       {
-        path: "student-dashboard",
+        path: AppRoutes.StudentDashboard,
         name: StudentRoutesConst.STUDENT_DASHBOARD,
         component: StudentDashboard,
         meta: {
@@ -206,7 +206,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
           throw e;
         });
