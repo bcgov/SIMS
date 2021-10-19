@@ -241,22 +241,33 @@ export class StudentService extends RecordDataModelService<Student> {
   ): Promise<Student[]> {
     const applicationExistsQuery = this.applicationRepo
       .createQueryBuilder("application")
-      .where("application.applicationNumber = :appNumber")
+      .where("LOWER(application.applicationNumber) = LOWER(:appNumber)")
       .select("1");
     let searchQuery = this.repo
       .createQueryBuilder("student")
-      .select(["student.birthdate", "user.firstName", "user.lastName"])
+      .select([
+        "student.id",
+        "student.birthdate",
+        "user.firstName",
+        "user.lastName",
+      ])
       .innerJoin("student.user", "user")
       .where("user.isActive = true");
     if (firstName) {
-      searchQuery = searchQuery.andWhere("user.firstName = :firstName", {
-        firstName,
-      });
+      searchQuery = searchQuery.andWhere(
+        "LOWER(user.firstName) = LOWER(:firstName)",
+        {
+          firstName,
+        },
+      );
     }
     if (lastName) {
-      searchQuery = searchQuery.andWhere("user.lastName = :lastName", {
-        lastName,
-      });
+      searchQuery = searchQuery.andWhere(
+        "LOWER(user.lastName) = LOWER(:lastName)",
+        {
+          lastName,
+        },
+      );
     }
     if (appNumber) {
       searchQuery = searchQuery

@@ -62,6 +62,7 @@ export interface StudentEducationProgramDto {
 }
 
 export class SearchStudentRespDto {
+  id: number;
   firstName: string;
   lastName: string;
   birthDate: Date;

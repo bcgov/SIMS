@@ -11,6 +11,8 @@ import {
   Res,
   UploadedFile,
   UseInterceptors,
+  Req,
+  Query,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -390,11 +392,11 @@ export class StudentController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("/firstName/:firstName/lastName/:lastName/appNumber/:appNumber")
+  @Get("search")
   async searchStudents(
-    @Param("firstName") firstName: string,
-    @Param("lastName") lastName: string,
-    @Param("appNumber") appNumber: string,
+    @Query("firstName") firstName: string,
+    @Query("lastName") lastName: string,
+    @Query("appNumber") appNumber: string,
   ): Promise<SearchStudentRespDto[]> {
     if (!appNumber && !firstName && !lastName) {
       throw new UnprocessableEntityException(
@@ -408,6 +410,7 @@ export class StudentController extends BaseController {
         appNumber,
       );
     return searchStudentApplications.map((eachStudent: Student) => ({
+      id: eachStudent.id,
       firstName: eachStudent.user.firstName,
       lastName: eachStudent.user.lastName,
       birthDate: eachStudent.birthdate,
