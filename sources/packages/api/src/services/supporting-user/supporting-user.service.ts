@@ -1,5 +1,4 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { ContactInfo } from "../../types";
 import { Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
@@ -10,12 +9,12 @@ import {
 } from "../../database/entities";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { configureIdleTransactionSessionTimeout } from "../../utilities/database";
-import { CustomNamedError } from "../../utilities";
+import {
+  CustomNamedError,
+  SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS,
+} from "../../utilities";
 import { SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA } from "./constants";
-
-// Timeout to handle the worst-case scenario where the commit/rollback
-// was not executed due to a possible catastrophic failure.
-const TRANSACTION_IDLE_TIMEOUT_SECONDS = 10;
+import { UpdateSupportingUserInfo } from "./supporting-user.models";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
@@ -49,17 +48,9 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * for the record to be update.
    * @param supportingUserType type of the user to search
    * to have the supporting information updated.
-   * @param contactInfo contact information provided by the
-   * supporting user.
-   * @param sin SIN provided by the supporting user.
-   * @param birthDate birth date present on the supporting user
-   * authentication information.
-   * @param gender gender present on the the supporting user
-   * authentication information.
-   * @param supportingData additional questions answered by
-   * the supporting user.
-   * @param userId id of the user that represents this
-   * supporting user.
+   * @param updateInfo information that must be updated
+   * altogether when a supporting user is providing
+   * the supporting data for a Student Application.
    * @returns update result. Expected one and only one
    * row to be updated. If no rows are updated it means that
    * there is no supporting user record to be updated at
@@ -70,17 +61,12 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   async updateSupportingUser(
     applicationId: number,
     supportingUserType: SupportingUserType,
-    contactInfo: ContactInfo,
-    sin: string,
-    birthDate: Date,
-    gender: string,
-    supportingData: any,
-    userId: number,
+    updateInfo: UpdateSupportingUserInfo,
   ): Promise<SupportingUser> {
     const queryRunner = this.connection.createQueryRunner();
     await configureIdleTransactionSessionTimeout(
       queryRunner,
-      TRANSACTION_IDLE_TIMEOUT_SECONDS,
+      SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS,
     );
 
     try {
@@ -118,13 +104,13 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
 
       // The SIN can be received with a few white spaces in the middle, so we need remove then
       // before inserting it because the DB will accept only 9 characters.
-      const sinWithNoSpaces = removeWhiteSpaces(sin);
-      userToUpdate.contactInfo = contactInfo;
+      const sinWithNoSpaces = removeWhiteSpaces(updateInfo.sin);
+      userToUpdate.contactInfo = updateInfo.contactInfo;
       userToUpdate.sin = sinWithNoSpaces;
-      userToUpdate.birthDate = birthDate;
-      userToUpdate.gender = gender;
-      userToUpdate.supportingData = supportingData;
-      userToUpdate.user = { id: userId } as User;
+      userToUpdate.birthDate = updateInfo.birthDate;
+      userToUpdate.gender = updateInfo.gender;
+      userToUpdate.supportingData = updateInfo.supportingData;
+      userToUpdate.user = { id: updateInfo.userId } as User;
       const updatedUser = await transactionRepo.save(userToUpdate);
       await queryRunner.commitTransaction();
       return updatedUser;

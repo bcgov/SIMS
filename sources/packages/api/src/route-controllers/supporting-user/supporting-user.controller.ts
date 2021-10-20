@@ -138,12 +138,14 @@ export class SupportingUserController {
       const updatedUser = await this.supportingUserService.updateSupportingUser(
         application.id,
         supportingUserType,
-        contactInfo,
-        payload.sin,
-        new Date(userToken.birthdate),
-        userToken.gender,
-        payload.supportingData,
-        user.id,
+        {
+          contactInfo,
+          sin: payload.sin,
+          birthDate: new Date(userToken.birthdate),
+          gender: userToken.gender,
+          supportingData: payload.supportingData,
+          userId: user.id,
+        },
       );
 
       await this.workflowActionsService.sendSupportingUsersCompletedMessage(
