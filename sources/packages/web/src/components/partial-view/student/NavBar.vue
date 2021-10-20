@@ -17,8 +17,7 @@
         v-if="isAuthenticated"
         label="Log off"
         icon="pi pi-fw pi-power-off"
-        class="p-button-text"
-        style="color: white"
+        class="p-button-text text-white"
         @click="logoff"
       />
     </template>

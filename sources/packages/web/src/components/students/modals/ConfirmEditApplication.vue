@@ -1,6 +1,6 @@
 <template>
   <ModalDialogBase
-    title="Confirmation Edit Applcation"
+    title="Confirm Edit Applcation"
     dialogType="question"
     :showDialog="showDialog"
     @dialogClosed="dialogClosed"
@@ -18,8 +18,8 @@
       <v-btn
         color="warning"
         depressed
+        class="text-white"
         @click="editApplication"
-        style="color: white"
       >
         <v-icon left size="25"> mdi-cancel </v-icon>
         Yes
