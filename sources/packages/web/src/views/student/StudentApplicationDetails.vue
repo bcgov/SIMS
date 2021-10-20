@@ -48,7 +48,7 @@
         <span class="mt-4"
           >This application was cancelled on
           {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
-          <a class="text-primary"> View application </a>
+          <a class="text-primary" @click="editApplicaion"> View application </a>
         </span>
       </div>
       <ApplicationDetails
