@@ -8,6 +8,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
   AuthorizedParties.institution,
   AuthorizedParties.student,
   AuthorizedParties.supportingUsers,
+  AuthorizedParties.aest,
 )
 @Controller("dynamic-form")
 export class DynamicFormController extends BaseController {

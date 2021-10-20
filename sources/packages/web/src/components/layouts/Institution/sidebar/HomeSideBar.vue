@@ -55,13 +55,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { useInstitutionAuth } from "../../../../composables/institution/useInstitutionAuth";
-
-interface MenuModel {
-  label: string;
-  icon?: string;
-  command?: () => void;
-  items?: MenuModel[];
-}
+import { MenuModel } from "@/types";
 
 export default {
   components: {},

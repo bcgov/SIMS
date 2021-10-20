@@ -125,6 +125,24 @@ export function useFormioUtils() {
     componentObj.redraw();
   };
 
+  /**
+   * Reset the checkboxes/select boxes to its initial
+   * or default value.
+   * @param form form.
+   * @param componentName checkbox or select box component name.
+   * @param defaultValue default/ initial value of the checkbox.
+   */
+  const resetCheckBox = async (
+    form: any,
+    componentName: string,
+    defaultValue: any,
+  ) => {
+    // Find the checkbox component.
+    const checkbox = getComponent(form, componentName);
+    checkbox.setValue(defaultValue);
+    checkbox.redraw();
+  };
+
   return {
     getComponent,
     redrawComponent,
@@ -136,5 +154,6 @@ export function useFormioUtils() {
     disableWizardButtons,
     setComponentValue,
     setRadioOptions,
+    resetCheckBox,
   };
 }
