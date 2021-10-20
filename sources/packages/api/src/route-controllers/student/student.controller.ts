@@ -47,8 +47,8 @@ import {
   deliveryMethod,
 } from "../../utilities/student-utils";
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
-import { UserGroups } from "src/auth/user-groups.enum";
-import { Groups } from "src/auth/decorators";
+import { UserGroups } from "../../auth/user-groups.enum";
+import { Groups } from "../../auth/decorators";
 import * as dayjs from "dayjs";
 
 // For multipart forms, the max number of file fields.
