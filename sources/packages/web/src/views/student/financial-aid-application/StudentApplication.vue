@@ -54,7 +54,6 @@ export default {
     const formioDataLoader = useFormioDropdownLoader();
     const formioUtils = useFormioUtils();
     const { showDialog, showModal } = useModalDialog<void>();
-    const showOnlyOneDraftDialog = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
 
     const formLoaded = async (form: any) => {
@@ -110,7 +109,6 @@ export default {
       initialData,
       formLoaded,
       showModal,
-      showOnlyOneDraftDialog,
       showDialog,
       dialogClosed,
       customEventCallback,

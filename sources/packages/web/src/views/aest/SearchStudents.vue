@@ -1,5 +1,23 @@
 <template>
   <v-container>
+    <ModalDialogBase
+      title="Search Students"
+      dialogType="warning"
+      :showDialog="showDialog"
+      @dialogClosed="dialogClosed"
+    >
+      <template v-slot:content>
+        <v-container>
+          <form>
+            <p>No Students found for the given search criteria.</p>
+          </form>
+        </v-container>
+      </template>
+      <template v-slot:footer>
+        <v-btn color="primary" outlined @click="dialogClosed"> Close </v-btn>
+      </template>
+    </ModalDialogBase>
+
     <h2 class="color-blue">Search Students</h2>
     <v-row class="mt-5"
       ><v-col><label for="appNumber">Application Number</label></v-col
@@ -22,10 +40,10 @@
       Search
     </v-btn>
     <DataTable
-      v-if="goToSearchStudents"
+      v-if="studentsfound"
       :autoLayout="true"
       :value="students"
-      class="mt-2"
+      class="p-m-4"
     >
       <Column field="firstName" header="First Name" :sortable="true">
         <template #body="slotProps">
@@ -62,12 +80,19 @@
 import { ref } from "vue";
 import { StudentService } from "../../services/StudentService";
 import { SearchStudentResp } from "@/types";
+import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+import { useModalDialog } from "@/composables";
 export default {
-  setup(props: any) {
+  components: {
+    ModalDialogBase,
+  },
+  setup() {
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");
-    const students = ref([] as SearchStudentResp[]);
+    const students = ref([{}] as SearchStudentResp[]);
+    const studentsfound = ref(false);
+    const { showDialog, showModal } = useModalDialog<boolean>();
     const goToSearchStudents = async (
       appNumber: string,
       firstName: string,
@@ -78,8 +103,23 @@ export default {
         firstName,
         lastName,
       );
+      if (students.value.length == 0) {
+        studentsfound.value = false;
+        showDialog.value = true;
+        return;
+      } else {
+        studentsfound.value = true;
+      }
     };
+    const dialogClosed = () => {
+      showDialog.value = false;
+    };
+
     return {
+      showDialog,
+      studentsfound,
+      showModal,
+      dialogClosed,
       goToSearchStudents,
       students,
       appNumber,

@@ -414,7 +414,7 @@ export class StudentController extends BaseController {
       id: eachStudent.id,
       firstName: eachStudent.user.firstName,
       lastName: eachStudent.user.lastName,
-      birthDate: dayjs(eachStudent.birthdate).format("YYYYMMDD"),
+      birthDate: dayjs(eachStudent.birthdate).format("YYYY-MMM-DD"),
     }));
   }
 }
