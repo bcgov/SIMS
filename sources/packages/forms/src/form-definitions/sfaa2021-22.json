@@ -139,7 +139,7 @@
                                                     "showCharCount": false,
                                                     "showWordCount": false,
                                                     "allowMultipleMasks": false,
-                                                    "id": "eekllsi"
+                                                    "id": "ew4l6q"
                                                 },
                                                 {
                                                     "label": "HTML",
@@ -1099,7 +1099,7 @@
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "evdrbxa",
+                    "id": "ef6vu8sg",
                     "defaultValue": ""
                 },
                 {
@@ -1610,7 +1610,7 @@
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "eg6n1l",
+                    "id": "ezeiosn",
                     "defaultValue": ""
                 },
                 {
@@ -2745,8 +2745,8 @@
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "eflb3hj",
-                    "defaultValue": ""
+                    "id": "elsslqi",
+                    "defaultValue": null
                 },
                 {
                     "label": "Select when you will be taking the program",
@@ -2802,7 +2802,7 @@
                     "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": true,
+                        "onlyAvailableItems": false,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -2822,7 +2822,7 @@
                         "eq": "",
                         "json": ""
                     },
-                    "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !!data.howWillYouBeAttendingTheProgram &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) \n  );\n\n",
+                    "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !!data.howWillYouBeAttendingTheProgram &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) \n  );",
                     "logic": [],
                     "attributes": {},
                     "overlay": {
@@ -2858,7 +2858,7 @@
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "e3yobe",
+                    "id": "ep7nvdd",
                     "defaultValue": ""
                 },
                 {
@@ -8952,7 +8952,7 @@
                                     "key": "firstName",
                                     "type": "textfield",
                                     "input": true,
-                                    "id": "el2qrn90000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "el2qrn90000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -9026,7 +9026,7 @@
                                     "key": "lastName",
                                     "type": "textfield",
                                     "input": true,
-                                    "id": "e618eci0000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "e618eci0000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -9178,7 +9178,7 @@
                                     "allowMultipleMasks": false,
                                     "inputType": "radio",
                                     "fieldSet": false,
-                                    "id": "ejv9syt000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ejv9syt000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "defaultValue": ""
                                 },
                                 {
@@ -9215,7 +9215,7 @@
                                     "key": "strongHowLongDoYouWantToGiveThisPersonAccessToYourStudentAidBcAccountStrong",
                                     "type": "radio",
                                     "input": true,
-                                    "id": "ejm9s3q0000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ejm9s3q0000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -9321,7 +9321,7 @@
                                         "disableWeekdays": false,
                                         "maxDate": null
                                     },
-                                    "id": "earatq0000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "earatq0000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "prefix": "",
                                     "suffix": "",
                                     "multiple": false,
@@ -27217,5 +27217,5 @@
     "name": "SFAA2021-22",
     "machineName": "SFAA2021-22",
     "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2021-10-15T18:23:29.372Z"
+    "modified": "2021-10-19T17:02:21.944Z"
 }
