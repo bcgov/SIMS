@@ -40,7 +40,7 @@ export class StudentService {
     appNumber: string,
     firstName: string,
     lastName: string,
-  ): Promise<SearchStudentResp> {
+  ): Promise<SearchStudentResp[]> {
     return await ApiClient.Students.searchStudents(
       appNumber,
       firstName,

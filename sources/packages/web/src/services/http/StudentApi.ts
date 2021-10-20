@@ -40,13 +40,13 @@ export class StudentApi extends HttpBaseClient {
     appNumber: string,
     firstName: string,
     lastName: string,
-  ): Promise<SearchStudentResp> {
+  ): Promise<SearchStudentResp[]> {
     try {
       const student = await this.apiClient.get(
         `students/search?appNumber=${appNumber}&firstName=${firstName}&lastName=${lastName}`,
         this.addAuthHeader(),
       );
-      return student.data as SearchStudentResp;
+      return student.data as SearchStudentResp[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;

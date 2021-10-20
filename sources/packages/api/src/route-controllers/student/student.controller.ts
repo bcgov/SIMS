@@ -50,7 +50,7 @@ import {
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
 import { UserGroups } from "src/auth/user-groups.enum";
 import { Groups } from "src/auth/decorators";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
