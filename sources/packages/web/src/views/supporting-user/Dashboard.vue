@@ -1,12 +1,10 @@
 <template>
-  <v-container>
-    <v-card class="p-4">
-      <formio
-        formName="supportingusersdashboard"
-        @customEvent="customEventCallback"
-      ></formio>
-    </v-card>
-  </v-container>
+  <full-page-container>
+    <formio
+      formName="supportingusersdashboard"
+      @customEvent="customEventCallback"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -14,9 +12,11 @@ import formio from "@/components/generic/formio.vue";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { useRouter } from "vue-router";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 export default {
   components: {
     formio,
+    FullPageContainer,
   },
   setup() {
     const router = useRouter();

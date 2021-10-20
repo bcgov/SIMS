@@ -39,7 +39,7 @@ $border-color-info: #6554c0;
   color: $secondary-header-color-lt;
 }
 
-.btn-primary {
+.ff-form-container .btn-primary {
   color: white !important;
 }
 
@@ -98,7 +98,12 @@ $border-color-info: #6554c0;
   border: 2px solid $panel-warning-color;
 }
 
-[id^="error-list"] ul {
+/**
+* Adjust the alignment for the bullet list on
+* the error summary displayed on the top 
+* of the Form.IO forms.
+*/
+.ff-form-container [id^="error-list"] ul {
   padding-left: 20px;
 }
 
@@ -106,7 +111,7 @@ $border-color-info: #6554c0;
   padding-left: 20px;
 }
 
-/**Todo: formio-component-content stlyes must be removed once content component is
+/**Todo: formio-component-content styles must be removed once content component is
  removed from all the forms  **/
 
 .formio-component-content h2 strong {

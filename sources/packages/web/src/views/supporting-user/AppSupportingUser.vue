@@ -1,16 +1,11 @@
 <template>
   <v-app-bar dense flat app style="overflow:visible">
-    <BCLogo subtitle="Supporting Information for Student Applications"></BCLogo>
+    <BCLogo
+      subtitle="Supporting Information for Student Applications"
+      @click="goToDashboard"
+    ></BCLogo>
     <v-spacer></v-spacer>
-    <v-btn
-      v-if="isAuthenticated"
-      class="mr-5"
-      text
-      @click="
-        $router.push({
-          name: SupportingUserRoutesConst.HOME,
-        })
-      "
+    <v-btn v-if="isAuthenticated" class="mr-5" text @click="goToDashboard"
       >Home</v-btn
     >
     <v-btn
@@ -43,10 +38,12 @@ import { ClientIdType } from "../../types/contracts/ConfigContract";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
+import { useRouter } from "vue-router";
 
 export default {
   components: { BCLogo },
   setup() {
+    const router = useRouter();
     const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
@@ -68,13 +65,19 @@ export default {
       },
     ];
 
+    const goToDashboard = () => {
+      router.push({
+        name: SupportingUserRoutesConst.DASHBOARD,
+      });
+    };
+
     return {
       userMenuItems,
       isAuthenticated,
       logoff,
       userOptionsMenuRef,
       togleUserMenu,
-      SupportingUserRoutesConst,
+      goToDashboard,
     };
   },
 };

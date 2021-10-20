@@ -1,14 +1,12 @@
 <template>
-  <v-container>
-    <v-card class="p-4">
-      <formio
-        :formName="formName"
-        :data="initialData"
-        :readOnly="submitting"
-        @submitted="submitted"
-      ></formio>
-    </v-card>
-  </v-container>
+  <full-page-container>
+    <formio
+      :formName="formName"
+      :data="initialData"
+      :readOnly="submitting"
+      @submitted="submitted"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -24,9 +22,11 @@ import {
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "@/types";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 export default {
   components: {
     formio,
+    FullPageContainer,
   },
   props: {
     supportingUserType: {
