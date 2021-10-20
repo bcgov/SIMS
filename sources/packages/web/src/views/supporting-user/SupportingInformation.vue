@@ -95,8 +95,8 @@ export default {
             break;
           default:
             toast.error(
-              "Unexpectd error",
-              "Unexpectd error while submittig the supporting data.",
+              "Unexpected error",
+              "Unexpected error while submitting the supporting data.",
               TOAST_ERROR_DISPLAY_TIME,
             );
             break;

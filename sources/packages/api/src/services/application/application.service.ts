@@ -1291,7 +1291,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * When a supporting user (e.g. parent/partner) need to provide
    * supporting data for a Student Application, this method provides
-   * a way to find the specific application to ne update using the
+   * a way to find the specific application to be updated using the
    * right amount of criteria as per defined in the Ministry Policies.
    * @param applicationNumber application number provided.
    * @param lastName last name of the student associated with the
