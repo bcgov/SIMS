@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  InternalServerErrorException,
   Param,
   Patch,
   UnprocessableEntityException,
@@ -12,6 +11,7 @@ import {
   FormService,
   SupportingUserService,
   UserService,
+  WorkflowActionsService,
 } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -35,6 +35,7 @@ export class SupportingUserController {
     private readonly applicationService: ApplicationService,
     private readonly userService: UserService,
     private readonly formService: FormService,
+    private readonly workflowActionsService: WorkflowActionsService,
   ) {}
 
   /**
@@ -46,11 +47,10 @@ export class SupportingUserController {
    * @param applicationNumber application number to be searched.
    * @param payload data used for validation and to execute the update.
    */
-  @Patch(":supportingUserType/application/:applicationNumber")
+  @Patch(":supportingUserType")
   async updateSupportingInformation(
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType") supportingUserType: SupportingUserType,
-    @Param("applicationNumber") applicationNumber: string,
     @Body() payload: UpdateSupportingUserDTO,
   ): Promise<void> {
     // Different types of supporting users need to provide different
@@ -84,7 +84,7 @@ export class SupportingUserController {
     // per defined by the Ministry policies.
     const applicationQuery =
       this.applicationService.getApplicationForSupportingUser(
-        applicationNumber,
+        payload.applicationNumber,
         payload.studentsLastName,
         payload.studentsDateOfBirth,
       );
@@ -102,6 +102,7 @@ export class SupportingUserController {
         ),
       );
     }
+
     // Check if the same user is trying to provide data to the same application
     // that he already provided.
     const supportingUserForApplication =
@@ -119,42 +120,45 @@ export class SupportingUserController {
       );
     }
 
-    const addressInfo: AddressInfo = {
-      addressLine1: payload.addressLine1,
-      addressLine2: payload.addressLine2,
-      province: payload.provinceState,
-      country: payload.country,
-      city: payload.city,
-      postalCode: payload.postalCode,
-    };
+    try {
+      const addressInfo: AddressInfo = {
+        addressLine1: payload.addressLine1,
+        addressLine2: payload.addressLine2,
+        province: payload.provinceState,
+        country: payload.country,
+        city: payload.city,
+        postalCode: payload.postalCode,
+      };
 
-    const contactInfo: ContactInfo = {
-      phone: payload.phone,
-      addresses: [addressInfo],
-    };
+      const contactInfo: ContactInfo = {
+        phone: payload.phone,
+        addresses: [addressInfo],
+      };
 
-    const updateResult = await this.supportingUserService.updateSupportingUser(
-      application.id,
-      supportingUserType,
-      contactInfo,
-      payload.sin,
-      new Date(userToken.birthdate),
-      userToken.gender,
-      payload.supportingData,
-      user.id,
-    );
-
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          `The application is not expecting supporting information from a ${supportingUserType.toLowerCase()} to be provided at this time.`,
-          SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
-        ),
+      const updatedUser = await this.supportingUserService.updateSupportingUser(
+        application.id,
+        supportingUserType,
+        contactInfo,
+        payload.sin,
+        new Date(userToken.birthdate),
+        userToken.gender,
+        payload.supportingData,
+        user.id,
       );
-    } else if (updateResult.affected > 1) {
-      throw new InternalServerErrorException(
-        "The updated was not executed as expected.",
+
+      await this.workflowActionsService.sendSupportingUsersCompletedMessage(
+        application.assessmentWorkflowId,
+        updatedUser.id,
       );
+    } catch (error) {
+      if (error.name === SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            error.message,
+            SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
+          ),
+        );
+      }
     }
   }
 }

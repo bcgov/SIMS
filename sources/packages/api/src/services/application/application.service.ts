@@ -1295,7 +1295,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * right amount of criteria as per defined in the Ministry Policies.
    * @param applicationNumber application number provided.
    * @param lastName last name of the student associated with the
-   * application.
+   * application (search will be case insensitive).
    * @param birthDate birth date of the student associated with the
    * application.
    * @returns application the application that was found, otherwise null.
@@ -1305,23 +1305,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
     lastName: string,
     birthDate: Date,
   ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select("application.id")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("application.applicationNumber = :applicationNumber", {
-        applicationNumber,
-      })
-      .andWhere("user.lastName = :lastName", {
-        lastName,
-      })
-      .andWhere("student.birthdate = :birthDate", {
-        birthDate,
-      })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.inProgress,
-      })
-      .getOne();
+    return (
+      this.repo
+        .createQueryBuilder("application")
+        .select(["application.id", "application.assessmentWorkflowId"])
+        .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
+        .where("application.applicationNumber = :applicationNumber", {
+          applicationNumber,
+        })
+        // TODO: an expression index 'lower(user.lastName)' will be created.
+        .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
+        .andWhere("student.birthdate = :birthDate", { birthDate })
+        .andWhere("application.applicationStatus = :applicationStatus", {
+          applicationStatus: ApplicationStatus.inProgress,
+        })
+        .getOne()
+    );
   }
 }

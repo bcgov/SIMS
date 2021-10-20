@@ -3,18 +3,21 @@ import HttpBaseClient from "./common/HttpBaseClient";
 
 export class SupportingUserApi extends HttpBaseClient {
   public async updateSupportingInformation(
-    applicationNumber: string,
     supportingUserType: SupportingUserType,
     payload: UpdateSupportingUserDTO,
   ): Promise<void> {
     try {
-      const response = await this.apiClient.patch(
-        `supporting-user/application/${applicationNumber}/userType/${supportingUserType}`,
+      await this.apiClient.patch(
+        `supporting-user/${supportingUserType}`,
         payload,
         this.addAuthHeader(),
       );
     } catch (error) {
-      this.handleRequestError(error);
+      if (!error.response.data?.errorType) {
+        // If it is an not expected error,
+        // handle it the default way.
+        this.handleRequestError(error);
+      }
       throw error;
     }
   }

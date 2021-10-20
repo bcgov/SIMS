@@ -116,6 +116,7 @@ export default {
       () => {
         if (form) {
           form.options.readOnly = props.readOnly;
+          form.redraw();
         }
       },
     );

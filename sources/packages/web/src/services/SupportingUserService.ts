@@ -10,12 +10,10 @@ export class SupportingUsersService {
   }
 
   async updateSupportingInformation(
-    applicationNumber: string,
     supportingUserType: SupportingUserType,
     payload: UpdateSupportingUserDTO,
   ): Promise<void> {
     await ApiClient.SupportingUserApi.updateSupportingInformation(
-      applicationNumber,
       supportingUserType,
       payload,
     );

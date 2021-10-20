@@ -72,7 +72,7 @@ export const AESTRoutesConst = {
  */
 export const SupportingUserRoutesConst = {
   APP_SUPPORTING_USERS: Symbol(),
-  HOME: Symbol(),
+  DASHBOARD: Symbol(),
   LOGIN: Symbol(),
   PARENT_INFORMATION: Symbol(),
   PARTNER_INFORMATION: Symbol(),

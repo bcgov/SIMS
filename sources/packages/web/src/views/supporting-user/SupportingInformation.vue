@@ -1,0 +1,112 @@
+<template>
+  <v-container>
+    <v-card class="p-4">
+      <formio
+        :formName="formName"
+        :data="initialData"
+        :readOnly="submitting"
+        @submitted="submitted"
+      ></formio>
+    </v-card>
+  </v-container>
+</template>
+
+<script lang="ts">
+import formio from "@/components/generic/formio.vue";
+import { useRouter } from "vue-router";
+import { useAuthBCSC, useFormatters, useToastMessage } from "@/composables";
+import { SupportingUsersService } from "@/services/SupportingUserService";
+import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
+import { ref, computed } from "vue";
+import {
+  SupportingUserType,
+  STUDENT_APPLICATION_NOT_FOUND,
+  SUPPORTING_USER_ALREADY_PROVIDED_DATA,
+  SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
+} from "@/types";
+export default {
+  components: {
+    formio,
+  },
+  props: {
+    supportingUserType: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props: any) {
+    const router = useRouter();
+    const toast = useToastMessage();
+    const TOAST_ERROR_DISPLAY_TIME = 15000;
+    const { dateOnlyLongString } = useFormatters();
+    const { bcscParsedToken } = useAuthBCSC();
+    const submitting = ref(false);
+    const initialData = ref();
+
+    initialData.value = {
+      ...bcscParsedToken,
+      dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
+    };
+
+    const formName = computed(() => {
+      switch (props.supportingUserType) {
+        case SupportingUserType.Parent:
+          return "supportingusersparent";
+        case SupportingUserType.Partner:
+          return "supportinguserspartner";
+        default:
+          throw new Error(
+            `Not able to define the form definition to load. Received unknown user type ${props.supportingUserType}.`,
+          );
+      }
+    });
+
+    const submitted = async (formData: any) => {
+      submitting.value = true;
+      try {
+        await SupportingUsersService.shared.updateSupportingInformation(
+          props.supportingUserType,
+          formData,
+        );
+        toast.success("Success", "Supporting data submitted with success.");
+        router.push({ name: SupportingUserRoutesConst.DASHBOARD });
+      } catch (error) {
+        switch (error.response.data.errorType) {
+          case STUDENT_APPLICATION_NOT_FOUND:
+            toast.error(
+              "Application not found",
+              error.response.data.message,
+              TOAST_ERROR_DISPLAY_TIME,
+            );
+            break;
+          case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
+            toast.warn(
+              "User already provided data",
+              error.response.data.message,
+              TOAST_ERROR_DISPLAY_TIME,
+            );
+            break;
+          case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
+            toast.warn(
+              `${props.supportingUserType} already provided data`,
+              error.response.data.message,
+              TOAST_ERROR_DISPLAY_TIME,
+            );
+            break;
+          default:
+            toast.error(
+              "Unexpectd error",
+              "Unexpectd error while submittig the supporting data.",
+              TOAST_ERROR_DISPLAY_TIME,
+            );
+            break;
+        }
+      } finally {
+        submitting.value = false;
+      }
+    };
+
+    return { formName, initialData, submitted, submitting };
+  },
+};
+</script>

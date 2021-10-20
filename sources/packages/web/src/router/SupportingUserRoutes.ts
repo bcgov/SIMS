@@ -1,14 +1,13 @@
 import { RouteRecordRaw } from "vue-router";
 import AppSupportingUsers from "@/views/supporting-user/AppSupportingUser.vue";
 import Login from "@/views/supporting-user/Login.vue";
-import Home from "@/views/supporting-user/Home.vue";
-import ParentInformation from "@/views/supporting-user/ParentInformation.vue";
-import PartnerInformation from "@/views/supporting-user/PartnerInformation.vue";
+import Dashboard from "@/views/supporting-user/Dashboard.vue";
+import SupportingInformation from "@/views/supporting-user/SupportingInformation.vue";
 import {
   SupportingUserRoutesConst,
   SharedRouteConst,
 } from "@/constants/routes/RouteConstants";
-import { AppRoutes, AuthStatus } from "@/types";
+import { AppRoutes, AuthStatus, SupportingUserType } from "@/types";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
@@ -29,9 +28,9 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.SupportingUsersHome,
-        name: SupportingUserRoutesConst.HOME,
-        component: Home,
+        path: AppRoutes.SupportingUsersDashboard,
+        name: SupportingUserRoutesConst.DASHBOARD,
+        component: Dashboard,
         meta: {
           clientType: ClientIdType.SupportingUsers,
         },
@@ -39,7 +38,10 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ParentSupportingInfo,
         name: SupportingUserRoutesConst.PARENT_INFORMATION,
-        component: ParentInformation,
+        component: SupportingInformation,
+        props: {
+          supportingUserType: SupportingUserType.Parent,
+        },
         meta: {
           clientType: ClientIdType.SupportingUsers,
         },
@@ -47,7 +49,10 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.PartnerSupportingInfo,
         name: SupportingUserRoutesConst.PARTNER_INFORMATION,
-        component: PartnerInformation,
+        component: SupportingInformation,
+        props: {
+          supportingUserType: SupportingUserType.Partner,
+        },
         meta: {
           clientType: ClientIdType.SupportingUsers,
         },
@@ -72,7 +77,7 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
               break;
             case AuthStatus.RedirectHome:
               next({
-                name: SupportingUserRoutesConst.HOME,
+                name: SupportingUserRoutesConst.DASHBOARD,
               });
               break;
             default:

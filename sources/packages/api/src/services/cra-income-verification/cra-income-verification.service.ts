@@ -222,6 +222,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
 
     this.workflowService.sendCRAIncomeVerificationCompletedMessage(
       queryResult.workflowId,
+      incomeVerificationId,
     );
   }
 
