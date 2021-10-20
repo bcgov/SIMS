@@ -54,7 +54,11 @@
                   <v-icon
                     size="25"
                     v-tooltip="'Click To Edit this Application'"
-                    @click="editApplicaion(slotProps.data.id)"
+                    @click="
+                      slotProps.data.status !== ApplicationStatus.draft
+                        ? confirmEditApplication(slotProps.data.id)
+                        : editApplicaion(slotProps.data.id)
+                    "
                     >mdi-pencil</v-icon
                   ></v-btn
                 >
@@ -78,6 +82,11 @@
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="loadApplicationSummary"
     />
+    <ConfirmEditApplication
+      ref="editApplicationModal"
+      @confirmEditApplication="editApplicaion"
+      :applicationId="selectedApplicationId"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -88,7 +97,7 @@ import Column from "primevue/column";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-import { useFormatters } from "@/composables";
+import { useFormatters, ModalDialog } from "@/composables";
 import Tooltip from "primevue/tooltip";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import {
@@ -97,6 +106,7 @@ import {
   StudentApplication,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
+import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
 export default {
   components: {
@@ -104,6 +114,7 @@ export default {
     DataTable,
     Column,
     CancelApplication,
+    ConfirmEditApplication,
   },
   directives: {
     tooltip: Tooltip,
@@ -115,7 +126,12 @@ export default {
     const { dateString } = useFormatters();
     const myApplications = ref([] as StudentApplication[]);
     const programYear = ref({} as ProgramYearOfApplicationDto);
+    const editApplicationModal = ref({} as ModalDialog<void>);
 
+    const confirmEditApplication = async (id: number) => {
+      selectedApplicationId.value = id;
+      await editApplicationModal.value.showModal();
+    };
     const getApplicationStatusClass = (status: string) => {
       switch (status) {
         case ApplicationStatus.draft:
@@ -193,6 +209,8 @@ export default {
       loadApplicationSummary,
       ApplicationStatus,
       editApplicaion,
+      editApplicationModal,
+      confirmEditApplication,
     };
   },
 };

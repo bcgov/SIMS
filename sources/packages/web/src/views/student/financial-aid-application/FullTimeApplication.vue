@@ -7,7 +7,7 @@
             <v-btn
               color="primary"
               class="mr-5"
-              v-if="!isReadOnly"
+              v-if="!showDraft"
               v-show="!isFirstPage && !submittingApplication"
               text
               :loading="savingDraft"
@@ -60,33 +60,41 @@
         </v-row>
       </div>
     </div>
+    <ConfirmEditApplication
+      ref="editApplicationModal"
+      @confirmEditApplication="editApplicaion"
+    />
   </v-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import formio from "../../../components/generic/formio.vue";
+import formio from "@/components/generic/formio.vue";
 import { onMounted, ref } from "vue";
-import { StudentService } from "../../../services/StudentService";
+import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
   useFormioDropdownLoader,
   useFormioUtils,
   useToastMessage,
   useFormioComponentLoader,
-} from "../../../composables";
+  ModalDialog,
+} from "@/composables";
 import {
   WizardNavigationEvent,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationStatus,
   OfferingIntensity,
+  GetApplicationDataDto,
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
 export default {
   components: {
     formio,
+    ConfirmEditApplication,
   },
   props: {
     id: {
@@ -118,6 +126,9 @@ export default {
     const isLastPage = ref(false);
     let applicationWizard: any;
     const isReadOnly = ref(false);
+    const showDraft = ref(false);
+    const existingApplication = ref({} as GetApplicationDataDto);
+    const editApplicationModal = ref({} as ModalDialog<void>);
 
     onMounted(async () => {
       //Get the student information and application information.
@@ -128,8 +139,14 @@ export default {
       // TODO: Move formatted address to a common place in Vue app or API.
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
-        applicationData.applicationStatus !== ApplicationStatus.draft ||
-        !!props.readOnly;
+        [
+          ApplicationStatus.completed,
+          ApplicationStatus.cancelled,
+          ApplicationStatus.overwritten,
+        ].includes(applicationData.applicationStatus) || !!props.readOnly;
+      showDraft.value =
+        !!props.readOnly ||
+        ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
       const address = studentInfo.contact;
       const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
       const studentFormData = {
@@ -143,8 +160,12 @@ export default {
         pdStatus: studentInfo.pdStatus,
       };
       initialData.value = { ...applicationData.data, ...studentFormData };
+      existingApplication.value = applicationData;
     });
 
+    const confirmEditApplication = async () => {
+      await editApplicationModal.value.showModal();
+    };
     // Save the current state of the student application skipping all validations.
     const saveDraft = async () => {
       savingDraft.value = true;
@@ -317,7 +338,10 @@ export default {
         });
         getOfferingDetails(form, locationId);
       }
-      if (event.changed.component.key === OFFERINGS_DROPDOWN_KEY) {
+      if (
+        event.changed.component.key === OFFERINGS_DROPDOWN_KEY &&
+        +event.changed.value > 0
+      ) {
         await formioComponentLoader.loadSelectedOfferingDate(
           form,
           +event.changed.value,
@@ -343,6 +367,16 @@ export default {
     };
 
     const wizardSubmit = () => {
+      if (
+        existingApplication.value.applicationStatus !== ApplicationStatus.draft
+      ) {
+        confirmEditApplication();
+      } else {
+        applicationWizard.submit();
+      }
+    };
+
+    const editApplicaion = () => {
       applicationWizard.submit();
     };
 
@@ -361,6 +395,10 @@ export default {
       submittingApplication,
       customEventCallback,
       isReadOnly,
+      showDraft,
+      confirmEditApplication,
+      editApplicaion,
+      editApplicationModal,
     };
   },
 };

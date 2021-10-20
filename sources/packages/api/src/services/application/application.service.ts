@@ -83,20 +83,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationData: any,
     associatedFiles: string[],
   ): Promise<Application> {
+    let result;
     const application = await this.getApplicationToSave(
       studentId,
-      ApplicationStatus.draft,
+      undefined,
       applicationId,
     );
     // If the application was not found it is because it does not belongs to the
-    // student or it is not in draft state. Either way it will be invalid.
+    // student or it is not in draft, Submitted, In Progress, Assessment, Enrollment state.
+    // Either way it will be invalid.
     if (!application) {
       throw new CustomNamedError(
         "Student Application not found or it is not in the correct status to be submitted.",
         APPLICATION_NOT_FOUND,
       );
     }
-    // If the the draft was created under a different program year than
+    // If the the existing application was created under a different program year than
     // the one being used to submit it, it is not valid.
     if (application.programYear.id !== programYearId) {
       throw new CustomNamedError(
@@ -104,22 +106,50 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_NOT_VALID,
       );
     }
+    if (application.applicationStatus === ApplicationStatus.draft) {
+      // TODO:remove the static program year and add dynamic year, from program year table
+      application.applicationNumber = await this.generateApplicationNumber(
+        "2122",
+      );
+      application.data = applicationData;
+      application.applicationStatus = ApplicationStatus.submitted;
+      application.applicationStatusUpdatedOn = getUTCNow();
+      application.studentFiles = await this.getSyncedApplicationFiles(
+        studentId,
+        application.studentFiles,
+        associatedFiles,
+      );
+      result = await this.repo.save(application);
+    } else {
+      /**
+       * * Updating existing Application status to override
+       * * and updating the ApplicationStatusUpdatedOn.
+       */
+      application.applicationStatus = ApplicationStatus.overwritten;
+      application.applicationStatusUpdatedOn = getUTCNow();
 
-    // TODO:remove the static program year and add dynamic year, from program year table
-    application.applicationNumber = await this.generateApplicationNumber(
-      "2122",
-    );
+      /**
+       * * Creating New Application
+       */
+      const newApplication = new Application();
+      newApplication.applicationNumber = application.applicationNumber;
+      newApplication.programYear = application.programYear;
+      newApplication.data = applicationData;
+      newApplication.applicationStatus = ApplicationStatus.submitted;
+      newApplication.applicationStatusUpdatedOn = getUTCNow();
+      newApplication.student = { id: application.studentId } as Student;
+      newApplication.studentFiles = await this.getSyncedApplicationFiles(
+        studentId,
+        [],
+        associatedFiles,
+      );
+      result = await this.repo.save([application, newApplication]);
+      this.workflow.deleteApplicationAssessment(
+        application.assessmentWorkflowId,
+      );
+    }
 
-    application.data = applicationData;
-    application.applicationStatus = ApplicationStatus.submitted;
-    application.applicationStatusUpdatedOn = getUTCNow();
-    application.studentFiles = await this.getSyncedApplicationFiles(
-      studentId,
-      application.studentFiles,
-      associatedFiles,
-    );
-
-    return this.repo.save(application);
+    return result;
   }
 
   /**
@@ -491,7 +521,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   private async getApplicationToSave(
     studentId: number,
-    status: ApplicationStatus,
+    status?: ApplicationStatus,
     applicationId?: number,
   ): Promise<Application> {
     let query = this.repo
@@ -506,14 +536,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
       .where("application.student.id = :studentId", { studentId })
-      .andWhere("programYear.active = true")
-      .andWhere("application.applicationStatus = :status", { status });
+      .andWhere("programYear.active = true");
+    if (status) {
+      query = query.andWhere("application.applicationStatus = :status", {
+        status,
+      });
+    } else {
+      query = query.andWhere(
+        "application.applicationStatus NOT IN (:...status)",
+        {
+          status: [
+            ApplicationStatus.completed,
+            ApplicationStatus.overwritten,
+            ApplicationStatus.cancelled,
+          ],
+        },
+      );
+    }
     if (applicationId) {
       query = query.andWhere("application.id = :applicationId", {
         applicationId,
       });
     }
-
     return query.getOne();
   }
 

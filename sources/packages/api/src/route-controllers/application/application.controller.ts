@@ -144,10 +144,9 @@ export class ApplicationController extends BaseController {
         throw new UnprocessableEntityException(error.message);
       }
       throw new InternalServerErrorException(
-        "Unexpected error while updating the draft application.",
+        "Unexpected error while submitting the application.",
       );
     }
-
     this.applicationService.startApplicationAssessment(applicationId);
   }
 

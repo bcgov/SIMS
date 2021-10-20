@@ -55,6 +55,10 @@
         v-if="applicationDetails?.applicationStatus"
         :applicationDetails="applicationDetails"
       />
+      <ConfirmEditApplication
+        ref="editApplicationModal"
+        @confirmEditApplication="editApplicaion"
+      />
     </v-container>
   </div>
 </template>
@@ -66,13 +70,14 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
-import { useFormatters } from "@/composables";
+import { useFormatters, ModalDialog } from "@/composables";
 import {
   ProgramYearOfApplicationDto,
   GetApplicationDataDto,
   ApplicationStatus,
 } from "@/types";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
+import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
 /**
  * added MenuType interface for prime vue component menu,
@@ -90,6 +95,7 @@ export default {
     Menu,
     CancelApplication,
     ApplicationDetails,
+    ConfirmEditApplication,
   },
   props: {
     id: {
@@ -105,6 +111,7 @@ export default {
     const programYear = ref({} as ProgramYearOfApplicationDto);
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
+    const editApplicationModal = ref({} as ModalDialog<void>);
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
@@ -149,6 +156,9 @@ export default {
         },
       });
     };
+    const confirmEditApplication = async () => {
+      await editApplicationModal.value.showModal();
+    };
     const loadMenu = () => {
       if (
         applicationDetails.value.applicationStatus !==
@@ -160,7 +170,11 @@ export default {
           {
             label: "Edit",
             icon: "pi pi-fw pi-pencil",
-            command: editApplicaion,
+            command:
+              applicationDetails.value.applicationStatus ===
+              ApplicationStatus.draft
+                ? editApplicaion
+                : confirmEditApplication,
           },
           { separator: true },
         );
@@ -220,6 +234,8 @@ export default {
       dateString,
       ApplicationStatus,
       showViewAssessment,
+      editApplicationModal,
+      editApplicaion,
     };
   },
 };
