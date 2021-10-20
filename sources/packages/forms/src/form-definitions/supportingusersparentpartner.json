@@ -611,7 +611,7 @@
                   "value": ""
                 }
               ],
-              "content": "   Your information above is taken from your B.C. Services Card. If the information is incorrect, please update your information with <a href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\" target=\"_blank\">B.C. Services Card</a> first.",
+              "content": " Your information above is taken from your B.C. Services Card. If the information is incorrect, please update your information with <a href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\" target=\"_blank\">B.C. Services Card</a> first.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "hidden": false,
