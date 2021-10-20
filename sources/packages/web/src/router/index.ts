@@ -10,7 +10,7 @@ import {
 import { UserAuthorizationService } from "@/services/UserAuthorizationService";
 import { AuthService } from "@/services/AuthService";
 import { ClientIdType } from "../types/contracts/ConfigContract";
-import { supportingUsersRoutes } from "./SupportingUsersRoutes";
+import { supportingUsersRoutes } from "./SupportingUserRoutes";
 
 const routes: Array<RouteRecordRaw> = [
   ...studentRoutes,

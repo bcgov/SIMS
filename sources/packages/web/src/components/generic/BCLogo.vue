@@ -13,7 +13,7 @@
     <v-row class="logo-main-text" no-gutters>
       <v-col>StudentAid BC</v-col>
     </v-row>
-    <v-row class="logo-subtitle" no-gutters
+    <v-row class="logo-subtitle hidden-xs" no-gutters
       ><v-col>{{ subtitle }}</v-col></v-row
     >
   </v-container>

@@ -71,10 +71,11 @@ export class WorkflowActionsService {
    */
   async sendCRAIncomeVerificationCompletedMessage(
     processInstanceId: string,
+    incomeVerificationId: number,
   ): Promise<void> {
     try {
       await this.workflowService.sendMessage({
-        messageName: "sims-cra-income-verification-complete",
+        messageName: `sims-cra-income-verification-complete-${incomeVerificationId}`,
         processInstanceId,
         all: false, // false means that the message is correlated to exactly one entity.
       });
@@ -125,6 +126,33 @@ export class WorkflowActionsService {
       );
       this.logger.error(error);
       //The error is not thrown here, as we are failing silently
+    }
+  }
+
+  /**
+   * When there is a need of collecting additional information from a person
+   * other than the student (e.g. parent/partner), a supporting user is created
+   * by the the workflow that will be waiting until this message is received.
+   * This method is going to send a message to the workflow allowing it to proceed
+   * when the data in available on database to be retrieved.
+   * @param processInstanceId workflow instance to receive the message.
+   */
+  async sendSupportingUsersCompletedMessage(
+    processInstanceId: string,
+    supportingUserId: number,
+  ): Promise<void> {
+    try {
+      await this.workflowService.sendMessage({
+        messageName: `sims-supporting-user-complete-${supportingUserId}`,
+        processInstanceId,
+        all: false, // false means that the message is correlated to exactly one entity.
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error while sending supporting users completed message to instance id: ${processInstanceId}`,
+      );
+      this.logger.error(error);
+      // The error is not thrown here, as we are failing silently.
     }
   }
 
