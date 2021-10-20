@@ -20,7 +20,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UpdateSupportingUserDTO } from "./models/supporting-user.dto";
 import { SupportingUserType } from "../../database/entities";
 import { AddressInfo, ApiProcessError, ContactInfo } from "../../types";
-import { FormNames } from "src/services/form/constants";
+import { FormNames } from "../../services/form/constants";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,

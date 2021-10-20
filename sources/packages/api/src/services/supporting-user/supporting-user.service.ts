@@ -10,7 +10,7 @@ import {
 } from "../../database/entities";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { configureIdleTransactionSessionTimeout } from "../../utilities/database";
-import { CustomNamedError } from "src/utilities";
+import { CustomNamedError } from "../../utilities";
 import { SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA } from "./constants";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
