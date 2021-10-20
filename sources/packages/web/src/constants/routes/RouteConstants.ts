@@ -63,6 +63,7 @@ export const InstitutionRoutesConst = {
 export const AESTRoutesConst = {
   APP_AEST: Symbol(),
   AEST_DASHBOARD: Symbol(),
+  SEARCH_STUDENTS: Symbol(),
   LOGIN: Symbol(),
   LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),
 };

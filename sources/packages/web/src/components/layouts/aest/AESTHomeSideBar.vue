@@ -20,7 +20,7 @@
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuModel } from "@/types"
+import { MenuModel } from "@/types";
 
 export default {
   setup() {
@@ -38,6 +38,11 @@ export default {
       {
         label: "Students",
         icon: "mdi-account-multiple-outline",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.SEARCH_STUDENTS,
+          });
+        },
       },
       {
         label: "Institutions",

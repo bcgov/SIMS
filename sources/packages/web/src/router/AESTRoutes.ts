@@ -2,6 +2,7 @@ import { RouteRecordRaw } from "vue-router";
 import AppAEST from "@/views/aest/AppAEST.vue";
 import Login from "@/views/aest/Login.vue";
 import AESTDashboard from "@/views/aest/AESTDashboard.vue";
+import SearchStudents from "@/views/aest/SearchStudents.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import {
   AESTRoutesConst,
@@ -50,6 +51,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.AEST,
         },
       },
+      {
+        path: AppRoutes.SearchStudents,
+        name: AESTRoutesConst.SEARCH_STUDENTS,
+        components: {
+          default: SearchStudents,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
     ],
     beforeEnter: (to, _from, next) => {
       AuthService.shared
@@ -79,7 +91,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });

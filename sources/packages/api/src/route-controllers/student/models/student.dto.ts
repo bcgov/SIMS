@@ -61,7 +61,7 @@ export interface StudentEducationProgramDto {
   deliveryMethod: string;
 }
 
-export class SearchStudentRespDto {
+export interface SearchStudentRespDto {
   id: number;
   firstName: string;
   lastName: string;

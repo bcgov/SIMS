@@ -35,6 +35,14 @@ export class StudentService {
     await ApiClient.Students.updateStudentContact({ ...contact });
   }
 
+  async searchStudents(
+    appNumber: string,
+    firstName: string,
+    lastName: string,
+  ): Promise<void> {
+    await ApiClient.Students.searchStudents(appNumber, firstName, lastName);
+  }
+
   public async getContact(): Promise<StudentContact> {
     const studentContact = await ApiClient.Students.getContact();
     return studentContact;
