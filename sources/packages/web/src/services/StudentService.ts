@@ -5,6 +5,7 @@ import {
   CreateStudent,
   StudentFormInfo,
   StudentApplication,
+  SearchStudentResp,
 } from "../types/contracts/StudentContract";
 
 export class StudentService {
@@ -39,8 +40,12 @@ export class StudentService {
     appNumber: string,
     firstName: string,
     lastName: string,
-  ): Promise<void> {
-    await ApiClient.Students.searchStudents(appNumber, firstName, lastName);
+  ): Promise<SearchStudentResp> {
+    return await ApiClient.Students.searchStudents(
+      appNumber,
+      firstName,
+      lastName,
+    );
   }
 
   public async getContact(): Promise<StudentContact> {

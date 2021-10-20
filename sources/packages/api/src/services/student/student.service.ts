@@ -241,7 +241,7 @@ export class StudentService extends RecordDataModelService<Student> {
   ): Promise<Student[]> {
     const applicationExistsQuery = this.applicationRepo
       .createQueryBuilder("application")
-      .where("LOWER(application.applicationNumber) like LOWER(%:appNumber%)")
+      .where("LOWER(application.applicationNumber) like LOWER(:appNumber)")
       .select("1");
     let searchQuery = this.repo
       .createQueryBuilder("student")
@@ -255,24 +255,24 @@ export class StudentService extends RecordDataModelService<Student> {
       .where("user.isActive = true");
     if (firstName) {
       searchQuery = searchQuery.andWhere(
-        "LOWER(user.firstName) like LOWER(%:firstName%)",
+        "LOWER(user.firstName) like LOWER(:firstName)",
         {
-          firstName,
+          firstName: `%${firstName}%`,
         },
       );
     }
     if (lastName) {
       searchQuery = searchQuery.andWhere(
-        "LOWER(user.lastName) like LOWER(%:lastName%)",
+        "LOWER(user.lastName) like LOWER(:lastName)",
         {
-          lastName,
+          lastName: `%${lastName}%`,
         },
       );
     }
     if (appNumber) {
       searchQuery = searchQuery
         .andWhere(`exists(${applicationExistsQuery.getQuery()})`)
-        .setParameters({ appNumber });
+        .setParameters({ appNumber: `%${appNumber}%` });
     }
     return searchQuery.getMany();
   }

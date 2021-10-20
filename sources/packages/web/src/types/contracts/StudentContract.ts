@@ -26,7 +26,7 @@ export interface SearchStudentResp {
   id: number;
   firstName: string;
   lastName: string;
-  birthDate: Date;
+  birthDate: string;
 }
 
 export interface StudentInfo {

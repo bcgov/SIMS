@@ -1,34 +1,32 @@
 <template>
-  <label for="appNumber">Application Number</label>
-  <ValidatedInput property-name="appNumber">
-    <Field name="appNumber" label="Application Number" as="InputText" />
-  </ValidatedInput>
-  <label for="firstName">Given Name</label>
-  <ValidatedInput property-name="firstName">
-    <Field name="firstName" label="Given Name" as="InputText" />
-  </ValidatedInput>
-  <label for="lastName">Last Name</label>
-  <ValidatedInput property-name="lastName">
-    <Field name="lastName" label="Last Name" as="InputText" />
-  </ValidatedInput>
   <v-container>
+    <h2 class="color-blue">Search Students</h2>
+    <v-row class="mt-5"
+      ><v-col><label for="appNumber">Application Number</label></v-col
+      ><v-col><label for="firstName">Given Name</label></v-col
+      ><v-col><label for="lastName">Last Name</label></v-col></v-row
+    >
+    <v-row
+      ><v-col><InputText type="text" v-model="appNumber" /> </v-col
+      ><v-col><InputText type="text" v-model="firstName" /> </v-col
+      ><v-col><InputText type="text" v-model="lastName" /> </v-col
+    ></v-row>
+
     <v-btn
+      :disabled="!appNumber && !firstName && !lastName"
       color="primary"
-      class="p-button-raised"
+      class="p-button-raised mt-2"
       @click="goToSearchStudents(appNumber, firstName, lastName)"
     >
       <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-      Search Students
+      Search
     </v-btn>
-
-    <DataTable :autoLayout="true" :value="students">
-      <Column field="appNumber" header="Application Number" :sortable="true">
-        <template #body="slotProps">
-          <div class="p-text-capitalize">
-            {{ slotProps.data.appNumber }}
-          </div>
-        </template>
-      </Column>
+    <DataTable
+      v-if="goToSearchStudents"
+      :autoLayout="true"
+      :value="students"
+      class="mt-2"
+    >
       <Column field="firstName" header="First Name" :sortable="true">
         <template #body="slotProps">
           <div class="p-text-capitalize">
@@ -61,19 +59,21 @@
   </v-container>
 </template>
 <script lang="ts">
+import { ref } from "vue";
 import { StudentService } from "../../services/StudentService";
-import ValidatedInput from "../../components/generic/ValidatedInput.vue";
+import { SearchStudentResp } from "@/types";
 export default {
-  components: {
-    ValidatedInput,
-  },
   setup(props: any) {
-    const goToSearchStudents = (
+    const appNumber = ref("");
+    const firstName = ref("");
+    const lastName = ref("");
+    const students = ref([] as SearchStudentResp[]);
+    const goToSearchStudents = async (
       appNumber: string,
       firstName: string,
       lastName: string,
     ) => {
-      return StudentService.shared.searchStudents(
+      students.value = await StudentService.shared.searchStudents(
         appNumber,
         firstName,
         lastName,
@@ -81,6 +81,10 @@ export default {
     };
     return {
       goToSearchStudents,
+      students,
+      appNumber,
+      firstName,
+      lastName,
     };
   },
 };
