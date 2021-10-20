@@ -11,7 +11,6 @@ import {
   Res,
   UploadedFile,
   UseInterceptors,
-  Req,
   Query,
 } from "@nestjs/common";
 import { Response } from "express";

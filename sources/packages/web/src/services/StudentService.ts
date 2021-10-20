@@ -41,11 +41,7 @@ export class StudentService {
     firstName: string,
     lastName: string,
   ): Promise<SearchStudentResp[]> {
-    return await ApiClient.Students.searchStudents(
-      appNumber,
-      firstName,
-      lastName,
-    );
+    return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
   }
 
   public async getContact(): Promise<StudentContact> {

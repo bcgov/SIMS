@@ -87,9 +87,6 @@ export default {
     ModalDialogBase,
   },
   setup() {
-    const appNumber = ref("");
-    const firstName = ref("");
-    const lastName = ref("");
     const students = ref([{}] as SearchStudentResp[]);
     const studentsfound = ref(false);
     const { showDialog, showModal } = useModalDialog<boolean>();
@@ -106,7 +103,6 @@ export default {
       if (students.value.length == 0) {
         studentsfound.value = false;
         showDialog.value = true;
-        return;
       } else {
         studentsfound.value = true;
       }
@@ -122,9 +118,6 @@ export default {
       dialogClosed,
       goToSearchStudents,
       students,
-      appNumber,
-      firstName,
-      lastName,
     };
   },
 };
