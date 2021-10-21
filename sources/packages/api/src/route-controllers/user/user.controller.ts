@@ -176,7 +176,7 @@ export class UserController extends BaseController {
   @Groups(UserGroups.AESTUser)
   @Put("aest")
   async syncAESTUser(@UserToken() userToken: IUserToken): Promise<void> {
-    await this.service.syncAESTUser(
+    await this.service.syncUser(
       userToken.userName,
       userToken.email,
       userToken.givenNames,

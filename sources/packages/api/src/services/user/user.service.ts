@@ -60,14 +60,14 @@ export class UserService extends DataModelService<User> {
   }
 
   /**
-   * Creates or updates Ministry user information.
+   * Creates or updates user information.
    * @param userName user name as it is on KeyCloak.
    * @param email email received from identity provider.
    * @param givenNames givenNames received from identity provider.
    * @param lastName lastName received from identity provider.
    * @returns created/updated user.
    */
-  async syncAESTUser(
+  async syncUser(
     userName: string,
     email: string,
     givenNames: string,
