@@ -1,49 +1,33 @@
 <template>
-  <v-container>
-    <ModalDialogBase
-      title="Search Students"
-      dialogType="warning"
-      :showDialog="showDialog"
-      @dialogClosed="dialogClosed"
-    >
-      <template v-slot:content>
-        <v-container>
-          <form>
-            <p>No Students found for the given search criteria.</p>
-          </form>
-        </v-container>
-      </template>
-      <template v-slot:footer>
-        <v-btn color="primary" outlined @click="dialogClosed"> Close </v-btn>
-      </template>
-    </ModalDialogBase>
-
+  <full-page-container>
     <h2 class="color-blue">Search Students</h2>
     <v-row class="mt-5"
       ><v-col><label for="appNumber">Application Number</label></v-col
       ><v-col><label for="firstName">Given Name</label></v-col
-      ><v-col><label for="lastName">Last Name</label></v-col></v-row
-    >
-    <v-row
-      ><v-col><InputText type="text" v-model="appNumber" /> </v-col
-      ><v-col><InputText type="text" v-model="firstName" /> </v-col
-      ><v-col><InputText type="text" v-model="lastName" /> </v-col
+      ><v-col><label for="lastName">Last Name</label></v-col> <v-col></v-col
     ></v-row>
+    <v-row
+      ><v-col><InputText type="text" v-model="appNumber" /></v-col
+      ><v-col><InputText type="text" v-model="firstName" /></v-col
+      ><v-col><InputText type="text" v-model="lastName" /></v-col
+      ><v-col
+        ><v-btn
+          :disabled="!appNumber && !firstName && !lastName"
+          color="primary"
+          class="p-button-raised"
+          @click="goToSearchStudents(appNumber, firstName, lastName)"
+        >
+          <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
+          Search
+        </v-btn></v-col
+      >
+    </v-row>
 
-    <v-btn
-      :disabled="!appNumber && !firstName && !lastName"
-      color="primary"
-      class="p-button-raised mt-2"
-      @click="goToSearchStudents(appNumber, firstName, lastName)"
-    >
-      <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-      Search
-    </v-btn>
     <DataTable
       v-if="studentsfound"
+      class="mt-4"
       :autoLayout="true"
       :value="students"
-      class="p-m-4"
     >
       <Column field="firstName" header="First Name" :sortable="true">
         <template #body="slotProps">
@@ -74,7 +58,7 @@
         </template>
       </Column>
     </DataTable>
-  </v-container>
+  </full-page-container>
 </template>
 <script lang="ts">
 import { ref } from "vue";
@@ -82,20 +66,17 @@ import { useRouter } from "vue-router";
 import { StudentService } from "../../services/StudentService";
 import { AESTRoutesConst } from "../../constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
-import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog } from "@/composables";
+import { useToastMessage } from "../../composables";
+
 export default {
-  components: {
-    ModalDialogBase,
-  },
   setup() {
+    const toast = useToastMessage();
     const router = useRouter();
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");
     const students = ref([{}] as SearchStudentResp[]);
     const studentsfound = ref(false);
-    const { showDialog, showModal } = useModalDialog<boolean>();
     const goToViewStudent = (studentId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENTS_APPLICATION,
@@ -116,23 +97,20 @@ export default {
       );
       if (students.value.length == 0) {
         studentsfound.value = false;
-        showDialog.value = true;
+        toast.error(
+          "No Students found",
+          "No Students found for the given search criteria.",
+        );
       } else {
         studentsfound.value = true;
       }
-    };
-    const dialogClosed = () => {
-      showDialog.value = false;
     };
 
     return {
       appNumber,
       firstName,
       lastName,
-      showDialog,
       studentsfound,
-      showModal,
-      dialogClosed,
       goToSearchStudents,
       students,
       goToViewStudent,

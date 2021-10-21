@@ -103,8 +103,8 @@ export const aestRoutes: Array<RouteRecordRaw> = [
                 name: SharedRouteConst.FORBIDDEN_USER,
               });
           }
-        })
-        .catch((e) => {
+        })  
+        .catch(e => {
           console.error(e);
           throw e;
         });

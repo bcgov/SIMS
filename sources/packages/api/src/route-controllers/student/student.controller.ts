@@ -49,7 +49,7 @@ import {
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
-import * as dayjs from "dayjs";
+import { dateString } from "../../utilities";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -413,7 +413,7 @@ export class StudentController extends BaseController {
       id: eachStudent.id,
       firstName: eachStudent.user.firstName,
       lastName: eachStudent.user.lastName,
-      birthDate: dayjs(eachStudent.birthdate).format("YYYY-MMM-DD"),
+      birthDate: dateString(eachStudent.birthdate),
     }));
   }
 }
