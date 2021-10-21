@@ -1,6 +1,11 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Application, ApplicationStatus, Student, User } from "../../database/entities";
+import {
+  Application,
+  ApplicationStatus,
+  Student,
+  User,
+} from "../../database/entities";
 import { Connection, Repository } from "typeorm";
 import { UserInfo } from "../../types";
 import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
@@ -246,7 +251,7 @@ export class StudentService extends RecordDataModelService<Student> {
         overwrittenStatus: ApplicationStatus.overwritten,
       })
       .select("1");
-    let searchQuery = this.repo
+    const searchQuery = this.repo
       .createQueryBuilder("student")
       .select([
         "student.id",
