@@ -553,23 +553,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.student.id = :studentId", { studentId })
       .andWhere("programYear.active = true");
     if (status) {
-      query = query.andWhere("application.applicationStatus = :status", {
+      query.andWhere("application.applicationStatus = :status", {
         status,
       });
     } else {
-      query = query.andWhere(
-        "application.applicationStatus NOT IN (:...status)",
-        {
-          status: [
-            ApplicationStatus.completed,
-            ApplicationStatus.overwritten,
-            ApplicationStatus.cancelled,
-          ],
-        },
-      );
+      query.andWhere("application.applicationStatus NOT IN (:...status)", {
+        status: [
+          ApplicationStatus.completed,
+          ApplicationStatus.overwritten,
+          ApplicationStatus.cancelled,
+        ],
+      });
     }
     if (applicationId) {
-      query = query.andWhere("application.id = :applicationId", {
+      query.andWhere("application.id = :applicationId", {
         applicationId,
       });
     }
