@@ -15,7 +15,7 @@
           :disabled="!appNumber && !firstName && !lastName"
           color="primary"
           class="p-button-raised"
-          @click="goToSearchStudents()"
+          @click="searchStudents()"
         >
           <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
           Search
@@ -85,7 +85,7 @@ export default {
         },
       });
     };
-    const goToSearchStudents = async () => {
+    const searchStudents = async () => {
       students.value = await StudentService.shared.searchStudents(
         appNumber.value,
         firstName.value,
@@ -107,7 +107,7 @@ export default {
       firstName,
       lastName,
       studentsFound,
-      goToSearchStudents,
+      searchStudents,
       students,
       goToViewStudent,
     };
