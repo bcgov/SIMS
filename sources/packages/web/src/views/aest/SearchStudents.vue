@@ -3,19 +3,19 @@
     <h2 class="color-blue">Search Students</h2>
     <v-row class="mt-5"
       ><v-col><label for="appNumber">Application Number</label></v-col
-      ><v-col><label for="firstName">Given Name</label></v-col
+      ><v-col><label for="firstName">Given Names</label></v-col
       ><v-col><label for="lastName">Last Name</label></v-col> <v-col></v-col
     ></v-row>
     <v-row
-      ><v-col><InputText type="text" v-model="appNumber" /></v-col
-      ><v-col><InputText type="text" v-model="firstName" /></v-col
-      ><v-col><InputText type="text" v-model="lastName" /></v-col
+      ><v-col><InputText type="text" v-model="appNumber"/></v-col
+      ><v-col><InputText type="text" v-model="firstName"/></v-col
+      ><v-col><InputText type="text" v-model="lastName"/></v-col
       ><v-col
         ><v-btn
           :disabled="!appNumber && !firstName && !lastName"
           color="primary"
           class="p-button-raised"
-          @click="goToSearchStudents(appNumber, firstName, lastName)"
+          @click="goToSearchStudents()"
         >
           <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
           Search
@@ -24,7 +24,7 @@
     </v-row>
 
     <DataTable
-      v-if="studentsfound"
+      v-if="studentsFound"
       class="mt-4"
       :autoLayout="true"
       :value="students"
@@ -43,7 +43,7 @@
           </div>
         </template>
       </Column>
-      <Column field="birthDate" header="Date of Birth" :sortable="true">
+      <Column field="birthDate" header="Date of Birth">
         <template #body="slotProps">
           <div class="p-text-capitalize">
             {{ slotProps.data.birthDate }}
@@ -63,10 +63,10 @@
 <script lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { StudentService } from "../../services/StudentService";
-import { AESTRoutesConst } from "../../constants/routes/RouteConstants";
+import { StudentService } from "@/services/StudentService";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
-import { useToastMessage } from "../../composables";
+import { useToastMessage } from "@/composables";
 
 export default {
   setup() {
@@ -76,7 +76,7 @@ export default {
     const firstName = ref("");
     const lastName = ref("");
     const students = ref([{}] as SearchStudentResp[]);
-    const studentsfound = ref(false);
+    const studentsFound = ref(false);
     const goToViewStudent = (studentId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENTS_APPLICATION,
@@ -85,24 +85,20 @@ export default {
         },
       });
     };
-    const goToSearchStudents = async (
-      applicationNumber: string,
-      studentFirstName: string,
-      studentLastName: string,
-    ) => {
+    const goToSearchStudents = async () => {
       students.value = await StudentService.shared.searchStudents(
-        applicationNumber,
-        studentFirstName,
-        studentLastName,
+        appNumber.value,
+        firstName.value,
+        lastName.value,
       );
       if (students.value.length == 0) {
-        studentsfound.value = false;
+        studentsFound.value = false;
         toast.error(
           "No Students found",
           "No Students found for the given search criteria.",
         );
       } else {
-        studentsfound.value = true;
+        studentsFound.value = true;
       }
     };
 
@@ -110,7 +106,7 @@ export default {
       appNumber,
       firstName,
       lastName,
-      studentsfound,
+      studentsFound,
       goToSearchStudents,
       students,
       goToViewStudent,
