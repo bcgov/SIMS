@@ -78,7 +78,9 @@
 </template>
 <script lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { StudentService } from "../../services/StudentService";
+import { AESTRoutesConst } from "../../constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
@@ -87,18 +89,30 @@ export default {
     ModalDialogBase,
   },
   setup() {
+    const router = useRouter();
+    const appNumber = ref("");
+    const firstName = ref("");
+    const lastName = ref("");
     const students = ref([{}] as SearchStudentResp[]);
     const studentsfound = ref(false);
     const { showDialog, showModal } = useModalDialog<boolean>();
+    const goToViewStudent = (studentId: number) => {
+      router.push({
+        name: AESTRoutesConst.STUDENTS_APPLICATION,
+        params: {
+          studentId,
+        },
+      });
+    };
     const goToSearchStudents = async (
-      appNumber: string,
-      firstName: string,
-      lastName: string,
+      applicationNumber: string,
+      studentFirstName: string,
+      studentLastName: string,
     ) => {
       students.value = await StudentService.shared.searchStudents(
-        appNumber,
-        firstName,
-        lastName,
+        applicationNumber,
+        studentFirstName,
+        studentLastName,
       );
       if (students.value.length == 0) {
         studentsfound.value = false;
@@ -112,12 +126,16 @@ export default {
     };
 
     return {
+      appNumber,
+      firstName,
+      lastName,
       showDialog,
       studentsfound,
       showModal,
       dialogClosed,
       goToSearchStudents,
       students,
+      goToViewStudent,
     };
   },
 };
