@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Application, Student, User } from "../../database/entities";
+import { Application, ApplicationStatus, Student, User } from "../../database/entities";
 import { Connection, Repository } from "typeorm";
 import { UserInfo } from "../../types";
 import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
@@ -242,6 +242,9 @@ export class StudentService extends RecordDataModelService<Student> {
     const applicationExistsQuery = this.applicationRepo
       .createQueryBuilder("application")
       .where("application.applicationNumber Ilike :appNumber")
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      })
       .select("1");
     let searchQuery = this.repo
       .createQueryBuilder("student")
@@ -254,17 +257,17 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.user", "user")
       .where("user.isActive = true");
     if (firstName) {
-      searchQuery = searchQuery.andWhere("user.firstName Ilike :firstName", {
+      searchQuery.andWhere("user.firstName Ilike :firstName", {
         firstName: `%${firstName}%`,
       });
     }
     if (lastName) {
-      searchQuery = searchQuery.andWhere("user.lastName Ilike :lastName", {
+      searchQuery.andWhere("user.lastName Ilike :lastName", {
         lastName: `%${lastName}%`,
       });
     }
     if (appNumber) {
-      searchQuery = searchQuery
+      searchQuery
         .andWhere(`exists(${applicationExistsQuery.getQuery()})`)
         .setParameters({ appNumber: `%${appNumber}%` });
     }
