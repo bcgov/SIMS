@@ -6,7 +6,7 @@
     @dialogClosed="dialogClosed"
   >
     <template v-slot:content>
-      <v-container>
+      <v-container class="p-component text-dark">
         <p>
           This will result in a new assessment which could cause a delay in your
           application, are you sure you want to proceed?

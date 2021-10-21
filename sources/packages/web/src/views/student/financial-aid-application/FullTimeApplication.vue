@@ -7,7 +7,7 @@
             <v-btn
               color="primary"
               class="mr-5"
-              v-if="!showDraft"
+              v-if="!notDraft"
               v-show="!isFirstPage && !submittingApplication"
               text
               :loading="savingDraft"
@@ -126,7 +126,7 @@ export default {
     const isLastPage = ref(false);
     let applicationWizard: any;
     const isReadOnly = ref(false);
-    const showDraft = ref(false);
+    const notDraft = ref(false);
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<void>);
 
@@ -144,7 +144,7 @@ export default {
           ApplicationStatus.cancelled,
           ApplicationStatus.overwritten,
         ].includes(applicationData.applicationStatus) || !!props.readOnly;
-      showDraft.value =
+      notDraft.value =
         !!props.readOnly ||
         ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
       const address = studentInfo.contact;
@@ -395,7 +395,7 @@ export default {
       submittingApplication,
       customEventCallback,
       isReadOnly,
-      showDraft,
+      notDraft,
       confirmEditApplication,
       editApplicaion,
       editApplicationModal,

@@ -67,8 +67,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Submits a Student Application.
-   * The system ensures that there is an application draft prior
-   * to the application submission.
+   * If the application is already in Draft state, then on submit the, existing
+   * row will be updated with the payload and application status will be set to
+   * Submitted and applicationStatusUpdatedOn will also be update and new workflow is started.
+   * If a student submit/re-submit and an existing application that is not in draft state
+   * (i.e existing application should be in any one of these status, submitted, In Progress,
+   * Assessment, Enrollment), then the existing application status is set to `Overwritten` and
+   * applicationStatusUpdatedOn is updated and delete the corresponding workflow and creates a
+   * new Application with same Application Number and Program Year as that of the Overwritten
+   * Application and with newly submitted payload. And starts a new workflow for the newly created
+   * Application.
+   * a new application with status 'Submitted'
    * @param applicationId application id that must be updated to submitted.
    * @param studentId student id for authorization validations.
    * @param programYearId program year associated with the submission.
@@ -82,8 +91,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     programYearId: number,
     applicationData: any,
     associatedFiles: string[],
-  ): Promise<Application> {
-    let result;
+  ): Promise<Application | Application[]> {
     const application = await this.getApplicationToSave(
       studentId,
       undefined,
@@ -119,36 +127,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
         application.studentFiles,
         associatedFiles,
       );
-      result = await this.repo.save(application);
-    } else {
-      /**
-       * * Updating existing Application status to override
-       * * and updating the ApplicationStatusUpdatedOn.
-       */
-      application.applicationStatus = ApplicationStatus.overwritten;
-      application.applicationStatusUpdatedOn = getUTCNow();
-
-      /**
-       * * Creating New Application
-       */
-      const newApplication = new Application();
-      newApplication.applicationNumber = application.applicationNumber;
-      newApplication.programYear = application.programYear;
-      newApplication.data = applicationData;
-      newApplication.applicationStatus = ApplicationStatus.submitted;
-      newApplication.applicationStatusUpdatedOn = getUTCNow();
-      newApplication.student = { id: application.studentId } as Student;
-      newApplication.studentFiles = await this.getSyncedApplicationFiles(
-        studentId,
-        [],
-        associatedFiles,
-      );
-      result = await this.repo.save([application, newApplication]);
-      this.workflow.deleteApplicationAssessment(
-        application.assessmentWorkflowId,
-      );
+      return this.repo.save(application);
     }
+    /**
+     * If a student submit/re-submit and an existing application that is not in draft state,
+     * (i.e existing application should be in any one of these status, submitted, In Progress,
+     * Assessment, Enrollment) then the execution will come here, then the existing application
+     * status is set to `Overwritten` and applicationStatusUpdatedOn is updated and delete the
+     * corresponding workflow and creates a new Application with same Application Number and
+     * Program Year as that of the Overwritten Application and with newly submitted payload.
+     */
+    // * Updating existing Application status to override
+    // * and updating the ApplicationStatusUpdatedOn.
+    application.applicationStatus = ApplicationStatus.overwritten;
+    application.applicationStatusUpdatedOn = getUTCNow();
 
+    //* Creating New Application with same Application Number and Program Year as
+    //* that of the Overwritten Application and with newly submitted payload with
+    //* application status submitted.
+
+    const newApplication = new Application();
+    newApplication.applicationNumber = application.applicationNumber;
+    newApplication.programYear = application.programYear;
+    newApplication.data = applicationData;
+    newApplication.applicationStatus = ApplicationStatus.submitted;
+    newApplication.applicationStatusUpdatedOn = getUTCNow();
+    newApplication.student = { id: application.studentId } as Student;
+    newApplication.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      [],
+      associatedFiles,
+    );
+    const result = await this.repo.save([application, newApplication]);
+    //* Deleting the existing workflow
+    this.workflow.deleteApplicationAssessment(application.assessmentWorkflowId);
     return result;
   }
 
@@ -514,7 +526,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * the operations related to save/submitting an
    * Student Application.
    * @param studentId student id.
-   * @param status expected status for the application.
+   * @param status status is an optional parameter. if status
+   * is passed, then application will be return with passed
+   * status, if nothing is passed, then application with status
+   * other than completed, overwritten, cancelled will be passed.
    * @param [applicationId] application id, when possible.
    * @returns application with the data needed to process
    * the operations related to save/submitting.
