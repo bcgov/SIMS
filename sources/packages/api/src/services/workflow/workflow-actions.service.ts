@@ -135,7 +135,7 @@ export class WorkflowActionsService {
    * This method is going to send a message to the workflow allowing it to proceed
    * when the data in available on database to be retrieved.
    * @param supportingUserId supporting user id that will be appended to the
-   * name of the message to uniquely identify id.
+   * name of the message to uniquely identify it.
    */
   async sendSupportingUsersCompletedMessage(
     supportingUserId: number,
