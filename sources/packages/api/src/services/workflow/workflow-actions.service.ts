@@ -67,21 +67,20 @@ export class WorkflowActionsService {
    * until the request in sent to CRA and a response is received.
    * This method is going to send a message to the workflow allowing it to proceed
    * when the data in available on database to be retrieved.
-   * @param processInstanceId workflow instance to receive the message.
+   * @param incomeVerificationId income verification id that will be appended to the
+   * name of the message to uniquely identify it.
    */
   async sendCRAIncomeVerificationCompletedMessage(
-    processInstanceId: string,
     incomeVerificationId: number,
   ): Promise<void> {
     try {
       await this.workflowService.sendMessage({
         messageName: `sims-cra-income-verification-complete-${incomeVerificationId}`,
-        processInstanceId,
         all: false, // false means that the message is correlated to exactly one entity.
       });
     } catch (error) {
       this.logger.error(
-        `Error while sending CRA income verification completed message to instance id: ${processInstanceId}`,
+        `Error while sending CRA income verification completed message using incomeVerificationId: ${incomeVerificationId}`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.
@@ -135,21 +134,20 @@ export class WorkflowActionsService {
    * by the the workflow that will be waiting until this message is received.
    * This method is going to send a message to the workflow allowing it to proceed
    * when the data in available on database to be retrieved.
-   * @param processInstanceId workflow instance to receive the message.
+   * @param supportingUserId supporting user id that will be appended to the
+   * name of the message to uniquely identify id.
    */
   async sendSupportingUsersCompletedMessage(
-    processInstanceId: string,
     supportingUserId: number,
   ): Promise<void> {
     try {
       await this.workflowService.sendMessage({
         messageName: `sims-supporting-user-complete-${supportingUserId}`,
-        processInstanceId,
         all: false, // false means that the message is correlated to exactly one entity.
       });
     } catch (error) {
       this.logger.error(
-        `Error while sending supporting users completed message to instance id: ${processInstanceId}`,
+        `Error while sending supporting users completed message using supportingUserId: ${supportingUserId}`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.

@@ -30,7 +30,7 @@ export default {
           routeName = SupportingUserRoutesConst.PARENT_INFORMATION;
           break;
         case FormIOCustomEventTypes.RouteToPartnerInformation:
-          routeName = SupportingUserRoutesConst.PARENT_INFORMATION;
+          routeName = SupportingUserRoutesConst.PARTNER_INFORMATION;
           break;
         default:
           throw new Error("Invalid route value");

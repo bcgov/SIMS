@@ -149,7 +149,6 @@ export class SupportingUserController {
       );
 
       await this.workflowActionsService.sendSupportingUsersCompletedMessage(
-        application.assessmentWorkflowId,
         updatedUser.id,
       );
     } catch (error) {
