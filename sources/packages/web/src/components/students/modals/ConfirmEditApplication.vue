@@ -1,0 +1,57 @@
+<template>
+  <ModalDialogBase
+    title="Confirm Edit Applcation"
+    dialogType="question"
+    :showDialog="showDialog"
+    @dialogClosed="dialogClosed"
+  >
+    <template v-slot:content>
+      <v-container class="p-component text-dark">
+        <p>
+          This will result in a new assessment which could cause a delay in your
+          application, are you sure you want to proceed?
+        </p>
+      </v-container>
+    </template>
+    <template v-slot:footer>
+      <v-btn color="primary" outlined @click="dialogClosed"> No </v-btn>
+      <v-btn
+        color="warning"
+        depressed
+        class="text-white"
+        @click="editApplication"
+      >
+        <v-icon left size="25"> mdi-cancel </v-icon>
+        Yes
+      </v-btn>
+    </template>
+  </ModalDialogBase>
+</template>
+
+<script lang="ts">
+import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+import { useModalDialog } from "@/composables";
+
+export default {
+  components: {
+    ModalDialogBase,
+  },
+  setup() {
+    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
+
+    const dialogClosed = () => {
+      showDialog.value = false;
+    };
+    const editApplication = async () => {
+      showDialog.value = false;
+      resolvePromise(true);
+    };
+    return {
+      showDialog,
+      showModal,
+      dialogClosed,
+      editApplication,
+    };
+  },
+};
+</script>

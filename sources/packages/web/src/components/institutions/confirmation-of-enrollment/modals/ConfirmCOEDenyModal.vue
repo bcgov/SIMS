@@ -16,7 +16,12 @@
     </template>
     <template v-slot:footer>
       <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
-      <v-btn color="danger" depressed @click="denyProgramInfo" style="color: white">
+      <v-btn
+        color="danger"
+        depressed
+        @click="denyProgramInfo"
+        class="text-white"
+      >
         <v-icon left size="25"> mdi-cancel </v-icon>
         Decline Request
       </v-btn>
@@ -63,7 +68,7 @@ export default {
       formioUtils.setRadioOptions(
         form,
         COE_DENIAL_REASON_RADIO,
-        await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons()
+        await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons(),
       );
     };
 

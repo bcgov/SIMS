@@ -7,7 +7,7 @@ export enum ApplicationStatus {
    */
   draft = "Draft",
   /**
-   * The application has been submitted by the application.
+   * The application has been submitted by the student.
    */
   submitted = "Submitted",
   /**
