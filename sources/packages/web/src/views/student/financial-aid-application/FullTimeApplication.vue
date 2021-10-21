@@ -128,7 +128,7 @@ export default {
     const isReadOnly = ref(false);
     const notDraft = ref(false);
     const existingApplication = ref({} as GetApplicationDataDto);
-    const editApplicationModal = ref({} as ModalDialog<void>);
+    const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     onMounted(async () => {
       //Get the student information and application information.
@@ -136,7 +136,6 @@ export default {
         StudentService.shared.getStudentInfo(),
         ApplicationService.shared.getApplicationData(props.id),
       ]);
-      // TODO: Move formatted address to a common place in Vue app or API.
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
@@ -148,6 +147,7 @@ export default {
         !!props.readOnly ||
         ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
       const address = studentInfo.contact;
+      // TODO: Move formatted address to a common place in Vue app or API.
       const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
       const studentFormData = {
         studentGivenNames: studentInfo.firstName,
@@ -163,9 +163,6 @@ export default {
       existingApplication.value = applicationData;
     });
 
-    const confirmEditApplication = async () => {
-      await editApplicationModal.value.showModal();
-    };
     // Save the current state of the student application skipping all validations.
     const saveDraft = async () => {
       savingDraft.value = true;
@@ -366,6 +363,16 @@ export default {
       applicationWizard.nextPage();
     };
 
+    const editApplicaion = () => {
+      applicationWizard.submit();
+    };
+
+    const confirmEditApplication = async () => {
+      if (await editApplicationModal.value.showModal()) {
+        editApplicaion();
+      }
+    };
+
     const wizardSubmit = () => {
       if (
         existingApplication.value.applicationStatus !== ApplicationStatus.draft
@@ -375,11 +382,6 @@ export default {
         applicationWizard.submit();
       }
     };
-
-    const editApplicaion = () => {
-      applicationWizard.submit();
-    };
-
     return {
       initialData,
       formLoaded,

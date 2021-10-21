@@ -36,25 +36,15 @@ export default {
   components: {
     ModalDialogBase,
   },
-  props: {
-    applicationId: {
-      type: Number,
-      required: false,
-    },
-  },
-  emits: ["confirmEditApplication"],
-  setup(props: any, context: any) {
-    const { showDialog, showModal } = useModalDialog<void>();
+  setup() {
+    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
+
     const dialogClosed = () => {
       showDialog.value = false;
     };
     const editApplication = async () => {
-      if (props.applicationId) {
-        context.emit("confirmEditApplication", props.applicationId);
-      } else {
-        context.emit("confirmEditApplication");
-      }
-      dialogClosed();
+      showDialog.value = false;
+      resolvePromise(true);
     };
     return {
       showDialog,

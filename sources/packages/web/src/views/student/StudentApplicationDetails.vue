@@ -57,7 +57,6 @@
       />
       <ConfirmEditApplication
         ref="editApplicationModal"
-        @confirmEditApplication="editApplicaion"
       />
     </v-container>
   </div>
@@ -111,7 +110,7 @@ export default {
     const programYear = ref({} as ProgramYearOfApplicationDto);
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
-    const editApplicationModal = ref({} as ModalDialog<void>);
+    const editApplicationModal = ref({} as ModalDialog<boolean>);
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
@@ -157,7 +156,9 @@ export default {
       });
     };
     const confirmEditApplication = async () => {
-      await editApplicationModal.value.showModal();
+      if (await editApplicationModal.value.showModal()) {
+        editApplicaion();
+      }
     };
     const loadMenu = () => {
       if (
@@ -236,7 +237,7 @@ export default {
       showViewAssessment,
       editApplicationModal,
       editApplicaion,
-      viewApplicaion
+      viewApplicaion,
     };
   },
 };

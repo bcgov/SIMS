@@ -82,11 +82,7 @@
       @showHideCancelApplication="showHideCancelApplication"
       @reloadData="loadApplicationSummary"
     />
-    <ConfirmEditApplication
-      ref="editApplicationModal"
-      @confirmEditApplication="editApplicaion"
-      :applicationId="selectedApplicationId"
-    />
+    <ConfirmEditApplication ref="editApplicationModal" />
   </div>
 </template>
 <script lang="ts">
@@ -126,12 +122,8 @@ export default {
     const { dateString } = useFormatters();
     const myApplications = ref([] as StudentApplication[]);
     const programYear = ref({} as ProgramYearOfApplicationDto);
-    const editApplicationModal = ref({} as ModalDialog<void>);
+    const editApplicationModal = ref({} as ModalDialog<boolean>);
 
-    const confirmEditApplication = async (id: number) => {
-      selectedApplicationId.value = id;
-      await editApplicationModal.value.showModal();
-    };
     const getApplicationStatusClass = (status: string) => {
       switch (status) {
         case ApplicationStatus.draft:
@@ -191,6 +183,12 @@ export default {
           id: applicationId,
         },
       });
+    };
+
+    const confirmEditApplication = async (id: number) => {
+      if (await editApplicationModal.value.showModal()) {
+        editApplicaion(id);
+      }
     };
 
     onMounted(async () => {
