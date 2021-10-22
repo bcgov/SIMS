@@ -44,13 +44,13 @@ export class StudentApi extends HttpBaseClient {
     try {
       let queryString = "students/search?";
       if (appNumber) {
-        queryString = queryString.concat(`appNumber=${appNumber}`);
+        queryString += `appNumber=${appNumber}`;
       }
       if (firstName) {
-        queryString = queryString.concat(`&firstName=${firstName}`);
+        queryString += `&firstName=${firstName}`;
       }
       if (lastName) {
-        queryString = queryString.concat(`&lastName=${lastName}`);
+        queryString += `&lastName=${lastName}`;
       }
       const student = await this.apiClient.get(
         queryString,
