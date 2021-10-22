@@ -52,7 +52,6 @@ export class StudentApi extends HttpBaseClient {
       if (lastName) {
         queryString = queryString.concat(`&lastName=${lastName}`);
       }
-      console.log(queryString);
       const student = await this.apiClient.get(
         queryString,
         this.addAuthHeader(),
