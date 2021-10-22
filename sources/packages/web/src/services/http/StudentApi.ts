@@ -42,7 +42,7 @@ export class StudentApi extends HttpBaseClient {
     lastName: string,
   ): Promise<SearchStudentResp[]> {
     try {
-      let queryString = "students/search?";
+      let queryString = "";
       if (appNumber) {
         queryString += `appNumber=${appNumber}`;
       }
@@ -53,7 +53,7 @@ export class StudentApi extends HttpBaseClient {
         queryString += `&lastName=${lastName}`;
       }
       const student = await this.apiClient.get(
-        queryString,
+        "students/search?".concat(queryString),
         this.addAuthHeader(),
       );
       return student.data as SearchStudentResp[];
