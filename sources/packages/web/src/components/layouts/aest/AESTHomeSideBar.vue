@@ -38,6 +38,11 @@ export default {
       {
         label: "Students",
         icon: "mdi-account-multiple-outline",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.SEARCH_STUDENTS,
+          });
+        },
       },
       {
         label: "Institutions",

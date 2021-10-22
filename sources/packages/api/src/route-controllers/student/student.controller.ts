@@ -11,6 +11,7 @@ import {
   Res,
   UploadedFile,
   UseInterceptors,
+  Query,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -27,6 +28,7 @@ import {
   GetStudentContactDto,
   UpdateStudentContactDto,
   StudentEducationProgramDto,
+  SearchStudentRespDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -37,14 +39,18 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
-import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
-import { Application } from "../../database/entities";
+import { Application, Student } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
-} from "../../utilities/student-utils";
-import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+  dateString,
+  credentialTypeToDisplay,
+  defaultFileFilter,
+  uploadLimits,
+} from "../../utilities";
+import { UserGroups } from "../../auth/user-groups.enum";
+import { Groups } from "../../auth/decorators";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -376,5 +382,39 @@ export class StudentController extends BaseController {
         status: eachApplication.applicationStatus,
       };
     }) as StudentApplicationDTO[];
+  }
+
+  /**
+   * Search the student based on the search criteria.
+   * @param firstName firsName of the student.
+   * @param lastName lastName of the student.
+   * @param appNumber application number of the student.
+   * @returns Searched student details.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("search")
+  async searchStudents(
+    @Query("firstName") firstName: string,
+    @Query("lastName") lastName: string,
+    @Query("appNumber") appNumber: string,
+  ): Promise<SearchStudentRespDto[]> {
+    if (!appNumber && !firstName && !lastName) {
+      throw new UnprocessableEntityException(
+        "Search with atleast one search criteria",
+      );
+    }
+    const searchStudentApplications =
+      await this.studentService.searchStudentApplication(
+        firstName,
+        lastName,
+        appNumber,
+      );
+    return searchStudentApplications.map((eachStudent: Student) => ({
+      id: eachStudent.id,
+      firstName: eachStudent.user.firstName,
+      lastName: eachStudent.user.lastName,
+      birthDate: dateString(eachStudent.birthdate),
+    }));
   }
 }

@@ -60,3 +60,10 @@ export interface StudentEducationProgramDto {
   credentialTypeToDisplay: string;
   deliveryMethod: string;
 }
+
+export interface SearchStudentRespDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+}
