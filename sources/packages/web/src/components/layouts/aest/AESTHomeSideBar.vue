@@ -20,7 +20,7 @@
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuModel } from "@/types"
+import { MenuModel } from "@/types";
 
 export default {
   setup() {

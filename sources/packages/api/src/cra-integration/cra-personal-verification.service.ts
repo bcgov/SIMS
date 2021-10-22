@@ -10,6 +10,7 @@ import {
   ConfigService,
   CRAIncomeVerificationService,
 } from "../services";
+import { WorkflowActionsService } from "../services/workflow/workflow-actions.service";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import {
@@ -38,6 +39,7 @@ export class CRAPersonalVerificationService {
     private readonly configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
+    private readonly workflowService: WorkflowActionsService,
   ) {}
 
   /**
@@ -370,7 +372,7 @@ export class CRAPersonalVerificationService {
     }
 
     // Send a message to the associated workflow to proceed.
-    await this.incomeVerificationService.reportIncomeVerificationToWorkflow(
+    await this.workflowService.sendCRAIncomeVerificationCompletedMessage(
       verificationId,
     );
   }

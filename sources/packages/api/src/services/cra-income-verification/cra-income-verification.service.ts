@@ -198,34 +198,6 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   }
 
   /**
-   * Reports to the workflow that the income verification
-   * requested is ready to be retrieved.
-   * @param incomeVerificationId CRA verification id.
-   */
-  async reportIncomeVerificationToWorkflow(
-    incomeVerificationId: number,
-  ): Promise<void> {
-    const queryResult = await this.repo
-      .createQueryBuilder("incomeVerifications")
-      .select("applications.assessmentWorkflowId", "workflowId")
-      .innerJoin("incomeVerifications.application", "applications")
-      .where("incomeVerifications.id = :incomeVerificationId", {
-        incomeVerificationId,
-      })
-      .getRawOne();
-
-    if (!queryResult?.workflowId) {
-      throw new Error(
-        `CRA income verification id ${incomeVerificationId} does not have an associated assessmentWorkflowId.`,
-      );
-    }
-
-    this.workflowService.sendCRAIncomeVerificationCompletedMessage(
-      queryResult.workflowId,
-    );
-  }
-
-  /**
    * This method allows the simulation of a complete cycle of the CRA send/response
    * process that allows the workflow to proceed without the need of the actual
    * CRA verification happens. This is enabled based in a environment variable,
@@ -249,7 +221,9 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         RequestStatusCodes.successfulRequest,
         InactiveCodes.inactiveCodeNotSet,
       );
-      await this.reportIncomeVerificationToWorkflow(verificationId);
+      await this.workflowService.sendCRAIncomeVerificationCompletedMessage(
+        verificationId,
+      );
     }
   }
 }

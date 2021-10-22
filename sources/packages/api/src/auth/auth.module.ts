@@ -3,8 +3,11 @@ import { APP_GUARD } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import {
+  ConfigService,
   InstitutionLocationService,
   InstitutionUserAuthService,
+  KeycloakService,
+  TokensService,
   UserService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
@@ -29,6 +32,9 @@ const jwtModule = JwtModule.register({
     UserService,
     InstitutionLocationService,
     InstitutionUserAuthService,
+    TokensService,
+    KeycloakService,
+    ConfigService,
     JwtStrategy,
     {
       provide: APP_GUARD,
@@ -59,6 +65,6 @@ const jwtModule = JwtModule.register({
       useClass: InstitutionLocationGuard,
     },
   ],
-  exports: [jwtModule],
+  exports: [jwtModule, TokensService, KeycloakService],
 })
 export class AuthModule {}

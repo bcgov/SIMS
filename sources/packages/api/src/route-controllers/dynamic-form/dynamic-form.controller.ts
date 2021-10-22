@@ -7,6 +7,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
   AuthorizedParties.student,
+  AuthorizedParties.supportingUsers,
   AuthorizedParties.aest,
 )
 @Controller("dynamic-form")

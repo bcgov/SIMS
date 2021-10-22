@@ -14,11 +14,6 @@ export interface SendMessagePayload {
    */
   messageName: string;
   /**
-   * Used to correlate the message to the process
-   * instance with the given id.
-   */
-  processInstanceId: string;
-  /**
    * A Boolean value that indicates whether the message should
    * be correlated to exactly one entity or multiple entities.
    * If the value is set to false, the message will be correlated
@@ -28,4 +23,9 @@ export interface SendMessagePayload {
    * instantiated by this message in one go.
    */
   all: boolean;
+  /**
+   * Used to correlate the message to the process
+   * instance with the given id.
+   */
+  processInstanceId?: string;
 }

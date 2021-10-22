@@ -1343,4 +1343,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .getOne();
   }
+
+  /**
+   * When a supporting user (e.g. parent/partner) need to provide
+   * supporting data for a Student Application, this method provides
+   * a way to find the specific application to be updated using the
+   * right amount of criteria as per defined in the Ministry Policies.
+   * @param applicationNumber application number provided.
+   * @param lastName last name of the student associated with the
+   * application (search will be case insensitive).
+   * @param birthDate birth date of the student associated with the
+   * application.
+   * @returns application the application that was found, otherwise null.
+   */
+  async getApplicationForSupportingUser(
+    applicationNumber: string,
+    lastName: string,
+    birthDate: Date,
+  ): Promise<Application> {
+    return (
+      this.repo
+        .createQueryBuilder("application")
+        .select(["application.id", "application.assessmentWorkflowId"])
+        .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
+        .where("application.applicationNumber = :applicationNumber", {
+          applicationNumber,
+        })
+        // TODO: an expression index 'lower(user.lastName)' will be created.
+        .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
+        .andWhere("student.birthdate = :birthDate", { birthDate })
+        .andWhere("application.applicationStatus = :applicationStatus", {
+          applicationStatus: ApplicationStatus.inProgress,
+        })
+        .getOne()
+    );
+  }
 }

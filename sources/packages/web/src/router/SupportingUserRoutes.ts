@@ -1,12 +1,13 @@
 import { RouteRecordRaw } from "vue-router";
-import AppSupportingUsers from "@/views/supporting-users/AppSupportingUsers.vue";
-import Login from "@/views/supporting-users/Login.vue";
-import Home from "@/views/supporting-users/Home.vue";
+import AppSupportingUsers from "@/views/supporting-user/AppSupportingUser.vue";
+import Login from "@/views/supporting-user/Login.vue";
+import Dashboard from "@/views/supporting-user/Dashboard.vue";
+import SupportingInformation from "@/views/supporting-user/SupportingInformation.vue";
 import {
-  SupportingUsersRoutesConst,
+  SupportingUserRoutesConst,
   SharedRouteConst,
 } from "@/constants/routes/RouteConstants";
-import { AppRoutes, AuthStatus } from "@/types";
+import { AppRoutes, AuthStatus, SupportingUserType } from "@/types";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
@@ -14,12 +15,12 @@ import { AuthService } from "@/services/AuthService";
 export const supportingUsersRoutes: Array<RouteRecordRaw> = [
   {
     path: AppRoutes.SupportingUsersRoot,
-    name: SupportingUsersRoutesConst.APP_SUPPORTING_USERS,
+    name: SupportingUserRoutesConst.APP_SUPPORTING_USERS,
     component: AppSupportingUsers,
     children: [
       {
         path: AppRoutes.Login,
-        name: SupportingUsersRoutesConst.LOGIN,
+        name: SupportingUserRoutesConst.LOGIN,
         component: Login,
         meta: {
           requiresAuth: false,
@@ -27,9 +28,31 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.SupportingUsersHome,
-        name: SupportingUsersRoutesConst.HOME,
-        component: Home,
+        path: AppRoutes.SupportingUsersDashboard,
+        name: SupportingUserRoutesConst.DASHBOARD,
+        component: Dashboard,
+        meta: {
+          clientType: ClientIdType.SupportingUsers,
+        },
+      },
+      {
+        path: AppRoutes.ParentSupportingInfo,
+        name: SupportingUserRoutesConst.PARENT_INFORMATION,
+        component: SupportingInformation,
+        props: {
+          supportingUserType: SupportingUserType.Parent,
+        },
+        meta: {
+          clientType: ClientIdType.SupportingUsers,
+        },
+      },
+      {
+        path: AppRoutes.PartnerSupportingInfo,
+        name: SupportingUserRoutesConst.PARTNER_INFORMATION,
+        component: SupportingInformation,
+        props: {
+          supportingUserType: SupportingUserType.Partner,
+        },
         meta: {
           clientType: ClientIdType.SupportingUsers,
         },
@@ -49,12 +72,12 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
               break;
             case AuthStatus.RequiredLogin:
               next({
-                name: SupportingUsersRoutesConst.LOGIN,
+                name: SupportingUserRoutesConst.LOGIN,
               });
               break;
             case AuthStatus.RedirectHome:
               next({
-                name: SupportingUsersRoutesConst.HOME,
+                name: SupportingUserRoutesConst.DASHBOARD,
               });
               break;
             default:
