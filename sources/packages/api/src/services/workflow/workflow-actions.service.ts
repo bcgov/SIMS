@@ -69,15 +69,17 @@ export class WorkflowActionsService {
    * when the data in available on database to be retrieved.
    * @param incomeVerificationId income verification id that will be appended to the
    * name of the message to uniquely identify it.
+   * @return true case a successful call happen, otherwise false.
    */
   async sendCRAIncomeVerificationCompletedMessage(
     incomeVerificationId: number,
-  ): Promise<void> {
+  ): Promise<boolean> {
     try {
       await this.workflowService.sendMessage({
         messageName: `sims-cra-income-verification-complete-${incomeVerificationId}`,
         all: false, // false means that the message is correlated to exactly one entity.
       });
+      return true;
     } catch (error) {
       this.logger.error(
         `Error while sending CRA income verification completed message using incomeVerificationId: ${incomeVerificationId}`,
@@ -85,6 +87,8 @@ export class WorkflowActionsService {
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.
     }
+
+    return false;
   }
 
   /**
