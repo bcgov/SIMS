@@ -129,12 +129,16 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
     try {
-      await this.applicationService.submitApplication(
-        applicationId,
-        student.id,
-        programYear.id,
-        submissionResult.data.data,
-        payload.associatedFiles,
+      const submittedApplication =
+        await this.applicationService.submitApplication(
+          applicationId,
+          student.id,
+          programYear.id,
+          submissionResult.data.data,
+          payload.associatedFiles,
+        );
+      this.applicationService.startApplicationAssessment(
+        submittedApplication.id,
       );
     } catch (error) {
       if (error.name === APPLICATION_NOT_FOUND) {
@@ -147,7 +151,6 @@ export class ApplicationController extends BaseController {
         "Unexpected error while submitting the application.",
       );
     }
-    this.applicationService.startApplicationAssessment(applicationId);
   }
 
   /**

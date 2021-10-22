@@ -91,7 +91,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     programYearId: number,
     applicationData: any,
     associatedFiles: string[],
-  ): Promise<Application | Application[]> {
+  ): Promise<Application> {
     const application = await this.getApplicationToSave(
       studentId,
       undefined,
@@ -158,10 +158,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
-    const result = await this.repo.save([application, newApplication]);
+    await this.repo.save([application, newApplication]);
     //* Deleting the existing workflow
     this.workflow.deleteApplicationAssessment(application.assessmentWorkflowId);
-    return result;
+    return newApplication;
   }
 
   /**
