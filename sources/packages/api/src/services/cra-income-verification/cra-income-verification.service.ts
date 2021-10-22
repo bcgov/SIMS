@@ -8,7 +8,6 @@ import {
 } from "../../database/entities";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { getUTCNow } from "../../utilities";
-import { ConfigService } from "..";
 import {
   InactiveCodes,
   MatchStatusCodes,
@@ -18,6 +17,8 @@ import {
 // Dummy files names for CRA income send/receive simulation process.
 const DUMMY_BYPASS_CRA_SENT_FILE = "DUMMY_BYPASS_CRA_SENT_FILE.txt";
 const DUMMY_BYPASS_CRA_RECEIVED_FILE = "DUMMY_BYPASS_CRA_RECEIVED_FILE.txt";
+const RETRY_BYPASS_CRA_RECEIVED_FILE_ATTEMPTS = 5;
+const RETRY_BYPASS_CRA_RECEIVED_FILE_TIME = 2000;
 
 /**
  * Service layer for CRA income verifications.
@@ -27,7 +28,6 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
   constructor(
     @Inject("Connection") connection: Connection,
     private readonly workflowService: WorkflowActionsService,
-    private readonly configService: ConfigService,
   ) {
     super(connection.getRepository(CRAIncomeVerification));
   }
@@ -203,27 +203,42 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * CRA verification happens. This is enabled based in a environment variable,
    * that is by default disabled and should ne enabled only for DEV purposes on
    * local developer machine or on an environment where the CRA process is not enabled.
+   * !This code should not be executed on production.
    * @param verificationId CRA verification id waiting to be processed.
    */
   async checkForCRAIncomeVerificationBypass(verificationId: number) {
-    if (this.configService.getConfig().bypassCRAIncomeVerification) {
-      const now = getUTCNow();
-      await this.updateSentFile(
-        [verificationId],
-        now,
-        DUMMY_BYPASS_CRA_SENT_FILE,
+    const now = getUTCNow();
+    await this.updateSentFile(
+      [verificationId],
+      now,
+      DUMMY_BYPASS_CRA_SENT_FILE,
+    );
+    await this.updateReceivedFile(
+      verificationId,
+      DUMMY_BYPASS_CRA_RECEIVED_FILE,
+      now,
+      MatchStatusCodes.successfulMatch,
+      RequestStatusCodes.successfulRequest,
+      InactiveCodes.inactiveCodeNotSet,
+    );
+
+    // !This is not a production code.
+    // While trying to bypass the CRA validation for non-prod
+    // environments, sometimes there is a delay between the API
+    // call and the workflow reaching the wait event. This code
+    // is a temporary fix since we do not have a retry strategy
+    // to handle failed HTTP requests.
+    for (let i = 0; i < RETRY_BYPASS_CRA_RECEIVED_FILE_ATTEMPTS; i++) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, RETRY_BYPASS_CRA_RECEIVED_FILE_TIME),
       );
-      await this.updateReceivedFile(
-        verificationId,
-        DUMMY_BYPASS_CRA_RECEIVED_FILE,
-        now,
-        MatchStatusCodes.successfulMatch,
-        RequestStatusCodes.successfulRequest,
-        InactiveCodes.inactiveCodeNotSet,
-      );
-      await this.workflowService.sendCRAIncomeVerificationCompletedMessage(
-        verificationId,
-      );
+      const success =
+        await this.workflowService.sendCRAIncomeVerificationCompletedMessage(
+          verificationId,
+        );
+      if (success) {
+        break;
+      }
     }
   }
 }

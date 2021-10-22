@@ -11,6 +11,7 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  ConfigService,
   CRAIncomeVerificationService,
   EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -31,6 +32,7 @@ import {
   CreateIncomeVerificationDto,
   CRAVerificationIncomeDetailsDto,
 } from "./models/application.system.model";
+import { IConfig } from "../../types";
 
 /**
  * Allow system access to the application data.
@@ -41,12 +43,16 @@ import {
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/application")
 export class ApplicationSystemController {
+  private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.config = this.configService.getConfig();
+  }
 
   @Get(":id")
   async getByApplicationId(
@@ -325,9 +331,14 @@ export class ApplicationSystemController {
         payload.supportingUserId,
       );
 
-    await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
-      incomeVerification.id,
-    );
+    if (this.config.bypassCRAIncomeVerification) {
+      // Call the async method but do not block the response allowing the API
+      // to return the value to the workflow and send the message to bypass
+      // the CRA verification.
+      this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
+        incomeVerification.id,
+      );
+    }
 
     return incomeVerification.id;
   }
