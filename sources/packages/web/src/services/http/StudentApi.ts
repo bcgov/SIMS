@@ -42,8 +42,19 @@ export class StudentApi extends HttpBaseClient {
     lastName: string,
   ): Promise<SearchStudentResp[]> {
     try {
+      let queryString = "students/search?";
+      if (appNumber) {
+        queryString = queryString.concat(`appNumber=${appNumber}`);
+      }
+      if (firstName) {
+        queryString = queryString.concat(`&firstName=${firstName}`);
+      }
+      if (lastName) {
+        queryString = queryString.concat(`&lastName=${lastName}`);
+      }
+      console.log(queryString);
       const student = await this.apiClient.get(
-        `students/search?appNumber=${appNumber}&firstName=${firstName}&lastName=${lastName}`,
+        queryString,
         this.addAuthHeader(),
       );
       return student.data as SearchStudentResp[];

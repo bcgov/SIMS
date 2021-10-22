@@ -61,22 +61,26 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
 import { useToastMessage } from "@/composables";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
 export default {
+  components: {
+    FullPageContainer,
+  },
+
   setup() {
     const toast = useToastMessage();
     const router = useRouter();
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");
-    const students = ref([{}] as SearchStudentResp[]);
-    const studentsFound = ref(false);
+    const students = ref([] as SearchStudentResp[]);
     const goToViewStudent = (studentId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENTS_APPLICATION,
@@ -92,15 +96,16 @@ export default {
         lastName.value,
       );
       if (students.value.length == 0) {
-        studentsFound.value = false;
-        toast.error(
+        toast.warn(
           "No Students found",
           "No Students found for the given search criteria.",
         );
-      } else {
-        studentsFound.value = true;
       }
     };
+
+    const studentsFound = computed(() => {
+      return students.value.length > 0;
+    });
 
     return {
       appNumber,
