@@ -39,17 +39,18 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
-import { defaultFileFilter, uploadLimits } from "../../utilities/upload-utils";
 import { StudentApplicationDTO } from "../application/models/application.model";
 import { Application, Student } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
-} from "../../utilities/student-utils";
-import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+  dateString,
+  credentialTypeToDisplay,
+  defaultFileFilter,
+  uploadLimits,
+} from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
-import { dateString } from "../../utilities";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
