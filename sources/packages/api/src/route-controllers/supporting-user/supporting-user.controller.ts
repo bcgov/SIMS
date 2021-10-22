@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   UnprocessableEntityException,
@@ -17,7 +18,11 @@ import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { UpdateSupportingUserDTO } from "./models/supporting-user.dto";
+import {
+  ApplicationIdentifierDTO,
+  GetApplicationDTO,
+  UpdateSupportingUserDTO,
+} from "./models/supporting-user.dto";
 import { SupportingUserType } from "../../database/entities";
 import { AddressInfo, ApiProcessError, ContactInfo } from "../../types";
 import { FormNames } from "../../services/form/constants";
@@ -37,6 +42,42 @@ export class SupportingUserController {
     private readonly formService: FormService,
     private readonly workflowActionsService: WorkflowActionsService,
   ) {}
+
+  /**
+   * Gets supporting user application related information.
+   * @param supportingUserType supporting user type.
+   * @param payload payload that identifies the Student
+   * Application.
+   * @returns application details.
+   */
+  @Get(":supportingUserType/application")
+  async getApplicationDetails(
+    @Param("supportingUserType") supportingUserType: SupportingUserType,
+    @Body() payload: ApplicationIdentifierDTO,
+  ): Promise<GetApplicationDTO> {
+    const application =
+      await this.applicationService.getApplicationForSupportingUser(
+        payload.applicationNumber,
+        payload.studentsLastName,
+        payload.studentsDateOfBirth,
+      );
+
+    if (!application) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Not able to find a Student Application with the provided data.",
+          STUDENT_APPLICATION_NOT_FOUND,
+        ),
+      );
+    }
+
+    return {
+      formName:
+        supportingUserType === SupportingUserType.Parent
+          ? application.programYear.formNameParent
+          : application.programYear.formNamePartner,
+    };
+  }
 
   /**
    * Updates the supporting data for a particular supporting user

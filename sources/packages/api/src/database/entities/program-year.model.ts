@@ -22,7 +22,7 @@ export class ProgramYear extends RecordDataModel {
    */
   @Column({
     name: "program_year_desc",
-    nullable: true,
+    nullable: false,
   })
   programYearDesc: string;
   /**
@@ -30,9 +30,27 @@ export class ProgramYear extends RecordDataModel {
    */
   @Column({
     name: "form_name",
-    nullable: true,
+    nullable: false,
   })
   formName: string;
+  /**
+   * Form to be loaded for supporting users
+   * of type Parent for the ProgramYear.
+   */
+  @Column({
+    name: "form_name_parent",
+    nullable: false,
+  })
+  formNameParent: string;
+  /**
+   * Form to be loaded for supporting users
+   * of type Partner for the ProgramYear.
+   */
+  @Column({
+    name: "form_name_partner",
+    nullable: false,
+  })
+  formNamePartner: string;
   /**
    * Active Indicator
    */
