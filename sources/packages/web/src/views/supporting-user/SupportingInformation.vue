@@ -43,11 +43,17 @@
             </div></div
         ></v-col>
         <v-col class="mt-9" cols="auto"
-          ><v-btn color="primary" :disabled="!canSearch">Search</v-btn></v-col
+          ><v-btn
+            color="primary"
+            :disabled="!canSearch"
+            @click="applicationSearch"
+            >Search</v-btn
+          ></v-col
         >
       </v-row>
     </content-group>
     <formio
+      v-if="formName"
       :formName="formName"
       :data="initialData"
       :readOnly="submitting"
@@ -64,7 +70,6 @@ import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import { ref, computed } from "vue";
 import {
-  SupportingUserType,
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
@@ -91,8 +96,9 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const submitting = ref(false);
     const initialData = ref();
+    const formName = ref("");
     const applicationNumber = ref("");
-    const studentsDateOfBirth = ref();
+    const studentsDateOfBirth = ref<Date>();
     const studentsLastName = ref("");
 
     initialData.value = {
@@ -100,18 +106,24 @@ export default {
       dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
     };
 
-    const formName = computed(() => {
-      switch (props.supportingUserType) {
-        case SupportingUserType.Parent:
-          return "supportingusersparent";
-        case SupportingUserType.Partner:
-          return "supportinguserspartner";
-        default:
-          throw new Error(
-            `Not able to define the form definition to load. Received unknown user type ${props.supportingUserType}.`,
-          );
+    const applicationSearch = async () => {
+      try {
+        const searchResult = await SupportingUsersService.shared.getApplicationDetails(
+          props.supportingUserType,
+          {
+            applicationNumber: applicationNumber.value,
+            studentsLastName: studentsLastName.value,
+            studentsDateOfBirth: studentsDateOfBirth.value as Date,
+          },
+        );
+        formName.value = searchResult.formName;
+      } catch (error) {
+        formName.value = "";
+        if (error.response.data.errorType === STUDENT_APPLICATION_NOT_FOUND) {
+          toast.warn("Application not found", error.response.data.message);
+        }
       }
-    });
+    };
 
     const submitted = async (formData: any) => {
       submitting.value = true;
@@ -175,6 +187,7 @@ export default {
       studentsDateOfBirth,
       studentsLastName,
       canSearch,
+      applicationSearch,
     };
   },
 };

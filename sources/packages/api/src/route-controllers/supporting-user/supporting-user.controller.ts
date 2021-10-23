@@ -2,9 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
   Param,
   Patch,
+  Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -45,12 +45,14 @@ export class SupportingUserController {
 
   /**
    * Gets supporting user application related information.
+   * !Here the post method is used to avoid sending the
+   * !student data exposed in the URL.
    * @param supportingUserType supporting user type.
    * @param payload payload that identifies the Student
    * Application.
    * @returns application details.
    */
-  @Get(":supportingUserType/application")
+  @Post(":supportingUserType/application")
   async getApplicationDetails(
     @Param("supportingUserType") supportingUserType: SupportingUserType,
     @Body() payload: ApplicationIdentifierDTO,
