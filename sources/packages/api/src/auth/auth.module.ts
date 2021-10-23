@@ -19,6 +19,7 @@ import {
   InstitutionAdminGuard,
   ActiveUserGuard,
   GroupsGuard,
+  RestrictionsGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 
@@ -63,6 +64,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: InstitutionLocationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RestrictionsGuard,
     },
   ],
   exports: [jwtModule, TokensService, KeycloakService],
