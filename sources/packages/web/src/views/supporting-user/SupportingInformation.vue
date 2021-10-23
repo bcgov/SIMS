@@ -1,5 +1,52 @@
 <template>
   <full-page-container>
+    <content-group class="mb-4">
+      <p class="category-header-medium primary-color">
+        Student Application Information
+      </p>
+      <p>
+        Please enter below the information to search for the application that
+        you will be providing supporting information. All the fields are
+        mandatory.
+      </p>
+      <v-row>
+        <v-col
+          ><div class="p-fluid p-formgrid p-grid">
+            <div class="p-field p-col-12 p-md-4">
+              <label class="field-required" for="applicationNumber"
+                >Application Number</label
+              >
+              <InputNumber
+                name="applicationNumber"
+                :format="false"
+                :useGrouping="false"
+                :allowEmpty="true"
+                v-model="applicationNumber"
+              />
+            </div>
+            <div class="p-field p-col-12 p-md-4">
+              <label class="field-required" for="studentsLastName"
+                >Student's Last Name</label
+              >
+              <InputText name="studentsLastName" v-model="studentsLastName" />
+            </div>
+            <div class="p-field p-col-12 p-md-4">
+              <label class="field-required" for="studentsLastName"
+                >Student's Date Of Birth</label
+              >
+              <Calendar
+                v-model="studentsDateOfBirth"
+                :editable="true"
+                :showIcon="false"
+                dateFormat="yy-mm-dd"
+              />
+            </div></div
+        ></v-col>
+        <v-col class="mt-9" cols="auto"
+          ><v-btn color="primary" :disabled="!canSearch">Search</v-btn></v-col
+        >
+      </v-row>
+    </content-group>
     <formio
       :formName="formName"
       :data="initialData"
@@ -23,10 +70,12 @@ import {
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import ContentGroup from "@/components/generic/ContentGroup.vue";
 export default {
   components: {
     formio,
     FullPageContainer,
+    ContentGroup,
   },
   props: {
     supportingUserType: {
@@ -42,6 +91,9 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const submitting = ref(false);
     const initialData = ref();
+    const applicationNumber = ref("");
+    const studentsDateOfBirth = ref();
+    const studentsLastName = ref("");
 
     initialData.value = {
       ...bcscParsedToken,
@@ -106,7 +158,24 @@ export default {
       }
     };
 
-    return { formName, initialData, submitted, submitting };
+    const canSearch = computed(() => {
+      return (
+        !!applicationNumber.value &&
+        !!studentsDateOfBirth.value &&
+        !!studentsLastName.value
+      );
+    });
+
+    return {
+      formName,
+      initialData,
+      submitted,
+      submitting,
+      applicationNumber,
+      studentsDateOfBirth,
+      studentsLastName,
+      canSearch,
+    };
   },
 };
 </script>
