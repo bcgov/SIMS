@@ -21,8 +21,6 @@ export class ApplicationIdentifierDTO {
  */
 export interface UpdateSupportingUserDTO {
   applicationNumber: string;
-  studentsDateOfBirth: Date;
-  studentsLastName: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -31,6 +29,8 @@ export interface UpdateSupportingUserDTO {
   postalCode: string;
   provinceState: string;
   sin: string;
+  studentsDateOfBirth: Date;
+  studentsLastName: string;
   supportingData: any;
 }
 

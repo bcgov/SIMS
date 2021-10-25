@@ -176,7 +176,7 @@ export default {
             break;
           case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
             toast.warn(
-              `${props.supportingUserType} already provided data`,
+              `Not expecting data for a ${props.supportingUserType}`,
               error.response.data.message,
               TOAST_ERROR_DISPLAY_TIME,
             );
