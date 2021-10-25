@@ -81,7 +81,7 @@ export class SupportingUserController {
 
     // Ensure that the user providing the supporting data is not the same user that
     // submits the Student Application.
-    if (application.student.user.id === userToken.userId) {
+    if (application.student.user.userName === userToken.userName) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user searching for applications to provide data must be different from the user associated with the student application.",
@@ -165,7 +165,7 @@ export class SupportingUserController {
 
     // Ensure that the user providing the supporting data is not the same user that
     // submits the Student Application.
-    if (application.student.user.id === userToken.userId) {
+    if (application.student.user.userName === userToken.userName) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user currently authenticated is the same user that submitted the application.",
