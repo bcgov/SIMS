@@ -21,4 +21,6 @@ export const TableNames = {
   COEDeniedReason: "coe_denied_reasons",
   CRAIncomeVerification: "cra_income_verifications",
   SupportingUsers: "supporting_users",
+  Restrictions: "restrictions",
+  StudentRestrictions: "student_restrictions",
 };
