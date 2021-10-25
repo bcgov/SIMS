@@ -19,7 +19,10 @@ export class ApplicationIdentifierDTO {
  * The validation of the entire model will (and
  * must) be done by the Form.IO dry run.
  */
-export class UpdateSupportingUserDTO extends ApplicationIdentifierDTO {
+export interface UpdateSupportingUserDTO {
+  applicationNumber: string;
+  studentsDateOfBirth: Date;
+  studentsLastName: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -32,5 +35,6 @@ export class UpdateSupportingUserDTO extends ApplicationIdentifierDTO {
 }
 
 export interface GetApplicationDTO {
+  programYearStartDate: Date;
   formName: string;
 }

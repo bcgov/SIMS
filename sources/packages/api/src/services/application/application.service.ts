@@ -1369,6 +1369,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
           "application.assessmentWorkflowId",
           "programYear.formNameParent",
           "programYear.formNamePartner",
+          "programYear.startDate",
+          "user.id",
+          "student.id",
         ])
         .innerJoin("application.student", "student")
         .innerJoin("student.user", "user")

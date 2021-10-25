@@ -7,7 +7,8 @@
       <p>
         Please enter below the information to search for the application that
         you will be providing supporting information. All the fields are
-        mandatory.
+        mandatory and must macth exactly the information provided on the student
+        application.
       </p>
       <v-row>
         <v-col
@@ -73,6 +74,7 @@ import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
+  SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
 } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -95,32 +97,54 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const { bcscParsedToken } = useAuthBCSC();
     const submitting = ref(false);
-    const initialData = ref();
-    const formName = ref("");
+    const formName = ref();
     const applicationNumber = ref("");
-    const studentsDateOfBirth = ref<Date>();
     const studentsLastName = ref("");
+    const studentsDateOfBirth = ref<Date>();
+    const initialData = ref();
 
-    initialData.value = {
-      ...bcscParsedToken,
-      dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
+    const setInitialData = (programYearStartDate: Date) => {
+      initialData.value = {
+        givenNames: bcscParsedToken.givenNames,
+        lastName: bcscParsedToken.lastName,
+        email: bcscParsedToken.email,
+        gender: bcscParsedToken.gender,
+        dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
+        programYearStartDate,
+      };
     };
+
+    /**
+     * The 3 pieces of information necessary to identify a Student application.
+     * Used for search the application and submit supporting information.
+     */
+    const getIdentifiedApplication = () => ({
+      applicationNumber: applicationNumber.value,
+      studentsLastName: studentsLastName.value,
+      studentsDateOfBirth: studentsDateOfBirth.value as Date,
+    });
 
     const applicationSearch = async () => {
       try {
         const searchResult = await SupportingUsersService.shared.getApplicationDetails(
           props.supportingUserType,
-          {
-            applicationNumber: applicationNumber.value,
-            studentsLastName: studentsLastName.value,
-            studentsDateOfBirth: studentsDateOfBirth.value as Date,
-          },
+          getIdentifiedApplication(),
         );
+        setInitialData(searchResult.programYearStartDate);
         formName.value = searchResult.formName;
       } catch (error) {
-        formName.value = "";
-        if (error.response.data.errorType === STUDENT_APPLICATION_NOT_FOUND) {
-          toast.warn("Application not found", error.response.data.message);
+        formName.value = null;
+        switch (error.response.data.errorType) {
+          case STUDENT_APPLICATION_NOT_FOUND:
+            toast.warn("Application not found", error.response.data.message);
+            break;
+          case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
+            toast.error(
+              "The student cannot act as a supporting user for its own application.",
+              error.response.data.message,
+              TOAST_ERROR_DISPLAY_TIME,
+            );
+            break;
         }
       }
     };
@@ -130,7 +154,7 @@ export default {
       try {
         await SupportingUsersService.shared.updateSupportingInformation(
           props.supportingUserType,
-          formData,
+          { ...formData, ...getIdentifiedApplication() },
         );
         toast.success("Success", "Supporting data submitted with success.");
         router.push({ name: SupportingUserRoutesConst.DASHBOARD });
@@ -153,6 +177,13 @@ export default {
           case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
             toast.warn(
               `${props.supportingUserType} already provided data`,
+              error.response.data.message,
+              TOAST_ERROR_DISPLAY_TIME,
+            );
+            break;
+          case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
+            toast.error(
+              "The student cannot act as a supporting user for its own application.",
               error.response.data.message,
               TOAST_ERROR_DISPLAY_TIME,
             );

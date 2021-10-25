@@ -10,6 +10,10 @@ export const SUPPORTING_USER_ALREADY_PROVIDED_DATA =
 // Student Application.
 export const SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA =
   "SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA";
+// The user currently authenticated is the student and the student cannot provide supporting
+// date for his own application.
+export const SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION =
+  "SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION";
 
 /**
  * Types of users that provides supporting information
@@ -55,5 +59,6 @@ export interface UpdateSupportingUserDTO extends ApplicationIdentifierDTO {
 }
 
 export interface GetApplicationDTO {
+  programYearStartDate: Date;
   formName: string;
 }

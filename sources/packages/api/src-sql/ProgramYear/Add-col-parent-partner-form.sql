@@ -15,24 +15,24 @@ COMMENT ON COLUMN sims.program_years.form_name_partner IS 'Partner form to be lo
 UPDATE
   sims.program_years
 SET
-  form_name_parent = 'PARENTS2021-2022',
-  form_name_partner = 'PARTNERS2021-2022'
+  form_name_parent = 'supportingusersparent2021-2022',
+  form_name_partner = 'supportinguserspartner2021-2022'
 WHERE
   program_year = '2021-2022';
 
 UPDATE
   sims.program_years
 SET
-  form_name_parent = 'PARENTS2022-2023',
-  form_name_partner = 'PARTNERS2022-2023'
+  form_name_parent = 'supportingusersparent2022-2023',
+  form_name_partner = 'supportinguserspartner2022-2023'
 WHERE
   program_year = '2022-2023';
 
 UPDATE
   sims.program_years
 SET
-  form_name_parent = 'PARENTS2023-2024',
-  form_name_partner = 'PARTNERS2023-2024'
+  form_name_parent = 'supportingusersparent2023-2024',
+  form_name_partner = 'supportinguserspartner2022-2023'
 WHERE
   program_year = '2023-2024';
 
