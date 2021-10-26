@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { StudentRestrictionService } from "src/services";
+import { StudentRestrictionService } from "../../services";
 import { CHECK_RESTRICTIONS_KEY } from "../decorators/check-restrictions.decorator";
 import { IUserToken } from "../userToken.interface";
 import { RestrictionParser } from "../../utilities";

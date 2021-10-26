@@ -22,7 +22,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   async getStudentRestrictionsByUserName(userId: number): Promise<any[]> {
-    return await this.repo
+    return this.repo
       .createQueryBuilder("studentRestrictions")
       .select("restrictions.id as restrictionid")
       .addSelect("restrictions.restrictionType as restictiontype")
