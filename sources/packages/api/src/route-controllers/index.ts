@@ -15,3 +15,4 @@ export * from "./program-info-request/program-info-request.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controller";
 export * from "./institution-type/institution-type.controller";
 export * from "./supporting-user/supporting-user.controller";
+export * from "./msfaa-integration/msfaa-integration.system.controller";

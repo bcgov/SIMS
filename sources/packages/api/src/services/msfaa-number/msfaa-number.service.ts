@@ -93,4 +93,18 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       dayjs(endDate).diff(startDate, "days") < MAX_MFSAA_VALID_DAYS
     );
   }
+
+  /**
+   * Fetches the MSFAA number records which are not sent for validation.
+   * This can be retrived by checking for date_requested column as null
+   * in the MSFAANumber table.
+   * @returns the records of the MSFAANumber table.
+   */
+  async getPendingMSFAAValidation(): Promise<MSFAANumber[]> {
+    return this.repo
+      .createQueryBuilder("msfaaNumber")
+      .innerJoin("msfaaNumber.student", "students")
+      .where("msfaaNumber.dateRequested is null")
+      .getMany();
+  }
 }
