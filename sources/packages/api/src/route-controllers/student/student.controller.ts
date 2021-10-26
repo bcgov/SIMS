@@ -30,6 +30,7 @@ import {
   UpdateStudentContactDto,
   StudentEducationProgramDto,
   SearchStudentRespDto,
+  StudentRestrictionDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -42,7 +43,6 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationDTO } from "../application/models/application.model";
 import { Application, Student } from "../../database/entities";
-import { RestrictionParser } from "../../utilities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -50,10 +50,10 @@ import {
   credentialTypeToDisplay,
   defaultFileFilter,
   uploadLimits,
+  RestrictionParser,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
-import { StudentRestrictionDTO } from "./models/student-restriction.dto";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;

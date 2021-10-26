@@ -67,3 +67,10 @@ export interface SearchStudentRespDto {
   lastName: string;
   birthDate: string;
 }
+
+export interface StudentRestrictionDTO {
+  hasRestriction: boolean;
+  hasFederalRestriction: boolean;
+  hasProvincialRestriction: boolean;
+  restrictionMessage: string;
+}

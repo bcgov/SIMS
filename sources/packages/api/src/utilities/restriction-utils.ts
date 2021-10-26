@@ -1,4 +1,4 @@
-import { StudentRestrictionDTO } from "src/route-controllers/student/models/student-restriction.dto";
+import { StudentRestrictionDTO } from "../route-controllers/student/models/student.dto";
 import { RestrictionType } from "../database/entities";
 /**
  * Parses the Student restriction data and returns the details which are required to validate
@@ -37,7 +37,7 @@ export class RestrictionParser {
   }
 
   init(): void {
-    if (!this.studentRestrictions || !(this.studentRestrictions.length > 0)) {
+    if (!this.studentRestrictions || this.studentRestrictions.length <= 0) {
       return;
     }
     this.studentRestrictions.forEach((studentRestriction) => {

@@ -1,20 +1,14 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  Inject,
-} from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { StudentRestrictionService } from "src/services";
 import { CHECK_RESTRICTIONS_KEY } from "../decorators/check-restrictions.decorator";
 import { IUserToken } from "../userToken.interface";
-import { RestrictionParser } from "src/utilities";
+import { RestrictionParser } from "../../utilities";
 
 @Injectable()
 export class RestrictionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    @Inject("StudentRestrictionService") //To-do: check
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {}
 
