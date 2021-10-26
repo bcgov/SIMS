@@ -55,7 +55,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useToast } from "primevue/usetoast";
+import { useToastMessage } from "@/composables";
 import formio from "../../components/generic/formio.vue";
 import { StudentService } from "../../services/StudentService";
 import { sinValidationRule } from "../../validators/SinNumberValidator";
@@ -65,7 +65,6 @@ import {
   StudentFormInfo,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-// import ApiClient from "../../services/http/ApiClient";
 
 type StudentFormData = Pick<
   StudentInfo,
@@ -90,7 +89,7 @@ export default {
   setup(props: any) {
     const store = useStore();
     const router = useRouter();
-    const toast = useToast();
+    const toast = useToastMessage();
     const showApplyPDButton = ref();
     const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
@@ -98,12 +97,14 @@ export default {
     const getStudentInfo = async () => {
       studentAllInfo.value = await StudentService.shared.getStudentInfo();
     };
+
     const showPendingStatus = computed(
       () =>
         studentAllInfo.value.pdSentDate &&
         studentAllInfo.value.pdUpdatedDate === null &&
         studentAllInfo.value.pdVerified === null,
     );
+
     const appliedPDButton = () => {
       showApplyPDButton.value = false;
       if (
@@ -114,29 +115,23 @@ export default {
         showApplyPDButton.value = true;
       }
     };
+
     const applyPDStatus = async () => {
       disableBtn.value = true;
       try {
         await StudentService.shared.applyForPDStatus();
-        toast.add({
-          severity: "success",
-          summary: `Applied for PD Status!`,
-          detail: " Successfully!",
-          life: 5000,
-        });
+        toast.success("Applied for PD Status!", "Successfully!");
       } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail:
-            "An error happened during the apply PD process. Please try after sometime.",
-          life: 5000,
-        });
+        toast.error(
+          "Unexpected error",
+          "An error happened during the apply PD process. Please try after sometime.",
+        );
       }
       await getStudentInfo();
       appliedPDButton();
       disableBtn.value = false;
     };
+
     const changed = (form: any, event: any) => {
       if (
         event.changed &&
@@ -157,41 +152,23 @@ export default {
     };
 
     const submitted = async (args: StudentContact & { sin?: string }) => {
-      let redirectHome = true;
-      console.log(`Submission: \n ${JSON.stringify(args, null, 2)}`);
-      if (props.editMode) {
-        await StudentService.shared.updateStudent(args);
-        toast.add({
-          severity: "success",
-          summary: "Student Updated",
-          detail: "Student contact information updated!",
-          life: 3000,
-        });
-      } else {
-        const result = await StudentService.shared.createStudent({
-          ...args,
-          sinNumber: args.sin || "",
-        });
-        if (result === true) {
-          toast.add({
-            severity: "success",
-            summary: "Student created",
-            detail: "Student was successfully created!",
-            life: 3000,
-          });
+      try {
+        if (props.editMode) {
+          await StudentService.shared.updateStudent(args);
+          toast.success(
+            "Student Updated",
+            "Student contact information updated!",
+          );
         } else {
-          redirectHome = false;
-          toast.add({
-            severity: "error",
-            summary: "Error",
-            detail: `Error while creating student: ${result}`,
-            life: 3000,
+          await StudentService.shared.createStudent({
+            ...args,
+            sinNumber: args.sin || "",
           });
+          toast.success("Student created", "Student was successfully created!");
         }
-      }
-
-      if (redirectHome) {
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
+      } catch {
+        toast.error("Error", "Error while saving student");
       }
     };
 

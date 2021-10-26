@@ -69,27 +69,6 @@ export default {
     const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
 
-    onMounted(async () => {
-      // Get path
-      if (await UserService.shared.checkUser()) {
-        if (await UserService.shared.checkActiveUser()) {
-          await StudentService.shared.synchronizeFromUserInfo();
-          if (route.path === AppRoutes.StudentRoot) {
-            // Loading student dash board if user try to load /student path
-            router.push({
-              name: StudentRoutesConst.STUDENT_DASHBOARD,
-            });
-          }
-        }
-      } else {
-        /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
-       where they can provide information and create SABC account */
-        router.push({
-          name: StudentRoutesConst.STUDENT_PROFILE,
-        });
-      }
-    });
-
     const logoClick = () => {
       const routeName = isAuthenticated.value
         ? StudentRoutesConst.STUDENT_DASHBOARD

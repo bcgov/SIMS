@@ -16,20 +16,8 @@ export class StudentService {
     return this.instance || (this.instance = new this());
   }
 
-  async createStudent(student: CreateStudent): Promise<boolean | string> {
-    try {
-      await ApiClient.Students.createStudent({ ...student });
-      return true;
-    } catch (excp) {
-      console.dir(excp);
-      console.error(`Unable to create student: ${JSON.stringify(excp)}`);
-      const message: string = excp.message || "";
-      if (message.includes("422")) {
-        return "User already exists";
-      } else {
-        return "Unable to create user";
-      }
-    }
+  async createStudent(student: CreateStudent): Promise<void> {
+    await ApiClient.Students.createStudent({ ...student });
   }
 
   async updateStudent(contact: StudentContact): Promise<void> {
@@ -75,5 +63,9 @@ export class StudentService {
 
   async getAllStudentApplications(): Promise<StudentApplication[]> {
     return ApiClient.Students.getAllStudentApplications();
+  }
+
+  public async checkStudent(): Promise<boolean> {
+    return ApiClient.Students.checkStudent();
   }
 }

@@ -114,6 +114,25 @@ export class StudentController extends BaseController {
     return studentInfo;
   }
 
+  /**
+   * Quick check to verify is there is an user
+   * and student associated with the token information.
+   * @param userToken authenticated user information.
+   * @returns true if the student exists, otherwise false.
+   */
+  @Get("check-student")
+  async checkStudentExists(
+    @UserToken() userToken: IUserToken,
+  ): Promise<boolean> {
+    if (!userToken.userId) {
+      return false;
+    }
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    return !!student;
+  }
+
   @Get("contact")
   async getContactInfo(
     @UserToken() userToken: IUserToken,
@@ -190,13 +209,6 @@ export class StudentController extends BaseController {
     @Body() payload: CreateStudentDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // Check user exists or not
-    const existingUser = await this.userService.getUser(userToken.userName);
-    if (existingUser) {
-      throw new UnprocessableEntityException("User already exists");
-    }
-
-    // Save student
     await this.studentService.createStudent(userToken, payload);
   }
 

@@ -8,7 +8,11 @@ import { InstitutionService } from "./InstitutionService";
 import { ApplicationToken, BCeIDDetailsDto } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  InstitutionRoutesConst,
+  StudentRoutesConst,
+} from "@/constants/routes/RouteConstants";
+import { StudentService } from "./StudentService";
 
 /**
  * Manages the KeyCloak initialization and authentication methods.
@@ -87,6 +91,16 @@ export class AuthService {
         switch (clientType) {
           case ClientIdType.Student:
             store.dispatch("student/setStudentProfileData", this.keycloak);
+            if (await StudentService.shared.checkStudent()) {
+              // If the student is present, just update the user data.
+              await StudentService.shared.synchronizeFromUserInfo();
+            } else {
+              // If the student is not present, redirect to student profile
+              // for account creation.
+              this.priorityRedirect = {
+                name: StudentRoutesConst.STUDENT_PROFILE,
+              };
+            }
             break;
           case ClientIdType.Institution: {
             const authHeader = HttpBaseClient.createAuthHeader(
