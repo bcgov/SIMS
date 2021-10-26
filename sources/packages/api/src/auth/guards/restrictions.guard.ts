@@ -5,15 +5,17 @@ import {
   Inject,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { UserService } from "src/services";
+import { StudentRestrictionService } from "src/services";
 import { CHECK_RESTRICTIONS_KEY } from "../decorators/check-restrictions.decorator";
 import { IUserToken } from "../userToken.interface";
+import { RestrictionParser } from "src/utilities";
 
 @Injectable()
 export class RestrictionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    @Inject("UserService") private readonly userService: UserService,
+    @Inject("StudentRestrictionService")
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -28,12 +30,13 @@ export class RestrictionsGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
 
-    const loggedInUser = await this.userService.getUser(userToken.userName);
-    console.log(loggedInUser);
-    if (loggedInUser) {
-      return true;
-    }
-
-    return false;
+    const studentRestrictions =
+      await this.studentRestrictionService.getStudentRestrictionsByUserName(
+        userToken.userName,
+      );
+    const parser: RestrictionParser = new RestrictionParser(
+      studentRestrictions,
+    );
+    return !parser.hasRestriction();
   }
 }

@@ -21,6 +21,7 @@ import {
   ATBCService,
   ApplicationService,
   EducationProgramService,
+  StudentRestrictionService,
 } from "../../services";
 import {
   CreateStudentDto,
@@ -41,6 +42,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationDTO } from "../application/models/application.model";
 import { Application, Student } from "../../database/entities";
+import { RestrictionParser } from "../../utilities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -51,6 +53,7 @@ import {
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
+import { StudentRestrictionDTO } from "./models/student-restriction.dto";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -68,6 +71,7 @@ export class StudentController extends BaseController {
     private readonly fileService: StudentFileService,
     private readonly applicationService: ApplicationService,
     private readonly programService: EducationProgramService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -416,5 +420,17 @@ export class StudentController extends BaseController {
       lastName: eachStudent.user.lastName,
       birthDate: dateString(eachStudent.birthdate),
     }));
+  }
+
+  @Get("restrictions")
+  async getStudentRestrictions(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentRestrictionDTO> {
+    const studentRestriction =
+      await this.studentRestrictionService.getStudentRestrictionsByUserName(
+        userToken.userName,
+      );
+    const restrictionParser = new RestrictionParser(studentRestriction);
+    return restrictionParser.getStudentRestrictionResponse();
   }
 }
