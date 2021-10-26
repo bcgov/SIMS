@@ -36,3 +36,24 @@ html * {
 .full-page-container-size {
   max-width: 1200px;
 }
+
+.content-group {
+  border: 1px solid #e8e8e8;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+/**
+* Overwrite the default internal padding
+* for PrimeVue components.
+*/
+.p-inputtext {
+  padding: 0.375rem 0.75rem !important;
+}
+/**
+* Overwrite the default margin
+* for PrimeVue components.
+*/
+.p-md-4 {
+  padding: 0.5rem !important;
+}
