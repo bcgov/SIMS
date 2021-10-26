@@ -21,17 +21,25 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return this.repo.findOne(id);
   }
 
-  async getStudentRestrictionsByUserName(
-    userName: string,
-  ): Promise<StudentRestriction[]> {
-    return this.repo
-      .createQueryBuilder("studentRestriction")
-      .leftJoinAndSelect("studentRestriction.student", "student")
-      .leftJoinAndSelect("studentRestriction.application", "application")
-      .leftJoinAndSelect("studentRestriction.restriction", "restriction")
-      .leftJoin("student.user", "user")
-      .where("user.userName = :userName", { userName })
-      .andWhere("studentRestriction.isActive = :isActive", { isActive: true })
-      .getMany();
+  async getStudentRestrictionsByUserName(userId: number): Promise<any[]> {
+    const restrictions = await this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select("restrictions.id as restrictionid")
+      .addSelect("restrictions.restrictionType as restictiontype")
+      .addSelect("count(*) restrctioncount")
+      .innerJoin("studentRestrictions.restriction", "restrictions")
+      .innerJoin("studentRestrictions.student", "student")
+      .innerJoin("student.user", "user")
+      .where("studentRestrictions.isActive = true")
+      .andWhere("user.id= :userId", {
+        userId,
+      })
+      .groupBy("studentRestrictions.student.id")
+      .addGroupBy("restrictions.id")
+      .addGroupBy("restrictions.restrictionType")
+      .addGroupBy("restrictions.allowedCount")
+      .having("count(*) > restrictions.allowedCount")
+      .getRawMany();
+    return restrictions;
   }
 }

@@ -1,12 +1,17 @@
 <template>
   <div class="p-m-4">
+    <Message severity="error" v-if="hasRestriction">
+      {{ restrictionMessage }}
+    </Message>
     <h1><strong>My Applications</strong></h1>
     <v-row>
       <span class="p-m-4"
         >A list of your applications for funding, grants, and busaries.</span
       >
       <v-col cols="12">
-        <span class="float-right"><StartApplication /></span>
+        <span class="float-right"
+          ><StartApplication :hasRestriction="hasRestriction"
+        /></span>
       </v-col>
       <v-col cols="12">
         <DataTable :autoLayout="true" :value="myApplications" class="p-m-4">
@@ -50,7 +55,7 @@
                   )
                 "
               >
-                <v-btn plain>
+                <v-btn :disabled="hasRestriction" plain>
                   <v-icon
                     size="25"
                     v-tooltip="'Click To Edit this Application'"
@@ -62,7 +67,7 @@
                     >mdi-pencil</v-icon
                   ></v-btn
                 >
-                <v-btn plain>
+                <v-btn :disabled="hasRestriction" plain>
                   <v-icon
                     size="25"
                     v-tooltip="'Click To Cancel this Application'"
@@ -123,6 +128,8 @@ export default {
     const myApplications = ref([] as StudentApplication[]);
     const programYear = ref({} as ProgramYearOfApplicationDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
 
     const getApplicationStatusClass = (status: string) => {
       switch (status) {
@@ -192,6 +199,9 @@ export default {
     };
 
     onMounted(async () => {
+      const studentRestriction = await StudentService.shared.getAllStudentRestriction();
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       await loadApplicationSummary();
     });
 
@@ -209,6 +219,8 @@ export default {
       editApplicaion,
       editApplicationModal,
       confirmEditApplication,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };

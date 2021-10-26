@@ -1,17 +1,25 @@
 import { StudentRestrictionDTO } from "src/route-controllers/student/models/student-restriction.dto";
-import { StudentRestriction, RestrictionType } from "../database/entities";
+import { RestrictionType } from "../database/entities";
 /**
  * Parses the Student restriction data and returns the details which are required to validate
  */
 export class RestrictionParser {
-  private studentRestrictions: StudentRestriction[];
+  private studentRestrictions: any[];
+
+  private restrictionMessage: string;
+
+  private provincialMessage =
+    "Your account has a hold on it. Please contact SABC to resolve.";
+
+  private federalMessage =
+    "Your account has a hold on it. Please contact CSFA to resolve.";
 
   private restrictionMap: Map<RestrictionType, boolean> = new Map([
     [RestrictionType.Provincial, false],
     [RestrictionType.Federal, false],
   ]);
 
-  constructor(studentRestrictions: StudentRestriction[]) {
+  constructor(studentRestrictions: any[]) {
     this.studentRestrictions = studentRestrictions;
     this.init();
   }
@@ -32,44 +40,33 @@ export class RestrictionParser {
     if (!this.studentRestrictions || !(this.studentRestrictions.length > 0)) {
       return;
     }
-    const restrictionOccurance: Map<number, number> = new Map();
     this.studentRestrictions.forEach((studentRestriction) => {
-      const resctrictionId = studentRestriction.restriction.id;
-      restrictionOccurance.set(
-        resctrictionId,
-        restrictionOccurance.has(resctrictionId)
-          ? restrictionOccurance.get(resctrictionId) + 1
-          : 1,
-      );
+      if (
+        RestrictionType.Provincial.toString() ===
+          studentRestriction.restictiontype &&
+        !this.restrictionMap.get(RestrictionType.Provincial)
+      ) {
+        this.restrictionMap.set(RestrictionType.Provincial, true);
+        this.restrictionMessage = this.restrictionMessage
+          ? this.restrictionMessage + " " + this.provincialMessage
+          : this.provincialMessage;
+      }
 
       if (
-        restrictionOccurance.get(resctrictionId) >
-        studentRestriction.restriction.allowedCount
+        RestrictionType.Federal.toString() ===
+          studentRestriction.restictiontype &&
+        !this.restrictionMap.get(RestrictionType.Federal)
       ) {
-        this.restrictionMap.set(
-          studentRestriction.restriction.restrictionType,
-          true,
-        );
+        this.restrictionMap.set(RestrictionType.Federal, true);
+        this.restrictionMessage = this.restrictionMessage
+          ? this.restrictionMessage + " " + this.federalMessage
+          : this.federalMessage;
       }
     });
   }
 
   getRestrictionMessage(): string {
-    if (!this.hasRestriction()) {
-      return null;
-    }
-    let getRestrictionMessage = "";
-    if (this.hasProvincialRestriction()) {
-      getRestrictionMessage =
-        "Your account has a hold on it. Please contact SABC to resolve.";
-    }
-    if (this.hadFederalRestriction()) {
-      getRestrictionMessage =
-        getRestrictionMessage +
-        " " +
-        "Your account has a hold on it. Please contact CSFA to resolve.";
-    }
-    return getRestrictionMessage;
+    return this.restrictionMessage;
   }
 
   getStudentRestrictionResponse(): StudentRestrictionDTO {

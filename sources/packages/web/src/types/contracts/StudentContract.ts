@@ -77,3 +77,10 @@ export interface StudentApplication {
   award: string;
   status: string;
 }
+
+export interface StudentRestriction {
+  hasRestriction: boolean;
+  hasFederalRestriction: boolean;
+  hasProvincialRestriction: boolean;
+  restrictionMessage: string;
+}

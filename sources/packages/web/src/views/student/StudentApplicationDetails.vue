@@ -1,5 +1,8 @@
 <template>
   <div class="p-m-4">
+    <Message severity="error" v-if="hasRestriction">
+      {{ restrictionMessage }}
+    </Message>
     <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
@@ -55,9 +58,7 @@
         v-if="applicationDetails?.applicationStatus"
         :applicationDetails="applicationDetails"
       />
-      <ConfirmEditApplication
-        ref="editApplicationModal"
-      />
+      <ConfirmEditApplication ref="editApplicationModal" />
     </v-container>
   </div>
 </template>
@@ -75,6 +76,7 @@ import {
   GetApplicationDataDto,
   ApplicationStatus,
 } from "@/types";
+import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
@@ -111,6 +113,8 @@ export default {
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
@@ -165,7 +169,8 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
+          ApplicationStatus.completed &&
+        !hasRestriction.value
       ) {
         items.value.push(
           {
@@ -217,6 +222,9 @@ export default {
       },
     );
     onMounted(async () => {
+      const studentRestriction = await StudentService.shared.getAllStudentRestriction();
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);
     });
     const toggle = (event: any) => {
@@ -238,6 +246,8 @@ export default {
       editApplicationModal,
       editApplicaion,
       viewApplicaion,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };

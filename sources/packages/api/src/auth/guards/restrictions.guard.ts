@@ -14,7 +14,7 @@ import { RestrictionParser } from "src/utilities";
 export class RestrictionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    @Inject("StudentRestrictionService")
+    @Inject("StudentRestrictionService") //To-do: check
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {}
 
@@ -29,10 +29,9 @@ export class RestrictionsGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsByUserName(
-        userToken.userName,
+        userToken.userId,
       );
     const parser: RestrictionParser = new RestrictionParser(
       studentRestrictions,

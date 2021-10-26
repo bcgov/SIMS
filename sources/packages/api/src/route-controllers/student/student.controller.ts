@@ -422,13 +422,13 @@ export class StudentController extends BaseController {
     }));
   }
 
-  @Get("restrictions")
+  @Get("restriction")
   async getStudentRestrictions(
     @UserToken() userToken: IUserToken,
   ): Promise<StudentRestrictionDTO> {
     const studentRestriction =
       await this.studentRestrictionService.getStudentRestrictionsByUserName(
-        userToken.userName,
+        userToken.userId,
       );
     const restrictionParser = new RestrictionParser(studentRestriction);
     return restrictionParser.getStudentRestrictionResponse();

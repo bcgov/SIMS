@@ -30,7 +30,11 @@ import {
   ProgramYearOfApplicationDto,
   NOAApplicationDto,
 } from "./models/application.model";
-import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  UserToken,
+  CheckRestrictions,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
@@ -98,6 +102,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be changed to submitted.
    * @param userToken token from the authenticated student.
    */
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
   async submitApplication(
@@ -163,6 +168,7 @@ export class ApplicationController extends BaseController {
    * @returns the application id of the created draft or an
    * HTTP exception if it is not possible to create it.
    */
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
   async createDraftApplication(
@@ -210,6 +216,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId draft application id.
    * @param userToken token from the authenticated student.
    */
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
   async updateDraftApplication(
@@ -367,6 +374,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    * @returns program year details of the application
    */
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/program-year")
   async programYearOfApplication(

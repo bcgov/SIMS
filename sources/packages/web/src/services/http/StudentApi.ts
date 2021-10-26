@@ -5,6 +5,7 @@ import {
   StudentProfile,
   StudentApplication,
   SearchStudentResp,
+  StudentRestriction,
 } from "../../types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -112,6 +113,16 @@ export class StudentApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return result?.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getStudentRestriction(): Promise<StudentRestriction> {
+    try {
+      const response = await this.getCall("students/restriction");
+      return response.data as StudentRestriction;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

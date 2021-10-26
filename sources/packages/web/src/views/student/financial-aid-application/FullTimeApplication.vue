@@ -1,4 +1,7 @@
 <template>
+  <Message severity="error" v-if="hasRestriction">
+    {{ restrictionMessage }}
+  </Message>
   <v-container class="center-container application-container ff-form-container">
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
@@ -7,7 +10,7 @@
             <v-btn
               color="primary"
               class="mr-5"
-              v-if="!notDraft"
+              v-if="!notDraft && !hasRestriction"
               v-show="!isFirstPage && !submittingApplication"
               text
               :loading="savingDraft"
@@ -17,7 +20,7 @@
               >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
             >
             <v-btn
-              v-if="!isReadOnly"
+              v-if="!isReadOnly && !hasRestriction"
               :disabled="!isLastPage || submittingApplication"
               v-show="!isFirstPage"
               color="primary"
@@ -127,10 +130,15 @@ export default {
     let applicationWizard: any;
     const isReadOnly = ref(false);
     const notDraft = ref(false);
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     onMounted(async () => {
+      const studentRestriction = await StudentService.shared.getAllStudentRestriction();
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       //Get the student information and application information.
       const [studentInfo, applicationData] = await Promise.all([
         StudentService.shared.getStudentInfo(),
@@ -401,6 +409,8 @@ export default {
       confirmEditApplication,
       editApplicaion,
       editApplicationModal,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };
