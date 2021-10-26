@@ -401,7 +401,7 @@ export class StudentController extends BaseController {
   ): Promise<SearchStudentRespDto[]> {
     if (!appNumber && !firstName && !lastName) {
       throw new UnprocessableEntityException(
-        "Search with atleast one search criteria",
+        "Search with at least one search criteria",
       );
     }
     const searchStudentApplications =
