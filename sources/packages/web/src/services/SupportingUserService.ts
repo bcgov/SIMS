@@ -1,5 +1,10 @@
 import ApiClient from "./http/ApiClient";
-import { SupportingUserType, UpdateSupportingUserDTO } from "@/types";
+import {
+  ApplicationIdentifierDTO,
+  GetApplicationDTO,
+  SupportingUserType,
+  UpdateSupportingUserDTO,
+} from "@/types";
 
 export class SupportingUsersService {
   // Share Instance
@@ -7,6 +12,16 @@ export class SupportingUsersService {
 
   public static get shared(): SupportingUsersService {
     return this.instance || (this.instance = new this());
+  }
+
+  public async getApplicationDetails(
+    supportingUserType: SupportingUserType,
+    payload: ApplicationIdentifierDTO,
+  ): Promise<GetApplicationDTO> {
+    return ApiClient.SupportingUserApi.getApplicationDetails(
+      supportingUserType,
+      payload,
+    );
   }
 
   async updateSupportingInformation(
