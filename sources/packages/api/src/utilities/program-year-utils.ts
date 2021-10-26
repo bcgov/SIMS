@@ -10,13 +10,13 @@ import { ProgramYear, SupportingUserType } from "../database/entities";
  */
 export function getSupportingUserForm(
   userType: SupportingUserType,
-  programYear: Pick<ProgramYear, "formNameParent" | "formNamePartner">,
+  programYear: Pick<ProgramYear, "parentFormName" | "partnerFormName">,
 ): string {
   switch (userType) {
     case SupportingUserType.Parent:
-      return programYear.formNameParent;
+      return programYear.parentFormName;
     case SupportingUserType.Partner:
-      return programYear.formNamePartner;
+      return programYear.partnerFormName;
     default:
       throw new Error(`Unknown supporting user type: ${userType}`);
   }

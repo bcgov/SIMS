@@ -1367,8 +1367,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .select([
           "application.id",
           "application.assessmentWorkflowId",
-          "programYear.formNameParent",
-          "programYear.formNamePartner",
+          "programYear.parentFormName",
+          "programYear.partnerFormName",
           "programYear.startDate",
           "user.userName",
           "student.id",

@@ -13,6 +13,6 @@ export const SUPPORTING_USER_ALREADY_PROVIDED_DATA =
 export const SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA =
   "SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA";
 // The user currently authenticated is the student and the student cannot provide supporting
-// date for his own application.
+// data for his own application.
 export const SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION =
   "SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION";
