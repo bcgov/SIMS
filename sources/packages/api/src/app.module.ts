@@ -28,6 +28,7 @@ import {
   COEDeniedReasonService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  MSFAAValidationService,
 } from "./services";
 import {
   UserController,
@@ -47,6 +48,7 @@ import {
   ConfirmationOfEnrollmentController,
   InstitutionTypeController,
   SupportingUserController,
+  MSFAAIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -73,6 +75,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     ConfirmationOfEnrollmentController,
     InstitutionTypeController,
     SupportingUserController,
+    MSFAAIntegrationController,
   ],
   providers: [
     AppService,
@@ -101,6 +104,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     COEDeniedReasonService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    MSFAAValidationService,
   ],
 })
 export class AppModule {}

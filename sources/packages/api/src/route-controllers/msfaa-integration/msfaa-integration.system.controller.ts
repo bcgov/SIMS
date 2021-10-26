@@ -20,7 +20,7 @@ export class MSFAAIntegrationController {
    * to validate if the MSFAA number
    * @returns Processing result log.
    */
-  @Post("send-file")
+  @Post("process-msfaa-validation")
   async processMSFAAValidation(): Promise<MSFAAFileResultDto> {
     this.logger.log("Sending MSFAA file for validation...");
     const uploadResult =

@@ -24,6 +24,11 @@ export class MSFAAValidationService {
       };
     }
 
+    return {
+      generatedFile: `present: ${pendingMSFAAValidation.length}`,
+      uploadedRecords: 0,
+    };
+
     this.logger.log(
       `Found ${pendingMSFAAValidation.length} MSFAA number(s) that needs validation.`,
     );
