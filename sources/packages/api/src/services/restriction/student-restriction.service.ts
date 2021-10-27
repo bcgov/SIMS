@@ -4,7 +4,7 @@ import { StudentRestriction } from "../../database/entities";
 import { Connection } from "typeorm";
 
 /**
- * Service layer for Student Restriction
+ * Service layer for Student Restriction.
  */
 @Injectable()
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
@@ -21,6 +21,13 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return this.repo.findOne(id);
   }
 
+  /**
+   * Retrieves the student restrictions as raw data.
+   * It uses group by to get the count of a restriction for a user.
+   * This count is to validate againt allowed count.
+   * @param userId
+   * @returns Student restriction raw data.
+   */
   async getStudentRestrictionsByUserName(userId: number): Promise<any[]> {
     return this.repo
       .createQueryBuilder("studentRestrictions")

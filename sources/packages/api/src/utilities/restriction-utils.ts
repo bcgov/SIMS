@@ -1,7 +1,8 @@
 import { StudentRestrictionDTO } from "../route-controllers/student/models/student.dto";
 import { RestrictionType } from "../database/entities";
 /**
- * Parses the Student restriction data and returns the details which are required to validate
+ * Restriction parser reads the raw data from student-restriction service.
+ * It builds restriction messages and converts the raw data to student restriction dto.
  */
 export class RestrictionParser {
   private studentRestrictions: any[];
@@ -23,19 +24,30 @@ export class RestrictionParser {
     this.studentRestrictions = studentRestrictions;
     this.init();
   }
-
+  /**
+   * @returns restriction flag
+   */
   hasRestriction(): boolean {
     return this.hasProvincialRestriction() || this.hadFederalRestriction();
   }
 
+  /**
+   * @returns provincial restriction flag
+   */
   hasProvincialRestriction(): boolean {
     return this.restrictionMap.get(RestrictionType.Provincial);
   }
 
+  /**
+   * @returns federal restriction flag
+   */
   hadFederalRestriction(): boolean {
     return this.restrictionMap.get(RestrictionType.Federal);
   }
 
+  /**
+   * Init method which poplates data for validation.
+   */
   init(): void {
     if (!this.studentRestrictions || this.studentRestrictions.length <= 0) {
       return;
@@ -64,11 +76,18 @@ export class RestrictionParser {
       }
     });
   }
-
+  /**
+   * Builds restriction message.
+   * @returns restricition message
+   */
   getRestrictionMessage(): string {
     return this.restrictionMessage;
   }
 
+  /**
+   * Transforms raw data to dto.
+   * @returns Student restriction dto
+   */
   getStudentRestrictionResponse(): StudentRestrictionDTO {
     if (!this.hasRestriction()) {
       return {

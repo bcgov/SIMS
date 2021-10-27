@@ -78,6 +78,9 @@ export interface StudentApplication {
   status: string;
 }
 
+/**
+ * DTO object which is returned by student restriction API.
+ */
 export interface StudentRestriction {
   hasRestriction: boolean;
   hasFederalRestriction: boolean;

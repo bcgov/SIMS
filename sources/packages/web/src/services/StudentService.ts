@@ -77,7 +77,10 @@ export class StudentService {
   async getAllStudentApplications(): Promise<StudentApplication[]> {
     return ApiClient.Students.getAllStudentApplications();
   }
-
+  /**
+   * API client to call the student restriction rest API.
+   * @returns student restriction(wrapped by promise)
+   */
   async getAllStudentRestriction(): Promise<StudentRestriction> {
     return ApiClient.Students.getStudentRestriction();
   }

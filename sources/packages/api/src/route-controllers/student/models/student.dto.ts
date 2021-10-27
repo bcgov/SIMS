@@ -68,6 +68,10 @@ export interface SearchStudentRespDto {
   birthDate: string;
 }
 
+/**
+ * DTO Object for student restriction.
+ * This object is retuned by controller.
+ */
 export interface StudentRestrictionDTO {
   hasRestriction: boolean;
   hasFederalRestriction: boolean;

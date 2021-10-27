@@ -421,7 +421,11 @@ export class StudentController extends BaseController {
       birthDate: dateString(eachStudent.birthdate),
     }));
   }
-
+  /**
+   * GET API which returns student restriction details.
+   * @param userToken
+   * @returns Student Restriction
+   */
   @Get("restriction")
   async getStudentRestrictions(
     @UserToken() userToken: IUserToken,

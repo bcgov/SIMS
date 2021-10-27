@@ -4,14 +4,21 @@ import { StudentRestrictionService } from "../../services";
 import { CHECK_RESTRICTIONS_KEY } from "../decorators/check-restrictions.decorator";
 import { IUserToken } from "../userToken.interface";
 import { RestrictionParser } from "../../utilities";
-
+/**
+ * This guard validates an API for restrictions if it is decorated with @CheckRestriction.
+ */
 @Injectable()
 export class RestrictionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {}
-
+  /**
+   * Implementation of canActivate method in CanActivate.
+   * With th user token, it checks for any restriction for the user.
+   * @param context
+   * @returns Promise<boolean>
+   */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const checkRestrictions = this.reflector.getAllAndOverride<boolean>(
       CHECK_RESTRICTIONS_KEY,
