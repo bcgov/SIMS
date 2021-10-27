@@ -35,7 +35,7 @@
       :showModal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="getApplicationDetailsAndRestrictions"
+      @reloadData="getApplicationDetails"
     />
 
     <v-container class="pt-12">
@@ -197,7 +197,8 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
+          ApplicationStatus.completed &&
+        !hasRestriction.value
       ) {
         items.value.push(
           { separator: true },
@@ -211,27 +212,26 @@ export default {
         );
       }
     };
-    const getApplicationDetailsAndRestrictions = async (
-      applicationId: number,
-    ) => {
-      const [applicationData, studentRestriction] = await Promise.all([
-        ApplicationService.shared.getApplicationData(applicationId),
-        StudentService.shared.getStudentRestriction(),
-      ]);
-      applicationDetails.value = applicationData;
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+    const getApplicationDetails = async (applicationId: number) => {
+      applicationDetails.value = await ApplicationService.shared.getApplicationData(
+        applicationId,
+      );
       loadMenu();
     };
     watch(
       () => props.id,
       async (currValue: number) => {
         //update the list
-        await getApplicationDetailsAndRestrictions(currValue);
+        await getApplicationDetails(currValue);
       },
     );
     onMounted(async () => {
-      await getApplicationDetailsAndRestrictions(props.id);
+      const [studentRestriction] = await Promise.all([
+        StudentService.shared.getStudentRestriction(),
+        getApplicationDetails(props.id),
+      ]);
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
     });
     const toggle = (event: any) => {
       menu?.value?.toggle(event);
@@ -245,7 +245,7 @@ export default {
       showModal,
       goBack,
       applicationDetails,
-      getApplicationDetailsAndRestrictions,
+      getApplicationDetails,
       dateString,
       ApplicationStatus,
       showViewAssessment,

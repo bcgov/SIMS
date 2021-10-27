@@ -51,7 +51,6 @@ import {
   defaultFileFilter,
   uploadLimits,
 } from "../../utilities";
-import { StudentRestrictionStatus } from "../../services/restriction/models/student-restriction.model";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 

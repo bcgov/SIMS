@@ -86,7 +86,7 @@
       :showModal="showModal"
       :applicationId="selectedApplicationId"
       @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="loadApplicationSummaryAndRestrictions"
+      @reloadData="loadApplicationSummary"
     />
     <ConfirmEditApplication ref="editApplicationModal" />
   </div>
@@ -172,17 +172,9 @@ export default {
         },
       });
     };
-    /**
-     * Fetching student applications and student restrictions in parallel
-     */
-    const loadApplicationSummaryAndRestrictions = async () => {
-      const [studentApplications, studentRestriction] = await Promise.all([
-        StudentService.shared.getAllStudentApplications(),
-        StudentService.shared.getStudentRestriction(),
-      ]);
-      myApplications.value = studentApplications;
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
+
+    const loadApplicationSummary = async () => {
+      myApplications.value = await StudentService.shared.getAllStudentApplications();
     };
 
     const getProgramYear = async (applicationId: number) => {
@@ -210,7 +202,12 @@ export default {
     };
 
     onMounted(async () => {
-      await loadApplicationSummaryAndRestrictions();
+      const [restrictions] = await Promise.all([
+        StudentService.shared.getStudentRestriction(),
+        loadApplicationSummary(),
+      ]);
+      hasRestriction.value = restrictions.hasRestriction;
+      restrictionMessage.value = restrictions.restrictionMessage;
     });
 
     return {
@@ -222,7 +219,7 @@ export default {
       showModal,
       selectedApplicationId,
       showHideCancelApplication,
-      loadApplicationSummaryAndRestrictions,
+      loadApplicationSummary,
       ApplicationStatus,
       editApplicaion,
       editApplicationModal,
