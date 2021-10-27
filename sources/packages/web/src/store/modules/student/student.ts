@@ -1,7 +1,3 @@
-export class StudentState {
-  profile!: StudentProfile;
-}
-
 export class StudentProfile {
   name?: string;
   age?: string;
@@ -16,8 +12,14 @@ export class StudentProfile {
   middleName?: string;
 }
 
+export class StudentState {
+  profile: StudentProfile = new StudentProfile();
+  hasStudentAccount = false;
+}
+
 const initialState: StudentState = {
   profile: new StudentProfile(),
+  hasStudentAccount: false,
 };
 
 export const student = {
@@ -37,11 +39,22 @@ export const student = {
       state.profile.gender = parsedToken.gender;
       state.profile.middleName = parsedToken.middle_name;
     },
+
+    SET_HAS_STUDENT_ACCOUNT(state: StudentState, hasStudentAccount: boolean) {
+      state.hasStudentAccount = hasStudentAccount;
+    },
   },
 
   actions: {
     setStudentProfileData({ commit }: { commit: Function }, token: any) {
       commit("SET_STUDENT_PROFILE_DATA", token.tokenParsed);
+    },
+
+    setHasStudentAccount(
+      { commit }: { commit: Function },
+      hasStudentAccount: boolean,
+    ) {
+      commit("SET_HAS_STUDENT_ACCOUNT", hasStudentAccount);
     },
   },
 };

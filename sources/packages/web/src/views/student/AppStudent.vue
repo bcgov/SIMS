@@ -5,7 +5,7 @@
     <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
     <v-spacer></v-spacer
     ><v-btn
-      v-if="isAuthenticated"
+      v-if="isAuthenticated && hasStudentAccount"
       text
       @click="
         $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
@@ -13,13 +13,13 @@
       >ApplicationS</v-btn
     >
     <v-btn
-      v-if="isAuthenticated"
+      v-if="isAuthenticated && hasStudentAccount"
       text
       @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
       >Notifications</v-btn
     >
     <v-btn
-      v-if="isAuthenticated"
+      v-if="isAuthenticated && hasStudentAccount"
       text
       @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
       >Profile</v-btn
@@ -50,11 +50,12 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
-import { useAuth } from "@/composables";
+import { useAuth, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
+import { MenuModel } from "@/types";
 
 export default {
   components: { BCLogo },
@@ -62,8 +63,8 @@ export default {
     const { executeLogout } = useAuth();
     const router = useRouter();
     const userOptionsMenuRef = ref();
-    const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
+    const { hasStudentAccount } = useStudentStore();
 
     const logoClick = () => {
       const routeName = isAuthenticated.value
@@ -78,24 +79,30 @@ export default {
       userOptionsMenuRef.value.toggle(event);
     };
 
-    userMenuItems.value = [
-      {
-        label: "Notifications Settings",
-        icon: "pi pi-bell",
-        command: () => {
-          router.push({
-            name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
-          });
-        },
-      },
-      {
+    const userMenuItems = computed(() => {
+      const menuItems: MenuModel[] = [];
+      if (hasStudentAccount.value) {
+        menuItems.push({
+          label: "Notifications Settings",
+          icon: "pi pi-bell",
+          command: () => {
+            router.push({
+              name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
+            });
+          },
+        });
+      }
+
+      menuItems.push({
         label: "Log off",
         icon: "pi pi-power-off",
         command: async () => {
           await executeLogout(ClientIdType.Student);
         },
-      },
-    ];
+      });
+
+      return menuItems;
+    });
 
     return {
       logoClick,
@@ -104,6 +111,7 @@ export default {
       StudentRoutesConst,
       userOptionsMenuRef,
       togleUserMenu,
+      hasStudentAccount,
     };
   },
 };

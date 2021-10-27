@@ -138,6 +138,7 @@ export default {
           );
         } else {
           await StudentService.shared.createStudent(args);
+          await store.dispatch("student/setHasStudentAccount", true);
           toast.success("Student created", "Student was successfully created!");
         }
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });

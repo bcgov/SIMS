@@ -89,9 +89,17 @@ export class AuthService {
 
       if (this.keycloak.authenticated) {
         switch (clientType) {
-          case ClientIdType.Student:
-            store.dispatch("student/setStudentProfileData", this.keycloak);
-            if (await StudentService.shared.checkStudent()) {
+          case ClientIdType.Student: {
+            await store.dispatch(
+              "student/setStudentProfileData",
+              this.keycloak,
+            );
+            const hasStudentAccount = await StudentService.shared.checkStudent();
+            await store.dispatch(
+              "student/setHasStudentAccount",
+              hasStudentAccount,
+            );
+            if (hasStudentAccount) {
               // If the student is present, just update the user data.
               await StudentService.shared.synchronizeFromUserInfo();
             } else {
@@ -101,7 +109,9 @@ export class AuthService {
                 name: StudentRoutesConst.STUDENT_PROFILE,
               };
             }
+
             break;
+          }
           case ClientIdType.Institution: {
             const authHeader = HttpBaseClient.createAuthHeader(
               this.keycloak.token,
