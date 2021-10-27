@@ -49,13 +49,10 @@
 </template>
 
 <script lang="ts">
-import { useRouter, useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
-import { UserService } from "../../services/UserService";
-import { StudentService } from "../../services/StudentService";
-import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-import { ClientIdType } from "../../types/contracts/ConfigContract";
-import { AppRoutes } from "../../types";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 
@@ -64,7 +61,6 @@ export default {
   setup() {
     const { executeLogout } = useAuth();
     const router = useRouter();
-    const route = useRoute();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();

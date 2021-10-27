@@ -204,11 +204,32 @@ export class StudentController extends BaseController {
     };
   }
 
+  /**
+   * Creates the student checking for an existing user to be
+   * used or creating a new one case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param payload information needed to create/update the user.
+   * @param userToken authenticated user information.
+   */
   @Post()
   async create(
-    @Body() payload: CreateStudentDto,
     @UserToken() userToken: IUserToken,
+    @Body() payload: CreateStudentDto,
   ): Promise<void> {
+    if (userToken.userId) {
+      // If the user already exists, verify if there is already a student
+      // associated with the existing user.
+      const existingStudent = await this.studentService.getStudentByUserId(
+        userToken.userId,
+      );
+      if (existingStudent) {
+        throw new UnprocessableEntityException(
+          "There is already a student associated with the user.",
+        );
+      }
+    }
+
     await this.studentService.createStudent(userToken, payload);
   }
 
