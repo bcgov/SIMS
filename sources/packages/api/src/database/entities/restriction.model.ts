@@ -4,14 +4,14 @@ import { RecordDataModel } from "./record.model";
 import { RestrictionType } from ".";
 
 /**
- * Entity for resctrictions
+ * Entity for restrictions
  */
 @Entity({ name: TableNames.Restrictions })
 export class Restriction extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Restrction type - Federal/Provincial
+   * Restriction type - Federal/Provincial
    */
   @Column({
     name: "restriction_type",

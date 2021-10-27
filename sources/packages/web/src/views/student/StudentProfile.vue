@@ -5,6 +5,10 @@
     information needs to be changed please visit
     <a href="http://id.gov.bc.ca" target="_blank">id.gov.bc.ca</a>.
   </Message>
+  <RestrictionBanner
+    v-if="hasRestriction"
+    :restrictionMessage="restrictionMessage"
+  />
   <span v-if="showApplyPDButton">
     <v-btn
       color="primary"
@@ -65,7 +69,7 @@ import {
   StudentFormInfo,
 } from "@/types/contracts/StudentContract";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-// import ApiClient from "../../services/http/ApiClient";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 
 type StudentFormData = Pick<
   StudentInfo,
@@ -79,7 +83,7 @@ type StudentFormData = Pick<
   };
 
 export default {
-  components: { formio },
+  components: { formio, RestrictionBanner },
   props: {
     editMode: {
       type: Boolean,
@@ -95,6 +99,8 @@ export default {
     const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
     const getStudentInfo = async () => {
       studentAllInfo.value = await StudentService.shared.getStudentInfo();
     };
@@ -196,6 +202,9 @@ export default {
     };
 
     onMounted(async () => {
+      const studentRestriction = await StudentService.shared.getStudentRestriction();
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       if (props.editMode) {
         await getStudentInfo();
         const data: StudentFormData = {
@@ -229,6 +238,8 @@ export default {
       studentAllInfo,
       disableBtn,
       showPendingStatus,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };

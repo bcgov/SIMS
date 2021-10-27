@@ -3,7 +3,6 @@ import { Reflector } from "@nestjs/core";
 import { StudentRestrictionService } from "../../services";
 import { CHECK_RESTRICTIONS_KEY } from "../decorators/check-restrictions.decorator";
 import { IUserToken } from "../userToken.interface";
-import { RestrictionParser } from "../../utilities";
 /**
  * This guard validates an API for restrictions if it is decorated with @CheckRestriction.
  */
@@ -15,7 +14,7 @@ export class RestrictionsGuard implements CanActivate {
   ) {}
   /**
    * Implementation of canActivate method in CanActivate.
-   * With th user token, it checks for any restriction for the user.
+   * With the user token, it checks for any restriction for the user.
    * @param context
    * @returns Promise<boolean>
    */
@@ -30,13 +29,10 @@ export class RestrictionsGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    const studentRestrictions =
-      await this.studentRestrictionService.getStudentRestrictionsByUserName(
+    const studentRestrictionStatus =
+      await this.studentRestrictionService.getStudentRestrictionsByUserId(
         userToken.userId,
       );
-    const parser: RestrictionParser = new RestrictionParser(
-      studentRestrictions,
-    );
-    return !parser.hasRestriction();
+    return !studentRestrictionStatus.hasRestriction;
   }
 }

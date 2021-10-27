@@ -1,7 +1,8 @@
 <template>
-  <Message severity="error" v-if="hasRestriction">
-    {{ restrictionMessage }}
-  </Message>
+  <RestrictionBanner
+    v-if="hasRestriction"
+    :restrictionMessage="restrictionMessage"
+  />
   <v-container class="center-container application-container ff-form-container">
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
@@ -93,11 +94,13 @@ import {
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 
 export default {
   components: {
     formio,
     ConfirmEditApplication,
+    RestrictionBanner,
   },
   props: {
     id: {
@@ -136,14 +139,18 @@ export default {
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     onMounted(async () => {
-      const studentRestriction = await StudentService.shared.getAllStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
-      //Get the student information and application information.
-      const [studentInfo, applicationData] = await Promise.all([
+      //Get the student information, application information and student restriction.
+      const [
+        studentInfo,
+        applicationData,
+        studentRestriction,
+      ] = await Promise.all([
         StudentService.shared.getStudentInfo(),
         ApplicationService.shared.getApplicationData(props.id),
+        StudentService.shared.getStudentRestriction(),
       ]);
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [

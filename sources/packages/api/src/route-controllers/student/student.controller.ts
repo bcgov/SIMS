@@ -50,8 +50,8 @@ import {
   credentialTypeToDisplay,
   defaultFileFilter,
   uploadLimits,
-  RestrictionParser,
 } from "../../utilities";
+import { StudentRestrictionStatus } from "../../services/restriction/models/student-restriction.model";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 
@@ -430,11 +430,16 @@ export class StudentController extends BaseController {
   async getStudentRestrictions(
     @UserToken() userToken: IUserToken,
   ): Promise<StudentRestrictionDTO> {
-    const studentRestriction =
-      await this.studentRestrictionService.getStudentRestrictionsByUserName(
+    const studentRestrictionStatus =
+      await this.studentRestrictionService.getStudentRestrictionsByUserId(
         userToken.userId,
       );
-    const restrictionParser = new RestrictionParser(studentRestriction);
-    return restrictionParser.getStudentRestrictionResponse();
+    return {
+      hasRestriction: studentRestrictionStatus.hasRestriction,
+      hasFederalRestriction: studentRestrictionStatus.hasFederalRestriction,
+      hasProvincialRestriction:
+        studentRestrictionStatus.hasProvincialRestriction,
+      restrictionMessage: studentRestrictionStatus.restrictionMessage,
+    } as StudentRestrictionDTO;
   }
 }

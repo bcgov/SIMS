@@ -81,7 +81,7 @@ export interface StudentApplication {
 /**
  * DTO object which is returned by student restriction API.
  */
-export interface StudentRestriction {
+export interface StudentRestrictionStatus {
   hasRestriction: boolean;
   hasFederalRestriction: boolean;
   hasProvincialRestriction: boolean;

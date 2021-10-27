@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS sims.restrictions(
   id SERIAL PRIMARY KEY,
   restriction_type sims.restriction_types NOT NULL, 
   restriction_code VARCHAR(10) NOT NULL,
-  description VARCHAR(250),
+  description VARCHAR(250) NOT NULL,
   allowed_count INT NOT NULL DEFAULT 0,
 
   -- Audit columns
@@ -21,7 +21,9 @@ COMMENT ON COLUMN sims.restrictions.id IS 'Auto-generated sequential primary key
 
 COMMENT ON COLUMN sims.restrictions.restriction_type IS 'Restriction type enumeration';
 
-COMMENT ON COLUMN sims.restrictions.restriction_code IS 'Resctriction code for a restriction';
+COMMENT ON COLUMN sims.restrictions.restriction_code IS 'Restriction code for a restriction';
+
+COMMENT ON COLUMN sims.restrictions.description IS 'Description of a restriction';
 
 COMMENT ON COLUMN sims.restrictions.allowed_count IS 'Allowed count defines the maximum number of times a given restriction can be held by any user';
 

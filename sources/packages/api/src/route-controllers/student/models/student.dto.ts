@@ -70,7 +70,7 @@ export interface SearchStudentRespDto {
 
 /**
  * DTO Object for student restriction.
- * This object is retuned by controller.
+ * This object is returned by controller.
  */
 export interface StudentRestrictionDTO {
   hasRestriction: boolean;

@@ -1,8 +1,9 @@
 <template>
   <div class="p-m-4">
-    <Message severity="error" v-if="hasRestriction">
-      {{ restrictionMessage }}
-    </Message>
+    <RestrictionBanner
+      v-if="hasRestriction"
+      :restrictionMessage="restrictionMessage"
+    />
     <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
@@ -34,7 +35,7 @@
       :showModal="showModal"
       :applicationId="id"
       @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="getApplicationDetails"
+      @reloadData="getApplicationDetailsAndRestrictions"
     />
 
     <v-container class="pt-12">
@@ -68,6 +69,7 @@ import Menu from "primevue/menu";
 import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog } from "@/composables";
@@ -97,6 +99,7 @@ export default {
     CancelApplication,
     ApplicationDetails,
     ConfirmEditApplication,
+    RestrictionBanner,
   },
   props: {
     id: {
@@ -208,24 +211,27 @@ export default {
         );
       }
     };
-    const getApplicationDetails = async (applicationId: number) => {
-      applicationDetails.value = await ApplicationService.shared.getApplicationData(
-        applicationId,
-      );
+    const getApplicationDetailsAndRestrictions = async (
+      applicationId: number,
+    ) => {
+      const [applicationData, studentRestriction] = await Promise.all([
+        ApplicationService.shared.getApplicationData(applicationId),
+        StudentService.shared.getStudentRestriction(),
+      ]);
+      applicationDetails.value = applicationData;
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       loadMenu();
     };
     watch(
       () => props.id,
       async (currValue: number) => {
         //update the list
-        await getApplicationDetails(currValue);
+        await getApplicationDetailsAndRestrictions(currValue);
       },
     );
     onMounted(async () => {
-      const studentRestriction = await StudentService.shared.getAllStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
-      await getApplicationDetails(props.id);
+      await getApplicationDetailsAndRestrictions(props.id);
     });
     const toggle = (event: any) => {
       menu?.value?.toggle(event);
@@ -239,7 +245,7 @@ export default {
       showModal,
       goBack,
       applicationDetails,
-      getApplicationDetails,
+      getApplicationDetailsAndRestrictions,
       dateString,
       ApplicationStatus,
       showViewAssessment,

@@ -1,8 +1,9 @@
 <template>
   <div class="p-m-4">
-    <Message severity="error" v-if="hasRestriction">
-      {{ restrictionMessage }}
-    </Message>
+    <RestrictionBanner
+      v-if="hasRestriction"
+      :restrictionMessage="restrictionMessage"
+    />
     <h1><strong>My Applications</strong></h1>
     <v-row>
       <span class="p-m-4"
@@ -85,7 +86,7 @@
       :showModal="showModal"
       :applicationId="selectedApplicationId"
       @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="loadApplicationSummary"
+      @reloadData="loadApplicationSummaryAndRestrictions"
     />
     <ConfirmEditApplication ref="editApplicationModal" />
   </div>
@@ -97,6 +98,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { useFormatters, ModalDialog } from "@/composables";
 import Tooltip from "primevue/tooltip";
@@ -116,6 +118,7 @@ export default {
     Column,
     CancelApplication,
     ConfirmEditApplication,
+    RestrictionBanner,
   },
   directives: {
     tooltip: Tooltip,
@@ -169,9 +172,17 @@ export default {
         },
       });
     };
-
-    const loadApplicationSummary = async () => {
-      myApplications.value = await StudentService.shared.getAllStudentApplications();
+    /**
+     * Fetching student applications and student restrictions in parallel
+     */
+    const loadApplicationSummaryAndRestrictions = async () => {
+      const [studentApplications, studentRestriction] = await Promise.all([
+        StudentService.shared.getAllStudentApplications(),
+        StudentService.shared.getStudentRestriction(),
+      ]);
+      myApplications.value = studentApplications;
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
     };
 
     const getProgramYear = async (applicationId: number) => {
@@ -199,10 +210,7 @@ export default {
     };
 
     onMounted(async () => {
-      const studentRestriction = await StudentService.shared.getAllStudentRestriction();
-      hasRestriction.value = studentRestriction.hasRestriction;
-      restrictionMessage.value = studentRestriction.restrictionMessage;
-      await loadApplicationSummary();
+      await loadApplicationSummaryAndRestrictions();
     });
 
     return {
@@ -214,7 +222,7 @@ export default {
       showModal,
       selectedApplicationId,
       showHideCancelApplication,
-      loadApplicationSummary,
+      loadApplicationSummaryAndRestrictions,
       ApplicationStatus,
       editApplicaion,
       editApplicationModal,

@@ -374,7 +374,6 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    * @returns program year details of the application
    */
-  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/program-year")
   async programYearOfApplication(
