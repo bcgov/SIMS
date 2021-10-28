@@ -1266,6 +1266,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         // Create a new MSFAA number case the previous one is no longer valid.
         const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
           application.studentId,
+          applicationId,
         );
         msfaaNumberId = newMSFAANumber.id;
       }

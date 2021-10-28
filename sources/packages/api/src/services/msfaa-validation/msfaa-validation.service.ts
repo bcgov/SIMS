@@ -24,15 +24,25 @@ export class MSFAAValidationService {
       };
     }
 
-    return {
-      generatedFile: `present: ${pendingMSFAAValidation.length}`,
-      uploadedRecords: 0,
-    };
+    //Create records and create file
+    /*const fileContent = this.createMSFAAValidationContent(
+      pendingMSFAAValidation,
+    );*/
+    //Create filename and generate the sequence - date specific
+    //Upload result to SFTP
+    //Update the dateRequested column records with date table in SIMS DB
 
     this.logger.log(
       `Found ${pendingMSFAAValidation.length} MSFAA number(s) that needs validation.`,
     );
+
+    return {
+      generatedFile: `present: ${pendingMSFAAValidation.length}`,
+      uploadedRecords: 0,
+    };
   }
+
+  async createMSFAAValidationContent() {}
   @InjectLogger()
   logger: LoggerService;
 }

@@ -1,7 +1,7 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { Brackets, Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { MSFAANumber, Student } from "../../database/entities";
+import { MSFAANumber, Student, Application } from "../../database/entities";
 import * as dayjs from "dayjs";
 import { MAX_MFSAA_VALID_DAYS } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
@@ -24,10 +24,16 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student to have a new MSFAA record created.
    * @returns Created MSFAA record.
    */
-  async createMSFAANumber(studentId: number): Promise<MSFAANumber> {
+  async createMSFAANumber(
+    studentId: number,
+    referenceApplicationId: number,
+  ): Promise<MSFAANumber> {
     const newMSFAANumber = new MSFAANumber();
     newMSFAANumber.msfaaNumber = await this.consumeNextSequence();
     newMSFAANumber.student = { id: studentId } as Student;
+    newMSFAANumber.referenceApplication = {
+      id: referenceApplicationId,
+    } as Application;
     return this.repo.save(newMSFAANumber);
   }
 
