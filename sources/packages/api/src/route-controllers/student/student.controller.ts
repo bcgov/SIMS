@@ -23,6 +23,7 @@ import {
   ApplicationService,
   EducationProgramService,
   FormService,
+  StudentRestrictionService,
 } from "../../services";
 import {
   FileCreateDto,
@@ -30,6 +31,7 @@ import {
   StudentEducationProgramDto,
   SearchStudentRespDto,
   SaveStudentDto,
+  StudentRestrictionDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -71,6 +73,7 @@ export class StudentController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -472,5 +475,26 @@ export class StudentController extends BaseController {
       lastName: eachStudent.user.lastName,
       birthDate: dateString(eachStudent.birthdate),
     }));
+  }
+  /**
+   * GET API which returns student restriction details.
+   * @param userToken
+   * @returns Student Restriction
+   */
+  @Get("restriction")
+  async getStudentRestrictions(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentRestrictionDTO> {
+    const studentRestrictionStatus =
+      await this.studentRestrictionService.getStudentRestrictionsByUserId(
+        userToken.userId,
+      );
+    return {
+      hasRestriction: studentRestrictionStatus.hasRestriction,
+      hasFederalRestriction: studentRestrictionStatus.hasFederalRestriction,
+      hasProvincialRestriction:
+        studentRestrictionStatus.hasProvincialRestriction,
+      restrictionMessage: studentRestrictionStatus.restrictionMessage,
+    } as StudentRestrictionDTO;
   }
 }

@@ -3,6 +3,7 @@
     <v-btn
       color="primary"
       class="p-button-raised float-right"
+      :disabled="hasRestriction"
       @click="goToStudentApplication()"
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
@@ -11,13 +12,17 @@
   </v-container>
 </template>
 <script lang="ts">
-import { SetupContext } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useToastMessage } from "@/composables";
 
 export default {
-  setup(props: any, context: SetupContext) {
+  props: {
+    hasRestriction: {
+      type: Boolean,
+    },
+  },
+  setup() {
     const router = useRouter();
     const toast = useToastMessage();
     const goToStudentApplication = async () => {

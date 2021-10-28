@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.restriction_types;

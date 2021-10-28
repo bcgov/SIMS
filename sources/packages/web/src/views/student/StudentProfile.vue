@@ -1,4 +1,8 @@
 <template>
+  <RestrictionBanner
+    v-if="hasRestriction"
+    :restrictionMessage="restrictionMessage"
+  />
   <full-page-container>
     <span v-if="showApplyPDButton">
       <v-btn
@@ -58,8 +62,9 @@ import {
   StudentContact,
   StudentFormInfo,
 } from "@/types/contracts/StudentContract";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 
 enum FormModes {
   edit = "edit",
@@ -77,7 +82,7 @@ type StudentFormData = Pick<
   };
 
 export default {
-  components: { formio, FullPageContainer },
+  components: { formio, RestrictionBanner, FullPageContainer },
   props: {
     editMode: {
       type: Boolean,
@@ -96,6 +101,9 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
     const { hasStudentAccount } = useStudentStore();
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
+
     const getStudentInfo = async () => {
       if (hasStudentAccount) {
         // Avoid calling the API to get the student information if the
@@ -158,6 +166,9 @@ export default {
     };
 
     onMounted(async () => {
+      const studentRestriction = await StudentService.shared.getStudentRestriction();
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       if (props.editMode) {
         await getStudentInfo();
         const data: StudentFormData = {
@@ -192,6 +203,8 @@ export default {
       studentAllInfo,
       disableBtn,
       showPendingStatus,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };

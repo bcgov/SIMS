@@ -1,59 +1,69 @@
 <template>
-  <full-page-container>
-    <v-row class="mb-5 text-right">
-      <v-col md="12" class="ml-auto">
-        <v-btn
-          color="primary"
-          class="mr-5"
-          v-if="!notDraft"
-          v-show="!isFirstPage && !submittingApplication"
-          text
-          :loading="savingDraft"
-          @click="saveDraft()"
-        >
-          <v-icon left :size="25"> mdi-pencil </v-icon
-          >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
-        >
-        <v-btn
-          v-if="!isReadOnly"
-          :disabled="!isLastPage || submittingApplication"
-          v-show="!isFirstPage"
-          color="primary"
-          @click="wizardSubmit()"
-          >{{ submittingApplication ? "Submitting..." : "Submit application" }}
-          <span v-if="submittingApplication">
-            &nbsp;&nbsp;
-            <ProgressSpinner
-              style="width: 30px; height: 25px"
-              strokeWidth="10"/></span
-        ></v-btn>
-      </v-col>
-    </v-row>
-    <formio
-      :formName="selectedForm"
-      :data="initialData"
-      :readOnly="isReadOnly"
-      @loaded="formLoaded"
-      @changed="formChanged"
-      @submitted="submitApplication"
-      @customEvent="customEventCallback"
-    ></formio>
-    <v-row>
-      <v-col md="6">
-        <v-btn
-          color="primary"
-          v-show="!isFirstPage"
-          outlined
-          @click="wizardGoPrevious()"
-          >Previous section</v-btn
-        >
-      </v-col>
-      <v-col md="6" class="ml-auto text-right">
-        <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext()"
-          >Next section</v-btn
-        >
-      </v-col>
-    </v-row>
+  <RestrictionBanner
+    v-if="hasRestriction"
+    :restrictionMessage="restrictionMessage"
+  />
+  <v-container class="center-container application-container ff-form-container">
+    <div class="p-card p-m-4 w-100">
+      <div class="p-p-4">
+        <v-row class="center-container application-container mb-5 text-right">
+          <v-col md="12" class="ml-auto">
+            <v-btn
+              color="primary"
+              class="mr-5"
+              v-if="!notDraft && !hasRestriction"
+              v-show="!isFirstPage && !submittingApplication"
+              text
+              :loading="savingDraft"
+              @click="saveDraft()"
+            >
+              <v-icon left :size="25"> mdi-pencil </v-icon
+              >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
+            >
+            <v-btn
+              v-if="!isReadOnly && !hasRestriction"
+              :disabled="!isLastPage || submittingApplication"
+              v-show="!isFirstPage"
+              color="primary"
+              @click="wizardSubmit()"
+              >{{
+                submittingApplication ? "Submitting..." : "Submit application"
+              }}
+              <span v-if="submittingApplication">
+                &nbsp;&nbsp;
+                <ProgressSpinner
+                  style="width: 30px; height: 25px"
+                  strokeWidth="10"/></span
+            ></v-btn>
+          </v-col>
+        </v-row>
+        <formio
+          :formName="selectedForm"
+          :data="initialData"
+          :readOnly="isReadOnly"
+          @loaded="formLoaded"
+          @changed="formChanged"
+          @submitted="submitApplication"
+          @customEvent="customEventCallback"
+        ></formio>
+        <v-row>
+          <v-col md="6">
+            <v-btn
+              color="primary"
+              v-show="!isFirstPage"
+              outlined
+              @click="wizardGoPrevious()"
+              >Previous section</v-btn
+            >
+          </v-col>
+          <v-col md="6" class="ml-auto text-right">
+            <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext()"
+              >Next section</v-btn
+            >
+          </v-col>
+        </v-row>
+      </div>
+    </div>
     <ConfirmEditApplication
       ref="editApplicationModal"
       @confirmEditApplication="editApplicaion"
@@ -84,13 +94,13 @@ import {
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 
 export default {
   components: {
     formio,
     ConfirmEditApplication,
-    FullPageContainer,
+    RestrictionBanner,
   },
   props: {
     id: {
@@ -123,15 +133,24 @@ export default {
     let applicationWizard: any;
     const isReadOnly = ref(false);
     const notDraft = ref(false);
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     onMounted(async () => {
-      //Get the student information and application information.
-      const [studentInfo, applicationData] = await Promise.all([
+      //Get the student information, application information and student restriction.
+      const [
+        studentInfo,
+        applicationData,
+        studentRestriction,
+      ] = await Promise.all([
         StudentService.shared.getStudentInfo(),
         ApplicationService.shared.getApplicationData(props.id),
+        StudentService.shared.getStudentRestriction(),
       ]);
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
@@ -397,6 +416,8 @@ export default {
       confirmEditApplication,
       editApplicaion,
       editApplicationModal,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };
