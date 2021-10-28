@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import dayjs from "dayjs";
+import * as Client from "ssh2-sftp-client";
 import { InjectLogger } from "src/common";
-import { DATE_FORMAT } from "src/cra-integration/cra-integration.models";
+import { DATE_FORMAT } from "src/msfaa-integration/models/msfaa-integration.model";
 import { OfferingIntensity } from "src/database/entities";
 import { LoggerService } from "src/logger/logger.service";
 import {
@@ -14,6 +15,7 @@ import { getUTCNow } from "src/utilities";
 import {
   MSFAARecord,
   MSFAARequestFileLine,
+  MSFAAUploadResult,
   TransactionCodes,
 } from "./models/msfaa-integration.model";
 
@@ -34,10 +36,10 @@ export class MSFAAIntegrationService {
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
-  async createMSFAAValidationContent(
+  createMSFAAValidationContent(
     msfaaRecords: MSFAARecord[],
     fileSequence: number,
-  ): Promise<MSFAARequestFileLine[]> {
+  ): MSFAARequestFileLine[] {
     const processDate = new Date();
     const craFileLines: MSFAARequestFileLine[] = [];
     // Header
@@ -72,30 +74,30 @@ export class MSFAAIntegrationService {
   }
 
   /**
-   * Converts the craFileLines to the final content and upload it.
-   * @param craFileLines Array of lines to be converted to a formatted fixed size file.
+   * Converts the MSFAAFileLines to the final content and upload it.
+   * @param MSFAAFileLines Array of lines to be converted to a formatted fixed size file.
    * @param remoteFilePath Remote location to upload the file (path + file name).
    * @returns Upload result.
    */
   async uploadContent(
-    craFileLines: CRARequestFileLine[],
+    msfaaFileLines: MSFAARequestFileLine[],
     remoteFilePath: string,
-  ): Promise<CRAUploadResult> {
+  ): Promise<MSFAAUploadResult> {
     // Generate fixed formatted file.
-    const fixedFormattedLines: string[] = craFileLines.map(
-      (line: CRARequestFileLine) => line.getFixedFormat(),
+    const fixedFormattedLines: string[] = msfaaFileLines.map(
+      (line: MSFAARequestFileLine) => line.getFixedFormat(),
     );
-    const craFileContent = fixedFormattedLines.join("\r\n");
+    const msfaaFileContent = fixedFormattedLines.join("\r\n");
 
     // Send the file to ftp.
     this.logger.log("Creating new SFTP client to start upload...");
     const client = await this.getClient();
     try {
       this.logger.log(`Uploading ${remoteFilePath}`);
-      await client.put(Buffer.from(craFileContent), remoteFilePath);
+      await client.put(Buffer.from(msfaaFileContent), remoteFilePath);
       return {
         generatedFile: remoteFilePath,
-        uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
+        uploadedRecords: msfaaFileLines.length - 2, // Do not consider header/footer.
       };
     } finally {
       this.logger.log("Finalizing SFTP client...");
@@ -105,8 +107,13 @@ export class MSFAAIntegrationService {
   }
 
   /**
-   * Expected file name of the CRA request file.
-   * @param sequence file sequence number.
+   * Expected file name of the MSFAA request file.
+   * for Part time the format is PPxx.EDU.MSFA.SENT.PT.YYYYMMDD.sss
+   * for full time the format is PPxx.EDU.MSFA.SENT.YYYYMMDD.sss
+   * xx is the province code currently its BC
+   * sss is a sequence that should be resetted every day
+   * @param OfferingIntensity offering intensity of the application
+   *  where MSFAA is requested.
    * @returns Full file path of the file to be saved on the SFTP.
    */
   createRequestFileName(offeringIntensity: string): {
@@ -131,6 +138,14 @@ export class MSFAAIntegrationService {
       fileName,
       filePath,
     };
+  }
+
+  /**
+   * Generates a new connected SFTP client ready to be used.
+   * @returns client
+   */
+  private async getClient(): Promise<Client> {
+    return this.sshService.createClient(this.ftpConfig);
   }
 
   @InjectLogger()
