@@ -32,7 +32,7 @@ export class Restriction extends RecordDataModel {
    */
   @Column({
     name: "description",
-    nullable: true,
+    nullable: false,
   })
   description: string;
   /**
