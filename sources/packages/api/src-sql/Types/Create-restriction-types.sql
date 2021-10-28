@@ -1,0 +1,1 @@
+CREATE TYPE sims.restriction_types AS ENUM ('Provincial', 'Federal');

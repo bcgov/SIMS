@@ -1,4 +1,8 @@
 <template>
+  <RestrictionBanner
+    v-if="hasRestriction"
+    :restrictionMessage="restrictionMessage"
+  />
   <v-container class="center-container application-container ff-form-container">
     <div class="p-card p-m-4 w-100">
       <div class="p-p-4">
@@ -7,7 +11,7 @@
             <v-btn
               color="primary"
               class="mr-5"
-              v-if="!notDraft"
+              v-if="!notDraft && !hasRestriction"
               v-show="!isFirstPage && !submittingApplication"
               text
               :loading="savingDraft"
@@ -17,7 +21,7 @@
               >{{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
             >
             <v-btn
-              v-if="!isReadOnly"
+              v-if="!isReadOnly && !hasRestriction"
               :disabled="!isLastPage || submittingApplication"
               v-show="!isFirstPage"
               color="primary"
@@ -90,11 +94,13 @@ import {
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 
 export default {
   components: {
     formio,
     ConfirmEditApplication,
+    RestrictionBanner,
   },
   props: {
     id: {
@@ -127,15 +133,24 @@ export default {
     let applicationWizard: any;
     const isReadOnly = ref(false);
     const notDraft = ref(false);
+    const hasRestriction = ref(true);
+    const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
 
     onMounted(async () => {
-      //Get the student information and application information.
-      const [studentInfo, applicationData] = await Promise.all([
+      //Get the student information, application information and student restriction.
+      const [
+        studentInfo,
+        applicationData,
+        studentRestriction,
+      ] = await Promise.all([
         StudentService.shared.getStudentInfo(),
         ApplicationService.shared.getApplicationData(props.id),
+        StudentService.shared.getStudentRestriction(),
       ]);
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
@@ -401,6 +416,8 @@ export default {
       confirmEditApplication,
       editApplicaion,
       editApplicationModal,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };

@@ -6,6 +6,7 @@ import {
   ConfigService,
   InstitutionLocationService,
   InstitutionUserAuthService,
+  StudentRestrictionService,
   KeycloakService,
   TokensService,
   UserService,
@@ -19,6 +20,7 @@ import {
   InstitutionAdminGuard,
   ActiveUserGuard,
   GroupsGuard,
+  RestrictionsGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 
@@ -32,6 +34,7 @@ const jwtModule = JwtModule.register({
     UserService,
     InstitutionLocationService,
     InstitutionUserAuthService,
+    StudentRestrictionService,
     TokensService,
     KeycloakService,
     ConfigService,
@@ -63,6 +66,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: InstitutionLocationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RestrictionsGuard,
     },
   ],
   exports: [jwtModule, TokensService, KeycloakService],

@@ -6,6 +6,7 @@ import {
   StudentFormInfo,
   StudentApplication,
   SearchStudentResp,
+  StudentRestrictionStatus,
 } from "../types/contracts/StudentContract";
 
 export class StudentService {
@@ -75,5 +76,12 @@ export class StudentService {
 
   async getAllStudentApplications(): Promise<StudentApplication[]> {
     return ApiClient.Students.getAllStudentApplications();
+  }
+  /**
+   * API client to call the student restriction rest API.
+   * @returns student restriction(wrapped by promise)
+   */
+  async getStudentRestriction(): Promise<StudentRestrictionStatus> {
+    return ApiClient.Students.getStudentRestriction();
   }
 }

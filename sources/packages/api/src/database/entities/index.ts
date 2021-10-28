@@ -27,3 +27,6 @@ export * from "./offering-intensity.type";
 export * from "./cra-income-verification.model";
 export * from "./supporting-user-type.type";
 export * from "./supporting-user.model";
+export * from "./restriction.model";
+export * from "./restriction.type";
+export * from "./student-restriction.model";

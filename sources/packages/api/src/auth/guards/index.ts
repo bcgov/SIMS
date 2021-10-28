@@ -4,3 +4,4 @@ export * from "./institution-location.guard";
 export * from "./jwt-auth.guard";
 export * from "./active-user.guard";
 export * from "./groups.guard";
+export * from "./restrictions.guard";

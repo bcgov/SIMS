@@ -28,6 +28,7 @@ import {
   COEDeniedReasonService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  StudentRestrictionService,
 } from "./services";
 import {
   UserController,
@@ -101,6 +102,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     COEDeniedReasonService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    StudentRestrictionService,
   ],
 })
 export class AppModule {}
