@@ -67,6 +67,10 @@ export class ConfigService {
         ATBCApp: process.env.ATBC_APP,
         ATBCEndpoint: process.env.ATBC_ENDPOINT,
       },
+      MSFAAIntegration: {
+        ftpRequestFolder: process.env.MSFAA_REQUEST_FOLDER,
+        provinceCode: process.env.MSFAA_PROVINCE_CODE,
+      },
     };
   }
 

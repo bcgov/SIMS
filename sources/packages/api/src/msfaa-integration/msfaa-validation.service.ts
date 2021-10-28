@@ -1,20 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "src/common";
-import { CRAUploadResult } from "src/cra-integration/cra-integration.models";
-import { CRAIntegrationService } from "src/cra-integration/cra-integration.service";
-import { MSFAANumber, OfferingIntensity } from "src/database/entities";
+import { MSFAANumber } from "src/database/entities";
 import { LoggerService } from "src/logger/logger.service";
-import { MSFAAFileResultDto } from "src/route-controllers/msfaa-integration/models/msfaa-file-result.dto";
 import { getUTCNow } from "src/utilities";
 import { EntityManager } from "typeorm";
-import { ConfigService, MSFAANumberService, SequenceControlService } from "..";
-import { MSFAARecord } from "./models/msfaa-integration.model";
+import { MSFAANumberService, SequenceControlService } from "../services";
+import {
+  MSFAARecord,
+  MSFAAUploadResult,
+} from "./models/msfaa-integration.model";
+import { MSFAAIntegrationService } from "./msfaa-integration.service";
 
 @Injectable()
 export class MSFAAValidationService {
   constructor(
     private readonly msfaaNumberService: MSFAANumberService,
-    private readonly craService: CRAIntegrationService,
+    private readonly msfaaService: MSFAAIntegrationService,
     private readonly sequenceService: SequenceControlService,
   ) {}
 
@@ -25,7 +26,7 @@ export class MSFAAValidationService {
    */
   async processMSFAAValidation(
     offeringIntensity: string,
-  ): Promise<MSFAAFileResultDto> {
+  ): Promise<MSFAAUploadResult> {
     this.logger.log(
       `Retrieving pending ${offeringIntensity} MSFAA validation...`,
     );
@@ -51,23 +52,25 @@ export class MSFAAValidationService {
         return msfaaRecord;
       },
     );
-    const msfaaRecordIds = msfaaRecords.map((msfaaRecord) => msfaaRecord.id);
+    const msfaaRecordIds = pendingMSFAAValidations.map(
+      (pendingMSFAAValidation) => pendingMSFAAValidation.id,
+    );
 
     //Create records and create file
-    let uploadResult: CRAUploadResult;
+    let uploadResult: MSFAAUploadResult;
     await this.sequenceService.consumeNextSequence(
       `MSFAA_${offeringIntensity}_SENT_FILE`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log("Creating income verification content...");
-          const fileContent = this.createMSFAAValidationContent(
+          const fileContent = this.msfaaService.createMSFAAValidationContent(
             msfaaRecords,
             nextSequenceNumber,
           );
           const fileInfo =
-            this.craService.createRequestFileName(nextSequenceNumber);
+            this.msfaaService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
-          uploadResult = await this.craService.uploadContent(
+          uploadResult = await this.msfaaService.uploadContent(
             fileContent,
             fileInfo.filePath,
           );
@@ -75,27 +78,21 @@ export class MSFAAValidationService {
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the
           // sequence number.
-          const incomeVerificationRepo = entityManager.getRepository(
-            CRAIncomeVerification,
-          );
-          this.incomeVerificationService.updateSentFile(
+          const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
+          this.msfaaNumberService.updateSentFile(
             msfaaRecordIds,
             getUTCNow(),
-            fileInfo.fileName,
-            incomeVerificationRepo,
+            msfaaNumberRepo,
           );
         } catch (error) {
           this.logger.error(
-            `Error while uploading content for income verification: ${error}`,
+            `Error while uploading content for ${offeringIntensity} MSFAA Validation: ${error}`,
           );
           throw error;
         }
       },
     );
-    return {
-      generatedFile: `present: ${msfaaRecords.length}`,
-      uploadedRecords: 0,
-    };
+    return uploadResult;
   }
 
   /**

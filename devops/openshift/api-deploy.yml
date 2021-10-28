@@ -168,6 +168,16 @@ objects:
                     secretKeyRef:
                       key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
                       name: ${ZONE_B_SFTP_SECRET_NAME}
+                - name: MSFAA_REQUEST_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${MSFAA_REQUEST_FOLDER_NAME_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: MSFAA_PROVINCE_CODE
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${MSFAA_PROVINCE_CODE_NAME_KEY}
+                      name: ${API_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
                 - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
@@ -379,3 +389,7 @@ parameters:
     value: atbc-app
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
+  - name: MSFAA_REQUEST_FOLDER_NAME_KEY
+    value: msfaa-request-folder
+  - name: MSFAA_PROVINCE_CODE_NAME_KEY
+    value: msfaa-province-code

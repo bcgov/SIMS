@@ -113,6 +113,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .createQueryBuilder("msfaaNumber")
       .select([
         "msfaaNumber.id",
+        "msfaaNumber.msfaaNumber",
         "students.id",
         "students.sin",
         "institutionLocation.institutionCode",
