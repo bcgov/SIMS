@@ -54,7 +54,7 @@ import {
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
-import { FormNames } from "src/services/form/constants";
+import { FormNames } from "../../services/form/constants";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
