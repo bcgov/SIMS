@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService, SshService } from "src/services";
 import { MSFAAIntegrationConfig, SFTPConfig } from "src/types";
 import {
+  MSFAARecord,
   MSFAARequestFileLine,
   TransactionCodes,
 } from "./models/msfaa-integration.model";
@@ -32,8 +33,7 @@ export class MSFAAIntegrationService {
     const header = new CRAFileHeader();
     header.transactionCode = TransactionCodes.MSFAARequestHeader;
     header.processDate = processDate;
-    header.programAreaCode = this.craConfig.programAreaCode;
-    header.environmentCode = this.craConfig.environmentCode;
+    header.provinceCode = this.msfaaConfig.provinceCode;
     header.sequence = fileSequence;
     craFileLines.push(header);
     // Records
@@ -44,7 +44,6 @@ export class MSFAAIntegrationService {
       craRecord.individualSurname = msfaaRecord.surname;
       craRecord.individualGivenName = msfaaRecord.givenName;
       craRecord.individualBirthDate = msfaaRecord.birthDate;
-      craRecord.programAreaCode = this.msfaaConfig.provinceCode;
       craRecord.taxYear = msfaaRecord.taxYear;
       craRecord.freeProjectArea = msfaaRecord.freeProjectArea;
       return craRecord;
