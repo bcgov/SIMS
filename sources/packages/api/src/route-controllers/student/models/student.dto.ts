@@ -1,4 +1,3 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;
@@ -9,40 +8,22 @@ export class GetStudentContactDto {
   postalCode: string;
 }
 
-export class CreateStudentDto {
-  @IsNotEmpty()
+/**
+ * Common data saved while creating
+ * or updating the student profile.
+ */
+export interface SaveStudentDto {
   phone: string;
-  @IsNotEmpty()
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceState: string;
+  country: string;
+  postalCode: string;
+  /**
+   * SIN is optional during update.
+   */
   sinNumber: string;
-  @IsNotEmpty()
-  addressLine1: string;
-  @IsOptional()
-  addressLine2: string;
-  @IsNotEmpty()
-  city: string;
-  @IsNotEmpty()
-  provinceState: string;
-  @IsNotEmpty()
-  country: string;
-  @IsNotEmpty()
-  postalCode: string;
-}
-
-export class UpdateStudentContactDto {
-  @IsNotEmpty()
-  phone: string;
-  @IsNotEmpty()
-  addressLine1: string;
-  @IsOptional()
-  addressLine2: string;
-  @IsNotEmpty()
-  city: string;
-  @IsNotEmpty()
-  provinceState: string;
-  @IsNotEmpty()
-  country: string;
-  @IsNotEmpty()
-  postalCode: string;
 }
 
 export interface FileCreateDto {

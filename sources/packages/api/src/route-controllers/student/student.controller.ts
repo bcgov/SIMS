@@ -12,6 +12,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Query,
+  BadRequestException,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -21,14 +22,14 @@ import {
   ATBCService,
   ApplicationService,
   EducationProgramService,
+  FormService,
 } from "../../services";
 import {
-  CreateStudentDto,
   FileCreateDto,
   GetStudentContactDto,
-  UpdateStudentContactDto,
   StudentEducationProgramDto,
   SearchStudentRespDto,
+  SaveStudentDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -51,6 +52,7 @@ import {
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
+import { FormNames } from "src/services/form/constants";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -68,6 +70,7 @@ export class StudentController extends BaseController {
     private readonly fileService: StudentFileService,
     private readonly applicationService: ApplicationService,
     private readonly programService: EducationProgramService,
+    private readonly formService: FormService,
   ) {
     super();
   }
@@ -169,9 +172,19 @@ export class StudentController extends BaseController {
 
   @Patch("contact")
   async update(
-    @Body() payload: UpdateStudentContactDto,
     @UserToken() userToken: IUserToken,
+    @Body() payload: SaveStudentDto,
   ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
+
     this.studentService.updateStudentContactByUserName(
       userToken.userName,
       payload,
@@ -215,7 +228,7 @@ export class StudentController extends BaseController {
   @Post()
   async create(
     @UserToken() userToken: IUserToken,
-    @Body() payload: CreateStudentDto,
+    @Body() payload: SaveStudentDto,
   ): Promise<void> {
     if (userToken.userId) {
       // If the user already exists, verify if there is already a student
@@ -228,6 +241,16 @@ export class StudentController extends BaseController {
           "There is already a student associated with the user.",
         );
       }
+    }
+
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create a student due to an invalid request.",
+      );
     }
 
     await this.studentService.createStudent(userToken, payload);

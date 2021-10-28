@@ -1,12 +1,12 @@
-import ApiClient from "./http/ApiClient";
-import Helper from "../helpers/utilfunctions";
+import ApiClient from "@/services/http/ApiClient";
+import Helper from "@/helpers/utilfunctions";
 import {
   StudentContact,
   CreateStudent,
   StudentFormInfo,
   StudentApplication,
   SearchStudentResp,
-} from "../types/contracts/StudentContract";
+} from "@/types/contracts/StudentContract";
 
 export class StudentService {
   // Share Instance
@@ -17,11 +17,11 @@ export class StudentService {
   }
 
   async createStudent(student: CreateStudent): Promise<void> {
-    await ApiClient.Students.createStudent({ ...student });
+    await ApiClient.Students.createStudent(student);
   }
 
   async updateStudent(contact: StudentContact): Promise<void> {
-    await ApiClient.Students.updateStudentContact({ ...contact });
+    await ApiClient.Students.updateStudentContact(contact);
   }
 
   async searchStudents(

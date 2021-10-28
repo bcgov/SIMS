@@ -45,7 +45,12 @@
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useToastMessage, useAuthBCSC, useFormatters } from "@/composables";
+import {
+  useToastMessage,
+  useAuthBCSC,
+  useFormatters,
+  useStudentStore,
+} from "@/composables";
 import formio from "@/components/generic/formio.vue";
 import { StudentService } from "../../services/StudentService";
 import {
@@ -90,8 +95,13 @@ export default {
     const studentAllInfo = ref({} as StudentFormInfo);
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
+    const { hasStudentAccount } = useStudentStore();
     const getStudentInfo = async () => {
-      studentAllInfo.value = await StudentService.shared.getStudentInfo();
+      if (hasStudentAccount) {
+        // Avoid calling the API to get the student information if the
+        // account is not creaed yet.
+        studentAllInfo.value = await StudentService.shared.getStudentInfo();
+      }
     };
 
     const showPendingStatus = computed(
