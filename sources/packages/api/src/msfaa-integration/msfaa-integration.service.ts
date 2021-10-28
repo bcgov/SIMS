@@ -59,4 +59,55 @@ export class MSFAAIntegrationService {
 
     return craFileLines;
   }
+
+  /**
+   * Converts the craFileLines to the final content and upload it.
+   * @param craFileLines Array of lines to be converted to a formatted fixed size file.
+   * @param remoteFilePath Remote location to upload the file (path + file name).
+   * @returns Upload result.
+   */
+  async uploadContent(
+    craFileLines: CRARequestFileLine[],
+    remoteFilePath: string,
+  ): Promise<CRAUploadResult> {
+    // Generate fixed formatted file.
+    const fixedFormattedLines: string[] = craFileLines.map(
+      (line: CRARequestFileLine) => line.getFixedFormat(),
+    );
+    const craFileContent = fixedFormattedLines.join("\r\n");
+
+    // Send the file to ftp.
+    this.logger.log("Creating new SFTP client to start upload...");
+    const client = await this.getClient();
+    try {
+      this.logger.log(`Uploading ${remoteFilePath}`);
+      await client.put(Buffer.from(craFileContent), remoteFilePath);
+      return {
+        generatedFile: remoteFilePath,
+        uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
+      };
+    } finally {
+      this.logger.log("Finalizing SFTP client...");
+      await SshService.closeQuietly(client);
+      this.logger.log("SFTP client finalized.");
+    }
+  }
+
+  /**
+   * Expected file name of the CRA request file.
+   * @param sequence file sequence number.
+   * @returns Full file path of the file to be saved on the SFTP.
+   */
+  createRequestFileName(sequence: number): {
+    fileName: string;
+    filePath: string;
+  } {
+    const sequenceFile = sequence.toString().padStart(5, "0");
+    const fileName = `CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
+    const filePath = `${this.craConfig.ftpRequestFolder}\\${fileName}`;
+    return {
+      fileName,
+      filePath,
+    };
+  }
 }

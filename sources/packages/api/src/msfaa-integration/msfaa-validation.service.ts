@@ -45,11 +45,10 @@ export class MSFAAValidationService {
     );
     const msfaaRecords = pendingMSFAAValidations.map(
       (pendingMSFAAValidation) => {
-        const msfaaRecord = this.createMSFAARecord(
+        return this.createMSFAARecord(
           pendingMSFAAValidation,
           offeringIntensity,
         );
-        return msfaaRecord;
       },
     );
     const msfaaRecordIds = pendingMSFAAValidations.map(
@@ -104,10 +103,10 @@ export class MSFAAValidationService {
    * @param offeringIntensity offeringintensity of the record.
    * @returns CRA record for the student.
    */
-  private async createMSFAARecord(
+  private createMSFAARecord(
     pendingMSFAARecords: MSFAANumber,
     offeringIntensity: string,
-  ): Promise<MSFAARecord> {
+  ): MSFAARecord {
     return {
       id: pendingMSFAARecords.id,
       msfaaNumber: pendingMSFAARecords.msfaaNumber,
@@ -132,7 +131,7 @@ export class MSFAAValidationService {
       phone: pendingMSFAARecords.student.contactInfo.phone,
       email: pendingMSFAARecords.student.user.email,
       offeringIntensity: offeringIntensity,
-    };
+    } as MSFAARecord;
   }
 
   @InjectLogger()
