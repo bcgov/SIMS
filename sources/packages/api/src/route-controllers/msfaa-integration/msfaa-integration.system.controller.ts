@@ -1,10 +1,11 @@
 import { Controller, Post } from "@nestjs/common";
-import { MSFAAFileResultDto } from "./models/msfaa-file-result.dto";
+import { MSFAAValidationResultDto } from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { MSFAAValidationService } from "../../services/msfaa-validation/msfaa-validation.service";
+import { OfferingIntensity } from "src/database/entities";
+import { MSFAAValidationService } from "src/msfaa-integration/msfaa-validation.service";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
@@ -21,15 +22,31 @@ export class MSFAAIntegrationController {
    * @returns Processing result log.
    */
   @Post("process-validation")
-  async processMSFAAValidation(): Promise<MSFAAFileResultDto> {
-    this.logger.log("Sending MSFAA file for validation...");
-    const uploadResult =
-      await this.msfaaValidationService.processMSFAAValidation();
-    this.logger.log("MSFAA file sent.");
-    return {
-      generatedFile: uploadResult.generatedFile,
-      uploadedRecords: uploadResult.uploadedRecords,
-    };
+  async processMSFAAValidation(): Promise<MSFAAValidationResultDto[]> {
+    this.logger.log("Sending Full Time MSFAA file for validation...");
+    const uploadFullTimeResult =
+      await this.msfaaValidationService.processMSFAAValidation(
+        OfferingIntensity.fullTime,
+      );
+    this.logger.log("MSFAA Full Time file sent.");
+    this.logger.log("Sending Part Time MSFAA file for validation...");
+    const uploadPartTimeResult =
+      await this.msfaaValidationService.processMSFAAValidation(
+        OfferingIntensity.partTime,
+      );
+    this.logger.log("MSFAA Part Time file sent.");
+    return [
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        generatedFile: uploadFullTimeResult.generatedFile,
+        uploadedRecords: uploadFullTimeResult.uploadedRecords,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        generatedFile: uploadPartTimeResult.generatedFile,
+        uploadedRecords: uploadPartTimeResult.uploadedRecords,
+      },
+    ];
   }
 
   @InjectLogger()

@@ -106,11 +106,34 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * in the MSFAANumber table.
    * @returns the records of the MSFAANumber table.
    */
-  async getPendingMSFAAValidation(): Promise<MSFAANumber[]> {
+  async getPendingMSFAAValidation(
+    offeringIntensity: string,
+  ): Promise<MSFAANumber[]> {
     return this.repo
       .createQueryBuilder("msfaaNumber")
+      .select([
+        "msfaaNumber.id",
+        "students.id",
+        "students.sin",
+        "institutionLocation.institutionCode",
+        "students.birthdate",
+        //"students.maritalStatus",
+        "users.lastName",
+        "users.firstName",
+        "students.gender",
+        "students.contactInfo",
+        "users.email",
+        "offerings.offeringIntensity",
+      ])
       .innerJoin("msfaaNumber.student", "students")
+      .innerJoin("students.user", "users")
+      .innerJoin("msfaaNumber.referenceApplication", "referenceApplication")
+      .innerJoin("referenceApplication.offering", "offerings")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
       .where("msfaaNumber.dateRequested is null")
+      .andWhere("offerings.offeringIntensity = :offeringIntensity", {
+        offeringIntensity,
+      })
       .getMany();
   }
 }
