@@ -1,6 +1,16 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService, SshService } from "src/services";
+import dayjs from "dayjs";
+import { InjectLogger } from "src/common";
+import { DATE_FORMAT } from "src/cra-integration/cra-integration.models";
+import { OfferingIntensity } from "src/database/entities";
+import { LoggerService } from "src/logger/logger.service";
+import {
+  ConfigService,
+  SequenceControlService,
+  SshService,
+} from "src/services";
 import { MSFAAIntegrationConfig, SFTPConfig } from "src/types";
+import { getUTCNow } from "src/utilities";
 import {
   MSFAARecord,
   MSFAARequestFileLine,
@@ -15,6 +25,7 @@ import {
  */
 @Injectable()
 export class MSFAAIntegrationService {
+  private readonly sequenceService: SequenceControlService;
   private readonly msfaaConfig: MSFAAIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
@@ -98,16 +109,30 @@ export class MSFAAIntegrationService {
    * @param sequence file sequence number.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  createRequestFileName(sequence: number): {
+  createRequestFileName(offeringIntensity: string): {
     fileName: string;
     filePath: string;
   } {
-    const sequenceFile = sequence.toString().padStart(5, "0");
-    const fileName = `CCRA_REQUEST_${this.craConfig.environmentCode}${sequenceFile}.DAT`;
-    const filePath = `${this.craConfig.ftpRequestFolder}\\${fileName}`;
+    let fileName = `PP${this.msfaaConfig.provinceCode}.EDU.MSFA.SENT.`;
+    let fileNameSequence: number;
+    if (OfferingIntensity.partTime === offeringIntensity) {
+      fileName += "PT.";
+    }
+    fileName += dayjs(getUTCNow()).format(DATE_FORMAT);
+    this.sequenceService.consumeNextSequence(
+      fileName,
+      async (nextSequenceNumber: number) => {
+        fileNameSequence = nextSequenceNumber;
+      },
+    );
+    fileName += `.${fileNameSequence}.DAT`;
+    const filePath = `${this.msfaaConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,
       filePath,
     };
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }

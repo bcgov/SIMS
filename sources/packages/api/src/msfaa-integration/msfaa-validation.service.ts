@@ -67,7 +67,7 @@ export class MSFAAValidationService {
             nextSequenceNumber,
           );
           const fileInfo =
-            this.msfaaService.createRequestFileName(nextSequenceNumber);
+            this.msfaaService.createRequestFileName(offeringIntensity);
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(
             fileContent,

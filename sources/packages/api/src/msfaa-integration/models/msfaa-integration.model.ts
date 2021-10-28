@@ -1,3 +1,5 @@
+export const DATE_FORMAT = "YYYYMMDD";
+
 /**
  * Required information to a
  * MSFAA validation to be processed.
