@@ -226,12 +226,10 @@ export default {
       },
     );
     onMounted(async () => {
-      const [studentRestriction] = await Promise.all([
-        StudentService.shared.getStudentRestriction(),
-        getApplicationDetails(props.id),
-      ]);
+      const studentRestriction = await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
+      await getApplicationDetails(props.id);
     });
     const toggle = (event: any) => {
       menu?.value?.toggle(event);

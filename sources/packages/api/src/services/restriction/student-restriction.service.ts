@@ -5,7 +5,7 @@ import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
   RESTRICTION_FEDERAL_MESSAGE,
   RESTRICTION_PROVINCIAL_MESSAGE,
-} from "../../utilities";
+} from "./constants";
 import { Connection } from "typeorm";
 
 /**
@@ -30,7 +30,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     const result = await this.repo
       .createQueryBuilder("studentRestrictions")
       .select("restrictions.id", "restrictionId")
-      .addSelect("restrictions.restrictionType", "studentRestrictionStatus")
+      .addSelect("restrictions.restrictionType", "restrictionType")
       .addSelect("count(*)", "restrictionCount")
       .innerJoin("studentRestrictions.restriction", "restrictions")
       .innerJoin("studentRestrictions.student", "student")
@@ -42,7 +42,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .groupBy("studentRestrictions.student.id")
       .addGroupBy("restrictions.id")
       .addGroupBy("restrictions.restrictionType")
-      .addGroupBy("restrictions.allowedCount")
       .having("count(*) > restrictions.allowedCount")
       .getRawMany();
 
@@ -55,23 +54,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       } as StudentRestrictionStatus;
     }
     let restrictionMessage: string = null;
-    const hasFederalRestriction =
-      result.filter(
-        (item) =>
-          item.studentRestrictionStatus === RestrictionType.Federal.toString(),
-      ).length > 0;
+    const hasFederalRestriction = result.some(
+      (item) => item.restrictionType === RestrictionType.Federal.toString(),
+    );
 
-    const hasProvincialRestriction =
-      result.filter(
-        (item) =>
-          item.studentRestrictionStatus ===
-          RestrictionType.Provincial.toString(),
-      ).length > 0;
+    const hasProvincialRestriction = result.some(
+      (item) => item.restrictionType === RestrictionType.Provincial.toString(),
+    );
 
     if (hasFederalRestriction) {
-      restrictionMessage = restrictionMessage
-        ? restrictionMessage + " " + RESTRICTION_FEDERAL_MESSAGE
-        : RESTRICTION_FEDERAL_MESSAGE;
+      restrictionMessage = RESTRICTION_FEDERAL_MESSAGE;
     }
 
     if (hasProvincialRestriction) {

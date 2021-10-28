@@ -34,7 +34,7 @@ export class Restriction extends RecordDataModel {
     name: "description",
     nullable: true,
   })
-  description?: string;
+  description: string;
   /**
    * Maximum number of times the given restriction can be ignored
    */
