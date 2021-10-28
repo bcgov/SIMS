@@ -10,4 +10,3 @@ export * from "./student-utils";
 export * from "./credential-type-utils";
 export * from "./upload-utils";
 export * from "./program-year-utils";
-export * from "./restriction-utils";
