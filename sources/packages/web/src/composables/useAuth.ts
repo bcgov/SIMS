@@ -24,5 +24,9 @@ export function useAuth() {
     await AuthService.shared.logout(clientType);
   };
 
-  return { isAuthenticated, parsedToken, executeLogin, executeLogout };
+  const executeRenewTokenIfExpired = () => {
+    AuthService.shared.renewTokenIfExpired();
+  };
+
+  return { isAuthenticated, parsedToken, executeLogin, executeLogout, executeRenewTokenIfExpired };
 }

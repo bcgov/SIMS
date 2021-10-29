@@ -26,7 +26,6 @@ export default {
         event.changed.component.key === "selectInstitution" &&
         event.changed.value
       ) {
-        console.log("selectInstitution");
         const submision = { data: event.data };
 
         if (event.changed.value === "camosun") {

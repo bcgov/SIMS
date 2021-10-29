@@ -211,4 +211,8 @@ export class AuthService {
     const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
     window.location.href = siteMinderLogoutURL;
   }
+
+  renewTokenIfExpired() {
+    HttpBaseClient.renewTokenIfExpired();
+  }
 }
