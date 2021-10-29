@@ -9,16 +9,20 @@
     <ConfirmExtendTime
       ref="extendTimeModal"
       :startTimer="startTimer"
-      :clientIdType="clientType"
+      :clientIdType="clientIdType"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { useRoute } from "vue-router";
 import { onMounted, ref, onUnmounted, computed } from "vue";
-import { ClientIdType, AppRoutes } from "@/types";
-import { useAuth, ModalDialog, useClientLoader } from "@/composables";
+import { ClientIdType } from "@/types";
+import {
+  useAuth,
+  ModalDialog,
+  useInstitutionAuth,
+  useFormatters,
+} from "@/composables";
 import {
   MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
   MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
@@ -38,16 +42,12 @@ export default {
   },
   setup(props: any) {
     const { executeRenewTokenIfExpired } = useAuth();
-    const route = useRoute();
     const lastActivityLogin = ref(new Date());
     const interval = ref();
     const extendTimeModal = ref({} as ModalDialog<boolean>);
     const startTimer = ref(false);
-    const { getClientType } = useClientLoader();
-
-    const clientType = computed(() => {
-      return getClientType(props.clientIdType);
-    });
+    const { isAuthenticated } = useInstitutionAuth();
+    const { getDatesDiff } = useFormatters();
 
     const minimumIdleTime = computed(() => {
       switch (props.clientIdType) {
@@ -65,10 +65,10 @@ export default {
     });
 
     const startIdleCheckerTimer = () => {
-      if (!route.path.includes(AppRoutes.Login)) {
+      if (isAuthenticated) {
         /* eslint-disable */
-        interval.value = setInterval(checkIdle, 30000);
-        /*eslint-enable */
+        interval.value = setInterval(checkIdle, 1000);
+        /* eslint-enable */
       }
     };
 
@@ -83,8 +83,12 @@ export default {
     };
 
     const checkIdle = () => {
-      const idleTimeInMintutes =
-        (new Date().getTime() - lastActivityLogin.value.getTime()) / 60000;
+      const idleTimeInMintutes = getDatesDiff(
+        lastActivityLogin.value,
+        new Date(),
+        "minutes",
+        true,
+      );
       if (idleTimeInMintutes >= minimumIdleTime.value) {
         confirmExtendTimeModal();
         startTimer.value = true;
@@ -100,7 +104,7 @@ export default {
     });
 
     const setLastActivityTime = () => {
-      if (!route.path.includes(AppRoutes.Login)) {
+      if (isAuthenticated) {
         lastActivityLogin.value = new Date();
       }
     };
@@ -108,7 +112,6 @@ export default {
       setLastActivityTime,
       extendTimeModal,
       startTimer,
-      clientType,
     };
   },
 };
