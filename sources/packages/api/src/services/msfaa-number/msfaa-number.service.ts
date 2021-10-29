@@ -113,8 +113,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .createQueryBuilder("msfaaNumber")
       .select([
         "msfaaNumber.id",
-        "msfaaNumber.msfaaNumber",
         "students.id",
+        "referenceApplication.id",
+        "institutionLocation.id",
+        "msfaaNumber.msfaaNumber",
         "students.sin",
         "institutionLocation.institutionCode",
         "students.birthdate",
@@ -124,15 +126,15 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "students.gender",
         "students.contactInfo",
         "users.email",
-        "offerings.offeringIntensity",
+        "offering.offeringIntensity",
       ])
       .innerJoin("msfaaNumber.student", "students")
       .innerJoin("students.user", "users")
       .innerJoin("msfaaNumber.referenceApplication", "referenceApplication")
-      .innerJoin("referenceApplication.offering", "offerings")
-      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("referenceApplication.offering", "offering")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
       .where("msfaaNumber.dateRequested is null")
-      .andWhere("offerings.offeringIntensity = :offeringIntensity", {
+      .andWhere("offering.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
       .getMany();

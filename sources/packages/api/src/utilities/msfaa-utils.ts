@@ -1,4 +1,4 @@
-import { OfferingIntensity } from "src/database/entities";
+import { OfferingIntensity } from "../database/entities";
 
 /**
  * Gets the marital status code conversion for the MSFAA request file

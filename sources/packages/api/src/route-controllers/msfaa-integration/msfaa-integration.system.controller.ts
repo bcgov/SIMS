@@ -4,8 +4,8 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { OfferingIntensity } from "src/database/entities";
-import { MSFAAValidationService } from "src/msfaa-integration/msfaa-validation.service";
+import { OfferingIntensity } from "../../database/entities";
+import { MSFAAValidationService } from "../../msfaa-integration/msfaa-validation.service";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")

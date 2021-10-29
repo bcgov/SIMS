@@ -1,21 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import dayjs from "dayjs";
-import { InjectLogger } from "src/common";
-import { OfferingIntensity } from "src/database/entities";
-import { LoggerService } from "src/logger/logger.service";
-import { DATE_FORMAT } from "src/msfaa-integration/models/msfaa-integration.model";
-import {
-  ConfigService,
-  SequenceControlService,
-  SshService,
-} from "src/services";
-import { MSFAAIntegrationConfig, SFTPConfig } from "src/types";
+import { InjectLogger } from "../common";
+import { OfferingIntensity } from "../database/entities";
+import { LoggerService } from "../logger/logger.service";
+import { DATE_FORMAT } from "../msfaa-integration/models/msfaa-integration.model";
+import { ConfigService, SequenceControlService, SshService } from "../services";
+import { MSFAAIntegrationConfig, SFTPConfig } from "../types";
 import {
   getGenderCode,
   getMaritalStatusCode,
   getOfferingIntensityCode,
   getUTCNow,
-} from "src/utilities";
+} from "../utilities";
 import * as Client from "ssh2-sftp-client";
 import {
   MSFAARecord,
@@ -160,7 +156,7 @@ export class MSFAAIntegrationService {
     if (OfferingIntensity.partTime === offeringIntensity) {
       fileName += "PT.";
     }
-    fileName += dayjs(getUTCNow()).format(DATE_FORMAT);
+    fileName += dayjs(getUTCNow()).format(DATE_FORMAT).toString();
     this.sequenceService.consumeNextSequence(
       fileName,
       async (nextSequenceNumber: number) => {
