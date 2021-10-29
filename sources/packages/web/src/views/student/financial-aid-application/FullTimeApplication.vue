@@ -129,7 +129,7 @@ export default {
     let applicationWizard: any;
     const isReadOnly = ref(false);
     const notDraft = ref(false);
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);

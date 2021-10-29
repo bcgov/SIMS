@@ -101,7 +101,7 @@ export default {
     const { bcscParsedToken } = useAuthBCSC();
     const { dateOnlyLongString } = useFormatters();
     const { hasStudentAccount } = useStudentStore();
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
 
     const getStudentInfo = async () => {
