@@ -67,20 +67,26 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    */
   async getPendingIncomeVerifications(): Promise<CRAIncomeVerification[]> {
     return this.repo
-      .createQueryBuilder("incomeVerifications")
+      .createQueryBuilder("incomeVerification")
       .select([
-        "incomeVerifications.id",
-        "incomeVerifications.taxYear",
-        "applications.id",
-        "students.birthdate",
-        "students.sin",
-        "users.firstName",
-        "users.lastName",
+        "incomeVerification.id",
+        "incomeVerification.taxYear",
+        "application.id",
+        "student.birthdate",
+        "student.sin",
+        "studentUser.firstName",
+        "studentUser.lastName",
+        "supportingUser.birthDate",
+        "supportingUser.sin",
+        "supportingUserUser.firstName",
+        "supportingUserUser.lastName",
       ])
-      .innerJoin("incomeVerifications.application", "applications")
-      .innerJoin("applications.student", "students")
-      .innerJoin("students.user", "users")
-      .where("incomeVerifications.dateSent is null")
+      .innerJoin("incomeVerification.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "studentUser")
+      .leftJoin("incomeVerification.supportingUser", "supportingUser")
+      .leftJoin("supportingUser.user", "supportingUserUser")
+      .where("incomeVerification.dateSent is null")
       .getMany();
   }
 

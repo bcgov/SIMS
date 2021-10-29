@@ -1,4 +1,4 @@
-import HttpBaseClient from "./common/HttpBaseClient";
+import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   StudentInfo,
   StudentContact,
@@ -6,7 +6,7 @@ import {
   StudentApplication,
   SearchStudentResp,
   StudentRestrictionStatus,
-} from "../../types/contracts/StudentContract";
+} from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
   public async createStudent(studentProfile: StudentProfile): Promise<void> {
@@ -110,6 +110,19 @@ export class StudentApi extends HttpBaseClient {
     try {
       const result = await this.apiClient.get(
         "students/application-summary",
+        this.addAuthHeader(),
+      );
+      return result?.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async checkStudent(): Promise<boolean> {
+    try {
+      const result = await this.apiClient.get(
+        "students/check-student",
         this.addAuthHeader(),
       );
       return result?.data;

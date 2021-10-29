@@ -8,14 +8,14 @@ import {
 } from "../../database/entities";
 import { Connection, Repository } from "typeorm";
 import { UserInfo } from "../../types";
-import { CreateStudentDto } from "../../route-controllers/student/models/student.dto";
 import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
 import { ArchiveDbService } from "../archive-db/archive-db.service";
 import { StudentLegacyData } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { getUTCNow } from "../../utilities";
+import { getUTCNow, removeWhiteSpaces } from "../../utilities";
+import { CreateStudentInfo } from "./student.service.models";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -44,19 +44,36 @@ export class StudentService extends RecordDataModelService<Student> {
     return this.repo.findOne({ user: { id: userId } });
   }
 
+  /**
+   Creates the student checking for an existing user to be used or
+   creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param userInfo information needed to create/update the user.
+   * @param otherInfo information received to create the student.
+   * @returns created student.
+   */
   async createStudent(
     userInfo: UserInfo,
-    otherInfo: CreateStudentDto,
+    otherInfo: CreateStudentInfo,
   ): Promise<Student> {
-    const student = this.create();
-    const user = new User();
+    let user: User;
+    if (userInfo.userId) {
+      user = { id: userInfo.userId } as User;
+    } else {
+      user = new User();
+    }
+
     user.userName = userInfo.userName;
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
+
+    const student = new Student();
+    student.user = user;
     student.birthdate = new Date(userInfo.birthdate);
     student.gender = userInfo.gender;
-    student.sin = otherInfo.sinNumber;
+    student.sin = removeWhiteSpaces(otherInfo.sinNumber);
     student.contactInfo = {
       addresses: [
         {
@@ -79,12 +96,12 @@ export class StudentService extends RecordDataModelService<Student> {
       if (result && result.length > 0 && result[0].disability === "Y") {
         student.studentPDVerified = true;
       }
-    } catch (excp) {
+    } catch (error) {
       this.logger.warn(
-        `Unable to get archived information of student with exception: ${excp}`,
+        `Unable to get archived information of student with exception: ${error}`,
       );
     }
-    return await this.save(student);
+    return this.save(student);
   }
 
   async updateStudentContactByUserName(

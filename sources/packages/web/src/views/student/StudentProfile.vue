@@ -1,75 +1,75 @@
 <template>
-  <Message severity="info">
-    Please notice that the read-only information below is retrieved from your BC
-    Service Card and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
-    <a href="http://id.gov.bc.ca" target="_blank">id.gov.bc.ca</a>.
-  </Message>
   <RestrictionBanner
     v-if="hasRestriction"
     :restrictionMessage="restrictionMessage"
   />
-  <span v-if="showApplyPDButton">
-    <v-btn
-      color="primary"
-      @click="applyPDStatus()"
-      v-if="showApplyPDButton"
-      :disabled="disableBtn"
-    >
-      Apply for PD status
-      <span v-if="disableBtn">
-        &nbsp;&nbsp;
-        <ProgressSpinner style="width:30px;height:25px" strokeWidth="10"
-      /></span>
-    </v-btn>
-  </span>
-  <span v-else>
-    <Message severity="warn" :closable="false" v-if="showPendingStatus">
-      <strong>PD Status: Pending</strong>
-    </Message>
-    <Message
-      severity="success"
-      :closable="false"
-      v-if="studentAllInfo.pdVerified === true"
-    >
-      <strong>PD Status: PD Confirmed</strong>
-    </Message>
-    <Message
-      severity="error"
-      :closable="false"
-      v-if="studentAllInfo.pdVerified === false"
-    >
-      <strong>PD Status: PD Denied</strong>
-    </Message>
-  </span>
-
-  <Card class="p-m-4">
-    <template #content>
-      <formio
-        formName="studentinformation"
-        :data="initialData"
-        @changed="changed"
-        @submitted="submitted"
-      ></formio>
-    </template>
-  </Card>
+  <full-page-container>
+    <span v-if="showApplyPDButton">
+      <v-btn
+        color="primary"
+        @click="applyPDStatus()"
+        v-if="showApplyPDButton"
+        :disabled="disableBtn"
+      >
+        Apply for PD status
+        <span v-if="disableBtn">
+          &nbsp;&nbsp;
+          <ProgressSpinner style="width:30px;height:25px" strokeWidth="10"
+        /></span>
+      </v-btn>
+    </span>
+    <span v-else>
+      <Message severity="warn" :closable="false" v-if="showPendingStatus">
+        <strong>PD Status: Pending</strong>
+      </Message>
+      <Message
+        severity="success"
+        :closable="false"
+        v-if="studentAllInfo.pdVerified === true"
+      >
+        <strong>PD Status: PD Confirmed</strong>
+      </Message>
+      <Message
+        severity="error"
+        :closable="false"
+        v-if="studentAllInfo.pdVerified === false"
+      >
+        <strong>PD Status: PD Denied</strong>
+      </Message>
+    </span>
+    <formio
+      formName="studentinformation"
+      :data="initialData"
+      @submitted="submitted"
+    ></formio>
+  </full-page-container>
 </template>
 
 <script lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useToast } from "primevue/usetoast";
-import formio from "../../components/generic/formio.vue";
+import {
+  useToastMessage,
+  useAuthBCSC,
+  useFormatters,
+  useStudentStore,
+} from "@/composables";
+import formio from "@/components/generic/formio.vue";
 import { StudentService } from "../../services/StudentService";
-import { sinValidationRule } from "../../validators/SinNumberValidator";
 import {
   StudentInfo,
   StudentContact,
   StudentFormInfo,
 } from "@/types/contracts/StudentContract";
-import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+
+enum FormModes {
+  edit = "edit",
+  create = "create",
+}
 
 type StudentFormData = Pick<
   StudentInfo,
@@ -78,12 +78,11 @@ type StudentFormData = Pick<
   StudentContact & {
     givenNames: string;
     dateOfBirth: string;
-    mode: string;
-    isSinValid?: boolean;
+    mode: FormModes;
   };
 
 export default {
-  components: { formio, RestrictionBanner },
+  components: { formio, RestrictionBanner, FullPageContainer },
   props: {
     editMode: {
       type: Boolean,
@@ -94,22 +93,32 @@ export default {
   setup(props: any) {
     const store = useStore();
     const router = useRouter();
-    const toast = useToast();
+    const toast = useToastMessage();
     const showApplyPDButton = ref();
     const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
-    const hasRestriction = ref(true);
+    const { bcscParsedToken } = useAuthBCSC();
+    const { dateOnlyLongString } = useFormatters();
+    const { hasStudentAccount } = useStudentStore();
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
+
     const getStudentInfo = async () => {
-      studentAllInfo.value = await StudentService.shared.getStudentInfo();
+      if (hasStudentAccount) {
+        // Avoid calling the API to get the student information if the
+        // account is not created yet.
+        studentAllInfo.value = await StudentService.shared.getStudentInfo();
+      }
     };
+
     const showPendingStatus = computed(
       () =>
         studentAllInfo.value.pdSentDate &&
         studentAllInfo.value.pdUpdatedDate === null &&
         studentAllInfo.value.pdVerified === null,
     );
+
     const appliedPDButton = () => {
       showApplyPDButton.value = false;
       if (
@@ -120,84 +129,39 @@ export default {
         showApplyPDButton.value = true;
       }
     };
+
     const applyPDStatus = async () => {
       disableBtn.value = true;
       try {
         await StudentService.shared.applyForPDStatus();
-        toast.add({
-          severity: "success",
-          summary: `Applied for PD Status!`,
-          detail: " Successfully!",
-          life: 5000,
-        });
+        toast.success("Applied for PD Status!", "Successfully!");
       } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail:
-            "An error happened during the apply PD process. Please try after sometime.",
-          life: 5000,
-        });
+        toast.error(
+          "Unexpected error",
+          "An error happened during the apply PD process. Please try after sometime.",
+        );
       }
       await getStudentInfo();
       appliedPDButton();
       disableBtn.value = false;
     };
-    const changed = (form: any, event: any) => {
-      if (
-        event.changed &&
-        event.changed.component.key === "sin" &&
-        event.changed.value
-      ) {
-        const value = event.changed.value;
-        const isValidSin = sinValidationRule(value);
-        const newSubmissionData: StudentFormData = {
-          ...event.data,
-          isSinValid: isValidSin,
-        };
 
-        form.submission = {
-          data: newSubmissionData,
-        };
-      }
-    };
-
-    const submitted = async (args: StudentContact & { sin?: string }) => {
-      let redirectHome = true;
-      console.log(`Submission: \n ${JSON.stringify(args, null, 2)}`);
-      if (props.editMode) {
-        await StudentService.shared.updateStudent(args);
-        toast.add({
-          severity: "success",
-          summary: "Student Updated",
-          detail: "Student contact information updated!",
-          life: 3000,
-        });
-      } else {
-        const result = await StudentService.shared.createStudent({
-          ...args,
-          sinNumber: args.sin || "",
-        });
-        if (result === true) {
-          toast.add({
-            severity: "success",
-            summary: "Student created",
-            detail: "Student was successfully created!",
-            life: 3000,
-          });
+    const submitted = async (args: StudentContact & { sinNumber?: string }) => {
+      try {
+        if (props.editMode) {
+          await StudentService.shared.updateStudent(args);
+          toast.success(
+            "Student Updated",
+            "Student contact information updated!",
+          );
         } else {
-          redirectHome = false;
-          toast.add({
-            severity: "error",
-            summary: "Error",
-            detail: `Error while creating student: ${result}`,
-            life: 3000,
-          });
+          await StudentService.shared.createStudent(args);
+          await store.dispatch("student/setHasStudentAccount", true);
+          toast.success("Student created", "Student was successfully created!");
         }
-      }
-
-      if (redirectHome) {
         router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
+      } catch {
+        toast.error("Error", "Error while saving student");
       }
     };
 
@@ -211,26 +175,27 @@ export default {
           ...studentAllInfo.value,
           ...studentAllInfo.value.contact,
           givenNames: studentAllInfo.value.firstName,
-          dateOfBirth: studentAllInfo.value.birthDateFormatted2,
-          mode: "edit",
+          dateOfBirth: dateOnlyLongString(studentAllInfo.value.dateOfBirth),
+          mode: FormModes.edit,
         };
         initialData.value = data;
       } else {
-        const profile = store.state.student.profile;
-        const obj: StudentFormData = {
-          ...profile,
-          firstName: profile.givenNames,
-          dateOfBirth: profile.birthdate,
-          mode: "create",
+        const data = {} as StudentFormData;
+        initialData.value = {
+          ...data,
+          firstName: bcscParsedToken.givenNames,
+          lastName: bcscParsedToken.lastName,
+          email: bcscParsedToken.email,
+          gender: bcscParsedToken.gender,
+          dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
+          mode: FormModes.create,
         };
-        initialData.value = obj;
       }
       await getStudentInfo();
       appliedPDButton();
     });
 
     return {
-      changed,
       submitted,
       initialData,
       applyPDStatus,
