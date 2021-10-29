@@ -131,7 +131,7 @@ export default {
     const myApplications = ref([] as StudentApplication[]);
     const programYear = ref({} as ProgramYearOfApplicationDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
 
     const getApplicationStatusClass = (status: string) => {

@@ -19,7 +19,7 @@ export default {
   setup() {
     const store = useStore();
     const user = computed(() => store.state.student.profile);
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     onMounted(async () => {
       const studentRestriction = await StudentService.shared.getStudentRestriction();

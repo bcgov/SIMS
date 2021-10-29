@@ -99,7 +99,7 @@ export default {
     const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const getStudentInfo = async () => {
       studentAllInfo.value = await StudentService.shared.getStudentInfo();
