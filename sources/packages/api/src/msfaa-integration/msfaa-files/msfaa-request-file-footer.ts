@@ -1,8 +1,8 @@
-import { SPACE_FILLER } from "src/cra-integration/cra-integration.models";
 import { StringBuilder } from "../../utilities/string-builder";
 import {
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
+  SPACE_FILLER,
   TransactionCodes,
 } from "../models/msfaa-integration.model";
 
