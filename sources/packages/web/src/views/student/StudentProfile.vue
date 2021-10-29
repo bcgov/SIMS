@@ -107,7 +107,7 @@ export default {
     const getStudentInfo = async () => {
       if (hasStudentAccount) {
         // Avoid calling the API to get the student information if the
-        // account is not creaed yet.
+        // account is not created yet.
         studentAllInfo.value = await StudentService.shared.getStudentInfo();
       }
     };

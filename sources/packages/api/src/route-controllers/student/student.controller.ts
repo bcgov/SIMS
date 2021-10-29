@@ -256,7 +256,10 @@ export class StudentController extends BaseController {
       );
     }
 
-    await this.studentService.createStudent(userToken, payload);
+    await this.studentService.createStudent(userToken, {
+      ...payload,
+      sinNumber: payload.sinNumber,
+    });
   }
 
   @Patch("/sync")
