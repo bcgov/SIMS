@@ -9,11 +9,9 @@ import {
 } from "../models/msfaa-integration.model";
 
 /**
- * Header of a CRA request/response file.
- * Please note that the numbers below (e.g. repeatAppend(SPACE_FILLER, 99))
- * represents the position of the information in a fixed text file format.
+ * Header of a MSFAA request file.
  * The documentation about it is available on the document
- * 'Income Verification Data Exchange Technical Guide BC'.
+ * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class MSFAAFileHeader implements MSFAARequestFileLine {
   transactionCode: TransactionCodes;

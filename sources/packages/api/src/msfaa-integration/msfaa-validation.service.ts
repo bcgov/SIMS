@@ -121,7 +121,7 @@ export class MSFAAValidationService {
    * @param pendingMSFAARecords referenced application
    * student, user and institutionlocation information.
    * @param offeringIntensity offeringintensity of the record.
-   * @returns CRA record for the student.
+   * @returns MSFAA record for the student.
    */
   private createMSFAARecord(
     pendingMSFAARecords: MSFAANumber,

@@ -8,11 +8,9 @@ import {
 } from "../models/msfaa-integration.model";
 
 /**
- * Record of a CRA IV(income verification) request file (0020).
- * Please note that the numbers below (e.g. repeatAppend(SPACE_FILLER, 4))
- * represents the position of the information in a fixed text file format.
+ * Record of a MSFAA request file.
  * The documentation about it is available on the document
- * 'Income Verification Data Exchange Technical Guide BC'.
+ * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class MSFAAFileDetail implements MSFAARequestFileLine {
   transactionCode: TransactionCodes;
