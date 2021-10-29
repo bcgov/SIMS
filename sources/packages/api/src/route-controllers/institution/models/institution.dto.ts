@@ -4,6 +4,9 @@ import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-ac
 import { Institution } from "../../../database/entities";
 
 export class CreateInstitutionDto {
+  @IsNotEmpty()
+  userEmail: string;
+
   @IsOptional()
   operatingName: string;
 

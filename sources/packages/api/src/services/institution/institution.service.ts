@@ -166,7 +166,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     user.userName = userInfo.userName;
     user.firstName = account.user.firstname;
     user.lastName = account.user.surname;
-    user.email = createInstitutionDto.primaryEmail;
+    user.email = createInstitutionDto.userEmail;
 
     institution.guid = account.institution.guid;
     institution.legalOperatingName = account.institution.legalName;

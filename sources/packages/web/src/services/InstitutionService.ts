@@ -56,36 +56,6 @@ export class InstitutionService {
     return [];
   }
 
-  public async createInstitution(institutionProfile: InstitutionProfileState) {
-    const institutionDto: InstitutionDto = {
-      operatingName: institutionProfile.operatingName,
-      primaryPhone: institutionProfile.primaryPhoneNumber,
-      primaryEmail: institutionProfile.primaryEmail,
-      website: institutionProfile.institutionWebsite,
-      regulatingBody: institutionProfile.regulatingBody,
-      establishedDate: institutionProfile.establishedDate,
-      // Primary Contact
-      primaryContactFirstName: institutionProfile.primaryContact.firstName,
-      primaryContactLastName: institutionProfile.primaryContact.lastName,
-      primaryContactEmail: institutionProfile.primaryContact.email,
-      primaryContactPhone: institutionProfile.primaryContact.phoneNumber,
-      // Legal Authority Contact
-      legalAuthorityFirstName: institutionProfile.legalContact.firstName,
-      legalAuthorityLastName: institutionProfile.legalContact.lastName,
-      legalAuthorityEmail: institutionProfile.legalContact.email,
-      legalAuthorityPhone: institutionProfile.legalContact.phoneNumber,
-      // Primary address
-      addressLine1: institutionProfile.primaryAddress.address1,
-      addressLine2: institutionProfile.primaryAddress.address2,
-      city: institutionProfile.primaryAddress.city,
-      provinceState: institutionProfile.primaryAddress.provinceState,
-      country: institutionProfile.primaryAddress.coutry,
-      postalCode: institutionProfile.primaryAddress.postalCode,
-      institutionType: institutionProfile.institutionType,
-    };
-    await ApiClient.Institution.createInstitution(institutionDto);
-  }
-
   public async createInstitutionV2(data: InstitutionDto) {
     await ApiClient.Institution.createInstitution(data);
   }
