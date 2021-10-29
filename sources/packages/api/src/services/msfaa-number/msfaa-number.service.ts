@@ -115,7 +115,6 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "msfaaNumber.id",
         "students.id",
         "referenceApplication.id",
-        "institutionLocation.id",
         "msfaaNumber.msfaaNumber",
         "students.sin",
         "institutionLocation.institutionCode",
