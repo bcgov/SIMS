@@ -1,23 +1,31 @@
 import { Injectable } from "@nestjs/common";
 import dayjs from "dayjs";
-import * as Client from "ssh2-sftp-client";
 import { InjectLogger } from "src/common";
-import { DATE_FORMAT } from "src/msfaa-integration/models/msfaa-integration.model";
 import { OfferingIntensity } from "src/database/entities";
 import { LoggerService } from "src/logger/logger.service";
+import { DATE_FORMAT } from "src/msfaa-integration/models/msfaa-integration.model";
 import {
   ConfigService,
   SequenceControlService,
   SshService,
 } from "src/services";
 import { MSFAAIntegrationConfig, SFTPConfig } from "src/types";
-import { getUTCNow } from "src/utilities";
+import {
+  getGenderCode,
+  getMaritalStatusCode,
+  getOfferingIntensityCode,
+  getUTCNow,
+} from "src/utilities";
+import * as Client from "ssh2-sftp-client";
 import {
   MSFAARecord,
   MSFAARequestFileLine,
   MSFAAUploadResult,
   TransactionCodes,
 } from "./models/msfaa-integration.model";
+import { MSFAAFileDetail } from "./msfaa-files/msfaa-request-file-detail";
+import { MSFAAFileFooter } from "./msfaa-files/msfaa-request-file-footer";
+import { MSFAAFileHeader } from "./msfaa-files/msfaa-request-file-header";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -36,41 +44,68 @@ export class MSFAAIntegrationService {
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
+  /**
+   * Create the MSFAA validation content, by populating the
+   * Header, Detail and trailer records.
+   * @param msfaaRecords - MSFAA, Student, User and application.
+   * objects data.
+   * @param fileSequence - Unique file sequence.
+   * @param totalSINHash - Sum hash total of the Student's SIN.
+   * @returns Complete MSFAAFileLines appending the header, footer
+   * and trailer as an array.
+   */
+
   createMSFAAValidationContent(
     msfaaRecords: MSFAARecord[],
     fileSequence: number,
+    totalSINHash: number,
   ): MSFAARequestFileLine[] {
     const processDate = new Date();
-    const craFileLines: MSFAARequestFileLine[] = [];
-    // Header
-    const header = new CRAFileHeader();
-    header.transactionCode = TransactionCodes.MSFAARequestHeader;
-    header.processDate = processDate;
-    header.provinceCode = this.msfaaConfig.provinceCode;
-    header.sequence = fileSequence;
-    craFileLines.push(header);
-    // Records
+    const msfaaFileLines: MSFAARequestFileLine[] = [];
+    // Header record
+    const msfaaHeader = new MSFAAFileHeader();
+    msfaaHeader.transactionCode = TransactionCodes.MSFAARequestHeader;
+    msfaaHeader.processDate = processDate;
+    msfaaHeader.provinceCode = this.msfaaConfig.provinceCode;
+    msfaaHeader.sequence = fileSequence;
+    msfaaFileLines.push(msfaaHeader);
+    // Detail records
     const fileRecords = msfaaRecords.map((msfaaRecord) => {
-      const craRecord = new CRAFileIVRequestRecord();
-      craRecord.transactionCode = TransactionCodes.MSFAARequestDetail;
-      craRecord.sin = msfaaRecord.sin;
-      craRecord.individualSurname = msfaaRecord.surname;
-      craRecord.individualGivenName = msfaaRecord.givenName;
-      craRecord.individualBirthDate = msfaaRecord.birthDate;
-      craRecord.taxYear = msfaaRecord.taxYear;
-      craRecord.freeProjectArea = msfaaRecord.freeProjectArea;
-      return craRecord;
+      const msfaaDetail = new MSFAAFileDetail();
+      msfaaDetail.transactionCode = TransactionCodes.MSFAARequestDetail;
+      msfaaHeader.processDate = processDate;
+      msfaaDetail.msfaaNumber = msfaaRecord.msfaaNumber;
+      msfaaDetail.sin = msfaaRecord.sin;
+      msfaaDetail.institutionCode = msfaaRecord.institutionCode;
+      msfaaDetail.birthDate = msfaaRecord.birthDate;
+      msfaaDetail.surname = msfaaRecord.surname;
+      msfaaDetail.givenName = msfaaRecord.givenName;
+      msfaaDetail.genderCode = getGenderCode(msfaaRecord.gender);
+      msfaaDetail.maritalStatusCode = getMaritalStatusCode(
+        msfaaRecord.maritalStatus,
+      );
+      msfaaDetail.addressLine1 = msfaaRecord.addressLine1;
+      msfaaDetail.addressLine2 = msfaaRecord.addressLine2;
+      msfaaDetail.city = msfaaRecord.city;
+      msfaaDetail.province = msfaaRecord.province;
+      msfaaDetail.postalCode = msfaaRecord.postalCode;
+      msfaaDetail.country = msfaaRecord.country;
+      msfaaDetail.phone = msfaaRecord.phone;
+      msfaaDetail.email = msfaaRecord.email;
+      msfaaDetail.offeringIntensityCode = getOfferingIntensityCode(
+        msfaaRecord.offeringIntensity,
+      );
+      return msfaaDetail;
     });
-    craFileLines.push(...fileRecords);
-    // Footer
-    const footer = new CRAFileFooter();
-    footer.transactionCode = TransactionCodes.MSFAARequestTrailer;
-    footer.processDate = processDate;
-    footer.sequence = fileSequence;
-    footer.recordCount = msfaaRecords.length + 2; // Must be the number of records + header + footer.
-    craFileLines.push(footer);
+    msfaaFileLines.push(...fileRecords);
+    // Footer or Trailer record
+    const msfaaFooter = new MSFAAFileFooter();
+    msfaaFooter.transactionCode = TransactionCodes.MSFAARequestTrailer;
+    msfaaFooter.totalSINHash = totalSINHash;
+    msfaaFooter.recordCount = msfaaRecords.length + 2; // Must be the number of records + header + footer.
+    msfaaFileLines.push(msfaaFooter);
 
-    return craFileLines;
+    return msfaaFileLines;
   }
 
   /**

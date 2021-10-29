@@ -55,16 +55,23 @@ export class MSFAAValidationService {
       (pendingMSFAAValidation) => pendingMSFAAValidation.id,
     );
 
+    const totalSINHash = pendingMSFAAValidations.reduce(
+      (accumulator, pendingMSFAAValidation) =>
+        accumulator + parseInt(pendingMSFAAValidation.student.sin),
+      0,
+    );
+
     //Create records and create file
     let uploadResult: MSFAAUploadResult;
     await this.sequenceService.consumeNextSequence(
       `MSFAA_${offeringIntensity}_SENT_FILE`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log("Creating income verification content...");
+          this.logger.log("Creating MSFAA validation content...");
           const fileContent = this.msfaaService.createMSFAAValidationContent(
             msfaaRecords,
             nextSequenceNumber,
+            totalSINHash,
           );
           const fileInfo =
             this.msfaaService.createRequestFileName(offeringIntensity);
