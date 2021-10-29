@@ -9,7 +9,7 @@
     <ConfirmExtendTime
       ref="extendTimeModal"
       :startTimer="startTimer"
-      :clientIdType="clientIdType"
+      :clientIdType="clientType"
     />
   </div>
 </template>
