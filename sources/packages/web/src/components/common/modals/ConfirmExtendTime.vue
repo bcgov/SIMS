@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useAuth } from "@/composables";
+import { useModalDialog, useAuth, useClientLoader } from "@/composables";
 import { COUNT_DOWN_TIMER_FOR_LOGOUT } from "@/constants/system-constants";
 import { ref, onUnmounted, watch } from "vue";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
@@ -52,24 +52,10 @@ export default {
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const interval = ref();
     const { executeLogout } = useAuth();
-
-    const getClientType = () => {
-      switch (props.clientIdType) {
-        case ClientIdType.Student:
-          return ClientIdType.Student;
-        case ClientIdType.Institution:
-          return ClientIdType.Institution;
-        case ClientIdType.SupportingUsers:
-          return ClientIdType.SupportingUsers;
-        case ClientIdType.AEST:
-          return ClientIdType.AEST;
-        default:
-          return ClientIdType.Student;
-      }
-    };
+    const { getClientType } = useClientLoader();
 
     const logoff = async () => {
-      await executeLogout(getClientType());
+      await executeLogout(getClientType(props.clientIdType));
     };
 
     const dialogClosed = () => {

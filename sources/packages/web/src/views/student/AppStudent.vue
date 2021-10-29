@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="v-main body-background"
-    @mouseover="setLastActivityTime"
-    @click="setLastActivityTime"
-    @keyup="setLastActivityTime"
-  >
+  <Root :clientIdType="ClientIdType.Student">
     <!-- Adding overflow:visible to allow the use of the Prime Vue
   floating menu while Veutify component is not ready.  -->
     <v-app-bar dense flat app style="overflow:visible">
@@ -52,66 +47,29 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-    <ConfirmExtendTime
-      ref="extendTimeModal"
-      :startTimer="startTimer"
-      :clientIdType="ClientIdType.Student"
-    />
-  </div>
+  </Root>
 </template>
 
 <script lang="ts">
 import { useRouter, useRoute } from "vue-router";
-import { onMounted, ref, onUnmounted } from "vue";
+import { ref, onMounted } from "vue";
 import { UserService } from "@/services/UserService";
 import { StudentService } from "@/services/StudentService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AppRoutes, ClientIdType } from "@/types";
-import { useAuth, ModalDialog } from "@/composables";
+import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
-import { MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT } from "@/constants/system-constants";
-import ConfirmExtendTime from "@/components/common/modals/ConfirmExtendTime.vue";
+import Root from "@/components/common/Root.vue";
 
 export default {
-  components: { BCLogo, ConfirmExtendTime },
+  components: { BCLogo, Root },
   setup() {
-    const { executeLogout, executeRenewTokenIfExpired } = useAuth();
+    const { executeLogout } = useAuth();
     const router = useRouter();
     const route = useRoute();
     const userOptionsMenuRef = ref();
     const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
-    const lastActivityLogin = ref(new Date() as Date);
-    const interval = ref();
-    const extendTimeModal = ref({} as ModalDialog<boolean>);
-    const startTimer = ref(false);
-
-    const startIdleCheckerTimer = () => {
-      if (!route.path.includes(AppRoutes.Login)) {
-        /* eslint-disable */
-        interval.value = setInterval(checkIdle, 30000);
-        /*eslint-enable */
-      }
-    };
-
-    const confirmExtendTimeModal = async () => {
-      if (await extendTimeModal.value.showModal()) {
-        lastActivityLogin.value = new Date();
-        startTimer.value = false;
-        clearInterval(interval.value);
-        startIdleCheckerTimer();
-        executeRenewTokenIfExpired();
-      }
-    };
-
-    const checkIdle = () => {
-      const diff = new Date().getTime() - lastActivityLogin.value.getTime();
-      const idleTimeInMintutes = diff / 60000;
-      if (idleTimeInMintutes >= MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT) {
-        confirmExtendTimeModal();
-        startTimer.value = true;
-      }
-    };
 
     onMounted(async () => {
       // Get path
@@ -132,18 +90,7 @@ export default {
           name: StudentRoutesConst.STUDENT_PROFILE,
         });
       }
-      startIdleCheckerTimer();
     });
-
-    onUnmounted(() => {
-      clearInterval(interval.value);
-    });
-
-    const setLastActivityTime = () => {
-      if (!route.path.includes(AppRoutes.Login)) {
-        lastActivityLogin.value = new Date();
-      }
-    };
 
     const logoClick = () => {
       const routeName = isAuthenticated.value
@@ -184,9 +131,6 @@ export default {
       StudentRoutesConst,
       userOptionsMenuRef,
       togleUserMenu,
-      setLastActivityTime,
-      extendTimeModal,
-      startTimer,
       ClientIdType,
     };
   },

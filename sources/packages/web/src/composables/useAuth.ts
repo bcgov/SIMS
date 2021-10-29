@@ -28,5 +28,11 @@ export function useAuth() {
     AuthService.shared.renewTokenIfExpired();
   };
 
-  return { isAuthenticated, parsedToken, executeLogin, executeLogout, executeRenewTokenIfExpired };
+  return {
+    isAuthenticated,
+    parsedToken,
+    executeLogin,
+    executeLogout,
+    executeRenewTokenIfExpired,
+  };
 }

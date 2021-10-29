@@ -7,3 +7,4 @@ export * from "./useFormatters";
 export * from "./useToastMessage";
 export * from "./useModalDialog";
 export * from "./useAuthBCSC";
+export * from "./useClientLoader";
