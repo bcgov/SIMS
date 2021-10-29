@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import dayjs from "dayjs";
 import { InjectLogger } from "../common";
 import { OfferingIntensity } from "../database/entities";
 import { LoggerService } from "../logger/logger.service";
@@ -10,7 +9,6 @@ import {
   getGenderCode,
   getMaritalStatusCode,
   getOfferingIntensityCode,
-  getUTCNow,
 } from "../utilities";
 import * as Client from "ssh2-sftp-client";
 import {
@@ -22,7 +20,7 @@ import {
 import { MSFAAFileDetail } from "./msfaa-files/msfaa-request-file-detail";
 import { MSFAAFileFooter } from "./msfaa-files/msfaa-request-file-footer";
 import { MSFAAFileHeader } from "./msfaa-files/msfaa-request-file-header";
-
+import { StringBuilder } from "../utilities/string-builder";
 /**
  * Manages the creation of the content files that needs to be sent
  * to MSFAA validation. These files are created based
@@ -31,11 +29,14 @@ import { MSFAAFileHeader } from "./msfaa-files/msfaa-request-file-header";
  */
 @Injectable()
 export class MSFAAIntegrationService {
-  private readonly sequenceService: SequenceControlService;
   private readonly msfaaConfig: MSFAAIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
-  constructor(config: ConfigService, private readonly sshService: SshService) {
+  constructor(
+    config: ConfigService,
+    private readonly sequenceService: SequenceControlService,
+    private readonly sshService: SshService,
+  ) {
     this.msfaaConfig = config.getConfig().MSFAAIntegration;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
@@ -81,7 +82,9 @@ export class MSFAAIntegrationService {
         msfaaRecord.maritalStatus,
       );
       msfaaDetail.addressLine1 = msfaaRecord.addressLine1;
-      msfaaDetail.addressLine2 = msfaaRecord.addressLine2;
+      msfaaDetail.addressLine2 = msfaaRecord.addressLine2
+        ? msfaaRecord.addressLine2
+        : "";
       msfaaDetail.city = msfaaRecord.city;
       msfaaDetail.province = msfaaRecord.province;
       msfaaDetail.postalCode = msfaaRecord.postalCode;
@@ -147,23 +150,27 @@ export class MSFAAIntegrationService {
    *  where MSFAA is requested.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  createRequestFileName(offeringIntensity: string): {
+  async createRequestFileName(offeringIntensity: string): Promise<{
     fileName: string;
     filePath: string;
-  } {
-    let fileName = `PP${this.msfaaConfig.provinceCode}.EDU.MSFA.SENT.`;
+  }> {
+    const fileNameArray = new StringBuilder();
+    fileNameArray.append(`PP${this.msfaaConfig.provinceCode}.EDU.MSFA.SENT.`);
     let fileNameSequence: number;
     if (OfferingIntensity.partTime === offeringIntensity) {
-      fileName += "PT.";
+      fileNameArray.append("PT.");
     }
-    fileName += dayjs(getUTCNow()).format(DATE_FORMAT).toString();
-    this.sequenceService.consumeNextSequence(
-      fileName,
+    fileNameArray.appendDate(new Date(), DATE_FORMAT);
+    await this.sequenceService.consumeNextSequence(
+      fileNameArray.toString(),
       async (nextSequenceNumber: number) => {
         fileNameSequence = nextSequenceNumber;
       },
     );
-    fileName += `.${fileNameSequence}.DAT`;
+    fileNameArray.append(".");
+    fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");
+    fileNameArray.append(".DAT");
+    const fileName = fileNameArray.toString();
     const filePath = `${this.msfaaConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,

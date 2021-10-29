@@ -49,7 +49,6 @@ export class MSFAAValidationService {
     this.logger.log(
       `Found ${pendingMSFAAValidations.length} MSFAA number(s) for ${offeringIntensity} application that needs validation.`,
     );
-    console.log(pendingMSFAAValidations);
     const msfaaRecords = pendingMSFAAValidations.map(
       (pendingMSFAAValidation) => {
         return this.createMSFAARecord(
@@ -85,12 +84,11 @@ export class MSFAAValidationService {
             nextSequenceNumber,
             totalSINHash,
           );
-          console.log(fileContent);
           // Create the request filename with the file path for the MSFAA Request
           // sent File.
-          const fileInfo =
-            this.msfaaService.createRequestFileName(offeringIntensity);
-          console.log(fileInfo);
+          const fileInfo = await this.msfaaService.createRequestFileName(
+            offeringIntensity,
+          );
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(
             fileContent,

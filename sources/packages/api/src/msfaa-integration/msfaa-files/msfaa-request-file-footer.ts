@@ -17,12 +17,12 @@ export class MSFAAFileFooter implements MSFAARequestFileLine {
   recordCount: number;
 
   public getFixedFormat(): string {
-    const header = new StringBuilder();
-    header.append(this.transactionCode);
-    header.appendWithEndFiller(MSFAA_SENT_TITLE, 40, SPACE_FILLER);
-    header.appendWithStartFiller(this.recordCount.toString(), 9, "0");
-    header.appendWithStartFiller(this.totalSINHash.toString(), 15, "0");
-    header.repeatAppend(SPACE_FILLER, 533); //Trailing spaces
-    return header.toString();
+    const footer = new StringBuilder();
+    footer.append(this.transactionCode);
+    footer.appendWithEndFiller(MSFAA_SENT_TITLE, 40, SPACE_FILLER);
+    footer.appendWithStartFiller(this.recordCount.toString(), 9, "0");
+    footer.appendWithStartFiller(this.totalSINHash.toString(), 15, "0");
+    footer.repeatAppend(SPACE_FILLER, 533); //Trailing spaces
+    return footer.toString();
   }
 }
