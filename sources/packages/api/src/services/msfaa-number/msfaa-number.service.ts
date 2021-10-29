@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Brackets, Connection } from "typeorm";
+import { Brackets, Connection, In, Repository } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { MSFAANumber, Student, Application } from "../../database/entities";
 import * as dayjs from "dayjs";
@@ -136,5 +136,31 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         offeringIntensity,
       })
       .getMany();
+  }
+
+  /**
+   * Once the MSFAA request file is created, updates the
+   * date that the file was uploaded.
+   * @param msfaavalidationIds records that are part of the generated
+   * file that must have the file sent name and date updated.
+   * @param dateSent date that the file was uploaded.
+   * @param [externalRepo] when provided, it is used instead of the
+   * local repository (this.repo). Useful when the command must be executed,
+   * for instance, as part of an existing transaction manage externally to this
+   * service.
+   * @returns the result of the update.
+   */
+  async updateRecordsInSentFile(
+    msfaavalidationIds: number[],
+    dateRequested: Date,
+    externalRepo?: Repository<MSFAANumber>,
+  ) {
+    if (!dateRequested) {
+      throw new Error(
+        "Date sent field is not provided to update the MSFAA records.",
+      );
+    }
+    const repository = externalRepo ?? this.repo;
+    return repository.update({ id: In(msfaavalidationIds) }, { dateRequested });
   }
 }

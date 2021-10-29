@@ -52,9 +52,16 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
+import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.module";
 // Test
 @Module({
-  imports: [LoggerModule, DatabaseModule, AuthModule, CraIntegrationModule],
+  imports: [
+    LoggerModule,
+    DatabaseModule,
+    AuthModule,
+    CraIntegrationModule,
+    MSFAAIntegrationModule,
+  ],
   controllers: [
     AppController,
     UserController,
@@ -103,7 +110,6 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
     COEDeniedReasonService,
     CRAIncomeVerificationService,
     SupportingUserService,
-    MSFAAValidationService,
   ],
 })
 export class AppModule {}

@@ -70,18 +70,22 @@ export class MSFAAValidationService {
       0,
     );
 
-    //Create records and create file
+    //Create records and create the unique file sequence number
     let uploadResult: MSFAAUploadResult;
     await this.sequenceService.consumeNextSequence(
       `MSFAA_${offeringIntensity}_SENT_FILE`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log("Creating MSFAA validation content...");
+          // Create the Validation content for the MSFAA file by populating the
+          // header, footer and trailer content.
           const fileContent = this.msfaaService.createMSFAAValidationContent(
             msfaaRecords,
             nextSequenceNumber,
             totalSINHash,
           );
+          // Create the request filename with the file path for the MSFAA Request
+          // sent File.
           const fileInfo =
             this.msfaaService.createRequestFileName(offeringIntensity);
           this.logger.log("Uploading content...");
