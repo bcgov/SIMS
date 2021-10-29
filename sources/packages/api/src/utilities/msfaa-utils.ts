@@ -4,11 +4,10 @@ import { OfferingIntensity } from "src/database/entities";
  * Gets the marital status code conversion for the MSFAA request file
  */
 export function getMaritalStatusCode(maritalStatus: string): string {
-  return maritalStatus === "married"
-    ? "M"
-    : maritalStatus === "single"
-    ? "S"
-    : "O";
+  if (maritalStatus === "married") {
+    return "M";
+  }
+  return maritalStatus === "single" ? "S" : "O";
 }
 
 /**
@@ -16,7 +15,10 @@ export function getMaritalStatusCode(maritalStatus: string): string {
  */
 
 export function getGenderCode(gender: string): string {
-  return gender === "male" ? "M" : gender === "female" ? "F" : "O";
+  if (gender === "male") {
+    return "M";
+  }
+  return gender === "female" ? "F" : "O";
 }
 
 /**
