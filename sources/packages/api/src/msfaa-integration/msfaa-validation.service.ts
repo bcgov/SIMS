@@ -20,9 +20,15 @@ export class MSFAAValidationService {
   ) {}
 
   /**
-   * 1. Fetches the MSFAA number records which are not sent for validation.
-   * 2.
-   * @returns Processing result log.
+   * 1. Fetches the MSFAA records which are not sent for validation.
+   * 2. Create Unique sequence for the request sent file.
+   * 3. Create the Validation content for the MSFAA file by populating the
+   *      header, footer and trailer content.
+   * 4. Create the request filename with the file path for the MSFAA Request
+   *      sent File.
+   * 5. Upload the content to the zoneB SFTP server.
+   * 6. Update the MSFAA records, that are sent in the request sent file.
+   * @returns Processing MSFAA request result.
    */
   async processMSFAAValidation(
     offeringIntensity: string,
@@ -51,10 +57,13 @@ export class MSFAAValidationService {
         );
       },
     );
+
+    //Fetches the MSFAANumber ids, for further update in the db.
     const msfaaRecordIds = pendingMSFAAValidations.map(
       (pendingMSFAAValidation) => pendingMSFAAValidation.id,
     );
 
+    //Total hash of the Student's SIN, its used in the footer content.
     const totalSINHash = pendingMSFAAValidations.reduce(
       (accumulator, pendingMSFAAValidation) =>
         accumulator + parseInt(pendingMSFAAValidation.student.sin),
@@ -85,7 +94,7 @@ export class MSFAAValidationService {
           // holds the transaction already created to manage the
           // sequence number.
           const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
-          this.msfaaNumberService.updateSentFile(
+          this.msfaaNumberService.updateRecordsInSentFile(
             msfaaRecordIds,
             getUTCNow(),
             msfaaNumberRepo,
