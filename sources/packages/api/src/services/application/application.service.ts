@@ -1361,31 +1361,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
     lastName: string,
     birthDate: Date,
   ): Promise<Application> {
-    return (
-      this.repo
-        .createQueryBuilder("application")
-        .select([
-          "application.id",
-          "application.assessmentWorkflowId",
-          "programYear.parentFormName",
-          "programYear.partnerFormName",
-          "programYear.startDate",
-          "user.userName",
-          "student.id",
-        ])
-        .innerJoin("application.student", "student")
-        .innerJoin("student.user", "user")
-        .innerJoin("application.programYear", "programYear")
-        .where("application.applicationNumber = :applicationNumber", {
-          applicationNumber,
-        })
-        // TODO: an expression index 'lower(user.lastName)' will be created.
-        .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
-        .andWhere("student.birthdate = :birthDate", { birthDate })
-        .andWhere("application.applicationStatus = :applicationStatus", {
-          applicationStatus: ApplicationStatus.inProgress,
-        })
-        .getOne()
-    );
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.assessmentWorkflowId",
+        "programYear.parentFormName",
+        "programYear.partnerFormName",
+        "programYear.startDate",
+        "user.userName",
+        "student.id",
+      ])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.programYear", "programYear")
+      .where("application.applicationNumber = :applicationNumber", {
+        applicationNumber,
+      })
+      .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
+      .andWhere("student.birthdate = :birthDate", { birthDate })
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.inProgress,
+      })
+      .getOne();
   }
 }

@@ -9,7 +9,7 @@ export interface Student {
 }
 
 export interface CreateStudent extends Student {
-  sinNumber: string;
+  sinNumber?: string;
 }
 
 export interface StudentContact {
@@ -54,7 +54,7 @@ export interface StudentInfo {
 
 export interface StudentProfile {
   phone: string;
-  sinNumber: string;
+  sinNumber?: string;
   addressLine1: string;
   addressLine2: string;
   city: string;

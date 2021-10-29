@@ -1,3 +1,4 @@
+require("../../env_setup");
 import { ConfigService } from "../services";
 import { CRAIntegrationService } from "./cra-integration.service";
 import * as faker from "faker";

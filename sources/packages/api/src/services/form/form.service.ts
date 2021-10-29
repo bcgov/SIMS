@@ -81,6 +81,12 @@ export class FormService {
 
       return { valid: true, data: submissionResponse.data };
     } catch (error) {
+      if (error.response?.data) {
+        this.logger.warn(
+          "Error while executing the Form.IO dryRun validation. Please see below the validation errors.",
+        );
+        this.logger.warn(error.response.data);
+      }
       if (error.response.status === HttpStatus.BAD_REQUEST) {
         return { valid: false };
       }
