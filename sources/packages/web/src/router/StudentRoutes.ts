@@ -181,29 +181,34 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             ClientIdType.Student,
             to.path,
           );
-          switch (status) {
-            case AuthStatus.Continue:
-              next();
-              break;
-            case AuthStatus.RequiredLogin:
-              next({
-                name: StudentRoutesConst.LOGIN,
-              });
-              break;
-            case AuthStatus.RedirectHome:
-              next({
-                name: StudentRoutesConst.STUDENT_DASHBOARD,
-              });
-              break;
-            case AuthStatus.ForbiddenUser:
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
-              break;
-            default:
-              next({
-                name: SharedRouteConst.FORBIDDEN_USER,
-              });
+          if (AuthService.shared.priorityRedirect) {
+            next(AuthService.shared.priorityRedirect);
+            AuthService.shared.priorityRedirect = undefined;
+          } else {
+            switch (status) {
+              case AuthStatus.Continue:
+                next();
+                break;
+              case AuthStatus.RequiredLogin:
+                next({
+                  name: StudentRoutesConst.LOGIN,
+                });
+                break;
+              case AuthStatus.RedirectHome:
+                next({
+                  name: StudentRoutesConst.STUDENT_DASHBOARD,
+                });
+                break;
+              case AuthStatus.ForbiddenUser:
+                next({
+                  name: SharedRouteConst.FORBIDDEN_USER,
+                });
+                break;
+              default:
+                next({
+                  name: SharedRouteConst.FORBIDDEN_USER,
+                });
+            }
           }
         })
         .catch(e => {

@@ -12034,7 +12034,7 @@
                                             "id": "e64vrxl"
                                         }
                                     ],
-                                    "id": "ecpkm9j000000000000000000000000000000000000",
+                                    "id": "ecpkm9j0000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -15975,6 +15975,95 @@
                     "defaultValue": ""
                 },
                 {
+                    "label": "<strong>How many parents do you live with?</strong>",
+                    "labelPosition": "top",
+                    "optionsLabelPosition": "right",
+                    "description": "",
+                    "tooltip": "",
+                    "customClass": "",
+                    "tabindex": "",
+                    "inline": false,
+                    "hidden": false,
+                    "hideLabel": false,
+                    "autofocus": false,
+                    "disabled": false,
+                    "tableView": false,
+                    "modalEdit": false,
+                    "values": [
+                        {
+                            "label": "1",
+                            "value": "1",
+                            "shortcut": ""
+                        },
+                        {
+                            "label": "2",
+                            "value": "2",
+                            "shortcut": ""
+                        }
+                    ],
+                    "dataType": "",
+                    "persistent": true,
+                    "protected": false,
+                    "dbIndex": false,
+                    "encrypted": false,
+                    "redrawOn": "",
+                    "clearOnHide": true,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "allowCalculateOverride": false,
+                    "validate": {
+                        "required": true,
+                        "onlyAvailableItems": true,
+                        "customMessage": "",
+                        "custom": "",
+                        "customPrivate": false,
+                        "json": "",
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "errorLabel": "",
+                    "key": "numberOfParents",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                        "show": true,
+                        "when": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber",
+                        "eq": "yes",
+                        "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                        "style": "",
+                        "page": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "type": "radio",
+                    "input": true,
+                    "placeholder": "",
+                    "prefix": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "unique": false,
+                    "refreshOn": "",
+                    "dataGridLabel": false,
+                    "widget": null,
+                    "validateOn": "change",
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "allowMultipleMasks": false,
+                    "inputType": "radio",
+                    "fieldSet": false,
+                    "id": "e7r61m9",
+                    "defaultValue": ""
+                },
+                {
                     "label": "HTML",
                     "tag": "p",
                     "className": "alert alert-info fa fa-info-circle",
@@ -16696,7 +16785,7 @@
                                             "key": "ageAtStartOfYourStudyPeriod",
                                             "type": "number",
                                             "input": true,
-                                            "id": "ea6c5bs000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "ea6c5bs00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -16776,7 +16865,7 @@
                                             "key": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod",
                                             "type": "radio",
                                             "input": true,
-                                            "id": "eqnu34000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "eqnu3400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -16856,7 +16945,7 @@
                                             "key": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability",
                                             "type": "radio",
                                             "input": true,
-                                            "id": "eajzsj000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "eajzsj00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -27217,5 +27306,5 @@
     "name": "SFAA2022-23",
     "machineName": "SFAA2022-23",
     "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2021-10-19T17:02:21.944Z"
+    "modified": "2021-10-22T01:24:23.672Z"
 }

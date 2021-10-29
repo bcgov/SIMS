@@ -1,25 +1,28 @@
 <template>
-  <v-container>
+  <full-page-container>
     <RestrictionBanner
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
     <formio formName="studentdashboard"></formio>
-  </v-container>
+  </full-page-container>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
 import { computed, onMounted, ref } from "vue";
+
 import { useStore } from "vuex";
 import { StudentService } from "@/services/StudentService";
 import formio from "@/components/generic/formio.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+
 export default {
-  components: { formio, RestrictionBanner },
+  components: { formio, FullPageContainer, RestrictionBanner },
   setup() {
     const store = useStore();
     const user = computed(() => store.state.student.profile);
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     onMounted(async () => {
       const studentRestriction = await StudentService.shared.getStudentRestriction();

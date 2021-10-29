@@ -6,7 +6,7 @@
       <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
       <v-spacer></v-spacer
       ><v-btn
-        v-if="isAuthenticated"
+        v-if="isAuthenticated && hasStudentAccount"
         text
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
@@ -14,13 +14,13 @@
         >ApplicationS</v-btn
       >
       <v-btn
-        v-if="isAuthenticated"
+        v-if="isAuthenticated && hasStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
         >Notifications</v-btn
       >
       <v-btn
-        v-if="isAuthenticated"
+        v-if="isAuthenticated && hasStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
         >Profile</v-btn
@@ -51,13 +51,11 @@
 </template>
 
 <script lang="ts">
-import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
-import { UserService } from "@/services/UserService";
-import { StudentService } from "@/services/StudentService";
+import { useRouter } from "vue-router";
+import { ref, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { AppRoutes, ClientIdType } from "@/types";
-import { useAuth } from "@/composables";
+import { ClientIdType, MenuModel } from "@/types";
+import { useAuth, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import Root from "@/components/common/Root.vue";
 
@@ -66,31 +64,9 @@ export default {
   setup() {
     const { executeLogout } = useAuth();
     const router = useRouter();
-    const route = useRoute();
     const userOptionsMenuRef = ref();
-    const userMenuItems = ref({});
     const { isAuthenticated } = useAuth();
-
-    onMounted(async () => {
-      // Get path
-      if (await UserService.shared.checkUser()) {
-        if (await UserService.shared.checkActiveUser()) {
-          await StudentService.shared.synchronizeFromUserInfo();
-          if (route.path === AppRoutes.StudentRoot) {
-            // Loading student dash board if user try to load /student path
-            router.push({
-              name: StudentRoutesConst.STUDENT_DASHBOARD,
-            });
-          }
-        }
-      } else {
-        /* User doesn't exist in SABC Database and so redirect the user to Student Profile page
-       where they can provide information and create SABC account */
-        router.push({
-          name: StudentRoutesConst.STUDENT_PROFILE,
-        });
-      }
-    });
+    const { hasStudentAccount } = useStudentStore();
 
     const logoClick = () => {
       const routeName = isAuthenticated.value
@@ -105,24 +81,30 @@ export default {
       userOptionsMenuRef.value.toggle(event);
     };
 
-    userMenuItems.value = [
-      {
-        label: "Notifications Settings",
-        icon: "pi pi-bell",
-        command: () => {
-          router.push({
-            name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
-          });
-        },
-      },
-      {
+    const userMenuItems = computed(() => {
+      const menuItems: MenuModel[] = [];
+      if (hasStudentAccount.value) {
+        menuItems.push({
+          label: "Notifications Settings",
+          icon: "pi pi-bell",
+          command: () => {
+            router.push({
+              name: StudentRoutesConst.NOTIFICATIONS_SETTINGS,
+            });
+          },
+        });
+      }
+
+      menuItems.push({
         label: "Log off",
         icon: "pi pi-power-off",
         command: async () => {
           await executeLogout(ClientIdType.Student);
         },
-      },
-    ];
+      });
+
+      return menuItems;
+    });
 
     return {
       logoClick,
@@ -132,6 +114,7 @@ export default {
       userOptionsMenuRef,
       togleUserMenu,
       ClientIdType,
+      hasStudentAccount,
     };
   },
 };
