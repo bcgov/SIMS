@@ -9,7 +9,7 @@ export interface Student {
 }
 
 export interface CreateStudent extends Student {
-  sinNumber: string;
+  sinNumber?: string;
 }
 
 export interface StudentContact {
@@ -54,7 +54,7 @@ export interface StudentInfo {
 
 export interface StudentProfile {
   phone: string;
-  sinNumber: string;
+  sinNumber?: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -76,4 +76,14 @@ export interface StudentApplication {
   applicationName: string;
   award: string;
   status: string;
+}
+
+/**
+ * DTO object which is returned by student restriction API.
+ */
+export interface StudentRestrictionStatus {
+  hasRestriction: boolean;
+  hasFederalRestriction: boolean;
+  hasProvincialRestriction: boolean;
+  restrictionMessage: string;
 }

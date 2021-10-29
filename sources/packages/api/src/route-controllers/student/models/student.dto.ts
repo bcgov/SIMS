@@ -1,4 +1,3 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;
@@ -9,40 +8,25 @@ export class GetStudentContactDto {
   postalCode: string;
 }
 
-export class CreateStudentDto {
-  @IsNotEmpty()
+/**
+ * Common data saved while creating
+ * or updating the student profile.
+ * Validations not added to DTO because
+ * they are going to be handled by the
+ * Form.IO dryRun validation.
+ */
+export interface SaveStudentDto {
   phone: string;
-  @IsNotEmpty()
-  sinNumber: string;
-  @IsNotEmpty()
   addressLine1: string;
-  @IsOptional()
   addressLine2: string;
-  @IsNotEmpty()
   city: string;
-  @IsNotEmpty()
   provinceState: string;
-  @IsNotEmpty()
   country: string;
-  @IsNotEmpty()
   postalCode: string;
-}
-
-export class UpdateStudentContactDto {
-  @IsNotEmpty()
-  phone: string;
-  @IsNotEmpty()
-  addressLine1: string;
-  @IsOptional()
-  addressLine2: string;
-  @IsNotEmpty()
-  city: string;
-  @IsNotEmpty()
-  provinceState: string;
-  @IsNotEmpty()
-  country: string;
-  @IsNotEmpty()
-  postalCode: string;
+  /**
+   * SIN is optional during update.
+   */
+  sinNumber?: string;
 }
 
 export interface FileCreateDto {
@@ -66,4 +50,15 @@ export interface SearchStudentRespDto {
   firstName: string;
   lastName: string;
   birthDate: string;
+}
+
+/**
+ * DTO Object for student restriction.
+ * This object is returned by controller.
+ */
+export interface StudentRestrictionDTO {
+  hasRestriction: boolean;
+  hasFederalRestriction: boolean;
+  hasProvincialRestriction: boolean;
+  restrictionMessage: string;
 }

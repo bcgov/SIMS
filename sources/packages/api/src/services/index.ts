@@ -30,3 +30,5 @@ export * from "./institution-type/institution-type.service";
 export * from "./msfaa-number/msfaa-number.service";
 export * from "./coe-denied-reason/coe-denied-reason.service";
 export * from "./supporting-user/supporting-user.service";
+export * from "./restriction/restriction.service";
+export * from "./restriction/student-restriction.service";

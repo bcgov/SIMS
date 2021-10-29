@@ -28,6 +28,7 @@ import {
   COEDeniedReasonService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  StudentRestrictionService,
 } from "./services";
 import {
   UserController,
@@ -110,6 +111,7 @@ import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.mo
     COEDeniedReasonService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    StudentRestrictionService,
   ],
 })
 export class AppModule {}

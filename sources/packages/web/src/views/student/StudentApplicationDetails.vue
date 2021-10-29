@@ -1,5 +1,9 @@
 <template>
   <div class="p-m-4">
+    <RestrictionBanner
+      v-if="hasRestriction"
+      :restrictionMessage="restrictionMessage"
+    />
     <h5 class="text-muted">
       <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
@@ -55,9 +59,7 @@
         v-if="applicationDetails?.applicationStatus"
         :applicationDetails="applicationDetails"
       />
-      <ConfirmEditApplication
-        ref="editApplicationModal"
-      />
+      <ConfirmEditApplication ref="editApplicationModal" />
     </v-container>
   </div>
 </template>
@@ -67,6 +69,7 @@ import Menu from "primevue/menu";
 import { onMounted, ref, watch, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog } from "@/composables";
@@ -75,6 +78,7 @@ import {
   GetApplicationDataDto,
   ApplicationStatus,
 } from "@/types";
+import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 
@@ -95,6 +99,7 @@ export default {
     CancelApplication,
     ApplicationDetails,
     ConfirmEditApplication,
+    RestrictionBanner,
   },
   props: {
     id: {
@@ -111,6 +116,8 @@ export default {
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const hasRestriction = ref(false);
+    const restrictionMessage = ref("");
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
@@ -165,7 +172,8 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
+          ApplicationStatus.completed &&
+        !hasRestriction.value
       ) {
         items.value.push(
           {
@@ -189,7 +197,8 @@ export default {
         applicationDetails.value.applicationStatus !==
           ApplicationStatus.cancelled &&
         applicationDetails.value.applicationStatus !==
-          ApplicationStatus.completed
+          ApplicationStatus.completed &&
+        !hasRestriction.value
       ) {
         items.value.push(
           { separator: true },
@@ -217,6 +226,9 @@ export default {
       },
     );
     onMounted(async () => {
+      const studentRestriction = await StudentService.shared.getStudentRestriction();
+      hasRestriction.value = studentRestriction.hasRestriction;
+      restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);
     });
     const toggle = (event: any) => {
@@ -238,6 +250,8 @@ export default {
       editApplicationModal,
       editApplicaion,
       viewApplicaion,
+      hasRestriction,
+      restrictionMessage,
     };
   },
 };

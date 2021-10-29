@@ -11,3 +11,4 @@ export * from "./credential-type-utils";
 export * from "./upload-utils";
 export * from "./program-year-utils";
 export * from "./msfaa-utils";
+export * from "./string-utils";

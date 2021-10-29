@@ -119,8 +119,8 @@ export class CRAPersonalVerificationService {
       `Found ${incomeVerifications.length} income verification(s) to be executed.`,
     );
     const craRecords = incomeVerifications.map((incomeVerification) => {
-      const craRecord = this.createCRARecordFromStudent(
-        incomeVerification.application.student,
+      const craRecord = this.createCRARecordFromIncomeVerification(
+        incomeVerification,
         this.getIncomeVerificationTag(incomeVerification.id),
       );
       craRecord.taxYear = incomeVerification.taxYear;
@@ -175,7 +175,7 @@ export class CRAPersonalVerificationService {
 
   /**
    * Use the information on the Student and User objects
-   * to generate the record to be send to CRA.
+   * to generate the record to be sent to CRA.
    * @param student student and user information.
    * @param freeProjectArea free text to be send together
    * with each record that could be used for process the
@@ -194,6 +194,42 @@ export class CRAPersonalVerificationService {
       birthDate: student.birthdate,
       freeProjectArea,
     } as CRAPersonRecord;
+  }
+
+  /**
+   * Use the information on the CRA income verification,
+   * student, supporting user and users to generate
+   * the record to be sent to CRA.
+   * @param craIncomeVerification income verification record
+   * loaded with the student from the application, the supporting
+   * user, if present, and the respective users.
+   * @param freeProjectArea free text to be send together
+   * with each record that could be used for process the
+   * response file, where this information will also be
+   * send back.
+   * @returns CRA record for the student.
+   */
+  private createCRARecordFromIncomeVerification(
+    craIncomeVerification: CRAIncomeVerification,
+    freeProjectArea: string,
+  ): CRAPersonRecord {
+    // If the supporting user has data return the information
+    // from the supporting user.
+    if (craIncomeVerification.supportingUser) {
+      return {
+        sin: craIncomeVerification.supportingUser.sin,
+        surname: craIncomeVerification.supportingUser.user.lastName,
+        givenName: craIncomeVerification.supportingUser.user.firstName,
+        birthDate: craIncomeVerification.supportingUser.birthDate,
+        freeProjectArea,
+      } as CRAPersonRecord;
+    }
+    // If the supporting user is empty, return the data from the student
+    // associated with the application.
+    return this.createCRARecordFromStudent(
+      craIncomeVerification.application.student,
+      freeProjectArea,
+    );
   }
 
   /**

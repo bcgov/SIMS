@@ -15,6 +15,8 @@ import {
   TokensService,
   MSFAANumberService,
   EducationProgramService,
+  StudentRestrictionService,
+  FormService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -43,7 +45,9 @@ describe("StudentController", () => {
         TokensService,
         MSFAANumberService,
         EducationProgramService,
+        FormService,
         createMockedJwtService(),
+        StudentRestrictionService,
       ],
       controllers: [StudentController],
     }).compile();

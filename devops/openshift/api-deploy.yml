@@ -267,11 +267,11 @@ parameters:
   - name: CPU_LIMIT
     value: "1.0"
   - name: MEMORY_LIMIT
-    value: "1000M"
+    value: "2000M"
   - name: CPU_REQUEST
     value: "0.5"
   - name: MEMORY_REQUEST
-    value: "512M"
+    value: "1000M"
   - name: REPLICAS
     value: "1"
   - name: PORT

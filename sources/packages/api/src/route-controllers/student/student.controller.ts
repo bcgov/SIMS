@@ -12,6 +12,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Query,
+  BadRequestException,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -21,14 +22,16 @@ import {
   ATBCService,
   ApplicationService,
   EducationProgramService,
+  FormService,
+  StudentRestrictionService,
 } from "../../services";
 import {
-  CreateStudentDto,
   FileCreateDto,
   GetStudentContactDto,
-  UpdateStudentContactDto,
   StudentEducationProgramDto,
   SearchStudentRespDto,
+  SaveStudentDto,
+  StudentRestrictionDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -51,6 +54,7 @@ import {
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
+import { FormNames } from "../../services/form/constants";
 
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
@@ -68,6 +72,8 @@ export class StudentController extends BaseController {
     private readonly fileService: StudentFileService,
     private readonly applicationService: ApplicationService,
     private readonly programService: EducationProgramService,
+    private readonly formService: FormService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super();
   }
@@ -114,6 +120,25 @@ export class StudentController extends BaseController {
     return studentInfo;
   }
 
+  /**
+   * Quick check to verify is there is an user
+   * and student associated with the token information.
+   * @param userToken authenticated user information.
+   * @returns true if the student exists, otherwise false.
+   */
+  @Get("check-student")
+  async checkStudentExists(
+    @UserToken() userToken: IUserToken,
+  ): Promise<boolean> {
+    if (!userToken.userId) {
+      return false;
+    }
+    const student = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    return !!student;
+  }
+
   @Get("contact")
   async getContactInfo(
     @UserToken() userToken: IUserToken,
@@ -150,9 +175,19 @@ export class StudentController extends BaseController {
 
   @Patch("contact")
   async update(
-    @Body() payload: UpdateStudentContactDto,
     @UserToken() userToken: IUserToken,
+    @Body() payload: SaveStudentDto,
   ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update a student due to an invalid request.",
+      );
+    }
+
     this.studentService.updateStudentContactByUserName(
       userToken.userName,
       payload,
@@ -185,19 +220,46 @@ export class StudentController extends BaseController {
     };
   }
 
+  /**
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
+   * The user could be already available in the case of the same user
+   * was authenticated previously on another portal (e.g. parent/partner).
+   * @param payload information needed to create/update the user.
+   * @param userToken authenticated user information.
+   */
   @Post()
   async create(
-    @Body() payload: CreateStudentDto,
     @UserToken() userToken: IUserToken,
+    @Body() payload: SaveStudentDto,
   ): Promise<void> {
-    // Check user exists or not
-    const existingUser = await this.userService.getUser(userToken.userName);
-    if (existingUser) {
-      throw new UnprocessableEntityException("User already exists");
+    if (userToken.userId) {
+      // If the user already exists, verify if there is already a student
+      // associated with the existing user.
+      const existingStudent = await this.studentService.getStudentByUserId(
+        userToken.userId,
+      );
+      if (existingStudent) {
+        throw new UnprocessableEntityException(
+          "There is already a student associated with the user.",
+        );
+      }
     }
 
-    // Save student
-    await this.studentService.createStudent(userToken, payload);
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.StudentInformation,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create a student due to an invalid request.",
+      );
+    }
+
+    await this.studentService.createStudent(userToken, {
+      ...payload,
+      sinNumber: payload.sinNumber,
+    });
   }
 
   @Patch("/sync")
@@ -401,7 +463,7 @@ export class StudentController extends BaseController {
   ): Promise<SearchStudentRespDto[]> {
     if (!appNumber && !firstName && !lastName) {
       throw new UnprocessableEntityException(
-        "Search with atleast one search criteria",
+        "Search with at least one search criteria",
       );
     }
     const searchStudentApplications =
@@ -416,5 +478,26 @@ export class StudentController extends BaseController {
       lastName: eachStudent.user.lastName,
       birthDate: dateString(eachStudent.birthdate),
     }));
+  }
+  /**
+   * GET API which returns student restriction details.
+   * @param userToken
+   * @returns Student Restriction
+   */
+  @Get("restriction")
+  async getStudentRestrictions(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentRestrictionDTO> {
+    const studentRestrictionStatus =
+      await this.studentRestrictionService.getStudentRestrictionsByUserId(
+        userToken.userId,
+      );
+    return {
+      hasRestriction: studentRestrictionStatus.hasRestriction,
+      hasFederalRestriction: studentRestrictionStatus.hasFederalRestriction,
+      hasProvincialRestriction:
+        studentRestrictionStatus.hasProvincialRestriction,
+      restrictionMessage: studentRestrictionStatus.restrictionMessage,
+    } as StudentRestrictionDTO;
   }
 }
