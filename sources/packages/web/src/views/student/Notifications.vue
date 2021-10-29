@@ -14,7 +14,7 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 export default {
   components: { RestrictionBanner },
   setup() {
-    const hasRestriction = ref(true);
+    const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     onMounted(async () => {
       const studentRestriction = await StudentService.shared.getStudentRestriction();
