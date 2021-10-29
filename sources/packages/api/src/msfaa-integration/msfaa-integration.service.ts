@@ -102,7 +102,7 @@ export class MSFAAIntegrationService {
     const msfaaFooter = new MSFAAFileFooter();
     msfaaFooter.transactionCode = TransactionCodes.MSFAARequestTrailer;
     msfaaFooter.totalSINHash = totalSINHash;
-    msfaaFooter.recordCount = msfaaRecords.length + 2; // Must be the number of records + header + footer.
+    msfaaFooter.recordCount = msfaaRecords.length;
     msfaaFileLines.push(msfaaFooter);
 
     return msfaaFileLines;
