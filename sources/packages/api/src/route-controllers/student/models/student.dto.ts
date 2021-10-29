@@ -11,6 +11,9 @@ export class GetStudentContactDto {
 /**
  * Common data saved while creating
  * or updating the student profile.
+ * Validations not added to DTO because
+ * they are going to be handled by the
+ * Form.IO dryRun validation.
  */
 export interface SaveStudentDto {
   phone: string;
@@ -23,7 +26,7 @@ export interface SaveStudentDto {
   /**
    * SIN is optional during update.
    */
-  sinNumber: string;
+  sinNumber?: string;
 }
 
 export interface FileCreateDto {

@@ -1,6 +1,4 @@
 -- Drop previously added indexes
-DROP INDEX IF EXISTS sims.users_user_name_unique;
-
 DROP INDEX IF EXISTS sims.users_lower_first_name_lower_last_name;
 
 -- Recreate the indexes as they were before

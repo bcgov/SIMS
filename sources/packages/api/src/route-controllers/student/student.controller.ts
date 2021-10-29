@@ -221,8 +221,8 @@ export class StudentController extends BaseController {
   }
 
   /**
-   * Creates the student checking for an existing user to be
-   * used or creating a new one case the user id is not provided.
+   * Creates the student checking for an existing user to be used or
+   * creating a new one in case the user id is not provided.
    * The user could be already available in the case of the same user
    * was authenticated previously on another portal (e.g. parent/partner).
    * @param payload information needed to create/update the user.

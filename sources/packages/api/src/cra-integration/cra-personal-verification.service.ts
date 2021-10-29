@@ -175,7 +175,7 @@ export class CRAPersonalVerificationService {
 
   /**
    * Use the information on the Student and User objects
-   * to generate the record to be send to CRA.
+   * to generate the record to be sent to CRA.
    * @param student student and user information.
    * @param freeProjectArea free text to be send together
    * with each record that could be used for process the
@@ -199,7 +199,7 @@ export class CRAPersonalVerificationService {
   /**
    * Use the information on the CRA income verification,
    * student, supporting user and users to generate
-   * the record to be send to CRA.
+   * the record to be sent to CRA.
    * @param craIncomeVerification income verification record
    * loaded with the student from the application, the supporting
    * user, if present, and the respective users.
