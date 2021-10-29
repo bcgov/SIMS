@@ -78,6 +78,7 @@ export default {
 
     const countDownTimer = () => {
       initializeCounter();
+      // * Set timer for 1 second, every 1 second updateTimer will be called.
       interval.value = setInterval(updateTimer, 1000);
     };
 
