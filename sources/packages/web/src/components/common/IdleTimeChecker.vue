@@ -62,7 +62,7 @@ export default {
     const startIdleCheckerTimer = () => {
       if (isAuthenticated.value) {
         /* eslint-disable */
-        interval.value = setInterval(checkIdle, 1000);
+        interval.value = setInterval(checkIdle, 30000);
         /* eslint-enable */
       }
     };
