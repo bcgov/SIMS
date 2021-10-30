@@ -47,9 +47,10 @@ export class SupportingUser extends RecordDataModel {
    */
   @Column({
     name: "birth_date",
+    type: "date",
     nullable: true,
   })
-  birthDate?: Date;
+  birthdate?: string;
   /**
    * Gender as received from BCSC authentication.
    */

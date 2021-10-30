@@ -6,7 +6,7 @@ export interface StudentInfo {
   lastName: string;
   email: string;
   gender: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   contact: StudentContact;
   pdVerified: boolean;
   validSin: boolean;

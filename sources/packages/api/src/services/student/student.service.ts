@@ -71,7 +71,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     const student = new Student();
     student.user = user;
-    student.birthdate = new Date(userInfo.birthdate);
+    student.birthdate = userInfo.birthdate;
     student.gender = userInfo.gender;
     student.sin = removeWhiteSpaces(otherInfo.sinNumber);
     student.contactInfo = {
@@ -153,12 +153,11 @@ export class StudentService extends RecordDataModelService<Student> {
       mustSave = true;
     }
 
-    const birthDate = new Date(userToken.birthdate);
     if (
-      birthDate !== studentToSync.birthdate ||
+      userToken.birthdate !== studentToSync.birthdate ||
       userToken.gender !== studentToSync.gender
     ) {
-      studentToSync.birthdate = birthDate;
+      studentToSync.birthdate = userToken.birthdate;
       studentToSync.gender = userToken.gender;
       mustSave = true;
     }

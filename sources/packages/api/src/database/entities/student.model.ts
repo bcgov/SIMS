@@ -29,8 +29,9 @@ export class Student extends RecordDataModel {
 
   @Column({
     name: "birth_date",
+    type: "date",
   })
-  birthdate: Date;
+  birthdate: string;
 
   @Column({
     name: "pd_verified",
