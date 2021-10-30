@@ -90,7 +90,7 @@ export class AuthService {
       });
 
       if (this.keycloak.authenticated) {
-        this.interval = setInterval(this.renewTokenIfExpired, 1000);
+        this.interval = setInterval(this.renewTokenIfExpired, 60000);
         switch (clientType) {
           case ClientIdType.Student: {
             await store.dispatch(
