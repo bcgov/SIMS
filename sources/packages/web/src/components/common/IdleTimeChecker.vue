@@ -6,11 +6,7 @@
     @keyup="setLastActivityTime"
   >
     <slot></slot>
-    <ConfirmExtendTime
-      ref="extendTimeModal"
-      :startTimer="startTimer"
-      :clientIdType="clientIdType"
-    />
+    <ConfirmExtendTime ref="extendTimeModal" :clientIdType="clientIdType" />
   </div>
 </template>
 
@@ -45,7 +41,6 @@ export default {
     const lastActivityLogin = ref(new Date());
     const interval = ref();
     const extendTimeModal = ref({} as ModalDialog<boolean>);
-    const startTimer = ref(false);
     const { isAuthenticated } = useInstitutionAuth();
     const { getDatesDiff } = useFormatters();
 
@@ -65,7 +60,7 @@ export default {
     });
 
     const startIdleCheckerTimer = () => {
-      if (isAuthenticated) {
+      if (isAuthenticated.value) {
         /* eslint-disable */
         interval.value = setInterval(checkIdle, 1000);
         /* eslint-enable */
@@ -75,10 +70,9 @@ export default {
     const confirmExtendTimeModal = async () => {
       if (await extendTimeModal.value.showModal()) {
         lastActivityLogin.value = new Date();
-        startTimer.value = false;
         clearInterval(interval.value);
         startIdleCheckerTimer();
-        executeRenewTokenIfExpired();
+        await executeRenewTokenIfExpired();
       }
     };
 
@@ -86,12 +80,11 @@ export default {
       const idleTimeInMintutes = getDatesDiff(
         lastActivityLogin.value,
         new Date(),
-        "minutes",
+        "second",
         true,
       );
       if (idleTimeInMintutes >= minimumIdleTime.value) {
         confirmExtendTimeModal();
-        startTimer.value = true;
       }
     };
 
@@ -104,14 +97,14 @@ export default {
     });
 
     const setLastActivityTime = () => {
-      if (isAuthenticated) {
+      if (isAuthenticated.value) {
         lastActivityLogin.value = new Date();
       }
     };
     return {
       setLastActivityTime,
       extendTimeModal,
-      startTimer,
+      isAuthenticated,
     };
   },
 };

@@ -10,7 +10,7 @@
         <p>
           You are about to logged off, do you wish to extend your time?
           <v-btn class="ml-2 text-white" color="warning" icon>
-            {{ countDown }}
+            {{ countdown }}
           </v-btn>
         </p>
       </v-container>
@@ -18,7 +18,7 @@
     <template v-slot:footer>
       <v-btn color="primary" outlined @click="dialogClosed"> No </v-btn>
       <v-btn color="warning" depressed class="text-white" @click="extendTime">
-        <v-icon left size="25"> mdi-cancel </v-icon>
+        <v-icon left size="25"> mdi-clock </v-icon>
         Yes
       </v-btn>
     </template>
@@ -37,10 +37,6 @@ export default {
     ModalDialogBase,
   },
   props: {
-    startTimer: {
-      type: Boolean,
-      required: false,
-    },
     clientIdType: {
       type: String,
       required: true,
@@ -48,7 +44,7 @@ export default {
     },
   },
   setup(props: any) {
-    const countDown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
+    const countdown = ref(COUNT_DOWN_TIMER_FOR_LOGOUT);
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
     const interval = ref();
     const { executeLogout } = useAuth();
@@ -65,15 +61,15 @@ export default {
     };
 
     const updateTimer = () => {
-      if (countDown.value > 0) {
-        countDown.value -= 1;
+      if (countdown.value > 0) {
+        countdown.value--;
       } else {
         dialogClosed();
       }
     };
 
     const initializeCounter = () => {
-      countDown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
+      countdown.value = COUNT_DOWN_TIMER_FOR_LOGOUT;
     };
 
     const countDownTimer = () => {
@@ -94,7 +90,7 @@ export default {
     });
 
     watch(
-      () => props.startTimer,
+      () => showDialog.value,
       (currValue: boolean) => {
         if (currValue) {
           countDownTimer();
@@ -109,7 +105,7 @@ export default {
       showModal,
       dialogClosed,
       extendTime,
-      countDown,
+      countdown,
     };
   },
 };

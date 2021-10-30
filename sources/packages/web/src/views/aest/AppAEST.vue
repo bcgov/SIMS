@@ -1,5 +1,5 @@
 <template>
-  <Root :clientIdType="ClientIdType.AEST">
+  <IdleTimeChecker :clientIdType="ClientIdType.AEST">
     <v-app-bar dense flat app style="overflow:visible">
       <BCLogo
         subtitle="Ministry of Advanced Education and Skills Training"
@@ -27,7 +27,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-  </Root>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
@@ -35,10 +35,10 @@ import { ref } from "vue";
 import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
-import Root from "@/components/common/Root.vue";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo, Root },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();

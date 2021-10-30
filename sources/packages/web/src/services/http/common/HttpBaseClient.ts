@@ -14,14 +14,11 @@ export default abstract class HttpBaseClient {
       throw new Error("User is not authenticated!");
     }
   }
-  static renewTokenIfExpired() {
-    if (AuthService.shared.keycloak?.isTokenExpired(MINIMUM_TOKEN_VALIDITY)) {
-      AuthService.shared.keycloak?.updateToken(MINIMUM_TOKEN_VALIDITY);
-    }
+  static async renewTokenIfExpired() {
+    await AuthService.shared.keycloak?.updateToken(MINIMUM_TOKEN_VALIDITY);
   }
 
   protected addAuthHeader(): AxiosRequestConfig {
-    HttpBaseClient.renewTokenIfExpired();
     return HttpBaseClient.createAuthHeader(AuthService.shared.keycloak?.token);
   }
 

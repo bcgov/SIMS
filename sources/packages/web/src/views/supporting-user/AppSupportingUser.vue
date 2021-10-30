@@ -1,5 +1,5 @@
 <template>
-  <Root :clientIdType="ClientIdType.SupportingUsers">
+  <IdleTimeChecker :clientIdType="ClientIdType.SupportingUsers">
     <v-app-bar dense flat app style="overflow:visible">
       <BCLogo
         subtitle="Supporting Information for Student Applications"
@@ -31,7 +31,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-  </Root>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
@@ -41,10 +41,10 @@ import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import Root from "@/components/common/Root.vue";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo, Root },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const router = useRouter();
     const { executeLogout } = useAuth();

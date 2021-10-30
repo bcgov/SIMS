@@ -31,6 +31,8 @@ export class AuthService {
     return this.clientType;
   }
 
+  interval = NaN;
+
   /**
    * Parsed user token.
    */
@@ -88,6 +90,7 @@ export class AuthService {
       });
 
       if (this.keycloak.authenticated) {
+        this.interval = setInterval(this.renewTokenIfExpired, 1000);
         switch (clientType) {
           case ClientIdType.Student: {
             await store.dispatch(
@@ -139,6 +142,8 @@ export class AuthService {
             break;
           }
         }
+      } else {
+        clearInterval(this.interval);
       }
     } catch (error) {
       console.error(`Keycloak initialization error - ${clientType}`);
@@ -235,8 +240,7 @@ export class AuthService {
     const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
     window.location.href = siteMinderLogoutURL;
   }
-
-  renewTokenIfExpired() {
-    HttpBaseClient.renewTokenIfExpired();
+  async renewTokenIfExpired() {
+    await HttpBaseClient.renewTokenIfExpired();
   }
 }

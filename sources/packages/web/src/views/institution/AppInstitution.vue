@@ -1,5 +1,5 @@
 <template>
-  <Root :clientIdType="ClientIdType.Institution">
+  <IdleTimeChecker :clientIdType="ClientIdType.Institution">
     <v-app-bar dense flat app style="overflow:visible">
       <BCLogo subtitle="Institution Application"></BCLogo>
       <v-spacer></v-spacer>
@@ -56,7 +56,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-  </Root>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
@@ -67,10 +67,10 @@ import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import "@/assets/css/institution.scss";
-import Root from "@/components/common/Root.vue";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo, Root },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();

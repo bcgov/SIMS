@@ -1,5 +1,5 @@
 <template>
-  <Root :clientIdType="ClientIdType.Student">
+  <IdleTimeChecker :clientIdType="ClientIdType.Student">
     <!-- Adding overflow:visible to allow the use of the Prime Vue
   floating menu while Veutify component is not ready.  -->
     <v-app-bar dense flat app style="overflow:visible">
@@ -47,7 +47,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-  </Root>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
@@ -57,10 +57,10 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ClientIdType, MenuModel } from "@/types";
 import { useAuth, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
-import Root from "@/components/common/Root.vue";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo, Root },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const { executeLogout } = useAuth();
     const router = useRouter();
