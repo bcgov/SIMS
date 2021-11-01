@@ -99,17 +99,15 @@ describe("ApplicationService", () => {
     it("should associate a pending MSFAA as a priority when it exists", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
-      // Create fake application to have the MSFAA associated.
-      const fakeApplication = createFakeApplicationInAssessment(testStudent);
-      const testApplication = await applicationRepository.save(fakeApplication);
       // MSFAA record to be used along this test.
-      const fakeMSFAANumber = createFakeMSFAANumber(
-        testApplication,
-        testStudent,
-      );
+      const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Enforce that the MSFAA will be in pending state.
       fakeMSFAANumber.dateSigned = null;
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
+      // Create fake application to have the MSFAA associated.
+      const fakeApplication = createFakeApplicationInAssessment(testStudent);
+      const testApplication = await applicationRepository.save(fakeApplication);
+
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
@@ -126,19 +124,14 @@ describe("ApplicationService", () => {
     it("should associate an existing MSFAA as a priority when it was signed inside the validity period.", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
-
-      // Create fake application to have the MSFAA associated.
-      const fakeApplication = createFakeApplicationInAssessment(testStudent);
-      const testApplication = await applicationRepository.save(fakeApplication);
-
       // MSFAA record to be used along this test.
-      const fakeMSFAANumber = createFakeMSFAANumber(
-        testApplication,
-        testStudent,
-      );
+      const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Enforce that the MSFAA will be in a valid period.
       fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(-1);
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
+      // Create fake application to have the MSFAA associated.
+      const fakeApplication = createFakeApplicationInAssessment(testStudent);
+      const testApplication = await applicationRepository.save(fakeApplication);
 
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
@@ -156,14 +149,8 @@ describe("ApplicationService", () => {
     it("should create a new MSFAA record when a completed and signed application exists but the MSFAA period is expired", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
-      // Create an application to receive the new MSFAA.
-      const fakeApplication = createFakeApplicationInAssessment(testStudent);
-      const testApplication = await applicationRepository.save(fakeApplication);
       // MSFAA record to be used.
-      const fakeMSFAANumber = createFakeMSFAANumber(
-        testApplication,
-        testStudent,
-      );
+      const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Make the dateSigned old enough to be considered expired.
       fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(1);
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
@@ -180,6 +167,10 @@ describe("ApplicationService", () => {
       const testCompletedApplication = await applicationRepository.save(
         fakeCompletedApplication,
       );
+
+      // Create an application to receive the new MSFAA.
+      const fakeApplication = createFakeApplicationInAssessment(testStudent);
+      const testApplication = await applicationRepository.save(fakeApplication);
 
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
@@ -199,14 +190,8 @@ describe("ApplicationService", () => {
     it("should reuse an existing MSFAA record when a complete and signed application exists and it is not expired", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
-      // Create an application to receive the new MSFAA.
-      const fakeApplication = createFakeApplicationInAssessment(testStudent);
-      const testApplication = await applicationRepository.save(fakeApplication);
       // MSFAA record to be used along this test.
-      const fakeMSFAANumber = createFakeMSFAANumber(
-        testApplication,
-        testStudent,
-      );
+      const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Make the dateSigned be expired.
       // This will force the MSFAA to be considered valid due to the
       // previous application offering end date and current application
@@ -228,6 +213,10 @@ describe("ApplicationService", () => {
         fakeCompletedApplication,
       );
 
+      // Create an application to receive the new MSFAA.
+      const fakeApplication = createFakeApplicationInAssessment(testStudent);
+      const testApplication = await applicationRepository.save(fakeApplication);
+
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
@@ -247,26 +236,19 @@ describe("ApplicationService", () => {
     it("should be able to find a completed application with an MSFAA number associated", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
-      // Create an application to receive the new MSFAA.
-      const fakeApplication = createFakeApplicationInAssessment(testStudent);
-      const testApplication = await applicationRepository.save(fakeApplication);
       // MSFAA record to be used along this test.
-      const fakeMSFAANumber = createFakeMSFAANumber(
-        testApplication,
-        testStudent,
-      );
+      const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       fakeMSFAANumber.dateSigned = new Date();
       const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Date to be assigned to the offering end date of the record to be retrieved.
       const expectedEndDate = new Date();
       expectedEndDate.setHours(0, 0, 0, 0);
       // Create fake application that must be returned.
+      const fakeApplication = createFakeApplicationInAssessment(testStudent);
       fakeApplication.offering.studyEndDate = expectedEndDate;
       fakeApplication.msfaaNumber = testMSFAANumber;
       fakeApplication.applicationStatus = ApplicationStatus.completed;
-      const newTestApplication = await applicationRepository.save(
-        fakeApplication,
-      );
+      const testApplication = await applicationRepository.save(fakeApplication);
       // Create a fake application with an offering end data older than the previous one.
       // While querying the database the testApplication must be retrieve instead of this one.
       const olderFakeApplication = createFakeApplication();
@@ -286,7 +268,7 @@ describe("ApplicationService", () => {
             testStudent.id,
           );
         expect(previouslySignedApplication).toBeTruthy();
-        expect(previouslySignedApplication.id).toBe(newTestApplication.id);
+        expect(previouslySignedApplication.id).toBe(testApplication.id);
         expect(previouslySignedApplication.msfaaNumber.id).toBe(
           testMSFAANumber.id,
         );
@@ -294,7 +276,7 @@ describe("ApplicationService", () => {
           expectedEndDate,
         );
       } finally {
-        await applicationRepository.remove(newTestApplication);
+        await applicationRepository.remove(testApplication);
         await applicationRepository.remove(olderFakeApplication);
         await msfaaNumberRepository.remove(testMSFAANumber);
         await studentRepository.remove(testStudent);
