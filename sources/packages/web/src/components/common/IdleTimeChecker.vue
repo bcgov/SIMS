@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, onUnmounted, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { ClientIdType } from "@/types";
 import { ModalDialog, useInstitutionAuth, useFormatters } from "@/composables";
 import {
@@ -53,7 +53,8 @@ export default {
       }
     });
 
-    const startIdleCheckerTimer = () => {
+    const resetIdleCheckerTimer = () => {
+      clearInterval(interval.value);
       if (isAuthenticated.value) {
         /* eslint-disable */
         interval.value = setInterval(checkIdle, 30000);
@@ -64,8 +65,7 @@ export default {
     const confirmExtendTimeModal = async () => {
       if (await extendTimeModal.value.showModal()) {
         lastActivityLogin.value = new Date();
-        clearInterval(interval.value);
-        startIdleCheckerTimer();
+        resetIdleCheckerTimer();
       }
     };
 
@@ -82,11 +82,7 @@ export default {
     };
 
     onMounted(async () => {
-      startIdleCheckerTimer();
-    });
-
-    onUnmounted(() => {
-      clearInterval(interval.value);
+      resetIdleCheckerTimer();
     });
 
     const setLastActivityTime = () => {

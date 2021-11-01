@@ -10,3 +10,5 @@ export const MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER = 270;
 export const MINIMUM_IDLE_TIME_FOR_WARNING_AEST = 270;
 // * COUNT_DOWN_TIMER_FOR_LOGOUT in seconds
 export const COUNT_DOWN_TIMER_FOR_LOGOUT = 30;
+// * renew auth token if expired checker should happen every seconds
+export const RENEW_AUTH_TOKEN_TIMER = 30;

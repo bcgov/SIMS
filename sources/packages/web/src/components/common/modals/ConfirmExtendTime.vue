@@ -8,7 +8,7 @@
     <template v-slot:content>
       <v-container class="p-component text-dark">
         <p>
-          You are about to logged off, do you wish to extend your time?
+          You are about to be logged off, do you wish to extend your time?
           <v-btn class="ml-2 text-white" color="warning" icon>
             {{ countdown }}
           </v-btn>
@@ -29,7 +29,7 @@
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useAuth, useClientLoader } from "@/composables";
 import { COUNT_DOWN_TIMER_FOR_LOGOUT } from "@/constants/system-constants";
-import { ref, onUnmounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 
 export default {
@@ -73,6 +73,7 @@ export default {
     };
 
     const countDownTimer = () => {
+      clearInterval(interval.value);
       initializeCounter();
       // * Set timer for 1 second, every 1 second updateTimer will be called.
       interval.value = setInterval(updateTimer, 1000);
@@ -84,10 +85,6 @@ export default {
       resolvePromise(true);
       initializeCounter();
     };
-
-    onUnmounted(() => {
-      clearInterval(interval.value);
-    });
 
     watch(
       () => showDialog.value,

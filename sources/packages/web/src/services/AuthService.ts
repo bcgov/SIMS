@@ -12,6 +12,7 @@ import {
   InstitutionRoutesConst,
   StudentRoutesConst,
 } from "@/constants/routes/RouteConstants";
+import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "./StudentService";
 
 /**
@@ -90,7 +91,10 @@ export class AuthService {
       });
 
       if (this.keycloak.authenticated) {
-        this.interval = setInterval(this.renewTokenIfExpired, 60000);
+        this.interval = setInterval(
+          this.renewTokenIfExpired,
+          RENEW_AUTH_TOKEN_TIMER,
+        );
         switch (clientType) {
           case ClientIdType.Student: {
             await store.dispatch(
