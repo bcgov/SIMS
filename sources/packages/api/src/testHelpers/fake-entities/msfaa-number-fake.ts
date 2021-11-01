@@ -1,12 +1,14 @@
-import { MSFAANumber, Student } from "../../database/entities";
+import { MSFAANumber, Student, Application } from "../../database/entities";
 import { createFakeStudent } from "./student-fake";
-import { createFakeApplication } from "./application-fake";
 import * as faker from "faker";
 
-export function createFakeMSFAANumber(student?: Student): MSFAANumber {
+export function createFakeMSFAANumber(
+  referenceApplication: Application,
+  student?: Student,
+): MSFAANumber {
   const msfaaNumber = new MSFAANumber();
   msfaaNumber.student = student ?? createFakeStudent();
-  msfaaNumber.referenceApplication = createFakeApplication();
+  msfaaNumber.referenceApplication = referenceApplication;
   msfaaNumber.msfaaNumber = faker.random
     .number({
       min: 1111111111,
