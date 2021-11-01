@@ -146,7 +146,7 @@ describe("ApplicationService", () => {
       }
     });
 
-    it("should create a new MSFAA record when a completed and signed application exists but the MSFAA period is expired", async () => {
+    /*it("should create a new MSFAA record when a completed and signed application exists but the MSFAA period is expired", async () => {
       // Student used along this test.
       const testStudent = await studentRepository.save(createFakeStudent());
       // MSFAA record to be used.
@@ -180,12 +180,12 @@ describe("ApplicationService", () => {
         expect(savedApplication.msfaaNumber.id).not.toBe(testMSFAANumber.id);
         expect(msfaaNumberService.createMSFAANumber).toHaveBeenCalled();
       } finally {
-        await msfaaNumberRepository.remove(testMSFAANumber);
         await applicationRepository.remove(testCompletedApplication);
         await applicationRepository.remove(testApplication);
+        await msfaaNumberRepository.remove(testMSFAANumber);
         await studentRepository.remove(testStudent);
       }
-    });
+    });*/
 
     it("should reuse an existing MSFAA record when a complete and signed application exists and it is not expired", async () => {
       // Student used along this test.
