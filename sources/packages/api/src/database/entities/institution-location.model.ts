@@ -14,6 +14,13 @@ export interface InstitutionLocationInfo {
   address: AddressInfo;
 }
 
+export interface PrimaryContact {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
+
 @Entity({
   name: "institution_locations",
 })
@@ -45,4 +52,11 @@ export class InstitutionLocation extends RecordDataModel {
     name: "institution_code",
   })
   institutionCode: string;
+
+  @Column({
+    name: "primary_contact",
+    type: "jsonb",
+    nullable: false,
+  })
+  primaryContact: PrimaryContact;
 }

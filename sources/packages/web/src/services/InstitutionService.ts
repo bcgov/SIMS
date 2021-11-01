@@ -3,7 +3,6 @@ import {
   InstitutionDto,
   EducationProgram,
   InstitutionDetailDto,
-  InstitutionProfileState,
   UpdateInstitutionDto,
   InstitutionLocation,
   InstitutionLocationsDetails,

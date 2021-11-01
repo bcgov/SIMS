@@ -20,11 +20,7 @@ import {
   IInstitutionUserToken,
   IUserToken,
 } from "../../auth/userToken.interface";
-import {
-  FormsFlowService,
-  InstitutionService,
-  ApplicationService,
-} from "../../services";
+import { InstitutionService, ApplicationService } from "../../services";
 import {
   HasLocationAccess,
   IsInstitutionAdmin,
@@ -45,7 +41,6 @@ export class InstitutionLocationsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
-    private readonly formsFlowService: FormsFlowService,
     private readonly institutionService: InstitutionService,
   ) {
     super();
@@ -157,6 +152,12 @@ export class InstitutionLocationsController extends BaseController {
             postalCode: el.data.address?.postalCode,
           },
         },
+        primaryContact: {
+          primaryContactFirstName: el.primaryContact.firstName,
+          primaryContactLastName: el.primaryContact.lastName,
+          primaryContactEmail: el.primaryContact.email,
+          primaryContactPhone: el.primaryContact.phoneNumber,
+        },
         institution: {
           institutionPrimaryContact: {
             primaryContactEmail:
@@ -220,7 +221,7 @@ export class InstitutionLocationsController extends BaseController {
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<InstitutionLocation> {
+  ): Promise<InstitutionLocationTypeDto> {
     //To retrive institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
@@ -230,10 +231,26 @@ export class InstitutionLocationsController extends BaseController {
       );
     }
     // get all institution locations.
-    return this.locationService.getInstitutionLocation(
-      institutionDetails.id,
-      locationId,
-    );
+    const institutionLocation: InstitutionLocation =
+      await this.locationService.getInstitutionLocation(
+        institutionDetails.id,
+        locationId,
+      );
+
+    return {
+      address1: institutionLocation.data.address.addressLine1,
+      address2: institutionLocation.data.address.addressLine2,
+      city: institutionLocation.data.address.city,
+      country: institutionLocation.data.address.country,
+      locationName: institutionLocation.name,
+      postalZipCode: institutionLocation.data.address.postalCode,
+      provinceState: institutionLocation.data.address.province,
+      institutionCode: institutionLocation.institutionCode,
+      primaryContactFirstName: institutionLocation.primaryContact.firstName,
+      primaryContactLastName: institutionLocation.primaryContact.lastName,
+      primaryContactEmail: institutionLocation.primaryContact.email,
+      primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
+    } as InstitutionLocationTypeDto;
   }
 
   /**

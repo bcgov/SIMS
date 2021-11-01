@@ -1,3 +1,4 @@
+import { InstitutionPrimaryContact } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
 
 export class GetInstitutionLocationDto {
@@ -15,6 +16,10 @@ export interface InstitutionLocationTypeDto {
   postalZipCode: string;
   provinceState: string;
   institutionCode: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactEmail: string;
+  primaryContactPhone: string;
 }
 
 export interface InstitutionLocationsDetailsDto {
@@ -30,13 +35,9 @@ export interface InstitutionLocationsDetailsDto {
       postalCode: string;
     };
   };
+  primaryContact: InstitutionPrimaryContact;
   institution: {
-    institutionPrimaryContact: {
-      primaryContactEmail: string;
-      primaryContactFirstName: string;
-      primaryContactLastName: string;
-      primaryContactPhone: string;
-    };
+    institutionPrimaryContact: InstitutionPrimaryContact;
   };
 }
 
@@ -45,7 +46,10 @@ export interface UserLocationDto {
   name: string;
 }
 
-export interface InstitutionLocationsDetailsDto {
+/**
+ * This is the object used displaying institution locations summary for an institution
+ */
+export interface InstitutionLocationsSummaryDto {
   id: number;
   name: string;
   address: {

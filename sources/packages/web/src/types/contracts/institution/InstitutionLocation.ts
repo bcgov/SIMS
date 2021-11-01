@@ -6,7 +6,17 @@ export interface InstitutionAddress {
   postalZipCode: string;
   provinceState: string;
 }
-export interface InstitutionLocation extends InstitutionAddress {
+
+export interface InstitutionPrimaryContact {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+}
+
+export interface InstitutionLocation
+  extends InstitutionAddress,
+    InstitutionPrimaryContact {
   locationName: string;
 }
 export interface InstitutionLocationData {
@@ -27,13 +37,9 @@ export interface InstitutionLocationsDetails {
       postalCode: string;
     };
   };
+  primaryContact: InstitutionPrimaryContact;
   institution: {
-    institutionPrimaryContact: {
-      primaryContactEmail: string;
-      primaryContactFirstName: string;
-      primaryContactLastName: string;
-      primaryContactPhone: string;
-    };
+    institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
 }
