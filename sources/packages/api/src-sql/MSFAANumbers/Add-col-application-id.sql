@@ -1,4 +1,4 @@
--- Create  -  The default 2 just a placeholder, this is used to ensure not null constraint. 
+-- Create application Id that generates the MSFAA Number -. 
 ALTER TABLE
     sims.msfaa_numbers
 ADD
