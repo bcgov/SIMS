@@ -22,7 +22,7 @@ describe("Test student model", () => {
     const controller = new StudentService(connection, archiveDB);
     const sub = new Student();
     sub.sin = "9999999999";
-    sub.birthdate = faker.date.past(18);
+    sub.birthdate = "1998-12-31";
     sub.gender = "X";
     sub.contactInfo = {
       addresses: [

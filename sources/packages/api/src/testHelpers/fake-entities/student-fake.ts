@@ -8,7 +8,7 @@ export function createFakeStudent(user?: User): Student {
   student.sin = faker.random
     .number({ min: 100000000, max: 999999999 })
     .toString();
-  student.birthdate = faker.date.past(18).toString();
+  student.birthdate = "1998-12-31";
   student.gender = "X";
   student.contactInfo = {
     addresses: [
