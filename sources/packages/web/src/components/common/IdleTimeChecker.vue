@@ -49,7 +49,8 @@ export default {
         case ClientIdType.AEST:
           return MINIMUM_IDLE_TIME_FOR_WARNING_AEST;
         default:
-          return 0.02;
+          console.error("Invalid Client type");
+          return 0;
       }
     });
 
