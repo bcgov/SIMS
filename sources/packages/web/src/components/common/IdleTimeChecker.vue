@@ -13,12 +13,7 @@
 <script lang="ts">
 import { onMounted, ref, onUnmounted, computed } from "vue";
 import { ClientIdType } from "@/types";
-import {
-  useAuth,
-  ModalDialog,
-  useInstitutionAuth,
-  useFormatters,
-} from "@/composables";
+import { ModalDialog, useInstitutionAuth, useFormatters } from "@/composables";
 import {
   MINIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
   MINIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
@@ -37,7 +32,6 @@ export default {
     },
   },
   setup(props: any) {
-    const { executeRenewTokenIfExpired } = useAuth();
     const lastActivityLogin = ref(new Date());
     const interval = ref();
     const extendTimeModal = ref({} as ModalDialog<boolean>);
@@ -72,7 +66,6 @@ export default {
         lastActivityLogin.value = new Date();
         clearInterval(interval.value);
         startIdleCheckerTimer();
-        await executeRenewTokenIfExpired();
       }
     };
 

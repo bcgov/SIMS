@@ -24,15 +24,10 @@ export function useAuth() {
     await AuthService.shared.logout(clientType);
   };
 
-  const executeRenewTokenIfExpired = async () => {
-    await AuthService.shared.renewTokenIfExpired();
-  };
-
   return {
     isAuthenticated,
     parsedToken,
     executeLogin,
     executeLogout,
-    executeRenewTokenIfExpired,
   };
 }
