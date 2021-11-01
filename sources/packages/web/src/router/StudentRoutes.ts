@@ -40,7 +40,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "login",
+        path: AppRoutes.Login,
         name: StudentRoutesConst.LOGIN,
         component: Login,
         meta: {

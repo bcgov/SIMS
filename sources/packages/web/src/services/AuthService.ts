@@ -12,6 +12,7 @@ import {
   InstitutionRoutesConst,
   StudentRoutesConst,
 } from "@/constants/routes/RouteConstants";
+import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "./StudentService";
 
 /**
@@ -30,6 +31,8 @@ export class AuthService {
   get authClientType(): ClientIdType | undefined {
     return this.clientType;
   }
+
+  interval = NaN;
 
   /**
    * Parsed user token.
@@ -88,6 +91,10 @@ export class AuthService {
       });
 
       if (this.keycloak.authenticated) {
+        this.interval = setInterval(
+          this.renewTokenIfExpired,
+          RENEW_AUTH_TOKEN_TIMER,
+        );
         switch (clientType) {
           case ClientIdType.Student: {
             await store.dispatch(
@@ -139,6 +146,8 @@ export class AuthService {
             break;
           }
         }
+      } else {
+        clearInterval(this.interval);
       }
     } catch (error) {
       console.error(`Keycloak initialization error - ${clientType}`);
@@ -234,5 +243,8 @@ export class AuthService {
     const externalLogoutUrl = config.authConfig.externalSiteMinderLogoutUrl;
     const siteMinderLogoutURL = `${externalLogoutUrl}?returl=${logoutURL}&retnow=1`;
     window.location.href = siteMinderLogoutURL;
+  }
+  async renewTokenIfExpired() {
+    await HttpBaseClient.renewTokenIfExpired();
   }
 }

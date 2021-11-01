@@ -1,64 +1,66 @@
 <template>
-  <!-- Adding overflow:visible to allow the use of the Prime Vue
+  <IdleTimeChecker :clientIdType="ClientIdType.Student">
+    <!-- Adding overflow:visible to allow the use of the Prime Vue
   floating menu while Veutify component is not ready.  -->
-  <v-app-bar dense flat app style="overflow:visible">
-    <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
-    <v-spacer></v-spacer
-    ><v-btn
-      v-if="isAuthenticated && hasStudentAccount"
-      text
-      @click="
-        $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
-      "
-      >ApplicationS</v-btn
-    >
-    <v-btn
-      v-if="isAuthenticated && hasStudentAccount"
-      text
-      @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
-      >Notifications</v-btn
-    >
-    <v-btn
-      v-if="isAuthenticated && hasStudentAccount"
-      text
-      @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
-      >Profile</v-btn
-    >
-    <v-btn
-      v-if="isAuthenticated"
-      class="mr-5"
-      icon="mdi-account"
-      outlined
-      elevation="1"
-      color="grey"
-      @click="togleUserMenu"
-    ></v-btn>
-    <Menu
-      v-if="isAuthenticated"
-      ref="userOptionsMenuRef"
-      :model="userMenuItems"
-      :popup="true"
-    />
-  </v-app-bar>
-  <router-view name="sidebar"></router-view>
-  <v-main class="body-background">
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-main>
+    <v-app-bar dense flat app style="overflow:visible">
+      <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
+      <v-spacer></v-spacer
+      ><v-btn
+        v-if="isAuthenticated && hasStudentAccount"
+        text
+        @click="
+          $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
+        "
+        >ApplicationS</v-btn
+      >
+      <v-btn
+        v-if="isAuthenticated && hasStudentAccount"
+        text
+        @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
+        >Notifications</v-btn
+      >
+      <v-btn
+        v-if="isAuthenticated && hasStudentAccount"
+        text
+        @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
+        >Profile</v-btn
+      >
+      <v-btn
+        v-if="isAuthenticated"
+        class="mr-5"
+        icon="mdi-account"
+        outlined
+        elevation="1"
+        color="grey"
+        @click="togleUserMenu"
+      ></v-btn>
+      <Menu
+        v-if="isAuthenticated"
+        ref="userOptionsMenuRef"
+        :model="userMenuItems"
+        :popup="true"
+      />
+    </v-app-bar>
+    <router-view name="sidebar"></router-view>
+    <v-main class="body-background">
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { ref, computed } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { ClientIdType } from "@/types/contracts/ConfigContract";
+import { ClientIdType, MenuModel } from "@/types";
 import { useAuth, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
-import { MenuModel } from "@/types";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const { executeLogout } = useAuth();
     const router = useRouter();
@@ -111,6 +113,7 @@ export default {
       StudentRoutesConst,
       userOptionsMenuRef,
       togleUserMenu,
+      ClientIdType,
       hasStudentAccount,
     };
   },

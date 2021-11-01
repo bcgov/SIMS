@@ -1,41 +1,44 @@
 <template>
-  <v-app-bar dense flat app style="overflow:visible">
-    <BCLogo
-      subtitle="Ministry of Advanced Education and Skills Training"
-    ></BCLogo>
-    <v-spacer></v-spacer>
-    <v-btn
-      v-if="isAuthenticated"
-      class="mr-5"
-      icon="mdi-account"
-      outlined
-      elevation="1"
-      color="grey"
-      @click="togleUserMenu"
-    ></v-btn>
-    <Menu
-      v-if="isAuthenticated"
-      ref="userOptionsMenuRef"
-      :model="userMenuItems"
-      :popup="true"
-    />
-  </v-app-bar>
-  <router-view name="sidebar"></router-view>
-  <v-main class="body-background">
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-main>
+  <IdleTimeChecker :clientIdType="ClientIdType.AEST">
+    <v-app-bar dense flat app style="overflow:visible">
+      <BCLogo
+        subtitle="Ministry of Advanced Education and Skills Training"
+      ></BCLogo>
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="isAuthenticated"
+        class="mr-5"
+        icon="mdi-account"
+        outlined
+        elevation="1"
+        color="grey"
+        @click="togleUserMenu"
+      ></v-btn>
+      <Menu
+        v-if="isAuthenticated"
+        ref="userOptionsMenuRef"
+        :model="userMenuItems"
+        :popup="true"
+      />
+    </v-app-bar>
+    <router-view name="sidebar"></router-view>
+    <v-main class="body-background">
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
 import { ref } from "vue";
-import { ClientIdType } from "../../types/contracts/ConfigContract";
+import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const { executeLogout } = useAuth();
     const userOptionsMenuRef = ref();
@@ -64,6 +67,7 @@ export default {
       logoff,
       userOptionsMenuRef,
       togleUserMenu,
+      ClientIdType,
     };
   },
 };

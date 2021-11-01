@@ -1,6 +1,6 @@
 <template>
   <ModalDialogBase
-    title="Confirm Edit Applcation"
+    title="Confirm Edit Application"
     dialogType="question"
     :showDialog="showDialog"
     @dialogClosed="dialogClosed"

@@ -1,6 +1,7 @@
 import { AuthService } from "@/services/AuthService";
 import { AxiosRequestConfig } from "axios";
 import HttpClient from "./HttpClient";
+import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
@@ -12,6 +13,9 @@ export default abstract class HttpBaseClient {
     } else {
       throw new Error("User is not authenticated!");
     }
+  }
+  static async renewTokenIfExpired() {
+    await AuthService.shared.keycloak?.updateToken(MINIMUM_TOKEN_VALIDITY);
   }
 
   protected addAuthHeader(): AxiosRequestConfig {

@@ -24,5 +24,10 @@ export function useAuth() {
     await AuthService.shared.logout(clientType);
   };
 
-  return { isAuthenticated, parsedToken, executeLogin, executeLogout };
+  return {
+    isAuthenticated,
+    parsedToken,
+    executeLogin,
+    executeLogout,
+  };
 }
