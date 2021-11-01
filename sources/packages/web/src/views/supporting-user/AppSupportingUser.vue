@@ -1,47 +1,50 @@
 <template>
-  <v-app-bar dense flat app style="overflow:visible">
-    <BCLogo
-      subtitle="Supporting Information for Student Applications"
-      @click="goToDashboard"
-    ></BCLogo>
-    <v-spacer></v-spacer>
-    <v-btn v-if="isAuthenticated" class="mr-5" text @click="goToDashboard"
-      >Home</v-btn
-    >
-    <v-btn
-      v-if="isAuthenticated"
-      class="mr-5"
-      icon="mdi-account"
-      outlined
-      elevation="1"
-      color="grey"
-      @click="togleUserMenu"
-    ></v-btn>
-    <Menu
-      v-if="isAuthenticated"
-      ref="userOptionsMenuRef"
-      :model="userMenuItems"
-      :popup="true"
-    />
-  </v-app-bar>
-  <router-view name="sidebar"></router-view>
-  <v-main class="body-background ff-form-container">
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-main>
+  <IdleTimeChecker :clientIdType="ClientIdType.SupportingUsers">
+    <v-app-bar dense flat app style="overflow:visible">
+      <BCLogo
+        subtitle="Supporting Information for Student Applications"
+        @click="goToDashboard"
+      ></BCLogo>
+      <v-spacer></v-spacer>
+      <v-btn v-if="isAuthenticated" class="mr-5" text @click="goToDashboard"
+        >Home</v-btn
+      >
+      <v-btn
+        v-if="isAuthenticated"
+        class="mr-5"
+        icon="mdi-account"
+        outlined
+        elevation="1"
+        color="grey"
+        @click="togleUserMenu"
+      ></v-btn>
+      <Menu
+        v-if="isAuthenticated"
+        ref="userOptionsMenuRef"
+        :model="userMenuItems"
+        :popup="true"
+      />
+    </v-app-bar>
+    <router-view name="sidebar"></router-view>
+    <v-main class="body-background ff-form-container">
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
+  </IdleTimeChecker>
 </template>
 
 <script lang="ts">
+import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { ClientIdType } from "../../types/contracts/ConfigContract";
+import { ClientIdType } from "@/types";
 import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import { useRouter } from "vue-router";
+import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 
 export default {
-  components: { BCLogo },
+  components: { BCLogo, IdleTimeChecker },
   setup() {
     const router = useRouter();
     const { executeLogout } = useAuth();
@@ -78,6 +81,7 @@ export default {
       userOptionsMenuRef,
       togleUserMenu,
       goToDashboard,
+      ClientIdType,
     };
   },
 };
