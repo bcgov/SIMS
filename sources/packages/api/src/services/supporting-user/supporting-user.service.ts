@@ -107,7 +107,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       const sinWithNoSpaces = removeWhiteSpaces(updateInfo.sin);
       userToUpdate.contactInfo = updateInfo.contactInfo;
       userToUpdate.sin = sinWithNoSpaces;
-      userToUpdate.birthdate = updateInfo.birthDate;
+      userToUpdate.birthdate = updateInfo.birthdate;
       userToUpdate.gender = updateInfo.gender;
       userToUpdate.supportingData = updateInfo.supportingData;
       userToUpdate.user = { id: updateInfo.userId } as User;

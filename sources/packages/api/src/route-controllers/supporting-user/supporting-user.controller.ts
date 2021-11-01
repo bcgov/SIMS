@@ -212,7 +212,7 @@ export class SupportingUserController {
         {
           contactInfo,
           sin: payload.sin,
-          birthDate: userToken.birthdate,
+          birthdate: userToken.birthdate,
           gender: userToken.gender,
           supportingData: payload.supportingData,
           userId: user.id,

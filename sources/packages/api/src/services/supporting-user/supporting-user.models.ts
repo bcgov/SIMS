@@ -19,7 +19,7 @@ export interface UpdateSupportingUserInfo {
    * Birth date present on the supporting user
    * authentication information.
    */
-  birthDate: string;
+  birthdate: string;
   /**
    * Gender present on the the supporting user
    * authentication information.
