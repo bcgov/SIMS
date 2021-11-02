@@ -191,7 +191,7 @@ export class CRAPersonalVerificationService {
       sin: student.sin,
       surname: student.user.lastName,
       givenName: student.user.firstName,
-      birthDate: new Date(student.birthdate),
+      birthDate: student.birthDate,
       freeProjectArea,
     } as CRAPersonRecord;
   }
@@ -220,7 +220,7 @@ export class CRAPersonalVerificationService {
         sin: craIncomeVerification.supportingUser.sin,
         surname: craIncomeVerification.supportingUser.user.lastName,
         givenName: craIncomeVerification.supportingUser.user.firstName,
-        birthDate: new Date(craIncomeVerification.supportingUser.birthdate),
+        birthDate: craIncomeVerification.supportingUser.birthDate,
         freeProjectArea,
       } as CRAPersonRecord;
     }

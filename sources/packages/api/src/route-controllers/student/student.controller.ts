@@ -85,6 +85,7 @@ export class StudentController extends BaseController {
     const existingStudent = await this.studentService.getStudentByUserName(
       userToken.userName,
     );
+
     if (!existingStudent) {
       throw new NotFoundException(
         `No student was found with the student name ${userToken.userName}`,
@@ -105,7 +106,7 @@ export class StudentController extends BaseController {
       lastName: existingUser.lastName,
       email: existingUser.email,
       gender: existingStudent.gender,
-      dateOfBirth: existingStudent.birthdate,
+      dateOfBirth: existingStudent.birthDate,
       contact: {
         ...existingStudent.contactInfo.addresses[0],
         provinceState: existingStudent.contactInfo.addresses[0].province,
@@ -307,7 +308,7 @@ export class StudentController extends BaseController {
         firstName: existingUser.firstName,
         lastName: existingUser.lastName,
         email: existingUser.email,
-        birthDate: new Date(existingStudent.birthdate),
+        birthDate: existingStudent.birthDate,
       };
       // api to create student profile in ATBC
       const response = await this.atbcService.ATBCCreateClient(payload);
@@ -476,7 +477,7 @@ export class StudentController extends BaseController {
       id: eachStudent.id,
       firstName: eachStudent.user.firstName,
       lastName: eachStudent.user.lastName,
-      birthDate: dateString(eachStudent.birthdate),
+      birthDate: dateString(eachStudent.birthDate),
     }));
   }
   /**

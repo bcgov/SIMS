@@ -67,12 +67,14 @@ export default {
     const { hasStudentAccount } = useStudentStore();
 
     const logoClick = () => {
-      const routeName = isAuthenticated.value
-        ? StudentRoutesConst.STUDENT_DASHBOARD
-        : StudentRoutesConst.LOGIN;
-      router.push({
-        name: routeName,
-      });
+      if (hasStudentAccount.value) {
+        const routeName = isAuthenticated.value
+          ? StudentRoutesConst.STUDENT_DASHBOARD
+          : StudentRoutesConst.LOGIN;
+        router.push({
+          name: routeName,
+        });
+      }
     };
 
     const togleUserMenu = (event: any) => {

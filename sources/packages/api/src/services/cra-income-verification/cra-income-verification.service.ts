@@ -72,7 +72,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         "incomeVerification.id",
         "incomeVerification.taxYear",
         "application.id",
-        "student.birthdate",
+        "student.birthDate",
         "student.sin",
         "studentUser.firstName",
         "studentUser.lastName",

@@ -1,6 +1,7 @@
 import "reflect-metadata";
 require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
+import * as dayjs from "dayjs";
 import { StudentLegacyData } from "../../types";
 import { ArchiveDbService } from "./archive-db.service";
 
@@ -9,7 +10,7 @@ type Individual = { sin: string; dob: string; pd: "Y" | null };
 const testData: Array<Individual> = [
   {
     sin: "500016209",
-    dob: "2001-02-23",
+    dob: "2001-02-23 00:00:00",
     pd: "Y",
   },
   {
@@ -65,7 +66,7 @@ describe("ArchiveDbService", () => {
 
   it("should get status with permanentDisabilityFlag = Y", async () => {
     const r: StudentLegacyData[] = await service.getIndividualPDStatus({
-      birthdate: testData[0].dob,
+      birthDate: dayjs(testData[0].dob).toDate(),
       sin: testData[0].sin,
     });
     expect(r).toBeDefined();
@@ -76,7 +77,7 @@ describe("ArchiveDbService", () => {
 
   it("should get status with permanentDisabilityFlag = null", async () => {
     const r: StudentLegacyData[] = await service.getIndividualPDStatus({
-      birthdate: testData[1].dob,
+      birthDate: dayjs(testData[1].dob).toDate(),
       sin: testData[1].sin,
     });
     expect(r).toBeDefined();

@@ -83,3 +83,14 @@ export const setToStartOfTheDayInPSTPDT = (
 ): string => {
   return dayjs(date).tz("America/Vancouver", local).startOf("day").format();
 };
+
+/***
+ * Parse a new string in the expected format YYYY-MM-DD and returns
+ * a new Date object with the local time defined as 00:00:00.
+ */
+export function getDateOnly(stringDate: string): Date | undefined {
+  if (stringDate) {
+    return new Date(`${stringDate}T00:00:00`);
+  }
+  return null;
+}

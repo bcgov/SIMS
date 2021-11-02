@@ -63,12 +63,12 @@ export class ArchiveDbService {
   }
 
   async getIndividualPDStatus(
-    student: Pick<Student, "birthdate" | "sin">,
+    student: Pick<Student, "birthDate" | "sin">,
   ): Promise<StudentLegacyData[]> {
     await this.init();
     return this._connection.query(
       "select permanent_disability_flg as disability from public.individual where sin=$1 and date_of_birth=$2",
-      [student.sin, dayjs(student.birthdate).format("YYYYMMDD")],
+      [student.sin, dayjs(student.birthDate).format("YYYYMMDD")],
     );
   }
 }
