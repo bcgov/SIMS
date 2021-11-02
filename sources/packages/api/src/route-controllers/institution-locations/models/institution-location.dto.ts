@@ -6,7 +6,9 @@ export class GetInstitutionLocationDto {
   data: InstitutionLocationInfo;
   name: string;
 }
-
+/**
+ * Interface which defines the contract of how institution location data is passed to form.io
+ */
 export interface InstitutionLocationTypeDto {
   address1: string;
   address2?: string;
@@ -22,6 +24,9 @@ export interface InstitutionLocationTypeDto {
   primaryContactPhone: string;
 }
 
+/**
+ * Interface which defines the contract of how institution location data is passed to Vue component
+ */
 export interface InstitutionLocationsDetailsDto {
   id: number;
   name: string;
@@ -46,9 +51,6 @@ export interface UserLocationDto {
   name: string;
 }
 
-/**
- * This is the object used displaying institution locations summary for an institution
- */
 export interface InstitutionLocationsSummaryDto {
   id: number;
   name: string;

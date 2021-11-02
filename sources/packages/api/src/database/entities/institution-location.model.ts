@@ -13,7 +13,9 @@ import { AddressInfo } from "../../types";
 export interface InstitutionLocationInfo {
   address: AddressInfo;
 }
-
+/**
+ * Interface for primary contact of institution location.
+ */
 export interface PrimaryContact {
   firstName: string;
   lastName: string;

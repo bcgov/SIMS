@@ -126,7 +126,11 @@ export class InstitutionLocationsController extends BaseController {
     );
     return updateResult.affected;
   }
-
+  /**
+   * Controller method to get institution locations for the given institution.
+   * @param userToken
+   * @returns All the institution locations for the given institution.
+   */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
   @Get()
@@ -214,7 +218,12 @@ export class InstitutionLocationsController extends BaseController {
       description: location.name,
     }));
   }
-
+  /**
+   * Controller method to retrieve institution location by id.
+   * @param locationId
+   * @param userToken
+   * @returns institution location.
+   */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(":locationId")

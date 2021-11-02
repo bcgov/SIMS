@@ -13,7 +13,9 @@ export interface InstitutionPrimaryContact {
   primaryContactLastName: string;
   primaryContactPhone: string;
 }
-
+/**
+ * DTO for institution location form.io
+ */
 export interface InstitutionLocation
   extends InstitutionAddress,
     InstitutionPrimaryContact {
@@ -24,6 +26,9 @@ export interface InstitutionLocationData {
   name: string;
   data: InstitutionAddress;
 }
+/**
+ * DTO for institution location Vue
+ */
 export interface InstitutionLocationsDetails {
   id: number;
   name: string;
