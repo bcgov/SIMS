@@ -23,7 +23,7 @@ import { MSFAAFileHeader } from "./msfaa-files/msfaa-request-file-header";
 import { StringBuilder } from "../utilities/string-builder";
 /**
  * Manages the creation of the content files that needs to be sent
- * to MSFAA validation. These files are created based
+ * to MSFAA request. These files are created based
  * on a fixed size format and uploaded to a SFTP on Government
  * ZONE B network for further processing and final send to servers.
  */
@@ -42,7 +42,7 @@ export class MSFAAIntegrationService {
   }
 
   /**
-   * Create the MSFAA validation content, by populating the
+   * Create the MSFAA request content, by populating the
    * Header, Detail and trailer records.
    * @param msfaaRecords - MSFAA, Student, User and application.
    * objects data.
@@ -51,8 +51,7 @@ export class MSFAAIntegrationService {
    * @returns Complete MSFAAFileLines appending the header, footer
    * and trailer as an array.
    */
-
-  createMSFAAValidationContent(
+  createMSFAARequestContent(
     msfaaRecords: MSFAARecord[],
     fileSequence: number,
     totalSINHash: number,

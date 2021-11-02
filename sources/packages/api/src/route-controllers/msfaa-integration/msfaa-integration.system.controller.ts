@@ -1,18 +1,16 @@
 import { Controller, Post } from "@nestjs/common";
-import { MSFAAValidationResultDto } from "./models/msfaa-file-result.dto";
+import { MSFAARequestResultDto } from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { OfferingIntensity } from "../../database/entities";
-import { MSFAAValidationService } from "../../msfaa-integration/msfaa-validation.service";
+import { MSFAARequestService } from "../../msfaa-integration/msfaa-request.service";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
 export class MSFAAIntegrationController {
-  constructor(
-    private readonly msfaaValidationService: MSFAAValidationService,
-  ) {}
+  constructor(private readonly msfaaRequestService: MSFAARequestService) {}
 
   /**
    * Identifies all the records where the MSFAA number
@@ -21,17 +19,17 @@ export class MSFAAIntegrationController {
    * to validate if the MSFAA number
    * @returns Processing result log.
    */
-  @Post("process-validation")
-  async processMSFAAValidation(): Promise<MSFAAValidationResultDto[]> {
-    this.logger.log("Sending Full Time MSFAA file for validation...");
+  @Post("process-request")
+  async processMSFAARequest(): Promise<MSFAARequestResultDto[]> {
+    this.logger.log("Sending Full Time MSFAA file for request...");
     const uploadFullTimeResult =
-      await this.msfaaValidationService.processMSFAAValidation(
+      await this.msfaaRequestService.processMSFAARequest(
         OfferingIntensity.fullTime,
       );
     this.logger.log("MSFAA Full Time file sent.");
-    this.logger.log("Sending Part Time MSFAA file for validation...");
+    this.logger.log("Sending Part Time MSFAA file for request...");
     const uploadPartTimeResult =
-      await this.msfaaValidationService.processMSFAAValidation(
+      await this.msfaaRequestService.processMSFAARequest(
         OfferingIntensity.partTime,
       );
     this.logger.log("MSFAA Part Time file sent.");

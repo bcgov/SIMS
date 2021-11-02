@@ -6,7 +6,7 @@ export const TIME_FORMAT = "HHmm";
 export const MSFAA_SENT_STATUS_CODE = "P";
 /**
  * Required information to a
- * MSFAA validation to be processed.
+ * MSFAA request to be processed.
  */
 export interface MSFAARecord {
   id: number;

@@ -80,7 +80,7 @@ export class MSFAANumber extends RecordDataModel {
   /**
    * Application that creates the MSFAA Number.
    */
-  @ManyToOne(() => Application, { eager: false, cascade: true })
+  @ManyToOne(() => Application, { eager: false, cascade: false })
   @JoinColumn({
     name: "reference_application_id",
     referencedColumnName: ColumnNames.ID,

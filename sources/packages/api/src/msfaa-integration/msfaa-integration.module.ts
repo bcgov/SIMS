@@ -7,18 +7,18 @@ import {
   SshService,
 } from "../services";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
-import { MSFAAValidationService } from "./msfaa-validation.service";
+import { MSFAARequestService } from "./msfaa-request.service";
 
 @Module({
   imports: [AuthModule],
   providers: [
     SshService,
     MSFAAIntegrationService,
-    MSFAAValidationService,
+    MSFAARequestService,
     MSFAANumberService,
     SequenceControlService,
     ConfigService,
   ],
-  exports: [MSFAAIntegrationService, MSFAAValidationService],
+  exports: [MSFAAIntegrationService, MSFAARequestService],
 })
 export class MSFAAIntegrationModule {}

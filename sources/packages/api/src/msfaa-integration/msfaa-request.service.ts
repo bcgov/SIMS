@@ -12,7 +12,7 @@ import {
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
 
 @Injectable()
-export class MSFAAValidationService {
+export class MSFAARequestService {
   constructor(
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
@@ -20,9 +20,9 @@ export class MSFAAValidationService {
   ) {}
 
   /**
-   * 1. Fetches the MSFAA records which are not sent for validation.
+   * 1. Fetches the MSFAA records which are not sent for request.
    * 2. Create Unique sequence for the request sent file.
-   * 3. Create the Validation content for the MSFAA file by populating the
+   * 3. Create the Request content for the MSFAA file by populating the
    *      header, footer and trailer content.
    * 4. Create the request filename with the file path for the MSFAA Request
    *      sent File.
@@ -30,43 +30,34 @@ export class MSFAAValidationService {
    * 6. Update the MSFAA records, that are sent in the request sent file.
    * @returns Processing MSFAA request result.
    */
-  async processMSFAAValidation(
+  async processMSFAARequest(
     offeringIntensity: string,
   ): Promise<MSFAAUploadResult> {
-    this.logger.log(
-      `Retrieving pending ${offeringIntensity} MSFAA validation...`,
-    );
-    const pendingMSFAAValidations =
-      await this.msfaaNumberService.getPendingMSFAAValidation(
-        offeringIntensity,
-      );
-    if (!pendingMSFAAValidations.length) {
+    this.logger.log(`Retrieving pending ${offeringIntensity} MSFAA request...`);
+    const pendingMSFAARequests =
+      await this.msfaaNumberService.getPendingMSFAARequest(offeringIntensity);
+    if (!pendingMSFAARequests.length) {
       return {
         generatedFile: "none",
         uploadedRecords: 0,
       };
     }
     this.logger.log(
-      `Found ${pendingMSFAAValidations.length} MSFAA number(s) for ${offeringIntensity} application that needs validation.`,
+      `Found ${pendingMSFAARequests.length} MSFAA number(s) for ${offeringIntensity} application that needs request.`,
     );
-    const msfaaRecords = pendingMSFAAValidations.map(
-      (pendingMSFAAValidation) => {
-        return this.createMSFAARecord(
-          pendingMSFAAValidation,
-          offeringIntensity,
-        );
-      },
-    );
+    const msfaaRecords = pendingMSFAARequests.map((pendingMSFAARequest) => {
+      return this.createMSFAARecord(pendingMSFAARequest, offeringIntensity);
+    });
 
     //Fetches the MSFAANumber ids, for further update in the db.
-    const msfaaRecordIds = pendingMSFAAValidations.map(
-      (pendingMSFAAValidation) => pendingMSFAAValidation.id,
+    const msfaaRecordIds = pendingMSFAARequests.map(
+      (pendingMSFAARequest) => pendingMSFAARequest.id,
     );
 
     //Total hash of the Student's SIN, its used in the footer content.
-    const totalSINHash = pendingMSFAAValidations.reduce(
-      (accumulator, pendingMSFAAValidation) =>
-        accumulator + parseInt(pendingMSFAAValidation.student.sin),
+    const totalSINHash = pendingMSFAARequests.reduce(
+      (accumulator, pendingMSFAARequest) =>
+        accumulator + parseInt(pendingMSFAARequest.student.sin),
       0,
     );
 
@@ -76,10 +67,10 @@ export class MSFAAValidationService {
       `MSFAA_${offeringIntensity}_SENT_FILE`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log("Creating MSFAA validation content...");
-          // Create the Validation content for the MSFAA file by populating the
+          this.logger.log("Creating MSFAA request content...");
+          // Create the Request content for the MSFAA file by populating the
           // header, footer and trailer content.
-          const fileContent = this.msfaaService.createMSFAAValidationContent(
+          const fileContent = this.msfaaService.createMSFAARequestContent(
             msfaaRecords,
             nextSequenceNumber,
             totalSINHash,
@@ -106,7 +97,7 @@ export class MSFAAValidationService {
           );
         } catch (error) {
           this.logger.error(
-            `Error while uploading content for ${offeringIntensity} MSFAA Validation: ${error}`,
+            `Error while uploading content for ${offeringIntensity} MSFAA Request: ${error}`,
           );
           throw error;
         }
@@ -118,7 +109,7 @@ export class MSFAAValidationService {
   /**
    * Use the information on the MSFAA, referenced application
    * student, user and institutionlocation objects are used
-   * to generate the record to be send to MSFAA validation.
+   * to generate the record to be send to MSFAA request.
    * @param pendingMSFAARecords referenced application
    * student, user and institutionlocation information.
    * @param offeringIntensity offeringintensity of the record.

@@ -101,12 +101,12 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   }
 
   /**
-   * Fetches the MSFAA number records which are not sent for validation.
+   * Fetches the MSFAA number records which are not sent for request.
    * This can be retrived by checking for date_requested column as null
    * in the MSFAANumber table.
    * @returns the records of the MSFAANumber table.
    */
-  async getPendingMSFAAValidation(
+  async getPendingMSFAARequest(
     offeringIntensity: string,
   ): Promise<MSFAANumber[]> {
     return this.repo
@@ -142,7 +142,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   /**
    * Once the MSFAA request file is created, updates the
    * date that the file was uploaded.
-   * @param msfaavalidationIds records that are part of the generated
+   * @param msfaarequestIds records that are part of the generated
    * file that must have the file sent name and date updated.
    * @param dateSent date that the file was uploaded.
    * @param [externalRepo] when provided, it is used instead of the
@@ -152,7 +152,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @returns the result of the update.
    */
   async updateRecordsInSentFile(
-    msfaavalidationIds: number[],
+    msfaarequestIds: number[],
     dateRequested: Date,
     externalRepo?: Repository<MSFAANumber>,
   ) {
@@ -162,6 +162,6 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       );
     }
     const repository = externalRepo ?? this.repo;
-    return repository.update({ id: In(msfaavalidationIds) }, { dateRequested });
+    return repository.update({ id: In(msfaarequestIds) }, { dateRequested });
   }
 }

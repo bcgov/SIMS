@@ -3,6 +3,6 @@ export interface MSFAAFileResultDto {
   uploadedRecords: number;
 }
 
-export interface MSFAAValidationResultDto extends MSFAAFileResultDto {
+export interface MSFAARequestResultDto extends MSFAAFileResultDto {
   offeringIntensity: string;
 }
