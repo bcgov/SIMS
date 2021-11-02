@@ -66,7 +66,7 @@ export class StringBuilder {
    * @param date
    * @param dateFormat
    */
-  public appendDate(date: Date, dateFormat: string) {
+  public appendDate(date: Date | string, dateFormat: string) {
     this.append(dayjs(date).format(dateFormat));
   }
 

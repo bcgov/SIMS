@@ -6,7 +6,19 @@ export interface InstitutionAddress {
   postalZipCode: string;
   provinceState: string;
 }
-export interface InstitutionLocation extends InstitutionAddress {
+
+export interface InstitutionPrimaryContact {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+}
+/**
+ * DTO for institution location form.io
+ */
+export interface InstitutionLocation
+  extends InstitutionAddress,
+    InstitutionPrimaryContact {
   locationName: string;
 }
 export interface InstitutionLocationData {
@@ -14,6 +26,9 @@ export interface InstitutionLocationData {
   name: string;
   data: InstitutionAddress;
 }
+/**
+ * DTO for institution location Vue
+ */
 export interface InstitutionLocationsDetails {
   id: number;
   name: string;
@@ -27,13 +42,9 @@ export interface InstitutionLocationsDetails {
       postalCode: string;
     };
   };
+  primaryContact: InstitutionPrimaryContact;
   institution: {
-    institutionPrimaryContact: {
-      primaryContactEmail: string;
-      primaryContactFirstName: string;
-      primaryContactLastName: string;
-      primaryContactPhone: string;
-    };
+    institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
 }

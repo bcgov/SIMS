@@ -35,19 +35,15 @@
               <label class="field-required" for="studentsLastName"
                 >Student's Date Of Birth</label
               >
-              <Calendar
+              <InputMask
                 v-model="studentsDateOfBirth"
-                :editable="true"
-                :showIcon="false"
-                dateFormat="yy-mm-dd"
+                mask="9999-99-99"
+                slotChar="yyyy-mm-dd"
               />
             </div></div
         ></v-col>
         <v-col class="mt-9" cols="auto"
-          ><v-btn
-            color="primary"
-            :disabled="!canSearch"
-            @click="applicationSearch"
+          ><v-btn color="primary" @click="applicationSearch"
             >Search</v-btn
           ></v-col
         >
@@ -69,7 +65,7 @@ import { useRouter } from "vue-router";
 import { useAuthBCSC, useFormatters, useToastMessage } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -100,7 +96,7 @@ export default {
     const formName = ref();
     const applicationNumber = ref("");
     const studentsLastName = ref("");
-    const studentsDateOfBirth = ref<Date>();
+    const studentsDateOfBirth = ref();
     const initialData = ref();
 
     const setInitialData = (programYearStartDate: Date) => {
@@ -121,10 +117,30 @@ export default {
     const getIdentifiedApplication = () => ({
       applicationNumber: applicationNumber.value,
       studentsLastName: studentsLastName.value,
-      studentsDateOfBirth: studentsDateOfBirth.value as Date,
+      studentsDateOfBirth: studentsDateOfBirth.value,
     });
 
     const applicationSearch = async () => {
+      if (
+        !applicationNumber.value ||
+        !studentsLastName.value ||
+        !studentsDateOfBirth.value
+      ) {
+        toast.warn(
+          "Mandatory information",
+          "Please complete all the mandatory fields.",
+        );
+        return;
+      }
+
+      if (isNaN(Date.parse(studentsDateOfBirth.value))) {
+        toast.warn(
+          "Mandatory information",
+          "Please check the Student's Date Of Birth.",
+        );
+        return;
+      }
+
       try {
         const searchResult = await SupportingUsersService.shared.getApplicationDetails(
           props.supportingUserType,
@@ -201,14 +217,6 @@ export default {
       }
     };
 
-    const canSearch = computed(() => {
-      return (
-        !!applicationNumber.value &&
-        !!studentsDateOfBirth.value &&
-        !!studentsLastName.value
-      );
-    });
-
     return {
       formName,
       initialData,
@@ -217,7 +225,6 @@ export default {
       applicationNumber,
       studentsDateOfBirth,
       studentsLastName,
-      canSearch,
       applicationSearch,
     };
   },

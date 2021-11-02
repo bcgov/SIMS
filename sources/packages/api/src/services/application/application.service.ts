@@ -1380,7 +1380,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber,
       })
       .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
-      .andWhere("student.birthdate = :birthDate", { birthDate })
+      .andWhere("student.birthDate = :birthDate", { birthDate })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.inProgress,
       })

@@ -13,6 +13,15 @@ import { AddressInfo } from "../../types";
 export interface InstitutionLocationInfo {
   address: AddressInfo;
 }
+/**
+ * Interface for primary contact of institution location.
+ */
+export interface PrimaryContact {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
 
 @Entity({
   name: "institution_locations",
@@ -45,4 +54,11 @@ export class InstitutionLocation extends RecordDataModel {
     name: "institution_code",
   })
   institutionCode: string;
+
+  @Column({
+    name: "primary_contact",
+    type: "jsonb",
+    nullable: false,
+  })
+  primaryContact: PrimaryContact;
 }

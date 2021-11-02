@@ -1,6 +1,9 @@
 import { BCeIDDetailsDto } from "../UserContract";
-
+/**
+ * DTO for institution creation
+ */
 export interface InstitutionDto {
+  userEmail: string;
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;

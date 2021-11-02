@@ -16,7 +16,7 @@ import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
 import { onMounted, ref } from "vue";
-import { InstitutionLocation, InstitutionLocationsDetails } from "../../types";
+import { InstitutionLocation } from "../../types";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
@@ -58,19 +58,9 @@ export default {
       }
     };
     onMounted(async () => {
-      const detail: InstitutionLocationsDetails = await InstitutionService.shared.getInstitutionLocation(
+      initialData.value = await InstitutionService.shared.getInstitutionLocation(
         props.locationId,
       );
-      initialData.value = {
-        address1: detail.data.address.addressLine1,
-        address2: detail.data.address.addressLine2,
-        city: detail.data.address.city,
-        country: detail.data.address.country,
-        locationName: detail.name,
-        postalZipCode: detail.data.address.postalCode,
-        provinceState: detail.data.address.province,
-        institutionCode: detail.institutionCode,
-      };
     });
     return {
       initialData,

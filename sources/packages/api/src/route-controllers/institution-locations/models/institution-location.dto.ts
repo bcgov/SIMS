@@ -1,3 +1,4 @@
+import { InstitutionPrimaryContact } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
 
 export class GetInstitutionLocationDto {
@@ -5,7 +6,9 @@ export class GetInstitutionLocationDto {
   data: InstitutionLocationInfo;
   name: string;
 }
-
+/**
+ * Interface which defines the contract of how institution location data is passed to form.io
+ */
 export interface InstitutionLocationTypeDto {
   address1: string;
   address2?: string;
@@ -15,8 +18,15 @@ export interface InstitutionLocationTypeDto {
   postalZipCode: string;
   provinceState: string;
   institutionCode: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactEmail: string;
+  primaryContactPhone: string;
 }
 
+/**
+ * Interface which defines the contract of how institution location data is passed to Vue component
+ */
 export interface InstitutionLocationsDetailsDto {
   id: number;
   name: string;
@@ -30,13 +40,9 @@ export interface InstitutionLocationsDetailsDto {
       postalCode: string;
     };
   };
+  primaryContact: InstitutionPrimaryContact;
   institution: {
-    institutionPrimaryContact: {
-      primaryContactEmail: string;
-      primaryContactFirstName: string;
-      primaryContactLastName: string;
-      primaryContactPhone: string;
-    };
+    institutionPrimaryContact: InstitutionPrimaryContact;
   };
 }
 
@@ -45,7 +51,7 @@ export interface UserLocationDto {
   name: string;
 }
 
-export interface InstitutionLocationsDetailsDto {
+export interface InstitutionLocationsSummaryDto {
   id: number;
   name: string;
   address: {

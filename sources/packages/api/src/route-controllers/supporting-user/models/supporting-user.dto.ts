@@ -9,7 +9,7 @@ export class ApplicationIdentifierDTO {
   @IsNotEmpty()
   applicationNumber: string;
   @IsNotEmpty()
-  studentsDateOfBirth: Date;
+  studentsDateOfBirth: string;
   @IsNotEmpty()
   studentsLastName: string;
 }
@@ -29,7 +29,7 @@ export interface UpdateSupportingUserDTO {
   postalCode: string;
   provinceState: string;
   sin: string;
-  studentsDateOfBirth: Date;
+  studentsDateOfBirth: string;
   studentsLastName: string;
   supportingData: any;
 }

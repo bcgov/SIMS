@@ -16,6 +16,12 @@ export function createFakeLocation(
       postalCode: faker.address.zipCode("A9A9A9"),
     },
   };
+  location.primaryContact = {
+    firstName: "FirstName",
+    lastName: "LastName",
+    email: "Email",
+    phoneNumber: "Phone",
+  };
   location.name = faker.company.companyName();
   location.institution = institution ?? createFakeInstitution();
   return location;

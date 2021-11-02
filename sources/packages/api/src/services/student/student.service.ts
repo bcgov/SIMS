@@ -14,7 +14,7 @@ import { ArchiveDbService } from "../archive-db/archive-db.service";
 import { StudentLegacyData } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
-import { getUTCNow, removeWhiteSpaces } from "../../utilities";
+import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 
 @Injectable()
@@ -71,7 +71,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
     const student = new Student();
     student.user = user;
-    student.birthdate = new Date(userInfo.birthdate);
+    student.birthDate = getDateOnly(userInfo.birthdate);
     student.gender = userInfo.gender;
     student.sin = removeWhiteSpaces(otherInfo.sinNumber);
     student.contactInfo = {
@@ -153,12 +153,12 @@ export class StudentService extends RecordDataModelService<Student> {
       mustSave = true;
     }
 
-    const birthDate = new Date(userToken.birthdate);
+    const userTokenBirthdate = getDateOnly(userToken.birthdate);
     if (
-      birthDate !== studentToSync.birthdate ||
+      userTokenBirthdate !== studentToSync.birthDate ||
       userToken.gender !== studentToSync.gender
     ) {
-      studentToSync.birthdate = birthDate;
+      studentToSync.birthDate = userTokenBirthdate;
       studentToSync.gender = userToken.gender;
       mustSave = true;
     }
@@ -272,7 +272,7 @@ export class StudentService extends RecordDataModelService<Student> {
       .createQueryBuilder("student")
       .select([
         "student.id",
-        "student.birthdate",
+        "student.birthDate",
         "user.firstName",
         "user.lastName",
       ])

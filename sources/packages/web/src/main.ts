@@ -15,6 +15,7 @@ import PrimeVue from "primevue/config";
 import Menu from "primevue/menu";
 import Menubar from "primevue/menubar";
 import InputText from "primevue/inputtext";
+import InputMask from "primevue/inputmask";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Card from "primevue/card";
@@ -49,6 +50,7 @@ AppConfigService.shared.init().then(() => {
     .component("DataTable", DataTable)
     .component("Column", Column)
     .component("InputText", InputText)
+    .component("InputMask", InputMask)
     .component("Message", Message)
     .component("Checkbox", Checkbox)
     .component("Calendar", Calendar)
