@@ -1,7 +1,12 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { Brackets, Connection, In, Repository } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { MSFAANumber, Student, Application } from "../../database/entities";
+import {
+  MSFAANumber,
+  Student,
+  Application,
+  OfferingIntensity,
+} from "../../database/entities";
 import * as dayjs from "dayjs";
 import { MAX_MFSAA_VALID_DAYS } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
@@ -107,7 +112,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @returns the records of the MSFAANumber table.
    */
   async getPendingMSFAARequest(
-    offeringIntensity: string,
+    offeringIntensity: OfferingIntensity,
   ): Promise<MSFAANumber[]> {
     return this.repo
       .createQueryBuilder("msfaaNumber")
@@ -152,7 +157,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @returns the result of the update.
    */
   async updateRecordsInSentFile(
-    msfaarequestIds: number[],
+    msfaaRequestIds: number[],
     dateRequested: Date,
     externalRepo?: Repository<MSFAANumber>,
   ) {
@@ -162,6 +167,6 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       );
     }
     const repository = externalRepo ?? this.repo;
-    return repository.update({ id: In(msfaarequestIds) }, { dateRequested });
+    return repository.update({ id: In(msfaaRequestIds) }, { dateRequested });
   }
 }

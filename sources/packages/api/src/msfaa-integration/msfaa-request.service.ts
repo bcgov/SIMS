@@ -10,6 +10,7 @@ import {
   MSFAAUploadResult,
 } from "./models/msfaa-integration.model";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
+import { OfferingIntensity } from "../database/entities/offering-intensity.type";
 
 @Injectable()
 export class MSFAARequestService {
@@ -31,7 +32,7 @@ export class MSFAARequestService {
    * @returns Processing MSFAA request result.
    */
   async processMSFAARequest(
-    offeringIntensity: string,
+    offeringIntensity: OfferingIntensity,
   ): Promise<MSFAAUploadResult> {
     this.logger.log(`Retrieving pending ${offeringIntensity} MSFAA request...`);
     const pendingMSFAARequests =
@@ -119,6 +120,7 @@ export class MSFAARequestService {
     pendingMSFAARecords: MSFAANumber,
     offeringIntensity: string,
   ): MSFAARecord {
+    const addressInfo = pendingMSFAARecords.student.contactInfo.addresses[0];
     return {
       id: pendingMSFAARecords.id,
       msfaaNumber: pendingMSFAARecords.msfaaNumber,
@@ -130,16 +132,14 @@ export class MSFAARequestService {
       surname: pendingMSFAARecords.student.user.lastName,
       givenName: pendingMSFAARecords.student.user.firstName,
       gender: pendingMSFAARecords.student.gender,
+      //TODO needed to make it dynamic, in the future stories
       maritalStatus: "married",
-      addressLine1:
-        pendingMSFAARecords.student.contactInfo.addresses[0].addressLine1,
-      addressLine2:
-        pendingMSFAARecords.student.contactInfo.addresses[0].addressLine2,
-      city: pendingMSFAARecords.student.contactInfo.addresses[0].city,
-      province: pendingMSFAARecords.student.contactInfo.addresses[0].province,
-      postalCode:
-        pendingMSFAARecords.student.contactInfo.addresses[0].postalCode,
-      country: pendingMSFAARecords.student.contactInfo.addresses[0].country,
+      addressLine1: addressInfo.addressLine1,
+      addressLine2: addressInfo.addressLine2,
+      city: addressInfo.city,
+      province: addressInfo.province,
+      postalCode: addressInfo.postalCode,
+      country: addressInfo.country,
       phone: pendingMSFAARecords.student.contactInfo.phone,
       email: pendingMSFAARecords.student.user.email,
       offeringIntensity: offeringIntensity,

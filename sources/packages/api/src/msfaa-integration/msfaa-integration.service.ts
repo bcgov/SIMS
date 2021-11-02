@@ -81,9 +81,7 @@ export class MSFAAIntegrationService {
         msfaaRecord.maritalStatus,
       );
       msfaaDetail.addressLine1 = msfaaRecord.addressLine1;
-      msfaaDetail.addressLine2 = msfaaRecord.addressLine2
-        ? msfaaRecord.addressLine2
-        : "";
+      msfaaDetail.addressLine2 = msfaaRecord.addressLine2 ?? "";
       msfaaDetail.city = msfaaRecord.city;
       msfaaDetail.province = msfaaRecord.province;
       msfaaDetail.postalCode = msfaaRecord.postalCode;
