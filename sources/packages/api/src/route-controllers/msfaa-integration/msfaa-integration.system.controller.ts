@@ -14,9 +14,9 @@ export class MSFAAIntegrationController {
 
   /**
    * Identifies all the records where the MSFAA number
-   * is not validated i.e. has date_requested=null
+   * is not requested i.e. has date_requested=null
    * create a fixed file and send file to the sftp server
-   * to validate if the MSFAA number
+   * to request the MSFAA number
    * @returns Processing result log.
    */
   @Post("process-request")
