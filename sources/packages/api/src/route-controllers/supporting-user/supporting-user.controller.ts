@@ -33,7 +33,7 @@ import {
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
-import { getSupportingUserForm } from "../../utilities";
+import { getDateOnly, getSupportingUserForm } from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
@@ -67,7 +67,7 @@ export class SupportingUserController {
       await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
-        payload.studentsDateOfBirth,
+        getDateOnly(payload.studentsDateOfBirth),
       );
 
     if (!application) {
@@ -129,7 +129,7 @@ export class SupportingUserController {
       this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
-        payload.studentsDateOfBirth,
+        getDateOnly(payload.studentsDateOfBirth),
       );
 
     // Wait for both queries to finish.
@@ -212,7 +212,7 @@ export class SupportingUserController {
         {
           contactInfo,
           sin: payload.sin,
-          birthDate: new Date(userToken.birthdate),
+          birthDate: getDateOnly(userToken.birthdate),
           gender: userToken.gender,
           supportingData: payload.supportingData,
           userId: user.id,

@@ -66,7 +66,7 @@ describe("ArchiveDbService", () => {
 
   it("should get status with permanentDisabilityFlag = Y", async () => {
     const r: StudentLegacyData[] = await service.getIndividualPDStatus({
-      birthdate: dayjs(testData[0].dob).toDate(),
+      birthDate: dayjs(testData[0].dob).toDate(),
       sin: testData[0].sin,
     });
     expect(r).toBeDefined();
@@ -77,7 +77,7 @@ describe("ArchiveDbService", () => {
 
   it("should get status with permanentDisabilityFlag = null", async () => {
     const r: StudentLegacyData[] = await service.getIndividualPDStatus({
-      birthdate: dayjs(testData[1].dob).toDate(),
+      birthDate: dayjs(testData[1].dob).toDate(),
       sin: testData[1].sin,
     });
     expect(r).toBeDefined();

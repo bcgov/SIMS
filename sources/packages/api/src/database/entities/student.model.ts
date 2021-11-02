@@ -9,6 +9,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { ContactInfo } from "../../types";
 import { User } from "./user.model";
+import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 @Entity({ name: TableNames.Student })
 export class Student extends RecordDataModel {
@@ -29,8 +30,10 @@ export class Student extends RecordDataModel {
 
   @Column({
     name: "birth_date",
+    type: "date",
+    transformer: dateOnlyTransformer,
   })
-  birthdate: Date;
+  birthDate: Date;
 
   @Column({
     name: "pd_verified",
