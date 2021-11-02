@@ -1,4 +1,4 @@
--- Add primary_contact to institutions table
+-- Add primary_contact to institution_locations table
 ALTER TABLE
     sims.institution_locations
 ADD
