@@ -42,7 +42,7 @@ import {
   IsInstitutionAdmin,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { InstitutionLocationsDetailsDto } from "../institution-locations/models/institution-location.dto";
+import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 
@@ -371,7 +371,7 @@ export class InstitutionController extends BaseController {
   @Get("/my-locations")
   async getMyInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationsDetailsDto[]> {
+  ): Promise<InstitutionLocationsSummaryDto[]> {
     // get all institution locations that user has access too.
     const InstitutionLocationData: InstitutionLocation[] =
       userToken.authorizations.isAdmin()
@@ -393,7 +393,7 @@ export class InstitutionController extends BaseController {
           city: el.data.address?.city,
           postalCode: el.data.address?.postalCode,
         },
-      } as InstitutionLocationsDetailsDto;
+      } as InstitutionLocationsSummaryDto;
     });
   }
   @Head("/:guid")

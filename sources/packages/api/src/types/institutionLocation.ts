@@ -8,5 +8,9 @@ export interface ValidatedInstitutionLocation {
     postalZipCode: string;
     country: string;
     institutionCode: string;
+    primaryContactFirstName: string;
+    primaryContactLastName: string;
+    primaryContactEmail: string;
+    primaryContactPhone: string;
   };
 }

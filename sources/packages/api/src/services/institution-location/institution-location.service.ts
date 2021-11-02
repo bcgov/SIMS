@@ -52,6 +52,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
           postalCode: data.data.postalZipCode,
         },
       },
+      primaryContact: {
+        firstName: data.data.primaryContactFirstName,
+        lastName: data.data.primaryContactLastName,
+        email: data.data.primaryContactEmail,
+        phoneNumber: data.data.primaryContactPhone,
+      },
       institution: institution,
       institutionCode: data.data.institutionCode,
     };
@@ -77,6 +83,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
           postalCode: data.postalZipCode,
         },
       },
+      primaryContact: {
+        firstName: data.primaryContactFirstName,
+        lastName: data.primaryContactLastName,
+        email: data.primaryContactEmail,
+        phoneNumber: data.primaryContactPhone,
+      },
       institution: institution,
       institutionCode: data.institutionCode,
     };
@@ -94,6 +106,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institution_location.data",
         "institution.institutionPrimaryContact",
         "institution_location.id",
+        "institution_location.primaryContact",
       ])
       .leftJoin("institution_location.institution", "institution")
       .where("institution.id = :id", { id: institutionId })
@@ -126,6 +139,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institution.institutionPrimaryContact",
         "institution_location.id",
         "institution_location.institutionCode",
+        "institution_location.primaryContact",
       ])
       .leftJoin("institution_location.institution", "institution")
       .where("institution.id = :id and institution_Location.id = :locationId", {

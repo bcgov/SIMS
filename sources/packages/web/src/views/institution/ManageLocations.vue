@@ -67,34 +67,16 @@
             <v-col>
               <span class="pb-2"><b> Primary Contact </b></span><br />
               <span class="mt-2">
-                {{
-                  item.institution.institutionPrimaryContact
-                    .primaryContactFirstName
-                }}
-                {{
-                  item.institution.institutionPrimaryContact
-                    .primaryContactLastName
-                }}
+                {{ item.primaryContact.primaryContactFirstName }}
+                {{ item.primaryContact.primaryContactLastName }}
                 <br />
               </span>
-              <span
-                v-if="
-                  item.institution.institutionPrimaryContact.primaryContactPhone
-                "
-              >
-                {{
-                  item.institution.institutionPrimaryContact.primaryContactPhone
-                }}
+              <span v-if="item.primaryContact.primaryContactPhone">
+                {{ item.primaryContact.primaryContactPhone }}
                 <br />
               </span>
-              <span
-                v-if="
-                  item.institution.institutionPrimaryContact.primaryContactEmail
-                "
-              >
-                {{
-                  item.institution.institutionPrimaryContact.primaryContactEmail
-                }}
+              <span v-if="item.primaryContact.primaryContactEmail">
+                {{ item.primaryContact.primaryContactEmail }}
                 <br />
               </span>
             </v-col>

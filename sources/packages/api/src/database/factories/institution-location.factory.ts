@@ -16,5 +16,11 @@ export async function institutionLocationFactory(
       postalCode: "V8V1M7",
     },
   };
+  loc.primaryContact = {
+    firstName: "FirstName",
+    lastName: "LastName",
+    email: "Email",
+    phoneNumber: "Phone",
+  };
   return loc;
 }
