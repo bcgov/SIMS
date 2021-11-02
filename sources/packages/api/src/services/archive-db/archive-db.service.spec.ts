@@ -15,7 +15,7 @@ const testData: Array<Individual> = [
   },
   {
     sin: "286206651",
-    dob: "1998-08-15",
+    dob: "1998-08-15 00:00:00",
     pd: null,
   },
 ];

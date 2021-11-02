@@ -16,7 +16,7 @@ export function formatDateOnly(date?: Date): string | undefined {
 }
 
 /***
- * Allow that the a date only column on Postgres can
+ * Allow that the a date-only column on Postgres can
  * be mapped to a Date object with local time always
  * defined as zero.
  * When mapping a Date only field from database Typeorm
@@ -27,15 +27,9 @@ export function formatDateOnly(date?: Date): string | undefined {
  */
 export const dateOnlyTransformer: ValueTransformer = {
   from: (dbValue: any): any => {
-    console.log("dateOnlyTransformer->dbValue");
-    console.log(dbValue);
-    console.log(getDateOnly(dbValue));
     return getDateOnly(dbValue);
   },
   to: (entityValue: any): any => {
-    console.log("dateOnlyTransformer->entityValue");
-    console.log(entityValue);
-    console.log(formatDateOnly(entityValue));
     return formatDateOnly(entityValue);
   },
 };
