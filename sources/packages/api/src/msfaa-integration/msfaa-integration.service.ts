@@ -164,10 +164,10 @@ export class MSFAAIntegrationService {
     fileNameArray.appendDate(new Date(), DATE_FORMAT);
     await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
       fileNameArray.toString(),
+      entityManager,
       async (nextSequenceNumber: number) => {
         fileNameSequence = nextSequenceNumber;
       },
-      entityManager,
     );
     fileNameArray.append(".");
     fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");

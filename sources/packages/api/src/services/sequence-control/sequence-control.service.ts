@@ -52,8 +52,8 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       await queryRunner.startTransaction();
       await this.consumeNextSequenceWithExistingEntityManager(
         sequenceName,
-        process,
         queryRunner.manager,
+        process,
       );
       await queryRunner.commitTransaction();
     } catch (error) {
@@ -80,11 +80,11 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
    */
   public async consumeNextSequenceWithExistingEntityManager(
     sequenceName: string,
+    entityManager: EntityManager,
     process: (
       sequenceNumber: number,
       entityManager: EntityManager,
     ) => Promise<void>,
-    entityManager: EntityManager,
   ) {
     try {
       // Select and lock the specific record only.
@@ -127,7 +127,9 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       this.logger.log("Persisting new sequence number to database...");
       await entityManager.save(sequenceRecord);
     } catch (error) {
-      this.logger.error("Executing sequence number rollback...");
+      this.logger.error(
+        "Throw error to the calling method for transaction rollback",
+      );
       throw error;
     }
   }
