@@ -129,7 +129,7 @@ export class MSFAARequestService {
       institutionCode:
         pendingMSFAARecords.referenceApplication.offering.institutionLocation
           .institutionCode,
-      birthDate: pendingMSFAARecords.student.birthdate,
+      birthDate: pendingMSFAARecords.student.birthDate,
       surname: pendingMSFAARecords.student.user.lastName,
       givenName: pendingMSFAARecords.student.user.firstName,
       gender: pendingMSFAARecords.student.gender,
