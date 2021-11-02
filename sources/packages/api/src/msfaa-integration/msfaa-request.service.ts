@@ -80,6 +80,7 @@ export class MSFAARequestService {
           // sent File.
           const fileInfo = await this.msfaaService.createRequestFileName(
             offeringIntensity,
+            entityManager,
           );
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(

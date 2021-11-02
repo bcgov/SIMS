@@ -21,6 +21,7 @@ import { MSFAAFileDetail } from "./msfaa-files/msfaa-request-file-detail";
 import { MSFAAFileFooter } from "./msfaa-files/msfaa-request-file-footer";
 import { MSFAAFileHeader } from "./msfaa-files/msfaa-request-file-header";
 import { StringBuilder } from "../utilities/string-builder";
+import { EntityManager } from "typeorm";
 /**
  * Manages the creation of the content files that needs to be sent
  * to MSFAA request. These files are created based
@@ -147,7 +148,10 @@ export class MSFAAIntegrationService {
    *  where MSFAA is requested.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  async createRequestFileName(offeringIntensity: string): Promise<{
+  async createRequestFileName(
+    offeringIntensity: string,
+    entityManager?: EntityManager,
+  ): Promise<{
     fileName: string;
     filePath: string;
   }> {
@@ -158,11 +162,12 @@ export class MSFAAIntegrationService {
       fileNameArray.append("PT.");
     }
     fileNameArray.appendDate(new Date(), DATE_FORMAT);
-    await this.sequenceService.consumeNextSequence(
+    await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
       fileNameArray.toString(),
       async (nextSequenceNumber: number) => {
         fileNameSequence = nextSequenceNumber;
       },
+      entityManager,
     );
     fileNameArray.append(".");
     fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");
