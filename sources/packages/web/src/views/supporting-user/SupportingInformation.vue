@@ -117,11 +117,15 @@ export default {
     const getIdentifiedApplication = () => ({
       applicationNumber: applicationNumber.value,
       studentsLastName: studentsLastName.value,
-      studentsDateOfBirth: new Date(studentsDateOfBirth.value),
+      studentsDateOfBirth: studentsDateOfBirth.value,
     });
 
     const applicationSearch = async () => {
-      if (!applicationNumber.value || !studentsLastName.value) {
+      if (
+        !applicationNumber.value ||
+        !studentsLastName.value ||
+        !studentsDateOfBirth.value
+      ) {
         toast.warn(
           "Mandatory information",
           "Please complete all the mandatory fields.",

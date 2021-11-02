@@ -67,7 +67,7 @@ export class SupportingUserController {
       await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
-        payload.studentsDateOfBirth,
+        getDateOnly(payload.studentsDateOfBirth),
       );
 
     if (!application) {
@@ -129,7 +129,7 @@ export class SupportingUserController {
       this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
         payload.studentsLastName,
-        payload.studentsDateOfBirth,
+        getDateOnly(payload.studentsDateOfBirth),
       );
 
     // Wait for both queries to finish.

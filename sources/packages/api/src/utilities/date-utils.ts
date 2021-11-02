@@ -92,5 +92,5 @@ export function getDateOnly(stringDate: string): Date | undefined {
   if (stringDate) {
     return new Date(`${stringDate}T00:00:00`);
   }
-  return null;
+  return undefined;
 }
