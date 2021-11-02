@@ -128,7 +128,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       await entityManager.save(sequenceRecord);
     } catch (error) {
       this.logger.error(
-        "Throw error to the calling method for transaction rollback",
+        "Error while executing in the consumeNextSequenceWithExistingEntityManager method",
       );
       throw error;
     }
