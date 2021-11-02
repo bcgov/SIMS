@@ -50,6 +50,43 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
     );
     try {
       await queryRunner.startTransaction();
+      await this.consumeNextSequenceWithExistingEntityManager(
+        sequenceName,
+        queryRunner.manager,
+        process,
+      );
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      this.logger.error("Executing sequence number rollback...");
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  /**
+   * Allows that a new sequence number, controlled by the database, be acquired.
+   * Between the process of getting the next sequence number and updating it back
+   * to the database, a process can be executed in the middle, making it possible that
+   * the number on database only be incremented if the process in the middle
+   * was successfully  executed.
+   * @param sequenceName name of the sequence to be incremented.
+   * @param process process to be executed. Depending on the process
+   * to be executed, in case of an error happen, the sequence could not be
+   * consumed in case of failure.
+   * @param entityManager existing entity manager, to use the transaction from the
+   * called method.
+   */
+  public async consumeNextSequenceWithExistingEntityManager(
+    sequenceName: string,
+    entityManager: EntityManager,
+    process: (
+      sequenceNumber: number,
+      entityManager: EntityManager,
+    ) => Promise<void>,
+  ) {
+    try {
       // Select and lock the specific record only.
       // If another attempt of generating the next sequence number
       // happens in the same sequence name the second request will
@@ -57,7 +94,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       // two concurrent processes will not be generating a new
       // sequence number at the same time.
       this.logger.log("Getting current sequence from DB...");
-      let sequenceRecord = await queryRunner.manager
+      let sequenceRecord = await entityManager
         .getRepository(SequenceControl)
         .createQueryBuilder("sc")
         .setLock("pessimistic_write")
@@ -83,19 +120,17 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       );
       // Even the sequence number being represented as a bigint in Postgres here
       // we are assuming that the max value will not go beyond the number safe limit.
-      await process(nextSequenceNumber, queryRunner.manager);
+      await process(nextSequenceNumber, entityManager);
       // If the external process was successfully execute
       // update the new sequence number to the database.
       sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
       this.logger.log("Persisting new sequence number to database...");
-      await queryRunner.manager.save(sequenceRecord);
-      await queryRunner.commitTransaction();
+      await entityManager.save(sequenceRecord);
     } catch (error) {
-      this.logger.error("Executing sequence number rollback...");
-      await queryRunner.rollbackTransaction();
+      this.logger.error(
+        "Error while executing in the consumeNextSequenceWithExistingEntityManager method",
+      );
       throw error;
-    } finally {
-      await queryRunner.release();
     }
   }
 

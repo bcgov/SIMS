@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Student } from ".";
+import { Application, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
@@ -77,4 +77,13 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   student: Student;
+  /**
+   * Application that creates the MSFAA Number.
+   */
+  @ManyToOne(() => Application, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "reference_application_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  referenceApplication: Application;
 }

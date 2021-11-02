@@ -10,6 +10,7 @@ export interface IConfig {
   CRAIntegration: CRAIntegrationConfig;
   simsApiClientCredential: ClientCredential;
   ATBCIntegration: ATBCIntegrationConfig;
+  MSFAAIntegration: MSFAAIntegrationConfig;
   /**
    * When defined as true, allows the simulation of a complete cycle of the
    * CRA send/response process that allows the workflow to proceed without
@@ -103,4 +104,9 @@ export interface ATBCIntegrationConfig {
   ATBCPassword: string;
   ATBCApp: string;
   ATBCEndpoint: string;
+}
+
+export interface MSFAAIntegrationConfig {
+  ftpRequestFolder: string;
+  provinceCode: string;
 }

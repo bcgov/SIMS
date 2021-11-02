@@ -181,7 +181,6 @@ describe("ApplicationService", () => {
         expect(msfaaNumberService.createMSFAANumber).toHaveBeenCalled();
       } finally {
         await applicationRepository.remove(testCompletedApplication);
-        await applicationRepository.remove(testApplication);
         await msfaaNumberRepository.remove(testMSFAANumber);
         await studentRepository.remove(testStudent);
       }

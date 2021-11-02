@@ -1,7 +1,12 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Brackets, Connection } from "typeorm";
+import { Brackets, Connection, In, Repository } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { MSFAANumber, Student } from "../../database/entities";
+import {
+  MSFAANumber,
+  Student,
+  Application,
+  OfferingIntensity,
+} from "../../database/entities";
 import * as dayjs from "dayjs";
 import { MAX_MFSAA_VALID_DAYS } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
@@ -24,10 +29,16 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student to have a new MSFAA record created.
    * @returns Created MSFAA record.
    */
-  async createMSFAANumber(studentId: number): Promise<MSFAANumber> {
+  async createMSFAANumber(
+    studentId: number,
+    referenceApplicationId: number,
+  ): Promise<MSFAANumber> {
     const newMSFAANumber = new MSFAANumber();
     newMSFAANumber.msfaaNumber = await this.consumeNextSequence();
     newMSFAANumber.student = { id: studentId } as Student;
+    newMSFAANumber.referenceApplication = {
+      id: referenceApplicationId,
+    } as Application;
     return this.repo.save(newMSFAANumber);
   }
 
@@ -92,5 +103,70 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       !!endDate &&
       dayjs(endDate).diff(startDate, "days") < MAX_MFSAA_VALID_DAYS
     );
+  }
+
+  /**
+   * Fetches the MSFAA number records which are not sent for request.
+   * This can be retrived by checking for date_requested column as null
+   * in the MSFAANumber table.
+   * @returns the records of the MSFAANumber table.
+   */
+  async getPendingMSFAARequest(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<MSFAANumber[]> {
+    return this.repo
+      .createQueryBuilder("msfaaNumber")
+      .select([
+        "msfaaNumber.id",
+        "students.id",
+        "referenceApplication.id",
+        "msfaaNumber.msfaaNumber",
+        "students.sin",
+        "institutionLocation.institutionCode",
+        "students.birthDate",
+        //"students.maritalStatus",
+        "users.lastName",
+        "users.firstName",
+        "students.gender",
+        "students.contactInfo",
+        "users.email",
+        "offering.offeringIntensity",
+      ])
+      .innerJoin("msfaaNumber.student", "students")
+      .innerJoin("students.user", "users")
+      .innerJoin("msfaaNumber.referenceApplication", "referenceApplication")
+      .innerJoin("referenceApplication.offering", "offering")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .where("msfaaNumber.dateRequested is null")
+      .andWhere("offering.offeringIntensity = :offeringIntensity", {
+        offeringIntensity,
+      })
+      .getMany();
+  }
+
+  /**
+   * Once the MSFAA request file is created, updates the
+   * date that the file was uploaded.
+   * @param msfaaRequestIds records that are part of the generated
+   * file that must have the file sent name and date updated.
+   * @param dateSent date that the file was uploaded.
+   * @param [externalRepo] when provided, it is used instead of the
+   * local repository (this.repo). Useful when the command must be executed,
+   * for instance, as part of an existing transaction manage externally to this
+   * service.
+   * @returns the result of the update.
+   */
+  async updateRecordsInSentFile(
+    msfaaRequestIds: number[],
+    dateRequested: Date,
+    externalRepo?: Repository<MSFAANumber>,
+  ) {
+    if (!dateRequested) {
+      throw new Error(
+        "Date sent field is not provided to update the MSFAA records.",
+      );
+    }
+    const repository = externalRepo ?? this.repo;
+    return repository.update({ id: In(msfaaRequestIds) }, { dateRequested });
   }
 }
