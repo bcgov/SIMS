@@ -15,8 +15,9 @@ export class MSFAAIntegrationController {
   /**
    * Identifies all the records where the MSFAA number
    * is not requested i.e. has date_requested=null
-   * create a fixed file and send file to the sftp server
-   * to request the MSFAA number
+   * Create a fixed file for part time,
+   *  full time and send file to the sftp server
+   * for processing
    * @returns Processing result log.
    */
   @Post("process-request")
