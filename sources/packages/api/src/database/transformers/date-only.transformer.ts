@@ -27,7 +27,6 @@ export function formatDateOnly(date?: Date): string | undefined {
  */
 export const dateOnlyTransformer: ValueTransformer = {
   from: (dbValue: string | undefined): Date | undefined => {
-    console.log(typeof dbValue);
     return getDateOnly(dbValue);
   },
   to: (entityValue: Date | undefined): string | undefined => {
