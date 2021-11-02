@@ -21,28 +21,29 @@ export class MSFAAIntegrationController {
    */
   @Post("process-request")
   async processMSFAARequest(): Promise<MSFAARequestResultDto[]> {
-    this.logger.log("Sending Full Time MSFAA file for request...");
-    const uploadFullTimeResult =
-      await this.msfaaRequestService.processMSFAARequest(
-        OfferingIntensity.fullTime,
-      );
-    this.logger.log("MSFAA Full Time file sent.");
-    this.logger.log("Sending Part Time MSFAA file for request...");
-    const uploadPartTimeResult =
-      await this.msfaaRequestService.processMSFAARequest(
-        OfferingIntensity.partTime,
-      );
-    this.logger.log("MSFAA Part Time file sent.");
+    this.logger.log("Sending MSFAA request File...");
+    const uploadFullTimeResult = this.msfaaRequestService.processMSFAARequest(
+      OfferingIntensity.fullTime,
+    );
+    const uploadPartTimeResult = this.msfaaRequestService.processMSFAARequest(
+      OfferingIntensity.partTime,
+    );
+    // Wait for both queries to finish.
+    const [fullTimeResponse, partTimeResponse] = await Promise.all([
+      uploadFullTimeResult,
+      uploadPartTimeResult,
+    ]);
+    this.logger.log("MSFAA request file sent.");
     return [
       {
         offeringIntensity: OfferingIntensity.fullTime,
-        generatedFile: uploadFullTimeResult.generatedFile,
-        uploadedRecords: uploadFullTimeResult.uploadedRecords,
+        generatedFile: fullTimeResponse.generatedFile,
+        uploadedRecords: fullTimeResponse.uploadedRecords,
       },
       {
         offeringIntensity: OfferingIntensity.partTime,
-        generatedFile: uploadPartTimeResult.generatedFile,
-        uploadedRecords: uploadPartTimeResult.uploadedRecords,
+        generatedFile: partTimeResponse.generatedFile,
+        uploadedRecords: partTimeResponse.uploadedRecords,
       },
     ];
   }
