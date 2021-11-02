@@ -13,7 +13,6 @@ export function getMaritalStatusCode(maritalStatus: string): string {
 /**
  * Gets the gender code conversion for the MSFAA request file
  */
-
 export function getGenderCode(gender: string): string {
   if (gender === "male") {
     return "M";
@@ -24,7 +23,6 @@ export function getGenderCode(gender: string): string {
 /**
  * Gets the offering intensity code conversion for the MSFAA request file
  */
-
 export function getOfferingIntensityCode(offeringIntensity: string): string {
   return offeringIntensity === OfferingIntensity.fullTime ? "FT" : "PT";
 }
