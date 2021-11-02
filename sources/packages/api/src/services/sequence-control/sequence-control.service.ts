@@ -50,7 +50,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
     );
     try {
       await queryRunner.startTransaction();
-      this.consumeNextSequenceWithExistingEntityManager(
+      await this.consumeNextSequenceWithExistingEntityManager(
         sequenceName,
         process,
         queryRunner.manager,
