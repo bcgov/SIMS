@@ -54,6 +54,7 @@ import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.module";
+import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 // Test
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.mo
     AuthModule,
     CraIntegrationModule,
     MSFAAIntegrationModule,
+    SFASIntegrationModule,
   ],
   controllers: [
     AppController,
