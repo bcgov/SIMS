@@ -71,6 +71,9 @@ export class ConfigService {
         ftpRequestFolder: process.env.MSFAA_REQUEST_FOLDER,
         provinceCode: process.env.MSFAA_PROVINCE_CODE,
       },
+      SFASIntegrationConfig: {
+        ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,
+      },
     };
   }
 

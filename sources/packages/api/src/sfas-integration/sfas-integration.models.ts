@@ -1,7 +1,13 @@
 export const DATE_FORMAT = "YYYYMMDD";
 
 export enum RecordTypeCodes {
-  IndividualDataRecord = "200",
-  ApplicationDataRecord = "300",
-  RestrictionDataRecord = "400",
+  Header = 100,
+  IndividualDataRecord = 200,
+  ApplicationDataRecord = 300,
+  RestrictionDataRecord = 400,
+}
+
+export class ProcessSftpResponseResult {
+  processSummary: string[] = [];
+  errorsSummary: string[] = [];
 }

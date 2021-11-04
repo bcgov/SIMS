@@ -4,29 +4,29 @@ import { SFASRecordIdentification } from "./sfas-record-identification";
  * These records contain data related to an individual/student in SFAS.
  */
 export class SFASStudentRecord extends SFASRecordIdentification {
-  constructor(line: string, lineNumber: number) {
-    super(line, lineNumber);
+  constructor(line: string) {
+    super(line);
   }
   /**
    * The first name as defined in SFAS.
    * individual_alias.first_name
    */
   get firstName(): string {
-    return this.line.substr(13, 15);
+    return this.line.substr(13, 15).trim();
   }
   /**
    * The last name as defined in SFAS
    * individual_alias.last_name.
    */
   get lastName(): string {
-    return this.line.substr(28, 25);
+    return this.line.substr(28, 25).trim();
   }
   /**
    * The middle name as defined in SFAS
    * individual_alias.middle_name.
    */
   get middleName(): string {
-    return this.line.substr(53, 15);
+    return this.line.substr(53, 15).trim();
   }
   /**
    * Date of birth
