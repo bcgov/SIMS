@@ -22,13 +22,6 @@ export interface StudentContact {
   postalCode: string;
 }
 
-export interface SearchStudentResp {
-  id: number;
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-}
-
 export interface StudentInfo {
   firstName: string;
   lastName: string;

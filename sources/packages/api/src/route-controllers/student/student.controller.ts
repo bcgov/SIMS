@@ -32,6 +32,8 @@ import {
   SearchStudentRespDto,
   SaveStudentDto,
   StudentRestrictionDTO,
+  StudentDetailDTO,
+  StudentApplicationSummary,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -500,5 +502,49 @@ export class StudentController extends BaseController {
         studentRestrictionStatus.hasProvincialRestriction,
       restrictionMessage: studentRestrictionStatus.restrictionMessage,
     } as StudentRestrictionDTO;
+  }
+
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/aest/:studentId")
+  async getStudentDetails(
+    @Param("studentId") studentId: number,
+  ): Promise<StudentDetailDTO> {
+    const student = await this.studentService.findById(studentId);
+    const address = student.contactInfo.addresses[0];
+    const applications =
+      await this.applicationService.getAllStudentApplications(studentId);
+    const studentApplications = !applications
+      ? ([] as StudentApplicationSummary[])
+      : applications.map((application: Application) => {
+          return {
+            applicationNumber: application.applicationNumber,
+            id: application.id,
+            studyStartPeriod: application.offering?.studyStartDate ?? "",
+            studyEndPeriod: application.offering?.studyEndDate ?? "",
+            // TODO: when application name is captured, update the below line
+            applicationName: "Financial Aid Application",
+            // TODO: when award is captured, update the below line
+            award: "5500",
+            status: application.applicationStatus,
+          } as StudentApplicationSummary;
+        });
+    return {
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      gender: student.gender,
+      dateOfBirth: student.birthDate,
+      contact: {
+        phone: student.contactInfo.phone,
+        addressLine1: address.addressLine1,
+        addressLine2: address.addressLine2,
+        city: address.city,
+        provinceState: address.province,
+        country: address.country,
+        postalCode: address.postalCode,
+      },
+      pdStatus: determinePDStatus(student),
+      applications: studentApplications,
+    } as StudentDetailDTO;
   }
 }

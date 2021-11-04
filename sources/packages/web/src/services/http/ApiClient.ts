@@ -13,6 +13,7 @@ import { FileUploadApi } from "@/services/http/FileUploadApi";
 import { ProgramInfoRequestApi } from "@/services/http/ProgramInfoRequestApi";
 import { ConfirmationOfEnrollmentApi } from "@/services/http/ConfirmationOfEnrollmentApi";
 import { SupportingUserApi } from "@/services/http/SupportingUserApi";
+import { MinistryApi } from "@/services/http/MinistryApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -30,6 +31,7 @@ const ApiClient = {
   ProgramInfoRequest: new ProgramInfoRequestApi(),
   ConfirmationOfEnrollment: new ConfirmationOfEnrollmentApi(),
   SupportingUserApi: new SupportingUserApi(),
+  MinistryApi: new MinistryApi(),
 };
 
 export default ApiClient;

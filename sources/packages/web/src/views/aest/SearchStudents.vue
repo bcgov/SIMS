@@ -63,7 +63,7 @@
 <script lang="ts">
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { StudentService } from "@/services/StudentService";
+import { AestService } from "@/services/AestService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
 import { useToastMessage } from "@/composables";
@@ -83,14 +83,12 @@ export default {
     const students = ref([] as SearchStudentResp[]);
     const goToViewStudent = (studentId: number) => {
       router.push({
-        name: AESTRoutesConst.STUDENTS_APPLICATION,
-        params: {
-          studentId,
-        },
+        name: AESTRoutesConst.STUDENT_DETAILS,
+        params: { studentId: studentId },
       });
     };
     const searchStudents = async () => {
-      students.value = await StudentService.shared.searchStudents(
+      students.value = await AestService.shared.searchStudents(
         appNumber.value,
         firstName.value,
         lastName.value,

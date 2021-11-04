@@ -4,7 +4,6 @@ import {
   StudentContact,
   StudentProfile,
   StudentApplication,
-  SearchStudentResp,
   StudentRestrictionStatus,
 } from "@/types/contracts/StudentContract";
 
@@ -31,33 +30,6 @@ export class StudentApi extends HttpBaseClient {
         studentContact,
         this.addAuthHeader(),
       );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async searchStudents(
-    appNumber: string,
-    firstName: string,
-    lastName: string,
-  ): Promise<SearchStudentResp[]> {
-    try {
-      let queryString = "";
-      if (appNumber) {
-        queryString += `appNumber=${appNumber}&`;
-      }
-      if (firstName) {
-        queryString += `firstName=${firstName}&`;
-      }
-      if (lastName) {
-        queryString += `lastName=${lastName}&`;
-      }
-      const student = await this.apiClient.get(
-        `students/search?${queryString.slice(0, -1)}`,
-        this.addAuthHeader(),
-      );
-      return student.data as SearchStudentResp[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;
