@@ -2,7 +2,7 @@ import { parseDate, parseDecimal } from "./sfas-parse-utils";
 import { SFASRecordIdentification } from "./sfas-record-identification";
 
 /**
- * This record contain data related to an individual/student in SFAS.
+ * This record contain data related to an individual/student on SFAS.
  */
 export class SFASIndividualRecord extends SFASRecordIdentification {
   constructor(line: string) {

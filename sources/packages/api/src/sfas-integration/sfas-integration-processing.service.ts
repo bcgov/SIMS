@@ -7,13 +7,20 @@ import {
   RecordTypeCodes,
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
-import { SFASDataImporter, SFASIndividualService } from "../services";
+import {
+  SFASApplicationService,
+  SFASDataImporter,
+  SFASIndividualService,
+} from "../services";
+import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "../utilities";
+import * as os from "os";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
   constructor(
     private readonly sfasService: SFASIntegrationService,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly sfasApplicationService: SFASApplicationService,
   ) {}
 
   /**
@@ -54,8 +61,10 @@ export class SFASIntegrationProcessingService {
 
     let downloadResult: DownloadResult;
 
+    this.logger.log(`Starting download of file ${filePath}...`);
     try {
       downloadResult = await this.sfasService.downloadResponseFile(filePath);
+      this.logger.log("File download finished.");
     } catch (error) {
       this.logger.error(error);
       result.summary.push(
@@ -65,10 +74,20 @@ export class SFASIntegrationProcessingService {
       return result;
     }
 
+    // Used to limit the number of asynchronous operations
+    // that will start at the same time.
+    const maxPromisesAllowed = os.cpus().length;
+    this.logger.log(
+      `Starting max ${maxPromisesAllowed} asynchronous processes.`,
+    );
     result.summary.push(
       `File contains ${downloadResult.records.length} records.`,
     );
+    this.logger.log(`Importing records from file ${filePath}.`);
+    this.logger.log(`Total of ${downloadResult.records.length} records.`);
+
     try {
+      let currentRecord = 1;
       // Hold all the promises that must be processed.
       const promises: Promise<void>[] = [];
       for (const record of downloadResult.records) {
@@ -76,6 +95,9 @@ export class SFASIntegrationProcessingService {
         switch (record.recordType) {
           case RecordTypeCodes.IndividualDataRecord:
             dataImporter = this.sfasIndividualService;
+            break;
+          case RecordTypeCodes.ApplicationDataRecord:
+            dataImporter = this.sfasApplicationService;
             break;
         }
 
@@ -91,9 +113,27 @@ export class SFASIntegrationProcessingService {
             });
           promises.push(processPromise);
         }
+
+        if (promises.length >= maxPromisesAllowed) {
+          // Waits for all be processed or some to fail.
+          await Promise.all(promises);
+          // Clear the array.
+          promises.splice(0, promises.length);
+        }
+
+        // Check if it is time to log the current progress.
+        if (currentRecord % SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE === 0) {
+          this.logger.log(
+            `Records imported: ${currentRecord} (${Math.round(
+              (currentRecord / downloadResult.records.length) * 100,
+            )}%)`,
+          );
+        }
+
+        currentRecord++;
       }
-      // Waits for all be processed or some to fail.
       await Promise.all(promises);
+      this.logger.log("Records imported.");
 
       try {
         //await this.sfasService.deleteFile(filePath);

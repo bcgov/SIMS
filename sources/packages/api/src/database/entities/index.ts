@@ -31,3 +31,4 @@ export * from "./restriction.model";
 export * from "./restriction.type";
 export * from "./student-restriction.model";
 export * from "./sfas-individual.model";
+export * from "./sfas-application.model";

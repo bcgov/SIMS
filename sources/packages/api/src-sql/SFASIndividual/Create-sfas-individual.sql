@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS sims.sfas_individuals (
   withdrawals INT NOT NULL,
   unsuccessful_completion INT NOT NULL,
   -- Audit columns
-  created_at timestamp without time zone NOT NULL DEFAULT now(),
-  updated_at timestamp without time zone NOT NULL DEFAULT now(),
-  extracted_at timestamp with time zone NOT NULL
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  extracted_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 -- ## Comments

@@ -4,7 +4,7 @@ import * as dayjs from "dayjs";
 // Expected date only format received from SFAS.
 const DATE_FORMAT = "YYYYMMDD";
 // Expected date and time format received from SFAS.
-const DATE_TIME_FORMAT = "YYYYMMDDHHMMSS";
+const DATE_TIME_FORMAT = "YYYYMMDDHHmmss";
 
 /**
  * Parse a date received from SFAS in the format YYYYMMDD.
@@ -19,8 +19,8 @@ export function parseDate(stringDate?: string): Date | undefined {
 }
 
 /**
- * Parse a date and time received from SFAS in the format YYYYMMDDHHMMSS.
- * @param stringDate date and time as string in the format YYYYMMDDHHMMSS.
+ * Parse a date and time received from SFAS in the format YYYYMMDDHHmmss.
+ * @param stringDate date and time as string in the format YYYYMMDDHHmmss.
  * @returns new date object with time.
  */
 export function parseDateTime(stringDateTime?: string): Date | undefined {

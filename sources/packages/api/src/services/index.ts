@@ -34,3 +34,4 @@ export * from "./restriction/restriction.service";
 export * from "./restriction/student-restriction.service";
 export * from "./sfas/sfas-process-base";
 export * from "./sfas/sfas-individual.service";
+export * from "./sfas/sfas-application.service";
