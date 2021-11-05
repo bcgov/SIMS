@@ -1,33 +1,14 @@
 <template>
-  <v-container>
-    <h5 class="text-muted">
-      <a @click="goBack()">
-        <v-icon left> mdi-arrow-left </v-icon> Back to Students</a
-      >
-    </h5>
-    <h2 class="color-blue">Student</h2>
-    <!-- <h2 class="mt-2">Student Applications are Progress</h2> -->
-    <v-card>
-      <v-card-title>Student Profile</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col>GivenName</v-col>
-          <v-col>LastName</v-col>
-          <v-col>Email</v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <v-card>
-      <v-card-title>Applications</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col>Hello</v-col>
-          <v-col>HI</v-col>
-          <v-col>How are you</v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
+  <h5 class="text-muted">
+    <a @click="goBack()">
+      <v-icon left> mdi-arrow-left </v-icon> Back to Student Search</a
+    >
+  </h5>
+  <PDStatus :pdStatus="studentDetail.pdStatus" />
+  <full-page-container>
+    <h2 class="color-blue padding-bottom-30">Student Details</h2>
+    <formio formName="studentProfileSummary" :data="initialData"></formio>
+    <div class="category-header-large">Student Appliations</div>
     <v-col>
       <DataTable
         :autoLayout="true"
@@ -61,7 +42,7 @@
         </Column>
       </DataTable>
     </v-col>
-  </v-container>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -72,8 +53,11 @@ import { StudentDetail, ApplicationStatus } from "@/types";
 import { AestService } from "@/services/AestService";
 import { useFormatters } from "@/composables";
 import Status from "@/views/student/ApplicationStatus.vue";
+import PDStatus from "@/views/student/StudentPDBanner.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import formio from "@/components/generic/formio.vue";
 export default {
-  components: { Status },
+  components: { Status, FullPageContainer, PDStatus, formio },
   props: {
     studentId: {
       type: Number,
@@ -83,6 +67,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const studentDetail = ref({} as StudentDetail);
+    const initialData = ref();
     const { dateString } = useFormatters();
     const goBack = () => {
       router.push({
@@ -94,6 +79,19 @@ export default {
       studentDetail.value = await AestService.shared.getStudentDetail(
         props.studentId,
       );
+      initialData.value = {
+        firstName: studentDetail.value.firstName,
+        lastName: studentDetail.value.lastName,
+        gender: studentDetail.value.gender,
+        email: studentDetail.value.email,
+        dateOfBirth: dateString(studentDetail.value.dateOfBirth),
+        phone: studentDetail.value.contact.phone,
+        addressLine1: studentDetail.value.contact.addressLine1,
+        addressLine2: studentDetail.value.contact.addressLine2,
+        city: studentDetail.value.contact.city,
+        provinceState: studentDetail.value.contact.provinceState,
+        postalCode: studentDetail.value.contact.postalCode,
+      };
     });
 
     const goToApplication = (id: number) => {
@@ -101,6 +99,7 @@ export default {
         name: AESTRoutesConst.APPLICATION_DETAILS,
         params: {
           applicationId: id,
+          studentId: props.studentId,
         },
       });
     };
@@ -110,6 +109,7 @@ export default {
       studentDetail,
       dateString,
       ApplicationStatus,
+      initialData,
     };
   },
 };

@@ -2,11 +2,12 @@
   <Chip
     :label="statusValue"
     class="text-uppercase"
-    :class="getApplicationStatusClass()"
+    :class="applicationStatusClass"
   />
 </template>
 <script lang="ts">
 import { ApplicationStatus } from "@/types";
+import { computed } from "vue";
 export default {
   props: {
     statusValue: {
@@ -14,7 +15,7 @@ export default {
     },
   },
   setup(props: any) {
-    const getApplicationStatusClass = () => {
+    const applicationStatusClass = computed(() => {
       switch (props.statusValue) {
         case ApplicationStatus.draft:
           return "bg-secondary text-white";
@@ -33,10 +34,10 @@ export default {
         default:
           return "";
       }
-    };
+    });
 
     return {
-      getApplicationStatusClass,
+      applicationStatusClass,
     };
   },
 };

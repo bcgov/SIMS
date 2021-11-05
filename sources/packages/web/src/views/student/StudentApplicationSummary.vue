@@ -39,11 +39,7 @@
           <Column field="award" header="Award"></Column>
           <Column field="status" header="Status">
             <template #body="slotProps">
-              <Chip
-                :label="slotProps.data.status"
-                class="text-uppercase"
-                :class="getApplicationStatusClass(slotProps.data.status)"
-              />
+              <Status :statusValue="slotProps.data.status" />
             </template>
           </Column>
           <Column field="id" header=""
@@ -110,6 +106,7 @@ import {
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import Status from "@/views/student/ApplicationStatus.vue";
 
 export default {
   components: {
@@ -119,6 +116,7 @@ export default {
     CancelApplication,
     ConfirmEditApplication,
     RestrictionBanner,
+    Status,
   },
   directives: {
     tooltip: Tooltip,
@@ -133,27 +131,6 @@ export default {
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
-
-    const getApplicationStatusClass = (status: string) => {
-      switch (status) {
-        case ApplicationStatus.draft:
-          return "bg-secondary text-white";
-        case ApplicationStatus.inProgress:
-          return "bg-warning text-white";
-        case ApplicationStatus.assessment:
-          return "bg-dark text-white";
-        case ApplicationStatus.enrollment:
-          return "bg-primary text-white";
-        case ApplicationStatus.completed:
-          return "bg-success text-white";
-        case ApplicationStatus.cancelled:
-          return "bg-danger text-white";
-        case ApplicationStatus.submitted:
-          return "bg-info text-white";
-        default:
-          return "";
-      }
-    };
 
     const openConfirmCancel = (id: number) => {
       showModal.value = true;
@@ -214,7 +191,6 @@ export default {
       myApplications,
       goToApplication,
       dateString,
-      getApplicationStatusClass,
       openConfirmCancel,
       showModal,
       selectedApplicationId,

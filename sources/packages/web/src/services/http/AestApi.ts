@@ -2,9 +2,10 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   StudentDetail,
   SearchStudentResp,
-} from "@/types/contracts/aest/AestContract";
+  GetApplicationDataDto,
+} from "@/types";
 
-export class MinistryApi extends HttpBaseClient {
+export class AestApi extends HttpBaseClient {
   public async searchStudents(
     appNumber: string,
     firstName: string,
@@ -36,5 +37,21 @@ export class MinistryApi extends HttpBaseClient {
     const response = await this.getCall(`students/aest/${studentId}`);
     const studentInfo = response.data as StudentDetail;
     return studentInfo;
+  }
+
+  /**
+   *
+   * @param applicationId
+   * @param userId
+   * @returns
+   */
+  public async getApplicationDetails(
+    applicationId: number,
+    studentId: number,
+  ): Promise<GetApplicationDataDto> {
+    const response = await this.getCall(
+      `application/aest/${applicationId}/${studentId}`,
+    );
+    return response.data as GetApplicationDataDto;
   }
 }

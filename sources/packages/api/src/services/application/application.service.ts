@@ -356,10 +356,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .getOne();
   }
-
+  /**
+   *
+   * @param applicationId
+   * @param userId
+   * @param studentId
+   * @returns
+   */
   async getApplicationByIdAndUser(
     applicationId: number,
     userId: number,
+    studentId?: number,
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
@@ -397,7 +404,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
-      .andWhere("user.id = :userId", { userId })
+      .andWhere(
+        studentId ? "student.id = :studentId" : "user.id = :userId",
+        studentId
+          ? {
+              studentId,
+            }
+          : { userId },
+      )
       .getOne();
     return application;
   }

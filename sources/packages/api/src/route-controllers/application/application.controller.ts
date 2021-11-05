@@ -402,4 +402,47 @@ export class ApplicationController extends BaseController {
       formName: applicationProgramYear.programYear.formName,
     } as ProgramYearOfApplicationDto;
   }
+
+  /**
+   *
+   * @param applicationId
+   * @param userId
+   * @returns
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("aest/:applicationId/:studentId")
+  async getByStudentAndApplicationId(
+    @Param("applicationId") applicationId: number,
+    @Param("studentId") studentId: number,
+  ): Promise<GetApplicationDataDto> {
+    const application = await this.applicationService.getApplicationByIdAndUser(
+      applicationId,
+      0,
+      studentId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    console.log(application);
+    return {
+      data: application.data,
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
+      applicationNumber: application.applicationNumber,
+      applicationOfferingIntensity: application.offering?.offeringIntensity,
+      applicationStartDate: dateString(application.offering?.studyStartDate),
+      applicationEndDate: dateString(application.offering?.studyEndDate),
+      applicationInstitutionName: application.location?.name,
+      applicationPIRStatus: application.pirStatus,
+      applicationAssessmentStatus: application.assessmentStatus,
+      applicationCOEStatus: application.coeStatus,
+      applicationFormName: application.programYear.formName,
+      applicationProgramYearID: application.programYear.id,
+      applicationPIRDeniedReason: getPIRDeniedReason(application),
+      applicationCOEDeniedReason: getCOEDeniedReason(application),
+    };
+  }
 }

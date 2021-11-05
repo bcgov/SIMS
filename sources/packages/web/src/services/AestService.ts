@@ -2,7 +2,8 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   StudentDetail,
   SearchStudentResp,
-} from "@/types/contracts/aest/AestContract";
+  GetApplicationDataDto,
+} from "@/types";
 
 export class AestService {
   // Share Instance
@@ -23,7 +24,7 @@ export class AestService {
     firstName: string,
     lastName: string,
   ): Promise<SearchStudentResp[]> {
-    return ApiClient.MinistryApi.searchStudents(appNumber, firstName, lastName);
+    return ApiClient.AestApi.searchStudents(appNumber, firstName, lastName);
   }
 
   /**
@@ -32,6 +33,19 @@ export class AestService {
    * @returns
    */
   async getStudentDetail(studentId: number): Promise<StudentDetail> {
-    return ApiClient.MinistryApi.getStudentDetail(studentId);
+    return ApiClient.AestApi.getStudentDetail(studentId);
+  }
+
+  /**
+   *
+   * @param applicationId
+   * @param userId
+   * @returns
+   */
+  async getApplicationDetail(
+    applicationId: number,
+    studentId: number,
+  ): Promise<GetApplicationDataDto> {
+    return ApiClient.AestApi.getApplicationDetails(applicationId, studentId);
   }
 }
