@@ -5,15 +5,32 @@ import { SFASIndividual } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { SFASIndividualRecord } from "src/sfas-integration/sfas-files/sfas-individual-record";
-import { getUTCNow } from "src/utilities";
+import { getUTC } from "../../utilities";
+import { SFASDataImporter } from "./sfas-process-base";
+import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 
+/**
+ * Manages the data related to an individual/student in SFAS.
+ */
 @Injectable()
-export class SFASIndividualService extends DataModelService<SFASIndividual> {
+export class SFASIndividualService
+  extends DataModelService<SFASIndividual>
+  implements SFASDataImporter
+{
   constructor(@Inject("Connection") connection: Connection) {
     super(connection.getRepository(SFASIndividual));
   }
 
-  async saveIndividual(sfasIndividual: SFASIndividualRecord): Promise<void> {
+  /**
+   * Import a record from SFAS. This method will be invoked by SFAS
+   * import processing service when the record type is detected as
+   * RecordTypeCodes.IndividualDataRecord.
+   */
+  async importSFASRecord(
+    record: SFASRecordIdentification,
+    extractedDate: Date,
+  ): Promise<void> {
+    const sfasIndividual = new SFASIndividualRecord(record.line);
     const individual = new SFASIndividual();
     individual.id = sfasIndividual.id;
     individual.firstName =
@@ -34,7 +51,7 @@ export class SFASIndividualService extends DataModelService<SFASIndividual> {
     individual.grantOveraward = sfasIndividual.grantOveraward;
     individual.withdrawals = sfasIndividual.withdrawals;
     individual.unsuccessfulCompletion = sfasIndividual.unsuccessfulCompletion;
-    individual.extractedAt = getUTCNow();
+    individual.extractedAt = getUTC(extractedDate);
     await this.repo.save(individual);
   }
 

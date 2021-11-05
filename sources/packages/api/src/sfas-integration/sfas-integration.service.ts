@@ -6,7 +6,8 @@ import { SshService } from "../services/ssh/ssh.service";
 import * as Client from "ssh2-sftp-client";
 import { SFASIntegrationConfig, SFTPConfig } from "../types";
 import { SFASRecordIdentification } from "./sfas-files/sfas-record-identification";
-import { RecordTypeCodes } from "./sfas-integration.models";
+import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
+import { SFASHeader } from "./sfas-files/sfas-header";
 
 @Injectable()
 export class SFASIntegrationService {
@@ -21,11 +22,11 @@ export class SFASIntegrationService {
   /**
    * Get the list of all files waiting to be downloaded from the
    * SFTP filtering by the the regex pattern '/SFAS-TO-SIMS-[\w]*\.txt/i'.
-   * @returns full file paths for all response files present on SFTP.
+   * The files must be ordered by file name.
+   * @returns file names for all response files present on SFTP.
    */
   async getResponseFilesFullPath(): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
-    console.log(`${this.sfasConfig.ftpReceiveFolder}`);
     const client = await this.getClient();
     try {
       filesToProcess = await client.list(
@@ -49,14 +50,10 @@ export class SFASIntegrationService {
    * @param fileName name of the file to be downloaded.
    * @returns parsed records from the file.
    */
-  async downloadResponseFile(
-    fileName: string,
-  ): Promise<SFASRecordIdentification[]> {
+  async downloadResponseFile(fileName: string): Promise<DownloadResult> {
     const client = await this.getClient();
     try {
-      console.log(fileName);
       const filePath = this.getFullFilePath(fileName);
-      console.log(filePath);
       // Read all the file content and create a buffer.
       const fileContent = await client.get(filePath);
       // Convert the file content to an array of text lines and remove possible blank lines.
@@ -65,7 +62,7 @@ export class SFASIntegrationService {
         .split(/\r\n|\n\r|\n|\r/)
         .filter((line) => line.length > 0);
       // Read the first line to check if the header code is the expected one.
-      const header = new SFASRecordIdentification(fileLines.shift()); // Read and remove header.
+      const header = new SFASHeader(fileLines.shift()); // Read and remove header.
       if (header.recordType !== RecordTypeCodes.Header) {
         this.logger.error(
           `The SFAS file ${fileName} has an invalid transaction code on header: ${header.recordType}`,
@@ -74,11 +71,20 @@ export class SFASIntegrationService {
         return null;
       }
 
+      // Remove the footer.
+      // Not part of the processing.
+      fileLines.pop();
+
       // Generate the records.
       let lineNumber = 2; // 1 is the header already removed.
-      return fileLines.map(
+      const records = fileLines.map(
         (line) => new SFASRecordIdentification(line, lineNumber++),
       );
+
+      return {
+        header,
+        records,
+      };
     } finally {
       await SshService.closeQuietly(client);
     }

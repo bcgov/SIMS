@@ -1,35 +1,38 @@
 import { Injectable } from "@nestjs/common";
-import { ModuleRef } from "@nestjs/core";
-import { SFASIndividualService } from "../services";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
-import { SFASRecordIdentification } from "./sfas-files/sfas-record-identification";
 import {
+  DownloadResult,
   ProcessSftpResponseResult,
   RecordTypeCodes,
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
-import { SFASIndividualRecord } from "./sfas-files/sfas-individual-record";
+import { SFASDataImporter, SFASIndividualService } from "../services";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
   constructor(
     private readonly sfasService: SFASIntegrationService,
     private readonly sfasIndividualService: SFASIndividualService,
-    private readonly moduleRef: ModuleRef,
   ) {}
 
   /**
    * Download all files from SFAS integration folder on SFTP and process them all.
+   * The files must be processed in the correct order, oldest to newest, and the
+   * process will stop if any error is detected, returning the proper log with
+   * the file and the line causing the issue.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async process(): Promise<ProcessSftpResponseResult[]> {
     const results: ProcessSftpResponseResult[] = [];
+    // Get the list of all files from SFTP ordered by file name.
     const filePaths = await this.sfasService.getResponseFilesFullPath();
     for (const filePath of filePaths) {
       const result = await this.processFile(filePath);
       results.push(result);
       if (!result.success) {
+        // It the file has an error, stop the process
+        // and allow the results to be returned.
         break;
       }
     }
@@ -40,7 +43,7 @@ export class SFASIntegrationProcessingService {
   /**
    * Process each individual SFAS integration file from the SFTP.
    * @param filePath SFAS integration file to be processed.
-   * @returns Process summary and errors summary.
+   * @returns Process summary and errors.
    */
   private async processFile(
     filePath: string,
@@ -49,12 +52,10 @@ export class SFASIntegrationProcessingService {
     result.success = true;
     result.summary.push(`Processing file ${filePath}.`);
 
-    let responseFileRecords: SFASRecordIdentification[];
+    let downloadResult: DownloadResult;
 
     try {
-      responseFileRecords = await this.sfasService.downloadResponseFile(
-        filePath,
-      );
+      downloadResult = await this.sfasService.downloadResponseFile(filePath);
     } catch (error) {
       this.logger.error(error);
       result.summary.push(
@@ -64,35 +65,32 @@ export class SFASIntegrationProcessingService {
       return result;
     }
 
-    result.summary.push(`File contains ${responseFileRecords.length} records.`);
-
+    result.summary.push(
+      `File contains ${downloadResult.records.length} records.`,
+    );
     try {
       // Hold all the promises that must be processed.
       const promises: Promise<void>[] = [];
-      for (const record of responseFileRecords) {
-        if (record.recordType === RecordTypeCodes.IndividualDataRecord) {
-          const individualRecord = new SFASIndividualRecord(record.line);
-          promises.push(
-            this.sfasIndividualService
-              .saveIndividual(individualRecord)
-              .catch((error) => {
-                const errorDescription = `Error processing record line number ${record.lineNumber} from file ${filePath}`;
-                this.logger.error(`${errorDescription}. Error: ${error}`);
-                result.summary.push(errorDescription);
-                result.success = false;
-              }),
-          );
+      for (const record of downloadResult.records) {
+        let dataImporter: SFASDataImporter;
+        switch (record.recordType) {
+          case RecordTypeCodes.IndividualDataRecord:
+            dataImporter = this.sfasIndividualService;
+            break;
         }
-        // const recordTypeName = RecordTypeCodes[record.recordType];
-        // if (recordTypeName) {
-        //   const processName = `${recordTypeName}Process`;
-        //   const process = await this.moduleRef.resolve<SFASProcessBase>(
-        //     processName,
-        //   );
-        //   if (process) {
-        //     await process.execute(record);
-        //   }
-        // }
+
+        if (dataImporter) {
+          const processPromise = dataImporter
+            .importSFASRecord(record, downloadResult.header.creationDate)
+            .catch((error) => {
+              const errorDescription = `Error processing record line number ${record.lineNumber}`;
+              this.logger.error(errorDescription);
+              this.logger.error(error);
+              result.summary.push(errorDescription);
+              result.success = false;
+            });
+          promises.push(processPromise);
+        }
       }
       // Waits for all be processed or some to fail.
       await Promise.all(promises);
@@ -101,15 +99,17 @@ export class SFASIntegrationProcessingService {
         //await this.sfasService.deleteFile(filePath);
       } catch (error) {
         const logMessage = `Error while deleting SFAS integration file: ${filePath}`;
-        this.logger.error(logMessage);
         result.summary.push(logMessage);
         result.success = false;
+        this.logger.error(logMessage);
+        this.logger.error(error);
       }
     } catch (error) {
       const logMessage = `Error while processing SFAS integration file: ${filePath}`;
-      this.logger.error(logMessage);
       result.summary.push(logMessage);
       result.success = false;
+      this.logger.error(logMessage);
+      this.logger.error(error);
     }
 
     return result;

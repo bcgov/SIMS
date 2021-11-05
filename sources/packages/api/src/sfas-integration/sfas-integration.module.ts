@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
-import { ConfigService, SFASIndividualService, SshService } from "../services";
-import { IndividualDataRecordProcess } from "./processes/individual-data-record-process";
+import { ConfigService, SshService, SFASIndividualService } from "../services";
 import { SFASIntegrationProcessingService } from "./sfas-integration-processing.service";
 import { SFASIntegrationService } from "./sfas-integration.service";
 
@@ -12,13 +11,8 @@ import { SFASIntegrationService } from "./sfas-integration.service";
     ConfigService,
     SFASIntegrationService,
     SFASIntegrationProcessingService,
-    IndividualDataRecordProcess,
     SFASIndividualService,
   ],
-  exports: [
-    SFASIntegrationService,
-    SFASIntegrationProcessingService,
-    SFASIndividualService,
-  ],
+  exports: [SFASIntegrationService, SFASIntegrationProcessingService],
 })
 export class SFASIntegrationModule {}

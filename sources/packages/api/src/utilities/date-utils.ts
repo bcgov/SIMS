@@ -21,6 +21,14 @@ export const getUTCNow = (): Date => {
 };
 
 /**
+ * Convert the local date to UTC
+ * @returns date converted to UTC.
+ */
+export const getUTC = (localDate: Date): Date => {
+  return dayjs(localDate).utc().toDate();
+};
+
+/**
  * Convert a string or date to a string format like "Thu Aug 05 2021".
  * @param date string or date to be converted.
  * @returns string representation (e.g. Thu Aug 05 2021).
@@ -61,10 +69,7 @@ export const dateDifference = (
  * to the actual timezone time with offset
  * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00)
  */
-export const getPSTPDTDate = (
-  date: string | Date,
-  local: boolean = false,
-): string => {
+export const getPSTPDTDate = (date: string | Date, local = false): string => {
   return dayjs(new Date(date)).tz("America/Vancouver", local).format();
 };
 
@@ -81,7 +86,7 @@ export const getPSTPDTDate = (
  */
 export const setToStartOfTheDayInPSTPDT = (
   date: string | Date,
-  local: boolean = false,
+  local = false,
 ): string => {
   return dayjs(date).tz("America/Vancouver", local).startOf("day").format();
 };
