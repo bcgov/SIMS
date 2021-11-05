@@ -36,9 +36,7 @@ export class SFASIntegrationService {
       await SshService.closeQuietly(client);
     }
 
-    console.log(`${this.sfasConfig.ftpReceiveFolder}`);
-    console.log(filesToProcess);
-    return filesToProcess.map((file) => file.name);
+    return filesToProcess.map((file) => file.name).sort();
   }
 
   private getFullFilePath(fileName: string): string {

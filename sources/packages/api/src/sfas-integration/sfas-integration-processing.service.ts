@@ -1,19 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
+import { SFASIndividualService } from "../services";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
-import { SFASProcessBase } from "./processes/sfas-process-base";
 import { SFASRecordIdentification } from "./sfas-files/sfas-record-identification";
 import {
   ProcessSftpResponseResult,
   RecordTypeCodes,
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
+import { SFASIndividualRecord } from "./sfas-files/sfas-individual-record";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
   constructor(
     private readonly sfasService: SFASIntegrationService,
+    private readonly sfasIndividualService: SFASIndividualService,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -21,11 +23,18 @@ export class SFASIntegrationProcessingService {
    * Download all files from SFAS integration folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  async process(): Promise<void> {
+  async process(): Promise<ProcessSftpResponseResult[]> {
+    const results: ProcessSftpResponseResult[] = [];
     const filePaths = await this.sfasService.getResponseFilesFullPath();
     for (const filePath of filePaths) {
-      await this.processFile(filePath);
+      const result = await this.processFile(filePath);
+      results.push(result);
+      if (!result.success) {
+        break;
+      }
     }
+
+    return results;
   }
 
   /**
@@ -36,9 +45,9 @@ export class SFASIntegrationProcessingService {
   private async processFile(
     filePath: string,
   ): Promise<ProcessSftpResponseResult> {
-    //const now = getUTCNow();
     const result = new ProcessSftpResponseResult();
-    result.processSummary.push(`Processing file ${filePath}.`);
+    result.success = true;
+    result.summary.push(`Processing file ${filePath}.`);
 
     let responseFileRecords: SFASRecordIdentification[];
 
@@ -48,45 +57,59 @@ export class SFASIntegrationProcessingService {
       );
     } catch (error) {
       this.logger.error(error);
-      result.errorsSummary.push(
+      result.summary.push(
         `Error downloading file ${filePath}. Error: ${error}`,
       );
-      // Abort the process nicely not throwing an exception and
-      // allowing other response files to be processed.
-      return;
+      result.success = false;
+      return result;
     }
 
-    result.processSummary.push(
-      `File contains ${responseFileRecords.length} records.`,
-    );
-
-    for (const record of responseFileRecords) {
-      try {
-        const recordTypeName = RecordTypeCodes[record.recordType];
-        if (recordTypeName) {
-          const processName = `${recordTypeName}Process`;
-          const process = this.moduleRef.get<SFASProcessBase>(processName);
-          if (process) {
-            await process.execute(record);
-          }
-        }
-      } catch (error) {
-        // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${record.lineNumber} from file ${filePath}`;
-        result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. Error: ${error}`);
-      }
-    }
+    result.summary.push(`File contains ${responseFileRecords.length} records.`);
 
     try {
-      //await this.sfasService.deleteFile(filePath);
+      // Hold all the promises that must be processed.
+      const promises: Promise<void>[] = [];
+      for (const record of responseFileRecords) {
+        if (record.recordType === RecordTypeCodes.IndividualDataRecord) {
+          const individualRecord = new SFASIndividualRecord(record.line);
+          promises.push(
+            this.sfasIndividualService
+              .saveIndividual(individualRecord)
+              .catch((error) => {
+                const errorDescription = `Error processing record line number ${record.lineNumber} from file ${filePath}`;
+                this.logger.error(`${errorDescription}. Error: ${error}`);
+                result.summary.push(errorDescription);
+                result.success = false;
+              }),
+          );
+        }
+        // const recordTypeName = RecordTypeCodes[record.recordType];
+        // if (recordTypeName) {
+        //   const processName = `${recordTypeName}Process`;
+        //   const process = await this.moduleRef.resolve<SFASProcessBase>(
+        //     processName,
+        //   );
+        //   if (process) {
+        //     await process.execute(record);
+        //   }
+        // }
+      }
+      // Waits for all be processed or some to fail.
+      await Promise.all(promises);
+
+      try {
+        //await this.sfasService.deleteFile(filePath);
+      } catch (error) {
+        const logMessage = `Error while deleting SFAS integration file: ${filePath}`;
+        this.logger.error(logMessage);
+        result.summary.push(logMessage);
+        result.success = false;
+      }
     } catch (error) {
-      // Log the error but allow the process to continue.
-      // If there was an issue only during the file removal, it will be
-      // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting CRA response file: ${filePath}`;
+      const logMessage = `Error while processing SFAS integration file: ${filePath}`;
       this.logger.error(logMessage);
-      result.errorsSummary.push(logMessage);
+      result.summary.push(logMessage);
+      result.success = false;
     }
 
     return result;

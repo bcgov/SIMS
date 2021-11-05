@@ -23,4 +23,5 @@ export const TableNames = {
   SupportingUsers: "supporting_users",
   Restrictions: "restrictions",
   StudentRestrictions: "student_restrictions",
+  SFASIndividuals: "sfas_individuals",
 };

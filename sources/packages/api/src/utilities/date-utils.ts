@@ -10,6 +10,8 @@ dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
 
+export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
+
 /**
  * get utc date time now
  * @returns date now in utc
@@ -93,4 +95,14 @@ export function getDateOnly(stringDate: string): Date | undefined {
     return new Date(`${stringDate}T00:00:00`);
   }
   return undefined;
+}
+
+export function getDateOnlyFromFormat(
+  stringDate: string,
+  stringDateFormat: string,
+) {
+  const isoDate = dayjs(stringDate, stringDateFormat).format(
+    DATE_ONLY_ISO_FORMAT,
+  );
+  return getDateOnly(isoDate);
 }

@@ -1,4 +1,5 @@
+import { ProcessSftpResponseResult } from "../../../cra-integration/cra-integration.models";
+
 export interface ProcessResponseDTO {
-  processSummary: string[];
-  errorsSummary: string[];
+  results: ProcessSftpResponseResult[];
 }

@@ -1,10 +1,15 @@
 import { SFASRecordIdentification } from "../sfas-files/sfas-record-identification";
-import { SFASStudentRecord } from "../sfas-files/sfas-student-record";
+import { SFASIndividualRecord } from "../sfas-files/sfas-individual-record";
 import { SFASProcessBase } from "./sfas-process-base";
+import { SFASIndividualService } from "../../services";
 
 export class IndividualDataRecordProcess extends SFASProcessBase {
+  constructor(private readonly sfasIndividualService: SFASIndividualService) {
+    super();
+  }
+
   async execute(record: SFASRecordIdentification): Promise<void> {
-    const studentRecord = new SFASStudentRecord(record.line);
-    console.dir(studentRecord.firstName);
+    const individualRecord = new SFASIndividualRecord(record.line);
+    this.sfasIndividualService.saveIndividual(individualRecord);
   }
 }
