@@ -43,6 +43,7 @@ import {
   getPIRDeniedReason,
   getCOEDeniedReason,
   getUserFullName,
+  transformToApplicationDto,
 } from "../../utilities";
 
 @Controller("application")
@@ -72,24 +73,7 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    return {
-      data: application.data,
-      id: application.id,
-      applicationStatus: application.applicationStatus,
-      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
-      applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: application.offering?.offeringIntensity,
-      applicationStartDate: dateString(application.offering?.studyStartDate),
-      applicationEndDate: dateString(application.offering?.studyEndDate),
-      applicationInstitutionName: application.location?.name,
-      applicationPIRStatus: application.pirStatus,
-      applicationAssessmentStatus: application.assessmentStatus,
-      applicationCOEStatus: application.coeStatus,
-      applicationFormName: application.programYear.formName,
-      applicationProgramYearID: application.programYear.id,
-      applicationPIRDeniedReason: getPIRDeniedReason(application),
-      applicationCOEDeniedReason: getCOEDeniedReason(application),
-    };
+    return transformToApplicationDto(application);
   }
   /**
    * Submit an existing student application changing the status
@@ -425,24 +409,6 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    console.log(application);
-    return {
-      data: application.data,
-      id: application.id,
-      applicationStatus: application.applicationStatus,
-      applicationStatusUpdatedOn: application.applicationStatusUpdatedOn,
-      applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: application.offering?.offeringIntensity,
-      applicationStartDate: dateString(application.offering?.studyStartDate),
-      applicationEndDate: dateString(application.offering?.studyEndDate),
-      applicationInstitutionName: application.location?.name,
-      applicationPIRStatus: application.pirStatus,
-      applicationAssessmentStatus: application.assessmentStatus,
-      applicationCOEStatus: application.coeStatus,
-      applicationFormName: application.programYear.formName,
-      applicationProgramYearID: application.programYear.id,
-      applicationPIRDeniedReason: getPIRDeniedReason(application),
-      applicationCOEDeniedReason: getCOEDeniedReason(application),
-    };
+    return transformToApplicationDto(application);
   }
 }
