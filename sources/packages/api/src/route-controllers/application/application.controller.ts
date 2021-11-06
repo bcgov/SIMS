@@ -40,8 +40,6 @@ import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
 import {
   dateString,
-  getPIRDeniedReason,
-  getCOEDeniedReason,
   getUserFullName,
   transformToApplicationDto,
 } from "../../utilities";

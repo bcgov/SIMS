@@ -35,8 +35,7 @@ export class AestApi extends HttpBaseClient {
 
   public async getStudentDetail(studentId: number): Promise<StudentDetail> {
     const response = await this.getCall(`students/aest/${studentId}`);
-    const studentInfo = response.data as StudentDetail;
-    return studentInfo;
+    return response.data as StudentDetail;
   }
 
   /**
