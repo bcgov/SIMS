@@ -1,3 +1,6 @@
+/**
+ * Interface for student search API response
+ */
 export interface SearchStudentResp {
   id: number;
   firstName: string;
@@ -5,6 +8,9 @@ export interface SearchStudentResp {
   birthDate: string;
 }
 
+/**
+ * Interface for student detail API response
+ */
 export interface StudentDetail {
   firstName: string;
   lastName: string;
@@ -26,6 +32,9 @@ export interface StudentDetail {
   applications: StudentApplicationSummary[];
 }
 
+/**
+ * Interface for application summary
+ */
 export interface StudentApplicationSummary {
   applicationNumber: string;
   studyStartPeriod: string;

@@ -386,10 +386,11 @@ export class ApplicationController extends BaseController {
   }
 
   /**
-   *
+   * API to fetch application details by applicationId and studentId.
+   * This API will be used by ministry users.
    * @param applicationId
    * @param userId
-   * @returns
+   * @returns Application details
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("aest/:applicationId/:studentId")

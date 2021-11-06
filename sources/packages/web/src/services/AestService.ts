@@ -4,9 +4,11 @@ import {
   SearchStudentResp,
   GetApplicationDataDto,
 } from "@/types";
-
+/**
+ * Client Service layer for Ministry APIs
+ */
 export class AestService {
-  // Share Instance
+  // Shared Instance
   private static instance: AestService;
 
   public static get shared(): AestService {
@@ -17,7 +19,7 @@ export class AestService {
    * @param appNumber
    * @param firstName
    * @param lastName
-   * @returns
+   * @returns SearchStudentResp[]
    */
   async searchStudents(
     appNumber: string,
@@ -28,19 +30,19 @@ export class AestService {
   }
 
   /**
-   *
+   * Get student details of given student.
    * @param studentId
-   * @returns
+   * @returns StudentDetail
    */
   async getStudentDetail(studentId: number): Promise<StudentDetail> {
     return ApiClient.AestApi.getStudentDetail(studentId);
   }
 
   /**
-   *
+   * Get application detail of given application
    * @param applicationId
    * @param userId
-   * @returns
+   * @returns GetApplicationDataDto
    */
   async getApplicationDetail(
     applicationId: number,

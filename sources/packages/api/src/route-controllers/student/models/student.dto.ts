@@ -64,7 +64,9 @@ export interface StudentRestrictionDTO {
   hasProvincialRestriction: boolean;
   restrictionMessage: string;
 }
-
+/**
+ * DTO object for student details.
+ */
 export interface StudentDetailDTO {
   firstName: string;
   lastName: string;
@@ -76,7 +78,9 @@ export interface StudentDetailDTO {
   pdStatus: StudentPDStatus;
   applications: StudentApplicationSummary[];
 }
-
+/**
+ * DTO object application summary info.
+ */
 export interface StudentApplicationSummary {
   applicationNumber: string;
   studyStartPeriod: string;

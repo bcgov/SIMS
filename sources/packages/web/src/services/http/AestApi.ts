@@ -5,7 +5,17 @@ import {
   GetApplicationDataDto,
 } from "@/types";
 
+/**
+ * API client for Ministry APIs
+ */
 export class AestApi extends HttpBaseClient {
+  /**
+   * API client for student search.
+   * @param appNumber
+   * @param firstName
+   * @param lastName
+   * @returns
+   */
   public async searchStudents(
     appNumber: string,
     firstName: string,
@@ -33,13 +43,18 @@ export class AestApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * API Client for student detail.
+   * @param studentId
+   * @returns
+   */
   public async getStudentDetail(studentId: number): Promise<StudentDetail> {
     const response = await this.getCall(`students/aest/${studentId}`);
     return response.data as StudentDetail;
   }
 
   /**
-   *
+   * API Client for application detail.
    * @param applicationId
    * @param userId
    * @returns

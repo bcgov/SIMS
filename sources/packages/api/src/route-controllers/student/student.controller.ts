@@ -504,6 +504,12 @@ export class StudentController extends BaseController {
     } as StudentRestrictionDTO;
   }
 
+  /**
+   * API to fetch student details by studentId.
+   * This API will be used by ministry users.
+   * @param studentId
+   * @returns Student Details
+   */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/aest/:studentId")
   async getStudentDetails(

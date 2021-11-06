@@ -24,7 +24,11 @@ export function getCOEDeniedReason(application: Application): string {
     ? application.coeDeniedOtherDesc
     : application.coeDeniedReason?.reason;
 }
-
+/**
+ * Transformation util for Application.
+ * @param application
+ * @returns Application DTO
+ */
 export const transformToApplicationDto = (
   application: Application,
 ): GetApplicationDataDto => {

@@ -357,7 +357,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
   /**
-   *
+   * Fetches application by applicationId and userId|studentId.
+   * When studentId is supplied, studentId is preferred as search criteria.
+   * When studentId is not supplied, then userId is used.
    * @param applicationId
    * @param userId
    * @param studentId
