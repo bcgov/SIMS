@@ -5,7 +5,7 @@ import { SFASApplication } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { getUTC } from "../../utilities";
-import { SFASDataImporter } from "./sfas-process-base";
+import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASApplicationRecord } from "../../sfas-integration/sfas-files/sfas-application-record";
 

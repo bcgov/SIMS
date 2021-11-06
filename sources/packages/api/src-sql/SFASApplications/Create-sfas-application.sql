@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS sims.sfas_applications (
   id INT PRIMARY KEY,
   individual_id INT NOT NULL,
-  start_date DATE NOT NULL,
-  end_date DATE NOT NULL,
-  program_year_id INT NOT NULL,
+  start_date DATE,
+  end_date DATE,
+  program_year_id INT,
   bsl_award NUMERIC(8, 2),
   csl_award NUMERIC(8, 2),
   bcag_award NUMERIC(8, 2),
@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS sims.sfas_applications (
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   extracted_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+CREATE INDEX sfas_applications_individual_id ON sims.sfas_applications(individual_id);
 
 -- ## Comments
 COMMENT ON TABLE sims.sfas_applications IS 'This record contain data related to an Student Application on SFAS.';

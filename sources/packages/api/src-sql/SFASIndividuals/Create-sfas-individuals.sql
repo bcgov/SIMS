@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS sims.sfas_individuals (
   extracted_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+CREATE INDEX sfas_individuals_lower_last_name_birth_date_sin ON sims.sfas_individuals(lower(last_name), birth_date, sin);
+
 -- ## Comments
 COMMENT ON TABLE sims.sfas_individuals IS 'These records contain data related to an individual/student in SFAS.';
 

@@ -23,21 +23,21 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Educational program start date (application_assessment.educ_period_start_dte).
    */
-  get startDate(): Date {
+  get startDate(): Date | undefined {
     return parseDate(this.line.substr(23, 8));
   }
   /**
    * Educational Program End date (application_assessment.educ_period_end_dte).
    */
-  get endDate(): Date {
+  get endDate(): Date | undefined {
     return parseDate(this.line.substr(31, 8));
   }
   /**
    * Program year (Application.program_yr_id).
    * Example: 20202021.
    */
-  get programYearId(): number {
-    return +this.line.substr(39, 8);
+  get programYearId(): number | undefined {
+    return +this.line.substr(39, 8) || undefined;
   }
   /**
    * Total BC Student Loan (award_disbursement.disbursement_amt).
@@ -96,7 +96,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Date that this application was canceled (application.cancel_dte).
    */
-  get applicationCancelDate(): Date {
+  get applicationCancelDate(): Date | undefined {
     return parseDate(this.line.substr(137, 8));
   }
 }

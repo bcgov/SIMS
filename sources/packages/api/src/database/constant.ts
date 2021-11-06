@@ -25,4 +25,5 @@ export const TableNames = {
   StudentRestrictions: "student_restrictions",
   SFASIndividuals: "sfas_individuals",
   SFASApplications: "sfas_applications",
+  SFASRestrictions: "sfas_restrictions",
 };

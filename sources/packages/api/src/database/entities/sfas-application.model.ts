@@ -27,20 +27,20 @@ export class SFASApplication extends BaseModel {
   @Column({
     name: "start_date",
     type: "date",
-    nullable: false,
+    nullable: true,
     transformer: dateOnlyTransformer,
   })
-  startDate: Date;
+  startDate?: Date;
   /**
    * Educational Program End date (application_assessment.educ_period_end_dte).
    */
   @Column({
     name: "end_date",
     type: "date",
-    nullable: false,
+    nullable: true,
     transformer: dateOnlyTransformer,
   })
-  endDate: Date;
+  endDate?: Date;
   /**
    * Program year (application.program_yr_id).
    * Example: 20202021.
@@ -128,10 +128,10 @@ export class SFASApplication extends BaseModel {
   @Column({
     name: "application_cancel_date",
     type: "date",
-    nullable: false,
+    nullable: true,
     transformer: dateOnlyTransformer,
   })
-  applicationCancelDate: Date;
+  applicationCancelDate?: Date;
   /**
    * Date that the record was extracted from SFAS.
    */

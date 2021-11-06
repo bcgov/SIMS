@@ -11,6 +11,7 @@ import {
   SFASApplicationService,
   SFASDataImporter,
   SFASIndividualService,
+  SFASRestrictionService,
 } from "../services";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "../utilities";
 import * as os from "os";
@@ -21,6 +22,7 @@ export class SFASIntegrationProcessingService {
     private readonly sfasService: SFASIntegrationService,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly sfasApplicationService: SFASApplicationService,
+    private readonly sfasRestrictionService: SFASRestrictionService,
   ) {}
 
   /**
@@ -91,16 +93,7 @@ export class SFASIntegrationProcessingService {
       // Hold all the promises that must be processed.
       const promises: Promise<void>[] = [];
       for (const record of downloadResult.records) {
-        let dataImporter: SFASDataImporter;
-        switch (record.recordType) {
-          case RecordTypeCodes.IndividualDataRecord:
-            dataImporter = this.sfasIndividualService;
-            break;
-          case RecordTypeCodes.ApplicationDataRecord:
-            dataImporter = this.sfasApplicationService;
-            break;
-        }
-
+        const dataImporter = this.getSFASDataImporterFor(record.recordType);
         if (dataImporter) {
           const processPromise = dataImporter
             .importSFASRecord(record, downloadResult.header.creationDate)
@@ -153,6 +146,31 @@ export class SFASIntegrationProcessingService {
     }
 
     return result;
+  }
+
+  /**
+   * Define the object responsible to import the SFAS
+   * data for the specific record type.
+   * @param recordTypeCode type of the record.
+   * @returns object responsible to import the SFAS
+   * data for the specific record type.
+   */
+  private getSFASDataImporterFor(
+    recordTypeCode: RecordTypeCodes,
+  ): SFASDataImporter {
+    let dataImporter: SFASDataImporter = undefined;
+    switch (recordTypeCode) {
+      case RecordTypeCodes.IndividualDataRecord:
+        dataImporter = this.sfasIndividualService;
+        break;
+      case RecordTypeCodes.ApplicationDataRecord:
+        dataImporter = this.sfasApplicationService;
+        break;
+      case RecordTypeCodes.RestrictionDataRecord:
+        dataImporter = this.sfasRestrictionService;
+        break;
+    }
+    return dataImporter;
   }
 
   @InjectLogger()
