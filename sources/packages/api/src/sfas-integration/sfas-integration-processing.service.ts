@@ -128,14 +128,17 @@ export class SFASIntegrationProcessingService {
       await Promise.all(promises);
       this.logger.log("Records imported.");
 
-      try {
-        //await this.sfasService.deleteFile(filePath);
-      } catch (error) {
-        const logMessage = `Error while deleting SFAS integration file: ${filePath}`;
-        result.summary.push(logMessage);
-        result.success = false;
-        this.logger.error(logMessage);
-        this.logger.error(error);
+      // Delete the file only if it was processed with success.
+      if (result.success) {
+        try {
+          await this.sfasService.deleteFile(filePath);
+        } catch (error) {
+          const logMessage = `Error while deleting SFAS integration file: ${filePath}`;
+          result.summary.push(logMessage);
+          result.success = false;
+          this.logger.error(logMessage);
+          this.logger.error(error);
+        }
       }
     } catch (error) {
       const logMessage = `Error while processing SFAS integration file: ${filePath}`;
