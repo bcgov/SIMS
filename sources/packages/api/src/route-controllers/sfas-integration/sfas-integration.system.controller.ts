@@ -26,8 +26,8 @@ export class SFASIntegrationController {
     }));
 
     if (results.some((result) => !result.success)) {
-      // If any result was not successfully completed return
-      // the entire processing log but with an HTTP error.
+      // If any result was not successfully completed, return
+      // the entire processing log but within an HTTP error.
       throw new UnprocessableEntityException(resultDTO);
     }
 

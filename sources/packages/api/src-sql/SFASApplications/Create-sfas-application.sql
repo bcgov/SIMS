@@ -31,9 +31,9 @@ COMMENT ON COLUMN sims.sfas_applications.individual_id IS 'The unique key/number
 
 COMMENT ON COLUMN sims.sfas_applications.start_date IS 'Educational program start date (application_assessment.educ_period_start_dte).';
 
-COMMENT ON COLUMN sims.sfas_applications.end_date IS 'Educational program start date (application_assessment.educ_period_start_dte).';
+COMMENT ON COLUMN sims.sfas_applications.end_date IS 'Educational Program End date (application_assessment.educ_period_end_dte).';
 
-COMMENT ON COLUMN sims.sfas_applications.program_year_id IS 'Program year (application.program_yr_id).';
+COMMENT ON COLUMN sims.sfas_applications.program_year_id IS 'Program year (application.program_yr_id), like 20202021.';
 
 COMMENT ON COLUMN sims.sfas_applications.bsl_award IS 'Total BC Student Loan (award_disbursement.disbursement_amt).';
 

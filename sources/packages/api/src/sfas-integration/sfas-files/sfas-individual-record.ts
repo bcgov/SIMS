@@ -35,7 +35,7 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   /**
    * Date of birth (individual.date_of_birth).
    */
-  get birthDate(): Date | undefined {
+  get birthDate(): Date {
     return parseDate(this.line.substr(68, 8));
   }
   /**

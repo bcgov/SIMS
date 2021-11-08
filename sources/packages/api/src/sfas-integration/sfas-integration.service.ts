@@ -21,7 +21,7 @@ export class SFASIntegrationService {
 
   /**
    * Get the list of all files waiting to be downloaded from the
-   * SFTP filtering by the the regex pattern '/SFAS-TO-SIMS-[\w]*\.txt/i'.
+   * SFTP filtering by the the regex pattern '/SFAS-TO-SIMS-[\w]*-[\w]*\.txt/i'.
    * The files must be ordered by file name.
    * @returns file names for all response files present on SFTP.
    */

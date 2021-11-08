@@ -47,9 +47,9 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "program_year_id",
-    nullable: false,
+    nullable: true,
   })
-  programYearId: number;
+  programYearId?: number;
   /**
    * Total BC Student Loan (award_disbursement.disbursement_amt).
    */
