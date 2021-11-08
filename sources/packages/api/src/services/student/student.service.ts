@@ -264,9 +264,7 @@ export class StudentService extends RecordDataModelService<Student> {
     const applicationExistsQuery = this.applicationRepo
       .createQueryBuilder("application")
       .where("application.applicationNumber Ilike :appNumber")
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      })
+      .andWhere("application.applicationStatus != :overwrittenStatus")
       .select("1");
     const searchQuery = this.repo
       .createQueryBuilder("student")
@@ -291,7 +289,10 @@ export class StudentService extends RecordDataModelService<Student> {
     if (appNumber) {
       searchQuery
         .andWhere(`exists(${applicationExistsQuery.getQuery()})`)
-        .setParameters({ appNumber: `%${appNumber}%` });
+        .setParameters({
+          appNumber: `%${appNumber}%`,
+          overwrittenStatus: ApplicationStatus.overwritten,
+        });
     }
     return searchQuery.getMany();
   }
