@@ -64,7 +64,6 @@ const MAX_UPLOAD_FILES = 1;
 // 3 means 'the file' + uniqueFileName + group.
 const MAX_UPLOAD_PARTS = 3;
 
-@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
@@ -80,6 +79,7 @@ export class StudentController extends BaseController {
     super();
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("studentInfo")
   async getStudentInfo(
     @UserToken() userToken: IUserToken,
@@ -129,6 +129,7 @@ export class StudentController extends BaseController {
    * @param userToken authenticated user information.
    * @returns true if the student exists, otherwise false.
    */
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("check-student")
   async checkStudentExists(
     @UserToken() userToken: IUserToken,
@@ -142,6 +143,7 @@ export class StudentController extends BaseController {
     return !!student;
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("contact")
   async getContactInfo(
     @UserToken() userToken: IUserToken,
@@ -176,6 +178,7 @@ export class StudentController extends BaseController {
     };
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch("contact")
   async update(
     @UserToken() userToken: IUserToken,
@@ -202,6 +205,7 @@ export class StudentController extends BaseController {
    * @param programId
    * @returns StudentEducationProgramDto
    */
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("/education-program/:programId")
   async getStudentEducationProgram(
     @Param("programId") programId: number,
@@ -231,6 +235,7 @@ export class StudentController extends BaseController {
    * @param payload information needed to create/update the user.
    * @param userToken authenticated user information.
    */
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Post()
   async create(
     @UserToken() userToken: IUserToken,
@@ -265,6 +270,7 @@ export class StudentController extends BaseController {
     });
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch("/sync")
   async synchronizeFromUserInfo(
     @UserToken() userToken: IUserToken,
@@ -272,6 +278,7 @@ export class StudentController extends BaseController {
     await this.studentService.synchronizeFromUserInfo(userToken);
   }
 
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch("/apply-pd-status")
   async applyForPDStatus(@UserToken() userToken: IUserToken): Promise<void> {
     // Get student details
@@ -329,6 +336,7 @@ export class StudentController extends BaseController {
    * the value from 'Directory' property from form.IO file component.
    * @returns created file information.
    */
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("files")
   @UseInterceptors(
     FileInterceptor("file", {
@@ -373,31 +381,44 @@ export class StudentController extends BaseController {
   }
 
   /**
-   * Gets a student file validating if the user has the access to it.
+   * Gets a student file validating if the student has access to it or if the user is Aest.
    * @param userToken authentication token.
    * @param uniqueFileName unique file name (name+guid).
    * @param response file content.
    */
+  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
   @Get("files/:uniqueFileName")
   async getUploadedFile(
     @UserToken() userToken: IUserToken,
     @Param("uniqueFileName") uniqueFileName: string,
     @Res() response: Response,
   ) {
-    const student = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
+    let studentFile = undefined;
+    if (
+      AuthorizedParties.aest === userToken.authorizedParty &&
+      userToken.groups?.some(
+        (group) => UserGroups.AESTUser.toString() === group,
+      )
+    ) {
+      studentFile = await this.fileService.getStudentFileByUniqueName(
+        uniqueFileName,
+      );
+    } else {
+      const student = await this.studentService.getStudentByUserId(
+        userToken.userId,
+      );
 
-    if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
+      if (!student) {
+        throw new UnprocessableEntityException(
+          "The user is not associated with a student.",
+        );
+      }
+
+      studentFile = await this.fileService.getStudentFile(
+        student.id,
+        uniqueFileName,
       );
     }
-
-    const studentFile = await this.fileService.getStudentFile(
-      student.id,
-      uniqueFileName,
-    );
 
     if (!studentFile) {
       throw new NotFoundException(
@@ -418,7 +439,7 @@ export class StudentController extends BaseController {
 
     stream.pipe(response);
   }
-
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("application-summary")
   async getStudentApplicationSummary(
     @UserToken() userToken: IUserToken,
@@ -487,6 +508,7 @@ export class StudentController extends BaseController {
    * @param userToken
    * @returns Student Restriction
    */
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("restriction")
   async getStudentRestrictions(
     @UserToken() userToken: IUserToken,
