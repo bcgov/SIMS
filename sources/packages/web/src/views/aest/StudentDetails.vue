@@ -6,7 +6,7 @@
   </h5>
   <PDStatus :pdStatus="studentDetail.pdStatus" />
   <full-page-container>
-    <h2 class="color-blue padding-bottom-30">Student Details</h2>
+    <h2 class="color-blue pb-4">Student Details</h2>
     <formio formName="studentProfileSummary" :data="initialData"></formio>
     <div class="category-header-large">Student Appliations</div>
     <v-col>

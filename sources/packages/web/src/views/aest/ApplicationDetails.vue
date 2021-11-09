@@ -5,7 +5,7 @@
     >
   </h5>
   <full-page-container v-if="applicationDetail.data">
-    <h2 class="color-blue padding-bottom-30">
+    <h2 class="color-blue pb-4">
       Student Application Details
       {{
         applicationDetail.applicationNumber
