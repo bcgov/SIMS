@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS sims.sfas_individuals (
   id INT PRIMARY KEY,
-  first_name VARCHAR(50) NOT NULL,
+  first_name VARCHAR(50),
   last_name VARCHAR(50) NOT NULL,
   birth_date DATE NOT NULL,
   sin CHAR(9) NOT NULL,

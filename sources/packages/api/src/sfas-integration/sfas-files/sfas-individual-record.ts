@@ -16,9 +16,10 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   }
   /**
    * The first name as defined in SFAS(individual_alias.first_name).
+   * First name could be not present for mononymous names.
    */
-  get firstName(): string {
-    return this.line.substr(13, 15).trim();
+  get firstName(): string | null {
+    return this.line.substr(13, 15).trim() || null;
   }
   /**
    * The last name as defined in SFAS (individual_alias.last_name).
@@ -28,9 +29,26 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   }
   /**
    * The middle name as defined in SFAS (individual_alias.middle_name).
+   * Middle name could be not present for mononymous names.
    */
-  get middleName(): string {
-    return this.line.substr(53, 15).trim();
+  get middleName(): string | null {
+    return this.line.substr(53, 15).trim() || null;
+  }
+
+  get givenNames(): string | null {
+    if (this.firstName && this.middleName) {
+      return `${this.firstName} ${this.middleName}`;
+    }
+
+    if (this.firstName) {
+      return this.firstName;
+    }
+
+    if (this.middleName) {
+      return this.middleName;
+    }
+
+    return null;
   }
   /**
    * Date of birth (individual.date_of_birth).
@@ -47,7 +65,7 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   /**
    * Permanent Disability Flag (individual.permanent_disability_flg).
    */
-  get pdStatus(): boolean | undefined {
+  get pdStatus(): boolean | null {
     switch (this.line.substr(85, 1)) {
       case "Y":
         return true;
@@ -60,13 +78,13 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   /**
    * The most recent, active Master Student Loan Agreement Number (loan_agreement_request.msfaa_agreement_number).
    */
-  get msfaaNumber(): number | undefined {
-    return +this.line.substr(86, 10) || undefined;
+  get msfaaNumber(): number | null {
+    return +this.line.substr(86, 10) || null;
   }
   /**
    * The most recent, active Master Student Loan Agreement signed date (loan_agreement_request.loan_agreement_signed_dte).
    */
-  get msfaaSignedDate(): Date | undefined {
+  get msfaaSignedDate(): Date | null {
     return parseDate(this.line.substr(96, 8));
   }
   /**

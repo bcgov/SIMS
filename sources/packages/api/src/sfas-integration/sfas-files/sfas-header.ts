@@ -11,7 +11,7 @@ export class SFASHeader extends SFASRecordIdentification {
   /**
    * Date and time that the data was extracted.
    */
-  get creationDate(): Date | undefined {
+  get creationDate(): Date | null {
     return parseDateTime(this.line.substr(46, 14));
   }
 }

@@ -41,7 +41,7 @@ export class SFASRestrictionRecord extends SFASRecordIdentification {
    * Date that this restriction is considered removed and no longer in effect
    * individual_process_control.control_removed_dte (date).
    */
-  get removalDate(): Date | undefined {
+  get removalDate(): Date | null {
     return parseDate(this.line.substr(35, 8));
   }
 }

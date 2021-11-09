@@ -33,8 +33,7 @@ export class SFASIndividualService
     const sfasIndividual = new SFASIndividualRecord(record.line);
     const individual = new SFASIndividual();
     individual.id = sfasIndividual.id;
-    individual.firstName =
-      `${sfasIndividual.firstName} ${sfasIndividual.middleName}`.trim();
+    individual.firstName = sfasIndividual.givenNames;
     individual.lastName = sfasIndividual.lastName;
     individual.birthDate = sfasIndividual.birthDate;
     individual.sin = sfasIndividual.sin;
