@@ -82,10 +82,12 @@ export class CRAPersonalVerificationService {
           const fileInfo =
             this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
-          uploadResult = await this.craService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+          await this.craService.uploadContent(fileContent, fileInfo.filePath);
+
+          uploadResult = {
+            generatedFile: fileInfo.filePath,
+            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
+          };
         } catch (error) {
           this.logger.error(
             `Error while uploading content for SIN verification: ${error}`,
@@ -144,10 +146,12 @@ export class CRAPersonalVerificationService {
           const fileInfo =
             this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
-          uploadResult = await this.craService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+          await this.craService.uploadContent(fileContent, fileInfo.filePath);
+
+          uploadResult = {
+            generatedFile: fileInfo.filePath,
+            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
+          };
 
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the

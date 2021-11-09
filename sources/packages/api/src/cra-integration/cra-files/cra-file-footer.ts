@@ -5,7 +5,7 @@ import {
   NUMBER_FILLER,
   TransactionCodes,
 } from "../cra-integration.models";
-import { CRARequestFileLine } from "./cra-request-file-line";
+import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
 
 /**
  * Footer of a CRA request/response file.
@@ -14,7 +14,7 @@ import { CRARequestFileLine } from "./cra-request-file-line";
  * The documentation about it is available on the document
  * 'Income Verification Data Exchange Technical Guide BC'.
  */
-export class CRAFileFooter implements CRARequestFileLine {
+export class CRAFileFooter implements FixedFormatFileLine {
   transactionCode: TransactionCodes;
   processDate: Date;
   programAreaCode: string;

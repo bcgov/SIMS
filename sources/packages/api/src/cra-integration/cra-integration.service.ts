@@ -3,22 +3,21 @@ import { LoggerService } from "../logger/logger.service";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "../services";
 import { SshService } from "../services/ssh/ssh.service";
-import * as Client from "ssh2-sftp-client";
 import {
   CRAPersonRecord,
-  CRAUploadResult,
   TransactionCodes,
   TransactionSubCodes,
   CRAsFtpResponseFile,
 } from "./cra-integration.models";
-import { CRAIntegrationConfig, SFTPConfig } from "../types";
+import { CRAIntegrationConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
-import { CRARequestFileLine } from "./cra-files/cra-request-file-line";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import { CRAResponseRecordIdentification } from "./cra-files/cra-response-record-identification";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
+import { FixedFormatFileLine } from "../services/ssh/sftp-integration-base.models";
+import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -27,13 +26,18 @@ import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-inc
  * ZONE B network for further processing and final send to CRA servers.
  */
 @Injectable()
-export class CRAIntegrationService {
+export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFile> {
   private readonly craConfig: CRAIntegrationConfig;
-  private readonly ftpConfig: SFTPConfig;
 
-  constructor(config: ConfigService, private readonly sshService: SshService) {
+  constructor(config: ConfigService, sshService: SshService) {
+    super(
+      config.getConfig().zoneBSFTP,
+      sshService,
+      /CCRA_RESPONSE_[\w]*\.txt/i,
+      config.getConfig().CRAIntegration.ftpResponseFolder,
+      config.getConfig().CRAIntegration.ftpRequestFolder,
+    );
     this.craConfig = config.getConfig().CRAIntegration;
-    this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
   /**
@@ -47,7 +51,7 @@ export class CRAIntegrationService {
   createMatchingRunContent(
     records: CRAPersonRecord[],
     sequence: number,
-  ): CRARequestFileLine[] {
+  ): FixedFormatFileLine[] {
     return this.createCRARequestFile(
       records,
       sequence,
@@ -67,7 +71,7 @@ export class CRAIntegrationService {
   createIncomeValidationContent(
     records: CRAPersonRecord[],
     sequence: number,
-  ): CRARequestFileLine[] {
+  ): FixedFormatFileLine[] {
     return this.createCRARequestFile(
       records,
       sequence,
@@ -92,9 +96,9 @@ export class CRAIntegrationService {
     headerTransactionCode: TransactionCodes,
     recordTransactionCode: TransactionCodes,
     footerTransactionCode: TransactionCodes,
-  ): CRARequestFileLine[] {
+  ): FixedFormatFileLine[] {
     const processDate = new Date();
-    const craFileLines: CRARequestFileLine[] = [];
+    const craFileLines: FixedFormatFileLine[] = [];
     // Header
     const header = new CRAFileHeader();
     header.transactionCode = headerTransactionCode;
@@ -131,39 +135,6 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Converts the craFileLines to the final content and upload it.
-   * @param craFileLines Array of lines to be converted to a formatted fixed size file.
-   * @param remoteFilePath Remote location to upload the file (path + file name).
-   * @returns Upload result.
-   */
-  async uploadContent(
-    craFileLines: CRARequestFileLine[],
-    remoteFilePath: string,
-  ): Promise<CRAUploadResult> {
-    // Generate fixed formatted file.
-    const fixedFormattedLines: string[] = craFileLines.map(
-      (line: CRARequestFileLine) => line.getFixedFormat(),
-    );
-    const craFileContent = fixedFormattedLines.join("\r\n");
-
-    // Send the file to ftp.
-    this.logger.log("Creating new SFTP client to start upload...");
-    const client = await this.getClient();
-    try {
-      this.logger.log(`Uploading ${remoteFilePath}`);
-      await client.put(Buffer.from(craFileContent), remoteFilePath);
-      return {
-        generatedFile: remoteFilePath,
-        uploadedRecords: craFileLines.length - 2, // Do not consider header/footer.
-      };
-    } finally {
-      this.logger.log("Finalizing SFTP client...");
-      await SshService.closeQuietly(client);
-      this.logger.log("SFTP client finalized.");
-    }
-  }
-
-  /**
    * Expected file name of the CRA request file.
    * @param sequence file sequence number.
    * @returns Full file path of the file to be saved on the SFTP.
@@ -182,104 +153,53 @@ export class CRAIntegrationService {
   }
 
   /**
-   * Get the list of all response files waiting to be downloaded from the
-   * SFTP filtering by the the regex pattern '/CCRA_RESPONSE_[\w]*\.txt/i'.
-   * @returns full file paths for all response files present on SFTP.
-   */
-  async getResponseFilesFullPath(): Promise<string[]> {
-    let filesToProcess: Client.FileInfo[];
-    const client = await this.getClient();
-    try {
-      filesToProcess = await client.list(
-        `${this.craConfig.ftpResponseFolder}`,
-        /CCRA_RESPONSE_[\w]*\.txt/i,
-      );
-    } finally {
-      await SshService.closeQuietly(client);
-    }
-
-    return filesToProcess.map((file) => file.name);
-  }
-
-  /**
    * Downloads the file specified on 'fileName' parameter from the
    * CRA response folder on the SFTP.
    * @param fileName File to be downloaded.
    * @returns Parsed records from the file.
    */
   async downloadResponseFile(fileName: string): Promise<CRAsFtpResponseFile> {
-    const client = await this.getClient();
-    try {
-      const filePath = `${this.craConfig.ftpResponseFolder}/${fileName}`;
-      // Read all the file content and create a buffer.
-      const fileContent = await client.get(filePath);
-      // Convert the file content to an array of text lines and remove possible blank lines.
-      const fileLines = fileContent
-        .toString()
-        .split(/\r\n|\n\r|\n|\r/)
-        .filter((line) => line.length > 0);
-      // Read the first line to check if the header code is the expected one.
-      const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
-      if (header.transactionCode !== TransactionCodes.ResponseHeader) {
-        this.logger.error(
-          `The CRA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
-        );
-        // If the header is not the expected one, just ignore the file.
-        return null;
-      }
-
-      // Remove footer (not used).
-      fileLines.pop();
-
-      // Generate the records.
-      let lineNumber = 1;
-      const statusRecords: CRAResponseStatusRecord[] = [];
-      const totalIncomeRecords: CRAResponseTotalIncomeRecord[] = [];
-      for (const line of fileLines) {
-        const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
-        switch (craRecord.transactionSubCode) {
-          case TransactionSubCodes.ResponseStatusRecord:
-            statusRecords.push(new CRAResponseStatusRecord(line, lineNumber));
-            break;
-          case TransactionSubCodes.TotalIncome:
-            totalIncomeRecords.push(
-              new CRAResponseTotalIncomeRecord(line, lineNumber),
-            );
-            break;
-        }
-        lineNumber++;
-      }
-
-      return {
-        fileName,
-        filePath,
-        statusRecords,
-        totalIncomeRecords,
-      };
-    } finally {
-      await SshService.closeQuietly(client);
+    const fileLines = await this.downloadResponseFileLines(fileName);
+    // Read the first line to check if the header code is the expected one.
+    const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
+    if (header.transactionCode !== TransactionCodes.ResponseHeader) {
+      this.logger.error(
+        `The CRA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
+      );
+      // If the header is not the expected one, just ignore the file.
+      return null;
     }
-  }
 
-  /**
-   * Delete a file from SFTP.
-   * @param filePath Full path of the file to be deleted.
-   */
-  async deleteFile(filePath: string): Promise<void> {
-    const client = await this.getClient();
-    try {
-      await client.delete(filePath);
-    } finally {
-      await SshService.closeQuietly(client);
+    // Remove footer (not used).
+    fileLines.pop();
+
+    // Generate the records.
+    let lineNumber = 1;
+    const statusRecords: CRAResponseStatusRecord[] = [];
+    const totalIncomeRecords: CRAResponseTotalIncomeRecord[] = [];
+    for (const line of fileLines) {
+      const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
+      switch (craRecord.transactionSubCode) {
+        case TransactionSubCodes.ResponseStatusRecord:
+          statusRecords.push(new CRAResponseStatusRecord(line, lineNumber));
+          break;
+        case TransactionSubCodes.TotalIncome:
+          totalIncomeRecords.push(
+            new CRAResponseTotalIncomeRecord(line, lineNumber),
+          );
+          break;
+      }
+      lineNumber++;
     }
-  }
 
-  /**
-   * Generates a new connected SFTP client ready to be used.
-   * @returns client
-   */
-  private async getClient(): Promise<Client> {
-    return this.sshService.createClient(this.ftpConfig);
+    // Full file path on SFTP.
+    const filePath = this.getInputFullFilePath(fileName);
+    return {
+      fileName,
+      filePath,
+      statusRecords,
+      totalIncomeRecords,
+    };
   }
 
   @InjectLogger()
