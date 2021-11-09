@@ -395,9 +395,7 @@ export class StudentController extends BaseController {
     let studentFile = undefined;
     if (
       AuthorizedParties.aest === userToken.authorizedParty &&
-      userToken.groups?.some(
-        (group) => UserGroups.AESTUser.toString() === group,
-      )
+      userToken.groups?.some((group) => UserGroups.AESTUser === group)
     ) {
       studentFile = await this.fileService.getStudentFileByUniqueName(
         uniqueFileName,

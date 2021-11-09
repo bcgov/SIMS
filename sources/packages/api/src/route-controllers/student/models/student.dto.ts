@@ -1,5 +1,4 @@
 import { StudentPDStatus, StudentContact } from "../../../types";
-import { ApplicationSummaryDTO } from "../../../route-controllers/application/models/application.model";
 
 export class GetStudentContactDto {
   phone: string;

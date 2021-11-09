@@ -70,7 +70,7 @@ export default {
     const studentDetail = ref({} as StudentDetail);
     const applications = ref({} as ApplicationSummaryDTO[]);
     const initialData = ref();
-    const { dateString } = useFormatters();
+    const { dateString, dateOnlyLongString } = useFormatters();
     const goBack = () => {
       router.push({
         name: AESTRoutesConst.SEARCH_STUDENTS,
@@ -90,7 +90,7 @@ export default {
         lastName: studentDetail.value.lastName,
         gender: studentDetail.value.gender,
         email: studentDetail.value.email,
-        dateOfBirth: dateString(studentDetail.value.dateOfBirth),
+        dateOfBirth: dateOnlyLongString(studentDetail.value.dateOfBirth),
         phone: studentDetail.value.contact.phone,
         addressLine1: studentDetail.value.contact.addressLine1,
         addressLine2: studentDetail.value.contact.addressLine2,
