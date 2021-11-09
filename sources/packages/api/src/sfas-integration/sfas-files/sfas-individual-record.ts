@@ -34,7 +34,10 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   get middleName(): string | null {
     return this.line.substr(53, 15).trim() || null;
   }
-
+  /**
+   * Given names created from the first name and middle name
+   * when both are available.
+   */
   get givenNames(): string | null {
     if (this.firstName && this.middleName) {
       return `${this.firstName} ${this.middleName}`;
