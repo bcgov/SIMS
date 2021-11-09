@@ -173,6 +173,11 @@ objects:
                     secretKeyRef:
                       key: ${MSFAA_REQUEST_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
+                - name: SFAS_RECEIVE_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
+                      name: ${API_SECRET_NAME}
                 - name: MSFAA_PROVINCE_CODE
                   valueFrom:
                     secretKeyRef:
@@ -393,3 +398,5 @@ parameters:
     value: msfaa-request-folder
   - name: MSFAA_PROVINCE_CODE_NAME_KEY
     value: msfaa-province-code
+  - name: SFAS_RECEIVE_FOLDER_NAME_KEY
+    value: sfas-receive-folder
