@@ -49,12 +49,14 @@ import {
   InstitutionTypeController,
   SupportingUserController,
   MSFAAIntegrationController,
+  SFASIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.module";
-// Test
+import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
+
 @Module({
   imports: [
     LoggerModule,
@@ -62,6 +64,7 @@ import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.mo
     AuthModule,
     CraIntegrationModule,
     MSFAAIntegrationModule,
+    SFASIntegrationModule,
   ],
   controllers: [
     AppController,
@@ -83,6 +86,7 @@ import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.mo
     InstitutionTypeController,
     SupportingUserController,
     MSFAAIntegrationController,
+    SFASIntegrationController,
   ],
   providers: [
     AppService,

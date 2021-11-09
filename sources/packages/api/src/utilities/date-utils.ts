@@ -10,12 +10,22 @@ dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
 
+export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
+
 /**
  * get utc date time now
  * @returns date now in utc
  */
 export const getUTCNow = (): Date => {
   return dayjs().utc().toDate();
+};
+
+/**
+ * Convert the local date to UTC
+ * @returns date converted to UTC.
+ */
+export const getUTC = (localDate: Date): Date => {
+  return dayjs(localDate).utc().toDate();
 };
 
 /**
@@ -59,10 +69,7 @@ export const dateDifference = (
  * to the actual timezone time with offset
  * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00)
  */
-export const getPSTPDTDate = (
-  date: string | Date,
-  local: boolean = false,
-): string => {
+export const getPSTPDTDate = (date: string | Date, local = false): string => {
   return dayjs(new Date(date)).tz("America/Vancouver", local).format();
 };
 
@@ -79,7 +86,7 @@ export const getPSTPDTDate = (
  */
 export const setToStartOfTheDayInPSTPDT = (
   date: string | Date,
-  local: boolean = false,
+  local = false,
 ): string => {
   return dayjs(date).tz("America/Vancouver", local).startOf("day").format();
 };
@@ -93,4 +100,14 @@ export function getDateOnly(stringDate: string): Date | undefined {
     return new Date(`${stringDate}T00:00:00`);
   }
   return undefined;
+}
+
+export function getDateOnlyFromFormat(
+  stringDate: string,
+  stringDateFormat: string,
+) {
+  const isoDate = dayjs(stringDate, stringDateFormat).format(
+    DATE_ONLY_ISO_FORMAT,
+  );
+  return getDateOnly(isoDate);
 }

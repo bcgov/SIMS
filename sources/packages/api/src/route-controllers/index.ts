@@ -16,3 +16,4 @@ export * from "./confirmation-of-enrollment/confirmation-of-enrollment.controlle
 export * from "./institution-type/institution-type.controller";
 export * from "./supporting-user/supporting-user.controller";
 export * from "./msfaa-integration/msfaa-integration.system.controller";
+export * from "./sfas-integration/sfas-integration.system.controller";
