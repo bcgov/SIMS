@@ -51,7 +51,7 @@ export class SFASIndividualService
     individual.withdrawals = sfasIndividual.withdrawals;
     individual.unsuccessfulCompletion = sfasIndividual.unsuccessfulCompletion;
     individual.extractedAt = getUTC(extractedDate);
-    await this.repo.save(individual);
+    await this.repo.save(individual, { reload: false, transaction: false });
   }
 
   @InjectLogger()

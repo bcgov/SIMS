@@ -40,7 +40,7 @@ export class SFASRestrictionService
     restriction.effectiveDate = sfasRestriction.effectiveDate;
     restriction.removalDate = sfasRestriction.removalDate;
     restriction.extractedAt = getUTC(extractedDate);
-    await this.repo.save(restriction);
+    await this.repo.save(restriction, { reload: false, transaction: false });
   }
 
   @InjectLogger()

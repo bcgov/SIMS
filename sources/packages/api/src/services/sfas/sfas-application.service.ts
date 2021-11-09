@@ -48,7 +48,7 @@ export class SFASApplicationService
     application.sbsdAward = sfasApplication.sbsdAward;
     application.applicationCancelDate = sfasApplication.applicationCancelDate;
     application.extractedAt = getUTC(extractedDate);
-    await this.repo.save(application);
+    await this.repo.save(application, { reload: false, transaction: false });
   }
 
   @InjectLogger()
