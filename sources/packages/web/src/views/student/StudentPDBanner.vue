@@ -2,21 +2,21 @@
   <Message
     severity="warn"
     :closable="false"
-    v-if="pdStatus === StudentPDStatus.Pending.toString()"
+    v-if="pdStatus === StudentPDStatus.Pending"
   >
     <strong>PD Status: Pending</strong>
   </Message>
   <Message
     severity="success"
     :closable="false"
-    v-if="pdStatus === StudentPDStatus.Yes.toString()"
+    v-if="pdStatus === StudentPDStatus.Yes"
   >
     <strong>PD Status: PD Confirmed</strong>
   </Message>
   <Message
     severity="error"
     :closable="false"
-    v-if="pdStatus === StudentPDStatus.No.toString()"
+    v-if="pdStatus === StudentPDStatus.No"
   >
     <strong>PD Status: PD Denied</strong>
   </Message>

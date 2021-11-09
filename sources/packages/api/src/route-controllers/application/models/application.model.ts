@@ -4,7 +4,13 @@ import {
   ProgramInfoStatus,
   AssessmentStatus,
   COEStatus,
+  Application,
 } from "../../../database/entities";
+import {
+  dateString,
+  getPIRDeniedReason,
+  getCOEDeniedReason,
+} from "../../../utilities";
 export class SaveApplicationDto {
   /**
    * Application dynamic data.
@@ -25,15 +31,23 @@ export class SaveApplicationDto {
   @Min(1)
   programYearId: number;
 }
-export interface GetApplicationDataDto {
-  /**
-   * Application dynamic data.
-   */
+
+/**
+ * Base DTO for application
+ */
+export interface GetApplicationBaseDTO {
   data: any;
   id: number;
   applicationStatus: ApplicationStatus;
-  applicationStatusUpdatedOn: Date;
   applicationNumber: string;
+  applicationFormName: string;
+  applicationProgramYearID: number;
+}
+export interface GetApplicationDataDto extends GetApplicationBaseDTO {
+  /**
+   * Application dynamic data.
+   */
+  applicationStatusUpdatedOn: Date;
   applicationOfferingIntensity: string;
   applicationStartDate: string;
   applicationEndDate: string;
@@ -41,8 +55,6 @@ export interface GetApplicationDataDto {
   applicationPIRStatus: ProgramInfoStatus;
   applicationAssessmentStatus: AssessmentStatus;
   applicationCOEStatus: COEStatus;
-  applicationFormName: string;
-  applicationProgramYearID: number;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
 }
@@ -193,3 +205,64 @@ export interface NOAApplicationDto {
   offeringStudyEndDate: string;
   msfaaNumber: string;
 }
+
+/**
+ * DTO object application summary info.
+ */
+export interface ApplicationSummaryDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  award: string;
+  status: string;
+}
+
+/**
+ * Transformation util for Application.
+ * @param application
+ * @returns Application DTO
+ */
+export const transformToApplicationDto = (
+  application: Application,
+): GetApplicationBaseDTO => {
+  return {
+    data: application.data,
+    id: application.id,
+    applicationStatus: application.applicationStatus,
+    applicationNumber: application.applicationNumber,
+    applicationFormName: application.programYear.formName,
+    applicationProgramYearID: application.programYear.id,
+  } as GetApplicationBaseDTO;
+};
+
+/**
+ * Transformation util for Application.
+ * @param application
+ * @returns Application DTO
+ */
+export const transformToApplicationDetailDto = (
+  applicationDetail: Application,
+): GetApplicationDataDto => {
+  return {
+    data: applicationDetail.data,
+    id: applicationDetail.id,
+    applicationStatus: applicationDetail.applicationStatus,
+    applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
+    applicationNumber: applicationDetail.applicationNumber,
+    applicationOfferingIntensity: applicationDetail.offering?.offeringIntensity,
+    applicationStartDate: dateString(
+      applicationDetail.offering?.studyStartDate,
+    ),
+    applicationEndDate: dateString(applicationDetail.offering?.studyEndDate),
+    applicationInstitutionName: applicationDetail.location?.name,
+    applicationPIRStatus: applicationDetail.pirStatus,
+    applicationAssessmentStatus: applicationDetail.assessmentStatus,
+    applicationCOEStatus: applicationDetail.coeStatus,
+    applicationFormName: applicationDetail.programYear.formName,
+    applicationProgramYearID: applicationDetail.programYear.id,
+    applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
+    applicationCOEDeniedReason: getCOEDeniedReason(applicationDetail),
+  };
+};

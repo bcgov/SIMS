@@ -41,8 +41,8 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { GetApplicationDataDto, WizardNavigationEvent } from "@/types";
-import { AestService } from "@/services/AestService";
+import { GetApplicationBaseDTO, WizardNavigationEvent } from "@/types";
+import { ApplicationService } from "@/services/ApplicationService";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import formio from "@/components/generic/formio.vue";
 export default {
@@ -59,14 +59,14 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const applicationDetail = ref({} as GetApplicationDataDto);
+    const applicationDetail = ref({} as GetApplicationBaseDTO);
     const initialData = ref({});
     const selectedForm = ref();
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     let applicationWizard: any;
     onMounted(async () => {
-      applicationDetail.value = await AestService.shared.getApplicationDetail(
+      applicationDetail.value = await ApplicationService.shared.getApplicationDetail(
         props.applicationId,
         props.studentId,
       );

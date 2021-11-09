@@ -1,4 +1,5 @@
 import { StudentPDStatus, StudentContact } from "../../../types";
+import { ApplicationSummaryDTO } from "../../../route-controllers/application/models/application.model";
 
 export class GetStudentContactDto {
   phone: string;
@@ -76,17 +77,4 @@ export interface StudentDetailDTO {
   contact: StudentContact;
   pdVerified: boolean;
   pdStatus: StudentPDStatus;
-  applications: StudentApplicationSummary[];
-}
-/**
- * DTO object application summary info.
- */
-export interface StudentApplicationSummary {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  id: number;
-  applicationName: string;
-  award: string;
-  status: string;
 }

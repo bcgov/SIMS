@@ -6,6 +6,8 @@ import {
   StudentFormInfo,
   StudentApplication,
   StudentRestrictionStatus,
+  SearchStudentResp,
+  StudentDetail,
 } from "@/types/contracts/StudentContract";
 
 export class StudentService {
@@ -67,5 +69,29 @@ export class StudentService {
    */
   async getStudentRestriction(): Promise<StudentRestrictionStatus> {
     return ApiClient.Students.getStudentRestriction();
+  }
+
+  /**
+   * Search students for ministry search page.
+   * @param appNumber
+   * @param firstName
+   * @param lastName
+   * @returns SearchStudentResp[]
+   */
+  async searchStudents(
+    appNumber: string,
+    firstName: string,
+    lastName: string,
+  ): Promise<SearchStudentResp[]> {
+    return ApiClient.Students.searchStudents(appNumber, firstName, lastName);
+  }
+
+  /**
+   * Get student details of given student.
+   * @param studentId
+   * @returns StudentDetail
+   */
+  async getStudentDetail(studentId: number): Promise<StudentDetail> {
+    return ApiClient.Students.getStudentDetail(studentId);
   }
 }

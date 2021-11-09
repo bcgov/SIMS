@@ -263,10 +263,10 @@ export class StudentService extends RecordDataModelService<Student> {
   ): Promise<Student[]> {
     const searchQuery = this.repo
       .createQueryBuilder("student")
-      .leftJoinAndSelect(
+      .leftJoin(
         Application,
         "application",
-        "application.student_id = student.id",
+        "application.student.id = student.id",
       )
       .select([
         "student.id",

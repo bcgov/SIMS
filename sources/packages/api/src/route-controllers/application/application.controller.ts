@@ -26,23 +26,25 @@ import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
   GetApplicationDataDto,
+  GetApplicationBaseDTO,
   ApplicationStatusToBeUpdatedDto,
   ProgramYearOfApplicationDto,
   NOAApplicationDto,
+  transformToApplicationDto,
+  transformToApplicationDetailDto,
+  ApplicationSummaryDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
+  Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApplicationStatus } from "../../database/entities";
+import { UserGroups } from "../../auth/user-groups.enum";
+import { ApplicationStatus, Application } from "../../database/entities";
 import { ApiProcessError } from "../../types";
-import {
-  dateString,
-  getUserFullName,
-  transformToApplicationDto,
-} from "../../utilities";
+import { dateString, getUserFullName } from "../../utilities";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -71,7 +73,7 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    return transformToApplicationDto(application);
+    return transformToApplicationDetailDto(application);
   }
   /**
    * Submit an existing student application changing the status
@@ -392,15 +394,16 @@ export class ApplicationController extends BaseController {
    * @param userId
    * @returns Application details
    */
+  @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("aest/:applicationId/:studentId")
+  @Get("aest/:applicationId/student/:studentId")
   async getByStudentAndApplicationId(
     @Param("applicationId") applicationId: number,
     @Param("studentId") studentId: number,
-  ): Promise<GetApplicationDataDto> {
+  ): Promise<GetApplicationBaseDTO> {
     const application = await this.applicationService.getApplicationByIdAndUser(
       applicationId,
-      0,
+      undefined,
       studentId,
     );
     if (!application) {
@@ -409,5 +412,35 @@ export class ApplicationController extends BaseController {
       );
     }
     return transformToApplicationDto(application);
+  }
+
+  /**
+   * API to fetch all the applications that belong to student.
+   * This API will be used by ministry users.
+   * @param applicationId
+   * @param userId
+   * @returns Application details
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("aest/student/:studentId")
+  async getSummaryByStudentId(
+    @Param("studentId") studentId: number,
+  ): Promise<ApplicationSummaryDTO[]> {
+    const applications =
+      await this.applicationService.getAllStudentApplications(studentId);
+    return applications.map((application: Application) => {
+      return {
+        applicationNumber: application.applicationNumber,
+        id: application.id,
+        studyStartPeriod: application.offering?.studyStartDate ?? "",
+        studyEndPeriod: application.offering?.studyEndDate ?? "",
+        // TODO: when application name is captured, update the below line
+        applicationName: "Financial Aid Application",
+        // TODO: when award is captured, update the below line
+        award: "5500",
+        status: application.applicationStatus,
+      } as ApplicationSummaryDTO;
+    });
   }
 }

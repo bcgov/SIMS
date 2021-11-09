@@ -55,9 +55,9 @@ export enum ApplicationStatus {
    * an edit on Confirmation of Enrollment that forces the assessment to
    * be reevaluated. Is this case the application is cloned and and the
    * old version is marked as 'Overwritten'.
-   * Another case when an Application status is set to overwritten, 
-   * when a student tries to edit and existing in progress 
-   * (i.e, application status - submitted , inProgress , assessment , enrollment ) 
+   * Another case when an Application status is set to overwritten,
+   * when a student tries to edit and existing in progress
+   * (i.e, application status - submitted , inProgress , assessment , enrollment )
    * application.
    * An Overwritten application should never be modified, once an application
    * is Overwritten and a clone/new version is created all edits should take
@@ -70,15 +70,23 @@ export interface ApplicationStatusToBeUpdatedDto {
   applicationStatus: ApplicationStatus;
 }
 
-export interface GetApplicationDataDto {
-  /**
-   * Application dynamic data.
-   */
+/**
+ * Base DTO for application
+ */
+export interface GetApplicationBaseDTO {
   data: any;
   id: number;
   applicationStatus: ApplicationStatus;
-  applicationStatusUpdatedOn: string;
   applicationNumber: string;
+  applicationFormName: string;
+  applicationProgramYearID: number;
+}
+
+export interface GetApplicationDataDto extends GetApplicationBaseDTO {
+  /**
+   * Application dynamic data.
+   */
+  applicationStatusUpdatedOn: string;
   applicationOfferingIntensity: string;
   applicationStartDate: string;
   applicationEndDate: string;
@@ -86,8 +94,6 @@ export interface GetApplicationDataDto {
   applicationPIRStatus: ProgramInfoStatus;
   applicationAssessmentStatus: AssessmentStatus;
   applicationCOEStatus: COEStatus;
-  applicationFormName: string;
-  applicationProgramYearID: number;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
 }
@@ -119,4 +125,17 @@ export interface StudentApplicationDetailsForTracking {
   applicationInstitutionName: string;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
+}
+
+/**
+ * Interface for application summary
+ */
+export interface ApplicationSummaryDTO {
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+  id: number;
+  applicationName: string;
+  award: string;
+  status: string;
 }

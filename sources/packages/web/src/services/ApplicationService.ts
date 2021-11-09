@@ -4,6 +4,8 @@ import {
   ProgramYearOfApplicationDto,
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
+  GetApplicationBaseDTO,
+  ApplicationSummaryDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -75,5 +77,33 @@ export class ApplicationService {
     applicationId: number,
   ): Promise<ProgramYearOfApplicationDto> {
     return ApiClient.Application.getProgramYearOfApplication(applicationId);
+  }
+
+  /**
+   * Get application detail of given application
+   * @param applicationId
+   * @param userId
+   * @returns GetApplicationBaseDTO
+   */
+  async getApplicationDetail(
+    applicationId: number,
+    studentId: number,
+  ): Promise<GetApplicationBaseDTO> {
+    return ApiClient.Application.getApplicationDetails(
+      applicationId,
+      studentId,
+    );
+  }
+
+  /**
+   * Get application detail of given application
+   * @param applicationId
+   * @param userId
+   * @returns GetApplicationBaseDTO
+   */
+  async getAllApplicationsForStudent(
+    studentId: number,
+  ): Promise<ApplicationSummaryDTO[]> {
+    return ApiClient.Application.getAllApplicationsForStudent(studentId);
   }
 }

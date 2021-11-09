@@ -63,7 +63,7 @@
 <script lang="ts">
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { AestService } from "@/services/AestService";
+import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchStudentResp } from "@/types";
 import { useToastMessage } from "@/composables";
@@ -88,7 +88,7 @@ export default {
       });
     };
     const searchStudents = async () => {
-      students.value = await AestService.shared.searchStudents(
+      students.value = await StudentService.shared.searchStudents(
         appNumber.value,
         firstName.value,
         lastName.value,

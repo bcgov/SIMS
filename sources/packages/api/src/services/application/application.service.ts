@@ -1,4 +1,8 @@
-import { Injectable, Inject } from "@nestjs/common";
+import {
+  Injectable,
+  Inject,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
@@ -367,10 +371,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async getApplicationByIdAndUser(
     applicationId: number,
-    userId: number,
+    userId?: number,
     studentId?: number,
   ): Promise<Application> {
-    const application = await this.repo
+    if (!userId && !studentId) {
+      throw new UnprocessableEntityException(
+        "Either student id or user id is mandatory to retrieve an application.",
+      );
+    }
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.data",
@@ -406,16 +415,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
-      .andWhere(
-        studentId ? "student.id = :studentId" : "user.id = :userId",
-        studentId
-          ? {
-              studentId,
-            }
-          : { userId },
-      )
-      .getOne();
-    return application;
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      });
+
+    if (userId) {
+      applicationQuery.andWhere("user.id = :userId", { userId });
+    }
+
+    if (studentId) {
+      applicationQuery.andWhere("student.id = :studentId", { studentId });
+    }
+    return applicationQuery.getOne();
   }
 
   /**

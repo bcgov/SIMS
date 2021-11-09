@@ -33,7 +33,6 @@ import {
   SaveStudentDto,
   StudentRestrictionDTO,
   StudentDetailDTO,
-  StudentApplicationSummary,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -532,6 +531,7 @@ export class StudentController extends BaseController {
    * @param studentId
    * @returns Student Details
    */
+  @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/aest/:studentId")
   async getStudentDetails(
@@ -539,23 +539,6 @@ export class StudentController extends BaseController {
   ): Promise<StudentDetailDTO> {
     const student = await this.studentService.findById(studentId);
     const address = student.contactInfo.addresses[0];
-    const applications =
-      await this.applicationService.getAllStudentApplications(studentId);
-    const studentApplications = !applications
-      ? ([] as StudentApplicationSummary[])
-      : applications.map((application: Application) => {
-          return {
-            applicationNumber: application.applicationNumber,
-            id: application.id,
-            studyStartPeriod: application.offering?.studyStartDate ?? "",
-            studyEndPeriod: application.offering?.studyEndDate ?? "",
-            // TODO: when application name is captured, update the below line
-            applicationName: "Financial Aid Application",
-            // TODO: when award is captured, update the below line
-            award: "5500",
-            status: application.applicationStatus,
-          } as StudentApplicationSummary;
-        });
     return {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
@@ -572,7 +555,6 @@ export class StudentController extends BaseController {
         postalCode: address.postalCode,
       },
       pdStatus: determinePDStatus(student),
-      applications: studentApplications,
     } as StudentDetailDTO;
   }
 }

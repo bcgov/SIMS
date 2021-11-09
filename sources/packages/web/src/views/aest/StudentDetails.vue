@@ -10,11 +10,7 @@
     <formio formName="studentProfileSummary" :data="initialData"></formio>
     <div class="category-header-large">Student Appliations</div>
     <v-col>
-      <DataTable
-        :autoLayout="true"
-        :value="studentDetail.applications"
-        class="p-m-4"
-      >
+      <DataTable :autoLayout="true" :value="applications" class="p-m-4">
         <Column field="applicationNumber" header="Application #"> </Column>
         <Column field="applicationName" header="Study Period">
           <template #body="slotProps">
@@ -49,8 +45,13 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentDetail, ApplicationStatus } from "@/types";
-import { AestService } from "@/services/AestService";
+import {
+  StudentDetail,
+  ApplicationStatus,
+  ApplicationSummaryDTO,
+} from "@/types";
+import { StudentService } from "@/services/StudentService";
+import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
 import Status from "@/views/student/ApplicationStatus.vue";
 import PDStatus from "@/views/student/StudentPDBanner.vue";
@@ -67,6 +68,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const studentDetail = ref({} as StudentDetail);
+    const applications = ref({} as ApplicationSummaryDTO[]);
     const initialData = ref();
     const { dateString } = useFormatters();
     const goBack = () => {
@@ -76,9 +78,13 @@ export default {
     };
 
     onMounted(async () => {
-      studentDetail.value = await AestService.shared.getStudentDetail(
-        props.studentId,
-      );
+      const [student, studentApplications] = await Promise.all([
+        StudentService.shared.getStudentDetail(props.studentId),
+        ApplicationService.shared.getAllApplicationsForStudent(props.studentId),
+      ]);
+      studentDetail.value = student;
+      applications.value = studentApplications;
+
       initialData.value = {
         firstName: studentDetail.value.firstName,
         lastName: studentDetail.value.lastName,
@@ -110,6 +116,7 @@ export default {
       dateString,
       ApplicationStatus,
       initialData,
+      applications,
     };
   },
 };
