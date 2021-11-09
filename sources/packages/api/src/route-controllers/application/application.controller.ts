@@ -396,7 +396,7 @@ export class ApplicationController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("aest/:applicationId/student/:studentId")
+  @Get(":applicationId/student/:studentId/aest")
   async getByStudentAndApplicationId(
     @Param("applicationId") applicationId: number,
     @Param("studentId") studentId: number,
@@ -423,7 +423,7 @@ export class ApplicationController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("aest/student/:studentId")
+  @Get("student/:studentId/aest")
   async getSummaryByStudentId(
     @Param("studentId") studentId: number,
   ): Promise<ApplicationSummaryDTO[]> {

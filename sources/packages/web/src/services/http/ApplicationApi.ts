@@ -147,7 +147,7 @@ export class ApplicationApi extends HttpBaseClient {
     studentId: number,
   ): Promise<GetApplicationBaseDTO> {
     const response = await this.getCall(
-      `application/aest/${applicationId}/student/${studentId}`,
+      `application/${applicationId}/student/${studentId}/aest`,
     );
     return response.data as GetApplicationBaseDTO;
   }
@@ -161,7 +161,7 @@ export class ApplicationApi extends HttpBaseClient {
     studentId: number,
   ): Promise<ApplicationSummaryDTO[]> {
     const response = await this.getCall(
-      `application/aest/student/${studentId}`,
+      `application/student/${studentId}/aest`,
     );
     return response.data as ApplicationSummaryDTO[];
   }

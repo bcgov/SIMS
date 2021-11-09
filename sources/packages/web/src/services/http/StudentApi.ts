@@ -160,7 +160,7 @@ export class StudentApi extends HttpBaseClient {
    * @returns
    */
   public async getStudentDetail(studentId: number): Promise<StudentDetail> {
-    const response = await this.getCall(`students/aest/${studentId}`);
+    const response = await this.getCall(`students/${studentId}/aest`);
     return response.data as StudentDetail;
   }
 }

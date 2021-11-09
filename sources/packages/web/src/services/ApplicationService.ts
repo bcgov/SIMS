@@ -96,10 +96,10 @@ export class ApplicationService {
   }
 
   /**
-   * Get application detail of given application
+   * Get all the applications for a student
    * @param applicationId
    * @param userId
-   * @returns GetApplicationBaseDTO
+   * @returns ApplicationSummaryDTO
    */
   async getAllApplicationsForStudent(
     studentId: number,

@@ -531,7 +531,7 @@ export class StudentController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/aest/:studentId")
+  @Get(":studentId/aest")
   async getStudentDetails(
     @Param("studentId") studentId: number,
   ): Promise<StudentDetailDTO> {

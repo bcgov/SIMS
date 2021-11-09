@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
@@ -52,6 +48,8 @@ export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
 export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
+export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
+  "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -375,8 +373,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId?: number,
   ): Promise<Application> {
     if (!userId && !studentId) {
-      throw new UnprocessableEntityException(
+      throw new CustomNamedError(
         "Either student id or user id is mandatory to retrieve an application.",
+        INSUFFICIENT_APPLICATION_SEARCH_PARAMS,
       );
     }
     const applicationQuery = this.repo

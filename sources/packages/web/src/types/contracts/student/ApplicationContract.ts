@@ -71,7 +71,7 @@ export interface ApplicationStatusToBeUpdatedDto {
 }
 
 /**
- * Base DTO for application
+ * Base DTO for application dynamic data
  */
 export interface GetApplicationBaseDTO {
   data: any;
@@ -82,10 +82,10 @@ export interface GetApplicationBaseDTO {
   applicationProgramYearID: number;
 }
 
+/**
+ * DTO for detailed application data
+ */
 export interface GetApplicationDataDto extends GetApplicationBaseDTO {
-  /**
-   * Application dynamic data.
-   */
   applicationStatusUpdatedOn: string;
   applicationOfferingIntensity: string;
   applicationStartDate: string;
