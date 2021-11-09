@@ -36,7 +36,6 @@ export class MSFAAResponseService {
   private async processFile(
     filePath: string,
   ): Promise<ProcessSftpResponseResult> {
-    const now = getUTCNow();
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
@@ -60,11 +59,7 @@ export class MSFAAResponseService {
 
     for (const receivedRecord of responseFile.receivedRecords) {
       try {
-        await this.processReceivedRecords(
-          receivedRecord,
-          now,
-          responseFile.fileName,
-        );
+        await this.processReceivedRecords(receivedRecord);
         result.processSummary.push(
           `Status record from line ${receivedRecord.lineNumber}.`,
         );
@@ -99,17 +94,11 @@ export class MSFAAResponseService {
    */
   private async processReceivedRecords(
     statusRecord: MSFAAResponseReceivedRecord,
-    receivedDate: Date,
-    receivedFileName: string,
   ): Promise<void> {
     const updateResult = await this.msfaaNumberService.updateReceivedFile(
-      verificationId,
-      receivedFileName,
-      receivedDate,
-      statusRecord.matchStatusCode,
-      statusRecord.requestStatusCode,
-      statusRecord.inactiveCode,
-      income,
+      statusRecord.msfaaNumber,
+      statusRecord.borrowerSignedDate,
+      statusRecord.serviceProviderReceivedDate,
     );
 
     // Expected to update 1 and only 1 record.

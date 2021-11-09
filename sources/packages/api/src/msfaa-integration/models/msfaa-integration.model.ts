@@ -1,3 +1,4 @@
+import * as dayjs from "dayjs";
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
@@ -160,15 +161,15 @@ export class MSFAAResponseReceivedRecord extends MSFAAsResponseRecordIdentificat
   /**
    * Date that the borrower indicated that the MSFAA was Signed
    */
-  public get borrowerSignedDate(): string {
-    return this.line.substr(23, 8);
+  public get borrowerSignedDate(): Date {
+    return dayjs(this.line.substr(23, 8), DATE_FORMAT).toDate();
   }
 
   /**
    * Date MSFAA was received by/resolved from Canada Post/Kiosk
    */
-  public get serviceProviderReceivedDate(): string {
-    return this.line.substr(31, 8);
+  public get serviceProviderReceivedDate(): Date {
+    return dayjs(this.line.substr(31, 8), DATE_FORMAT).toDate();
   }
 }
 
