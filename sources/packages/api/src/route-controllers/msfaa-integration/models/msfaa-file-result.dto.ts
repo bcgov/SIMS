@@ -6,3 +6,8 @@ export interface MSFAAFileResultDto {
 export interface MSFAARequestResultDto extends MSFAAFileResultDto {
   offeringIntensity: string;
 }
+
+export interface ProcessResponseResDto {
+  processSummary: string[];
+  errorsSummary: string[];
+}

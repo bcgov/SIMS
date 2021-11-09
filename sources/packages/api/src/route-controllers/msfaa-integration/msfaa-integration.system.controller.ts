@@ -1,16 +1,23 @@
 import { Controller, Post } from "@nestjs/common";
-import { MSFAARequestResultDto } from "./models/msfaa-file-result.dto";
+import {
+  MSFAARequestResultDto,
+  ProcessResponseResDto,
+} from "./models/msfaa-file-result.dto";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { OfferingIntensity } from "../../database/entities";
 import { MSFAARequestService } from "../../msfaa-integration/msfaa-request.service";
+import { MSFAAResponseService } from "../../msfaa-integration/msfaa-response.service";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
 export class MSFAAIntegrationController {
-  constructor(private readonly msfaaRequestService: MSFAARequestService) {}
+  constructor(
+    private readonly msfaaRequestService: MSFAARequestService,
+    private readonly msfaaResponseService: MSFAAResponseService,
+  ) {}
 
   /**
    * Identifies all the records where the MSFAA number
@@ -47,6 +54,21 @@ export class MSFAAIntegrationController {
         uploadedRecords: partTimeResponse.uploadedRecords,
       },
     ];
+  }
+
+  /**
+   * Download all files from MSFAA Response folder on SFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  @Post("process-responses")
+  async processResponses(): Promise<ProcessResponseResDto[]> {
+    const results = await this.msfaaResponseService.processResponses();
+    return results.map((result) => {
+      return {
+        processSummary: result.processSummary,
+        errorsSummary: result.errorsSummary,
+      };
+    });
   }
 
   @InjectLogger()

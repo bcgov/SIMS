@@ -2,7 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../common";
 import { OfferingIntensity } from "../database/entities";
 import { LoggerService } from "../logger/logger.service";
-import { DATE_FORMAT } from "../msfaa-integration/models/msfaa-integration.model";
+import {
+  DATE_FORMAT,
+  MSFAAResponseCancelledRecord,
+  MSFAAResponseReceivedRecord,
+  MSFAAsFtpResponseFile,
+  MSFAAsResponseRecordIdentification,
+  TransactionSubCodes,
+} from "../msfaa-integration/models/msfaa-integration.model";
 import { ConfigService, SequenceControlService, SshService } from "../services";
 import { MSFAAIntegrationConfig, SFTPConfig } from "../types";
 import {
@@ -17,9 +24,9 @@ import {
   MSFAAUploadResult,
   TransactionCodes,
 } from "./models/msfaa-integration.model";
-import { MSFAAFileDetail } from "./msfaa-files/msfaa-request-file-detail";
-import { MSFAAFileFooter } from "./msfaa-files/msfaa-request-file-footer";
-import { MSFAAFileHeader } from "./msfaa-files/msfaa-request-file-header";
+import { MSFAAFileDetail } from "./msfaa-files/msfaa-file-detail";
+import { MSFAAFileFooter } from "./msfaa-files/msfaa-file-footer";
+import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
 import { StringBuilder } from "../utilities/string-builder";
 import { EntityManager } from "typeorm";
 /**
@@ -61,7 +68,7 @@ export class MSFAAIntegrationService {
     const msfaaFileLines: MSFAARequestFileLine[] = [];
     // Header record
     const msfaaHeader = new MSFAAFileHeader();
-    msfaaHeader.transactionCode = TransactionCodes.MSFAARequestHeader;
+    msfaaHeader.transactionCode = TransactionCodes.MSFAAHeader;
     msfaaHeader.processDate = processDate;
     msfaaHeader.provinceCode = this.msfaaConfig.provinceCode;
     msfaaHeader.sequence = fileSequence;
@@ -69,7 +76,7 @@ export class MSFAAIntegrationService {
     // Detail records
     const fileRecords = msfaaRecords.map((msfaaRecord) => {
       const msfaaDetail = new MSFAAFileDetail();
-      msfaaDetail.transactionCode = TransactionCodes.MSFAARequestDetail;
+      msfaaDetail.transactionCode = TransactionCodes.MSFAADetail;
       msfaaHeader.processDate = processDate;
       msfaaDetail.msfaaNumber = msfaaRecord.msfaaNumber;
       msfaaDetail.sin = msfaaRecord.sin;
@@ -97,7 +104,7 @@ export class MSFAAIntegrationService {
     msfaaFileLines.push(...fileRecords);
     // Footer or Trailer record
     const msfaaFooter = new MSFAAFileFooter();
-    msfaaFooter.transactionCode = TransactionCodes.MSFAARequestTrailer;
+    msfaaFooter.transactionCode = TransactionCodes.MSFAATrailer;
     msfaaFooter.totalSINHash = totalSINHash;
     msfaaFooter.recordCount = msfaaRecords.length;
     msfaaFileLines.push(msfaaFooter);
@@ -178,6 +185,139 @@ export class MSFAAIntegrationService {
       fileName,
       filePath,
     };
+  }
+
+  /**
+   * Get the list of all response files waiting to be downloaded from the
+   * SFTP filtering by the the regex pattern '/PE*\.txt/i'.
+   * @returns full file paths for all response files present on SFTP.
+   */
+  async getResponseFilesFullPath(): Promise<string[]> {
+    let filesToProcess: Client.FileInfo[];
+    const client = await this.getClient();
+    try {
+      filesToProcess = await client.list(
+        `${this.msfaaConfig.ftpResponseFolder}`,
+        /PE*\.txt/i,
+      );
+    } finally {
+      await SshService.closeQuietly(client);
+    }
+    return filesToProcess.map((file) => file.name);
+  }
+
+  /**
+   * Downloads the file specified on 'fileName' parameter from the
+   * MSFAA response folder on the SFTP.
+   * @param fileName File to be downloaded.
+   * @returns Parsed records from the file.
+   */
+  async downloadResponseFile(fileName: string): Promise<MSFAAsFtpResponseFile> {
+    const client = await this.getClient();
+    try {
+      const filePath = `${this.msfaaConfig.ftpResponseFolder}/${fileName}`;
+      // Read all the file content and create a buffer.
+      const fileContent = await client.get(filePath);
+      // Convert the file content to an array of text lines and remove possible blank lines.
+      const fileLines = fileContent
+        .toString()
+        .split(/\r\n|\n\r|\n|\r/)
+        .filter((line) => line.length > 0);
+      // Read the first line to check if the header code is the expected one.
+      const header = MSFAAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
+      if (header.transactionCode !== TransactionCodes.MSFAAHeader) {
+        this.logger.error(
+          `The MSFAA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
+        );
+        // If the header is not the expected one, just ignore the file.
+        return null;
+      }
+
+      /** Read the last line to check if the trailer code is the expected one and fetch the Hash
+       * total of all the SIN values
+       */
+      const trailer = MSFAAFileFooter.CreateFromLine(
+        fileLines.slice(-1).toString(),
+      ); // Read and remove header.
+      if (trailer.transactionCode !== TransactionCodes.MSFAATrailer) {
+        this.logger.error(
+          `The MSFAA file ${fileName} has an invalid transaction code on trailer: ${trailer.transactionCode}`,
+        );
+        // If the header is not the expected one, just ignore the file.
+        return null;
+      }
+      // Remove trailer (not used).
+      fileLines.pop();
+
+      /**
+       * Check if the number of records match the trailer record count
+       */
+      if (trailer.recordCount !== fileLines.length) {
+        this.logger.error(
+          `The MSFAA file ${fileName} has invalid number of records, expected ${trailer.recordCount} but got ${fileLines.length}`,
+        );
+        // If the number of records does not match the trailer record count, just ignore the file.
+        return null;
+      }
+
+      // Generate the records.
+      let lineNumber = 1;
+      const receivedRecords: MSFAAResponseReceivedRecord[] = [];
+      const cancelledRecords: MSFAAResponseCancelledRecord[] = [];
+      let sinTotalInRecord = 0;
+      for (const line of fileLines) {
+        const msfaaRecord = new MSFAAsResponseRecordIdentification(
+          line,
+          lineNumber,
+        );
+        sinTotalInRecord += parseInt(msfaaRecord.sin);
+        switch (msfaaRecord.transactionSubCode) {
+          case TransactionSubCodes.Received:
+            receivedRecords.push(
+              new MSFAAResponseReceivedRecord(line, lineNumber),
+            );
+            break;
+          case TransactionSubCodes.Cancelled:
+            cancelledRecords.push(
+              new MSFAAResponseCancelledRecord(line, lineNumber),
+            );
+            break;
+        }
+        lineNumber++;
+      }
+      /**
+       * Check if the sum total hash of SIN in the records match the trailer SIN hash total
+       */
+      if (sinTotalInRecord !== trailer.totalSINHash) {
+        this.logger.error(
+          `The MSFAA file ${fileName} has SINHash insconsistent with the total sum of sin in the records`,
+        );
+        // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count, just ignore the file.
+        return null;
+      }
+
+      return {
+        fileName,
+        filePath,
+        receivedRecords,
+        cancelledRecords,
+      };
+    } finally {
+      await SshService.closeQuietly(client);
+    }
+  }
+
+  /**
+   * Delete a file from SFTP.
+   * @param filePath Full path of the file to be deleted.
+   */
+  async deleteFile(filePath: string): Promise<void> {
+    const client = await this.getClient();
+    try {
+      await client.delete(filePath);
+    } finally {
+      await SshService.closeQuietly(client);
+    }
   }
 
   /**

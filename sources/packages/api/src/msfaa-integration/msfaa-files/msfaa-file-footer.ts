@@ -25,4 +25,12 @@ export class MSFAAFileFooter implements MSFAARequestFileLine {
     footer.repeatAppend(SPACE_FILLER, 533); //Trailing spaces
     return footer.toString();
   }
+
+  public static CreateFromLine(line: string): MSFAAFileFooter {
+    const header = new MSFAAFileFooter();
+    header.transactionCode = line.substr(0, 3) as TransactionCodes;
+    header.recordCount = parseInt(line.substr(43, 9));
+    header.totalSINHash = parseInt(line.substr(52, 15));
+    return header;
+  }
 }
