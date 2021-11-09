@@ -1,3 +1,5 @@
+import { StudentPDStatus, StudentContact } from "../../../types";
+
 export class GetStudentContactDto {
   phone: string;
   addressLine1: string;
@@ -61,4 +63,17 @@ export interface StudentRestrictionDTO {
   hasFederalRestriction: boolean;
   hasProvincialRestriction: boolean;
   restrictionMessage: string;
+}
+/**
+ * DTO object for student details.
+ */
+export interface StudentDetailDTO {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  dateOfBirth: Date;
+  contact: StudentContact;
+  pdVerified: boolean;
+  pdStatus: StudentPDStatus;
 }

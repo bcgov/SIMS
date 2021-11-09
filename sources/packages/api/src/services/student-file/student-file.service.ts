@@ -46,6 +46,19 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
+   * Gets a student file.
+   * This method is exclusively for the ministry user purpose.
+   * For a ministry user student id validation is not required.
+   * @param uniqueFileName unique file name (name+guid).
+   * @returns student file.
+   */
+  async getStudentFileByUniqueName(
+    uniqueFileName: string,
+  ): Promise<StudentFile> {
+    return this.repo.findOne({ uniqueFileName: uniqueFileName });
+  }
+
+  /**
    * Gets a list of student files using the unique names for search them.
    * @param studentId student id.
    * @param uniqueFileNames list of unique file names.

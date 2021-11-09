@@ -48,6 +48,8 @@ export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
 export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
+export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
+  "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -356,12 +358,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .getOne();
   }
-
+  /**
+   * Fetches application by applicationId and userId|studentId.
+   * When studentId is supplied, studentId is preferred as search criteria.
+   * When studentId is not supplied, then userId is used.
+   * @param applicationId
+   * @param userId
+   * @param studentId
+   * @returns
+   */
   async getApplicationByIdAndUser(
     applicationId: number,
-    userId: number,
+    userId?: number,
+    studentId?: number,
   ): Promise<Application> {
-    const application = await this.repo
+    if (!userId && !studentId) {
+      throw new CustomNamedError(
+        "Either student id or user id is mandatory to retrieve an application.",
+        INSUFFICIENT_APPLICATION_SEARCH_PARAMS,
+      );
+    }
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.data",
@@ -397,9 +414,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
-      .andWhere("user.id = :userId", { userId })
-      .getOne();
-    return application;
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      });
+
+    if (userId) {
+      applicationQuery.andWhere("user.id = :userId", { userId });
+    }
+
+    if (studentId) {
+      applicationQuery.andWhere("student.id = :studentId", { studentId });
+    }
+    return applicationQuery.getOne();
   }
 
   /**

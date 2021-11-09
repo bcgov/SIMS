@@ -3,7 +3,8 @@ import AppAEST from "@/views/aest/AppAEST.vue";
 import Login from "@/views/aest/Login.vue";
 import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
-import StudentApplications from "@/views/aest/StudentApplications.vue";
+import StudentDetails from "@/views/aest/StudentDetails.vue";
+import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import {
   AESTRoutesConst,
@@ -53,10 +54,23 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentApplications,
-        name: AESTRoutesConst.STUDENTS_APPLICATION,
+        path: AppRoutes.StudentDetail,
+        name: AESTRoutesConst.STUDENT_DETAILS,
+        props: true,
         components: {
-          default: StudentApplications,
+          default: StudentDetails,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ApplicationDetail,
+        name: AESTRoutesConst.APPLICATION_DETAILS,
+        props: true,
+        components: {
+          default: ApplicationDetails,
           sidebar: AESTHomeSideBar,
         },
         meta: {
