@@ -1,5 +1,12 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Brackets, Connection, In, Repository, UpdateResult } from "typeorm";
+import {
+  Brackets,
+  Connection,
+  In,
+  IsNull,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   MSFAANumber,
@@ -173,7 +180,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   /**
    * Once the MSFAA response file is processed, updates the
    * MSFAA received on the database with the
-   * information received.
+   * information received. If the information was already received
+   * the record will not b updated.
    * @param msfaaNumber MSFAA number
    * @param dateSigned date in which the borrower indicated the MSFAA was signed
    * @param serviceProviderReceivedDate date in which the MSDAA was received by/resolve from CanadaPost/Kiosk
@@ -191,7 +199,11 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     }
 
     return this.repo.update(
-      { msfaaNumber: msfaaNumber },
+      {
+        msfaaNumber: msfaaNumber,
+        dateSigned: IsNull(),
+        serviceProviderReceivedDate: IsNull(),
+      },
       {
         dateSigned,
         serviceProviderReceivedDate,
