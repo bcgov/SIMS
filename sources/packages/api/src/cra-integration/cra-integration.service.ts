@@ -31,12 +31,7 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
   private readonly craConfig: CRAIntegrationConfig;
 
   constructor(config: ConfigService, sshService: SshService) {
-    super(
-      config.getConfig().zoneBSFTP,
-      sshService,
-      /CCRA_RESPONSE_[\w]*\.txt/i,
-      config.getConfig().CRAIntegration.ftpResponseFolder,
-    );
+    super(config.getConfig().zoneBSFTP, sshService);
     this.craConfig = config.getConfig().CRAIntegration;
   }
 

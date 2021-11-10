@@ -1,20 +1,23 @@
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { SshService } from "./ssh.service";
-import * as Client from "ssh2-sftp-client";
 import { SFTPConfig } from "../../types";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
-import path from "path";
+import * as Client from "ssh2-sftp-client";
+import * as path from "path";
 
 /**
  * Provides the basic features to enable the SFTP integration.
  */
 export abstract class SFTPIntegrationBase<DownloadType> {
+  /**
+   * Initializes a new instance of the SFTPIntegrationBase.
+   * @param sftpConfig configuration to connect to the SFTP.
+   * @param sshService service responsible to connect and execute SFTP commands.
+   */
   constructor(
     private readonly sftpConfig: SFTPConfig,
     private readonly sshService: SshService,
-    private readonly sftpInputFileRegexSearch: RegExp,
-    private readonly sftpRemoteDownloadFolder: string,
   ) {}
 
   /**
@@ -52,20 +55,20 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * The files will be ordered by file name.
    * @returns file names for all response files present on SFTP.
    */
-  async getResponseFilesFullPath(): Promise<string[]> {
+  async getResponseFilesFullPath(
+    remoteDownloadFolder: string,
+    fileRegexSearch: RegExp,
+  ): Promise<string[]> {
     let filesToProcess: Client.FileInfo[];
     const client = await this.getClient();
     try {
-      filesToProcess = await client.list(
-        this.sftpRemoteDownloadFolder,
-        this.sftpInputFileRegexSearch,
-      );
+      filesToProcess = await client.list(remoteDownloadFolder, fileRegexSearch);
     } finally {
       await SshService.closeQuietly(client);
     }
 
     return filesToProcess
-      .map((file) => path.join(this.sftpRemoteDownloadFolder, file.name))
+      .map((file) => path.join(remoteDownloadFolder, file.name))
       .sort();
   }
 

@@ -11,12 +11,7 @@ import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
 @Injectable()
 export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> {
   constructor(config: ConfigService, sshService: SshService) {
-    super(
-      config.getConfig().zoneBSFTP,
-      sshService,
-      /SFAS-TO-SIMS-[\w]*-[\w]*\.txt/i,
-      config.getConfig().SFASIntegrationConfig.ftpReceiveFolder,
-    );
+    super(config.getConfig().zoneBSFTP, sshService);
   }
 
   /**

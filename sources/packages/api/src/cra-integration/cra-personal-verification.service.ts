@@ -33,6 +33,8 @@ const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
  */
 @Injectable()
 export class CRAPersonalVerificationService {
+  private readonly ftpResponseFolder: string;
+
   constructor(
     private readonly craService: CRAIntegrationService,
     private readonly studentService: StudentService,
@@ -40,7 +42,11 @@ export class CRAPersonalVerificationService {
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly workflowService: WorkflowActionsService,
-  ) {}
+    config: ConfigService,
+  ) {
+    this.ftpResponseFolder =
+      config.getConfig().CRAIntegration.ftpResponseFolder;
+  }
 
   /**
    * Identifies all the students that still do not have their SIN
@@ -252,7 +258,10 @@ export class CRAPersonalVerificationService {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const remoteFilePaths = await this.craService.getResponseFilesFullPath();
+    const remoteFilePaths = await this.craService.getResponseFilesFullPath(
+      this.ftpResponseFolder,
+      /CCRA_RESPONSE_[\w]*\.txt/i,
+    );
     const processFiles: ProcessSftpResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {
       processFiles.push(await this.processFile(remoteFilePath));

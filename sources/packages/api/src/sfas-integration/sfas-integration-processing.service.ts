@@ -8,6 +8,7 @@ import {
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
+  ConfigService,
   SFASApplicationService,
   SFASDataImporter,
   SFASIndividualService,
@@ -18,12 +19,17 @@ import * as os from "os";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
+  private readonly ftpReceiveFolder: string;
   constructor(
     private readonly sfasService: SFASIntegrationService,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasRestrictionService: SFASRestrictionService,
-  ) {}
+    config: ConfigService,
+  ) {
+    this.ftpReceiveFolder =
+      config.getConfig().SFASIntegrationConfig.ftpReceiveFolder;
+  }
 
   /**
    * Download all files from SFAS integration folder on SFTP and process them all.
@@ -35,7 +41,10 @@ export class SFASIntegrationProcessingService {
   async process(): Promise<ProcessSftpResponseResult[]> {
     const results: ProcessSftpResponseResult[] = [];
     // Get the list of all files from SFTP ordered by file name.
-    const filePaths = await this.sfasService.getResponseFilesFullPath();
+    const filePaths = await this.sfasService.getResponseFilesFullPath(
+      this.ftpReceiveFolder,
+      /SFAS-TO-SIMS-[\w]*-[\w]*\.txt/i,
+    );
     for (const filePath of filePaths) {
       const result = await this.processFile(filePath);
       results.push(result);
