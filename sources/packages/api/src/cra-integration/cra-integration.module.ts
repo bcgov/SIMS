@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
 import {
   ApplicationService,
-  ArchiveDbService,
   ConfigService,
   CRAIntegrationService,
   CRAPersonalVerificationService,
@@ -14,6 +13,7 @@ import {
   WorkflowActionsService,
   WorkflowService,
   CRAIncomeVerificationService,
+  SFASIndividualService,
 } from "../services";
 
 @Module({
@@ -24,7 +24,6 @@ import {
     CRAPersonalVerificationService,
     SequenceControlService,
     StudentService,
-    ArchiveDbService,
     ConfigService,
     ApplicationService,
     StudentFileService,
@@ -32,6 +31,7 @@ import {
     WorkflowActionsService,
     MSFAANumberService,
     CRAIncomeVerificationService,
+    SFASIndividualService,
   ],
   exports: [
     CRAPersonalVerificationService,

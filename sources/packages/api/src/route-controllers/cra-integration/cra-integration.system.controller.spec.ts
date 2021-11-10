@@ -2,7 +2,6 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
   ApplicationService,
-  ArchiveDbService,
   ConfigService,
   KeycloakService,
   MSFAANumberService,
@@ -30,7 +29,6 @@ describe("CRAIntegrationController", () => {
         SshService,
         SequenceControlService,
         StudentService,
-        ArchiveDbService,
         ConfigService,
         ApplicationService,
         StudentFileService,

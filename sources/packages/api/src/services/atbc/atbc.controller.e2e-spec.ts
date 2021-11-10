@@ -4,7 +4,6 @@ import * as faker from "faker";
 import { Student, User } from "../../database/entities";
 import {
   StudentService,
-  ArchiveDbService,
   ATBCService,
   UserService,
   StudentFileService,
@@ -52,7 +51,6 @@ describe("Test ATBC Controller", () => {
       providers: [
         ConfigService,
         UserService,
-        ArchiveDbService,
         ATBCService,
         StudentFileService,
         StudentService,

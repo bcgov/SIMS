@@ -2,7 +2,6 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import { StudentService } from "./student.service";
 import { DatabaseModule } from "../../database/database.module";
-import { ArchiveDbService } from "../archive-db/archive-db.service";
 import { DatabaseService } from "../../database/database.service";
 
 describe("StudentService", () => {
@@ -12,7 +11,7 @@ describe("StudentService", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [StudentService, ArchiveDbService],
+      providers: [StudentService],
     }).compile();
     await module.init();
 

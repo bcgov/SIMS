@@ -21,6 +21,12 @@ import { SFASIntegrationService } from "./sfas-integration.service";
     SFASApplicationService,
     SFASRestrictionService,
   ],
-  exports: [SFASIntegrationService, SFASIntegrationProcessingService],
+  exports: [
+    SFASIntegrationService,
+    SFASIntegrationProcessingService,
+    SFASIndividualService,
+    SFASApplicationService,
+    SFASRestrictionService,
+  ],
 })
 export class SFASIntegrationModule {}

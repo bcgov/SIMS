@@ -2,8 +2,6 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { SFASIndividual } from "../../database/entities";
-import { InjectLogger } from "../../common";
-import { LoggerService } from "../../logger/logger.service";
 import { SFASIndividualRecord } from "../../sfas-integration/sfas-files/sfas-individual-record";
 import { getUTC } from "../../utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
@@ -54,6 +52,31 @@ export class SFASIndividualService
     await this.repo.save(individual, { reload: false, transaction: false });
   }
 
-  @InjectLogger()
-  logger: LoggerService;
+  /**
+   * Get the permanent disability status from SFAS, if available.
+   * @param lastName student last name.
+   * @param birthDate student data of birth.
+   * @param sin student Social Insurance Number.
+   * @returns the permanent disability if present or null. Even when
+   * the record is present os SFAS, the value could still be null,
+   * what means that a permanent disability verification was never
+   * executed for the student.
+   */
+  async getPDStatus(
+    lastName: string,
+    birthDate: Date,
+    sin: string,
+  ): Promise<boolean | null> {
+    const individual = await this.repo
+      .createQueryBuilder("individual")
+      .select("individual.pdStatus")
+      .where("lower(individual.lastName) = :lastName", {
+        lastName: lastName.toLowerCase(),
+      })
+      .andWhere("individual.sin = :sin", { sin })
+      .andWhere("individual.birthDate = :birthDate", { birthDate })
+      .getOne();
+
+    return individual?.pdStatus;
+  }
 }

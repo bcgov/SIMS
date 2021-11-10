@@ -12,7 +12,6 @@ export POSTGRES_PORT := $(or $(POSTGRES_PORT), 5432)
 export POSTGRES_USER := $(or $(POSTGRES_USER), admin)
 export POSTGRES_PASSWORD := $(or $(POSTGRES_PASSWORD), aest_sim)
 export POSTGRES_DB := $(or $(POSTGRES_DB), aest)
-export ARCHIVE_DB := $(or $(ARCHIVE_DB), sfas_db)
 # Key Cloak
 export KEYCLOAK_AUTH_URL := $(or $(KEYCLOAK_AUTH_URL), https://dev.oidc.gov.bc.ca/auth/)
 export KEYCLOAK_REALM := $(or $(KEYCLOAK_REALM), jxoe2o46)
@@ -123,10 +122,5 @@ local-api-test: ## Run API tests
 local-db:
 	@echo "Make: Shelling into database workspace ..."
 	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) -W $(POSTGRES_DB)
-
-local-db-archive-db:
-	@echo "Make: Shelling into database workspace ..."
-	@docker-compose -f docker-compose.yml exec postgres psql -U $(POSTGRESQL_USER) $(ARCHIVE_DB)
-
 
 

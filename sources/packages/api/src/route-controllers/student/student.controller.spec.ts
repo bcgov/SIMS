@@ -1,7 +1,6 @@
 require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
-  ArchiveDbService,
   StudentService,
   UserService,
   ATBCService,
@@ -33,7 +32,6 @@ describe("StudentController", () => {
         ConfigService,
         StudentService,
         UserService,
-        ArchiveDbService,
         ATBCService,
         SequenceControlService,
         StudentFileService,

@@ -1,6 +1,6 @@
 require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
-import { ArchiveDbService, ProgramYearService } from "../../services";
+import { ProgramYearService } from "../../services";
 import { ProgramYearController } from "./program-year.controller";
 import { DatabaseModule } from "../../database/database.module";
 import { DatabaseService } from "../../database/database.service";
@@ -11,7 +11,7 @@ describe("ProgramYearController", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [ProgramYearService, ArchiveDbService],
+      providers: [ProgramYearService],
       controllers: [ProgramYearController],
     }).compile();
     await module.init();
