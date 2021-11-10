@@ -16,6 +16,7 @@ import {
   EducationProgramService,
   StudentRestrictionService,
   FormService,
+  SFASIndividualService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -66,6 +67,7 @@ describe("Test ATBC Controller", () => {
         createMockedJwtService(),
         FormService,
         StudentRestrictionService,
+        SFASIndividualService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

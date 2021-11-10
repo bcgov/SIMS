@@ -6,6 +6,7 @@ import {
   KeycloakService,
   MSFAANumberService,
   SequenceControlService,
+  SFASIndividualService,
   SshService,
   StudentFileService,
   StudentService,
@@ -38,6 +39,7 @@ describe("CRAIntegrationController", () => {
         TokensService,
         KeycloakService,
         createMockedJwtService(),
+        SFASIndividualService,
       ],
       controllers: [CRAIntegrationController],
     })

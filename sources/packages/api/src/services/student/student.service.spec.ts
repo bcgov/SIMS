@@ -3,6 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { StudentService } from "./student.service";
 import { DatabaseModule } from "../../database/database.module";
 import { DatabaseService } from "../../database/database.service";
+import { SFASIndividualService } from "..";
 
 describe("StudentService", () => {
   let service: StudentService;
@@ -11,7 +12,7 @@ describe("StudentService", () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      providers: [StudentService],
+      providers: [StudentService, SFASIndividualService],
     }).compile();
     await module.init();
 
