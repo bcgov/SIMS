@@ -1,4 +1,4 @@
-import * as dayjs from "dayjs";
+import { getDateOnlyFromFormat } from "../../utilities";
 import { StringBuilder } from "../../utilities/string-builder";
 import {
   DATE_FORMAT,
@@ -39,7 +39,7 @@ export class CRAFileHeader implements FixedFormatFileLine {
   public static createFromLine(line: string): CRAFileHeader {
     const header = new CRAFileHeader();
     header.transactionCode = line.substr(0, 4) as TransactionCodes;
-    header.processDate = dayjs(line.substr(28, 8), DATE_FORMAT).toDate();
+    header.processDate = getDateOnlyFromFormat(line.substr(28, 8), DATE_FORMAT);
     header.programAreaCode = line.substr(37, 4);
     header.environmentCode = line.substr(41, 1);
     header.sequence = parseInt(line.substr(42, 5));
