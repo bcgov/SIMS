@@ -198,7 +198,7 @@ export class MSFAAIntegrationService {
     try {
       filesToProcess = await client.list(
         `${this.msfaaConfig.ftpResponseFolder}`,
-        /PE*\.txt/i,
+        /PEDU.PBC.MSFA.REC.*\.DAT/i,
       );
     } finally {
       await SshService.closeQuietly(client);
@@ -229,8 +229,10 @@ export class MSFAAIntegrationService {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
         );
-        // If the header is not the expected one, just ignore the file.
-        return null;
+        // If the header is not the expected one.
+        throw new Error(
+          "The MSFAA file has an invalid transaction code on header",
+        );
       }
 
       /** Read the last line to check if the trailer code is the expected one and fetch the Hash
@@ -243,8 +245,10 @@ export class MSFAAIntegrationService {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on trailer: ${trailer.transactionCode}`,
         );
-        // If the header is not the expected one, just ignore the file.
-        return null;
+        // If the header is not the expected one.
+        throw new Error(
+          "The MSFAA file has an invalid transaction code on trailer",
+        );
       }
       // Remove trailer (not used).
       fileLines.pop();
@@ -256,8 +260,8 @@ export class MSFAAIntegrationService {
         this.logger.error(
           `The MSFAA file ${fileName} has invalid number of records, expected ${trailer.recordCount} but got ${fileLines.length}`,
         );
-        // If the number of records does not match the trailer record count, just ignore the file.
-        return null;
+        // If the number of records does not match the trailer record count..
+        throw new Error("The MSFAA file has invalid number of records");
       }
 
       // Generate the records.
@@ -292,8 +296,10 @@ export class MSFAAIntegrationService {
         this.logger.error(
           `The MSFAA file ${fileName} has SINHash insconsistent with the total sum of sin in the records`,
         );
-        // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count, just ignore the file.
-        return null;
+        // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count.
+        throw new Error(
+          "The MSFAA file has TotalSINHash insconsistent with the total sum of sin in the records",
+        );
       }
 
       return {

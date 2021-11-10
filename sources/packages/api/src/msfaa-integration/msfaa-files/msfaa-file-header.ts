@@ -35,11 +35,8 @@ export class MSFAAFileHeader implements MSFAARequestFileLine {
 
   public static CreateFromLine(line: string): MSFAAFileHeader {
     const header = new MSFAAFileHeader();
-    header.transactionCode = line.substr(0, 4) as TransactionCodes;
-    header.processDate = dayjs(line.substr(28, 8), DATE_FORMAT).toDate();
-    header.provinceCode = line.substr(37, 4);
-    header.environmentCode = line.substr(41, 1);
-    header.sequence = parseInt(line.substr(42, 5));
+    header.transactionCode = line.substr(0, 3) as TransactionCodes;
+    header.processDate = dayjs(line.substr(47, 8), DATE_FORMAT).toDate();
     return header;
   }
 }

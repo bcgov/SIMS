@@ -1,7 +1,6 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectLogger } from "../common";
 import { MSFAANumberService } from "../services";
-import { getUTCNow } from "../utilities";
 import {
   MSFAAResponseReceivedRecord,
   MSFAAsFtpResponseFile,
@@ -45,9 +44,7 @@ export class MSFAAResponseService {
       responseFile = await this.msfaaService.downloadResponseFile(filePath);
     } catch (error) {
       this.logger.error(error);
-      result.errorsSummary.push(
-        `Error downloading file ${filePath}. Error: ${error}`,
-      );
+      result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
       return result;
