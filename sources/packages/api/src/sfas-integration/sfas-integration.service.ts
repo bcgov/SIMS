@@ -37,9 +37,9 @@ export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> 
     fileLines.pop();
 
     // Generate the records.
-    let lineNumber = 2; // 1 is the header already removed.
     const records = fileLines.map(
-      (line) => new SFASRecordIdentification(line, lineNumber++),
+      // 1 is the header already removed.
+      (line, index) => new SFASRecordIdentification(line, index + 2),
     );
 
     return {
