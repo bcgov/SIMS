@@ -8,6 +8,7 @@ import {
 } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
+  ConfigService,
   SFASApplicationService,
   SFASDataImporter,
   SFASIndividualService,
@@ -18,12 +19,17 @@ import * as os from "os";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
+  private readonly ftpReceiveFolder: string;
   constructor(
     private readonly sfasService: SFASIntegrationService,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasRestrictionService: SFASRestrictionService,
-  ) {}
+    config: ConfigService,
+  ) {
+    this.ftpReceiveFolder =
+      config.getConfig().SFASIntegrationConfig.ftpReceiveFolder;
+  }
 
   /**
    * Download all files from SFAS integration folder on SFTP and process them all.
@@ -35,7 +41,10 @@ export class SFASIntegrationProcessingService {
   async process(): Promise<ProcessSftpResponseResult[]> {
     const results: ProcessSftpResponseResult[] = [];
     // Get the list of all files from SFTP ordered by file name.
-    const filePaths = await this.sfasService.getResponseFilesFullPath();
+    const filePaths = await this.sfasService.getResponseFilesFullPath(
+      this.ftpReceiveFolder,
+      /SFAS-TO-SIMS-[\w]*-[\w]*\.txt/i,
+    );
     for (const filePath of filePaths) {
       const result = await this.processFile(filePath);
       results.push(result);
@@ -51,26 +60,28 @@ export class SFASIntegrationProcessingService {
 
   /**
    * Process each individual SFAS integration file from the SFTP.
-   * @param filePath SFAS integration file to be processed.
+   * @param remoteFilePath SFAS integration file to be processed.
    * @returns Process summary and errors.
    */
   private async processFile(
-    filePath: string,
+    remoteFilePath: string,
   ): Promise<ProcessSftpResponseResult> {
     const result = new ProcessSftpResponseResult();
     result.success = true;
-    result.summary.push(`Processing file ${filePath}.`);
+    result.summary.push(`Processing file ${remoteFilePath}.`);
 
     let downloadResult: DownloadResult;
 
-    this.logger.log(`Starting download of file ${filePath}...`);
+    this.logger.log(`Starting download of file ${remoteFilePath}...`);
     try {
-      downloadResult = await this.sfasService.downloadResponseFile(filePath);
+      downloadResult = await this.sfasService.downloadResponseFile(
+        remoteFilePath,
+      );
       this.logger.log("File download finished.");
     } catch (error) {
       this.logger.error(error);
       result.summary.push(
-        `Error downloading file ${filePath}. Error: ${error}`,
+        `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
       result.success = false;
       return result;
@@ -85,7 +96,7 @@ export class SFASIntegrationProcessingService {
     result.summary.push(
       `File contains ${downloadResult.records.length} records.`,
     );
-    this.logger.log(`Importing records from file ${filePath}.`);
+    this.logger.log(`Importing records from file ${remoteFilePath}.`);
     this.logger.log(`Total of ${downloadResult.records.length} records.`);
 
     try {
@@ -131,9 +142,9 @@ export class SFASIntegrationProcessingService {
       // Delete the file only if it was processed with success.
       if (result.success) {
         try {
-          await this.sfasService.deleteFile(filePath);
+          await this.sfasService.deleteFile(remoteFilePath);
         } catch (error) {
-          const logMessage = `Error while deleting SFAS integration file: ${filePath}`;
+          const logMessage = `Error while deleting SFAS integration file: ${remoteFilePath}`;
           result.summary.push(logMessage);
           result.success = false;
           this.logger.error(logMessage);
@@ -141,7 +152,7 @@ export class SFASIntegrationProcessingService {
         }
       }
     } catch (error) {
-      const logMessage = `Error while processing SFAS integration file: ${filePath}`;
+      const logMessage = `Error while processing SFAS integration file: ${remoteFilePath}`;
       result.summary.push(logMessage);
       result.success = false;
       this.logger.error(logMessage);

@@ -5,7 +5,7 @@ import {
   TransactionCodes,
   TransactionSubCodes,
 } from "../cra-integration.models";
-import { CRARequestFileLine } from "./cra-request-file-line";
+import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
 
 /**
  * Record of a CRA IV(income verification) request file (0020).
@@ -14,7 +14,7 @@ import { CRARequestFileLine } from "./cra-request-file-line";
  * The documentation about it is available on the document
  * 'Income Verification Data Exchange Technical Guide BC'.
  */
-export class CRAFileIVRequestRecord implements CRARequestFileLine {
+export class CRAFileIVRequestRecord implements FixedFormatFileLine {
   transactionCode: TransactionCodes;
   sin: string;
   individualSurname: string;

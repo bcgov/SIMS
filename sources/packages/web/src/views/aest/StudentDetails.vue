@@ -8,11 +8,11 @@
   <full-page-container>
     <h2 class="color-blue pb-4">Student Details</h2>
     <formio formName="studentProfileSummary" :data="initialData"></formio>
-    <div class="category-header-large">Student Appliations</div>
+    <div class="category-header-large">Student Applications</div>
     <v-col>
       <DataTable :autoLayout="true" :value="applications" class="p-m-4">
         <Column field="applicationNumber" header="Application #"> </Column>
-        <Column field="applicationName" header="Study Period">
+        <Column field="applicationName" header="Name">
           <template #body="slotProps">
             <v-btn
               plain
