@@ -1,6 +1,6 @@
 import * as dayjs from "dayjs";
 import { getDateOnly } from "../../utilities";
-import { ValueTransformer } from "typeorm";
+import { FindOperator, ValueTransformer } from "typeorm";
 export const TYPEORM_DATE_ONLY_FORMAT = "YYYY-MM-DD";
 
 /***
@@ -26,10 +26,17 @@ export function formatDateOnly(date?: Date): string | undefined {
  * as the one returned from the database.
  */
 export const dateOnlyTransformer: ValueTransformer = {
-  from: (dbValue: string | undefined): Date | undefined => {
+  from: (dbValue: string | null): Date | null => {
     return getDateOnly(dbValue);
   },
-  to: (entityValue: Date | undefined): string | undefined => {
+
+  to: (
+    entityValue: Date | FindOperator<any> | null,
+  ): string | FindOperator<any> | null => {
+    if (entityValue instanceof FindOperator) {
+      return entityValue;
+    }
+
     return formatDateOnly(entityValue);
   },
 };

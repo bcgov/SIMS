@@ -95,17 +95,17 @@ export const setToStartOfTheDayInPSTPDT = (
  * Parse a new string in the expected format YYYY-MM-DD and returns
  * a new Date object with the local time defined as 00:00:00.
  */
-export function getDateOnly(stringDate: string): Date | undefined {
+export function getDateOnly(stringDate: string): Date | null {
   if (stringDate) {
     return new Date(`${stringDate}T00:00:00`);
   }
-  return undefined;
+  return null;
 }
 
 export function getDateOnlyFromFormat(
   stringDate: string,
   stringDateFormat: string,
-) {
+): Date | null {
   const isoDate = dayjs(stringDate, stringDateFormat).format(
     DATE_ONLY_ISO_FORMAT,
   );
