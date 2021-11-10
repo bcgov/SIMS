@@ -9,7 +9,7 @@ import { SFASHeader } from "./sfas-files/sfas-header";
 import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
 
 @Injectable()
-export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> {
+export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult | null> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
   }
@@ -20,7 +20,9 @@ export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> 
    * @param remoteFilePath full remote file path with file name.
    * @returns parsed records from the file.
    */
-  async downloadResponseFile(remoteFilePath: string): Promise<DownloadResult> {
+  async downloadResponseFile(
+    remoteFilePath: string,
+  ): Promise<DownloadResult | null> {
     const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
     const header = new SFASHeader(fileLines.shift()); // Read and remove header.
