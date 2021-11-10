@@ -7,7 +7,7 @@ import {
   TIME_FORMAT,
   TransactionCodes,
 } from "../models/msfaa-integration.model";
-import { getDateOnlyFromFormat } from "src/utilities";
+import { getDateOnlyFromFormat } from "../../utilities";
 
 /**
  * Header of a MSFAA request file.
