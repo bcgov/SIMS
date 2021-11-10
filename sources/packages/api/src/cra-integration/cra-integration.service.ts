@@ -18,6 +18,7 @@ import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record"
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import { FixedFormatFileLine } from "../services/ssh/sftp-integration-base.models";
 import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
+import path from "path";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -35,7 +36,6 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
       sshService,
       /CCRA_RESPONSE_[\w]*\.txt/i,
       config.getConfig().CRAIntegration.ftpResponseFolder,
-      config.getConfig().CRAIntegration.ftpRequestFolder,
     );
     this.craConfig = config.getConfig().CRAIntegration;
   }
@@ -153,18 +153,20 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
   }
 
   /**
-   * Downloads the file specified on 'fileName' parameter from the
+   * Downloads the file specified on 'remoteFilePath' parameter from the
    * CRA response folder on the SFTP.
-   * @param fileName File to be downloaded.
+   * @param remoteFilePath full remote file path with file name.
    * @returns Parsed records from the file.
    */
-  async downloadResponseFile(fileName: string): Promise<CRAsFtpResponseFile> {
-    const fileLines = await this.downloadResponseFileLines(fileName);
+  async downloadResponseFile(
+    remoteFilePath: string,
+  ): Promise<CRAsFtpResponseFile> {
+    const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
     const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
     if (header.transactionCode !== TransactionCodes.ResponseHeader) {
       this.logger.error(
-        `The CRA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
+        `The CRA file ${remoteFilePath} has an invalid transaction code on header: ${header.transactionCode}`,
       );
       // If the header is not the expected one, just ignore the file.
       return null;
@@ -192,11 +194,10 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
       lineNumber++;
     }
 
-    // Full file path on SFTP.
-    const filePath = this.getInputFullFilePath(fileName);
+    const fileName = path.basename(remoteFilePath);
     return {
       fileName,
-      filePath,
+      filePath: remoteFilePath,
       statusRecords,
       totalIncomeRecords,
     };

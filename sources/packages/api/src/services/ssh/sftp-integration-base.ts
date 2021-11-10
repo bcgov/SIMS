@@ -4,6 +4,7 @@ import { SshService } from "./ssh.service";
 import * as Client from "ssh2-sftp-client";
 import { SFTPConfig } from "../../types";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
+import path from "path";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -13,19 +14,18 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     private readonly sftpConfig: SFTPConfig,
     private readonly sshService: SshService,
     private readonly sftpInputFileRegexSearch: RegExp,
-    private readonly sftpInputFolder: string,
-    private readonly sftpOutputFolder?: string,
+    private readonly sftpRemoteDownloadFolder: string,
   ) {}
 
   /**
    * Converts the fileLines to the final content and upload it.
    * @param fileLines Array of lines to be converted to a formatted fixed size file.
-   * @param fileName file name to be uploaded.
+   * @param remoteFilePath full remote file path with file name.
    * @returns Upload result.
    */
   async uploadContent(
     fileLines: FixedFormatFileLine[],
-    fileName: string,
+    remoteFilePath: string,
   ): Promise<string> {
     // Generate fixed formatted file.
     const fixedFormattedLines: string[] = fileLines.map((line) =>
@@ -37,7 +37,6 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     this.logger.log("Creating new SFTP client to start upload...");
     const client = await this.getClient();
     try {
-      const remoteFilePath = this.getOutputFullFilePath(fileName);
       this.logger.log(`Uploading ${remoteFilePath}`);
       return await client.put(Buffer.from(fileContent), remoteFilePath);
     } finally {
@@ -58,41 +57,31 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     const client = await this.getClient();
     try {
       filesToProcess = await client.list(
-        `${this.sftpInputFolder}`,
+        this.sftpRemoteDownloadFolder,
         this.sftpInputFileRegexSearch,
       );
     } finally {
       await SshService.closeQuietly(client);
     }
 
-    return filesToProcess.map((file) => file.name).sort();
-  }
-
-  protected getInputFullFilePath(fileName: string): string {
-    return `${this.sftpInputFolder}/${fileName}`;
-  }
-
-  protected getOutputFullFilePath(fileName: string): string {
-    if (this.sftpOutputFolder) {
-      throw new Error("Output folder is not configured.");
-    }
-    return `${this.sftpOutputFolder}/${fileName}`;
+    return filesToProcess
+      .map((file) => path.join(this.sftpRemoteDownloadFolder, file.name))
+      .sort();
   }
 
   /**
    * Downloads the file specified on 'fileName' parameter from the
    * SFAS integration folder on the SFTP.
-   * @param fileName name of the file to be downloaded.
+   * @param remoteFilePath full remote file path with file name.
    * @returns parsed records from the file.
    */
   protected async downloadResponseFileLines(
-    fileName: string,
+    remoteFilePath: string,
   ): Promise<string[]> {
     const client = await this.getClient();
     try {
-      const filePath = this.getInputFullFilePath(fileName);
       // Read all the file content and create a buffer.
-      const fileContent = await client.get(filePath);
+      const fileContent = await client.get(remoteFilePath);
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
         .toString()
@@ -103,17 +92,21 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     }
   }
 
-  abstract downloadResponseFile(fileName: string): Promise<DownloadType>;
+  /**
+   * When overridden in a derived class, transform the text lines
+   * in parsed objects specific to the integration process.
+   * @param remoteFilePath full remote file path with file name.
+   */
+  abstract downloadResponseFile(remoteFilePath: string): Promise<DownloadType>;
 
   /**
    * Delete a file from SFTP.
-   * @param fileName name of the file to be deleted.
+   * @param remoteFilePath full remote file path with file name.
    */
-  async deleteFile(fileName: string): Promise<void> {
-    const filePath = this.getInputFullFilePath(fileName);
+  async deleteFile(remoteFilePath: string): Promise<void> {
     const client = await this.getClient();
     try {
-      await client.delete(filePath);
+      await client.delete(remoteFilePath);
     } finally {
       await SshService.closeQuietly(client);
     }

@@ -252,34 +252,34 @@ export class CRAPersonalVerificationService {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const filePaths = await this.craService.getResponseFilesFullPath();
+    const remoteFilePaths = await this.craService.getResponseFilesFullPath();
     const processFiles: ProcessSftpResponseResult[] = [];
-    for (const filePath of filePaths) {
-      processFiles.push(await this.processFile(filePath));
+    for (const remoteFilePath of remoteFilePaths) {
+      processFiles.push(await this.processFile(remoteFilePath));
     }
     return processFiles;
   }
 
   /**
    * Process each individual CRA response file from the SFTP.
-   * @param filePath CRA response file to be processed.
+   * @param remoteFilePath CRA response file to be processed.
    * @returns Process summary and errors summary.
    */
   private async processFile(
-    filePath: string,
+    remoteFilePath: string,
   ): Promise<ProcessSftpResponseResult> {
     const now = getUTCNow();
     const result = new ProcessSftpResponseResult();
-    result.processSummary.push(`Processing file ${filePath}.`);
+    result.processSummary.push(`Processing file ${remoteFilePath}.`);
 
     let responseFile: CRAsFtpResponseFile;
 
     try {
-      responseFile = await this.craService.downloadResponseFile(filePath);
+      responseFile = await this.craService.downloadResponseFile(remoteFilePath);
     } catch (error) {
       this.logger.error(error);
       result.errorsSummary.push(
-        `Error downloading file ${filePath}. Error: ${error}`,
+        `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
@@ -321,19 +321,19 @@ export class CRAPersonalVerificationService {
         }
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${responseFile.filePath}`;
+        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${responseFile.fileName}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }
     }
 
     try {
-      await this.craService.deleteFile(responseFile.filePath);
+      await this.craService.deleteFile(remoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file removal, it will be
       // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting CRA response file: ${responseFile.filePath}`;
+      const logMessage = `Error while deleting CRA response file: ${remoteFilePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }
