@@ -8,7 +8,6 @@ import {
 } from "typeorm";
 import { Application, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -51,7 +50,7 @@ export class MSFAANumber extends RecordDataModel {
   @Column({
     name: "date_signed",
     type: "date",
-    transformer: dateOnlyTransformer,
+    nullable: true,
   })
   dateSigned?: Date;
   /**
@@ -62,7 +61,7 @@ export class MSFAANumber extends RecordDataModel {
   @Column({
     name: "service_provider_received_date",
     type: "date",
-    transformer: dateOnlyTransformer,
+    nullable: true,
   })
   serviceProviderReceivedDate?: Date;
   /**
