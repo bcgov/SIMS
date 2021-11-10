@@ -26,7 +26,7 @@ import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
  * ZONE B network for further processing and final send to CRA servers.
  */
 @Injectable()
-export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFile | null> {
+export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFile> {
   private readonly craConfig: CRAIntegrationConfig;
 
   constructor(config: ConfigService, sshService: SshService) {
@@ -154,7 +154,7 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
    */
   async downloadResponseFile(
     remoteFilePath: string,
-  ): Promise<CRAsFtpResponseFile | null> {
+  ): Promise<CRAsFtpResponseFile> {
     const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
     const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
@@ -162,8 +162,8 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
       this.logger.error(
         `The CRA file ${remoteFilePath} has an invalid transaction code on header: ${header.transactionCode}`,
       );
-      // If the header is not the expected one, just ignore the file.
-      return null;
+      // If the header is not the expected one, throw an error.
+      throw new Error("Invalid file header.");
     }
 
     // Remove footer (not used).
