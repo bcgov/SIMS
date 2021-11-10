@@ -170,10 +170,10 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
     fileLines.pop();
 
     // Generate the records.
-    let lineNumber = 1;
     const statusRecords: CRAResponseStatusRecord[] = [];
     const totalIncomeRecords: CRAResponseTotalIncomeRecord[] = [];
-    for (const line of fileLines) {
+    fileLines.forEach((line: string, index: number) => {
+      const lineNumber = index + 1;
       const craRecord = new CRAResponseRecordIdentification(line, lineNumber);
       switch (craRecord.transactionSubCode) {
         case TransactionSubCodes.ResponseStatusRecord:
@@ -185,8 +185,7 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
           );
           break;
       }
-      lineNumber++;
-    }
+    });
 
     return {
       statusRecords,
