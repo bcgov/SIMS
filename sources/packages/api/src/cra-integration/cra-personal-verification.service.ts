@@ -22,6 +22,7 @@ import {
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
 import { getUTCNow } from "../utilities";
+import * as path from "path";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
@@ -33,6 +34,8 @@ const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
  */
 @Injectable()
 export class CRAPersonalVerificationService {
+  private readonly ftpResponseFolder: string;
+
   constructor(
     private readonly craService: CRAIntegrationService,
     private readonly studentService: StudentService,
@@ -40,7 +43,11 @@ export class CRAPersonalVerificationService {
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly workflowService: WorkflowActionsService,
-  ) {}
+    config: ConfigService,
+  ) {
+    this.ftpResponseFolder =
+      config.getConfig().CRAIntegration.ftpResponseFolder;
+  }
 
   /**
    * Identifies all the students that still do not have their SIN
@@ -82,10 +89,12 @@ export class CRAPersonalVerificationService {
           const fileInfo =
             this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
-          uploadResult = await this.craService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+          await this.craService.uploadContent(fileContent, fileInfo.filePath);
+
+          uploadResult = {
+            generatedFile: fileInfo.filePath,
+            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
+          };
         } catch (error) {
           this.logger.error(
             `Error while uploading content for SIN verification: ${error}`,
@@ -144,10 +153,12 @@ export class CRAPersonalVerificationService {
           const fileInfo =
             this.craService.createRequestFileName(nextSequenceNumber);
           this.logger.log("Uploading content...");
-          uploadResult = await this.craService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+          await this.craService.uploadContent(fileContent, fileInfo.filePath);
+
+          uploadResult = {
+            generatedFile: fileInfo.filePath,
+            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
+          };
 
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the
@@ -248,34 +259,37 @@ export class CRAPersonalVerificationService {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const filePaths = await this.craService.getResponseFilesFullPath();
+    const remoteFilePaths = await this.craService.getResponseFilesFullPath(
+      this.ftpResponseFolder,
+      /CCRA_RESPONSE_[\w]*\.txt/i,
+    );
     const processFiles: ProcessSftpResponseResult[] = [];
-    for (const filePath of filePaths) {
-      processFiles.push(await this.processFile(filePath));
+    for (const remoteFilePath of remoteFilePaths) {
+      processFiles.push(await this.processFile(remoteFilePath));
     }
     return processFiles;
   }
 
   /**
    * Process each individual CRA response file from the SFTP.
-   * @param filePath CRA response file to be processed.
+   * @param remoteFilePath CRA response file to be processed.
    * @returns Process summary and errors summary.
    */
   private async processFile(
-    filePath: string,
+    remoteFilePath: string,
   ): Promise<ProcessSftpResponseResult> {
     const now = getUTCNow();
     const result = new ProcessSftpResponseResult();
-    result.processSummary.push(`Processing file ${filePath}.`);
+    result.processSummary.push(`Processing file ${remoteFilePath}.`);
 
     let responseFile: CRAsFtpResponseFile;
 
     try {
-      responseFile = await this.craService.downloadResponseFile(filePath);
+      responseFile = await this.craService.downloadResponseFile(remoteFilePath);
     } catch (error) {
       this.logger.error(error);
       result.errorsSummary.push(
-        `Error downloading file ${filePath}. Error: ${error}`,
+        `Error downloading file ${remoteFilePath}. Error: ${error}`,
       );
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
@@ -286,6 +300,8 @@ export class CRAPersonalVerificationService {
       `File contains ${responseFile.statusRecords.length} verifications.`,
     );
 
+    // Get only the file name for logging.
+    const fileName = path.basename(remoteFilePath);
     for (const statusRecord of responseFile.statusRecords) {
       try {
         // 0022 could be present in a SIN validation response or income verification response.
@@ -305,7 +321,7 @@ export class CRAPersonalVerificationService {
           await this.processIncomeVerification(
             statusRecord,
             now,
-            responseFile.fileName,
+            fileName,
             totalIncomeRecord,
           );
           const totalRecordLog = totalIncomeRecord
@@ -317,19 +333,19 @@ export class CRAPersonalVerificationService {
         }
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${responseFile.filePath}`;
+        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${fileName}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }
     }
 
     try {
-      await this.craService.deleteFile(responseFile.filePath);
+      await this.craService.deleteFile(remoteFilePath);
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file removal, it will be
       // processed again and could be deleted in the second attempt.
-      const logMessage = `Error while deleting CRA response file: ${responseFile.filePath}`;
+      const logMessage = `Error while deleting CRA response file: ${remoteFilePath}`;
       this.logger.error(logMessage);
       result.errorsSummary.push(logMessage);
     }
