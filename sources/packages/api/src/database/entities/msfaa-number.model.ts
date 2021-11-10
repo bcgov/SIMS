@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Application, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
+import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -31,14 +32,13 @@ export class MSFAANumber extends RecordDataModel {
   })
   msfaaNumber: string;
   /**
-   * Date that the request was generated to ESDC.
+   * Date with timezone that the request was generated to ESDC.
    * When null, it indicates that the request was not sent yet.
    * This column does not contains time information, so the time
    * of this field must be reconsidered on any calculation.
    */
   @Column({
     name: "date_requested",
-    type: "date",
   })
   dateRequested?: Date;
   /**
@@ -51,6 +51,8 @@ export class MSFAANumber extends RecordDataModel {
   @Column({
     name: "date_signed",
     type: "date",
+    transformer: dateOnlyTransformer,
+    nullable: true,
   })
   dateSigned?: Date;
   /**
@@ -61,6 +63,8 @@ export class MSFAANumber extends RecordDataModel {
   @Column({
     name: "service_provider_received_date",
     type: "date",
+    transformer: dateOnlyTransformer,
+    nullable: true,
   })
   serviceProviderReceivedDate?: Date;
   /**

@@ -1,3 +1,6 @@
+import { MSFAAResponseCancelledRecord } from "../msfaa-files/msfaa-response-cancelled-record";
+import { MSFAAResponseReceivedRecord } from "../msfaa-files/msfaa-response-received-record";
+
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
@@ -51,7 +54,53 @@ export interface MSFAARequestFileLine {
  * Codes used to start all the lines of the files sent to MSFAA.
  */
 export enum TransactionCodes {
-  MSFAARequestHeader = "100",
-  MSFAARequestDetail = "200",
-  MSFAARequestTrailer = "999",
+  MSFAAHeader = "100",
+  MSFAADetail = "200",
+  MSFAATrailer = "999",
+}
+
+/**
+ * Codes used to define if the MSFAA was signed or canceled/rejected.
+ */
+export enum TransactionSubCodes {
+  Received = "R",
+  Cancelled = "C",
+}
+
+/**
+ * Represents the output of the processing of
+ * one MSFAA response file from the. SFTP
+ */
+export class ProcessSftpResponseResult {
+  /**
+   * Processing summary for a file.
+   */
+  processSummary: string[] = [];
+  /**
+   * Errors found during the processing.
+   */
+  errorsSummary: string[] = [];
+}
+
+/**
+ * Represents the parsed content of a file
+ * downloaded from the MSFAA SFTP response folder.
+ */
+export interface MSFAASFTPResponseFile {
+  /**
+   * File name. Useful for log.
+   */
+  fileName: string;
+  /**
+   * Full file path of the file on the SFTP.
+   */
+  filePath: string;
+  /**
+   * Response statuses records present on the file.
+   */
+  receivedRecords: MSFAAResponseReceivedRecord[];
+  /**
+   * Total records present on the file.
+   */
+  cancelledRecords: MSFAAResponseCancelledRecord[];
 }

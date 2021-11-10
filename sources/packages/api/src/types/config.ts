@@ -109,6 +109,7 @@ export interface ATBCIntegrationConfig {
 
 export interface MSFAAIntegrationConfig {
   ftpRequestFolder: string;
+  ftpResponseFolder: string;
   provinceCode: string;
 }
 

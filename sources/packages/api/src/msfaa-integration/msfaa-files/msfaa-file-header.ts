@@ -7,6 +7,7 @@ import {
   TIME_FORMAT,
   TransactionCodes,
 } from "../models/msfaa-integration.model";
+import { getDateOnlyFromFormat } from "../../utilities";
 
 /**
  * Header of a MSFAA request file.
@@ -30,5 +31,12 @@ export class MSFAAFileHeader implements MSFAARequestFileLine {
     header.appendWithStartFiller(this.sequence.toString(), 6, "0");
     header.repeatAppend(SPACE_FILLER, 535); // Trailing space
     return header.toString();
+  }
+
+  public static createFromLine(line: string): MSFAAFileHeader {
+    const header = new MSFAAFileHeader();
+    header.transactionCode = line.substr(0, 3) as TransactionCodes;
+    header.processDate = getDateOnlyFromFormat(line.substr(47, 8), DATE_FORMAT);
+    return header;
   }
 }

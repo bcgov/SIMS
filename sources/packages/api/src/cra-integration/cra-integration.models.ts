@@ -111,7 +111,7 @@ export interface CRAUploadResult {
  * Represents the parsed content of a file
  * downloaded from the CRA SFTP response folder.
  */
-export interface CRAsFtpResponseFile {
+export interface CRASFTPResponseFile {
   /**
    * Response statuses records present on the file.
    */

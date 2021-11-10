@@ -1,5 +1,12 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Brackets, Connection, In, Repository } from "typeorm";
+import {
+  Brackets,
+  Connection,
+  In,
+  IsNull,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   MSFAANumber,
@@ -168,5 +175,39 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     }
     const repository = externalRepo ?? this.repo;
     return repository.update({ id: In(msfaaRequestIds) }, { dateRequested });
+  }
+
+  /**
+   * Once the MSFAA response file is processed, updates the
+   * MSFAA received on the database with the
+   * information received. If the information was already received
+   * the record will not be updated.
+   * @param msfaaNumber MSFAA number
+   * @param dateSigned date in which the borrower indicated the MSFAA was signed
+   * @param serviceProviderReceivedDate date in which the MSDAA was received by/resolve from CanadaPost/Kiosk
+   * @returns update result. Only one row is supposed to be affected.
+   */
+  async updateReceivedFile(
+    msfaaNumber: string,
+    dateSigned: Date,
+    serviceProviderReceivedDate: Date,
+  ): Promise<UpdateResult> {
+    if (!dateSigned || !serviceProviderReceivedDate) {
+      throw new Error(
+        "Not all required fields to update a received MSFAA record were provided.",
+      );
+    }
+
+    return this.repo.update(
+      {
+        msfaaNumber: msfaaNumber,
+        dateSigned: IsNull(),
+        serviceProviderReceivedDate: IsNull(),
+      },
+      {
+        dateSigned,
+        serviceProviderReceivedDate,
+      },
+    );
   }
 }

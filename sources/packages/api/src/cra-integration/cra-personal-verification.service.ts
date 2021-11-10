@@ -18,7 +18,7 @@ import {
   CRAUploadResult,
   MatchStatusCodes,
   RequestStatusCodes,
-  CRAsFtpResponseFile,
+  CRASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
 import { getUTCNow } from "../utilities";
@@ -282,7 +282,7 @@ export class CRAPersonalVerificationService {
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(`Processing file ${remoteFilePath}.`);
 
-    let responseFile: CRAsFtpResponseFile;
+    let responseFile: CRASFTPResponseFile;
 
     try {
       responseFile = await this.craService.downloadResponseFile(remoteFilePath);
