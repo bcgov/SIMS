@@ -22,6 +22,7 @@ import {
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
 import { getUTCNow } from "../utilities";
+import * as path from "path";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
@@ -299,6 +300,8 @@ export class CRAPersonalVerificationService {
       `File contains ${responseFile.statusRecords.length} verifications.`,
     );
 
+    // Get only the file name for logging.
+    const fileName = path.basename(remoteFilePath);
     for (const statusRecord of responseFile.statusRecords) {
       try {
         // 0022 could be present in a SIN validation response or income verification response.
@@ -318,7 +321,7 @@ export class CRAPersonalVerificationService {
           await this.processIncomeVerification(
             statusRecord,
             now,
-            responseFile.fileName,
+            fileName,
             totalIncomeRecord,
           );
           const totalRecordLog = totalIncomeRecord
@@ -330,7 +333,7 @@ export class CRAPersonalVerificationService {
         }
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${responseFile.fileName}`;
+        const errorDescription = `Error processing record line number ${statusRecord.lineNumber} from file ${fileName}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }

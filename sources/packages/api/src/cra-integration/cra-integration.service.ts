@@ -18,7 +18,6 @@ import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record"
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import { FixedFormatFileLine } from "../services/ssh/sftp-integration-base.models";
 import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
-import path from "path";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -27,7 +26,7 @@ import path from "path";
  * ZONE B network for further processing and final send to CRA servers.
  */
 @Injectable()
-export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFile> {
+export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFile | null> {
   private readonly craConfig: CRAIntegrationConfig;
 
   constructor(config: ConfigService, sshService: SshService) {
@@ -155,7 +154,7 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
    */
   async downloadResponseFile(
     remoteFilePath: string,
-  ): Promise<CRAsFtpResponseFile> {
+  ): Promise<CRAsFtpResponseFile | null> {
     const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
     const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
@@ -189,10 +188,7 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
       lineNumber++;
     }
 
-    const fileName = path.basename(remoteFilePath);
     return {
-      fileName,
-      filePath: remoteFilePath,
       statusRecords,
       totalIncomeRecords,
     };

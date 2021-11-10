@@ -113,14 +113,6 @@ export interface CRAUploadResult {
  */
 export interface CRAsFtpResponseFile {
   /**
-   * File name. Useful for log.
-   */
-  fileName: string;
-  /**
-   * Full file path of the file on the SFTP.
-   */
-  filePath: string;
-  /**
    * Response statuses records present on the file.
    */
   statusRecords: CRAResponseStatusRecord[];
