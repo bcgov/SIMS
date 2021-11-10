@@ -36,7 +36,7 @@ export class CRAFileHeader implements FixedFormatFileLine {
     return header.toString();
   }
 
-  public static CreateFromLine(line: string): CRAFileHeader {
+  public static createFromLine(line: string): CRAFileHeader {
     const header = new CRAFileHeader();
     header.transactionCode = line.substr(0, 4) as TransactionCodes;
     header.processDate = dayjs(line.substr(28, 8), DATE_FORMAT).toDate();

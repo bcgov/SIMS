@@ -156,7 +156,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * Once the CRA response file is processed, updates the
    * CRA income verification record on the database with the
    * information received. If the information was already received
-   * the record will not b updated.
+   * the record will not be updated.
    * @param craVerificationId CRA verification record to be updated.
    * @param fileReceived name of the response file received.
    * @param dateReceived date that the file was received.

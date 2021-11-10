@@ -181,7 +181,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * Once the MSFAA response file is processed, updates the
    * MSFAA received on the database with the
    * information received. If the information was already received
-   * the record will not b updated.
+   * the record will not be updated.
    * @param msfaaNumber MSFAA number
    * @param dateSigned date in which the borrower indicated the MSFAA was signed
    * @param serviceProviderReceivedDate date in which the MSDAA was received by/resolve from CanadaPost/Kiosk

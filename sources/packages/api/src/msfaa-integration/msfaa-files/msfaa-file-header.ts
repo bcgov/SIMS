@@ -1,5 +1,4 @@
 import { StringBuilder } from "../../utilities/string-builder";
-import * as dayjs from "dayjs";
 import {
   DATE_FORMAT,
   MSFAARequestFileLine,
@@ -8,6 +7,7 @@ import {
   TIME_FORMAT,
   TransactionCodes,
 } from "../models/msfaa-integration.model";
+import { getDateOnlyFromFormat } from "src/utilities";
 
 /**
  * Header of a MSFAA request file.
@@ -33,10 +33,10 @@ export class MSFAAFileHeader implements MSFAARequestFileLine {
     return header.toString();
   }
 
-  public static CreateFromLine(line: string): MSFAAFileHeader {
+  public static createFromLine(line: string): MSFAAFileHeader {
     const header = new MSFAAFileHeader();
     header.transactionCode = line.substr(0, 3) as TransactionCodes;
-    header.processDate = dayjs(line.substr(47, 8), DATE_FORMAT).toDate();
+    header.processDate = getDateOnlyFromFormat(line.substr(47, 8), DATE_FORMAT);
     return header;
   }
 }

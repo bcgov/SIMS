@@ -2,10 +2,10 @@ import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectLogger } from "../common";
 import { MSFAANumberService } from "../services";
 import {
-  MSFAAResponseReceivedRecord,
-  MSFAAsFtpResponseFile,
+  MSFAASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./models/msfaa-integration.model";
+import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
 
 @Injectable()
@@ -38,7 +38,7 @@ export class MSFAAResponseService {
     const result = new ProcessSftpResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
-    let responseFile: MSFAAsFtpResponseFile;
+    let responseFile: MSFAASFTPResponseFile;
 
     try {
       responseFile = await this.msfaaService.downloadResponseFile(filePath);

@@ -4,10 +4,7 @@ import { OfferingIntensity } from "../database/entities";
 import { LoggerService } from "../logger/logger.service";
 import {
   DATE_FORMAT,
-  MSFAAResponseCancelledRecord,
-  MSFAAResponseReceivedRecord,
-  MSFAAsFtpResponseFile,
-  MSFAAsResponseRecordIdentification,
+  MSFAASFTPResponseFile,
   TransactionSubCodes,
 } from "../msfaa-integration/models/msfaa-integration.model";
 import { ConfigService, SequenceControlService, SshService } from "../services";
@@ -29,6 +26,9 @@ import { MSFAAFileFooter } from "./msfaa-files/msfaa-file-footer";
 import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
 import { StringBuilder } from "../utilities/string-builder";
 import { EntityManager } from "typeorm";
+import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
+import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
+import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
 /**
  * Manages the creation of the content files that needs to be sent
  * to MSFAA request. These files are created based
@@ -212,7 +212,7 @@ export class MSFAAIntegrationService {
    * @param fileName File to be downloaded.
    * @returns Parsed records from the file.
    */
-  async downloadResponseFile(fileName: string): Promise<MSFAAsFtpResponseFile> {
+  async downloadResponseFile(fileName: string): Promise<MSFAASFTPResponseFile> {
     const client = await this.getClient();
     try {
       const filePath = `${this.msfaaConfig.ftpResponseFolder}/${fileName}`;
@@ -224,7 +224,7 @@ export class MSFAAIntegrationService {
         .split(/\r\n|\n\r|\n|\r/)
         .filter((line) => line.length > 0);
       // Read the first line to check if the header code is the expected one.
-      const header = MSFAAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
+      const header = MSFAAFileHeader.createFromLine(fileLines.shift()); // Read and remove header.
       if (header.transactionCode !== TransactionCodes.MSFAAHeader) {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
@@ -238,20 +238,16 @@ export class MSFAAIntegrationService {
       /** Read the last line to check if the trailer code is the expected one and fetch the Hash
        * total of all the SIN values
        */
-      const trailer = MSFAAFileFooter.CreateFromLine(
-        fileLines.slice(-1).toString(),
-      ); // Read and remove header.
+      const trailer = MSFAAFileFooter.createFromLine(fileLines.pop()); // Read and remove trailer.
       if (trailer.transactionCode !== TransactionCodes.MSFAATrailer) {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on trailer: ${trailer.transactionCode}`,
         );
-        // If the header is not the expected one.
+        // If the trailer is not the expected one.
         throw new Error(
           "The MSFAA file has an invalid transaction code on trailer",
         );
       }
-      // Remove trailer (not used).
-      fileLines.pop();
 
       /**
        * Check if the number of records match the trailer record count
@@ -270,7 +266,7 @@ export class MSFAAIntegrationService {
       const cancelledRecords: MSFAAResponseCancelledRecord[] = [];
       let sinTotalInRecord = 0;
       for (const line of fileLines) {
-        const msfaaRecord = new MSFAAsResponseRecordIdentification(
+        const msfaaRecord = new MSFAAResponseRecordIdentification(
           line,
           lineNumber,
         );

@@ -1,4 +1,6 @@
-import * as dayjs from "dayjs";
+import { MSFAAResponseCancelledRecord } from "../msfaa-files/msfaa-response-cancelled-record";
+import { MSFAAResponseReceivedRecord } from "../msfaa-files/msfaa-response-received-record";
+
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
@@ -58,7 +60,7 @@ export enum TransactionCodes {
 }
 
 /**
- * Codes used to identify the code
+ * Codes used to define if the MSFAA was signed or canceled/rejected.
  */
 export enum TransactionSubCodes {
   Received = "R",
@@ -84,7 +86,7 @@ export class ProcessSftpResponseResult {
  * Represents the parsed content of a file
  * downloaded from the MSFAA SFTP response folder.
  */
-export interface MSFAAsFtpResponseFile {
+export interface MSFAASFTPResponseFile {
   /**
    * File name. Useful for log.
    */
@@ -101,106 +103,4 @@ export interface MSFAAsFtpResponseFile {
    * Total records present on the file.
    */
   cancelledRecords: MSFAAResponseCancelledRecord[];
-}
-
-export class MSFAAsResponseRecordIdentification {
-  constructor(line: string, lineNumber: number) {
-    this.transactionCode = line.substr(0, 3) as TransactionCodes;
-    this.msfaaNumber = line.substr(3, 10);
-    this.sin = line.substr(13, 9);
-    this.transactionSubCode = line.substr(22, 1) as TransactionSubCodes;
-    this.line = line;
-    this.lineNumber = lineNumber;
-  }
-
-  /**
-   * Codes used to start all the lines of the files sent to MSFAA.
-   */
-  public readonly transactionCode: TransactionCodes;
-  /**
-   * MSFAA number of the record.
-   */
-  public readonly msfaaNumber: string;
-  /**
-   * SIN value that is part of the common record identification.
-   */
-  public readonly sin: string;
-  /**
-   * Secondary codes used alongside the records.
-   */
-  public readonly transactionSubCode: TransactionSubCodes;
-  /**
-   * Original line read from the MSFAA response file.
-   */
-  public readonly line: string;
-  /**
-   * Original line number where this record was present
-   * in the MSFAA response file. Useful for log.
-   */
-  public readonly lineNumber: number;
-}
-
-/**
- * MSFAA record received (Trans Sub Code - R) that
- * contains the details of Borrower Signed Date,
- * Service Provider Received Date.
- * This record is part of the details record in the MSFAA
- * response file has been extended from the base
- * MSFAAsResponseRecordIdentification class to have the common
- * values between the received and cancelled records.
- * Please note that the numbers below (e.g. line.substr(25, 2))
- * represents the position of the information in a fixed text file format.
- * The documentation about it is available on the document
- * 'SLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
- */
-export class MSFAAResponseReceivedRecord extends MSFAAsResponseRecordIdentification {
-  constructor(line: string, lineNumber: number) {
-    super(line, lineNumber);
-  }
-
-  /**
-   * Date that the borrower indicated that the MSFAA was Signed
-   */
-  public get borrowerSignedDate(): Date {
-    return dayjs(this.line.substr(23, 8), DATE_FORMAT).toDate();
-  }
-
-  /**
-   * Date MSFAA was received by/resolved from Canada Post/Kiosk
-   */
-  public get serviceProviderReceivedDate(): Date {
-    return dayjs(this.line.substr(31, 8), DATE_FORMAT).toDate();
-  }
-}
-
-/**
- * MSFAA record cancelled (Trans Sub Code - C) that
- * contains the details of New Issuing Province and cancelled Date.
- * This record is part of the details record in the MSFAA
- * response file has been extended from the base
- * MSFAAsResponseRecordIdentification class to have the common
- * values between the received and cancelled records.
- * Please note that the numbers below (e.g. line.substr(25, 2))
- * represents the position of the information in a fixed text file format.
- * The documentation about it is available on the document
- * 'SLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
- */
-export class MSFAAResponseCancelledRecord extends MSFAAsResponseRecordIdentification {
-  constructor(line: string, lineNumber: number) {
-    super(line, lineNumber);
-  }
-
-  /**
-   * New Province code that issued the MSFAA
-   */
-  public get newIssusingProvince(): string {
-    return this.line.substr(48, 2);
-  }
-
-  /**
-   * Date when the MSFAA was cancelled
-   */
-  public get cancelledDate(): string {
-    return this.line.substr(50, 8);
-  }
 }

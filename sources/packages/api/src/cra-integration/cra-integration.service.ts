@@ -7,7 +7,7 @@ import {
   CRAPersonRecord,
   TransactionCodes,
   TransactionSubCodes,
-  CRAsFtpResponseFile,
+  CRASFTPResponseFile,
 } from "./cra-integration.models";
 import { CRAIntegrationConfig } from "../types";
 import { CRAFileHeader } from "./cra-files/cra-file-header";
@@ -26,7 +26,7 @@ import { SFTPIntegrationBase } from "../services/ssh/sftp-integration-base";
  * ZONE B network for further processing and final send to CRA servers.
  */
 @Injectable()
-export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFile> {
+export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFile> {
   private readonly craConfig: CRAIntegrationConfig;
 
   constructor(config: ConfigService, sshService: SshService) {
@@ -154,10 +154,10 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRAsFtpResponseFi
    */
   async downloadResponseFile(
     remoteFilePath: string,
-  ): Promise<CRAsFtpResponseFile> {
+  ): Promise<CRASFTPResponseFile> {
     const fileLines = await this.downloadResponseFileLines(remoteFilePath);
     // Read the first line to check if the header code is the expected one.
-    const header = CRAFileHeader.CreateFromLine(fileLines.shift()); // Read and remove header.
+    const header = CRAFileHeader.createFromLine(fileLines.shift()); // Read and remove header.
     if (header.transactionCode !== TransactionCodes.ResponseHeader) {
       this.logger.error(
         `The CRA file ${remoteFilePath} has an invalid transaction code on header: ${header.transactionCode}`,
