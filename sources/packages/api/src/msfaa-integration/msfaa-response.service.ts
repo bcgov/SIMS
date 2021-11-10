@@ -83,25 +83,24 @@ export class MSFAAResponseService {
   }
 
   /**
-   *
-   * @param statusRecord
-   * @param receivedDate
-   * @param receivedFileName
-   * @param totalIncomeRecord
+   * Process the received record of the MSFAA response file
+   * by updating the columns of MSFAA Numbers table
+   * @param receivedRecord MSFAA received record with
+   * borrowerSignedDate and serviceProviderReceivedDate
    */
   private async processReceivedRecords(
-    statusRecord: MSFAAResponseReceivedRecord,
+    receivedRecord: MSFAAResponseReceivedRecord,
   ): Promise<void> {
     const updateResult = await this.msfaaNumberService.updateReceivedFile(
-      statusRecord.msfaaNumber,
-      statusRecord.borrowerSignedDate,
-      statusRecord.serviceProviderReceivedDate,
+      receivedRecord.msfaaNumber,
+      receivedRecord.borrowerSignedDate,
+      receivedRecord.serviceProviderReceivedDate,
     );
 
     // Expected to update 1 and only 1 record.
     if (updateResult.affected !== 1) {
       throw new Error(
-        `Error while updating MSFAA number: ${statusRecord.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+        `Error while updating MSFAA number: ${receivedRecord.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
     }
   }
