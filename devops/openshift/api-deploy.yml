@@ -177,6 +177,7 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${MSFAA_RESPONSE_FOLDER_NAME_KEY}
+                      name: ${API_SECRET_NAME}
                 - name: SFAS_RECEIVE_FOLDER
                   valueFrom:
                     secretKeyRef:
