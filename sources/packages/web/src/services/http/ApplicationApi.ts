@@ -3,6 +3,8 @@ import {
   ProgramYearOfApplicationDto,
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
+  GetApplicationBaseDTO,
+  ApplicationSummaryDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -132,5 +134,35 @@ export class ApplicationApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  /**
+   * API Client for application detail.
+   * @param applicationId
+   * @param userId
+   * @returns
+   */
+  public async getApplicationDetails(
+    applicationId: number,
+    studentId: number,
+  ): Promise<GetApplicationBaseDTO> {
+    const response = await this.getCall(
+      `application/${applicationId}/student/${studentId}/aest`,
+    );
+    return response.data as GetApplicationBaseDTO;
+  }
+
+  /**
+   * API Client for applications of a student.
+   * @param studentId
+   * @returns
+   */
+  public async getAllApplicationsForStudent(
+    studentId: number,
+  ): Promise<ApplicationSummaryDTO[]> {
+    const response = await this.getCall(
+      `application/student/${studentId}/aest`,
+    );
+    return response.data as ApplicationSummaryDTO[];
   }
 }

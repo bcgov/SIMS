@@ -1,8 +1,5 @@
 import { Application } from "../database/entities";
-import {
-  COE_DENIED_REASON_OTHER_ID,
-  PIR_DENIED_REASON_OTHER_ID,
-} from ".";
+import { COE_DENIED_REASON_OTHER_ID, PIR_DENIED_REASON_OTHER_ID } from ".";
 
 /**
  * Gets PIR denied reason

@@ -72,6 +72,9 @@ export class ConfigService {
         ftpResponseFolder: process.env.MSFAA_RESPONSE_FOLDER,
         provinceCode: process.env.MSFAA_PROVINCE_CODE,
       },
+      SFASIntegrationConfig: {
+        ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,
+      },
     };
   }
 

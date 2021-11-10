@@ -83,10 +83,8 @@ export default {
     const students = ref([] as SearchStudentResp[]);
     const goToViewStudent = (studentId: number) => {
       router.push({
-        name: AESTRoutesConst.STUDENTS_APPLICATION,
-        params: {
-          studentId,
-        },
+        name: AESTRoutesConst.STUDENT_DETAILS,
+        params: { studentId: studentId },
       });
     };
     const searchStudents = async () => {

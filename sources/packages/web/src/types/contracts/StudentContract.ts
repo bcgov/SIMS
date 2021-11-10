@@ -22,13 +22,6 @@ export interface StudentContact {
   postalCode: string;
 }
 
-export interface SearchStudentResp {
-  id: number;
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-}
-
 export interface StudentInfo {
   firstName: string;
   lastName: string;
@@ -86,4 +79,47 @@ export interface StudentRestrictionStatus {
   hasFederalRestriction: boolean;
   hasProvincialRestriction: boolean;
   restrictionMessage: string;
+}
+
+/**
+ * Enumeration for student permanent disability status.
+ */
+export enum StudentPDStatus {
+  Yes = "Yes",
+  No = "No",
+  NotRequested = "Not Requested",
+  Pending = "Pending",
+}
+
+/**
+ * Interface for student search API response
+ */
+export interface SearchStudentResp {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+}
+
+/**
+ * Interface for student detail API response
+ */
+export interface StudentDetail {
+  firstName: string;
+  lastName: string;
+  gender: string;
+  email: string;
+  dateOfBirth: Date;
+  contact: {
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    provinceState: string;
+    country: string;
+    postalCode: string;
+    phone: string;
+  };
+  pdVerified: boolean;
+  validSin: boolean;
+  pdStatus: string;
 }

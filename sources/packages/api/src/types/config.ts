@@ -11,6 +11,7 @@ export interface IConfig {
   simsApiClientCredential: ClientCredential;
   ATBCIntegration: ATBCIntegrationConfig;
   MSFAAIntegration: MSFAAIntegrationConfig;
+  SFASIntegrationConfig: SFASIntegrationConfig;
   /**
    * When defined as true, allows the simulation of a complete cycle of the
    * CRA send/response process that allows the workflow to proceed without
@@ -110,4 +111,8 @@ export interface MSFAAIntegrationConfig {
   ftpRequestFolder: string;
   ftpResponseFolder: string;
   provinceCode: string;
+}
+
+export interface SFASIntegrationConfig {
+  ftpReceiveFolder: string;
 }

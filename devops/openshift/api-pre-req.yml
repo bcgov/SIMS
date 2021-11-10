@@ -28,6 +28,7 @@ objects:
       msfaa-request-folder: ${MSFAA_REQUEST_FOLDER}
       msfaa-response-folder: ${MSFAA_RESPONSE_FOLDER}
       msfaa-province-code: ${MSFAA_PROVINCE_CODE}
+      sfas-receive-folder: ${SFAS_RECEIVE_FOLDER}
       atbc-username: ${ATBC_USERNAME}
       atbc-password: ${ATBC_PASSWORD}
       atbc-app: ${ATBC_APP}
@@ -147,3 +148,8 @@ parameters:
     required: true
     description: |
       MSFAA province code
+  - name: SFAS_RECEIVE_FOLDER
+    displayName: SFAS receive folder
+    required: true
+    description: |
+      Folder on the SFTP where SFAS integration files will be placed.
