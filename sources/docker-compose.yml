@@ -97,7 +97,7 @@ services:
   # - App
   # Postgres
   postgres:
-    image: "postgres-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}"
+    image: postgres-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: db-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./.docker/postgres
