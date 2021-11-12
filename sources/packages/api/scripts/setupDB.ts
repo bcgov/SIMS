@@ -23,10 +23,9 @@ const config = require("../ormconfig");
     await connection.runMigrations();
     await connection.close();
     console.log(`**** Running setupDB: [Complete] ****`);
-  } catch (excp) {
-    console.error(`Exception occurs during setup db process: ${excp}`);
+  } catch (error) {
+    console.error(`Exception occurs during setup db process: ${error}`);
     console.dir(config);
-    throw excp;
+    throw error;
   }
-
 })();

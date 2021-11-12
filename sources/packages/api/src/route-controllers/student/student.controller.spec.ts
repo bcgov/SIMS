@@ -1,7 +1,6 @@
 require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
-  ArchiveDbService,
   StudentService,
   UserService,
   ATBCService,
@@ -17,6 +16,7 @@ import {
   EducationProgramService,
   StudentRestrictionService,
   FormService,
+  SFASIndividualService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -33,7 +33,6 @@ describe("StudentController", () => {
         ConfigService,
         StudentService,
         UserService,
-        ArchiveDbService,
         ATBCService,
         SequenceControlService,
         StudentFileService,
@@ -48,6 +47,7 @@ describe("StudentController", () => {
         FormService,
         createMockedJwtService(),
         StudentRestrictionService,
+        SFASIndividualService,
       ],
       controllers: [StudentController],
     }).compile();

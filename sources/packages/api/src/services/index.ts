@@ -4,7 +4,6 @@ export * from "./auth/token-cache.service";
 export * from "./auth/tokens.service";
 export * from "./student/student.service";
 export * from "./user/user.service";
-export * from "./archive-db/archive-db.service";
 export * from "./bceid/bceid.service";
 export * from "./bceid/bceid.service.provider";
 export * from "./institution/institution.service";

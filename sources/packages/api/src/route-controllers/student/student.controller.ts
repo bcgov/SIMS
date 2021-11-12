@@ -298,12 +298,12 @@ export class StudentController extends BaseController {
         `No user record was found with for student ${userToken.userName}`,
       );
     }
-    //check pd status in db, student should only allowed to check PD status once
-    // existingStudent?.studentPDSentAt is set when student apply for PD Status first
-    // studentPDVerified is null  before PD checker update status
-    // studentPDVerified is true if PD Confirmed by ATBC OR is true from `SFASDB
-    // studentPDVerified is false if PD Denied by ATBC
-    // if student has a SIN valid only, he/she should allow for a PD check
+    // Check the PD status in DB. Student should only be allowed to check the PD status once
+    // existingStudent?.studentPDSentAt is set when student apply for PD Status first.
+    // studentPDVerified is null before PD checker update status;
+    // studentPDVerified is true if PD Confirmed by ATBC OR is true from sfas_individual table;
+    // studentPDVerified is false if PD Denied by ATBC.
+    // if student has a SIN valid only, he/she should allow for a PD check.
 
     if (
       existingStudent.validSIN &&

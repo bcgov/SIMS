@@ -2,11 +2,11 @@ require("../../../env_setup");
 import { Test, TestingModule } from "@nestjs/testing";
 import {
   ApplicationService,
-  ArchiveDbService,
   ConfigService,
   KeycloakService,
   MSFAANumberService,
   SequenceControlService,
+  SFASIndividualService,
   SshService,
   StudentFileService,
   StudentService,
@@ -30,7 +30,6 @@ describe("CRAIntegrationController", () => {
         SshService,
         SequenceControlService,
         StudentService,
-        ArchiveDbService,
         ConfigService,
         ApplicationService,
         StudentFileService,
@@ -40,6 +39,7 @@ describe("CRAIntegrationController", () => {
         TokensService,
         KeycloakService,
         createMockedJwtService(),
+        SFASIndividualService,
       ],
       controllers: [CRAIntegrationController],
     })

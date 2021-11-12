@@ -4,7 +4,6 @@ import * as faker from "faker";
 import { Student, User } from "../../database/entities";
 import {
   StudentService,
-  ArchiveDbService,
   ATBCService,
   UserService,
   StudentFileService,
@@ -17,6 +16,7 @@ import {
   EducationProgramService,
   StudentRestrictionService,
   FormService,
+  SFASIndividualService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -52,7 +52,6 @@ describe("Test ATBC Controller", () => {
       providers: [
         ConfigService,
         UserService,
-        ArchiveDbService,
         ATBCService,
         StudentFileService,
         StudentService,
@@ -68,6 +67,7 @@ describe("Test ATBC Controller", () => {
         createMockedJwtService(),
         FormService,
         StudentRestrictionService,
+        SFASIndividualService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

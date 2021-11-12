@@ -48,8 +48,6 @@ objects:
                   value: ${FORMS_URL}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
-                - name: ARCHIVE_DB
-                  value: ${ARCHIVE_DB}
                 - name: PORT
                   value: "${PORT}"
                 - name: POSTGRES_HOST
@@ -335,8 +333,6 @@ parameters:
     value: database-name
   - name: BUILD_TAG
     value: "0"
-  - name: ARCHIVE_DB
-    value: "sfasdb"
   - name: API_SECRET_NAME
     value: sims-api-creds
   - name: BCeID_WEB_SERVICE_ONLINE_SERVICE_ID_NAME_KEY

@@ -6,28 +6,23 @@ import {
   Student,
   User,
 } from "../../database/entities";
-import { Connection, Repository } from "typeorm";
+import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
 import { StudentContact } from "../../types/studentContact";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ArchiveDbService } from "../archive-db/archive-db.service";
-import { StudentLegacyData } from "../../types";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
+import { SFASIndividualService } from "../sfas/sfas-individual.service";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
-  private readonly applicationRepo: Repository<Application>;
-  @InjectLogger()
-  logger: LoggerService;
   constructor(
     @Inject("Connection") connection: Connection,
-    private readonly archiveDB: ArchiveDbService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(connection.getRepository(Student));
-    this.applicationRepo = connection.getRepository(Application);
     this.logger.log("[Created]");
   }
 
@@ -89,17 +84,17 @@ export class StudentService extends RecordDataModelService<Student> {
     };
     student.user = user;
 
-    // Get PD status from Archive DB
     try {
-      const result: StudentLegacyData[] =
-        await this.archiveDB.getIndividualPDStatus(student);
-      if (result && result.length > 0 && result[0].disability === "Y") {
-        student.studentPDVerified = true;
-      }
-    } catch (error) {
-      this.logger.warn(
-        `Unable to get archived information of student with exception: ${error}`,
+      // Get PD status from SFAS integration data.
+      student.studentPDVerified = await this.sfasIndividualService.getPDStatus(
+        user.lastName,
+        student.birthDate,
+        student.sin,
       );
+    } catch (error) {
+      this.logger.error("Unable to get SFAS information of student.");
+      this.logger.error(error);
+      throw error;
     }
     return this.save(student);
   }
@@ -297,4 +292,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     return searchQuery.getMany();
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
