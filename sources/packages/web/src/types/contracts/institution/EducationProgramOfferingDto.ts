@@ -17,7 +17,9 @@ export interface SaveEducationProgramOfferingDto {
   tuitionRemittanceRequested: string;
   offeringType?: string;
 }
-
+/**
+ * Program offering summary DTO for Vue.
+ */
 export interface EducationProgramOfferingDto {
   id: number;
   offeringName: string;

@@ -95,7 +95,7 @@
           </v-col>
         </v-row>
         <DataTable :autoLayout="true" :value="offerings">
-          <Column field="name" header="Name" :sortable="true"></Column>
+          <Column field="offeringName" header="Name" :sortable="true"></Column>
           <Column
             field="studyDates"
             header="Study Dates"

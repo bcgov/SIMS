@@ -98,7 +98,7 @@ export class EducationProgramOfferingController {
     }
     return programOfferingList.map((offering) => ({
       id: offering.id,
-      name: offering.name,
+      offeringName: offering.name,
       studyDates: offering.studyDates,
       offeringDelivered: offering.offeringDelivered,
       offeringIntensity: offering.offeringIntensity,
