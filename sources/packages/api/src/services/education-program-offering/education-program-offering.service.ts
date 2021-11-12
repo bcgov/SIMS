@@ -167,7 +167,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     educationProgramOffering: SaveEducationProgramOfferingDto,
   ): EducationProgramOffering {
     const programOffering = new EducationProgramOffering();
-    programOffering.name = educationProgramOffering.name;
+    programOffering.name = educationProgramOffering.offeringName;
     programOffering.studyStartDate = educationProgramOffering.studyStartDate;
     programOffering.studyEndDate = educationProgramOffering.studyEndDate;
     programOffering.breakStartDate = educationProgramOffering.breakStartDate;

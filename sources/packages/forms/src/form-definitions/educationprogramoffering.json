@@ -110,7 +110,7 @@
           "tableView": true,
           "modalEdit": false,
           "multiple": false,
-          "defaultValue": "Offering",
+          "defaultValue": "",
           "persistent": true,
           "inputFormat": "plain",
           "protected": false,
@@ -139,7 +139,7 @@
           },
           "unique": false,
           "errorLabel": "",
-          "key": "name",
+          "key": "offeringName",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -164,7 +164,7 @@
           "refreshOn": "",
           "dataGridLabel": false,
           "inputType": "text",
-          "id": "e8rash"
+          "id": "e27x1nn"
         },
         {
           "label": "How will this be offered?",
@@ -2453,5 +2453,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-09-28T22:06:33.187Z"
+  "modified": "2021-11-11T00:38:00.021Z"
 }

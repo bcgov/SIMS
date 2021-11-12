@@ -12,8 +12,11 @@ export enum OfferingIntensity {
   fullTime = "Full Time",
 }
 
+/**
+ * DTO for program offering form object
+ */
 export interface OfferingDTO {
-  name: string;
+  offeringName: string;
   studyStartDate?: Date;
   studyEndDate?: Date;
   breakStartDate?: Date;
