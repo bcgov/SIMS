@@ -20,7 +20,7 @@ export interface SaveEducationProgramOfferingDto {
 
 export interface EducationProgramOfferingDto {
   id: number;
-  name: string;
+  offeringName: string;
   studyDates: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;

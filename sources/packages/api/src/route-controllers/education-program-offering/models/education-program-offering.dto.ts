@@ -1,7 +1,7 @@
 import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 export interface SaveEducationProgramOfferingDto {
-  name: string;
+  offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
   breakStartDate: Date;
@@ -30,7 +30,7 @@ export class EducationProgramOfferingDto {
 
 export interface ProgramOfferingDto {
   id: number;
-  name: string;
+  offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
   breakStartDate: Date;

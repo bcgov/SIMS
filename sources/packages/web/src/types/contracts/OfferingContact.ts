@@ -13,7 +13,7 @@ export enum OfferingIntensity {
 }
 
 export interface OfferingDTO {
-  name: string;
+  offeringName: string;
   studyStartDate?: Date;
   studyEndDate?: Date;
   breakStartDate?: Date;

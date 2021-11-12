@@ -127,7 +127,7 @@ export class EducationProgramOfferingController {
     }
     return {
       id: offering.id,
-      name: offering.name,
+      offeringName: offering.name,
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
       breakStartDate: offering.breakStartDate,
