@@ -25,6 +25,7 @@ import { COEStatus } from "./coe-status.type";
 import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
+import { DisbursementSchedule } from "./disbursement-schedule.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -218,4 +219,24 @@ export class Application extends RecordDataModel {
     name: "coe_denied_other_desc",
   })
   coeDeniedOtherDesc?: string;
+
+  /**
+   * Disbursement ids related to this application.
+   */
+  @RelationId((application: Application) => application.disbursementSchedules)
+  disbursementSchedulesIds?: number[];
+  /**
+   * Disbursements related to this application.
+   */
+  @OneToMany(
+    () => DisbursementSchedule,
+    (disbursementSchedule) => disbursementSchedule.application,
+    {
+      eager: false,
+      cascade: true,
+      onDelete: "CASCADE",
+      nullable: true,
+    },
+  )
+  disbursementSchedules?: DisbursementSchedule[];
 }

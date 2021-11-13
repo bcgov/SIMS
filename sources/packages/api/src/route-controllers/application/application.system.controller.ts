@@ -13,6 +13,7 @@ import {
   APPLICATION_NOT_FOUND,
   ConfigService,
   CRAIncomeVerificationService,
+  DisbursementScheduleService,
   EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SupportingUserService,
@@ -31,6 +32,7 @@ import {
   CreateSupportingUsersDto,
   CreateIncomeVerificationDto,
   CRAVerificationIncomeDetailsDto,
+  CreateDisbursementDTO,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
 
@@ -50,6 +52,7 @@ export class ApplicationSystemController {
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly configService: ConfigService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     this.config = this.configService.getConfig();
   }
@@ -425,5 +428,18 @@ export class ApplicationSystemController {
     }
 
     return { supportingData: supportingUser.supportingData };
+  }
+
+  @Post(":applicationId/disbursements")
+  async createDisbursement(
+    @Param("applicationId") applicationId: number,
+    @Body() payload: CreateDisbursementDTO[],
+  ): Promise<number> {
+    await this.disbursementScheduleService.createDisbursementSchedules(
+      applicationId,
+      payload,
+    );
+
+    return null;
   }
 }

@@ -28,6 +28,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   StudentRestrictionService,
+  DisbursementScheduleService,
 } from "./services";
 import {
   UserController,
@@ -114,6 +115,7 @@ import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.modul
     CRAIncomeVerificationService,
     SupportingUserService,
     StudentRestrictionService,
+    DisbursementScheduleService,
   ],
 })
 export class AppModule {}

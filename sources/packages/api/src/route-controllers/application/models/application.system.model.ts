@@ -1,4 +1,14 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  Min,
+  ValidateNested,
+} from "class-validator";
+import { DisbursementValueType } from "../../../database/entities/disbursement-value-type";
 
 import {
   ProgramInfoStatus,
@@ -7,6 +17,7 @@ import {
   ApplicationStatus,
   SupportingUserType,
 } from "../../../database/entities";
+import { Type } from "class-transformer";
 
 export class UpdateProgramInfoDto {
   @IsOptional()
@@ -89,4 +100,25 @@ export class CreateSupportingUsersDto {
 
 export interface SupportingUserDto {
   supportingData: any;
+}
+
+export class DisbursementValueDTO {
+  @IsNotEmpty()
+  valueCode: string;
+  @IsEnum(DisbursementValueType)
+  valueType: DisbursementValueType;
+  @IsNotEmpty()
+  @IsInt()
+  @Min(0)
+  valueAmount: number;
+}
+
+export class CreateDisbursementDTO {
+  @IsNotEmpty()
+  disbursementDate: Date;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @ArrayMinSize(1)
+  @Type(() => DisbursementValueDTO)
+  disbursements: DisbursementValueDTO[];
 }
