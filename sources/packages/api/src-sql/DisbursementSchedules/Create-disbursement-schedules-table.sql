@@ -4,13 +4,11 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_schedules(
   disbursement_date DATE NOT NULL,
   date_sent TIMESTAMP WITH TIME ZONE,
   -- Reference Columns
-  application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE
-  SET
-    NULL,
-    -- Audit columns
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
+  application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
+  -- Audit columns
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
