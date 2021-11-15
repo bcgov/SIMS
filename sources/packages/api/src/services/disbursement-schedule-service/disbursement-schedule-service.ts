@@ -83,7 +83,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
 
     for (const disbursement of disbursements) {
-      console.log(disbursement.disbursementDate);
       const newDisbursement = new DisbursementSchedule();
       newDisbursement.disbursementDate = disbursement.disbursementDate;
       newDisbursement.documentNumber = await this.getNextDocumentNumber();
