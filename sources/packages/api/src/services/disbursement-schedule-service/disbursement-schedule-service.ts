@@ -41,7 +41,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * ! disbursements are being added to the Student Application.
    * ! Once the Student Application already has disbursements, another
    * ! scenarios must be considered, for instance, if some amount of money
-   * ! was already release to the student.
+   * ! was already released to the student.
    * @param applicationId application id to associate the disbursements.
    * @param disbursements array of disbursements and values to be created.
    * @returns created disbursements.

@@ -437,7 +437,7 @@ export class ApplicationSystemController {
    * and creates the disbursements and values altogether.
    * @param applicationId application id to associate the disbursements.
    * @param payload array of disbursements and values to be created.
-   * @returns created disbursements.
+   * @returns created disbursements ids.
    */
   @Post(":applicationId/disbursements")
   async createDisbursement(

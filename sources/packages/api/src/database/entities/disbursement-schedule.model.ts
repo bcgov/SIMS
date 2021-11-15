@@ -26,7 +26,6 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "document_number",
-    default: 123,
     nullable: false,
   })
   documentNumber: number;
