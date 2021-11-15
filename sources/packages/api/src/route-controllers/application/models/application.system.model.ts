@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   Min,
   ValidateNested,
@@ -102,23 +103,42 @@ export interface SupportingUserDto {
   supportingData: any;
 }
 
+/**
+ * Values to be associated with a disbursement.
+ */
 export class DisbursementValueDTO {
   @IsNotEmpty()
   valueCode: string;
   @IsEnum(DisbursementValueType)
   valueType: DisbursementValueType;
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   @Min(0)
   valueAmount: number;
 }
 
-export class CreateDisbursementDTO {
+/**
+ * Disbursement to be created altogether
+ * with its values on a Student Application.
+ */
+export class DisbursementScheduleDTO {
   @IsNotEmpty()
   disbursementDate: Date;
   @IsArray()
-  @ValidateNested({ each: true })
   @ArrayMinSize(1)
+  @ValidateNested({ each: true })
   @Type(() => DisbursementValueDTO)
   disbursements: DisbursementValueDTO[];
+}
+
+/**
+ * Schedules to be created altogether
+ * on a Student Application.
+ */
+export class CreateDisbursementsDTO {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => DisbursementScheduleDTO)
+  schedules: DisbursementScheduleDTO[];
 }

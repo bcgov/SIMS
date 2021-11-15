@@ -36,7 +36,8 @@ export const dateOnlyTransformer: ValueTransformer = {
     if (entityValue instanceof FindOperator) {
       return entityValue;
     }
-
+    console.log(entityValue);
+    console.log(formatDateOnly(entityValue));
     return formatDateOnly(entityValue);
   },
 };

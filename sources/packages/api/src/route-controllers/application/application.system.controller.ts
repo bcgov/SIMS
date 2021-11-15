@@ -11,6 +11,7 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
+  APPLICATION_NOT_VALID,
   ConfigService,
   CRAIncomeVerificationService,
   DisbursementScheduleService,
@@ -32,7 +33,7 @@ import {
   CreateSupportingUsersDto,
   CreateIncomeVerificationDto,
   CRAVerificationIncomeDetailsDto,
-  CreateDisbursementDTO,
+  CreateDisbursementsDTO,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
 
@@ -430,16 +431,36 @@ export class ApplicationSystemController {
     return { supportingData: supportingUser.supportingData };
   }
 
+  /**
+   * Create the disbursements while the application is 'In Progress'.
+   * Ensures that the application do not have any disbursements records
+   * and creates the disbursements and values altogether.
+   * @param applicationId application id to associate the disbursements.
+   * @param payload array of disbursements and values to be created.
+   * @returns created disbursements.
+   */
   @Post(":applicationId/disbursements")
   async createDisbursement(
     @Param("applicationId") applicationId: number,
-    @Body() payload: CreateDisbursementDTO[],
-  ): Promise<number> {
-    await this.disbursementScheduleService.createDisbursementSchedules(
-      applicationId,
-      payload,
-    );
-
-    return null;
+    @Body() payload: CreateDisbursementsDTO,
+  ): Promise<number[]> {
+    try {
+      const disbursements =
+        await this.disbursementScheduleService.createDisbursementSchedules(
+          applicationId,
+          payload.schedules,
+        );
+      return disbursements.map((disbursement) => disbursement.id);
+    } catch (error) {
+      switch (error.name) {
+        case APPLICATION_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case APPLICATION_NOT_VALID:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          throw error;
+      }
+    }
   }
 }

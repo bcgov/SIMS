@@ -4,18 +4,17 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_values(
   value_code VARCHAR(10) NOT NULL,
   value_amount NUMERIC(8, 2),
   -- Reference Columns
-  disbursement_schedule_id INT NOT NULL REFERENCES sims.disbursement_schedules(id) ON DELETE
-  SET
-    NULL,
-    -- Audit columns
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
+  disbursement_schedule_id INT NOT NULL REFERENCES sims.disbursement_schedules(id) ON DELETE CASCADE,
+  -- Audit columns
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
-    NULL
+    NULL,
+    CONSTRAINT disbursement_schedule_id_value_type_value_code_unique UNIQUE (disbursement_schedule_id, value_type, value_code)
 );
 
 -- ## Comments

@@ -9,6 +9,7 @@ import { AuthModule } from "../../auth/auth.module";
 import {
   ApplicationService,
   ConfigService,
+  DisbursementScheduleService,
   EducationProgramOfferingService,
   KeycloakService,
   MSFAANumberService,
@@ -71,6 +72,7 @@ describe("Test system-access/application Controller", () => {
         MSFAANumberService,
         SupportingUserService,
         createMockedJwtService(),
+        DisbursementScheduleService,
       ],
     }).compile();
 

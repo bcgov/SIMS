@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { Application } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -27,9 +26,10 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "document_number",
+    default: 123,
     nullable: false,
   })
-  documentDumber: number;
+  documentNumber: number;
   /**
    * Date that the money must be disbursed.
    */
@@ -40,14 +40,28 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: false,
   })
   disbursementDate: Date;
-
+  /**
+   * Date that this disbursement was sent to ESDC.
+   */
+  @Column({
+    name: "date_sent",
+    type: "date",
+    transformer: dateOnlyTransformer,
+    nullable: true,
+  })
+  dateSent?: Date;
+  /**
+   * Application associated with this disbursement.
+   */
   @ManyToOne(() => Application, { eager: false, cascade: false })
   @JoinColumn({
     name: "application_id",
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
-
+  /**
+   * Values for this disbursement.
+   */
   @OneToMany(
     () => DisbursementValue,
     (disbursementValue) => disbursementValue.disbursementSchedule,

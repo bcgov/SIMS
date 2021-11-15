@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_schedules(
   id SERIAL PRIMARY KEY,
   document_number INT NOT NULL,
   disbursement_date DATE NOT NULL,
+  date_sent TIMESTAMP WITH TIME ZONE,
   -- Reference Columns
   application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE
   SET
@@ -26,7 +27,9 @@ COMMENT ON COLUMN sims.disbursement_schedules.document_number IS 'Financial docu
 
 COMMENT ON COLUMN sims.disbursement_schedules.disbursement_date IS 'Date that the money must be disbursed.';
 
-COMMENT ON COLUMN sims.disbursement_schedules.application_id IS 'Student Application related to the discursement.';
+COMMENT ON COLUMN sims.disbursement_schedules.date_sent IS 'Date that this disbursement was sent to ESDC.';
+
+COMMENT ON COLUMN sims.disbursement_schedules.application_id IS 'Student Application related to the disbursement.';
 
 COMMENT ON COLUMN sims.disbursement_schedules.created_at IS 'Record creation timestamp';
 

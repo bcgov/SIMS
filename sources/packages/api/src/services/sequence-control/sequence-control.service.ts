@@ -42,7 +42,9 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       entityManager: EntityManager,
     ) => Promise<void>,
   ) {
-    this.logger.log("Checking next sequence available...");
+    this.logger.log(
+      `Checking next sequence available for sequence name ${sequenceName}...`,
+    );
     const queryRunner = this.connection.createQueryRunner();
     await configureIdleTransactionSessionTimeout(
       queryRunner,
