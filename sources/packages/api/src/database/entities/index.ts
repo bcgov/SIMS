@@ -33,3 +33,6 @@ export * from "./student-restriction.model";
 export * from "./sfas-individual.model";
 export * from "./sfas-application.model";
 export * from "./sfas-restriction.model";
+export * from "./disbursement-value-type";
+export * from "./disbursement-values.model";
+export * from "./disbursement-schedule.model";

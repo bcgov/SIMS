@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.disbursement_value_types;

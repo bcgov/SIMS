@@ -1,4 +1,15 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Min,
+  ValidateNested,
+} from "class-validator";
+import { DisbursementValueType } from "../../../database/entities/disbursement-value-type";
 
 import {
   ProgramInfoStatus,
@@ -7,6 +18,7 @@ import {
   ApplicationStatus,
   SupportingUserType,
 } from "../../../database/entities";
+import { Type } from "class-transformer";
 
 export class UpdateProgramInfoDto {
   @IsOptional()
@@ -89,4 +101,46 @@ export class CreateSupportingUsersDto {
 
 export interface SupportingUserDto {
   supportingData: any;
+}
+
+/**
+ * Values to be associated with a disbursement.
+ */
+export class DisbursementValueDTO {
+  @IsNotEmpty()
+  valueCode: string;
+  @IsEnum(DisbursementValueType)
+  valueType: DisbursementValueType;
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  valueAmount: number;
+}
+
+/**
+ * Disbursement to be created altogether
+ * with its values on a Student Application.
+ */
+export class DisbursementScheduleDTO {
+  @IsNotEmpty()
+  disbursementDate: Date;
+  @IsNotEmpty()
+  negotiatedExpiryDate: Date;
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => DisbursementValueDTO)
+  disbursements: DisbursementValueDTO[];
+}
+
+/**
+ * Schedules to be created altogether
+ * on a Student Application.
+ */
+export class CreateDisbursementsDTO {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => DisbursementScheduleDTO)
+  schedules: DisbursementScheduleDTO[];
 }
