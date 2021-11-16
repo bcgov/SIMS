@@ -41,12 +41,13 @@ import { UserDto } from "../user/models/user.dto";
 import {
   AllowAuthorizedParty,
   IsInstitutionAdmin,
+  UserToken,
+  Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { UserToken, Groups } from "../../auth/decorators";
 import { Institution, InstitutionLocation } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
