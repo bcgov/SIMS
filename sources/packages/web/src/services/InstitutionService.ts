@@ -1,4 +1,7 @@
-import { Institute } from "../types/contracts/InstituteContract";
+import {
+  Institute,
+  SearchInstitutionResp,
+} from "../types/contracts/InstituteContract";
 import {
   InstitutionDto,
   EducationProgram,
@@ -281,5 +284,18 @@ export class InstitutionService {
       applicationId,
       locationId,
     );
+  }
+
+  /**
+   * Search Institution for ministry search page.
+   * @param legalName
+   * @param operatingName
+   * @returns SearchInstitutionResp[]
+   */
+  async searchInstitutions(
+    legalName: string,
+    operatingName: string,
+  ): Promise<SearchInstitutionResp[]> {
+    return ApiClient.Institution.searchInstitutions(legalName, operatingName);
   }
 }

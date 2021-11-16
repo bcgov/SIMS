@@ -47,6 +47,11 @@ export default {
       {
         label: "Institutions",
         icon: "mdi-city",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.SEARCH_INSTITUTIONS,
+          });
+        },
       },
       {
         label: "Settings",
