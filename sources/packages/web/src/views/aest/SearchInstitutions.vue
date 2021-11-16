@@ -45,7 +45,13 @@
       <Column field="address" header="Address">
         <template #body="slotProps">
           <div class="p-text-capitalize">
-            {{ slotProps.data.address }}
+            {{ slotProps.data.address.addressLine1 }}
+            {{ slotProps.data.address.addressLine2 }}
+            {{ slotProps.data.address.city }}
+            {{ slotProps.data.address.provinceState }}
+            {{ slotProps.data.address.country }}
+            {{ slotProps.data.address.postalZipCode }}
+            {{ slotProps.data.address.phone }}
           </div>
         </template>
       </Column>

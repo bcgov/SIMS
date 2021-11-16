@@ -148,5 +148,4 @@ export interface InstitutionAddress {
   provinceState: string;
   country: string;
   postalCode: string;
-  phone: string;
 }

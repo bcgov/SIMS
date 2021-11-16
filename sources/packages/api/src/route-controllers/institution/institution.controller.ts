@@ -444,7 +444,6 @@ export class InstitutionController extends BaseController {
         provinceState: eachinstitution.institutionAddress.provinceState,
         country: eachinstitution.institutionAddress.country,
         postalCode: eachinstitution.institutionAddress.postalCode,
-        phone: eachinstitution.institutionAddress.phone,
       },
     }));
   }
