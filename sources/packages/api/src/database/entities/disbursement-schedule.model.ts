@@ -40,6 +40,16 @@ export class DisbursementSchedule extends RecordDataModel {
   })
   disbursementDate: Date;
   /**
+   * The maximum date that this document is valid to.
+   */
+  @Column({
+    name: "negotiated_expiry_date",
+    type: "date",
+    transformer: dateOnlyTransformer,
+    nullable: false,
+  })
+  negotiatedExpiryDate: Date;
+  /**
    * Date that this disbursement was sent to ESDC.
    */
   @Column({

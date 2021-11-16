@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_schedules(
   id SERIAL PRIMARY KEY,
   document_number INT NOT NULL,
   disbursement_date DATE NOT NULL,
+  negotiated_expiry_date DATE NOT NULL,
   date_sent TIMESTAMP WITH TIME ZONE,
   -- Reference Columns
   application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
@@ -24,6 +25,8 @@ COMMENT ON COLUMN sims.disbursement_schedules.id IS 'Auto-generated sequential p
 COMMENT ON COLUMN sims.disbursement_schedules.document_number IS 'Financial document number associated with this disbursement.';
 
 COMMENT ON COLUMN sims.disbursement_schedules.disbursement_date IS 'Date that the money must be disbursed.';
+
+COMMENT ON COLUMN sims.disbursement_schedules.negotiated_expiry_date IS 'The maximum date that this document is valid to.';
 
 COMMENT ON COLUMN sims.disbursement_schedules.date_sent IS 'Date that this disbursement was sent to ESDC.';
 

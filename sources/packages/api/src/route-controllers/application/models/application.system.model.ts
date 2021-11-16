@@ -124,6 +124,8 @@ export class DisbursementValueDTO {
 export class DisbursementScheduleDTO {
   @IsNotEmpty()
   disbursementDate: Date;
+  @IsNotEmpty()
+  negotiatedExpiryDate: Date;
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
