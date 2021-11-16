@@ -24,7 +24,7 @@ export enum DisbursementValueType {
    */
   BCGrant = "BC Grant",
   /**
-   * Represents the sun of the total provincial grants that
+   * Represents the sum of the total provincial grants that
    * must be reported to ESDC. The individual BC Grants are not
    * reported individually, only the total.
    */
