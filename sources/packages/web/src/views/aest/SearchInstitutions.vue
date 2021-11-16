@@ -5,10 +5,12 @@
       <v-col><label for="legalName">Legal Name</label></v-col>
       <v-col><label for="operatingName">Operating Name</label></v-col>
       <v-col></v-col>
+      <v-col></v-col>
     </v-row>
     <v-row>
       <v-col><InputText type="text" v-model="legalName"/></v-col>
       <v-col><InputText type="text" v-model="operatingName"/></v-col>
+      <v-col></v-col>
       <v-col
         ><v-btn
           :disabled="!legalName && !operatingName"
