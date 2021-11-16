@@ -44,15 +44,21 @@
       </Column>
       <Column field="address" header="Address">
         <template #body="slotProps">
-          <div class="p-text-capitalize">
+          <span class="mt-2">
             {{ slotProps.data.address.addressLine1 }}
+            <br />
+          </span>
+          <span v-if="slotProps.data.address.addressLine2">
             {{ slotProps.data.address.addressLine2 }}
-            {{ slotProps.data.address.city }}
-            {{ slotProps.data.address.provinceState }}
-            {{ slotProps.data.address.country }}
+            <br />
+          </span>
+          <span>
+            {{ slotProps.data.address.city }},
+            {{ slotProps.data.address.provinceState }},
             {{ slotProps.data.address.postalZipCode }}
-            {{ slotProps.data.address.phone }}
-          </div>
+            <br />
+          </span>
+          <span>{{ slotProps.data.address.country }}</span>
         </template>
       </Column>
       <Column>
