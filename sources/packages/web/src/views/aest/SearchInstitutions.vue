@@ -1,15 +1,15 @@
 <template>
   <full-page-container>
     <h2 class="color-blue">Search Institution</h2>
-    <v-row class="mt-5"
-      ><v-col
-        ><label for="legalName">Legal Name</label></v-col
-      ><label for="operatingName">Operating Name</label></v-col
-      ></v-row
-    >
-    <v-row
-      ><v-col><InputText type="text" v-model="legalName"/></v-col
-      ><v-col
+    <v-row class="mt-5">
+      <v-col><label for="legalName">Legal Name</label></v-col>
+      <v-col><label for="operatingName">Operating Name</label></v-col>
+      <v-col></v-col>
+    </v-row>
+    <v-row>
+      <v-col><InputText type="text" v-model="legalName"/></v-col>
+      <v-col><InputText type="text" v-model="operatingName"/></v-col>
+      <v-col
         ><v-btn
           :disabled="!legalName && !operatingName"
           color="primary"
@@ -18,8 +18,8 @@
         >
           <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
           Search
-        </v-btn></v-col
-      >
+        </v-btn>
+      </v-col>
     </v-row>
 
     <DataTable

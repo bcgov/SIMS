@@ -8,6 +8,7 @@ import {
   Param,
   Head,
   NotFoundException,
+  Query,
 } from "@nestjs/common";
 import {
   BCeIDService,
@@ -19,6 +20,7 @@ import {
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
+  SearchInstitutionRespDto,
 } from "./models/institution.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -45,6 +47,9 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { UserGroups } from "../../auth/user-groups.enum";
+import { Groups } from "../../auth/decorators";
+import { Institution } from "src/database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -404,5 +409,43 @@ export class InstitutionController extends BaseController {
         `Institution with guid: ${guid} does not exist`,
       );
     }
+  }
+
+  /**
+   * Search the institution based on the search criteria.
+   * @param legalName legalName of the institution.
+   * @param operatingName operatingName of the institution.
+   * @returns Searched institution details.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("search")
+  async searchInsitutions(
+    @Query("legalName") legalName: string,
+    @Query("operatingName") operatingName: string,
+  ): Promise<SearchInstitutionRespDto[]> {
+    if (!legalName && !operatingName) {
+      throw new UnprocessableEntityException(
+        "Search with at least one search criteria",
+      );
+    }
+    const searchInstitutions = await this.institutionService.searchInstitution(
+      legalName,
+      operatingName,
+    );
+    return searchInstitutions.map((eachinstitution: Institution) => ({
+      id: eachinstitution.id,
+      legalName: eachinstitution.legalOperatingName,
+      operatingName: eachinstitution.operatingName,
+      address: {
+        addressLine1: eachinstitution.institutionAddress.addressLine1,
+        addressLine2: eachinstitution.institutionAddress.addressLine2,
+        city: eachinstitution.institutionAddress.city,
+        provinceState: eachinstitution.institutionAddress.provinceState,
+        country: eachinstitution.institutionAddress.country,
+        postalCode: eachinstitution.institutionAddress.postalCode,
+        phone: eachinstitution.institutionAddress.phone,
+      },
+    }));
   }
 }
