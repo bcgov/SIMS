@@ -22,7 +22,6 @@ import {
   InstitutionDto,
   SearchInstitutionRespDto,
 } from "./models/institution.dto";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
@@ -46,10 +45,9 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
-import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { Groups } from "../../auth/decorators";
-import { Institution } from "src/database/entities";
+import { UserToken, Groups } from "../../auth/decorators";
+import { Institution, InstitutionLocation } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
