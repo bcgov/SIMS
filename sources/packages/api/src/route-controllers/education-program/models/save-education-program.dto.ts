@@ -1,5 +1,8 @@
 import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
 
+/**
+ * Dto that represents education programs fom.io object.
+ */
 export interface EducationProgramDto {
   name: string;
   description: string;
@@ -17,14 +20,33 @@ export interface EducationProgramDto {
   averageHoursStudy: number;
   completionYears: string;
   admissionRequirement: string;
-  hasMinimunAge?: string;
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
+  minHoursWeek?: string;
+  isAviationProgram?: string;
+  minHoursWeekAvi?: string;
+  entranceRequirements: EntranceRequirements;
+  hasWILComponent: string;
+  isWILApproved?: string;
+  wilProgramEligibility?: string;
+  hasTravel: string;
+  travelProgramEligibility?: string;
+  hasIntlExchange?: string;
+  intlExchangeProgramEligibility?: string;
+  programDeclaration: boolean;
 }
 
 export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
   deliveredOnline: boolean;
+}
+
+export interface EntranceRequirements {
+  hasMinimunAge: boolean;
+  minHighSchool: boolean;
+  requirementsByInstitution: boolean;
+  requirementsByBcita: boolean;
 }

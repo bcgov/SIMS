@@ -8,7 +8,11 @@ ALTER COLUMN
 ALTER TABLE
     sims.education_programs
 ALTER COLUMN
-    has_minimun_age TYPE BOOLEAN;
+    has_minimun_age TYPE BOOLEAN USING CASE
+        has_minimun_age
+        WHEN 'yes' THEN TRUE
+        ELSE FALSE
+    END;
 
 -- Add institution_program_code to education_programs table
 ALTER TABLE

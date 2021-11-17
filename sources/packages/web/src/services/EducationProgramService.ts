@@ -2,6 +2,7 @@ import {
   EducationProgramDto,
   OptionItemDto,
   StudentEducationProgramDto,
+  ProgramDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -13,15 +14,18 @@ export class EducationProgramService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getProgram(programId: number): Promise<any> {
+  public async getProgram(programId: number): Promise<ProgramDto> {
     return ApiClient.EducationProgram.getProgram(programId);
   }
 
-  public async createProgram(data: any): Promise<void> {
+  public async createProgram(data: ProgramDto): Promise<void> {
     await ApiClient.EducationProgram.createProgram(data);
   }
 
-  public async updateProgram(programId: number, data: any): Promise<void> {
+  public async updateProgram(
+    programId: number,
+    data: ProgramDto,
+  ): Promise<void> {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }
 
@@ -48,9 +52,12 @@ export class EducationProgramService {
    */
   public async getLocationProgramsOptionList(
     locationId: number,
-    programYearId: number
+    programYearId: number,
   ): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgram.getLocationProgramsOptionList(locationId, programYearId);
+    return ApiClient.EducationProgram.getLocationProgramsOptionList(
+      locationId,
+      programYearId,
+    );
   }
 
   /**

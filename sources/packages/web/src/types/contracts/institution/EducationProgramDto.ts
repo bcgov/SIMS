@@ -53,3 +53,56 @@ export enum ApprovalStatus {
    */
   pending = "pending",
 }
+
+/**
+ * DTO object which represent the eduction program form.io object.
+ */
+export interface ProgramDto {
+  institutionId: number;
+  name: string;
+  description: string;
+  credentialType: string;
+  credentialTypeOther: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  regulatoryBody: string;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  deliveredOnlineAlsoOnsite?: string;
+  sameOnlineCreditsEarned?: string;
+  earnAcademicCreditsOtherInstitution?: string;
+  courseLoadCalculation: string;
+  averageHoursStudy: number;
+  completionYears: string;
+  admissionRequirement: string;
+  eslEligibility: string;
+  hasJointInstitution: string;
+  hasJointDesignatedInstitution: string;
+  approvalStatus: string;
+  programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
+  minHoursWeek?: string;
+  isAviationProgram?: string;
+  minHoursWeekAvi?: string;
+  entranceRequirements: EntranceRequirements;
+  hasWILComponent: string;
+  isWILApproved?: string;
+  wilProgramEligibility?: string;
+  hasTravel: string;
+  travelProgramEligibility?: string;
+  hasIntlExchange?: string;
+  intlExchangeProgramEligibility?: string;
+  programDeclaration: boolean;
+}
+
+export interface ProgramDeliveryTypes {
+  deliveredOnSite: boolean;
+  deliveredOnline: boolean;
+}
+
+export interface EntranceRequirements {
+  hasMinimunAge: boolean;
+  minHighSchool: boolean;
+  requirementsByInstitution: boolean;
+  requirementsByBcita: boolean;
+}

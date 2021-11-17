@@ -13,7 +13,7 @@ $font-header-medium: 20px;
 $font-header-small: 17px;
 $line-height-header-lg: 34px;
 $line-height-header-md: 27px;
-$formio-header-lh-sm: 22px;
+$line-height-header-sm: 22px;
 $formio-content: 16px;
 $formio-content-lh: 24px;
 $formio-header-margin: 0.5rem;
@@ -45,7 +45,7 @@ $border-color-info: #6554c0;
   color: white !important;
 }
 
-/**Typography styles for large header**/
+/**Typography styles for small header**/
 .category-header-small {
   height: 18px;
   font-style: normal;
@@ -56,6 +56,14 @@ $border-color-info: #6554c0;
   text-transform: uppercase;
 }
 
+/**Typography styles for medium small header**/
+.category-header-medium-small {
+  font-style: normal;
+  font-weight: $formio-header-wt;
+  font-size: $font-header-small;
+  line-height: $line-height-header-sm;
+}
+
 /**Typography styles for medium header**/
 .category-header-medium {
   font-style: normal;
@@ -64,7 +72,7 @@ $border-color-info: #6554c0;
   line-height: $line-height-header-md;
 }
 
-/**Typography styles for small header**/
+/**Typography styles for large header**/
 .category-header-large {
   font-style: normal;
   font-weight: $formio-header-wt;
@@ -137,7 +145,7 @@ $border-color-info: #6554c0;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
-  line-height: $formio-header-lh-sm;
+  line-height: $line-height-header-sm;
 }
 
 .formio-component-htmlelement.category-header-large p {
@@ -192,7 +200,7 @@ $border-color-info: #6554c0;
 
 .formio-component-htmlelement.header-sm p,
 .formio-component-htmlelement.header-sm div {
-  line-height: $formio-header-lh-sm;
+  line-height: $line-height-header-sm;
   margin-bottom: $formio-header-margin;
 }
 
@@ -219,7 +227,7 @@ $border-color-info: #6554c0;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
-  line-height: $formio-header-lh-sm;
+  line-height: $line-height-header-sm;
   margin-bottom: $formio-header-margin;
 }
 

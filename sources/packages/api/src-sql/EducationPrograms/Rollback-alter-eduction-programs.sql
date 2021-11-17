@@ -10,7 +10,11 @@ SET
 ALTER TABLE
     sims.education_programs
 ALTER COLUMN
-    has_minimun_age TYPE VARCHAR(50);
+    has_minimun_age TYPE VARCHAR(50) USING CASE
+        has_minimun_age
+        WHEN TRUE THEN 'yes'
+        ELSE 'no'
+    END;
 
 -- Remove column institution_program_code
 ALTER TABLE

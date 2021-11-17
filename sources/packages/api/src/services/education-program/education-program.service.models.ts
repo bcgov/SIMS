@@ -1,6 +1,8 @@
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
-
+/**
+ * Service level interface for education programs object.
+ */
 export interface SaveEducationProgram {
   id?: number;
   institutionId: number;
@@ -20,12 +22,24 @@ export interface SaveEducationProgram {
   averageHoursStudy: number;
   completionYears: string;
   admissionRequirement: string;
-  hasMinimunAge?: string;
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
+  minHoursWeek?: string;
+  isAviationProgram?: string;
+  minHoursWeekAvi?: string;
+  entranceRequirements: EntranceRequirements;
+  hasWILComponent: string;
+  isWILApproved?: string;
+  wilProgramEligibility?: string;
+  hasTravel: string;
+  travelProgramEligibility?: string;
+  hasIntlExchange?: string;
+  intlExchangeProgramEligibility?: string;
+  programDeclaration: boolean;
 }
 
 export interface ProgramDeliveryTypes {
@@ -66,4 +80,11 @@ export class EducationProgramModel {
       this.credentialTypeOther,
     );
   }
+}
+
+export interface EntranceRequirements {
+  hasMinimunAge: boolean;
+  minHighSchool: boolean;
+  requirementsByInstitution: boolean;
+  requirementsByBcita: boolean;
 }

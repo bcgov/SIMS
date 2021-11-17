@@ -24,6 +24,10 @@ export function createFakeEducationProgram(
   program.hasJointInstitution = "hasJointInstitution";
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";
   program.approvalStatus = "approvalStatus";
+  program.hasWILComponent = "yes";
+  program.hasTravel = "yes";
+  program.hasIntlExchange = "yes";
+  program.programDeclaration = true;
   program.institution = institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
   return program;

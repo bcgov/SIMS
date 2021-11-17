@@ -34,7 +34,7 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "program_description",
   })
-  description: string;
+  description?: string;
   /**
    * Credential types like: Diploma, Certificate, Degree, Masters, Doctorate, Other.
    */
@@ -148,7 +148,7 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "has_minimun_age",
   })
-  hasMinimunAge?: string;
+  hasMinimunAge?: boolean;
   /**
    * Code to indicates the "English as a Second Language (ESL)" requirement
    */
@@ -198,4 +198,124 @@ export class EducationProgram extends RecordDataModel {
     type: "enum",
   })
   programIntensity: ProgramIntensity;
+
+  /**
+   * Institution program code of the given program
+   */
+  @Column({
+    name: "institution_program_code",
+  })
+  institutionProgramCode?: string;
+
+  /**
+   * Minimum hours check for a general program.
+   */
+  @Column({
+    name: "min_hours_week",
+  })
+  minHoursWeek?: string;
+
+  /**
+   * Identifier for aviation program.
+   */
+  @Column({
+    name: "is_aviation_program",
+  })
+  isAviationProgram?: string;
+
+  /**
+   * Minimum hours check for a aviation program.
+   */
+  @Column({
+    name: "min_hours_week_avi",
+  })
+  minHoursWeekAvi?: string;
+
+  /**
+   * Entrance eligibility of minimum grade 12
+   */
+  @Column({
+    name: "min_high_school",
+  })
+  minHighSchool?: boolean;
+
+  /**
+   * Entrance eligibility established by institution.
+   */
+  @Column({
+    name: "requirements_by_institution",
+  })
+  requirementsByInstitution?: boolean;
+
+  /**
+   * Entrance eligibility by B.C ITA.
+   */
+  @Column({
+    name: "requirements_by_bcita",
+  })
+  requirementsByBcita?: boolean;
+
+  /**
+   * Identifier for Work Integrated(WIL) Learning component.
+   */
+  @Column({
+    name: "has_wil_component",
+  })
+  hasWILComponent: string;
+
+  /**
+   * Determines if WIL is approved by regulator or oversight body.
+   */
+  @Column({
+    name: "is_wil_approved",
+  })
+  isWILApproved?: string;
+
+  /**
+   * Determines if WIL meet the program eligibility requirements according to StudentAid BC policy.
+   */
+  @Column({
+    name: "wil_program_eligibility",
+  })
+  wilProgramEligibility?: string;
+
+  /**
+   * Identifier for Field trip, field placement, or travel component in program.
+   */
+  @Column({
+    name: "has_travel",
+  })
+  hasTravel: string;
+
+  /**
+   * Determines if Field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy.
+   */
+  @Column({
+    name: "travel_program_eligibility",
+  })
+  travelProgramEligibility?: string;
+
+  /**
+   * Identifier for international exchange in program.
+   */
+  @Column({
+    name: "has_intl_exchange",
+  })
+  hasIntlExchange: string;
+
+  /**
+   * Determines if international exchange meet the program eligibility requirements according to StudentAid BC policy.
+   */
+  @Column({
+    name: "intl_exchange_program_eligibility",
+  })
+  intlExchangeProgramEligibility?: string;
+
+  /**
+   * Declaration confirming this program meets the policies outlined in the StudentAid BC policy manual.
+   */
+  @Column({
+    name: "program_declaration",
+  })
+  programDeclaration: boolean;
 }
