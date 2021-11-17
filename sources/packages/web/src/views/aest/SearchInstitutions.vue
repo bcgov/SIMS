@@ -47,13 +47,8 @@
       </Column>
       <Column field="address" header="Address">
         <template #body="slotProps">
-          <div
-            v-for="addressLineItem in addressLineItemList(
-              slotProps.data.address,
-            )"
-            :key="addressLineItem"
-          >
-            {{ addressLineItem }}
+          <div class="p-text-capitalize">
+            {{ formattedAddress(slotProps.data.address) }}
           </div>
         </template>
       </Column>
@@ -93,8 +88,8 @@ export default {
         params: { institutionId: institutionId },
       });
     };
-    const addressLineItemList = (address: Address) => {
-      return Helper.addressLineItemList(address);
+    const formattedAddress = (address: Address) => {
+      return Helper.formattedAddress(address);
     };
     const searchInstitutions = async () => {
       institutions.value = await InstitutionService.shared.searchInstitutions(
@@ -118,7 +113,7 @@ export default {
       searchInstitutions,
       institutions,
       goToViewInstitution,
-      addressLineItemList,
+      formattedAddress,
     };
   },
 };

@@ -27,14 +27,16 @@ export default class Helper {
     return formattedDate.toLocaleDateString("en-CA", options);
   }
 
-  static addressLineItemList(address: Address) {
-    return [
-      address.addressLine1,
-      address.addressLine2,
-      address.city,
-      address.provinceState,
-      address.postalCode,
-      address.country,
-    ];
+  static formattedAddress(address: Address) {
+    const formattedAddress = [];
+    formattedAddress.push(address.addressLine1);
+    if (address.addressLine2) {
+      formattedAddress.push(address.addressLine2);
+    }
+    formattedAddress.push(address.city);
+    formattedAddress.push(address.provinceState);
+    formattedAddress.push(address.postalCode);
+    formattedAddress.push(address.country);
+    return formattedAddress.join(", ");
   }
 }
