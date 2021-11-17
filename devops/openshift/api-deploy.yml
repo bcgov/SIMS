@@ -166,25 +166,25 @@ objects:
                     secretKeyRef:
                       key: ${ZONE_B_SFTP_PRIVATE_KEY_NAME_KEY}
                       name: ${ZONE_B_SFTP_SECRET_NAME}
-                - name: MSFAA_REQUEST_FOLDER
+                - name: ESDC_REQUEST_FOLDER
                   valueFrom:
                     secretKeyRef:
-                      key: ${MSFAA_REQUEST_FOLDER_NAME_KEY}
+                      key: ${ESDC_REQUEST_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: MSFAA_RESPONSE_FOLDER
+                - name: ESDC_RESPONSE_FOLDER
                   valueFrom:
                     secretKeyRef:
-                      key: ${MSFAA_RESPONSE_FOLDER_NAME_KEY}
+                      key: ${ESDC_RESPONSE_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
                 - name: SFAS_RECEIVE_FOLDER
                   valueFrom:
                     secretKeyRef:
                       key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: MSFAA_PROVINCE_CODE
+                - name: ESDC_ORIGINATOR_CODE
                   valueFrom:
                     secretKeyRef:
-                      key: ${MSFAA_PROVINCE_CODE_NAME_KEY}
+                      key: ${ESDC_ORIGINATOR_CODE_NAME_KEY}
                       name: ${API_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
@@ -395,11 +395,11 @@ parameters:
     value: atbc-app
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
-  - name: MSFAA_REQUEST_FOLDER_NAME_KEY
-    value: msfaa-request-folder
-  - name: MSFAA_RESPONSE_FOLDER_NAME_KEY
-    value: msfaa-response-folder
-  - name: MSFAA_PROVINCE_CODE_NAME_KEY
-    value: msfaa-province-code
+  - name: ESDC_REQUEST_FOLDER_NAME_KEY
+    value: esdc-request-folder
+  - name: ESDC_RESPONSE_FOLDER_NAME_KEY
+    value: esdc-response-folder
+  - name: ESDC_ORIGINATOR_CODE_NAME_KEY
+    value: esdc-province-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder

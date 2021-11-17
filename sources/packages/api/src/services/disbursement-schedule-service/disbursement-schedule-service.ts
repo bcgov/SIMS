@@ -117,4 +117,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     );
     return nextDocumentNumber;
   }
+
+  async getECertInformation(): Promise<DisbursementSchedule[]> {
+    return this.repo
+      .createQueryBuilder("disbursement")
+      .where("disbursement.date_sent is null")
+      .getMany();
+  }
 }

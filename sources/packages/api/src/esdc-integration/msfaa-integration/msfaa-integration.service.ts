@@ -1,19 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../common";
-import { OfferingIntensity } from "../database/entities";
-import { LoggerService } from "../logger/logger.service";
+import { InjectLogger } from "../../common";
+import { OfferingIntensity } from "../../database/entities";
+import { LoggerService } from "../../logger/logger.service";
 import {
   DATE_FORMAT,
   MSFAASFTPResponseFile,
   TransactionSubCodes,
 } from "../msfaa-integration/models/msfaa-integration.model";
 import { ConfigService, SequenceControlService, SshService } from "../services";
-import { MSFAAIntegrationConfig, SFTPConfig } from "../types";
+import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
 import {
   getGenderCode,
   getMaritalStatusCode,
   getOfferingIntensityCode,
-} from "../utilities";
+} from "../../utilities";
 import * as Client from "ssh2-sftp-client";
 import {
   MSFAARecord,
@@ -24,11 +24,12 @@ import {
 import { MSFAAFileDetail } from "./msfaa-files/msfaa-file-detail";
 import { MSFAAFileFooter } from "./msfaa-files/msfaa-file-footer";
 import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
-import { StringBuilder } from "../utilities/string-builder";
+import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
+
 /**
  * Manages the creation of the content files that needs to be sent
  * to MSFAA request. These files are created based
@@ -37,7 +38,7 @@ import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-
  */
 @Injectable()
 export class MSFAAIntegrationService {
-  private readonly msfaaConfig: MSFAAIntegrationConfig;
+  private readonly esdcConfig: ESDCIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
   constructor(
@@ -45,7 +46,7 @@ export class MSFAAIntegrationService {
     private readonly sequenceService: SequenceControlService,
     private readonly sshService: SshService,
   ) {
-    this.msfaaConfig = config.getConfig().MSFAAIntegration;
+    this.esdcConfig = config.getConfig().MSFAAIntegration;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
@@ -70,7 +71,7 @@ export class MSFAAIntegrationService {
     const msfaaHeader = new MSFAAFileHeader();
     msfaaHeader.transactionCode = TransactionCodes.MSFAAHeader;
     msfaaHeader.processDate = processDate;
-    msfaaHeader.provinceCode = this.msfaaConfig.provinceCode;
+    msfaaHeader.provinceCode = this.esdcConfig.originatorCode;
     msfaaHeader.sequence = fileSequence;
     msfaaFileLines.push(msfaaHeader);
     // Detail records
@@ -163,7 +164,7 @@ export class MSFAAIntegrationService {
     filePath: string;
   }> {
     const fileNameArray = new StringBuilder();
-    fileNameArray.append(`PP${this.msfaaConfig.provinceCode}.EDU.MSFA.SENT.`);
+    fileNameArray.append(`PP${this.esdcConfig.originatorCode}.EDU.MSFA.SENT.`);
     let fileNameSequence: number;
     if (OfferingIntensity.partTime === offeringIntensity) {
       fileNameArray.append("PT.");
@@ -180,7 +181,7 @@ export class MSFAAIntegrationService {
     fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");
     fileNameArray.append(".DAT");
     const fileName = fileNameArray.toString();
-    const filePath = `${this.msfaaConfig.ftpRequestFolder}\\${fileName}`;
+    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,
       filePath,
@@ -197,7 +198,7 @@ export class MSFAAIntegrationService {
     const client = await this.getClient();
     try {
       filesToProcess = await client.list(
-        `${this.msfaaConfig.ftpResponseFolder}`,
+        `${this.esdcConfig.ftpResponseFolder}`,
         /PEDU.PBC.MSFA.REC.*\.DAT/i,
       );
     } finally {
@@ -215,7 +216,7 @@ export class MSFAAIntegrationService {
   async downloadResponseFile(fileName: string): Promise<MSFAASFTPResponseFile> {
     const client = await this.getClient();
     try {
-      const filePath = `${this.msfaaConfig.ftpResponseFolder}/${fileName}`;
+      const filePath = `${this.esdcConfig.ftpResponseFolder}/${fileName}`;
       // Read all the file content and create a buffer.
       const fileContent = await client.get(filePath);
       // Convert the file content to an array of text lines and remove possible blank lines.
@@ -290,11 +291,11 @@ export class MSFAAIntegrationService {
        */
       if (sinTotalInRecord !== trailer.totalSINHash) {
         this.logger.error(
-          `The MSFAA file ${fileName} has SINHash insconsistent with the total sum of sin in the records`,
+          `The MSFAA file ${fileName} has SINHash inconsistent with the total sum of sin in the records`,
         );
         // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count.
         throw new Error(
-          "The MSFAA file has TotalSINHash insconsistent with the total sum of sin in the records",
+          "The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
         );
       }
 

@@ -1,4 +1,3 @@
-import { StringBuilder } from "../../utilities/string-builder";
 import {
   DATE_FORMAT,
   MSFAARequestFileLine,
@@ -7,7 +6,7 @@ import {
   TIME_FORMAT,
   TransactionCodes,
 } from "../models/msfaa-integration.model";
-import { getDateOnlyFromFormat } from "../../utilities";
+import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
 
 /**
  * Header of a MSFAA request file.

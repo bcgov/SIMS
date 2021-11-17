@@ -25,9 +25,9 @@ objects:
       cra-response-folder: ${CRA_RESPONSE_FOLDER}
       cra-program-area-code: ${CRA_PROGRAM_AREA_CODE}
       cra-environment-code: ${CRA_ENVIRONMENT_CODE}
-      msfaa-request-folder: ${MSFAA_REQUEST_FOLDER}
-      msfaa-response-folder: ${MSFAA_RESPONSE_FOLDER}
-      msfaa-province-code: ${MSFAA_PROVINCE_CODE}
+      esdc-request-folder: ${ESDC_REQUEST_FOLDER}
+      esdc-response-folder: ${ESDC_RESPONSE_FOLDER}
+      esdc-originator-code: ${ESDC_ORIGINATOR_CODE}
       sfas-receive-folder: ${SFAS_RECEIVE_FOLDER}
       atbc-username: ${ATBC_USERNAME}
       atbc-password: ${ATBC_PASSWORD}
@@ -133,21 +133,21 @@ parameters:
     required: true
     description: |
       ATBC App name to get access token.
-  - name: MSFAA_REQUEST_FOLDER
-    displayName: MSFAA request folder
+  - name: ESDC_REQUEST_FOLDER
+    displayName: ESDC request folder
     required: true
     description: |
-      MSFAA folder on ZONE B network server to upload files.
-  - name: MSFAA_RESPONSE_FOLDER
-    displayName: MSFAA response folder
+      ESDC folder on ZONE B network server to upload files.
+  - name: ESDC_RESPONSE_FOLDER
+    displayName: ESDC response folder
     required: true
     description: |
-      MSFAA folder on ZONE B network server to receive files.
-  - name: MSFAA_PROVINCE_CODE
-    displayName: MSFAA province code
+      ESDC folder on ZONE B network server to receive files.
+  - name: ESDC_ORIGINATOR_CODE
+    displayName: ESDC originator code
     required: true
     description: |
-      MSFAA province code
+      ESDC originator code, usually defined as province code
   - name: SFAS_RECEIVE_FOLDER
     displayName: SFAS receive folder
     required: true

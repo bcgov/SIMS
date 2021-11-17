@@ -1,5 +1,5 @@
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "../../utilities/string-builder";
+import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
+import { StringBuilder } from "../../../utilities/string-builder";
 import {
   DATE_FORMAT,
   GrantAward,
@@ -204,10 +204,8 @@ export class ECertfileRecord implements FixedFormatFileLine {
     record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 20); // Alternate Country Name, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 20); // Alternate Phone Number, optional, not provided.
-    // TODO: Reuse MSFAA logic
-    record.append("M"); // Student gender M=Male F=Female
-    // TODO: Reuse MSFAA logic
-    record.append("M"); // Borrower marital status S= Single, M = Married, O = Other
+    record.append(this.gender, 1);
+    record.append(this.maritalStatus, 1);
     record.appendWithEndFiller(this.studentNumber, 12, SPACE_FILLER);
     record.append("E"); // Student’s language preference E= English, F= French.
     record.appendWithStartFiller(this.totalGrantAmount, 6, NUMBER_FILLER);
