@@ -432,17 +432,17 @@ export class InstitutionController extends BaseController {
       legalName,
       operatingName,
     );
-    return searchInstitutions.map((eachinstitution: Institution) => ({
-      id: eachinstitution.id,
-      legalName: eachinstitution.legalOperatingName,
-      operatingName: eachinstitution.operatingName,
+    return searchInstitutions.map((eachInstitution: Institution) => ({
+      id: eachInstitution.id,
+      legalName: eachInstitution.legalOperatingName,
+      operatingName: eachInstitution.operatingName,
       address: {
-        addressLine1: eachinstitution.institutionAddress.addressLine1,
-        addressLine2: eachinstitution.institutionAddress.addressLine2,
-        city: eachinstitution.institutionAddress.city,
-        provinceState: eachinstitution.institutionAddress.provinceState,
-        country: eachinstitution.institutionAddress.country,
-        postalCode: eachinstitution.institutionAddress.postalCode,
+        addressLine1: eachInstitution.institutionAddress.addressLine1,
+        addressLine2: eachInstitution.institutionAddress.addressLine2,
+        city: eachInstitution.institutionAddress.city,
+        provinceState: eachInstitution.institutionAddress.provinceState,
+        country: eachInstitution.institutionAddress.country,
+        postalCode: eachInstitution.institutionAddress.postalCode,
       },
     }));
   }

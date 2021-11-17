@@ -238,9 +238,9 @@
           <div class="p-fluid p-formgrid p-grid">
             <div class="p-field p-col-12">
               <label for="primaryAddressAddress1">Address 1</label>
-              <ValidatedInput property-name="primaryAddress.address1">
+              <ValidatedInput property-name="primaryAddress.addressLine1">
                 <Field
-                  name="primaryAddress.address1"
+                  name="primaryAddress.addressLine1"
                   label="Address 1"
                   rules="required"
                   as="InputText"
@@ -249,9 +249,9 @@
             </div>
             <div class="p-field p-col-12">
               <label for="primaryAddressAddress2">Address 2</label>
-              <ValidatedInput property-name="primaryAddress.address2">
+              <ValidatedInput property-name="primaryAddress.addressLine2">
                 <Field
-                  name="primaryAddress.address2"
+                  name="primaryAddress.addressLine2"
                   label="Address 2"
                   rules="required"
                   as="InputText"
@@ -293,9 +293,9 @@
             </div>
             <div class="p-field p-col-6">
               <label for="primaryAddressCountry">Country</label>
-              <ValidatedInput property-name="primaryAddress.coutry">
+              <ValidatedInput property-name="primaryAddress.country">
                 <Field
-                  name="primaryAddress.coutry"
+                  name="primaryAddress.country"
                   label="Country"
                   rules="required"
                   as="InputText"

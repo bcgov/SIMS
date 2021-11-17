@@ -1,3 +1,5 @@
+import { Address } from "@/types";
+
 export interface InstitutionProfileState {
   studentEmail: string;
   operatingName: string;
@@ -17,13 +19,4 @@ export interface ContactInfo {
   lastName: string;
   email: string;
   phoneNumber: string;
-}
-
-export interface Address {
-  address1: string;
-  address2: string;
-  city: string;
-  postalCode: string;
-  provinceState: string;
-  coutry: string;
 }

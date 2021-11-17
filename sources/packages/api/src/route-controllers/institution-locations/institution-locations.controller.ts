@@ -247,12 +247,12 @@ export class InstitutionLocationsController extends BaseController {
       );
 
     return {
-      address1: institutionLocation.data.address.addressLine1,
-      address2: institutionLocation.data.address.addressLine2,
+      addressLine1: institutionLocation.data.address.addressLine1,
+      addressLine2: institutionLocation.data.address.addressLine2,
       city: institutionLocation.data.address.city,
       country: institutionLocation.data.address.country,
       locationName: institutionLocation.name,
-      postalZipCode: institutionLocation.data.address.postalCode,
+      postalCode: institutionLocation.data.address.postalCode,
       provinceState: institutionLocation.data.address.province,
       institutionCode: institutionLocation.institutionCode,
       primaryContactFirstName: institutionLocation.primaryContact.firstName,

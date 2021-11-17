@@ -44,12 +44,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       name: data.data.locationName,
       data: {
         address: {
-          addressLine1: data.data.address1,
-          addressLine2: data.data.address2,
+          addressLine1: data.data.addressLine1,
+          addressLine2: data.data.addressLine2,
           province: data.data.provinceState,
           country: data.data.country,
           city: data.data.city,
-          postalCode: data.data.postalZipCode,
+          postalCode: data.data.postalCode,
         },
       },
       primaryContact: {
@@ -75,12 +75,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       name: data.locationName,
       data: {
         address: {
-          addressLine1: data.address1,
-          addressLine2: data.address2,
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2,
           province: data.provinceState,
           country: data.country,
           city: data.city,
-          postalCode: data.postalZipCode,
+          postalCode: data.postalCode,
         },
       },
       primaryContact: {

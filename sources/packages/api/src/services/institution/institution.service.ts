@@ -487,7 +487,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution[]> {
     const searchQuery = this.repo
       .createQueryBuilder("institution")
-      .where("institution.establishedDate is not null");
+      .select([
+        "institution.legalOperatingName",
+        "institution.operatingName",
+        "institution.institutionAddress",
+        "institution.id",
+      ])
+      .where("1 = 1");
     if (legalName) {
       searchQuery.andWhere("institution.legalOperatingName Ilike :legalName", {
         legalName: `%${legalName}%`,

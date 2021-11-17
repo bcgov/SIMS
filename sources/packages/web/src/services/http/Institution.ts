@@ -158,9 +158,8 @@ export class InstitutionApi extends HttpBaseClient {
       if (operatingName) {
         queryString += `operatingName=${operatingName}&`;
       }
-      const institution = await this.apiClient.get(
+      const institution = await this.getCall(
         `institution/search?${queryString.slice(0, -1)}`,
-        this.addAuthHeader(),
       );
       return institution.data as SearchInstitutionResp[];
     } catch (error) {

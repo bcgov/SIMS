@@ -1,4 +1,4 @@
-import { InstitutionAddress } from "..";
+import { Address } from "..";
 
 export interface Institute {
   name: string;
@@ -12,5 +12,5 @@ export interface SearchInstitutionResp {
   id: number;
   legalName: string;
   operatingName: string;
-  address: InstitutionAddress;
+  address: Address;
 }

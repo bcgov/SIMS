@@ -10,12 +10,12 @@ export class GetInstitutionLocationDto {
  * Interface which defines the contract of how institution location data is passed to form.io
  */
 export interface InstitutionLocationTypeDto {
-  address1: string;
-  address2?: string;
+  addressLine1: string;
+  addressLine2?: string;
   city: string;
   country: string;
   locationName: string;
-  postalZipCode: string;
+  postalCode: string;
   provinceState: string;
   institutionCode: string;
   primaryContactFirstName: string;

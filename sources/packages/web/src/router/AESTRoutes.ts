@@ -86,7 +86,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           default: SearchStudents,
           sidebar: AESTHomeSideBar,
         },
-        props: true,
         meta: {
           clientType: ClientIdType.AEST,
         },
@@ -98,7 +97,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           default: SearchInstitutions,
           sidebar: AESTHomeSideBar,
         },
-        props: true,
         meta: {
           clientType: ClientIdType.AEST,
         },
