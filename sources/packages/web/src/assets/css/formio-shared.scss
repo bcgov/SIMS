@@ -1,9 +1,8 @@
 /** SCSS Color variables **/
-$primary-header-color: #0053a4;
+$primary-header-color: #2965c5;
 $secondary-header-color: #333a47;
 $secondary-header-color-lt: #8692a4;
-$fromio-header-color: #2965c5;
-$formio-content-color: #333a47;
+$app-content-color: #333a47;
 $panel-warning-color: #f3b229;
 $panel-error-color: #dc2525;
 
@@ -148,10 +147,12 @@ $border-color-info: #6554c0;
   line-height: $line-height-header-sm;
 }
 
+/** Forcing line height for category-header-large **/
 .formio-component-htmlelement.category-header-large p {
-  line-height: 34px;
+  line-height: line-height-header-lg;
 }
 
+/**Adjusting margin for headers with sub heading using class has-sub-heading **/
 .formio-component-htmlelement.has-sub-heading p,
 .formio-component-htmlelement.has-sub-heading div {
   margin-bottom: 5px;
@@ -172,11 +173,11 @@ $border-color-info: #6554c0;
 .banner-alert strong,
 .banner-info strong,
 .banner-warning strong {
-  color: $formio-content-color;
+  color: $app-content-color;
 }
 
 .formio-component .primary-color p {
-  color: $fromio-header-color;
+  color: $primary-header-color;
 }
 
 .formio-component .fa {
@@ -205,7 +206,7 @@ $border-color-info: #6554c0;
 }
 
 .header-lg {
-  color: $fromio-header-color;
+  color: $primary-header-color;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-large;
@@ -214,7 +215,7 @@ $border-color-info: #6554c0;
 }
 
 .header-md {
-  color: $fromio-header-color;
+  color: $primary-header-color;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-medium;
@@ -223,7 +224,7 @@ $border-color-info: #6554c0;
 }
 
 .header-sm {
-  color: $fromio-header-color;
+  color: $primary-header-color;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;

@@ -1,7 +1,7 @@
 import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
 
 /**
- * Dto that represents education programs fom.io object.
+ * Dto that represents education programs form object.
  */
 export interface EducationProgramDto {
   name: string;

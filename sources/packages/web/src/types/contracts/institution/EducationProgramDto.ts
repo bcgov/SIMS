@@ -11,7 +11,9 @@ export enum ProgramIntensity {
    */
   fullTime = "Full Time",
 }
-
+/**
+ * Education program Base DTO object
+ */
 export interface EducationProgramBaseDto {
   name: string;
   description: string;
@@ -58,7 +60,7 @@ export enum ApprovalStatus {
 }
 
 /**
- * DTO object which represent the eduction program form.io object.
+ * DTO object which represent the eduction program form object.
  */
 export interface ProgramDto extends EducationProgramBaseDto {
   institutionId: number;

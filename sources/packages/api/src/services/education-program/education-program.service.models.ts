@@ -2,7 +2,7 @@ import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
 import { EducationProgramDto } from "../../route-controllers/education-program/models/save-education-program.dto";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 /**
- * Service level interface for education programs object.
+ * DTO that is used to persist the eduction programs form data.
  */
 export interface SaveEducationProgram extends EducationProgramDto {
   id?: number;
