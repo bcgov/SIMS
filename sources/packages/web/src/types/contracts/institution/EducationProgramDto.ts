@@ -12,6 +12,18 @@ export enum ProgramIntensity {
   fullTime = "Full Time",
 }
 
+export interface EducationProgramBaseDto {
+  name: string;
+  description: string;
+  credentialType: string;
+  credentialTypeOther: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  approvalStatus: string;
+  programIntensity: ProgramIntensity;
+}
+
 export interface SummaryEducationProgramDto {
   id: number;
   name: string;
@@ -22,17 +34,8 @@ export interface SummaryEducationProgramDto {
   approvalStatus: string;
 }
 
-export interface EducationProgramDto {
+export interface EducationProgramDto extends EducationProgramBaseDto {
   id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeOther: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  approvalStatus: string;
-  programIntensity: ProgramIntensity;
 }
 
 export interface StudentEducationProgramDto {
@@ -57,15 +60,8 @@ export enum ApprovalStatus {
 /**
  * DTO object which represent the eduction program form.io object.
  */
-export interface ProgramDto {
+export interface ProgramDto extends EducationProgramBaseDto {
   institutionId: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeOther: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
   regulatoryBody: string;
   programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite?: string;
@@ -78,8 +74,6 @@ export interface ProgramDto {
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
-  approvalStatus: string;
-  programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;

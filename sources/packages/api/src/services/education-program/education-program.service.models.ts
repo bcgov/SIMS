@@ -1,50 +1,13 @@
 import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
+import { EducationProgramDto } from "../../route-controllers/education-program/models/save-education-program.dto";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 /**
  * Service level interface for education programs object.
  */
-export interface SaveEducationProgram {
+export interface SaveEducationProgram extends EducationProgramDto {
   id?: number;
   institutionId: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  credentialTypeOther: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  regulatoryBody: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite?: string;
-  sameOnlineCreditsEarned?: string;
-  earnAcademicCreditsOtherInstitution?: string;
-  courseLoadCalculation: string;
-  averageHoursStudy: number;
-  completionYears: string;
-  admissionRequirement: string;
-  eslEligibility: string;
-  hasJointInstitution: string;
-  hasJointDesignatedInstitution: string;
   approvalStatus: string;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode?: string;
-  minHoursWeek?: string;
-  isAviationProgram?: string;
-  minHoursWeekAvi?: string;
-  entranceRequirements: EntranceRequirements;
-  hasWILComponent: string;
-  isWILApproved?: string;
-  wilProgramEligibility?: string;
-  hasTravel: string;
-  travelProgramEligibility?: string;
-  hasIntlExchange?: string;
-  intlExchangeProgramEligibility?: string;
-  programDeclaration: boolean;
-}
-
-export interface ProgramDeliveryTypes {
-  deliveredOnSite: boolean;
-  deliveredOnline: boolean;
 }
 
 export class EducationProgramsSummary {
@@ -80,11 +43,4 @@ export class EducationProgramModel {
       this.credentialTypeOther,
     );
   }
-}
-
-export interface EntranceRequirements {
-  hasMinimunAge: boolean;
-  minHighSchool: boolean;
-  requirementsByInstitution: boolean;
-  requirementsByBcita: boolean;
 }
