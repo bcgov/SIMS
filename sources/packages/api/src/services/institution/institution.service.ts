@@ -474,4 +474,36 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       await queryRunner.release();
     }
   }
+
+  /**
+   * Search the institution based on the search criteria.
+   * @param legalName legalName of the institution.
+   * @param operatingName operatingName of the institution.
+   * @returns Searched institution details.
+   */
+  async searchInstitution(
+    legalName: string,
+    operatingName: string,
+  ): Promise<Institution[]> {
+    const searchQuery = this.repo
+      .createQueryBuilder("institution")
+      .select([
+        "institution.legalOperatingName",
+        "institution.operatingName",
+        "institution.institutionAddress",
+        "institution.id",
+      ])
+      .where("1 = 1");
+    if (legalName) {
+      searchQuery.andWhere("institution.legalOperatingName Ilike :legalName", {
+        legalName: `%${legalName}%`,
+      });
+    }
+    if (operatingName) {
+      searchQuery.andWhere("institution.operatingName Ilike :operatingName", {
+        operatingName: `%${operatingName}%`,
+      });
+    }
+    return searchQuery.getMany();
+  }
 }

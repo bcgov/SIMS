@@ -7,6 +7,7 @@ import {
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
   ApplicationSummaryDTO,
+  SearchInstitutionResp,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -74,7 +75,9 @@ export class InstitutionApi extends HttpBaseClient {
     await this.apiClient.delete(`institution/user/${id}`, this.addAuthHeader());
   }
 
-  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
+  public async getUserTypeAndRoles(): Promise<
+    InstitutionUserTypeAndRoleResponseDto
+  > {
     try {
       const resp = await this.apiClient.get(
         "institution/user-types-roles",
@@ -137,6 +140,28 @@ export class InstitutionApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async searchInstitutions(
+    legalName: string,
+    operatingName: string,
+  ): Promise<SearchInstitutionResp[]> {
+    try {
+      let queryString = "";
+      if (legalName) {
+        queryString += `legalName=${legalName}&`;
+      }
+      if (operatingName) {
+        queryString += `operatingName=${operatingName}&`;
+      }
+      const institution = await this.getCall(
+        `institution/search?${queryString.slice(0, -1)}`,
+      );
+      return institution.data as SearchInstitutionResp[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;
