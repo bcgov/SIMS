@@ -53,7 +53,7 @@ export class ProgramYear extends RecordDataModel {
   })
   partnerFormName: string;
   /**
-   * Program Year Prefix  for the
+   * Program Year Prefix for the
    * particular ProgramYear.
    */
   @Column({
