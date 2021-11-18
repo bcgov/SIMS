@@ -16,10 +16,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { EducationProgramDto } from "./models/save-education-program.dto";
-import {
-  EducationProgramService,
-  FormService,
-} from "../../services";
+import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import {
@@ -94,11 +91,28 @@ export class EducationProgramController {
       averageHoursStudy: program.averageHoursStudy,
       completionYears: program.completionYears,
       admissionRequirement: program.admissionRequirement,
-      hasMinimunAge: program.hasMinimunAge,
       eslEligibility: program.eslEligibility,
       hasJointInstitution: program.hasJointInstitution,
       hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
       programIntensity: program.programIntensity,
+      institutionProgramCode: program.institutionProgramCode,
+      minHoursWeek: program.minHoursWeek,
+      isAviationProgram: program.isAviationProgram,
+      minHoursWeekAvi: program.minHoursWeekAvi,
+      entranceRequirements: {
+        hasMinimumAge: program.hasMinimumAge,
+        minHighSchool: program.minHighSchool,
+        requirementsByInstitution: program.requirementsByInstitution,
+        requirementsByBCITA: program.requirementsByBCITA,
+      },
+      hasWILComponent: program.hasWILComponent,
+      isWILApproved: program.isWILApproved,
+      wilProgramEligibility: program.wilProgramEligibility,
+      hasTravel: program.hasTravel,
+      travelProgramEligibility: program.travelProgramEligibility,
+      hasIntlExchange: program.hasIntlExchange,
+      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+      programDeclaration: program.programDeclaration,
     };
   }
 

@@ -101,7 +101,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.averageHoursStudy = educationProgram.averageHoursStudy;
     program.completionYears = educationProgram.completionYears;
     program.admissionRequirement = educationProgram.admissionRequirement;
-    program.hasMinimunAge = educationProgram.hasMinimunAge;
+    program.hasMinimumAge = educationProgram.entranceRequirements.hasMinimumAge;
     program.eslEligibility = educationProgram.eslEligibility;
     program.hasJointInstitution = educationProgram.hasJointInstitution;
     program.hasJointDesignatedInstitution =
@@ -109,6 +109,26 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.approvalStatus = educationProgram.approvalStatus;
     program.institution = { id: educationProgram.institutionId } as Institution;
     program.programIntensity = educationProgram.programIntensity;
+    program.institutionProgramCode = educationProgram.institutionProgramCode;
+    program.minHoursWeek = educationProgram.minHoursWeek;
+    program.isAviationProgram = educationProgram.isAviationProgram;
+    program.minHoursWeekAvi = educationProgram.minHoursWeekAvi;
+    program.minHighSchool = educationProgram.entranceRequirements.minHighSchool;
+    program.requirementsByInstitution =
+      educationProgram.entranceRequirements.requirementsByInstitution;
+    program.requirementsByBCITA =
+      educationProgram.entranceRequirements.requirementsByBCITA;
+    program.hasWILComponent = educationProgram.hasWILComponent;
+    program.isWILApproved = educationProgram.isWILApproved;
+    program.wilProgramEligibility = educationProgram.wilProgramEligibility;
+    program.hasTravel = educationProgram.hasTravel;
+    program.travelProgramEligibility =
+      educationProgram.travelProgramEligibility;
+    program.hasIntlExchange = educationProgram.hasIntlExchange;
+    program.intlExchangeProgramEligibility =
+      educationProgram.intlExchangeProgramEligibility;
+    program.programDeclaration = educationProgram.programDeclaration;
+
     return this.repo.save(program);
   }
 
