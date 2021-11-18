@@ -57,7 +57,7 @@ export class ProgramYear extends RecordDataModel {
    * particular ProgramYear.
    */
   @Column({
-    name: "program_year_perfix",
+    name: "program_year_prefix",
     nullable: false,
   })
   programYearPrefix: string;
