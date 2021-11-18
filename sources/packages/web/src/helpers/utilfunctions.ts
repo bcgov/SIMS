@@ -1,5 +1,3 @@
-import { Address } from "@/types";
-
 export default class Helper {
   //Formatting date received from api from 1998-03-24T00:00:00.000Z
   //to March 24, 1998
@@ -25,18 +23,5 @@ export default class Helper {
     };
     const formattedDate = new Date(date);
     return formattedDate.toLocaleDateString("en-CA", options);
-  }
-
-  static formattedAddress(address: Address) {
-    const formattedAddress = [];
-    formattedAddress.push(address.addressLine1);
-    if (address.addressLine2) {
-      formattedAddress.push(address.addressLine2);
-    }
-    formattedAddress.push(address.city);
-    formattedAddress.push(address.provinceState);
-    formattedAddress.push(address.postalCode);
-    formattedAddress.push(address.country);
-    return formattedAddress.join(", ");
   }
 }

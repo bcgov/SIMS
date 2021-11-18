@@ -48,7 +48,7 @@
       <Column field="address" header="Address">
         <template #body="slotProps">
           <div class="p-text-capitalize">
-            {{ formattedAddress(slotProps.data.address) }}
+            {{ getFormattedAddress(slotProps.data.address) }}
           </div>
         </template>
       </Column>
@@ -68,9 +68,8 @@ import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { SearchInstitutionResp, Address } from "@/types";
-import { useToastMessage } from "@/composables";
+import { useToastMessage, useFormatters } from "@/composables";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import Helper from "@/helpers/utilfunctions";
 
 export default {
   components: {
@@ -88,9 +87,7 @@ export default {
         params: { institutionId: institutionId },
       });
     };
-    const formattedAddress = (address: Address) => {
-      return Helper.formattedAddress(address);
-    };
+    const { getFormattedAddress } = useFormatters();
     const searchInstitutions = async () => {
       institutions.value = await InstitutionService.shared.searchInstitutions(
         legalName.value,
@@ -113,7 +110,7 @@ export default {
       searchInstitutions,
       institutions,
       goToViewInstitution,
-      formattedAddress,
+      getFormattedAddress,
     };
   },
 };
