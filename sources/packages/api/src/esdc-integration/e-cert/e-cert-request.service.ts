@@ -1,105 +1,98 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
-import { MSFAANumber } from "../../database/entities";
+import { DisbursementSchedule } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
 import { getUTCNow } from "../../utilities";
 import { EntityManager } from "typeorm";
-import { MSFAANumberService, SequenceControlService } from "../../services";
 import {
-  MSFAARecord,
-  MSFAAUploadResult,
-} from "./models/msfaa-integration.model";
-import { MSFAAIntegrationService } from "./msfaa-integration.service";
-import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
+  DisbursementScheduleService,
+  SequenceControlService,
+} from "../../services";
+import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
+import {
+  ECertRecord,
+  ECertUploadResult,
+  GrantAward,
+} from "./models/e-cert-integration.model";
+
+const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
 
 @Injectable()
-export class MSFAARequestService {
+export class ECertRequestService {
   constructor(
-    private readonly msfaaNumberService: MSFAANumberService,
-    private readonly msfaaService: MSFAAIntegrationService,
+    private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly sequenceService: SequenceControlService,
   ) {}
 
-  /**
-   * 1. Fetches the MSFAA records which are not sent for request.
-   * 2. Create Unique sequence for the request sent file.
-   * 3. Create the Request content for the MSFAA file by populating the
-   *      header, footer and trailer content.
-   * 4. Create the request filename with the file path for the MSFAA Request
-   *      sent File.
-   * 5. Upload the content to the zoneB SFTP server.
-   * 6. Update the MSFAA records, that are sent in the request sent file.
-   * @returns Processing MSFAA request result.
-   */
-  async processMSFAARequest(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<MSFAAUploadResult> {
-    this.logger.log(`Retrieving pending ${offeringIntensity} MSFAA request...`);
-    const pendingMSFAARequests =
-      await this.msfaaNumberService.getPendingMSFAARequest(offeringIntensity);
-    if (!pendingMSFAARequests.length) {
+  // TODO: Add return type.
+  async generateECert(): Promise<any> {
+    this.logger.log(`Retrieving disbursements to generate the e-Cert file...`);
+    const disbursements =
+      await this.disbursementScheduleService.getECertInformation();
+    if (!disbursements.length) {
       return {
         generatedFile: "none",
         uploadedRecords: 0,
       };
     }
-    this.logger.log(
-      `Found ${pendingMSFAARequests.length} MSFAA number(s) for ${offeringIntensity} application that needs request.`,
-    );
-    const msfaaRecords = pendingMSFAARequests.map((pendingMSFAARequest) => {
-      return this.createMSFAARecord(pendingMSFAARequest, offeringIntensity);
+    this.logger.log(`Found ${disbursements.length} disbursements schedules.`);
+    const disbursementRecords = disbursements.map((disbursement) => {
+      return this.createECertRecord(disbursement);
     });
 
-    //Fetches the MSFAANumber ids, for further update in the db.
-    const msfaaRecordIds = pendingMSFAARequests.map(
-      (pendingMSFAARequest) => pendingMSFAARequest.id,
+    // Fetches the disbursements ids, for further update in the DB.
+    const disbursementIds = disbursements.map(
+      (disbursement) => disbursement.id,
     );
 
-    //Total hash of the Student's SIN, its used in the footer content.
-    const totalSINHash = pendingMSFAARequests.reduce(
-      (accumulator, pendingMSFAARequest) =>
-        accumulator + parseInt(pendingMSFAARequest.student.sin),
-      0,
-    );
+    // Total hash of the Student's SIN, its used in the footer content.
+    const totalSINHash = disbursementRecords
+      .map((disbursement) => +disbursement.sin)
+      .reduce((previousSin, currentSin) => previousSin + currentSin);
 
     //Create records and create the unique file sequence number
-    let uploadResult: MSFAAUploadResult;
+    let uploadResult: ECertUploadResult;
     await this.sequenceService.consumeNextSequence(
-      `MSFAA_${offeringIntensity}_SENT_FILE`,
+      ECERT_SENT_FILE_SEQUENCE_GROUP,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log("Creating MSFAA request content...");
-          // Create the Request content for the MSFAA file by populating the
-          // header, footer and trailer content.
-          const fileContent = this.msfaaService.createMSFAARequestContent(
-            msfaaRecords,
+          this.logger.log("Creating e-Cert file content...");
+          const fileContent = this.ecertIntegrationService.createRequestContent(
+            disbursementRecords,
             nextSequenceNumber,
             totalSINHash,
           );
-          // Create the request filename with the file path for the MSFAA Request
-          // sent File.
-          const fileInfo = await this.msfaaService.createRequestFileName(
-            offeringIntensity,
-            entityManager,
-          );
-          this.logger.log("Uploading content...");
-          uploadResult = await this.msfaaService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+          // Create the request filename with the file path for the e-Cert File.
+          const fileInfo =
+            await this.ecertIntegrationService.createRequestFileName(
+              entityManager,
+            );
 
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the
           // sequence number.
-          const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
-          this.msfaaNumberService.updateRecordsInSentFile(
-            msfaaRecordIds,
+          const disbursementScheduleRepo =
+            entityManager.getRepository(DisbursementSchedule);
+          this.disbursementScheduleService.updateRecordsInSentFile(
+            disbursementIds,
             getUTCNow(),
-            msfaaNumberRepo,
+            disbursementScheduleRepo,
           );
+
+          this.logger.log("Uploading content...");
+          await this.ecertIntegrationService.uploadContent(
+            fileContent,
+            fileInfo.filePath,
+          );
+
+          uploadResult = {
+            generatedFile: fileInfo.filePath,
+            uploadedRecords: disbursementRecords.length,
+          };
         } catch (error) {
           this.logger.error(
-            `Error while uploading content for ${offeringIntensity} MSFAA Request: ${error}`,
+            `Error while uploading content for e-Cert file: ${error}`,
           );
           throw error;
         }
@@ -108,43 +101,57 @@ export class MSFAARequestService {
     return uploadResult;
   }
 
-  /**
-   * Use the information on the MSFAA, referenced application
-   * student, user and institutionlocation objects are used
-   * to generate the record to be send to MSFAA request.
-   * @param pendingMSFAARecords referenced application
-   * student, user and institutionlocation information.
-   * @param offeringIntensity offeringintensity of the record.
-   * @returns MSFAA record for the student.
-   */
-  private createMSFAARecord(
-    pendingMSFAARecords: MSFAANumber,
-    offeringIntensity: string,
-  ): MSFAARecord {
-    const addressInfo = pendingMSFAARecords.student.contactInfo.addresses[0];
+  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+    const now = new Date();
+    const addressInfo =
+      disbursement.application.student.contactInfo.addresses[0];
+    // Sum all values for grants and loans
+    // const studentTotalAmount = disbursement.disbursementValues
+    //   .map(disbursement => disbursement.valueAmount)
+    //   .reduce((previousAmount, currentAmount) => (previousAmount + currentAmount));
+
+    const fieldOfStudy =
+      +disbursement.application.offering.educationProgram.cipCode.substr(0, 2);
+
+    const grantAwards = disbursement.disbursementValues.map(
+      (disbursementValue) =>
+        ({
+          code: disbursementValue.valueCode,
+          amount: disbursementValue.valueAmount,
+        } as GrantAward),
+    );
+
     return {
-      id: pendingMSFAARecords.id,
-      msfaaNumber: pendingMSFAARecords.msfaaNumber,
-      sin: pendingMSFAARecords.student.sin,
-      institutionCode:
-        pendingMSFAARecords.referenceApplication.offering.institutionLocation
-          .institutionCode,
-      birthDate: pendingMSFAARecords.student.birthDate,
-      surname: pendingMSFAARecords.student.user.lastName,
-      givenName: pendingMSFAARecords.student.user.firstName,
-      gender: pendingMSFAARecords.student.gender,
-      //TODO needed to make it dynamic, in the future stories
-      maritalStatus: "married",
+      sin: disbursement.application.student.sin,
+      applicationNumber: disbursement.application.applicationNumber,
+      documentNumber: disbursement.documentNumber,
+      disbursementDate: disbursement.disbursementDate,
+      documentProducedDate: now,
+      negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
+      schoolAmount:
+        disbursement.application.offering.tuitionRemittanceRequestedAmount,
+      educationalStartDate: disbursement.application.offering.studyStartDate,
+      educationalEndDate: disbursement.application.offering.studyEndDate,
+      federalInstitutionCode:
+        disbursement.application.offering.institutionLocation.institutionCode,
+      weeksOfStudy: 1,
+      fieldOfStudy,
+      yearOfStudy: 9,
+      totalYearsOfStudy: 5,
+      enrollmentConfirmationDate: now,
+      dateOfBirth: disbursement.application.student.birthDate,
+      lastName: disbursement.application.student.user.lastName,
+      firstName: disbursement.application.student.user.firstName,
       addressLine1: addressInfo.addressLine1,
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,
-      province: addressInfo.province,
-      postalCode: addressInfo.postalCode,
       country: addressInfo.country,
-      phone: pendingMSFAARecords.student.contactInfo.phone,
-      email: pendingMSFAARecords.student.user.email,
-      offeringIntensity: offeringIntensity,
-    } as MSFAARecord;
+      email: disbursement.application.student.user.email,
+      gender: disbursement.application.student.gender,
+      maritalStatus: "married",
+      studentNumber: disbursement.application.data.studentNumber,
+      grantAwards,
+    } as ECertRecord;
   }
 
   @InjectLogger()

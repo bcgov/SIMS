@@ -1,17 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { OfferingIntensity } from "../../database/entities";
-import { DATE_FORMAT } from "../msfaa-integration/models/msfaa-integration.model";
 import {
   ConfigService,
   SequenceControlService,
   SshService,
 } from "../../services";
 import { ESDCIntegrationConfig } from "../../types";
-import { getGenderCode, getMaritalStatusCode } from "../../utilities";
+import {
+  getDayOfTheYear,
+  getGenderCode,
+  getMaritalStatusCode,
+} from "../../utilities";
 import {
   ECertRecord,
   RecordTypeCodes,
-} from "../e-cert/models/e-cert-integration.model";
+} from "./models/e-cert-integration.model";
 import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
@@ -46,7 +48,6 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     fileSequence: number,
     totalSINHash: number,
   ): FixedFormatFileLine[] {
-    const processDate = new Date();
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
     const header = new ECertFileHeader();
@@ -62,7 +63,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       esdcRecord.applicationNumber = ecertRecord.applicationNumber;
       esdcRecord.documentNumber = ecertRecord.documentNumber;
       esdcRecord.disbursementDate = ecertRecord.disbursementDate;
-      esdcRecord.documentProducedDate = processDate;
+      esdcRecord.documentProducedDate = ecertRecord.documentProducedDate;
       esdcRecord.negotiatedExpiryDate = ecertRecord.negotiatedExpiryDate;
       esdcRecord.disbursementAmount = ecertRecord.disbursementAmount;
       esdcRecord.studentAmount = ecertRecord.studentAmount;
@@ -84,7 +85,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       esdcRecord.addressLine1 = ecertRecord.addressLine1;
       esdcRecord.addressLine2 = ecertRecord.addressLine2;
       esdcRecord.city = ecertRecord.city;
-      esdcRecord.countryName = "Canada";
+      esdcRecord.countryName = ecertRecord.country;
       esdcRecord.emailAddress = ecertRecord.email;
       esdcRecord.gender = getGenderCode(ecertRecord.gender);
       esdcRecord.maritalStatus = getMaritalStatusCode(
@@ -116,20 +117,19 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
    *  where MSFAA is requested.
    * @returns Full file path of the file to be saved on the SFTP.
    */
-  async createRequestFileName(
-    offeringIntensity: string,
-    entityManager?: EntityManager,
-  ): Promise<{
+  async createRequestFileName(entityManager?: EntityManager): Promise<{
     fileName: string;
     filePath: string;
   }> {
     const fileNameArray = new StringBuilder();
-    fileNameArray.append(`PP${this.esdcConfig.originatorCode}.EDU.MSFA.SENT.`);
+    const now = new Date();
+    const dayOfTheYear = getDayOfTheYear(now).toString().padStart(3, "0");
+    fileNameArray.append(
+      `PP${
+        this.esdcConfig.originatorCode
+      }.EDU.ECERTS.${now.getFullYear()}${dayOfTheYear}`,
+    );
     let fileNameSequence: number;
-    if (OfferingIntensity.partTime === offeringIntensity) {
-      fileNameArray.append("PT.");
-    }
-    fileNameArray.appendDate(new Date(), DATE_FORMAT);
     await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
       fileNameArray.toString(),
       entityManager,

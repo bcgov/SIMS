@@ -14,12 +14,9 @@ export interface ECertRecord {
   applicationNumber: string;
   documentNumber: number;
   disbursementDate: Date;
+  documentProducedDate: Date;
   negotiatedExpiryDate: Date;
-  disbursementAmount: number;
-  studentAmount: number;
   schoolAmount: number;
-  cslAwardAmount: number;
-  bcslAwardAmount: number;
   educationalStartDate: Date;
   educationalEndDate: Date;
   federalInstitutionCode: string;
@@ -27,7 +24,6 @@ export interface ECertRecord {
   fieldOfStudy: number;
   yearOfStudy: number;
   totalYearsOfStudy: number;
-  intensityIndicator: string;
   enrollmentConfirmationDate: Date;
   dateOfBirth: Date;
   lastName: string;
@@ -41,7 +37,6 @@ export interface ECertRecord {
   gender: string;
   maritalStatus: string;
   studentNumber: string;
-  totalGrantAmount: number;
   grantAwards: GrantAward[];
 }
 
@@ -53,4 +48,12 @@ export enum RecordTypeCodes {
   ECertHeader = "100",
   ECertRecord = "200",
   ECertFooter = "999",
+}
+
+/**
+ * Result of a file uploaded to SFTP on ZONE B network.
+ */
+export interface ECertUploadResult {
+  generatedFile: string;
+  uploadedRecords: number;
 }

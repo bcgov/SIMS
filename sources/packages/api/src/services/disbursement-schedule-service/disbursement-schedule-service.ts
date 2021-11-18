@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { CustomNamedError } from "../../utilities";
-import { Connection, Repository } from "typeorm";
+import {
+  CustomNamedError,
+  DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
+} from "../../utilities";
+import { Connection, In, Repository } from "typeorm";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SequenceControlService,
+  StudentRestrictionService,
 } from "..";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
@@ -15,6 +19,7 @@ import {
   DisbursementValue,
 } from "../../database/entities";
 import { Disbursement } from "./disbursement-schedule.models";
+import * as dayjs from "dayjs";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -28,6 +33,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   constructor(
     connection: Connection,
     private readonly sequenceService: SequenceControlService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(connection.getRepository(DisbursementSchedule));
     this.applicationRepo = connection.getRepository(Application);
@@ -118,10 +124,86 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return nextDocumentNumber;
   }
 
+  /**
+   * Get all records that must be part of the e-Cert files and that were not sent yet.
+   * Considerer any record that is scheduled in upcoming days or in the past.
+   * Check if the student has a valid SIN.
+   * Consider only completed Student Applications with signed MSFAA date.
+   * Check if there are restrictions applied to the student account that would
+   * prevent the disbursement.
+   */
   async getECertInformation(): Promise<DisbursementSchedule[]> {
+    // Define the minimum date to send a disbursement.
+    const disbursementMinDate = dayjs().add(
+      DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
+      "days",
+    );
+    console.log("disbursementMinDate:", disbursementMinDate);
+
     return this.repo
       .createQueryBuilder("disbursement")
+      .select([
+        "disbursement.id",
+        "disbursement.documentNumber",
+        "disbursement.negotiatedExpiryDate",
+        "application.applicationNumber",
+        "application.data->'studentNumber'",
+        "offering.tuitionRemittanceRequestedAmount",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "student.sin",
+        "student.birthDate",
+        "student.gender",
+        "student.contactInfo",
+        "location.institutionCode",
+      ])
+      .innerJoin("disbursement.application", "application")
+      .innerJoin("disbursement.location", "location")
+      .innerJoin("disbursement.offering", "offering")
+      .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
+
+      .innerJoin("student.user", "user")
+      .innerJoin("application.msfaaNumber", "msfaaNumber")
       .where("disbursement.date_sent is null")
+      .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
+        disbursementMinDate,
+      })
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.completed,
+      })
+      .andWhere("msfaaNumber.dateSigned is not null")
+      .andWhere("student.validSIN = true")
+      .andWhere(
+        `not exists(${this.studentRestrictionService
+          .getExistsBlockRestrictionQuery()
+          .getSql()})`,
+      )
       .getMany();
+  }
+
+  /**
+   * Once the e-Cert file is sent, updates the date that the file was uploaded.
+   * @param disbursementIds records that are part of the generated
+   * file that must have the date sent updated.
+   * @param dateSent date that the file was uploaded.
+   * @param [disbursementScheduleRepo] when provided, it is used instead of the
+   * local repository (this.repo). Useful when the command must be executed,
+   * for instance, as part of an existing transaction manage externally to this
+   * service.
+   * @returns the result of the update.
+   */
+  async updateRecordsInSentFile(
+    disbursementIds: number[],
+    dateSent: Date,
+    disbursementScheduleRepo?: Repository<DisbursementSchedule>,
+  ) {
+    if (!dateSent) {
+      throw new Error(
+        "Date sent field is not provided to update the disbursement records.",
+      );
+    }
+    const repository = disbursementScheduleRepo ?? this.repo;
+    return repository.update({ id: In(disbursementIds) }, { dateSent });
   }
 }
