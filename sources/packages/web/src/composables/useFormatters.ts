@@ -68,7 +68,7 @@ export function useFormatters() {
   };
 
   const getFormattedAddress = (address: Address): string => {
-    const formattedAddress = [];
+    const formattedAddress: string[] = [];
     formattedAddress.push(address.addressLine1);
     if (address.addressLine2) {
       formattedAddress.push(address.addressLine2);
