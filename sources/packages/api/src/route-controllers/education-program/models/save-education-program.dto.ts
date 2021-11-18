@@ -5,7 +5,7 @@ import { ProgramIntensity } from "../../../database/entities/program-intensity.t
  */
 export interface EducationProgramDto {
   name: string;
-  description: string;
+  description?: string;
   credentialType: string;
   credentialTypeOther: string;
   cipCode: string;
@@ -45,8 +45,8 @@ export interface ProgramDeliveryTypes {
 }
 
 export interface EntranceRequirements {
-  hasMinimunAge: boolean;
+  hasMinimumAge: boolean;
   minHighSchool: boolean;
   requirementsByInstitution: boolean;
-  requirementsByBcita: boolean;
+  requirementsByBCITA: boolean;
 }

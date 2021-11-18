@@ -149,7 +149,18 @@ $border-color-info: #6554c0;
 
 /** Forcing line height for category-header-large **/
 .formio-component-htmlelement.category-header-large p {
-  line-height: line-height-header-lg;
+  line-height: $line-height-header-lg;
+}
+
+/** Forcing line height for category-header-medium **/
+.formio-component-htmlelement.category-header-medium p {
+  line-height: $line-height-header-md;
+}
+
+/** Forcing line height for category-header-medium-small and small **/
+.formio-component-htmlelement.category-header-medium-small p,
+.formio-component-htmlelement.category-header-small p {
+  line-height: $line-height-header-sm;
 }
 
 /**Adjusting margin for headers with sub heading using class has-sub-heading **/

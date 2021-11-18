@@ -97,8 +97,8 @@ export interface ProgramDeliveryTypes {
 }
 
 export interface EntranceRequirements {
-  hasMinimunAge: boolean;
+  hasMinimumAge: boolean;
   minHighSchool: boolean;
   requirementsByInstitution: boolean;
-  requirementsByBcita: boolean;
+  requirementsByBCITA: boolean;
 }

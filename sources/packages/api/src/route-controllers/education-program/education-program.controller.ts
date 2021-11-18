@@ -100,10 +100,10 @@ export class EducationProgramController {
       isAviationProgram: program.isAviationProgram,
       minHoursWeekAvi: program.minHoursWeekAvi,
       entranceRequirements: {
-        hasMinimunAge: program.hasMinimunAge,
+        hasMinimumAge: program.hasMinimumAge,
         minHighSchool: program.minHighSchool,
         requirementsByInstitution: program.requirementsByInstitution,
-        requirementsByBcita: program.requirementsByBcita,
+        requirementsByBCITA: program.requirementsByBCITA,
       },
       hasWILComponent: program.hasWILComponent,
       isWILApproved: program.isWILApproved,

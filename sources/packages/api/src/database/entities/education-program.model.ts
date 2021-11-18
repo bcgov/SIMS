@@ -146,9 +146,9 @@ export class EducationProgram extends RecordDataModel {
    * Indicates if there is a minimum age requirement.
    */
   @Column({
-    name: "has_minimun_age",
+    name: "has_minimum_age",
   })
-  hasMinimunAge?: boolean;
+  hasMinimumAge?: boolean;
   /**
    * Code to indicates the "English as a Second Language (ESL)" requirement
    */
@@ -253,7 +253,7 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "requirements_by_bcita",
   })
-  requirementsByBcita?: boolean;
+  requirementsByBCITA?: boolean;
 
   /**
    * Identifier for Work Integrated(WIL) Learning component.

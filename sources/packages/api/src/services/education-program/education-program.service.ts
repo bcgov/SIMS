@@ -101,7 +101,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.averageHoursStudy = educationProgram.averageHoursStudy;
     program.completionYears = educationProgram.completionYears;
     program.admissionRequirement = educationProgram.admissionRequirement;
-    program.hasMinimunAge = educationProgram.entranceRequirements.hasMinimunAge;
+    program.hasMinimumAge = educationProgram.entranceRequirements.hasMinimumAge;
     program.eslEligibility = educationProgram.eslEligibility;
     program.hasJointInstitution = educationProgram.hasJointInstitution;
     program.hasJointDesignatedInstitution =
@@ -116,8 +116,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.minHighSchool = educationProgram.entranceRequirements.minHighSchool;
     program.requirementsByInstitution =
       educationProgram.entranceRequirements.requirementsByInstitution;
-    program.requirementsByBcita =
-      educationProgram.entranceRequirements.requirementsByBcita;
+    program.requirementsByBCITA =
+      educationProgram.entranceRequirements.requirementsByBCITA;
     program.hasWILComponent = educationProgram.hasWILComponent;
     program.isWILApproved = educationProgram.isWILApproved;
     program.wilProgramEligibility = educationProgram.wilProgramEligibility;
