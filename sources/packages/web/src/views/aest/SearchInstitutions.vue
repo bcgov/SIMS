@@ -67,7 +67,7 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { SearchInstitutionResp, Address } from "@/types";
+import { SearchInstitutionResp } from "@/types";
 import { useToastMessage, useFormatters } from "@/composables";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 
