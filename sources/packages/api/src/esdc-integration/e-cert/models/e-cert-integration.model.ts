@@ -1,10 +1,13 @@
+import { DisbursementValueType } from "../../../database/entities";
+
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
 export const ECERT_SENT_TITLE = "ENTITLEMENT";
 export const TIME_FORMAT = "HHmm";
 
-export interface GrantAward {
+export interface Award {
+  type: DisbursementValueType;
   code: string;
   amount: number;
 }
@@ -37,7 +40,7 @@ export interface ECertRecord {
   gender: string;
   maritalStatus: string;
   studentNumber: string;
-  grantAwards: GrantAward[];
+  grantAwards: Award[];
 }
 
 /**

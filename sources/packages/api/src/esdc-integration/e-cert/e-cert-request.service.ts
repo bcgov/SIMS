@@ -46,11 +46,6 @@ export class ECertRequestService {
       (disbursement) => disbursement.id,
     );
 
-    // Total hash of the Student's SIN, its used in the footer content.
-    const totalSINHash = disbursementRecords
-      .map((disbursement) => +disbursement.sin)
-      .reduce((previousSin, currentSin) => previousSin + currentSin);
-
     //Create records and create the unique file sequence number
     let uploadResult: ECertUploadResult;
     await this.sequenceService.consumeNextSequence(
@@ -61,7 +56,6 @@ export class ECertRequestService {
           const fileContent = this.ecertIntegrationService.createRequestContent(
             disbursementRecords,
             nextSequenceNumber,
-            totalSINHash,
           );
           // Create the request filename with the file path for the e-Cert File.
           const fileInfo =
@@ -105,6 +99,7 @@ export class ECertRequestService {
     const now = new Date();
     const addressInfo =
       disbursement.application.student.contactInfo.addresses[0];
+    // TODO: Move calculations to the integration service.
     // Sum all values for grants and loans
     // const studentTotalAmount = disbursement.disbursementValues
     //   .map(disbursement => disbursement.valueAmount)

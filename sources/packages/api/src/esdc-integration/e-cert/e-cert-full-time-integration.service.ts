@@ -11,6 +11,7 @@ import {
   getMaritalStatusCode,
 } from "../../utilities";
 import {
+  Award,
   ECertRecord,
   RecordTypeCodes,
 } from "./models/e-cert-integration.model";
@@ -21,6 +22,7 @@ import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.mo
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertfileRecord } from "./e-cert-files/e-cert-file-record";
+import { DisbursementValueType } from "src/database/entities";
 
 @Injectable()
 export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
@@ -46,7 +48,6 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
   createRequestContent(
     ecertRecords: ECertRecord[],
     fileSequence: number,
-    totalSINHash: number,
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
@@ -56,7 +57,32 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     header.sequence = fileSequence;
     fileLines.push(header);
     // Detail records
+
     const fileRecords = ecertRecords.map((ecertRecord) => {
+      const studentAmount = this.getTotalDisbursementAmount(
+        ecertRecord.grantAwards,
+        [
+          DisbursementValueType.CanadaLoan,
+          DisbursementValueType.BCLoan,
+          DisbursementValueType.CanadaGrant,
+          DisbursementValueType.BCTotalGrant,
+        ],
+      );
+      const cslAwardAmount = this.getTotalDisbursementAmount(
+        ecertRecord.grantAwards,
+        [DisbursementValueType.CanadaLoan],
+      );
+      const bcslAwardAmount = this.getTotalDisbursementAmount(
+        ecertRecord.grantAwards,
+        [DisbursementValueType.BCLoan],
+      );
+      const totalGrantAmount = this.getTotalDisbursementAmount(
+        ecertRecord.grantAwards,
+        [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
+      );
+      const schoolAmount = Math.round(ecertRecord.schoolAmount);
+      const disbursementAmount = studentAmount + schoolAmount;
+
       const esdcRecord = new ECertfileRecord();
       esdcRecord.recordType = RecordTypeCodes.ECertRecord;
       esdcRecord.sin = ecertRecord.sin;
@@ -65,11 +91,11 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       esdcRecord.disbursementDate = ecertRecord.disbursementDate;
       esdcRecord.documentProducedDate = ecertRecord.documentProducedDate;
       esdcRecord.negotiatedExpiryDate = ecertRecord.negotiatedExpiryDate;
-      esdcRecord.disbursementAmount = ecertRecord.disbursementAmount;
-      esdcRecord.studentAmount = ecertRecord.studentAmount;
-      esdcRecord.schoolAmount = ecertRecord.schoolAmount;
-      esdcRecord.cslAwardAmount = ecertRecord.cslAwardAmount;
-      esdcRecord.bcslAwardAmount = ecertRecord.bcslAwardAmount;
+      esdcRecord.disbursementAmount = disbursementAmount;
+      esdcRecord.studentAmount = studentAmount;
+      esdcRecord.schoolAmount = schoolAmount;
+      esdcRecord.cslAwardAmount = cslAwardAmount;
+      esdcRecord.bcslAwardAmount = bcslAwardAmount;
       esdcRecord.educationalStartDate = ecertRecord.educationalStartDate;
       esdcRecord.educationalEndDate = ecertRecord.educationalEndDate;
       esdcRecord.federalInstitutionCode = ecertRecord.federalInstitutionCode;
@@ -92,12 +118,18 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
         ecertRecord.maritalStatus,
       );
       esdcRecord.studentNumber = ecertRecord.studentNumber;
-      esdcRecord.totalGrantAmount = ecertRecord.totalGrantAmount;
+      esdcRecord.totalGrantAmount = totalGrantAmount;
       esdcRecord.grantAwards = ecertRecord.grantAwards;
       return esdcRecord;
     });
     fileLines.push(...fileRecords);
+
     // Footer or Trailer record
+
+    // Total hash of the Student's SIN, its used in the footer content.
+    const totalSINHash = ecertRecords
+      .map((ecertRecord) => +ecertRecord.sin)
+      .reduce((previousSin, currentSin) => previousSin + currentSin);
     const footer = new ECertFileFooter();
     footer.recordTypeCode = RecordTypeCodes.ECertFooter;
     footer.totalSINHash = totalSINHash;
@@ -107,16 +139,19 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     return fileLines;
   }
 
-  /**
-   * Expected file name of the MSFAA request file.
-   * for Part time the format is PPxx.EDU.MSFA.SENT.PT.YYYYMMDD.sss
-   * for full time the format is PPxx.EDU.MSFA.SENT.YYYYMMDD.sss
-   * xx is the province code currently its BC
-   * sss is a sequence that should be resetted every day
-   * @param OfferingIntensity offering intensity of the application
-   *  where MSFAA is requested.
-   * @returns Full file path of the file to be saved on the SFTP.
-   */
+  private getTotalDisbursementAmount(
+    awards: Award[],
+    types: DisbursementValueType[],
+  ): number {
+    const awardAmount = awards
+      .filter((award) => types.includes(award.type))
+      .map((award) => award.amount)
+      .reduce(
+        (previousAmount, currentAmount) => previousAmount + currentAmount,
+      );
+    return Math.round(awardAmount);
+  }
+
   async createRequestFileName(entityManager?: EntityManager): Promise<{
     fileName: string;
     filePath: string;
