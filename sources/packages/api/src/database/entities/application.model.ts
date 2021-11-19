@@ -113,7 +113,7 @@ export class Application extends RecordDataModel {
 
   @ManyToOne(() => EducationProgramOffering, {
     eager: false,
-    cascade: false,
+    cascade: true,
   })
   @JoinColumn({
     name: "offering_id",
