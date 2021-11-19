@@ -1,4 +1,4 @@
-import { DisbursementValueType } from "../../../database/entities";
+import { DisbursementValue } from "../../../database/entities";
 
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
@@ -6,11 +6,10 @@ export const NUMBER_FILLER = "0";
 export const ECERT_SENT_TITLE = "ENTITLEMENT";
 export const TIME_FORMAT = "HHmm";
 
-export interface Award {
-  type: DisbursementValueType;
-  code: string;
-  amount: number;
-}
+export type Award = Pick<
+  DisbursementValue,
+  "valueType" | "valueCode" | "valueAmount"
+>;
 
 export interface ECertRecord {
   sin: string;
@@ -26,7 +25,7 @@ export interface ECertRecord {
   weeksOfStudy: number;
   fieldOfStudy: number;
   yearOfStudy: number;
-  totalYearsOfStudy: number;
+  completionYears: string;
   enrollmentConfirmationDate: Date;
   dateOfBirth: Date;
   lastName: string;
@@ -40,7 +39,7 @@ export interface ECertRecord {
   gender: string;
   maritalStatus: string;
   studentNumber: string;
-  grantAwards: Award[];
+  awards: Award[];
 }
 
 /**

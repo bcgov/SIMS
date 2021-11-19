@@ -1,8 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
-import { DisbursementSchedule } from "../../database/entities";
+import {
+  DisbursementSchedule,
+  OfferingIntensity,
+} from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTCNow } from "../../utilities";
+import { getFieldOfStudyFromCIPCode, getUTCNow, round } from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
   DisbursementScheduleService,
@@ -10,26 +13,33 @@ import {
 } from "../../services";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import {
+  Award,
   ECertRecord,
   ECertUploadResult,
-  GrantAward,
-} from "./models/e-cert-integration.model";
+} from "./models/e-cert-full-time-integration.model";
 
 const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
 
 @Injectable()
-export class ECertRequestService {
+export class ECertFullTimeRequestService {
   constructor(
     private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly sequenceService: SequenceControlService,
   ) {}
 
-  // TODO: Add return type.
-  async generateECert(): Promise<any> {
+  /**
+   * Get all full time disbursements available to be sent to ESDC.
+   * Considerer any record that is scheduled in upcoming days or in the past.
+   * @returns result of the file upload with the file generated and the
+   * amount of records added to the file.
+   */
+  async generateECert(): Promise<ECertUploadResult> {
     this.logger.log(`Retrieving disbursements to generate the e-Cert file...`);
     const disbursements =
-      await this.disbursementScheduleService.getECertInformation();
+      await this.disbursementScheduleService.getECertInformationToBeSent(
+        OfferingIntensity.fullTime,
+      );
     if (!disbursements.length) {
       return {
         generatedFile: "none",
@@ -95,25 +105,27 @@ export class ECertRequestService {
     return uploadResult;
   }
 
+  /**
+   * Create the e-Cert record with the information needed to generate the
+   * entire record to be sent to ESDC.
+   * @param disbursement disbursement that contains all information to
+   * generate the record.
+   * @returns e-Cert record.
+   */
   private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
     const addressInfo =
       disbursement.application.student.contactInfo.addresses[0];
-    // TODO: Move calculations to the integration service.
-    // Sum all values for grants and loans
-    // const studentTotalAmount = disbursement.disbursementValues
-    //   .map(disbursement => disbursement.valueAmount)
-    //   .reduce((previousAmount, currentAmount) => (previousAmount + currentAmount));
-
-    const fieldOfStudy =
-      +disbursement.application.offering.educationProgram.cipCode.substr(0, 2);
-
-    const grantAwards = disbursement.disbursementValues.map(
+    const fieldOfStudy = getFieldOfStudyFromCIPCode(
+      disbursement.application.offering.educationProgram.cipCode,
+    );
+    const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
         ({
-          code: disbursementValue.valueCode,
-          amount: disbursementValue.valueAmount,
-        } as GrantAward),
+          valueType: disbursementValue.valueType,
+          valueCode: disbursementValue.valueCode,
+          valueAmount: round(disbursementValue.valueAmount).toString(),
+        } as Award),
     );
 
     return {
@@ -127,12 +139,13 @@ export class ECertRequestService {
         disbursement.application.offering.tuitionRemittanceRequestedAmount,
       educationalStartDate: disbursement.application.offering.studyStartDate,
       educationalEndDate: disbursement.application.offering.studyEndDate,
-      federalInstitutionCode:
-        disbursement.application.offering.institutionLocation.institutionCode,
+      federalInstitutionCode: disbursement.application.location.institutionCode,
       weeksOfStudy: 1,
       fieldOfStudy,
-      yearOfStudy: 9,
-      totalYearsOfStudy: 5,
+      // TODO: get the value from offerings (to be defined/added).
+      yearOfStudy: 1,
+      completionYears:
+        disbursement.application.offering.educationProgram.completionYears,
       enrollmentConfirmationDate: now,
       dateOfBirth: disbursement.application.student.birthDate,
       lastName: disbursement.application.student.user.lastName,
@@ -143,9 +156,12 @@ export class ECertRequestService {
       country: addressInfo.country,
       email: disbursement.application.student.user.email,
       gender: disbursement.application.student.gender,
+      // TODO: get the maritalStatus from profile or application (to be defined).
       maritalStatus: "married",
-      studentNumber: disbursement.application.data.studentNumber,
-      grantAwards,
+      // TODO: student number to be save alongside the application (to be defined).
+      studentNumber:
+        disbursement.application.data?.studentNumber.toString() || "",
+      awards,
     } as ECertRecord;
   }
 

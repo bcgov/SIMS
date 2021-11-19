@@ -4,7 +4,7 @@ import {
   ECERT_SENT_TITLE,
   RecordTypeCodes,
   SPACE_FILLER,
-} from "../models/e-cert-integration.model";
+} from "../models/e-cert-full-time-integration.model";
 
 /**
  * Footer of an E-Cert file.

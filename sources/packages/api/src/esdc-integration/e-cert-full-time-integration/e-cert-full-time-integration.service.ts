@@ -7,14 +7,16 @@ import {
 import { ESDCIntegrationConfig } from "../../types";
 import {
   getDayOfTheYear,
+  getDisbursementValuesByType,
   getGenderCode,
   getMaritalStatusCode,
+  getTotalDisbursementAmount,
+  getTotalYearsOfStudy,
 } from "../../utilities";
 import {
-  Award,
   ECertRecord,
   RecordTypeCodes,
-} from "./models/e-cert-integration.model";
+} from "./models/e-cert-full-time-integration.model";
 import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
@@ -53,34 +55,34 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     // Header record
     const header = new ECertFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertHeader;
-    header.provinceCode = this.esdcConfig.originatorCode;
+    header.processDate = new Date();
+    header.originatorCode = this.esdcConfig.originatorCode;
     header.sequence = fileSequence;
     fileLines.push(header);
+
     // Detail records
 
+    // Calculated values.
+    // !All values must be rounded to the nearest integer (0.5 rounds up).
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      const studentAmount = this.getTotalDisbursementAmount(
-        ecertRecord.grantAwards,
-        [
-          DisbursementValueType.CanadaLoan,
-          DisbursementValueType.BCLoan,
-          DisbursementValueType.CanadaGrant,
-          DisbursementValueType.BCTotalGrant,
-        ],
-      );
-      const cslAwardAmount = this.getTotalDisbursementAmount(
-        ecertRecord.grantAwards,
-        [DisbursementValueType.CanadaLoan],
-      );
-      const bcslAwardAmount = this.getTotalDisbursementAmount(
-        ecertRecord.grantAwards,
-        [DisbursementValueType.BCLoan],
-      );
-      const totalGrantAmount = this.getTotalDisbursementAmount(
-        ecertRecord.grantAwards,
-        [DisbursementValueType.CanadaGrant, DisbursementValueType.BCTotalGrant],
-      );
+      const studentAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+        DisbursementValueType.CanadaLoan,
+        DisbursementValueType.BCLoan,
+        DisbursementValueType.CanadaGrant,
+        DisbursementValueType.BCTotalGrant,
+      ]);
+      const cslAwardAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+        DisbursementValueType.CanadaLoan,
+      ]);
+      const bcslAwardAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+        DisbursementValueType.BCLoan,
+      ]);
+      const totalGrantAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+        DisbursementValueType.CanadaGrant,
+        DisbursementValueType.BCTotalGrant,
+      ]);
       const schoolAmount = Math.round(ecertRecord.schoolAmount);
+      // These values are already rounded.
       const disbursementAmount = studentAmount + schoolAmount;
 
       const esdcRecord = new ECertfileRecord();
@@ -102,7 +104,9 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       esdcRecord.weeksOfStudy = ecertRecord.weeksOfStudy;
       esdcRecord.fieldOfStudy = ecertRecord.fieldOfStudy;
       esdcRecord.yearOfStudy = ecertRecord.yearOfStudy;
-      esdcRecord.totalYearsOfStudy = ecertRecord.totalYearsOfStudy;
+      esdcRecord.totalYearsOfStudy = getTotalYearsOfStudy(
+        ecertRecord.completionYears,
+      );
       esdcRecord.enrollmentConfirmationDate =
         ecertRecord.enrollmentConfirmationDate;
       esdcRecord.dateOfBirth = ecertRecord.dateOfBirth;
@@ -119,17 +123,24 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       );
       esdcRecord.studentNumber = ecertRecord.studentNumber;
       esdcRecord.totalGrantAmount = totalGrantAmount;
-      esdcRecord.grantAwards = ecertRecord.grantAwards;
+      esdcRecord.grantAwards = getDisbursementValuesByType(ecertRecord.awards, [
+        DisbursementValueType.CanadaGrant,
+        DisbursementValueType.BCTotalGrant,
+      ]);
+
+      console.log(esdcRecord);
+
       return esdcRecord;
     });
     fileLines.push(...fileRecords);
 
     // Footer or Trailer record
 
-    // Total hash of the Student's SIN, its used in the footer content.
-    const totalSINHash = ecertRecords
-      .map((ecertRecord) => +ecertRecord.sin)
-      .reduce((previousSin, currentSin) => previousSin + currentSin);
+    // Total hash of the Student's SIN.
+    const totalSINHash = ecertRecords.reduce(
+      (hash, record) => hash + +record.sin,
+      0,
+    );
     const footer = new ECertFileFooter();
     footer.recordTypeCode = RecordTypeCodes.ECertFooter;
     footer.totalSINHash = totalSINHash;
@@ -137,19 +148,6 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     fileLines.push(footer);
 
     return fileLines;
-  }
-
-  private getTotalDisbursementAmount(
-    awards: Award[],
-    types: DisbursementValueType[],
-  ): number {
-    const awardAmount = awards
-      .filter((award) => types.includes(award.type))
-      .map((award) => award.amount)
-      .reduce(
-        (previousAmount, currentAmount) => previousAmount + currentAmount,
-      );
-    return Math.round(awardAmount);
   }
 
   async createRequestFileName(entityManager?: EntityManager): Promise<{

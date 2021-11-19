@@ -7,7 +7,11 @@ import {
   MSFAASFTPResponseFile,
   TransactionSubCodes,
 } from "../msfaa-integration/models/msfaa-integration.model";
-import { ConfigService, SequenceControlService, SshService } from "../services";
+import {
+  ConfigService,
+  SequenceControlService,
+  SshService,
+} from "../../services";
 import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
 import {
   getGenderCode,
@@ -46,7 +50,7 @@ export class MSFAAIntegrationService {
     private readonly sequenceService: SequenceControlService,
     private readonly sshService: SshService,
   ) {
-    this.esdcConfig = config.getConfig().MSFAAIntegration;
+    this.esdcConfig = config.getConfig().ESDCIntegration;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 

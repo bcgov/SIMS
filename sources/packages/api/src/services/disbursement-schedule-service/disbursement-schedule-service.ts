@@ -17,6 +17,7 @@ import {
   ApplicationStatus,
   DisbursementSchedule,
   DisbursementValue,
+  OfferingIntensity,
 } from "../../database/entities";
 import { Disbursement } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
@@ -98,7 +99,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           const newValue = new DisbursementValue();
           newValue.valueType = disbursementValue.valueType;
           newValue.valueCode = disbursementValue.valueCode;
-          newValue.valueAmount = disbursementValue.valueAmount;
+          newValue.valueAmount = disbursementValue.valueAmount.toString();
           return newValue;
         },
       );
@@ -132,23 +133,29 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * Check if there are restrictions applied to the student account that would
    * prevent the disbursement.
    */
-  async getECertInformation(): Promise<DisbursementSchedule[]> {
+  async getECertInformationToBeSent(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<DisbursementSchedule[]> {
     // Define the minimum date to send a disbursement.
-    const disbursementMinDate = dayjs().add(
-      DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
-      "days",
-    );
-    console.log("disbursementMinDate:", disbursementMinDate);
+    const disbursementMinDate = dayjs()
+      .add(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS, "days")
+      .toDate();
 
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("disbursement")
       .select([
         "disbursement.id",
         "disbursement.documentNumber",
         "disbursement.negotiatedExpiryDate",
+        "disbursement.disbursementDate",
         "application.applicationNumber",
-        "application.data->'studentNumber'",
+        "application.data",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
         "offering.tuitionRemittanceRequestedAmount",
+        "educationProgram.cipCode",
+        "educationProgram.completionYears",
         "user.firstName",
         "user.lastName",
         "user.email",
@@ -156,16 +163,21 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "student.birthDate",
         "student.gender",
         "student.contactInfo",
+        "location.id",
         "location.institutionCode",
+        "disbursementValue.valueType",
+        "disbursementValue.valueCode",
+        "disbursementValue.valueAmount",
       ])
       .innerJoin("disbursement.application", "application")
-      .innerJoin("disbursement.location", "location")
-      .innerJoin("disbursement.offering", "offering")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
-
       .innerJoin("student.user", "user")
       .innerJoin("application.msfaaNumber", "msfaaNumber")
-      .where("disbursement.date_sent is null")
+      .innerJoin("disbursement.disbursementValues", "disbursementValue")
+      .where("disbursement.dateSent is null")
       .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
         disbursementMinDate,
       })
@@ -174,12 +186,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .andWhere("msfaaNumber.dateSigned is not null")
       .andWhere("student.validSIN = true")
+      .andWhere("offering.offeringIntensity = :offeringIntensity", {
+        offeringIntensity,
+      })
       .andWhere(
         `not exists(${this.studentRestrictionService
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
-      )
-      .getMany();
+      );
+
+    console.log(query.getSql());
+
+    const result = await query.getMany();
+
+    console.dir(result);
+
+    return result;
   }
 
   /**

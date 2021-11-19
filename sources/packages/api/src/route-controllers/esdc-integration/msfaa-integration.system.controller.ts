@@ -8,8 +8,8 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { OfferingIntensity } from "../../database/entities";
-import { MSFAARequestService } from "../../msfaa-integration/msfaa-request.service";
-import { MSFAAResponseService } from "../../msfaa-integration/msfaa-response.service";
+import { MSFAARequestService } from "../../esdc-integration/msfaa-integration/msfaa-request.service";
+import { MSFAAResponseService } from "../../esdc-integration/msfaa-integration/msfaa-response.service";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")

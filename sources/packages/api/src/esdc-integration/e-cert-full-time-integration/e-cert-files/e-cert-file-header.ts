@@ -6,7 +6,7 @@ import {
   RecordTypeCodes,
   SPACE_FILLER,
   TIME_FORMAT,
-} from "../models/e-cert-integration.model";
+} from "../models/e-cert-full-time-integration.model";
 
 /**
  * Header of an E-Cert file.
@@ -16,19 +16,18 @@ import {
 export class ECertFileHeader implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   processDate: Date;
-  provinceCode: string;
-  environmentCode: string;
+  originatorCode: string;
   sequence: number;
 
   public getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.recordTypeCode);
-    header.appendWithEndFiller(this.provinceCode, 4, SPACE_FILLER);
+    header.appendWithEndFiller(this.originatorCode, 4, SPACE_FILLER);
     header.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
     header.appendWithStartFiller(this.sequence.toString(), 6, "0");
-    header.repeatAppend(SPACE_FILLER, 535); // Trailing space
+    header.repeatAppend(SPACE_FILLER, 735); // Trailing space
     return header.toString();
   }
 }
