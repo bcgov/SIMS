@@ -1,10 +1,18 @@
+--Default value to program description before setting NOT NULL.
+update
+    sims.education_programs
+SET
+    program_description = 'Program Default Description'
+WHERE
+    program_description IS NULL;
+
 --Set NOT NULL constraint on program_description.
 ALTER TABLE
     sims.education_programs
 ALTER COLUMN
     program_description
 SET
-    NOT NULL DEFAULT 'Program Default Description';
+    NOT NULL;
 
 --Default constraint for the program_description is removed after the not null constraint is enforced.
 ALTER TABLE

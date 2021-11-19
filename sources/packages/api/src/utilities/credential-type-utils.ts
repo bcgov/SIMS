@@ -14,5 +14,5 @@ export const credentialTypeToDisplay = (credentialType: string): string => {
     postGraduateOrDoctorate: "Post-Graduate / Doctorate",
     qualifyingStudies: "Qualifying Studies",
   };
-  return credentialTypeMap[credentialType];
+  return credentialTypeMap[credentialType] || credentialType;
 };
