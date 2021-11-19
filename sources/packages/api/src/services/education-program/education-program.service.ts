@@ -58,7 +58,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.name",
         "programs.description",
         "programs.credentialType",
-        "programs.credentialTypeOther",
         "programs.deliveredOnSite",
         "programs.deliveredOnline",
       ])
@@ -83,7 +82,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.name = educationProgram.name;
     program.description = educationProgram.description;
     program.credentialType = educationProgram.credentialType;
-    program.credentialTypeOther = educationProgram.credentialTypeOther;
     program.cipCode = educationProgram.cipCode;
     program.nocCode = educationProgram.nocCode;
     program.sabcCode = educationProgram.sabcCode;
@@ -148,7 +146,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.name as name",
         "programs.cipCode as cipCode",
         "programs.credentialType as credentialType",
-        "programs.credentialTypeOther as credentialTypeOther",
         "programs.approvalStatus as approvalStatus",
       ])
       .addSelect(
@@ -171,7 +168,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.name = summary.name;
       summaryItem.cipCode = summary.cipcode;
       summaryItem.credentialType = summary.credentialtype;
-      summaryItem.credentialTypeOther = summary.credentialtypeother;
       summaryItem.approvalStatus = summary.approvalstatus;
       summaryItem.totalOfferings = summary.totalofferings;
       return summaryItem;
@@ -194,7 +190,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.name",
         "programs.description",
         "programs.credentialType",
-        "programs.credentialTypeOther",
         "programs.cipCode",
         "programs.nocCode",
         "programs.sabcCode",
@@ -211,7 +206,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     summaryItem.name = educationProgram.name;
     summaryItem.description = educationProgram.description;
     summaryItem.credentialType = educationProgram.credentialType;
-    summaryItem.credentialTypeOther = educationProgram.credentialTypeOther;
     summaryItem.cipCode = educationProgram.cipCode;
     summaryItem.nocCode = educationProgram.nocCode;
     summaryItem.sabcCode = educationProgram.sabcCode;

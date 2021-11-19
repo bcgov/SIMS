@@ -43,13 +43,6 @@ export class EducationProgram extends RecordDataModel {
   })
   credentialType: string;
   /**
-   * Credential type descritpion when "Other" is selected for credential_type.
-   */
-  @Column({
-    name: "credential_type_other",
-  })
-  credentialTypeOther: string;
-  /**
    * Classification of Instructional Programs (CIP) Code.
    */
   @Column({

@@ -49,7 +49,6 @@ import {
   determinePDStatus,
   deliveryMethod,
   dateString,
-  credentialTypeToDisplay,
   defaultFileFilter,
   uploadLimits,
 } from "../../utilities";
@@ -215,10 +214,7 @@ export class StudentController extends BaseController {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
-      credentialTypeToDisplay: credentialTypeToDisplay(
-        educationProgram.credentialType,
-        educationProgram.credentialTypeOther,
-      ),
+      credentialType: educationProgram.credentialType,
       deliveryMethod: deliveryMethod(
         educationProgram.deliveredOnline,
         educationProgram.deliveredOnSite,

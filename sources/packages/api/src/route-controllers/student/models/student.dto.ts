@@ -43,7 +43,7 @@ export interface StudentEducationProgramDto {
   id: number;
   name: string;
   description: string;
-  credentialTypeToDisplay: string;
+  credentialType: string;
   deliveryMethod: string;
 }
 

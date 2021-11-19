@@ -18,7 +18,6 @@ export interface EducationProgramBaseDto {
   name: string;
   description: string;
   credentialType: string;
-  credentialTypeOther: string;
   cipCode: string;
   nocCode: string;
   sabcCode: string;
@@ -31,7 +30,6 @@ export interface SummaryEducationProgramDto {
   id: number;
   name: string;
   credentialType: string;
-  credentialTypeOther: string;
   cipCode: string;
   offeringsCount: number;
   approvalStatus: string;
@@ -45,7 +43,7 @@ export interface StudentEducationProgramDto {
   id: number;
   name: string;
   description: string;
-  credentialTypeToDisplay: string;
+  credentialType: string;
   deliveryMethod: string;
 }
 

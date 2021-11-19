@@ -7,7 +7,6 @@ export interface EducationProgramDto {
   name: string;
   description?: string;
   credentialType: string;
-  credentialTypeOther: string;
   cipCode: string;
   nocCode: string;
   sabcCode: string;

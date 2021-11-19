@@ -4,9 +4,9 @@ ALTER TABLE
 ADD
     COLUMN IF NOT EXISTS average_hours_study INT;
 
-COMMENT ON COLUMN sims.education_programs.has_minimun_age IS 'Average hours of study.';
+COMMENT ON COLUMN sims.education_programs.average_hours_study IS 'Average hours of study.';
 
--- Add has_minimun_age to admission_requirement table.
+-- Add admission_requirement to education_programs table.
 ALTER TABLE
     sims.education_programs
 ADD
@@ -20,7 +20,7 @@ ALTER TABLE
 ALTER COLUMN
     admission_requirement DROP DEFAULT;
 
--- Add has_minimun_age to credential_type_other table.
+-- Add credential_type_other to education_programs table.
 ALTER TABLE
     sims.education_programs
 ADD
