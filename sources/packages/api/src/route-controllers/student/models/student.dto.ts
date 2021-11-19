@@ -44,6 +44,7 @@ export interface StudentEducationProgramDto {
   name: string;
   description: string;
   credentialType: string;
+  credentialTypeToDisplay: string;
   deliveryMethod: string;
 }
 

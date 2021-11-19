@@ -51,6 +51,7 @@ import {
   dateString,
   defaultFileFilter,
   uploadLimits,
+  credentialTypeToDisplay,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
@@ -215,6 +216,9 @@ export class StudentController extends BaseController {
       name: educationProgram.name,
       description: educationProgram.description,
       credentialType: educationProgram.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(
+        educationProgram.credentialType,
+      ),
       deliveryMethod: deliveryMethod(
         educationProgram.deliveredOnline,
         educationProgram.deliveredOnSite,

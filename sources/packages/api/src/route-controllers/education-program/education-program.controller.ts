@@ -25,6 +25,7 @@ import {
 } from "./models/summary-education-program.dto";
 import { EducationProgram } from "../../database/entities";
 import { OptionItem } from "../../types";
+import { credentialTypeToDisplay } from "../../utilities";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -49,6 +50,7 @@ export class EducationProgramController {
       id: program.id,
       name: program.name,
       credentialType: program.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
       cipCode: program.cipCode,
       totalOfferings: program.totalOfferings,
       approvalStatus: program.approvalStatus,
@@ -200,6 +202,9 @@ export class EducationProgramController {
       name: educationProgram.name,
       description: educationProgram.description,
       credentialType: educationProgram.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(
+        educationProgram.credentialType,
+      ),
       cipCode: educationProgram.cipCode,
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,

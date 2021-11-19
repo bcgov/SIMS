@@ -56,7 +56,7 @@
           <v-col cols="2"
             ><span class="font-weight-bold">Credential Type</span>
             <br />
-            <p>{{ educationProgram.credentialType }}</p>
+            <p>{{ educationProgram.credentialTypeToDisplay }}</p>
           </v-col>
         </v-row>
         <v-row class="secondary-color">
