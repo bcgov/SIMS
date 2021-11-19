@@ -100,7 +100,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .andWhere("restrictionStudent.id = student.id")
       .groupBy("studentRestrictions.student.id")
       .addGroupBy("restrictions.id")
-      .addGroupBy("restrictions.restrictionType")
       .having("count(*) > restrictions.allowedCount");
   }
 }
