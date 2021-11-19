@@ -25,7 +25,7 @@ import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.mo
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
-import { DisbursementValueType } from "src/database/entities";
+import { DisbursementValueType } from "../../database/entities";
 
 /**
  * Manages the file content generation and methods to
