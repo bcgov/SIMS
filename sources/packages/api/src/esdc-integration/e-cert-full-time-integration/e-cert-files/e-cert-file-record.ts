@@ -11,22 +11,21 @@ import {
 /**
  * Number of possible awards available to be provided (code and amount).
  */
-const GRANT_AWARD_SLOTS = 10;
+const AWARD_SLOTS = 10;
 
 /**
  * Record of an Entitlement E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertfileRecord implements FixedFormatFileLine {
+export class ECertFileRecord implements FixedFormatFileLine {
   recordType: RecordTypeCodes;
   /**
    * Social insurance number of student.
    */
   sin: string;
   /**
-   * BCSAP Application Number ie 2007123456.
-   * Note that while SP may store Application Number, it is not used for client searches.
+   * Student Application number.
    */
   applicationNumber: string;
   /**
@@ -47,24 +46,29 @@ export class ECertfileRecord implements FixedFormatFileLine {
   negotiatedExpiryDate: Date;
   /**
    * Total dollar amount of all funding types on this document (e-Cert).
+   * ! Must be rounded, only integer, no decimals.
    */
   disbursementAmount: number;
   /**
    * Dollar amount that should be sent to the student. This represents the total
    * amount of BCSL/grants and CSL/grants that should go to the student on this document.
+   * ! Must be rounded, only integer, no decimals.
    */
   studentAmount: number;
   /**
    * Dollar amount that should be sent to the school. This represents the total amount of
    * BCSL/grants and CSL/grants that should go to the student on this document.
+   * ! Must be rounded, only integer, no decimals.
    */
   schoolAmount: number;
   /**
    * Federal loan dollar amount to be disbursed.
+   * ! Must be rounded, only integer, no decimals.
    */
   cslAwardAmount: number;
   /**
    * Provincial loan dollar amount to be disbursed.
+   * ! Must be rounded, only integer, no decimals.
    */
   bcslAwardAmount: number;
   /**
@@ -151,6 +155,7 @@ export class ECertfileRecord implements FixedFormatFileLine {
   totalGrantAmount: number;
   /**
    * Federal grants list (maximum 10) where 6 to 10 are not expecting data.
+   * ! All values must be rounded, only integers, no decimals.
    */
   grantAwards: Award[];
 
@@ -159,12 +164,7 @@ export class ECertfileRecord implements FixedFormatFileLine {
     record.append(this.recordType);
     record.append(this.sin, 9);
     record.appendWithStartFiller(this.applicationNumber, 19, NUMBER_FILLER);
-    record.appendWithStartFiller(
-      this.documentNumber.toString(),
-      8,
-      NUMBER_FILLER,
-    );
-    // 0.5 goes up.
+    record.appendWithStartFiller(this.documentNumber, 8, NUMBER_FILLER);
     record.appendDate(this.disbursementDate, DATE_FORMAT);
     record.appendDate(this.documentProducedDate, DATE_FORMAT);
     record.appendDate(this.negotiatedExpiryDate, DATE_FORMAT);
@@ -211,13 +211,13 @@ export class ECertfileRecord implements FixedFormatFileLine {
     record.appendWithStartFiller(this.totalGrantAmount, 6, NUMBER_FILLER);
     // Add the list of awards codes and values that always fill the same amount
     // of slots defined on GRANT_AWARD_SLOTS. When there values available
-    for (let i = 0; i < GRANT_AWARD_SLOTS; i++) {
+    for (let i = 0; i < AWARD_SLOTS; i++) {
       const award = this.grantAwards.shift();
       if (award) {
         record.appendWithEndFiller(award.valueCode, 4, SPACE_FILLER);
         record.appendWithStartFiller(award.valueAmount, 6, NUMBER_FILLER);
       } else {
-        record.repeatAppend(SPACE_FILLER, 10); // Empty data for code(4)+amount(6) = 10 empty spaces.
+        record.repeatAppend(SPACE_FILLER, 10); // Empty data for code(length=4)+amount(length=6) = 10 empty spaces.
       }
     }
 

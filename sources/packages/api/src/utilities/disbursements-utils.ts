@@ -21,6 +21,7 @@ export function getDisbursementValuesByType(
 /**
  * Get the sum of the awards (disbursement values)
  * for the specific types.
+ * ! Values returned by this method must be rounded.
  * @param awards list of awards (disbursement values).
  * @param types types sum and get the total.
  * @returns sum of the awards (disbursement values)
@@ -44,7 +45,7 @@ export function getTotalDisbursementAmount(
  * @returns field of study extracted from the CIP code.
  */
 export function getFieldOfStudyFromCIPCode(cipCode: string): number | null {
-  if (cipCode?.length <= FIELD_OF_STUDY_LENGTH) {
+  if (cipCode?.length >= FIELD_OF_STUDY_LENGTH) {
     return +cipCode.substr(0, FIELD_OF_STUDY_LENGTH);
   }
   return null;
@@ -53,12 +54,12 @@ export function getFieldOfStudyFromCIPCode(cipCode: string): number | null {
 /**
  * Round a number or string to the nearest integer (0.5 rounds up).
  * @param decimalValue decimal value as number or string.
- * @returns if a valid number returns the rounded number, otherwise null.
+ * @returns if a valid number, returns the rounded number, otherwise null.
  */
 export function round(decimalValue: number | string): number | null {
-  const parsedDecimalValue = +decimalValue;
-  if (isNumber(parsedDecimalValue)) {
-    return Math.round(+decimalValue);
+  const parsedDecimalValue = parseFloat(decimalValue.toString());
+  if (isNaN(parsedDecimalValue)) {
+    return null;
   }
-  return null;
+  return Math.round(parsedDecimalValue);
 }

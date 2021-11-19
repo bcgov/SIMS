@@ -146,6 +146,7 @@ export class ECertFullTimeRequestService {
       yearOfStudy: 1,
       completionYears:
         disbursement.application.offering.educationProgram.completionYears,
+      // TODO: not available (to be defined/added).
       enrollmentConfirmationDate: now,
       dateOfBirth: disbursement.application.student.birthDate,
       lastName: disbursement.application.student.user.lastName,
@@ -158,7 +159,7 @@ export class ECertFullTimeRequestService {
       gender: disbursement.application.student.gender,
       // TODO: get the maritalStatus from profile or application (to be defined).
       maritalStatus: "married",
-      // TODO: student number to be save alongside the application (to be defined).
+      // TODO: student number to be saved alongside the application (to be defined).
       studentNumber:
         disbursement.application.data?.studentNumber.toString() || "",
       awards,

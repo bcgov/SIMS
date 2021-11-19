@@ -2,6 +2,7 @@ import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base
 import { StringBuilder } from "../../../utilities/string-builder";
 import {
   ECERT_SENT_TITLE,
+  NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/e-cert-full-time-integration.model";
@@ -20,9 +21,9 @@ export class ECertFileFooter implements FixedFormatFileLine {
     const footer = new StringBuilder();
     footer.append(this.recordTypeCode);
     footer.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
-    footer.appendWithStartFiller(this.recordCount.toString(), 9, "0");
-    footer.appendWithStartFiller(this.totalSINHash.toString(), 15, "0");
-    footer.repeatAppend(SPACE_FILLER, 533); //Trailing spaces
+    footer.appendWithStartFiller(this.recordCount, 9, NUMBER_FILLER);
+    footer.appendWithStartFiller(this.totalSINHash, 15, NUMBER_FILLER);
+    footer.repeatAppend(SPACE_FILLER, 733); //Trailing spaces
     return footer.toString();
   }
 }

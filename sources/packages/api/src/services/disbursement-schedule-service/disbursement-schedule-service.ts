@@ -141,7 +141,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .add(DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS, "days")
       .toDate();
 
-    const query = this.repo
+    return this.repo
       .createQueryBuilder("disbursement")
       .select([
         "disbursement.id",
@@ -190,18 +190,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         offeringIntensity,
       })
       .andWhere(
-        `not exists(${this.studentRestrictionService
+        `NOT EXISTS(${this.studentRestrictionService
           .getExistsBlockRestrictionQuery()
           .getSql()})`,
-      );
-
-    console.log(query.getSql());
-
-    const result = await query.getMany();
-
-    console.dir(result);
-
-    return result;
+      )
+      .getMany();
   }
 
   /**

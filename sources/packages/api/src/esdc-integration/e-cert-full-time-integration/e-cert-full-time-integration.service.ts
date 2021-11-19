@@ -15,6 +15,7 @@ import {
 } from "../../utilities";
 import {
   ECertRecord,
+  NUMBER_FILLER,
   RecordTypeCodes,
 } from "./models/e-cert-full-time-integration.model";
 import { StringBuilder } from "../../utilities/string-builder";
@@ -23,9 +24,13 @@ import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
 import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
-import { ECertfileRecord } from "./e-cert-files/e-cert-file-record";
+import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "src/database/entities";
 
+/**
+ * Manages the file content generation and methods to
+ * upload/download the files to SFTP.
+ */
 @Injectable()
 export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
   private readonly esdcConfig: ESDCIntegrationConfig;
@@ -63,7 +68,8 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     // Detail records
 
     // Calculated values.
-    // !All values must be rounded to the nearest integer (0.5 rounds up).
+    // ! All values must be rounded to the nearest integer (0.5 rounds up).
+    // ! All values on ecertRecord.awards are supposed to be already rounded at this stage.
     const fileRecords = ecertRecords.map((ecertRecord) => {
       const studentAmount = getTotalDisbursementAmount(ecertRecord.awards, [
         DisbursementValueType.CanadaLoan,
@@ -82,55 +88,50 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
         DisbursementValueType.BCTotalGrant,
       ]);
       const schoolAmount = Math.round(ecertRecord.schoolAmount);
-      // These values are already rounded.
+      // ! These values are supposed to be already rounded at this stage.
       const disbursementAmount = studentAmount + schoolAmount;
 
-      const esdcRecord = new ECertfileRecord();
-      esdcRecord.recordType = RecordTypeCodes.ECertRecord;
-      esdcRecord.sin = ecertRecord.sin;
-      esdcRecord.applicationNumber = ecertRecord.applicationNumber;
-      esdcRecord.documentNumber = ecertRecord.documentNumber;
-      esdcRecord.disbursementDate = ecertRecord.disbursementDate;
-      esdcRecord.documentProducedDate = ecertRecord.documentProducedDate;
-      esdcRecord.negotiatedExpiryDate = ecertRecord.negotiatedExpiryDate;
-      esdcRecord.disbursementAmount = disbursementAmount;
-      esdcRecord.studentAmount = studentAmount;
-      esdcRecord.schoolAmount = schoolAmount;
-      esdcRecord.cslAwardAmount = cslAwardAmount;
-      esdcRecord.bcslAwardAmount = bcslAwardAmount;
-      esdcRecord.educationalStartDate = ecertRecord.educationalStartDate;
-      esdcRecord.educationalEndDate = ecertRecord.educationalEndDate;
-      esdcRecord.federalInstitutionCode = ecertRecord.federalInstitutionCode;
-      esdcRecord.weeksOfStudy = ecertRecord.weeksOfStudy;
-      esdcRecord.fieldOfStudy = ecertRecord.fieldOfStudy;
-      esdcRecord.yearOfStudy = ecertRecord.yearOfStudy;
-      esdcRecord.totalYearsOfStudy = getTotalYearsOfStudy(
+      const record = new ECertFileRecord();
+      record.recordType = RecordTypeCodes.ECertRecord;
+      record.sin = ecertRecord.sin;
+      record.applicationNumber = ecertRecord.applicationNumber;
+      record.documentNumber = ecertRecord.documentNumber;
+      record.disbursementDate = ecertRecord.disbursementDate;
+      record.documentProducedDate = ecertRecord.documentProducedDate;
+      record.negotiatedExpiryDate = ecertRecord.negotiatedExpiryDate;
+      record.disbursementAmount = disbursementAmount;
+      record.studentAmount = studentAmount;
+      record.schoolAmount = schoolAmount;
+      record.cslAwardAmount = cslAwardAmount;
+      record.bcslAwardAmount = bcslAwardAmount;
+      record.educationalStartDate = ecertRecord.educationalStartDate;
+      record.educationalEndDate = ecertRecord.educationalEndDate;
+      record.federalInstitutionCode = ecertRecord.federalInstitutionCode;
+      record.weeksOfStudy = ecertRecord.weeksOfStudy;
+      record.fieldOfStudy = ecertRecord.fieldOfStudy;
+      record.yearOfStudy = ecertRecord.yearOfStudy;
+      record.totalYearsOfStudy = getTotalYearsOfStudy(
         ecertRecord.completionYears,
       );
-      esdcRecord.enrollmentConfirmationDate =
+      record.enrollmentConfirmationDate =
         ecertRecord.enrollmentConfirmationDate;
-      esdcRecord.dateOfBirth = ecertRecord.dateOfBirth;
-      esdcRecord.lastName = ecertRecord.lastName;
-      esdcRecord.firstName = ecertRecord.firstName;
-      esdcRecord.addressLine1 = ecertRecord.addressLine1;
-      esdcRecord.addressLine2 = ecertRecord.addressLine2;
-      esdcRecord.city = ecertRecord.city;
-      esdcRecord.countryName = ecertRecord.country;
-      esdcRecord.emailAddress = ecertRecord.email;
-      esdcRecord.gender = getGenderCode(ecertRecord.gender);
-      esdcRecord.maritalStatus = getMaritalStatusCode(
-        ecertRecord.maritalStatus,
-      );
-      esdcRecord.studentNumber = ecertRecord.studentNumber;
-      esdcRecord.totalGrantAmount = totalGrantAmount;
-      esdcRecord.grantAwards = getDisbursementValuesByType(ecertRecord.awards, [
+      record.dateOfBirth = ecertRecord.dateOfBirth;
+      record.lastName = ecertRecord.lastName;
+      record.firstName = ecertRecord.firstName;
+      record.addressLine1 = ecertRecord.addressLine1;
+      record.addressLine2 = ecertRecord.addressLine2;
+      record.city = ecertRecord.city;
+      record.countryName = ecertRecord.country;
+      record.emailAddress = ecertRecord.email;
+      record.gender = getGenderCode(ecertRecord.gender);
+      record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
+      record.studentNumber = ecertRecord.studentNumber;
+      record.totalGrantAmount = totalGrantAmount;
+      record.grantAwards = getDisbursementValuesByType(ecertRecord.awards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
       ]);
-
-      console.log(esdcRecord);
-
-      return esdcRecord;
+      return record;
     });
     fileLines.push(...fileRecords);
 
@@ -150,17 +151,27 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     return fileLines;
   }
 
+  /**
+   * Define the e-Cert file name that must be uploaded.
+   * It must follow a pattern like 'PPBC.EDU.ECERTS.Dyyyyjjj.001.DAT'.
+   * @param entityManager allows the sequential number to be part of
+   * the transaction that is used to create sequential number and execute
+   * DB changes.
+   * @returns fileName and full remote file path that the file must be uploaded.
+   */
   async createRequestFileName(entityManager?: EntityManager): Promise<{
     fileName: string;
     filePath: string;
   }> {
     const fileNameArray = new StringBuilder();
     const now = new Date();
-    const dayOfTheYear = getDayOfTheYear(now).toString().padStart(3, "0");
+    const dayOfTheYear = getDayOfTheYear(now)
+      .toString()
+      .padStart(3, NUMBER_FILLER);
     fileNameArray.append(
       `PP${
         this.esdcConfig.originatorCode
-      }.EDU.ECERTS.${now.getFullYear()}${dayOfTheYear}`,
+      }.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
     );
     let fileNameSequence: number;
     await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
@@ -171,7 +182,11 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       },
     );
     fileNameArray.append(".");
-    fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");
+    fileNameArray.appendWithStartFiller(
+      fileNameSequence.toString(),
+      3,
+      NUMBER_FILLER,
+    );
     fileNameArray.append(".DAT");
     const fileName = fileNameArray.toString();
     const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
@@ -181,7 +196,12 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     };
   }
 
-  async downloadResponseFile(fileName: string): Promise<void> {
-    throw new Error("Full Time Entitlement Feedback File to be implemented.");
+  /**
+   * Transform the text lines in parsed objects specific to the integration process.
+   * TODO: read the feedback file.
+   * @param remoteFilePath full remote file path with file name.
+   */
+  downloadResponseFile(remoteFilePath: string): Promise<void> {
+    throw new Error("To be implemented.");
   }
 }

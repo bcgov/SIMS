@@ -3,6 +3,7 @@ import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base
 import {
   DATE_FORMAT,
   ECERT_SENT_TITLE,
+  NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
   TIME_FORMAT,
@@ -26,7 +27,7 @@ export class ECertFileHeader implements FixedFormatFileLine {
     header.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
-    header.appendWithStartFiller(this.sequence.toString(), 6, "0");
+    header.appendWithStartFiller(this.sequence.toString(), 6, NUMBER_FILLER);
     header.repeatAppend(SPACE_FILLER, 735); // Trailing space
     return header.toString();
   }
