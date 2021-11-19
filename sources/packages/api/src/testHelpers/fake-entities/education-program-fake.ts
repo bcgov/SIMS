@@ -17,9 +17,7 @@ export function createFakeEducationProgram(
   program.deliveredOnSite = false;
   program.deliveredOnline = false;
   program.courseLoadCalculation = "courseLoadCalculation";
-  program.averageHoursStudy = 1;
   program.completionYears = "completionYears";
-  program.admissionRequirement = "admissionRequirement";
   program.eslEligibility = "eslEligibility";
   program.hasJointInstitution = "hasJointInstitution";
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";

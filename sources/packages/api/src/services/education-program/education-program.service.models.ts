@@ -37,6 +37,7 @@ export class EducationProgramModel {
   sabcCode: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode: string;
   get credentialTypeToDisplay(): string {
     return credentialTypeToDisplay(
       this.credentialType,

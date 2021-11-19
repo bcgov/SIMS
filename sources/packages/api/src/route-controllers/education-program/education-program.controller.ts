@@ -88,9 +88,7 @@ export class EducationProgramController {
       earnAcademicCreditsOtherInstitution:
         program.earnAcademicCreditsOtherInstitution,
       courseLoadCalculation: program.courseLoadCalculation,
-      averageHoursStudy: program.averageHoursStudy,
       completionYears: program.completionYears,
-      admissionRequirement: program.admissionRequirement,
       eslEligibility: program.eslEligibility,
       hasJointInstitution: program.hasJointInstitution,
       hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
@@ -208,6 +206,7 @@ export class EducationProgramController {
       sabcCode: educationProgram.sabcCode,
       approvalStatus: educationProgram.approvalStatus,
       programIntensity: educationProgram.programIntensity,
+      institutionProgramCode: educationProgram.institutionProgramCode,
     };
   }
 

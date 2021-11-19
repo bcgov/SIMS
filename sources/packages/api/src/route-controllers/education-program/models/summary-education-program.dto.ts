@@ -19,4 +19,5 @@ export interface SubsetEducationProgramDto {
   sabcCode: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
 }

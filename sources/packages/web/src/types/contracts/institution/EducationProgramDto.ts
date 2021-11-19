@@ -24,6 +24,7 @@ export interface EducationProgramBaseDto {
   sabcCode: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
 }
 
 export interface SummaryEducationProgramDto {
@@ -76,7 +77,6 @@ export interface ProgramDto extends EducationProgramBaseDto {
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
-  institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;
   minHoursWeekAvi?: string;

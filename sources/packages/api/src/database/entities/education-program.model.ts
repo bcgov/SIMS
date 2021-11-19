@@ -122,26 +122,12 @@ export class EducationProgram extends RecordDataModel {
   })
   courseLoadCalculation: string;
   /**
-   * Average hours of study.
-   */
-  @Column({
-    name: "average_hours_study",
-  })
-  averageHoursStudy: number;
-  /**
    * Code for years required to complete this program.
    */
   @Column({
     name: "completion_years",
   })
   completionYears: string;
-  /**
-   * Code for the admission requirements for this program.
-   */
-  @Column({
-    name: "admission_requirement",
-  })
-  admissionRequirement: string;
   /**
    * Indicates if there is a minimum age requirement.
    */

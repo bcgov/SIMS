@@ -98,9 +98,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.earnAcademicCreditsOtherInstitution =
       educationProgram.earnAcademicCreditsOtherInstitution;
     program.courseLoadCalculation = educationProgram.courseLoadCalculation;
-    program.averageHoursStudy = educationProgram.averageHoursStudy;
     program.completionYears = educationProgram.completionYears;
-    program.admissionRequirement = educationProgram.admissionRequirement;
     program.hasMinimumAge = educationProgram.entranceRequirements.hasMinimumAge;
     program.eslEligibility = educationProgram.eslEligibility;
     program.hasJointInstitution = educationProgram.hasJointInstitution;
@@ -202,6 +200,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.sabcCode",
         "programs.approvalStatus",
         "programs.programIntensity",
+        "programs.institutionProgramCode",
       ])
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
@@ -218,6 +217,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     summaryItem.sabcCode = educationProgram.sabcCode;
     summaryItem.approvalStatus = educationProgram.approvalStatus;
     summaryItem.programIntensity = educationProgram.programIntensity;
+    summaryItem.institutionProgramCode =
+      educationProgram.institutionProgramCode;
     return summaryItem;
   }
 
