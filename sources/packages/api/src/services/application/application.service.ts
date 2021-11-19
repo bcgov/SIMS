@@ -117,9 +117,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
     if (application.applicationStatus === ApplicationStatus.draft) {
-      // TODO:remove the static program year and add dynamic year, from program year table
+      /**
+       * Generate the application number with respect to the programYearPrefix.
+       * This ensures that respective sequence is created in the sequence_controls table
+       * for specific year 2021,2022 subsequently.
+       */
       application.applicationNumber = await this.generateApplicationNumber(
-        "2122",
+        application.programYear.programYearPrefix,
       );
       application.data = applicationData;
       application.applicationStatus = ApplicationStatus.submitted;
@@ -570,6 +574,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application",
         "programYear.id",
+        "programYear.programYearPrefix",
         "studentFiles",
         "studentFile.uniqueFileName",
       ])

@@ -1,11 +1,11 @@
 export interface ValidatedInstitutionLocation {
   data: {
     locationName: string;
-    address1: string;
-    address2?: string;
+    addressLine1: string;
+    addressLine2?: string;
     city: string;
     provinceState: string;
-    postalZipCode: string;
+    postalCode: string;
     country: string;
     institutionCode: string;
     primaryContactFirstName: string;

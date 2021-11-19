@@ -73,7 +73,6 @@ export default {
   components: {
     FullPageContainer,
   },
-
   setup() {
     const toast = useToastMessage();
     const router = useRouter();
@@ -93,18 +92,16 @@ export default {
         firstName.value,
         lastName.value,
       );
-      if (students.value.length == 0) {
+      if (students.value.length === 0) {
         toast.warn(
           "No Students found",
           "No Students found for the given search criteria.",
         );
       }
     };
-
     const studentsFound = computed(() => {
       return students.value.length > 0;
     });
-
     return {
       appNumber,
       firstName,

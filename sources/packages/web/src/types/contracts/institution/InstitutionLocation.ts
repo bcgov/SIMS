@@ -1,11 +1,4 @@
-export interface InstitutionAddress {
-  address1: string;
-  address2?: string;
-  city: string;
-  country: string;
-  postalZipCode: string;
-  provinceState: string;
-}
+import { Address } from "@/types";
 
 export interface InstitutionPrimaryContact {
   primaryContactEmail: string;
@@ -17,14 +10,14 @@ export interface InstitutionPrimaryContact {
  * DTO for institution location form.io
  */
 export interface InstitutionLocation
-  extends InstitutionAddress,
+  extends Address,
     InstitutionPrimaryContact {
   locationName: string;
 }
 export interface InstitutionLocationData {
   id?: number;
   name: string;
-  data: InstitutionAddress;
+  data: Address;
 }
 /**
  * DTO for institution location Vue

@@ -53,6 +53,15 @@ export class ProgramYear extends RecordDataModel {
   })
   partnerFormName: string;
   /**
+   * Program Year Prefix for the
+   * particular ProgramYear.
+   */
+  @Column({
+    name: "program_year_prefix",
+    nullable: false,
+  })
+  programYearPrefix: string;
+  /**
    * Active Indicator
    */
   @Column({

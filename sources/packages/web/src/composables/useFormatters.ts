@@ -1,3 +1,4 @@
+import { Address } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 
 /**
@@ -66,5 +67,18 @@ export function useFormatters() {
     return 0;
   };
 
-  return { dateString, dateOnlyLongString, getDatesDiff };
+  const getFormattedAddress = (address: Address): string => {
+    const formattedAddress: string[] = [];
+    formattedAddress.push(address.addressLine1);
+    if (address.addressLine2) {
+      formattedAddress.push(address.addressLine2);
+    }
+    formattedAddress.push(address.city);
+    formattedAddress.push(address.provinceState);
+    formattedAddress.push(address.postalCode);
+    formattedAddress.push(address.country);
+    return formattedAddress.join(", ");
+  };
+
+  return { dateString, dateOnlyLongString, getDatesDiff, getFormattedAddress };
 }
