@@ -506,4 +506,19 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     }
     return searchQuery.getMany();
   }
+
+  /**
+   * Get the institution by ID.
+   * @param institutionId Institution id.
+   * @returns Location retrieved, if found, otherwise returns null.
+   */
+  async getAESTInstitutionDetailById(
+    institutionId: number,
+  ): Promise<Institution> {
+    return this.repo
+      .createQueryBuilder("institution")
+      .innerJoinAndSelect("institution.institutionType", "institutionType")
+      .where("institution.id = :institutionId", { institutionId })
+      .getOne();
+  }
 }

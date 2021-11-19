@@ -17,6 +17,7 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import {
+  AESTInstitutionDetailDto,
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
@@ -445,5 +446,57 @@ export class InstitutionController extends BaseController {
         postalCode: eachInstitution.institutionAddress.postalCode,
       },
     }));
+  }
+
+  /**
+   * Get the Institution details for a ministry institution detail page
+   * @param institutionId
+   * @returns AESTInstitutionDetailDto
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("/:institutionId")
+  async getAESTInstitutionDetailById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<AESTInstitutionDetailDto> {
+    if (!institutionId) {
+      throw new UnprocessableEntityException(
+        "Institution Id is required to fetch the institution detail",
+      );
+    }
+    const institutionDetail =
+      await this.institutionService.getAESTInstitutionDetailById(institutionId);
+    return {
+      legalOperatingName: institutionDetail.legalOperatingName,
+      operatingName: institutionDetail.operatingName,
+      primaryPhone: institutionDetail.primaryPhone,
+      primaryEmail: institutionDetail.primaryEmail,
+      website: institutionDetail.website,
+      regulatingBody: institutionDetail.regulatingBody,
+      establishedDate: institutionDetail.establishedDate,
+      primaryContactEmail:
+        institutionDetail.institutionPrimaryContact.primaryContactEmail,
+      primaryContactFirstName:
+        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
+      primaryContactLastName:
+        institutionDetail.institutionPrimaryContact.primaryContactLastName,
+      primaryContactPhone:
+        institutionDetail.institutionPrimaryContact.primaryContactPhone,
+      legalAuthorityEmail:
+        institutionDetail.legalAuthorityContact.legalAuthorityEmail,
+      legalAuthorityFirstName:
+        institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
+      legalAuthorityLastName:
+        institutionDetail.legalAuthorityContact.legalAuthorityLastName,
+      legalAuthorityPhone:
+        institutionDetail.legalAuthorityContact.legalAuthorityPhone,
+      addressLine1: institutionDetail.institutionAddress.addressLine1,
+      addressLine2: institutionDetail.institutionAddress.addressLine2,
+      city: institutionDetail.institutionAddress.city,
+      country: institutionDetail.institutionAddress.country,
+      provinceState: institutionDetail.institutionAddress.provinceState,
+      postalCode: institutionDetail.institutionAddress.postalCode,
+      institutionTypeName: institutionDetail.institutionType.name,
+    };
   }
 }
