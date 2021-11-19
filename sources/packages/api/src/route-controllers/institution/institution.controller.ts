@@ -8,6 +8,7 @@ import {
   Param,
   Head,
   NotFoundException,
+  Query,
 } from "@nestjs/common";
 import {
   BCeIDService,
@@ -19,8 +20,8 @@ import {
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
+  SearchInstitutionRespDto,
 } from "./models/institution.dto";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
@@ -40,11 +41,14 @@ import { UserDto } from "../user/models/user.dto";
 import {
   AllowAuthorizedParty,
   IsInstitutionAdmin,
+  UserToken,
+  Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
-import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { UserGroups } from "../../auth/user-groups.enum";
+import { Institution, InstitutionLocation } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -404,5 +408,42 @@ export class InstitutionController extends BaseController {
         `Institution with guid: ${guid} does not exist`,
       );
     }
+  }
+
+  /**
+   * Search the institution based on the search criteria.
+   * @param legalName legalName of the institution.
+   * @param operatingName operatingName of the institution.
+   * @returns Searched institution details.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("search")
+  async searchInsitutions(
+    @Query("legalName") legalName: string,
+    @Query("operatingName") operatingName: string,
+  ): Promise<SearchInstitutionRespDto[]> {
+    if (!legalName && !operatingName) {
+      throw new UnprocessableEntityException(
+        "Search with at least one search criteria",
+      );
+    }
+    const searchInstitutions = await this.institutionService.searchInstitution(
+      legalName,
+      operatingName,
+    );
+    return searchInstitutions.map((eachInstitution: Institution) => ({
+      id: eachInstitution.id,
+      legalName: eachInstitution.legalOperatingName,
+      operatingName: eachInstitution.operatingName,
+      address: {
+        addressLine1: eachInstitution.institutionAddress.addressLine1,
+        addressLine2: eachInstitution.institutionAddress.addressLine2,
+        city: eachInstitution.institutionAddress.city,
+        provinceState: eachInstitution.institutionAddress.provinceState,
+        country: eachInstitution.institutionAddress.country,
+        postalCode: eachInstitution.institutionAddress.postalCode,
+      },
+    }));
   }
 }

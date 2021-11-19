@@ -133,3 +133,19 @@ export interface InstitutionDetailDto {
   account: BCeIDDetailsDto;
   isBCPrivate?: boolean;
 }
+
+export interface SearchInstitutionRespDto {
+  id: number;
+  legalName: string;
+  operatingName: string;
+  address: InstitutionAddress;
+}
+
+export interface InstitutionAddress {
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceState: string;
+  country: string;
+  postalCode: string;
+}
