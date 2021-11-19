@@ -28,4 +28,4 @@ export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
  * it could be included in the e-Cert files to be sent to the
  * federal government.
  */
-export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 6;
+export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 5;
