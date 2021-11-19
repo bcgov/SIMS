@@ -59,3 +59,8 @@ export interface ECertUploadResult {
   generatedFile: string;
   uploadedRecords: number;
 }
+
+export interface CreateRequestFileNameResult {
+  fileName: string;
+  filePath: string;
+}

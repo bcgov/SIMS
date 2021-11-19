@@ -14,6 +14,7 @@ import {
   getTotalYearsOfStudy,
 } from "../../utilities";
 import {
+  CreateRequestFileNameResult,
   ECertRecord,
   NUMBER_FILLER,
   RecordTypeCodes,
@@ -61,7 +62,6 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     const header = new ECertFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertHeader;
     header.processDate = new Date();
-    header.originatorCode = this.esdcConfig.originatorCode;
     header.sequence = fileSequence;
     fileLines.push(header);
 
@@ -159,19 +159,18 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
    * DB changes.
    * @returns fileName and full remote file path that the file must be uploaded.
    */
-  async createRequestFileName(entityManager?: EntityManager): Promise<{
-    fileName: string;
-    filePath: string;
-  }> {
+  async createRequestFileName(
+    entityManager?: EntityManager,
+  ): Promise<CreateRequestFileNameResult> {
     const fileNameArray = new StringBuilder();
     const now = new Date();
     const dayOfTheYear = getDayOfTheYear(now)
       .toString()
       .padStart(3, NUMBER_FILLER);
     fileNameArray.append(
-      `PP${
-        this.esdcConfig.originatorCode
-      }.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
+      `${
+        this.esdcConfig.environmentCode
+      }PBC.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
     );
     let fileNameSequence: number;
     await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
@@ -193,7 +192,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     return {
       fileName,
       filePath,
-    };
+    } as CreateRequestFileNameResult;
   }
 
   /**

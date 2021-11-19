@@ -3,7 +3,7 @@ import {
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
   SPACE_FILLER,
-  TransactionCodes,
+  RecordTypeCodes,
 } from "../models/msfaa-integration.model";
 
 /**
@@ -12,7 +12,7 @@ import {
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class MSFAAFileFooter implements MSFAARequestFileLine {
-  transactionCode: TransactionCodes;
+  transactionCode: RecordTypeCodes;
   totalSINHash: number;
   recordCount: number;
 
@@ -28,7 +28,7 @@ export class MSFAAFileFooter implements MSFAARequestFileLine {
 
   public static createFromLine(line: string): MSFAAFileFooter {
     const footer = new MSFAAFileFooter();
-    footer.transactionCode = line.substr(0, 3) as TransactionCodes;
+    footer.transactionCode = line.substr(0, 3) as RecordTypeCodes;
     footer.recordCount = parseInt(line.substr(43, 9));
     footer.totalSINHash = parseInt(line.substr(52, 15));
     return footer;

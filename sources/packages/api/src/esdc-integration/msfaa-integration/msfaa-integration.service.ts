@@ -5,7 +5,7 @@ import { LoggerService } from "../../logger/logger.service";
 import {
   DATE_FORMAT,
   MSFAASFTPResponseFile,
-  TransactionSubCodes,
+  ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
 import {
   ConfigService,
@@ -23,7 +23,7 @@ import {
   MSFAARecord,
   MSFAARequestFileLine,
   MSFAAUploadResult,
-  TransactionCodes,
+  RecordTypeCodes,
 } from "./models/msfaa-integration.model";
 import { MSFAAFileDetail } from "./msfaa-files/msfaa-file-detail";
 import { MSFAAFileFooter } from "./msfaa-files/msfaa-file-footer";
@@ -73,15 +73,14 @@ export class MSFAAIntegrationService {
     const msfaaFileLines: MSFAARequestFileLine[] = [];
     // Header record
     const msfaaHeader = new MSFAAFileHeader();
-    msfaaHeader.transactionCode = TransactionCodes.MSFAAHeader;
+    msfaaHeader.transactionCode = RecordTypeCodes.MSFAAHeader;
     msfaaHeader.processDate = processDate;
-    msfaaHeader.provinceCode = this.esdcConfig.originatorCode;
     msfaaHeader.sequence = fileSequence;
     msfaaFileLines.push(msfaaHeader);
     // Detail records
     const fileRecords = msfaaRecords.map((msfaaRecord) => {
       const msfaaDetail = new MSFAAFileDetail();
-      msfaaDetail.transactionCode = TransactionCodes.MSFAADetail;
+      msfaaDetail.transactionCode = RecordTypeCodes.MSFAADetail;
       msfaaHeader.processDate = processDate;
       msfaaDetail.msfaaNumber = msfaaRecord.msfaaNumber;
       msfaaDetail.sin = msfaaRecord.sin;
@@ -109,7 +108,7 @@ export class MSFAAIntegrationService {
     msfaaFileLines.push(...fileRecords);
     // Footer or Trailer record
     const msfaaFooter = new MSFAAFileFooter();
-    msfaaFooter.transactionCode = TransactionCodes.MSFAATrailer;
+    msfaaFooter.transactionCode = RecordTypeCodes.MSFAATrailer;
     msfaaFooter.totalSINHash = totalSINHash;
     msfaaFooter.recordCount = msfaaRecords.length;
     msfaaFileLines.push(msfaaFooter);
@@ -168,7 +167,9 @@ export class MSFAAIntegrationService {
     filePath: string;
   }> {
     const fileNameArray = new StringBuilder();
-    fileNameArray.append(`PP${this.esdcConfig.originatorCode}.EDU.MSFA.SENT.`);
+    fileNameArray.append(
+      `${this.esdcConfig.environmentCode}PBC.EDU.MSFA.SENT.`,
+    );
     let fileNameSequence: number;
     if (OfferingIntensity.partTime === offeringIntensity) {
       fileNameArray.append("PT.");
@@ -230,7 +231,7 @@ export class MSFAAIntegrationService {
         .filter((line) => line.length > 0);
       // Read the first line to check if the header code is the expected one.
       const header = MSFAAFileHeader.createFromLine(fileLines.shift()); // Read and remove header.
-      if (header.transactionCode !== TransactionCodes.MSFAAHeader) {
+      if (header.transactionCode !== RecordTypeCodes.MSFAAHeader) {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
         );
@@ -244,7 +245,7 @@ export class MSFAAIntegrationService {
        * total of all the SIN values
        */
       const trailer = MSFAAFileFooter.createFromLine(fileLines.pop()); // Read and remove trailer.
-      if (trailer.transactionCode !== TransactionCodes.MSFAATrailer) {
+      if (trailer.transactionCode !== RecordTypeCodes.MSFAATrailer) {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on trailer: ${trailer.transactionCode}`,
         );
@@ -276,13 +277,13 @@ export class MSFAAIntegrationService {
           lineNumber,
         );
         sinTotalInRecord += parseInt(msfaaRecord.sin);
-        switch (msfaaRecord.transactionSubCode) {
-          case TransactionSubCodes.Received:
+        switch (msfaaRecord.statusCode) {
+          case ReceivedStatusCode.Received:
             receivedRecords.push(
               new MSFAAResponseReceivedRecord(line, lineNumber),
             );
             break;
-          case TransactionSubCodes.Cancelled:
+          case ReceivedStatusCode.Cancelled:
             cancelledRecords.push(
               new MSFAAResponseCancelledRecord(line, lineNumber),
             );

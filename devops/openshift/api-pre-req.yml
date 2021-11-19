@@ -27,7 +27,7 @@ objects:
       cra-environment-code: ${CRA_ENVIRONMENT_CODE}
       esdc-request-folder: ${ESDC_REQUEST_FOLDER}
       esdc-response-folder: ${ESDC_RESPONSE_FOLDER}
-      esdc-originator-code: ${ESDC_ORIGINATOR_CODE}
+      esdc-environment-code: ${ESDC_ENVIRONMENT_CODE}
       sfas-receive-folder: ${SFAS_RECEIVE_FOLDER}
       atbc-username: ${ATBC_USERNAME}
       atbc-password: ${ATBC_PASSWORD}
@@ -143,11 +143,11 @@ parameters:
     required: true
     description: |
       ESDC folder on ZONE B network server to receive files.
-  - name: ESDC_ORIGINATOR_CODE
-    displayName: ESDC originator code
+  - name: ESDC_ENVIRONMENT_CODE
+    displayName: ESDC environment code
     required: true
     description: |
-      ESDC originator code, usually defined as province code
+      ESDC environment code, D=Dev, T=Test, P=Production
   - name: SFAS_RECEIVE_FOLDER
     displayName: SFAS receive folder
     required: true

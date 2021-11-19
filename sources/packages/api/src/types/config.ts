@@ -110,7 +110,7 @@ export interface ATBCIntegrationConfig {
 export interface ESDCIntegrationConfig {
   ftpRequestFolder: string;
   ftpResponseFolder: string;
-  originatorCode: string;
+  environmentCode: string;
 }
 
 export interface SFASIntegrationConfig {

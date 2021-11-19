@@ -70,7 +70,7 @@ export class ConfigService {
       ESDCIntegration: {
         ftpRequestFolder: process.env.ESDC_REQUEST_FOLDER,
         ftpResponseFolder: process.env.ESDC_RESPONSE_FOLDER,
-        originatorCode: process.env.ESDC_ORIGINATOR_CODE,
+        environmentCode: process.env.ESDC_ENVIRONMENT_CODE,
       },
       SFASIntegrationConfig: {
         ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,

@@ -181,10 +181,10 @@ objects:
                     secretKeyRef:
                       key: ${SFAS_RECEIVE_FOLDER_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: ESDC_ORIGINATOR_CODE
+                - name: ESDC_ENVIRONMENT_CODE
                   valueFrom:
                     secretKeyRef:
-                      key: ${ESDC_ORIGINATOR_CODE_NAME_KEY}
+                      key: ${ESDC_ENVIRONMENT_CODE_NAME_KEY}
                       name: ${API_SECRET_NAME}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
                   value: ${FILE_UPLOAD_MAX_FILE_SIZE}
@@ -399,7 +399,7 @@ parameters:
     value: esdc-request-folder
   - name: ESDC_RESPONSE_FOLDER_NAME_KEY
     value: esdc-response-folder
-  - name: ESDC_ORIGINATOR_CODE_NAME_KEY
-    value: esdc-province-code
+  - name: ESDC_ENVIRONMENT_CODE_NAME_KEY
+    value: esdc-environment-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
