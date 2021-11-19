@@ -25,6 +25,7 @@ import {
 } from "./models/summary-education-program.dto";
 import { EducationProgram } from "../../database/entities";
 import { OptionItem } from "../../types";
+import { credentialTypeToDisplay } from "../../utilities";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -48,7 +49,8 @@ export class EducationProgramController {
     return programs.map((program) => ({
       id: program.id,
       name: program.name,
-      credentialType: program.credentialTypeToDisplay,
+      credentialType: program.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
       cipCode: program.cipCode,
       totalOfferings: program.totalOfferings,
       approvalStatus: program.approvalStatus,
@@ -74,7 +76,6 @@ export class EducationProgramController {
       name: program.name,
       description: program.description,
       credentialType: program.credentialType,
-      credentialTypeOther: program.credentialTypeOther,
       cipCode: program.cipCode,
       nocCode: program.nocCode,
       sabcCode: program.sabcCode,
@@ -88,9 +89,7 @@ export class EducationProgramController {
       earnAcademicCreditsOtherInstitution:
         program.earnAcademicCreditsOtherInstitution,
       courseLoadCalculation: program.courseLoadCalculation,
-      averageHoursStudy: program.averageHoursStudy,
       completionYears: program.completionYears,
-      admissionRequirement: program.admissionRequirement,
       eslEligibility: program.eslEligibility,
       hasJointInstitution: program.hasJointInstitution,
       hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
@@ -202,12 +201,16 @@ export class EducationProgramController {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
-      credentialType: educationProgram.credentialTypeToDisplay,
+      credentialType: educationProgram.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(
+        educationProgram.credentialType,
+      ),
       cipCode: educationProgram.cipCode,
       nocCode: educationProgram.nocCode,
       sabcCode: educationProgram.sabcCode,
       approvalStatus: educationProgram.approvalStatus,
       programIntensity: educationProgram.programIntensity,
+      institutionProgramCode: educationProgram.institutionProgramCode,
     };
   }
 

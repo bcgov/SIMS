@@ -49,9 +49,9 @@ import {
   determinePDStatus,
   deliveryMethod,
   dateString,
-  credentialTypeToDisplay,
   defaultFileFilter,
   uploadLimits,
+  credentialTypeToDisplay,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
@@ -215,9 +215,9 @@ export class StudentController extends BaseController {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
+      credentialType: educationProgram.credentialType,
       credentialTypeToDisplay: credentialTypeToDisplay(
         educationProgram.credentialType,
-        educationProgram.credentialTypeOther,
       ),
       deliveryMethod: deliveryMethod(
         educationProgram.deliveredOnline,

@@ -7,7 +7,6 @@ export interface EducationProgramDto {
   name: string;
   description?: string;
   credentialType: string;
-  credentialTypeOther: string;
   cipCode: string;
   nocCode: string;
   sabcCode: string;
@@ -17,9 +16,7 @@ export interface EducationProgramDto {
   sameOnlineCreditsEarned?: string;
   earnAcademicCreditsOtherInstitution?: string;
   courseLoadCalculation: string;
-  averageHoursStudy: number;
   completionYears: string;
-  admissionRequirement: string;
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;

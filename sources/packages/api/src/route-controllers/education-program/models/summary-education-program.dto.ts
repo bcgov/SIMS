@@ -4,6 +4,7 @@ export class SummaryEducationProgramDto {
   id: number;
   name: string;
   credentialType: string;
+  credentialTypeToDisplay: string;
   cipCode: string;
   totalOfferings: number;
   approvalStatus: string;
@@ -14,9 +15,11 @@ export interface SubsetEducationProgramDto {
   name: string;
   description: string;
   credentialType: string;
+  credentialTypeToDisplay: string;
   cipCode: string;
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
 }

@@ -5,12 +5,12 @@
         <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
       >
     </h5>
-    <h4>View Program</h4>
+    <h3>Program Detail</h3>
     <v-sheet elevation="1" class="mx-auto">
       <v-container>
         <v-row>
           <v-col cols="8">
-            <span class="color-blue h3 font-weight-bold">
+            <span class="category-header-large color-blue">
               {{ educationProgram.name }}
             </span>
             <Chip
@@ -26,9 +26,9 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="secondary-color">
           <v-col cols="5">
-            <span class="font-weight-bold">Description</span>
+            <span class="category-header-medium-small">Description</span>
             <br />
             <p>{{ educationProgram.name }}</p>
           </v-col>
@@ -56,10 +56,10 @@
           <v-col cols="2"
             ><span class="font-weight-bold">Credential Type</span>
             <br />
-            <p>{{ educationProgram.credentialType }}</p>
+            <p>{{ educationProgram.credentialTypeToDisplay }}</p>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="secondary-color">
           <v-col cols="5">
             <span class="font-weight-bold"
               >Classification of Instructional Programs (CIP)</span
@@ -75,15 +75,17 @@
             <p>{{ educationProgram.nocCode }}</p>
           </v-col>
           <v-col cols="3"
-            ><span class="font-weight-bold">SABC Code</span>
+            ><span class="font-weight-bold">Institution Program Code</span>
             <br />
-            <p>{{ educationProgram.sabcCode }}</p>
+            <p>{{ educationProgram.institutionProgramCode }}</p>
           </v-col>
         </v-row>
         <v-divider></v-divider>
         <v-row>
           <v-col cols="8">
-            <h2 class="color-blue">Offerings</h2>
+            <span class="category-header-medium color-blue"
+              >Study period offerings</span
+            >
           </v-col>
           <v-col cols="4">
             <v-btn class="float-right" @click="goToAddNewOffering()">

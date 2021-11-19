@@ -19,8 +19,8 @@
           <Column field="name" header="Program Name" :sortable="true"></Column>
           <Column field="credentialType" header="Credential" :sortable="true">
             <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.credentialType }}
+              <div>
+                {{ slotProps.data.credentialTypeToDisplay }}
               </div>
             </template></Column
           >
@@ -36,7 +36,7 @@
                 class="p-mr-2 p-mb-2 p-text-uppercase"
                 :class="
                   getProgramStatusColorClass(slotProps.data.approvalStatus)
-                " /></template
+                "/></template
           ></Column>
           <Column>
             <template #body="slotProps">

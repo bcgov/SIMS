@@ -18,19 +18,19 @@ export interface EducationProgramBaseDto {
   name: string;
   description: string;
   credentialType: string;
-  credentialTypeOther: string;
+  credentialTypeToDisplay: string;
   cipCode: string;
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
 }
 
 export interface SummaryEducationProgramDto {
   id: number;
   name: string;
   credentialType: string;
-  credentialTypeOther: string;
   cipCode: string;
   offeringsCount: number;
   approvalStatus: string;
@@ -45,6 +45,7 @@ export interface StudentEducationProgramDto {
   name: string;
   description: string;
   credentialTypeToDisplay: string;
+  credentialType: string;
   deliveryMethod: string;
 }
 
@@ -76,7 +77,6 @@ export interface ProgramDto extends EducationProgramBaseDto {
   eslEligibility: string;
   hasJointInstitution: string;
   hasJointDesignatedInstitution: string;
-  institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;
   minHoursWeekAvi?: string;

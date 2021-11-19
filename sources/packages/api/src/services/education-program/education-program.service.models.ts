@@ -1,4 +1,3 @@
-import { credentialTypeToDisplay } from "../../utilities/credential-type-utils";
 import { EducationProgramDto } from "../../route-controllers/education-program/models/save-education-program.dto";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 /**
@@ -15,15 +14,8 @@ export class EducationProgramsSummary {
   name: string;
   cipCode: string;
   credentialType: string;
-  credentialTypeOther: string;
   approvalStatus: string;
   totalOfferings: number;
-  get credentialTypeToDisplay(): string {
-    return credentialTypeToDisplay(
-      this.credentialType,
-      this.credentialTypeOther,
-    );
-  }
 }
 
 export class EducationProgramModel {
@@ -31,16 +23,10 @@ export class EducationProgramModel {
   name: string;
   description: string;
   credentialType: string;
-  credentialTypeOther: string;
   cipCode: string;
   nocCode: string;
   sabcCode: string;
   approvalStatus: string;
   programIntensity: ProgramIntensity;
-  get credentialTypeToDisplay(): string {
-    return credentialTypeToDisplay(
-      this.credentialType,
-      this.credentialTypeOther,
-    );
-  }
+  institutionProgramCode: string;
 }
