@@ -106,8 +106,6 @@ export class ProgramInfoRequestController {
       result.offeringName = application.offering.name;
       result.studyStartDate = application.offering.studyStartDate;
       result.studyEndDate = application.offering.studyEndDate;
-      result.breakStartDate = application.offering.breakStartDate;
-      result.breakEndDate = application.offering.breakEndDate;
       result.actualTuitionCosts = application.offering.actualTuitionCosts;
       result.programRelatedCosts = application.offering.programRelatedCosts;
       result.mandatoryFees = application.offering.mandatoryFees;

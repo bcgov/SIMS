@@ -144,12 +144,6 @@ export class ConfirmationOfEnrollmentController {
       ),
       applicationOfferingEndDate: dateString(application.offering.studyEndDate),
       applicationOfferingHasStudyBreak: application.offering.lacksStudyBreaks,
-      applicationOfferingBreakStartDate: dateString(
-        application.offering.breakStartDate,
-      ),
-      applicationOfferingBreakEndDate: dateString(
-        application.offering.breakEndDate,
-      ),
       applicationOfferingActualTuition: application.offering.actualTuitionCosts,
       applicationOfferingProgramRelatedCost:
         application.offering.programRelatedCosts,

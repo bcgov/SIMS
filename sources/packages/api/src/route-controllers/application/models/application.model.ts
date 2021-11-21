@@ -63,8 +63,6 @@ export interface ApplicationOfferingDetails {
   id: number;
   studyStartDate: Date;
   studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;

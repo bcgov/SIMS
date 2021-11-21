@@ -1,6 +1,6 @@
 import * as dayjs from "dayjs";
 import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
-
+import { StudyBreak } from "../../database/entities/education-program-offering.model";
 import { EXTENDED_DATE_FORMAT } from "../../utilities";
 
 export class EducationProgramOfferingModel {
@@ -26,8 +26,6 @@ export interface ProgramOfferingModel {
   name: string;
   studyStartDate: Date;
   studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
@@ -39,4 +37,10 @@ export interface ProgramOfferingModel {
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  showYrOfStudy?: boolean;
+  hasOfferingWILComponent: string;
+  offeringWILType?: string;
+  studyBreaks?: StudyBreak[];
+  offeringDeclaration: boolean;
 }

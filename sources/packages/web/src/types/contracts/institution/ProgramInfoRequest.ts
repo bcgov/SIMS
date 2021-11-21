@@ -1,4 +1,4 @@
-import { SaveEducationProgramOfferingDto } from "@/types";
+import { OfferingDTO } from "@/types";
 
 /**
  * Possible status for a Program Information Request (PIR).
@@ -37,10 +37,10 @@ export interface PIRSummaryDTO {
   fullName: string;
 }
 
-export interface CompleteProgramInfoRequestDto
-  extends SaveEducationProgramOfferingDto {
+export interface CompleteProgramInfoRequestDto extends OfferingDTO {
   selectedProgram?: number;
   selectedOffering?: number;
+  offeringType?: string;
 }
 
 export interface GetProgramInfoRequestDto

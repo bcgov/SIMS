@@ -1,14 +1,11 @@
 import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
-/**
- * DTO for persisting program offering.
- */
-export interface SaveEducationProgramOfferingDto {
+import { StudyBreak } from "../../../database/entities/education-program-offering.model";
+
+export interface programOfferingBaseDTO {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
   actualTuitionCosts: number;
   programRelatedCosts: number;
   mandatoryFees: number;
@@ -19,8 +16,20 @@ export interface SaveEducationProgramOfferingDto {
   lacksStudyBreaks: boolean;
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
-  offeringType?: OfferingTypes;
   offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  showYrOfStudy?: boolean;
+  hasOfferingWILComponent: string;
+  offeringWILType?: string;
+  studyBreaks?: StudyBreak[];
+  offeringDeclaration: boolean;
+}
+/**
+ * DTO for persisting program offering.
+ */
+export interface SaveEducationProgramOfferingDto
+  extends programOfferingBaseDTO {
+  offeringType?: OfferingTypes;
 }
 /**
  * Summary DTO of program offering.
@@ -36,24 +45,8 @@ export class EducationProgramOfferingDto {
 /**
  * View only DTO for program offering.
  */
-export interface ProgramOfferingDto {
+export interface ProgramOfferingDto extends programOfferingBaseDTO {
   id: number;
-  offeringName: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
-  breakStartDate: Date;
-  breakEndDate: Date;
-  actualTuitionCosts: number;
-  programRelatedCosts: number;
-  mandatoryFees: number;
-  exceptionalExpenses: number;
-  tuitionRemittanceRequestedAmount: number;
-  offeringDelivered: string;
-  lacksStudyDates: boolean;
-  lacksStudyBreaks: boolean;
-  lacksFixedCosts: boolean;
-  tuitionRemittanceRequested: string;
-  offeringIntensity: OfferingIntensity;
 }
 
 export interface ProgramOfferingDetailsDto {

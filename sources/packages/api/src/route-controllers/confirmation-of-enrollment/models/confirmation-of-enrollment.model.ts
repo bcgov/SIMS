@@ -7,8 +7,6 @@ export interface ApplicationDetailsForCOEDTO {
   applicationOfferingStartDate: string;
   applicationOfferingEndDate: string;
   applicationOfferingHasStudyBreak: boolean;
-  applicationOfferingBreakStartDate: string;
-  applicationOfferingBreakEndDate: string;
   applicationOfferingActualTuition: number;
   applicationOfferingProgramRelatedCost: number;
   applicationOfferingMandatoryCost: number;
