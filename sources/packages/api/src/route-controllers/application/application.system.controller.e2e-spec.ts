@@ -15,6 +15,7 @@ import {
   MSFAANumberService,
   SequenceControlService,
   StudentFileService,
+  StudentRestrictionService,
   SupportingUserService,
   TokensService,
   WorkflowActionsService,
@@ -73,6 +74,7 @@ describe("Test system-access/application Controller", () => {
         SupportingUserService,
         createMockedJwtService(),
         DisbursementScheduleService,
+        StudentRestrictionService,
       ],
     }).compile();
 

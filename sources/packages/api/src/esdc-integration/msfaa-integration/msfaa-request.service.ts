@@ -1,16 +1,16 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../common";
-import { MSFAANumber } from "../database/entities";
-import { LoggerService } from "../logger/logger.service";
-import { getUTCNow } from "../utilities";
+import { InjectLogger } from "../../common";
+import { MSFAANumber } from "../../database/entities";
+import { LoggerService } from "../../logger/logger.service";
+import { getUTCNow } from "../../utilities";
 import { EntityManager } from "typeorm";
-import { MSFAANumberService, SequenceControlService } from "../services";
+import { MSFAANumberService, SequenceControlService } from "../../services";
 import {
   MSFAARecord,
   MSFAAUploadResult,
 } from "./models/msfaa-integration.model";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
-import { OfferingIntensity } from "../database/entities/offering-intensity.type";
+import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
 
 @Injectable()
 export class MSFAARequestService {

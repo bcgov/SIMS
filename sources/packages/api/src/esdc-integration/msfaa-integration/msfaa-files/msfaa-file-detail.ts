@@ -1,10 +1,10 @@
-import { StringBuilder } from "../../utilities/string-builder";
+import { StringBuilder } from "../../../utilities/string-builder";
 import {
   DATE_FORMAT,
   MSFAARequestFileLine,
   SPACE_FILLER,
   MSFAA_SENT_STATUS_CODE,
-  TransactionCodes,
+  RecordTypeCodes,
 } from "../models/msfaa-integration.model";
 
 /**
@@ -13,7 +13,7 @@ import {
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class MSFAAFileDetail implements MSFAARequestFileLine {
-  transactionCode: TransactionCodes;
+  transactionCode: RecordTypeCodes;
   processDate: Date;
   msfaaNumber: string;
   sin: string;
@@ -44,7 +44,7 @@ export class MSFAAFileDetail implements MSFAARequestFileLine {
     record.appendDate(this.processDate, DATE_FORMAT);
     record.appendWithEndFiller(this.surname, 25, SPACE_FILLER);
     record.appendWithEndFiller(this.givenName, 15, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 3); //Initals
+    record.repeatAppend(SPACE_FILLER, 3); // Initials
     record.append(this.genderCode);
     record.append(this.maritalStatusCode);
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);

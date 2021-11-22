@@ -10,7 +10,7 @@ export interface IConfig {
   CRAIntegration: CRAIntegrationConfig;
   simsApiClientCredential: ClientCredential;
   ATBCIntegration: ATBCIntegrationConfig;
-  MSFAAIntegration: MSFAAIntegrationConfig;
+  ESDCIntegration: ESDCIntegrationConfig;
   SFASIntegrationConfig: SFASIntegrationConfig;
   /**
    * When defined as true, allows the simulation of a complete cycle of the
@@ -107,10 +107,10 @@ export interface ATBCIntegrationConfig {
   ATBCEndpoint: string;
 }
 
-export interface MSFAAIntegrationConfig {
+export interface ESDCIntegrationConfig {
   ftpRequestFolder: string;
   ftpResponseFolder: string;
-  provinceCode: string;
+  environmentCode: string;
 }
 
 export interface SFASIntegrationConfig {

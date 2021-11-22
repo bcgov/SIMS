@@ -50,12 +50,14 @@ import {
   SupportingUserController,
   MSFAAIntegrationController,
   SFASIntegrationController,
+  ECertIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
-import { MSFAAIntegrationModule } from "./msfaa-integration/msfaa-integration.module";
+import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
+import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
 
 @Module({
   imports: [
@@ -65,6 +67,7 @@ import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.modul
     CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,
+    ECertFullTimeIntegrationModule,
   ],
   controllers: [
     AppController,
@@ -87,6 +90,7 @@ import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.modul
     SupportingUserController,
     MSFAAIntegrationController,
     SFASIntegrationController,
+    ECertIntegrationController,
   ],
   providers: [
     AppService,

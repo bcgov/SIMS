@@ -48,8 +48,12 @@ export class StringBuilder {
    * @param length Fixed string length.
    * @param filler The string to pad the string being appended.
    */
-  public appendWithStartFiller(s: string, length: number, filler: string) {
-    this.append(s.padStart(length, filler));
+  public appendWithStartFiller(
+    s: string | number,
+    length: number,
+    filler: string,
+  ) {
+    this.append(s.toString().padStart(length, filler));
   }
 
   /**

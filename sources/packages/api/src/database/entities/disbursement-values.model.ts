@@ -39,12 +39,14 @@ export class DisbursementValue extends RecordDataModel {
   valueCode: string;
   /**
    * Amount of money to be disbursed for one particular loan/grant.
+   * !Decimal values are retrieved by Typeorm as string from Postgres.
    */
   @Column({
     name: "value_amount",
+    type: "numeric",
     nullable: false,
   })
-  valueAmount: number;
+  valueAmount: string;
   /**
    * Disbursement value ids.
    */

@@ -6,7 +6,7 @@ import {
   RESTRICTION_FEDERAL_MESSAGE,
   RESTRICTION_PROVINCIAL_MESSAGE,
 } from "./constants";
-import { Connection } from "typeorm";
+import { Connection, SelectQueryBuilder } from "typeorm";
 
 /**
  * Service layer for Student Restriction.
@@ -78,5 +78,28 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       hasProvincialRestriction: hasProvincialRestriction,
       restrictionMessage: restrictionMessage,
     } as StudentRestrictionStatus;
+  }
+
+  /**
+   * Creates a 'select' query that could be used in an 'exists' or
+   * 'not exists' where clause to define if the student has some
+   * active restrictions that must prevent him for certain
+   * critical operations, for instance, to have money disbursed.
+   * ! This query will assume that a join to 'student.id' is present
+   * ! in the master query.
+   * @returns 'select' query that could be used in an 'exists' or
+   * 'not exists'.
+   */
+  getExistsBlockRestrictionQuery(): SelectQueryBuilder<StudentRestriction> {
+    return this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select("1")
+      .innerJoin("studentRestrictions.restriction", "restrictions")
+      .innerJoin("studentRestrictions.student", "restrictionStudent")
+      .where("studentRestrictions.isActive = true")
+      .andWhere("restrictionStudent.id = student.id")
+      .groupBy("studentRestrictions.student.id")
+      .addGroupBy("restrictions.id")
+      .having("count(*) > restrictions.allowedCount");
   }
 }

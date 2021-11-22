@@ -67,10 +67,10 @@ export class ConfigService {
         ATBCApp: process.env.ATBC_APP,
         ATBCEndpoint: process.env.ATBC_ENDPOINT,
       },
-      MSFAAIntegration: {
-        ftpRequestFolder: process.env.MSFAA_REQUEST_FOLDER,
-        ftpResponseFolder: process.env.MSFAA_RESPONSE_FOLDER,
-        provinceCode: process.env.MSFAA_PROVINCE_CODE,
+      ESDCIntegration: {
+        ftpRequestFolder: process.env.ESDC_REQUEST_FOLDER,
+        ftpResponseFolder: process.env.ESDC_RESPONSE_FOLDER,
+        environmentCode: process.env.ESDC_ENVIRONMENT_CODE,
       },
       SFASIntegrationConfig: {
         ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,

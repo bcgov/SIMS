@@ -53,16 +53,16 @@ export interface MSFAARequestFileLine {
 /**
  * Codes used to start all the lines of the files sent to MSFAA.
  */
-export enum TransactionCodes {
+export enum RecordTypeCodes {
   MSFAAHeader = "100",
   MSFAADetail = "200",
   MSFAATrailer = "999",
 }
 
 /**
- * Codes used to define if the MSFAA was signed or canceled/rejected.
+ * Codes used to define if the MSFAA was signed or cancelled/rejected.
  */
-export enum TransactionSubCodes {
+export enum ReceivedStatusCode {
   Received = "R",
   Cancelled = "C",
 }
