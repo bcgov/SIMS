@@ -123,7 +123,7 @@ export class SFASApplication extends BaseModel {
   })
   sbsdAward: number;
   /**
-   * Date that this application was canceled (application.cancel_dte).
+   * Date that this application was cancelled (application.cancel_dte).
    */
   @Column({
     name: "application_cancel_date",

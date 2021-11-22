@@ -73,7 +73,7 @@ export default {
         context.emit("reloadData", props.applicationId);
         toast.success(
           "Application Cancelled",
-          "Your application is now canceled!",
+          "Your application is now cancelled!",
         );
       } catch (error) {
         toast.error(

@@ -60,7 +60,7 @@ export enum RecordTypeCodes {
 }
 
 /**
- * Codes used to define if the MSFAA was signed or canceled/rejected.
+ * Codes used to define if the MSFAA was signed or cancelled/rejected.
  */
 export enum ReceivedStatusCode {
   Received = "R",

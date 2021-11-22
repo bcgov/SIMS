@@ -50,7 +50,6 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
    * header, detail and trailer records.
    * @param ecertRecords student, User and application data.
    * @param fileSequence unique file sequence.
-   * @param totalSINHash sum hash total of the Student's SIN.
    * @returns complete ECert content to be sent.
    */
   createRequestContent(
