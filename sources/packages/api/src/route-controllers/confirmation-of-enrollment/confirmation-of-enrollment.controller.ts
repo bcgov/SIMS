@@ -166,6 +166,12 @@ export class ConfirmationOfEnrollmentController {
       ),
       applicationLocationId: application.location.id,
       applicationDeniedReason: getCOEDeniedReason(application),
+      studyBreaks: application.offering.studyBreaks?.map((studyBreak) => {
+        return {
+          breakStartDate: dateString(studyBreak.breakEndDate),
+          breakEndDate: dateString(studyBreak.breakEndDate),
+        };
+      }),
     };
   }
 

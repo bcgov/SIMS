@@ -1,3 +1,4 @@
+import { StudyBreak } from "@/types";
 export interface COESummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
@@ -31,6 +32,7 @@ export interface ApplicationDetailsForCOEDTO {
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
   applicationDeniedReason?: string;
+  studyBreaks?: StudyBreak[];
 }
 
 /**

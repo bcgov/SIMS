@@ -23,6 +23,7 @@ export interface ApplicationDetailsForCOEDTO {
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
   applicationDeniedReason?: string;
+  studyBreaks?: StudyBreak[];
 }
 
 export interface COEDeniedReasonDto {
@@ -37,4 +38,12 @@ export class DenyConfirmationOfEnrollmentDto {
   coeDenyReasonId: number;
   @IsOptional()
   otherReasonDesc?: string;
+}
+
+/**
+ * Read only Interface for study break item.
+ */
+export interface StudyBreak {
+  breakStartDate: string;
+  breakEndDate: string;
 }
