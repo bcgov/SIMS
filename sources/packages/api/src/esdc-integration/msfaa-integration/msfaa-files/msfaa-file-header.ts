@@ -8,6 +8,8 @@ import {
 } from "../models/msfaa-integration.model";
 import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
 
+const ORIGINATOR_CODE = "BC";
+
 /**
  * Header of a MSFAA request file.
  * The documentation about it is available on the document
@@ -21,7 +23,7 @@ export class MSFAAFileHeader implements MSFAARequestFileLine {
   public getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.transactionCode);
-    header.appendWithEndFiller("BC", 4, SPACE_FILLER);
+    header.appendWithEndFiller(ORIGINATOR_CODE, 4, SPACE_FILLER);
     header.appendWithEndFiller(MSFAA_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);

@@ -9,6 +9,8 @@ import {
   TIME_FORMAT,
 } from "../models/e-cert-full-time-integration.model";
 
+const ORIGINATOR_CODE = "BC";
+
 /**
  * Header of an E-Cert file.
  * The documentation about it is available on the document
@@ -22,7 +24,7 @@ export class ECertFileHeader implements FixedFormatFileLine {
   public getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.recordTypeCode);
-    header.appendWithEndFiller("BC", 4, SPACE_FILLER);
+    header.appendWithEndFiller(ORIGINATOR_CODE, 4, SPACE_FILLER);
     header.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);

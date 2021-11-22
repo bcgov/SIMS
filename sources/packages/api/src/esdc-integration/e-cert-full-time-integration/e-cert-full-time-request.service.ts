@@ -140,7 +140,7 @@ export class ECertFullTimeRequestService {
       educationalStartDate: disbursement.application.offering.studyStartDate,
       educationalEndDate: disbursement.application.offering.studyEndDate,
       federalInstitutionCode: disbursement.application.location.institutionCode,
-      weeksOfStudy: 1,
+      weeksOfStudy: disbursement.application.assessment.weeks,
       fieldOfStudy,
       // TODO: get the value from offerings (to be defined/added).
       yearOfStudy: 1,
