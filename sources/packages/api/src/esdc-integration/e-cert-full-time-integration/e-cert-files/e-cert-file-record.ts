@@ -184,6 +184,9 @@ export class ECertFileRecord implements FixedFormatFileLine {
     record.append("F"); // 'F' for full-time. Part time is done by another integration to another system.
     record.repeatAppend(SPACE_FILLER, 2); // Provincial field of study code, optional, not provided.
     record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
+    // The below information indicates if e-cert or paper certificate is sent (E=E-cert; P=Paper).
+    // Paper is no longer used, the data options existed in the past to support a transition period
+    // and has not been removed from the files. We only send electronic files now.
     record.append("E"); // Indicates if e-cert or paper certificate E=E-cert; P=Paper.
     record.appendDate(this.dateOfBirth, DATE_FORMAT);
     record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
