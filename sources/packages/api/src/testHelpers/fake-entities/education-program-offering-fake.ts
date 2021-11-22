@@ -29,5 +29,8 @@ export function createFakeEducationProgramOffering(
   offering.institutionLocation = institutionLocation ?? createFakeLocation();
   offering.offeringIntensity = OfferingIntensity.fullTime;
   offering.offeringType = OfferingTypes.public;
+  offering.yearOfStudy = 1;
+  offering.hasOfferingWILComponent = "no";
+  offering.offeringDeclaration = true;
   return offering;
 }

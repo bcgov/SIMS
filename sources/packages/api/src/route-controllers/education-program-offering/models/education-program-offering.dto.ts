@@ -2,7 +2,7 @@ import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
 
-export interface programOfferingBaseDTO {
+export interface ProgramOfferingBaseDTO {
   offeringName: string;
   studyStartDate: Date;
   studyEndDate: Date;
@@ -28,7 +28,7 @@ export interface programOfferingBaseDTO {
  * DTO for persisting program offering.
  */
 export interface SaveEducationProgramOfferingDto
-  extends programOfferingBaseDTO {
+  extends ProgramOfferingBaseDTO {
   offeringType?: OfferingTypes;
 }
 /**
@@ -45,7 +45,7 @@ export class EducationProgramOfferingDto {
 /**
  * View only DTO for program offering.
  */
-export interface ProgramOfferingDto extends programOfferingBaseDTO {
+export interface ProgramOfferingDto extends ProgramOfferingBaseDTO {
   id: number;
 }
 

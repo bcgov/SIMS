@@ -32,7 +32,6 @@ import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
 import { getOfferingNameAndPeriod } from "../../utilities";
-import { off } from "process";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
