@@ -163,12 +163,6 @@ $border-color-info: #6554c0;
   line-height: $line-height-header-sm;
 }
 
-/**Adjusting margin for headers with sub heading using class has-sub-heading **/
-.formio-component-htmlelement.has-sub-heading p,
-.formio-component-htmlelement.has-sub-heading div {
-  margin-bottom: 5px;
-}
-
 .formio-component .col-form-label {
   font-weight: $formio-header-wt;
 }
