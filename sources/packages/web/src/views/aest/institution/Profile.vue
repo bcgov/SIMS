@@ -67,7 +67,8 @@
               INSTITUTION PRIMARY CONTACT
             </h6>
             <v-row class="mt-1 mb-2">
-              {{ initialValue.primaryContactFullName }}
+              {{ initialValue.primaryContactFirstName }}
+              {{ initialValue.primaryContactLastName }}
             </v-row>
             <v-row class="mt-1 mb-2">
               {{ initialValue.primaryContactEmail }}
@@ -83,7 +84,8 @@
               LEGAL AUTHORIZED AUTHORITY CONTACT
             </h6>
             <v-row class="mt-1 mb-2">
-              {{ initialValue.legalAuthorityFullName }}
+              {{ initialValue.legalAuthorityFirstName }}
+              {{ initialValue.legalAuthorityLastName }}
             </v-row>
             <v-row class="mt-1 mb-2">
               {{ initialValue.legalAuthorityEmail }}
