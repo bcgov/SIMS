@@ -26,6 +26,9 @@
       >
       <v-tab><v-btn @click="showProfile(institutionId)">Users</v-btn></v-tab>
       <v-tab
+        ><v-btn @click="showProfile(institutionId)">Designation</v-btn></v-tab
+      >
+      <v-tab
         ><v-btn @click="showProfile(institutionId)">Restrictions</v-btn></v-tab
       >
       <v-tab><v-btn @click="showProfile(institutionId)">Notes</v-btn></v-tab>
@@ -59,6 +62,7 @@ export default {
     const showProfile = (institutionId: number) => {
       router.push({
         name: AESTRoutesConst.PROFILE,
+        params: { institutionId: institutionId },
       });
     };
 
