@@ -155,6 +155,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.tuitionRemittanceRequestedAmount",
+        "offering.yearOfStudy",
         "educationProgram.cipCode",
         "educationProgram.completionYears",
         "user.firstName",
