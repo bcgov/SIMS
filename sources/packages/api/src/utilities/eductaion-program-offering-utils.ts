@@ -7,18 +7,7 @@ import { dateString } from ".";
  * @returns Year of Study label
  */
 export const getYearOfStudyLabel = (yearId: number): string => {
-  const yearOfStudy = [
-    "Year 1",
-    "Year 2",
-    "Year 3",
-    "Year 4",
-    "Year 5",
-    "Year 6",
-    "Year 7",
-    "Year 8",
-    "Year 9",
-  ];
-  return yearOfStudy[yearId - 1];
+  return `Year ${yearId}`;
 };
 
 /**
@@ -32,7 +21,7 @@ export function getOfferingNameAndPeriod(
   return `${offering.name} (${dateString(
     offering.studyStartDate,
   )} - ${dateString(offering.studyEndDate)})${
-    offering.showYrOfStudy
+    offering.showYearOfStudy
       ? " - " + getYearOfStudyLabel(offering.yearOfStudy)
       : ""
   }`;

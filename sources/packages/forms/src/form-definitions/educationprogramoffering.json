@@ -17,7 +17,7 @@
       ],
       "content": "Add study period",
       "refreshOnChange": false,
-      "customClass": "category-header-large primary-color has-sub-heading",
+      "customClass": "category-header-large primary-color",
       "hidden": false,
       "modalEdit": false,
       "key": "html",
@@ -42,6 +42,7 @@
       },
       "type": "htmlelement",
       "input": false,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -53,7 +54,6 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -82,7 +82,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "eredehc"
+      "id": "e7v3zsj"
     },
     {
       "label": "HTML",
@@ -96,7 +96,7 @@
       ],
       "content": "Students will see the program name, description, and credential type including your study period name, dates, and year of program.",
       "refreshOnChange": false,
-      "customClass": "",
+      "customClass": "mt-n2",
       "hidden": false,
       "modalEdit": false,
       "key": "html6",
@@ -121,6 +121,7 @@
       },
       "type": "htmlelement",
       "input": false,
+      "tableView": false,
       "placeholder": "",
       "prefix": "",
       "suffix": "",
@@ -132,7 +133,6 @@
       "clearOnHide": true,
       "refreshOn": "",
       "redrawOn": "",
-      "tableView": false,
       "dataGridLabel": false,
       "labelPosition": "top",
       "description": "",
@@ -161,7 +161,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "erb7cvl"
+      "id": "eju28h2"
     },
     {
       "title": "Panel",
@@ -405,7 +405,7 @@
           "validateOn": "change",
           "validate": {
             "required": true,
-            "onlyAvailableItems": false,
+            "onlyAvailableItems": true,
             "customMessage": "",
             "custom": "",
             "customPrivate": false,
@@ -461,7 +461,7 @@
             "include": "score",
             "threshold": 0.3
           },
-          "id": "eu7bphr",
+          "id": "eny9x4v",
           "defaultValue": ""
         },
         {
@@ -500,7 +500,7 @@
             "unique": false
           },
           "errorLabel": "",
-          "key": "showYrOfStudy",
+          "key": "showYearOfStudy",
           "tags": [],
           "properties": {},
           "conditional": {
@@ -537,7 +537,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eh2mb8i"
+          "id": "ebim1"
         },
         {
           "label": "HTML",
@@ -559,7 +559,7 @@
           "properties": {},
           "conditional": {
             "show": true,
-            "when": "displayYearOfStudyToStudents",
+            "when": "showYearOfStudy",
             "eq": "true",
             "json": ""
           },
@@ -616,7 +616,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ev5n9qc"
+          "id": "e9zes5n"
         },
         {
           "label": "How will this be offered?",
@@ -660,7 +660,7 @@
             "required": true,
             "onlyAvailableItems": true,
             "customMessage": "",
-            "custom": "valid=(data.programIntensity.includes(input))?true:'The program you have selected has only ' +data.programIntensity+ ' offering';",
+            "custom": "valid = (data.programIntensity.includes(input)) ? true : 'The program you have selected has only ' + data.programIntensity + ' offering';",
             "customPrivate": false,
             "json": "",
             "strictDateValidation": false,
@@ -704,7 +704,7 @@
           "allowMultipleMasks": false,
           "inputType": "radio",
           "fieldSet": false,
-          "id": "e0wnaav",
+          "id": "eak3txq",
           "defaultValue": ""
         },
         {
@@ -1562,7 +1562,7 @@
           ],
           "content": "Study breaks",
           "refreshOnChange": false,
-          "customClass": "category-header-medium primary-color has-sub-heading",
+          "customClass": "category-header-medium primary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html2",
@@ -1587,6 +1587,7 @@
           },
           "type": "htmlelement",
           "input": false,
+          "tableView": false,
           "placeholder": "",
           "prefix": "",
           "suffix": "",
@@ -1598,7 +1599,6 @@
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
-          "tableView": false,
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -1627,7 +1627,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "emsrhdh"
+          "id": "egoblfc"
         },
         {
           "label": "HTML",
@@ -1641,7 +1641,7 @@
           ],
           "content": "Identify scheduled breaks for the program year (August 1 to July 31).\n<ul>\n  <li>Breaks should not exceed two weeks except</li>\n  <li>Calendar year-end break can be up to three weeks long (December to January)</li>\n  <li>Do not include break dates that are before or after the study period</li>\n</ul>",
           "refreshOnChange": false,
-          "customClass": "align-bullets",
+          "customClass": "align-bullets mt-n2",
           "hidden": false,
           "modalEdit": false,
           "key": "html3",
@@ -1666,6 +1666,7 @@
           },
           "type": "htmlelement",
           "input": false,
+          "tableView": false,
           "placeholder": "",
           "prefix": "",
           "suffix": "",
@@ -1677,7 +1678,6 @@
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
-          "tableView": false,
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -1706,7 +1706,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ebg76pp"
+          "id": "e0zx7sl"
         },
         {
           "label": "Study Breaks",
@@ -1838,7 +1838,7 @@
                 "maxDate": null
               },
               "hideOnChildrenHidden": false,
-              "id": "e4xdqvr0",
+              "id": "e4xdqvr00000000000000000000000000",
               "prefix": "",
               "customClass": "",
               "suffix": "",
@@ -2023,7 +2023,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "datepickerMode": "day",
-              "id": "ex3qj3m0"
+              "id": "ex3qj3m00000000000000000000000000"
             }
           ],
           "placeholder": "",
@@ -2127,7 +2127,7 @@
           ],
           "content": "Study costs",
           "refreshOnChange": false,
-          "customClass": "category-header-medium primary-color has-sub-heading",
+          "customClass": "category-header-medium primary-color",
           "hidden": false,
           "modalEdit": false,
           "key": "html4",
@@ -2152,6 +2152,7 @@
           },
           "type": "htmlelement",
           "input": false,
+          "tableView": false,
           "placeholder": "",
           "prefix": "",
           "suffix": "",
@@ -2163,7 +2164,6 @@
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
-          "tableView": false,
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -2192,7 +2192,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ec5yll"
+          "id": "es9d0f4"
         },
         {
           "label": "HTML",
@@ -2206,7 +2206,7 @@
           ],
           "content": "Please add the costs for each section (use 0 if there are no costs)",
           "refreshOnChange": false,
-          "customClass": "",
+          "customClass": "mt-n2",
           "hidden": false,
           "modalEdit": false,
           "key": "html5",
@@ -2231,6 +2231,7 @@
           },
           "type": "htmlelement",
           "input": false,
+          "tableView": false,
           "placeholder": "",
           "prefix": "",
           "suffix": "",
@@ -2242,7 +2243,6 @@
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
-          "tableView": false,
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -2271,7 +2271,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e92qx8l"
+          "id": "ejpj3l"
         },
         {
           "label": "Columns",
@@ -3156,6 +3156,7 @@
               },
               "type": "htmlelement",
               "input": false,
+              "tableView": false,
               "placeholder": "",
               "prefix": "",
               "suffix": "",
@@ -3167,7 +3168,6 @@
               "clearOnHide": true,
               "refreshOn": "",
               "redrawOn": "",
-              "tableView": false,
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -3196,7 +3196,7 @@
               "showCharCount": false,
               "showWordCount": false,
               "allowMultipleMasks": false,
-              "id": "ezyauz"
+              "id": "eicz0e"
             },
             {
               "label": "I confirm this study period offering meets the policies outlined in the StudentAid BC policy manual.",
@@ -3437,5 +3437,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-11-22T04:43:21.073Z"
+  "modified": "2021-11-23T00:01:33.832Z"
 }

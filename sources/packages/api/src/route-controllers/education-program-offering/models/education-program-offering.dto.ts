@@ -18,7 +18,7 @@ export interface ProgramOfferingBaseDTO {
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
-  showYrOfStudy?: boolean;
+  showYearOfStudy?: boolean;
   hasOfferingWILComponent: string;
   offeringWILType?: string;
   studyBreaks?: StudyBreak[];

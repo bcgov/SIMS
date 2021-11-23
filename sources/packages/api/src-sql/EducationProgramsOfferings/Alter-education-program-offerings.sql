@@ -4,15 +4,15 @@ ALTER TABLE
 ADD
     COLUMN IF NOT EXISTS year_of_study INT NOT NULL DEFAULT 1;
 
-COMMENT ON COLUMN sims.education_programs_offerings.year_of_study IS 'Year of study of the study period.';
+COMMENT ON COLUMN sims.education_programs_offerings.year_of_study IS 'Year of study for the study period.';
 
--- Add show_yr_of_study to education_programs_offerings table.
+-- Add show_year_of_study to education_programs_offerings table.
 ALTER TABLE
     sims.education_programs_offerings
 ADD
-    COLUMN IF NOT EXISTS show_yr_of_study BOOLEAN;
+    COLUMN IF NOT EXISTS show_year_of_study BOOLEAN;
 
-COMMENT ON COLUMN sims.education_programs_offerings.show_yr_of_study IS 'This value determins if we show year of study to students.';
+COMMENT ON COLUMN sims.education_programs_offerings.show_year_of_study IS 'This value determines if we show year of study to students.';
 
 -- Add has_offering_wil_component to education_programs_offerings table.
 ALTER TABLE
@@ -20,7 +20,7 @@ ALTER TABLE
 ADD
     COLUMN IF NOT EXISTS has_offering_wil_component VARCHAR(50) NOT NULL DEFAULT 'no';
 
-COMMENT ON COLUMN sims.education_programs_offerings.has_offering_wil_component IS 'This column determines if offering has WIL component.';
+COMMENT ON COLUMN sims.education_programs_offerings.has_offering_wil_component IS 'This column determines if offering has WIL(Work Integrated Learning) component.';
 
 -- Add offering_wil_type to education_programs_offerings table.
 ALTER TABLE

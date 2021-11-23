@@ -142,7 +142,7 @@ export class EducationProgramOfferingController {
       tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
       offeringIntensity: offering.offeringIntensity,
       yearOfStudy: offering.yearOfStudy,
-      showYrOfStudy: offering.showYrOfStudy,
+      showYearOfStudy: offering.showYearOfStudy,
       hasOfferingWILComponent: offering.hasOfferingWILComponent,
       offeringWILType: offering.offeringWILType,
       studyBreaks: offering.studyBreaks,

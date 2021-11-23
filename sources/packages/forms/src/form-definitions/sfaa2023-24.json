@@ -2485,7 +2485,7 @@
                     "widget": "choicesjs",
                     "placeholder": "Select how will you be attending the program",
                     "description": "",
-                    "tooltip": "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of 60% or greater or\r\n40 and 60% for students with a permanent disability. If you are unsure, contact your school’s financial aid officer.",
+                    "tooltip": "A part-time program has a course load between 20 and 59%.A full-time program must have a course load of 60% or greater or\r\n40 and 60% for students with a permanent disability. If you are unsure, contact your school’s financial aid officer.",
                     "customClass": "font-weight-bold",
                     "tabindex": "",
                     "hidden": false,
@@ -2593,7 +2593,7 @@
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "e5c4snk",
+                    "id": "ebybpqp",
                     "defaultValue": ""
                 },
                 {
@@ -2862,7 +2862,7 @@
                             "input": true,
                             "refreshOn": "",
                             "inputType": "text",
-                            "id": "ekiaqgr00000000",
+                            "id": "ekiaqgr0000000000",
                             "defaultValue": null
                         }
                     ],
@@ -27325,5 +27325,5 @@
     "name": "SFAA2023-24",
     "machineName": "SFAA2023-24",
     "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2021-11-22T07:47:10.122Z"
+    "modified": "2021-11-22T23:35:21.499Z"
 }

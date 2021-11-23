@@ -2,9 +2,9 @@
 ALTER TABLE
     sims.education_programs_offerings DROP COLUMN IF EXISTS year_of_study;
 
--- Remove column show_yr_of_study.
+-- Remove column show_year_of_study.
 ALTER TABLE
-    sims.education_programs_offerings DROP COLUMN IF EXISTS show_yr_of_study;
+    sims.education_programs_offerings DROP COLUMN IF EXISTS show_year_of_study;
 
 -- Remove column has_offering_wil_component.
 ALTER TABLE

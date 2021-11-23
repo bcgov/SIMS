@@ -96,7 +96,7 @@
             ],
             "content": "{{ data.applicationNumber + \" | \" + data.institutionLocationName + \" | \" + data.studentStudyStartDate + \" - \" + data.studentStudyEndDate }}",
             "refreshOnChange": true,
-            "customClass": "category-header-medium secondary-color  mt-5 mb-5",
+            "customClass": "category-header-medium secondary-color mt-5 mb-5",
             "hidden": false,
             "modalEdit": false,
             "key": "html17",
@@ -161,7 +161,7 @@
             "showCharCount": false,
             "showWordCount": false,
             "allowMultipleMasks": false,
-            "id": "eslxjqj"
+            "id": "e44r7r"
         },
         {
             "label": "Student Name",
@@ -3445,7 +3445,7 @@
                                 "unique": false
                             },
                             "errorLabel": "",
-                            "key": "showYrOfStudy",
+                            "key": "showYearOfStudy",
                             "tags": [],
                             "properties": {},
                             "conditional": {
@@ -3482,7 +3482,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "edqcbiv"
+                            "id": "erz28z"
                         },
                         {
                             "label": "HTML",
@@ -3504,7 +3504,7 @@
                             "properties": {},
                             "conditional": {
                                 "show": true,
-                                "when": "showYrOfStudy",
+                                "when": "showYearOfStudy",
                                 "eq": "true",
                                 "json": ""
                             },
@@ -3561,7 +3561,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "eq9vsn8"
+                            "id": "e2qqp1f"
                         },
                         {
                             "label": "How will this be offered?",
@@ -4476,7 +4476,7 @@
                             ],
                             "content": "Study breaks",
                             "refreshOnChange": false,
-                            "customClass": "category-header-medium-small primary-color has-sub-heading",
+                            "customClass": "category-header-medium-small primary-color",
                             "hidden": false,
                             "modalEdit": false,
                             "key": "html8",
@@ -4541,7 +4541,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ei05qp"
+                            "id": "ead1u5d"
                         },
                         {
                             "label": "HTML",
@@ -4555,7 +4555,7 @@
                             ],
                             "content": "Identify scheduled breaks for the program year (August 1 to July 31).\n<ul>\n  <li>Breaks should not exceed two weeks except</li>\n  <li>Calendar year-end break can be up to three weeks long (December to January)</li>\n  <li>Do not include break dates that are before or after the study period</li>\n</ul>",
                             "refreshOnChange": false,
-                            "customClass": "align-bullets",
+                            "customClass": "align-bullets mt-n2",
                             "hidden": false,
                             "modalEdit": false,
                             "key": "html13",
@@ -4620,7 +4620,7 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "eachsps8"
+                            "id": "ensb49"
                         },
                         {
                             "label": "Data Grid",
@@ -5039,7 +5039,7 @@
                                             "id": "eptyzeo"
                                         }
                                     ],
-                                    "id": "eurf0na0000000000000000000000000000000000",
+                                    "id": "eurf0na0000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -7016,6 +7016,6 @@
     "name": "programInformationRequest",
     "path": "programinformationrequest",
     "created": "2021-07-30T18:07:34.916Z",
-    "modified": "2021-11-21T09:53:20.978Z",
+    "modified": "2021-11-23T00:05:15.161Z",
     "machineName": "programInformationRequest"
 }

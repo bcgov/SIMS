@@ -124,7 +124,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.tuitionRemittanceRequested",
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
-        "offerings.showYrOfStudy",
+        "offerings.showYearOfStudy",
         "offerings.hasOfferingWILComponent",
         "offerings.offeringWILType",
         "offerings.studyBreaks",
@@ -200,7 +200,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.offeringIntensity =
       educationProgramOffering.offeringIntensity;
     programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
-    programOffering.showYrOfStudy = educationProgramOffering.showYrOfStudy;
+    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
     programOffering.hasOfferingWILComponent =
       educationProgramOffering.hasOfferingWILComponent;
     programOffering.offeringWILType = educationProgramOffering.offeringWILType;
@@ -236,7 +236,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.studyStartDate")
       .addSelect("offerings.studyEndDate")
       .addSelect("offerings.yearOfStudy")
-      .addSelect("offerings.showYrOfStudy")
+      .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
       .andWhere("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,
