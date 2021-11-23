@@ -18,21 +18,38 @@
         </template>
       </v-badge>
     </h2>
-    <v-tabs align-with-title>
-      <v-tab><v-btn @click="showProfile(institutionId)">Profile</v-btn></v-tab>
-      <v-tab><v-btn @click="showProfile(institutionId)">Programs</v-btn></v-tab>
-      <v-tab
-        ><v-btn @click="showProfile(institutionId)">Locations</v-btn></v-tab
-      >
-      <v-tab><v-btn @click="showProfile(institutionId)">Users</v-btn></v-tab>
-      <v-tab
-        ><v-btn @click="showProfile(institutionId)">Designation</v-btn></v-tab
-      >
-      <v-tab
-        ><v-btn @click="showProfile(institutionId)">Restrictions</v-btn></v-tab
-      >
-      <v-tab><v-btn @click="showProfile(institutionId)">Notes</v-btn></v-tab>
-    </v-tabs>
+    <v-btn outlined @click="showProfile(institutionId)"
+      ><v-icon size="25" class="mr-2">mdi-city</v-icon>Profile</v-btn
+    >
+    <v-btn outlined @click="showPrograms(institutionId)">
+      <v-icon size="25" class="mr-2">mdi-book-open-outline</v-icon
+      >Programs</v-btn
+    >
+    <v-btn outlined @click="showLocations(institutionId)"
+      ><v-icon size="25" class="mr-2">mdi-map-marker-outline</v-icon
+      >Locations</v-btn
+    >
+    <v-btn outlined @click="showUsers(institutionId)"
+      ><v-icon size="25" class="mr-2">mdi-account-group-outline</v-icon
+      >Users</v-btn
+    >
+    <v-btn outlined @click="showDesignation(institutionId)"
+      ><v-icon size="25" class="mr-2">mdi-certificate-outline</v-icon
+      >Designation</v-btn
+    >
+    <v-btn outlined @click="showRestrictions(institutionId)"
+      ><v-icon size="25" class="mr-2">mdi-close-circle-outline</v-icon
+      >Restrictions</v-btn
+    >
+    <v-btn outlined @click="showNotes(institutionId)"
+      ><v-icon size="25" class="mr-2">mdi-clipboard-outline</v-icon>Notes</v-btn
+    >
+
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </full-page-container>
 </template>
 
@@ -65,7 +82,42 @@ export default {
         params: { institutionId: institutionId },
       });
     };
-
+    const showPrograms = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.PROGRAMS,
+        params: { institutionId: institutionId },
+      });
+    };
+    const showLocations = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.LOCATIONS,
+        params: { institutionId: institutionId },
+      });
+    };
+    const showUsers = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.USERS,
+        params: { institutionId: institutionId },
+      });
+    };
+    const showDesignation = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.DESIGNATION,
+        params: { institutionId: institutionId },
+      });
+    };
+    const showRestrictions = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.RESTRICTIONS,
+        params: { institutionId: institutionId },
+      });
+    };
+    const showNotes = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.NOTES,
+        params: { institutionId: institutionId },
+      });
+    };
     onMounted(async () => {
       initialValue.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
@@ -74,6 +126,12 @@ export default {
     return {
       initialValue,
       showProfile,
+      showPrograms,
+      showLocations,
+      showUsers,
+      showDesignation,
+      showRestrictions,
+      showNotes,
       goBack,
     };
   },

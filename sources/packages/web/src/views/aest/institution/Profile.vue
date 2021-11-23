@@ -1,7 +1,140 @@
 <template>
-  <h2 color="primary-color" class="mb-15">
-    {{ initialValue.legalOperatingName }}
-  </h2>
+  <full-page-container>
+    <h2 class="color-blue font-weight-bold">Profile</h2>
+    <full-page-container>
+      <v-row>
+        <v-col>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Legal operating name</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.legalOperatingName }}
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Institution name</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.operatingName }}
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Type</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.institutionTypeName }}
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Regulating body</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.regulatingBody }}
+          </v-row>
+        </v-col>
+        <v-divider class="mx-4" vertical></v-divider>
+        <v-col>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Primary phone number</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.primaryPhone }}
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Primary email</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.primaryEmail }}
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Website</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.website }}
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            <span class="font-weight-bold">Established date</span>
+          </v-row>
+          <v-row class="mt-1 mb-2">
+            {{ initialValue.establishedDate }}
+          </v-row>
+        </v-col>
+      </v-row>
+    </full-page-container>
+    <h2 class="color-blue font-weight-bold pt-4 pb-4">Contact info</h2>
+    <full-page-container>
+      <v-row>
+        <v-col
+          ><full-page-container
+            ><h6 class="color-blue font-weight-bold pt-4 pb-4">
+              INSTITUTION PRIMARY CONTACT
+            </h6>
+            <v-row class="mt-1 mb-2">
+              {{ initialValue.primaryContactFullName }}
+            </v-row>
+            <v-row class="mt-1 mb-2">
+              {{ initialValue.primaryContactEmail }}
+            </v-row>
+            <v-row class="mt-1 mb-2">
+              {{ initialValue.primaryContactPhone }}
+            </v-row>
+          </full-page-container></v-col
+        >
+        <v-col
+          ><full-page-container
+            ><h6 class="color-blue font-weight-bold pt-4 pb-4">
+              LEGAL AUTHORIZED AUTHORITY CONTACT
+            </h6>
+            <v-row class="mt-1 mb-2">
+              {{ initialValue.legalAuthorityFullName }}
+            </v-row>
+            <v-row class="mt-1 mb-2">
+              {{ initialValue.legalAuthorityEmail }}
+            </v-row>
+            <v-row class="mt-1 mb-2">
+              {{ initialValue.legalAuthorityPhone }}
+            </v-row></full-page-container
+          ></v-col
+        ></v-row
+      >
+    </full-page-container>
+    <h2 class="color-blue font-weight-bold pt-4 pb-4">Mailing address</h2>
+    <full-page-container>
+      <v-row class="mt-1 mb-2">
+        <span class="font-weight-bold">Address 1</span>
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        {{ initialValue.address?.addressLine1 }}
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        <span class="font-weight-bold">Address 2</span>
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        {{ initialValue.address?.addressLine2 }}
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        <span class="font-weight-bold">City</span>
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        {{ initialValue.address?.city }}
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        <span class="font-weight-bold">Postal code</span>
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        {{ initialValue.address?.postalCode }}
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        <span class="font-weight-bold">Province</span>
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        {{ initialValue.address?.provinceState }}
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        <span class="font-weight-bold">Country</span>
+      </v-row>
+      <v-row class="mt-1 mb-2">
+        {{ initialValue.address?.country }}
+      </v-row>
+    </full-page-container>
+  </full-page-container>
 </template>
 
 <script lang="ts">
@@ -9,8 +142,10 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { AESTInstitutionDetailDto } from "@/types";
 export default {
+  components: { FullPageContainer },
   props: {
     institutionId: {
       type: Number,
