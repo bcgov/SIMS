@@ -5,7 +5,7 @@
         <v-icon left> mdi-arrow-left </v-icon> Back to Institution</a
       >
     </h5>
-    <h2 class="color-blue">{{ institutionDetail }}</h2>
+    <h2 class="color-blue">{{ institutionBasicInfo }}</h2>
     <h2 class="mt-2">Institution Details page is in Progress</h2>
   </v-container>
 </template>
@@ -26,6 +26,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const institutionDetail = ref({});
+    const institutionBasicInfo = ref({});
     const goBack = () => {
       router.push({
         name: AESTRoutesConst.SEARCH_INSTITUTIONS,
@@ -33,6 +34,12 @@ export default {
     };
 
     onMounted(async () => {
+      institutionBasicInfo.value = await Promise.all([
+        InstitutionService.shared.getBasicInstitutionInfoById(
+          props.institutionId,
+        ),
+      ]);
+
       institutionDetail.value = await Promise.all([
         InstitutionService.shared.getAESTInstitutionDetailById(
           props.institutionId,
@@ -41,6 +48,7 @@ export default {
     });
     return {
       institutionDetail,
+      institutionBasicInfo,
       goBack,
     };
   },

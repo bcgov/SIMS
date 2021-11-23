@@ -9,6 +9,7 @@ import {
   ApplicationSummaryDTO,
   SearchInstitutionResp,
   AESTInstitutionDetailDto,
+  BasicInstitutionInfo,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -172,6 +173,21 @@ export class InstitutionApi extends HttpBaseClient {
   public async getAESTInstitutionDetailById(
     institutionId: number,
   ): Promise<AESTInstitutionDetailDto> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/${institutionId}/detail`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getBasicInstitutionInfoById(
+    institutionId: number,
+  ): Promise<BasicInstitutionInfo> {
     try {
       const response = await this.apiClient.get(
         `institution/${institutionId}`,

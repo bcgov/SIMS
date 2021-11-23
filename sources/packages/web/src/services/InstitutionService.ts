@@ -2,6 +2,7 @@ import {
   Institute,
   SearchInstitutionResp,
   AESTInstitutionDetailDto,
+  BasicInstitutionInfo,
 } from "../types/contracts/InstituteContract";
 import {
   InstitutionDto,
@@ -301,7 +302,7 @@ export class InstitutionService {
   }
 
   /**
-   * Get the Institution details for a ministry institution detail page
+   * Get the Institution details for the ministry institution detail page
    * @param institutionId
    * @returns AESTInstitutionDetailDto
    */
@@ -309,5 +310,15 @@ export class InstitutionService {
     institutionId: number,
   ): Promise<AESTInstitutionDetailDto> {
     return ApiClient.Institution.getAESTInstitutionDetailById(institutionId);
+  }
+  /**
+   * Get the Basic information of the institution for the ministry institution detail page header
+   * @param institutionId
+   * @returns BasicInstitutionInfo
+   */
+  async getBasicInstitutionInfoById(
+    institutionId: number,
+  ): Promise<BasicInstitutionInfo> {
+    return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
   }
 }

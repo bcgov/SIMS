@@ -5,6 +5,10 @@ export interface Institute {
   code?: string;
 }
 
+export interface BasicInstitutionInfo {
+  operatingName: string;
+}
+
 /**
  * Interface for Institution search API response
  */

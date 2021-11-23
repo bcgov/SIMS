@@ -132,6 +132,10 @@ export class AESTInstitutionDetailDto extends PartialType(InstitutionDto) {
   institutionTypeName: string;
 }
 
+export interface BasicInstitutionInfo {
+  operatingName: string;
+}
+
 export interface InstitutionDetailDto {
   institution: InstitutionDto;
   account: BCeIDDetailsDto;

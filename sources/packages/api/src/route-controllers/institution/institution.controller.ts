@@ -18,6 +18,7 @@ import {
 } from "../../services";
 import {
   AESTInstitutionDetailDto,
+  BasicInstitutionInfo,
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
@@ -449,13 +450,13 @@ export class InstitutionController extends BaseController {
   }
 
   /**
-   * Get the Institution details for a ministry institution detail page
+   * Get the Institution details for the ministry institution detail page
    * @param institutionId
    * @returns AESTInstitutionDetailDto
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("/:institutionId")
+  @Get("/:institutionId/detail")
   async getAESTInstitutionDetailById(
     @Param("institutionId") institutionId: number,
   ): Promise<AESTInstitutionDetailDto> {
@@ -497,6 +498,30 @@ export class InstitutionController extends BaseController {
       provinceState: institutionDetail.institutionAddress.provinceState,
       postalCode: institutionDetail.institutionAddress.postalCode,
       institutionTypeName: institutionDetail.institutionType.name,
+    };
+  }
+
+  /**
+   * Get the Basic Institution info for the ministry institution detail page
+   * @param institutionId
+   * @returns AESTInstitutionDetailDto
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("/:institutionId")
+  async getBasicInstitutionInfoById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<BasicInstitutionInfo> {
+    if (!institutionId) {
+      throw new UnprocessableEntityException(
+        "Institution Id is required to fetch the institution detail",
+      );
+    }
+    const institutionDetail = await this.institutionService.getById(
+      institutionId,
+    );
+    return {
+      operatingName: institutionDetail.operatingName,
     };
   }
 }
