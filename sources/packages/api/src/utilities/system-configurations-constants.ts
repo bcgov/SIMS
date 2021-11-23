@@ -23,3 +23,9 @@ export const SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS = 10;
  * all the time.
  */
 export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
+/**
+ * Amount of days before a disbursement schedule date is due that
+ * it could be included in the e-Cert files to be sent to the
+ * federal government.
+ */
+export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 5;

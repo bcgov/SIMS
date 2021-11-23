@@ -5,10 +5,12 @@ import * as dayjs from "dayjs";
 import * as utc from "dayjs/plugin/utc";
 import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
+import * as dayOfYear from "dayjs/plugin/dayOfYear";
 
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
+dayjs.extend(dayOfYear);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 
@@ -110,4 +112,13 @@ export function getDateOnlyFromFormat(
     DATE_ONLY_ISO_FORMAT,
   );
   return getDateOnly(isoDate);
+}
+
+/**
+ * Get the day of the year (1-366), considering the leap year.
+ * @param day day to retrieve the number.
+ * @returns day of the year (1-366), considering the leap year.
+ */
+export function getDayOfTheYear(day: Date): number {
+  return dayjs(day).dayOfYear();
 }

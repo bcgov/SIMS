@@ -112,8 +112,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.name",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
-        "offerings.breakStartDate",
-        "offerings.breakEndDate",
         "offerings.actualTuitionCosts",
         "offerings.programRelatedCosts",
         "offerings.mandatoryFees",
@@ -125,6 +123,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.lacksFixedCosts",
         "offerings.tuitionRemittanceRequested",
         "offerings.offeringIntensity",
+        "offerings.yearOfStudy",
+        "offerings.showYearOfStudy",
+        "offerings.hasOfferingWILComponent",
+        "offerings.offeringWILType",
+        "offerings.studyBreaks",
+        "offerings.offeringDeclaration",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -170,8 +174,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.name = educationProgramOffering.offeringName;
     programOffering.studyStartDate = educationProgramOffering.studyStartDate;
     programOffering.studyEndDate = educationProgramOffering.studyEndDate;
-    programOffering.breakStartDate = educationProgramOffering.breakStartDate;
-    programOffering.breakEndDate = educationProgramOffering.breakEndDate;
     programOffering.actualTuitionCosts =
       educationProgramOffering.actualTuitionCosts;
     programOffering.programRelatedCosts =
@@ -197,6 +199,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     } as InstitutionLocation;
     programOffering.offeringIntensity =
       educationProgramOffering.offeringIntensity;
+    programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
+    programOffering.showYearOfStudy = educationProgramOffering.showYearOfStudy;
+    programOffering.hasOfferingWILComponent =
+      educationProgramOffering.hasOfferingWILComponent;
+    programOffering.offeringWILType = educationProgramOffering.offeringWILType;
+    programOffering.studyBreaks = educationProgramOffering.studyBreaks;
+    programOffering.offeringDeclaration =
+      educationProgramOffering.offeringDeclaration;
     return programOffering;
   }
 
@@ -225,6 +235,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.name")
       .addSelect("offerings.studyStartDate")
       .addSelect("offerings.studyEndDate")
+      .addSelect("offerings.yearOfStudy")
+      .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
       .andWhere("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,

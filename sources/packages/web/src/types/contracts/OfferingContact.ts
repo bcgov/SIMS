@@ -19,8 +19,6 @@ export interface OfferingDTO {
   offeringName: string;
   studyStartDate?: Date;
   studyEndDate?: Date;
-  breakStartDate?: Date;
-  breakEndDate?: Date;
   actualTuitionCosts?: number;
   programRelatedCosts?: number;
   mandatoryFees?: number;
@@ -32,7 +30,21 @@ export interface OfferingDTO {
   lacksFixedCosts: boolean;
   tuitionRemittanceRequested: string;
   offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  showYearOfStudy?: boolean;
+  hasOfferingWILComponent: string;
+  offeringWILType?: string;
+  studyBreaks?: StudyBreak[];
+  offeringDeclaration: boolean;
 }
 export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;
+}
+
+/**
+ * Dto for study break item.
+ */
+export interface StudyBreak {
+  breakStartDate: Date;
+  breakEndDate: Date;
 }

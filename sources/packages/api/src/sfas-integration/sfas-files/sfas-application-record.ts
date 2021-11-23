@@ -94,7 +94,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
     return parseDecimal(this.line.substr(127, 10));
   }
   /**
-   * Date that this application was canceled (application.cancel_dte).
+   * Date that this application was cancelled (application.cancel_dte).
    */
   get applicationCancelDate(): Date | null {
     return parseDate(this.line.substr(137, 8));

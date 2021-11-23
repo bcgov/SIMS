@@ -1,34 +1,39 @@
 import { Injectable } from "@nestjs/common";
-import { InjectLogger } from "../common";
-import { OfferingIntensity } from "../database/entities";
-import { LoggerService } from "../logger/logger.service";
+import { InjectLogger } from "../../common";
+import { OfferingIntensity } from "../../database/entities";
+import { LoggerService } from "../../logger/logger.service";
 import {
   DATE_FORMAT,
   MSFAASFTPResponseFile,
-  TransactionSubCodes,
+  ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
-import { ConfigService, SequenceControlService, SshService } from "../services";
-import { MSFAAIntegrationConfig, SFTPConfig } from "../types";
+import {
+  ConfigService,
+  SequenceControlService,
+  SshService,
+} from "../../services";
+import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
 import {
   getGenderCode,
   getMaritalStatusCode,
   getOfferingIntensityCode,
-} from "../utilities";
+} from "../../utilities";
 import * as Client from "ssh2-sftp-client";
 import {
   MSFAARecord,
   MSFAARequestFileLine,
   MSFAAUploadResult,
-  TransactionCodes,
+  RecordTypeCodes,
 } from "./models/msfaa-integration.model";
 import { MSFAAFileDetail } from "./msfaa-files/msfaa-file-detail";
 import { MSFAAFileFooter } from "./msfaa-files/msfaa-file-footer";
 import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
-import { StringBuilder } from "../utilities/string-builder";
+import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
+
 /**
  * Manages the creation of the content files that needs to be sent
  * to MSFAA request. These files are created based
@@ -37,7 +42,7 @@ import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-
  */
 @Injectable()
 export class MSFAAIntegrationService {
-  private readonly msfaaConfig: MSFAAIntegrationConfig;
+  private readonly esdcConfig: ESDCIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
   constructor(
@@ -45,7 +50,7 @@ export class MSFAAIntegrationService {
     private readonly sequenceService: SequenceControlService,
     private readonly sshService: SshService,
   ) {
-    this.msfaaConfig = config.getConfig().MSFAAIntegration;
+    this.esdcConfig = config.getConfig().ESDCIntegration;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
 
@@ -68,15 +73,14 @@ export class MSFAAIntegrationService {
     const msfaaFileLines: MSFAARequestFileLine[] = [];
     // Header record
     const msfaaHeader = new MSFAAFileHeader();
-    msfaaHeader.transactionCode = TransactionCodes.MSFAAHeader;
+    msfaaHeader.transactionCode = RecordTypeCodes.MSFAAHeader;
     msfaaHeader.processDate = processDate;
-    msfaaHeader.provinceCode = this.msfaaConfig.provinceCode;
     msfaaHeader.sequence = fileSequence;
     msfaaFileLines.push(msfaaHeader);
     // Detail records
     const fileRecords = msfaaRecords.map((msfaaRecord) => {
       const msfaaDetail = new MSFAAFileDetail();
-      msfaaDetail.transactionCode = TransactionCodes.MSFAADetail;
+      msfaaDetail.transactionCode = RecordTypeCodes.MSFAADetail;
       msfaaHeader.processDate = processDate;
       msfaaDetail.msfaaNumber = msfaaRecord.msfaaNumber;
       msfaaDetail.sin = msfaaRecord.sin;
@@ -104,7 +108,7 @@ export class MSFAAIntegrationService {
     msfaaFileLines.push(...fileRecords);
     // Footer or Trailer record
     const msfaaFooter = new MSFAAFileFooter();
-    msfaaFooter.transactionCode = TransactionCodes.MSFAATrailer;
+    msfaaFooter.transactionCode = RecordTypeCodes.MSFAATrailer;
     msfaaFooter.totalSINHash = totalSINHash;
     msfaaFooter.recordCount = msfaaRecords.length;
     msfaaFileLines.push(msfaaFooter);
@@ -163,7 +167,9 @@ export class MSFAAIntegrationService {
     filePath: string;
   }> {
     const fileNameArray = new StringBuilder();
-    fileNameArray.append(`PP${this.msfaaConfig.provinceCode}.EDU.MSFA.SENT.`);
+    fileNameArray.append(
+      `${this.esdcConfig.environmentCode}PBC.EDU.MSFA.SENT.`,
+    );
     let fileNameSequence: number;
     if (OfferingIntensity.partTime === offeringIntensity) {
       fileNameArray.append("PT.");
@@ -180,7 +186,7 @@ export class MSFAAIntegrationService {
     fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");
     fileNameArray.append(".DAT");
     const fileName = fileNameArray.toString();
-    const filePath = `${this.msfaaConfig.ftpRequestFolder}\\${fileName}`;
+    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,
       filePath,
@@ -197,7 +203,7 @@ export class MSFAAIntegrationService {
     const client = await this.getClient();
     try {
       filesToProcess = await client.list(
-        `${this.msfaaConfig.ftpResponseFolder}`,
+        `${this.esdcConfig.ftpResponseFolder}`,
         /PEDU.PBC.MSFA.REC.*\.DAT/i,
       );
     } finally {
@@ -215,7 +221,7 @@ export class MSFAAIntegrationService {
   async downloadResponseFile(fileName: string): Promise<MSFAASFTPResponseFile> {
     const client = await this.getClient();
     try {
-      const filePath = `${this.msfaaConfig.ftpResponseFolder}/${fileName}`;
+      const filePath = `${this.esdcConfig.ftpResponseFolder}/${fileName}`;
       // Read all the file content and create a buffer.
       const fileContent = await client.get(filePath);
       // Convert the file content to an array of text lines and remove possible blank lines.
@@ -225,7 +231,7 @@ export class MSFAAIntegrationService {
         .filter((line) => line.length > 0);
       // Read the first line to check if the header code is the expected one.
       const header = MSFAAFileHeader.createFromLine(fileLines.shift()); // Read and remove header.
-      if (header.transactionCode !== TransactionCodes.MSFAAHeader) {
+      if (header.transactionCode !== RecordTypeCodes.MSFAAHeader) {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on header: ${header.transactionCode}`,
         );
@@ -239,7 +245,7 @@ export class MSFAAIntegrationService {
        * total of all the SIN values
        */
       const trailer = MSFAAFileFooter.createFromLine(fileLines.pop()); // Read and remove trailer.
-      if (trailer.transactionCode !== TransactionCodes.MSFAATrailer) {
+      if (trailer.transactionCode !== RecordTypeCodes.MSFAATrailer) {
         this.logger.error(
           `The MSFAA file ${fileName} has an invalid transaction code on trailer: ${trailer.transactionCode}`,
         );
@@ -271,13 +277,13 @@ export class MSFAAIntegrationService {
           lineNumber,
         );
         sinTotalInRecord += parseInt(msfaaRecord.sin);
-        switch (msfaaRecord.transactionSubCode) {
-          case TransactionSubCodes.Received:
+        switch (msfaaRecord.statusCode) {
+          case ReceivedStatusCode.Received:
             receivedRecords.push(
               new MSFAAResponseReceivedRecord(line, lineNumber),
             );
             break;
-          case TransactionSubCodes.Cancelled:
+          case ReceivedStatusCode.Cancelled:
             cancelledRecords.push(
               new MSFAAResponseCancelledRecord(line, lineNumber),
             );
@@ -290,11 +296,11 @@ export class MSFAAIntegrationService {
        */
       if (sinTotalInRecord !== trailer.totalSINHash) {
         this.logger.error(
-          `The MSFAA file ${fileName} has SINHash insconsistent with the total sum of sin in the records`,
+          `The MSFAA file ${fileName} has SINHash inconsistent with the total sum of sin in the records`,
         );
         // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count.
         throw new Error(
-          "The MSFAA file has TotalSINHash insconsistent with the total sum of sin in the records",
+          "The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
         );
       }
 

@@ -1,6 +1,6 @@
 import { Injectable, LoggerService } from "@nestjs/common";
-import { InjectLogger } from "../common";
-import { MSFAANumberService } from "../services";
+import { InjectLogger } from "../../common";
+import { MSFAANumberService } from "../../services";
 import {
   MSFAASFTPResponseFile,
   ProcessSftpResponseResult,

@@ -1,14 +1,14 @@
 import {
-  TransactionCodes,
-  TransactionSubCodes,
+  RecordTypeCodes,
+  ReceivedStatusCode,
 } from "../models/msfaa-integration.model";
 
 export class MSFAAResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
-    this.transactionCode = line.substr(0, 3) as TransactionCodes;
+    this.transactionCode = line.substr(0, 3) as RecordTypeCodes;
     this.msfaaNumber = line.substr(3, 10);
     this.sin = line.substr(13, 9);
-    this.transactionSubCode = line.substr(22, 1) as TransactionSubCodes;
+    this.statusCode = line.substr(22, 1) as ReceivedStatusCode;
     this.line = line;
     this.lineNumber = lineNumber;
   }
@@ -16,7 +16,7 @@ export class MSFAAResponseRecordIdentification {
   /**
    * Codes used to start all the lines of the files sent to MSFAA.
    */
-  public readonly transactionCode: TransactionCodes;
+  public readonly transactionCode: RecordTypeCodes;
   /**
    * MSFAA number of the record.
    */
@@ -26,9 +26,9 @@ export class MSFAAResponseRecordIdentification {
    */
   public readonly sin: string;
   /**
-   * Secondary codes used alongside the records.
+   * Status codes used alongside the records.
    */
-  public readonly transactionSubCode: TransactionSubCodes;
+  public readonly statusCode: ReceivedStatusCode;
   /**
    * Original line read from the MSFAA response file.
    */

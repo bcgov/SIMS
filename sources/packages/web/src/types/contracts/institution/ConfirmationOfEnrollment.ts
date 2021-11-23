@@ -15,8 +15,6 @@ export interface ApplicationDetailsForCOEDTO {
   applicationOfferingStartDate: string;
   applicationOfferingEndDate: string;
   applicationOfferingHasStudyBreak: boolean;
-  applicationOfferingBreakStartDate: string;
-  applicationOfferingBreakEndDate: string;
   applicationOfferingActualTuition: number;
   applicationOfferingProgramRelatedCost: number;
   applicationOfferingMandatoryCost: number;
@@ -33,6 +31,7 @@ export interface ApplicationDetailsForCOEDTO {
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
   applicationDeniedReason?: string;
+  studyBreaks?: StudyBreakCOE[];
 }
 
 /**
@@ -69,4 +68,13 @@ export interface COEDeniedReasonDto {
 export interface DenyConfirmationOfEnrollment {
   coeDenyReasonId: number;
   otherReasonDesc?: string;
+}
+
+/**
+ * Read only Dto for study break item.
+ * This is for COE where study breaks are shown in read only view.
+ */
+export interface StudyBreakCOE {
+  breakStartDate: string;
+  breakEndDate: string;
 }

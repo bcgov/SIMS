@@ -84,8 +84,6 @@ export class ApplicationSystemController {
         id: application.offering?.id,
         studyStartDate: application.offering?.studyStartDate,
         studyEndDate: application.offering?.studyEndDate,
-        breakStartDate: application.offering?.breakStartDate,
-        breakEndDate: application.offering?.breakEndDate,
         actualTuitionCosts: application.offering?.actualTuitionCosts,
         programRelatedCosts: application.offering?.programRelatedCosts,
         mandatoryFees: application.offering?.mandatoryFees,

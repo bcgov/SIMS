@@ -1,10 +1,11 @@
-import { getDateOnlyFromFormat } from "../../utilities";
+import { getDateOnlyFromFormat } from "../../../utilities";
 import { DATE_FORMAT } from "../models/msfaa-integration.model";
 import { MSFAAResponseRecordIdentification } from "./msfaa-response-record-identification";
 
 /**
- * MSFAA record cancelled (Trans Sub Code - C) that
- * contains the details of New Issuing Province and cancelled Date.
+ * MSFAA record received (Trans Sub Code - R) that
+ * contains the details of Borrower Signed Date,
+ * Service Provider Received Date.
  * This record is part of the details record in the MSFAA
  * response file has been extended from the base
  * MSFAAResponseRecordIdentification class to have the common
@@ -14,22 +15,22 @@ import { MSFAAResponseRecordIdentification } from "./msfaa-response-record-ident
  * The documentation about it is available on the document
  * 'SLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class MSFAAResponseCancelledRecord extends MSFAAResponseRecordIdentification {
+export class MSFAAResponseReceivedRecord extends MSFAAResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
     super(line, lineNumber);
   }
 
   /**
-   * New Province code that issued the MSFAA
+   * Date that the borrower indicated that the MSFAA was Signed
    */
-  public get newIssusingProvince(): string {
-    return this.line.substr(48, 2);
+  public get borrowerSignedDate(): Date {
+    return getDateOnlyFromFormat(this.line.substr(23, 8), DATE_FORMAT);
   }
 
   /**
-   * Date when the MSFAA was cancelled
+   * Date MSFAA was received by/resolved from Canada Post/Kiosk
    */
-  public get cancelledDate(): Date {
-    return getDateOnlyFromFormat(this.line.substr(50, 8), DATE_FORMAT);
+  public get serviceProviderReceivedDate(): Date {
+    return getDateOnlyFromFormat(this.line.substr(31, 8), DATE_FORMAT);
   }
 }

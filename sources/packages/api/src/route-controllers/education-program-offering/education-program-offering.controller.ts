@@ -112,7 +112,6 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("offeringId") offeringId: number,
-    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<ProgramOfferingDto> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
     const offering = await this.programOfferingService.getProgramOffering(
@@ -130,8 +129,6 @@ export class EducationProgramOfferingController {
       offeringName: offering.name,
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
-      breakStartDate: offering.breakStartDate,
-      breakEndDate: offering.breakEndDate,
       actualTuitionCosts: offering.actualTuitionCosts,
       programRelatedCosts: offering.programRelatedCosts,
       mandatoryFees: offering.mandatoryFees,
@@ -144,6 +141,12 @@ export class EducationProgramOfferingController {
       lacksFixedCosts: offering.lacksFixedCosts,
       tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
       offeringIntensity: offering.offeringIntensity,
+      yearOfStudy: offering.yearOfStudy,
+      showYearOfStudy: offering.showYearOfStudy,
+      hasOfferingWILComponent: offering.hasOfferingWILComponent,
+      offeringWILType: offering.offeringWILType,
+      studyBreaks: offering.studyBreaks,
+      offeringDeclaration: offering.offeringDeclaration,
     };
   }
 

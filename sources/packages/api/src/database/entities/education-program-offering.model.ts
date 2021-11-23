@@ -47,22 +47,6 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   studyEndDate: Date;
   /**
-   * Offering Break start date
-   */
-  @Column({
-    name: "break_start_date",
-    nullable: true,
-  })
-  breakStartDate: Date;
-  /**
-   * Offering Break end date
-   */
-  @Column({
-    name: "break_end_date",
-    nullable: true,
-  })
-  breakEndDate: Date;
-  /**
    * Offering Actual Tuition Costs
    */
   @Column({
@@ -164,11 +148,68 @@ export class EducationProgramOffering extends RecordDataModel {
   })
   offeringType: OfferingTypes;
   /**
-   *offering_intensity decides if offering is Full-Time or Part-Time
+   *offering_intensity decides if offering is Full-Time or Part-Time.
    */
   @Column({
     name: "offering_intensity",
     nullable: false,
   })
   offeringIntensity: OfferingIntensity;
+
+  /**
+   * Offering year of study.
+   */
+  @Column({
+    name: "year_of_study",
+  })
+  yearOfStudy: number;
+
+  /**
+   * Show year of study to student based on this value.
+   */
+  @Column({
+    name: "show_year_of_study",
+  })
+  showYearOfStudy?: boolean;
+
+  /**
+   * Determines if the offering has WIL component.
+   */
+  @Column({
+    name: "has_offering_wil_component",
+  })
+  hasOfferingWILComponent: string;
+
+  /**
+   * WIL component type of the offering.
+   */
+  @Column({
+    name: "offering_wil_type",
+  })
+  offeringWILType?: string;
+
+  /**
+   * List of study breaks.
+   */
+  @Column({
+    name: "study_breaks",
+    type: "jsonb",
+  })
+  studyBreaks?: StudyBreak[];
+
+  /**
+   * Declaration by the user creating or updating the offering.
+   */
+  @Column({
+    name: "offering_declaration",
+  })
+  offeringDeclaration: boolean;
+}
+
+/**
+ * Interface for study break item.
+ */
+export interface StudyBreak {
+  breakStartDate: Date;
+  breakEndDate: Date;
 }

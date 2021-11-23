@@ -1,13 +1,14 @@
-import { StringBuilder } from "../../utilities/string-builder";
 import {
   DATE_FORMAT,
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
   SPACE_FILLER,
   TIME_FORMAT,
-  TransactionCodes,
+  RecordTypeCodes,
 } from "../models/msfaa-integration.model";
-import { getDateOnlyFromFormat } from "../../utilities";
+import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
+
+const ORIGINATOR_CODE = "BC";
 
 /**
  * Header of a MSFAA request file.
@@ -15,16 +16,14 @@ import { getDateOnlyFromFormat } from "../../utilities";
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class MSFAAFileHeader implements MSFAARequestFileLine {
-  transactionCode: TransactionCodes;
+  transactionCode: RecordTypeCodes;
   processDate: Date;
-  provinceCode: string;
-  environmentCode: string;
   sequence: number;
 
   public getFixedFormat(): string {
     const header = new StringBuilder();
     header.append(this.transactionCode);
-    header.appendWithEndFiller(this.provinceCode, 4, SPACE_FILLER);
+    header.appendWithEndFiller(ORIGINATOR_CODE, 4, SPACE_FILLER);
     header.appendWithEndFiller(MSFAA_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
@@ -35,7 +34,7 @@ export class MSFAAFileHeader implements MSFAARequestFileLine {
 
   public static createFromLine(line: string): MSFAAFileHeader {
     const header = new MSFAAFileHeader();
-    header.transactionCode = line.substr(0, 3) as TransactionCodes;
+    header.transactionCode = line.substr(0, 3) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(line.substr(47, 8), DATE_FORMAT);
     return header;
   }
