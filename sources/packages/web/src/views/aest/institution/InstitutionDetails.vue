@@ -5,7 +5,7 @@
     >
   </h5>
   <full-page-container>
-    <h2 color="primary-color">
+    <h2 color="primary-color" class="mb-15">
       {{ initialValue.operatingName }}
       <!-- TODO: Replace v-badge with vuetify2 equavalent v-chip with icon once veutify3 is released-->
       <v-badge
@@ -19,9 +19,16 @@
       </v-badge>
     </h2>
     <v-tabs align-with-title>
-      <v-tab>Tab 1</v-tab>
-      <v-tab>Tab 2</v-tab>
-      <v-tab>Tab 3</v-tab>
+      <v-tab><v-btn @click="showProfile(institutionId)">Profile</v-btn></v-tab>
+      <v-tab><v-btn @click="showProfile(institutionId)">Programs</v-btn></v-tab>
+      <v-tab
+        ><v-btn @click="showProfile(institutionId)">Locations</v-btn></v-tab
+      >
+      <v-tab><v-btn @click="showProfile(institutionId)">Users</v-btn></v-tab>
+      <v-tab
+        ><v-btn @click="showProfile(institutionId)">Restrictions</v-btn></v-tab
+      >
+      <v-tab><v-btn @click="showProfile(institutionId)">Notes</v-btn></v-tab>
     </v-tabs>
   </full-page-container>
 </template>
@@ -49,6 +56,11 @@ export default {
         name: AESTRoutesConst.SEARCH_INSTITUTIONS,
       });
     };
+    const showProfile = (institutionId: number) => {
+      router.push({
+        name: AESTRoutesConst.PROFILE,
+      });
+    };
 
     onMounted(async () => {
       initialValue.value = await InstitutionService.shared.getBasicInstitutionInfoById(
@@ -57,6 +69,7 @@ export default {
     });
     return {
       initialValue,
+      showProfile,
       goBack,
     };
   },

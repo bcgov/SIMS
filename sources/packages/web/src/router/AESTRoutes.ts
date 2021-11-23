@@ -5,7 +5,14 @@ import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/StudentDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
-import InstitutionDetails from "@/views/aest/InstitutionDetails.vue";
+import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
+import Profile from "@/views/aest/institution/Profile.vue";
+import Programs from "@/views/aest/institution/Programs.vue";
+import Locations from "@/views/aest/institution/Locations.vue";
+import Users from "@/views/aest/institution/Users.vue";
+import Designation from "@/views/aest/institution/Designation.vue";
+import Restrictions from "@/views/aest/institution/Restrictions.vue";
+import Notes from "@/views/aest/institution/Notes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import {
@@ -112,6 +119,71 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.AEST,
         },
+        children: [
+          {
+            path: AppRoutes.Profile,
+            name: AESTRoutesConst.PROFILE,
+            props: true,
+            component: Profile,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Programs,
+            name: AESTRoutesConst.PROGRAMS,
+            props: true,
+            components: Programs,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Locations,
+            name: AESTRoutesConst.LOCATIONS,
+            props: true,
+            components: Locations,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Users,
+            name: AESTRoutesConst.USERS,
+            props: true,
+            components: Users,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Designation,
+            name: AESTRoutesConst.DESIGNATION,
+            props: true,
+            components: Designation,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Restrictions,
+            name: AESTRoutesConst.RESTRICTIONS,
+            props: true,
+            components: Restrictions,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Notes,
+            name: AESTRoutesConst.NOTES,
+            props: true,
+            components: Notes,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+        ],
       },
     ],
     beforeEnter: (to, _from, next) => {
