@@ -6,14 +6,17 @@ import {
 } from "../../services";
 import { ESDCIntegrationConfig } from "../../types";
 import {
+  combineDecimalPlaces,
   getDayOfTheYear,
   getDisbursementValuesByType,
   getGenderCode,
   getMaritalStatusCode,
   getTotalDisbursementAmount,
   getTotalYearsOfStudy,
+  round,
 } from "../../utilities";
 import {
+  Award,
   CreateRequestFileNameResult,
   ECertRecord,
   NUMBER_FILLER,
@@ -67,28 +70,41 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
     // Detail records
 
     // Calculated values.
-    // ! All values must be rounded to the nearest integer (0.5 rounds up).
-    // ! All values on ecertRecord.awards are supposed to be already rounded at this stage.
+
     const fileRecords = ecertRecords.map((ecertRecord) => {
-      const studentAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+      // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
+      const roundedAwards = ecertRecord.awards.map(
+        (award) =>
+          ({
+            valueType: award.valueType,
+            valueCode: award.valueCode,
+            valueAmount: round(award.valueAmount).toString(),
+          } as Award),
+      );
+
+      const disbursementAmount = getTotalDisbursementAmount(roundedAwards, [
         DisbursementValueType.CanadaLoan,
         DisbursementValueType.BCLoan,
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
       ]);
-      const cslAwardAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+
+      // ! All dollar values must be rounded to the nearest integer (0.5 rounds up)
+      // ! except studentAmount and schoolAmount that must have the decimal part
+      // ! combined into the integer part because the schoolAmount contains decimals
+      // ! and schoolAmount is used to determine the studentAmount.
+      const studentAmount = disbursementAmount - ecertRecord.schoolAmount;
+
+      const cslAwardAmount = getTotalDisbursementAmount(roundedAwards, [
         DisbursementValueType.CanadaLoan,
       ]);
-      const bcslAwardAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+      const bcslAwardAmount = getTotalDisbursementAmount(roundedAwards, [
         DisbursementValueType.BCLoan,
       ]);
-      const totalGrantAmount = getTotalDisbursementAmount(ecertRecord.awards, [
+      const totalGrantAmount = getTotalDisbursementAmount(roundedAwards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
       ]);
-      const schoolAmount = Math.round(ecertRecord.schoolAmount);
-      // ! These values are supposed to be already rounded at this stage.
-      const disbursementAmount = studentAmount + schoolAmount;
 
       const record = new ECertFileRecord();
       record.recordType = RecordTypeCodes.ECertRecord;
@@ -99,8 +115,8 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       record.documentProducedDate = ecertRecord.documentProducedDate;
       record.negotiatedExpiryDate = ecertRecord.negotiatedExpiryDate;
       record.disbursementAmount = disbursementAmount;
-      record.studentAmount = studentAmount;
-      record.schoolAmount = schoolAmount;
+      record.studentAmount = combineDecimalPlaces(studentAmount);
+      record.schoolAmount = combineDecimalPlaces(ecertRecord.schoolAmount);
       record.cslAwardAmount = cslAwardAmount;
       record.bcslAwardAmount = bcslAwardAmount;
       record.educationalStartDate = ecertRecord.educationalStartDate;
@@ -126,10 +142,11 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
       record.maritalStatus = getMaritalStatusCode(ecertRecord.maritalStatus);
       record.studentNumber = ecertRecord.studentNumber;
       record.totalGrantAmount = totalGrantAmount;
-      record.grantAwards = getDisbursementValuesByType(ecertRecord.awards, [
+      record.grantAwards = getDisbursementValuesByType(roundedAwards, [
         DisbursementValueType.CanadaGrant,
         DisbursementValueType.BCTotalGrant,
       ]);
+
       return record;
     });
     fileLines.push(...fileRecords);

@@ -5,7 +5,7 @@ import {
   OfferingIntensity,
 } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
-import { getFieldOfStudyFromCIPCode, getUTCNow, round } from "../../utilities";
+import { getFieldOfStudyFromCIPCode, getUTCNow } from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
   DisbursementScheduleService,
@@ -124,7 +124,7 @@ export class ECertFullTimeRequestService {
         ({
           valueType: disbursementValue.valueType,
           valueCode: disbursementValue.valueCode,
-          valueAmount: round(disbursementValue.valueAmount).toString(),
+          valueAmount: disbursementValue.valueAmount,
         } as Award),
     );
 
@@ -142,8 +142,7 @@ export class ECertFullTimeRequestService {
       federalInstitutionCode: disbursement.application.location.institutionCode,
       weeksOfStudy: disbursement.application.assessment.weeks,
       fieldOfStudy,
-      // TODO: get the value from offerings (to be defined/added).
-      yearOfStudy: 1,
+      yearOfStudy: disbursement.application.offering.yearOfStudy,
       completionYears:
         disbursement.application.offering.educationProgram.completionYears,
       // TODO: not available (to be defined/added).
