@@ -29,11 +29,10 @@ export function getTotalDisbursementAmount(
   awards: Award[],
   types: DisbursementValueType[],
 ): number {
-  const awardAmount = getDisbursementValuesByType(awards, types).reduce(
+  return getDisbursementValuesByType(awards, types).reduce(
     (totalAmount, award) => totalAmount + +award.valueAmount,
     0,
   );
-  return awardAmount;
 }
 
 /**
