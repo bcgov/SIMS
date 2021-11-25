@@ -1,5 +1,5 @@
 # Base Image
-FROM node:12.18.3-slim
+FROM registry.access.redhat.com/ubi8/nodejs-16:1-5
 
 LABEL maintainer="BC GOV"
 

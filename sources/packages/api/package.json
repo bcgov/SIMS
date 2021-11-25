@@ -49,7 +49,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
     "soap": "^0.36.0",
-    "ssh2-sftp-client": "^6.0.1",
+    "ssh2-sftp-client": "^7.1.0",
     "typeorm": "^0.2.29"
   },
   "devDependencies": {
