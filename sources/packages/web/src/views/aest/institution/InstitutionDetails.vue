@@ -18,33 +18,33 @@
         </template>
       </v-badge>
     </h2>
-    <v-btn outlined @click="showProfile(institutionId)"
+    <v-btn text variant="outlined" @click="showProfile(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-city</v-icon>Profile</v-btn
     >
-    <v-btn outlined @click="showPrograms(institutionId)">
+    <v-btn text variant="outlined" @click="showPrograms(institutionId)">
       <v-icon size="25" class="mr-2">mdi-book-open-outline</v-icon
       >Programs</v-btn
     >
-    <v-btn outlined @click="showLocations(institutionId)"
+    <v-btn text variant="outlined" @click="showLocations(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-map-marker-outline</v-icon
       >Locations</v-btn
     >
-    <v-btn outlined @click="showUsers(institutionId)"
+    <v-btn text variant="outlined" @click="showUsers(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-account-group-outline</v-icon
       >Users</v-btn
     >
-    <v-btn outlined @click="showDesignation(institutionId)"
+    <v-btn text variant="outlined" @click="showDesignation(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-certificate-outline</v-icon
       >Designation</v-btn
     >
-    <v-btn outlined @click="showRestrictions(institutionId)"
+    <v-btn text variant="outlined" @click="showRestrictions(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-close-circle-outline</v-icon
       >Restrictions</v-btn
     >
-    <v-btn outlined @click="showNotes(institutionId)"
+    <v-btn text variant="outlined" @click="showNotes(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-clipboard-outline</v-icon>Notes</v-btn
     >
-
+    <hr />
     <router-view v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />
@@ -122,6 +122,7 @@ export default {
       initialValue.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
       );
+      showNotes(props.institutionId);
     });
     return {
       initialValue,

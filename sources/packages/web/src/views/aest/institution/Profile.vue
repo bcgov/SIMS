@@ -1,7 +1,7 @@
 <template>
-  <full-page-container>
+  <content-group>
     <h2 class="color-blue font-weight-bold">Profile</h2>
-    <full-page-container>
+    <content-group>
       <v-row>
         <v-col>
           <v-row class="mt-1 mb-2">
@@ -47,58 +47,60 @@
             <span class="font-weight-bold">Website</span>
           </v-row>
           <v-row class="mt-1 mb-2">
-            {{ initialValue.website }}
+            <v-btn plain color="primary" target="{{ initialValue.website }}">{{
+              initialValue.website
+            }}</v-btn>
           </v-row>
           <v-row class="mt-1 mb-2">
             <span class="font-weight-bold">Established date</span>
           </v-row>
           <v-row class="mt-1 mb-2">
-            {{ initialValue.establishedDate }}
+            {{ initialValue.formattedEstablishedDate }}
           </v-row>
         </v-col>
       </v-row>
-    </full-page-container>
+    </content-group>
     <h2 class="color-blue font-weight-bold pt-4 pb-4">Contact info</h2>
-    <full-page-container>
+    <content-group>
       <v-row>
         <v-col
-          ><full-page-container
-            ><h6 class="color-blue font-weight-bold pt-4 pb-4">
+          ><content-group
+            ><h6 class="color-blue font-weight-bold">
               INSTITUTION PRIMARY CONTACT
             </h6>
-            <v-row class="mt-1 mb-2">
+            <v-row class="mt-1 mb-2 ml-0">
               {{ initialValue.primaryContactFirstName }}
               {{ initialValue.primaryContactLastName }}
             </v-row>
-            <v-row class="mt-1 mb-2">
+            <v-row class="mt-1 mb-2 ml-0">
               {{ initialValue.primaryContactEmail }}
             </v-row>
-            <v-row class="mt-1 mb-2">
+            <v-row class="mt-1 mb-2 ml-0">
               {{ initialValue.primaryContactPhone }}
             </v-row>
-          </full-page-container></v-col
+          </content-group></v-col
         >
         <v-col
-          ><full-page-container
-            ><h6 class="color-blue font-weight-bold pt-4 pb-4">
+          ><content-group
+            ><h6 class="color-blue font-weight-bold">
               LEGAL AUTHORIZED AUTHORITY CONTACT
             </h6>
-            <v-row class="mt-1 mb-2">
+            <v-row class="mt-1 mb-2 ml-0">
               {{ initialValue.legalAuthorityFirstName }}
               {{ initialValue.legalAuthorityLastName }}
             </v-row>
-            <v-row class="mt-1 mb-2">
+            <v-row class="mt-1 mb-2 ml-0">
               {{ initialValue.legalAuthorityEmail }}
             </v-row>
-            <v-row class="mt-1 mb-2">
+            <v-row class="mt-1 mb-2 ml-0">
               {{ initialValue.legalAuthorityPhone }}
-            </v-row></full-page-container
+            </v-row></content-group
           ></v-col
         ></v-row
       >
-    </full-page-container>
+    </content-group>
     <h2 class="color-blue font-weight-bold pt-4 pb-4">Mailing address</h2>
-    <full-page-container>
+    <content-group>
       <v-row class="mt-1 mb-2">
         <span class="font-weight-bold">Address 1</span>
       </v-row>
@@ -135,8 +137,8 @@
       <v-row class="mt-1 mb-2">
         {{ initialValue.address?.country }}
       </v-row>
-    </full-page-container>
-  </full-page-container>
+    </content-group>
+  </content-group>
 </template>
 
 <script lang="ts">
@@ -144,10 +146,10 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { AESTInstitutionDetailDto } from "@/types";
 export default {
-  components: { FullPageContainer },
+  components: { ContentGroup },
   props: {
     institutionId: {
       type: Number,

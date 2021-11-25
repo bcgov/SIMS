@@ -25,8 +25,8 @@ export interface AESTInstitutionDetailDto {
   primaryPhone: string;
   primaryEmail: string;
   website: string;
-  regulatingBody: string;
-  establishedDate: Date;
+  formattedEstablishedDate: string;
+  establishedDate: string;
   // Primary Contact
   primaryContactEmail: string;
   primaryContactFirstName: string;

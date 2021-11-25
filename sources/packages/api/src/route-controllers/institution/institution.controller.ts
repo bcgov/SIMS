@@ -51,6 +51,8 @@ import { InstitutionLocationsSummaryDto } from "../institution-locations/models/
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Institution, InstitutionLocation } from "../../database/entities";
+import { EXTENDED_DATE_FORMAT } from "../../utilities";
+import * as dayjs from "dayjs";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -474,7 +476,9 @@ export class InstitutionController extends BaseController {
       primaryEmail: institutionDetail.primaryEmail,
       website: institutionDetail.website,
       regulatingBody: institutionDetail.regulatingBody,
-      establishedDate: institutionDetail.establishedDate,
+      formattedEstablishedDate: dayjs(institutionDetail.establishedDate).format(
+        EXTENDED_DATE_FORMAT,
+      ),
       primaryContactEmail:
         institutionDetail.institutionPrimaryContact.primaryContactEmail,
       primaryContactFirstName:
