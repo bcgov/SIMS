@@ -478,6 +478,7 @@ export class InstitutionController extends BaseController {
       primaryEmail: institutionDetail.primaryEmail,
       website: institutionDetail.website,
       regulatingBody: institutionDetail.regulatingBody,
+      institutionTypeName: institutionDetail.institutionType.name,
       formattedEstablishedDate: dayjs(institutionDetail.establishedDate).format(
         EXTENDED_DATE_FORMAT,
       ),
@@ -497,13 +498,14 @@ export class InstitutionController extends BaseController {
         institutionDetail.legalAuthorityContact.legalAuthorityLastName,
       legalAuthorityPhone:
         institutionDetail.legalAuthorityContact.legalAuthorityPhone,
-      addressLine1: institutionDetail.institutionAddress.addressLine1,
-      addressLine2: institutionDetail.institutionAddress.addressLine2,
-      city: institutionDetail.institutionAddress.city,
-      country: institutionDetail.institutionAddress.country,
-      provinceState: institutionDetail.institutionAddress.provinceState,
-      postalCode: institutionDetail.institutionAddress.postalCode,
-      institutionTypeName: institutionDetail.institutionType.name,
+      address: {
+        addressLine1: institutionDetail.institutionAddress.addressLine1,
+        addressLine2: institutionDetail.institutionAddress.addressLine2,
+        city: institutionDetail.institutionAddress.city,
+        country: institutionDetail.institutionAddress.country,
+        provinceState: institutionDetail.institutionAddress.provinceState,
+        postalCode: institutionDetail.institutionAddress.postalCode,
+      },
     };
   }
 
