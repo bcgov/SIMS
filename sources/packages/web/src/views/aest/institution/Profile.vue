@@ -87,27 +87,27 @@
     <content-group>
       <title-value
         propertyTitle="Address 1"
-        :propertyValue="initialValue.address.addressLine1"
+        :propertyValue="initialValue.address?.addressLine1"
       />
       <title-value
         propertyTitle="Address 2"
-        :propertyValue="initialValue.address.addressLine2"
+        :propertyValue="initialValue.address?.addressLine2"
       />
       <title-value
         propertyTitle="City"
-        :propertyValue="initialValue.address.city"
+        :propertyValue="initialValue.address?.city"
       />
       <title-value
         propertyTitle="Postal Code"
-        :propertyValue="initialValue.address.postalCode"
+        :propertyValue="initialValue.address?.postalCode"
       />
       <title-value
         propertyTitle="Province"
-        :propertyValue="initialValue.address.provinceState"
+        :propertyValue="initialValue.address?.provinceState"
       />
       <title-value
         propertyTitle="Country"
-        :propertyValue="initialValue.address.country"
+        :propertyValue="initialValue.address?.country"
       />
     </content-group>
   </content-group>

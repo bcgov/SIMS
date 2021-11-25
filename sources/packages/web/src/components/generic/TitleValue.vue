@@ -11,7 +11,6 @@ Used when we need to display title and the value inside a container
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
 export default {
   props: {
     propertyTitle: {

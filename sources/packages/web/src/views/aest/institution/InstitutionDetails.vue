@@ -7,7 +7,7 @@
   <full-page-container>
     <h2 color="primary-color" class="mb-15">
       {{ initialValue.operatingName }}
-      <!-- TODO: Replace v-badge with vuetify2 equavalent v-chip with icon once veutify3 is released-->
+      <!-- TODO: Replace v-badge with vuetify2 equivalent v-chip with icon once veutify3 is released-->
       <v-badge
         color="green"
         content="&#10004;  DESIGNATED"
@@ -18,6 +18,7 @@
         </template>
       </v-badge>
     </h2>
+    <!-- TODO: Replace v-btn with vuetify2 equivalent v-tab with icon once veutify3 is released-->
     <v-btn text variant="outlined" @click="showProfile(institutionId)"
       ><v-icon size="25" class="mr-2">mdi-city</v-icon>Profile</v-btn
     >
