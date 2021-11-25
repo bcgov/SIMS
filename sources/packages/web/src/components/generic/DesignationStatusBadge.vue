@@ -5,7 +5,7 @@ Used when we need to display title and the value inside a container
 <template>
   <v-badge
     color="green"
-    content="&#10004;  {{designationStatus}}"
+    :content="designationStatus"
     location="top-right"
     text-color="white"
     ><template v-slot:default>

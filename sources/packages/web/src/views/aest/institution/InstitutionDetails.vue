@@ -7,7 +7,7 @@
   <full-page-container>
     <h2 color="primary-color" class="mb-15">
       {{ initialValue.operatingName }}
-      <designation-status-badge designationStatus="DESIGNATED" />
+      <designation-status-badge designationStatus="&#10004; DESIGNATED" />
     </h2>
     <!-- TODO: Replace v-btn with vuetify2 equivalent v-tab with icon once veutify3 is released-->
     <v-btn text variant="outlined" @click="showProfile(institutionId)"
