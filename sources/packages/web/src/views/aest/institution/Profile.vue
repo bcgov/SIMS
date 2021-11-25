@@ -45,44 +45,42 @@
       </v-row>
     </content-group>
     <h2 class="color-blue font-weight-bold pt-4 pb-4">Contact info</h2>
-    <content-group>
-      <v-row>
-        <v-col
-          ><content-group
-            ><h6 class="color-blue font-weight-bold">
-              INSTITUTION PRIMARY CONTACT
-            </h6>
-            <v-row class="mt-1 mb-2 ml-0">
-              {{ initialValue.primaryContactFirstName }}
-              {{ initialValue.primaryContactLastName }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0">
-              {{ initialValue.primaryContactEmail }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0">
-              {{ initialValue.primaryContactPhone }}
-            </v-row>
-          </content-group></v-col
-        >
-        <v-col
-          ><content-group
-            ><h6 class="color-blue font-weight-bold">
-              LEGAL AUTHORIZED AUTHORITY CONTACT
-            </h6>
-            <v-row class="mt-1 mb-2 ml-0">
-              {{ initialValue.legalAuthorityFirstName }}
-              {{ initialValue.legalAuthorityLastName }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0">
-              {{ initialValue.legalAuthorityEmail }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0">
-              {{ initialValue.legalAuthorityPhone }}
-            </v-row></content-group
-          ></v-col
-        ></v-row
+    <v-row>
+      <v-col
+        ><content-group
+          ><h6 class="color-blue font-weight-bold">
+            INSTITUTION PRIMARY CONTACT
+          </h6>
+          <v-row class="mt-1 mb-2 ml-0">
+            {{ initialValue.primaryContactFirstName }}
+            {{ initialValue.primaryContactLastName }}
+          </v-row>
+          <v-row class="mt-1 mb-2 ml-0">
+            {{ initialValue.primaryContactEmail }}
+          </v-row>
+          <v-row class="mt-1 mb-2 ml-0">
+            {{ initialValue.primaryContactPhone }}
+          </v-row>
+        </content-group></v-col
       >
-    </content-group>
+      <v-col
+        ><content-group
+          ><h6 class="color-blue font-weight-bold">
+            LEGAL AUTHORIZED AUTHORITY CONTACT
+          </h6>
+          <v-row class="mt-1 mb-2 ml-0">
+            {{ initialValue.legalAuthorityFirstName }}
+            {{ initialValue.legalAuthorityLastName }}
+          </v-row>
+          <v-row class="mt-1 mb-2 ml-0">
+            {{ initialValue.legalAuthorityEmail }}
+          </v-row>
+          <v-row class="mt-1 mb-2 ml-0">
+            {{ initialValue.legalAuthorityPhone }}
+          </v-row></content-group
+        ></v-col
+      ></v-row
+    >
     <h2 class="color-blue font-weight-bold pt-4 pb-4">Mailing address</h2>
     <content-group>
       <title-value

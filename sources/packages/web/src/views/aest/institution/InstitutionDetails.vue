@@ -7,16 +7,7 @@
   <full-page-container>
     <h2 color="primary-color" class="mb-15">
       {{ initialValue.operatingName }}
-      <!-- TODO: Replace v-badge with vuetify2 equivalent v-chip with icon once veutify3 is released-->
-      <v-badge
-        color="green"
-        content="&#10004;  DESIGNATED"
-        location="top-right"
-        text-color="white"
-        ><template v-slot:default>
-          <v-icon :size="25">mdi-map-markers-radius</v-icon>
-        </template>
-      </v-badge>
+      <designation-status-badge designationStatus="DESIGNATED" />
     </h2>
     <!-- TODO: Replace v-btn with vuetify2 equivalent v-tab with icon once veutify3 is released-->
     <v-btn text variant="outlined" @click="showProfile(institutionId)"
@@ -60,9 +51,10 @@ import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import DesignationStatusBadge from "@/components/generic/DesignationStatusBadge.vue";
 import { BasicInstitutionInfo } from "@/types";
 export default {
-  components: { FullPageContainer },
+  components: { FullPageContainer, DesignationStatusBadge },
   props: {
     institutionId: {
       type: Number,
