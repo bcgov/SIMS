@@ -1,6 +1,8 @@
 <template>
   <content-group>
-    <h2 class="color-blue font-weight-bold">Profile</h2>
+    <div class="mt-1 mb-4">
+      <h2 class="color-blue font-weight-bold">Profile</h2>
+    </div>
     <content-group>
       <v-row>
         <v-col>

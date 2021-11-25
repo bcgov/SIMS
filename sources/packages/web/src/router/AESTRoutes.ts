@@ -133,7 +133,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Programs,
             name: AESTRoutesConst.PROGRAMS,
             props: true,
-            components: Programs,
+            component: Programs,
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -142,7 +142,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Locations,
             name: AESTRoutesConst.LOCATIONS,
             props: true,
-            components: Locations,
+            component: Locations,
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -151,7 +151,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Users,
             name: AESTRoutesConst.USERS,
             props: true,
-            components: Users,
+            component: Users,
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -160,7 +160,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Designation,
             name: AESTRoutesConst.DESIGNATION,
             props: true,
-            components: Designation,
+            component: Designation,
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -169,7 +169,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Restrictions,
             name: AESTRoutesConst.RESTRICTIONS,
             props: true,
-            components: Restrictions,
+            component: Restrictions,
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -178,7 +178,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Notes,
             name: AESTRoutesConst.NOTES,
             props: true,
-            components: Notes,
+            component: Notes,
             meta: {
               clientType: ClientIdType.AEST,
             },

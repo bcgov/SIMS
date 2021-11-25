@@ -1,13 +1,13 @@
 <template>
-  <full-page-container>
+  <content-group>
     <h2 class="color-blue">Notes</h2>
-  </full-page-container>
+  </content-group>
 </template>
 
 <script lang="ts">
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import ContentGroup from "@/components/generic/ContentGroup.vue";
 export default {
-  components: { FullPageContainer },
+  components: { ContentGroup },
   //TODO, create and fetch an API to fetch Notes
 };
 </script>
