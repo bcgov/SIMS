@@ -1,10 +1,10 @@
 <template>
   <content-group>
-    <h2 class="color-blue font-weight-bold">Profile</h2>
+    <h2 class="color-blue font-weight-bold mb-2">Profile</h2>
     <content-group>
       <v-row>
         <v-col>
-          <v-row class="mt-1 mb-2">
+          <v-row class="mb-2">
             <span class="font-weight-bold">Legal operating name</span>
           </v-row>
           <v-row class="mt-1 mb-2">
@@ -145,7 +145,6 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { AESTInstitutionDetailDto } from "@/types";
 export default {
@@ -157,7 +156,6 @@ export default {
     },
   },
   setup(props: any) {
-    const router = useRouter();
     const initialValue = ref({} as AESTInstitutionDetailDto);
     onMounted(async () => {
       initialValue.value = await InstitutionService.shared.getAESTInstitutionDetailById(

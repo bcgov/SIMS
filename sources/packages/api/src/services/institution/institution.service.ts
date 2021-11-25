@@ -528,6 +528,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @returns Institution retrieved, if found, otherwise returns null.
    */
   async getById(id: number): Promise<Institution> {
-    return await this.repo.findOne(id);
+    return this.repo.findOne(id);
   }
 }
