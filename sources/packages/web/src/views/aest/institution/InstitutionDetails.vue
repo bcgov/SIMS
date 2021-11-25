@@ -122,7 +122,7 @@ export default {
       initialValue.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
       );
-      showNotes(props.institutionId);
+      showProfile(props.institutionId);
     });
     return {
       initialValue,

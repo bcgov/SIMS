@@ -1,10 +1,10 @@
 <template>
   <content-group>
-    <h2 class="color-blue font-weight-bold mb-2">Profile</h2>
+    <h2 class="color-blue font-weight-bold">Profile</h2>
     <content-group>
       <v-row>
         <v-col>
-          <v-row class="mb-2">
+          <v-row class="mt-1 mb-2">
             <span class="font-weight-bold">Legal operating name</span>
           </v-row>
           <v-row class="mt-1 mb-2">
@@ -47,9 +47,7 @@
             <span class="font-weight-bold">Website</span>
           </v-row>
           <v-row class="mt-1 mb-2">
-            <v-btn plain color="primary" target="{{ initialValue.website }}">{{
-              initialValue.website
-            }}</v-btn>
+            {{ initialValue.website }}
           </v-row>
           <v-row class="mt-1 mb-2">
             <span class="font-weight-bold">Established date</span>
