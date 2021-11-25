@@ -704,7 +704,7 @@
           "allowMultipleMasks": false,
           "inputType": "radio",
           "fieldSet": false,
-          "id": "eak3txq",
+          "id": "ev71tr",
           "defaultValue": ""
         },
         {
@@ -834,7 +834,7 @@
           "protected": false,
           "dbIndex": false,
           "encrypted": false,
-          "redrawOn": "data",
+          "redrawOn": "",
           "clearOnHide": true,
           "customDefaultValue": "",
           "calculateValue": "",
@@ -844,7 +844,7 @@
             "required": true,
             "onlyAvailableItems": false,
             "customMessage": "",
-            "custom": "valid = (input === \"no\" || data.hasWILComponent ===\"yes\") ? true : \"This study period can’t contain a WIL component. Your program must be approved with a WIL component.\"  ",
+            "custom": "valid = (data.hasOfferingWILComponent === \"no\" || data.hasWILComponent ===\"yes\") ? true : \"This study period can’t contain a WIL component. Your program must be approved with a WIL component.\";  ",
             "customPrivate": false,
             "json": "",
             "strictDateValidation": false,
@@ -888,7 +888,7 @@
           "allowMultipleMasks": false,
           "inputType": "radio",
           "fieldSet": false,
-          "id": "enr6pnt",
+          "id": "evhzrlx",
           "defaultValue": ""
         },
         {
@@ -1838,7 +1838,7 @@
                 "maxDate": null
               },
               "hideOnChildrenHidden": false,
-              "id": "e4xdqvr00000000000000000000000000",
+              "id": "e4xdqvr000000000000000000000000000000000000",
               "prefix": "",
               "customClass": "",
               "suffix": "",
@@ -2023,7 +2023,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "datepickerMode": "day",
-              "id": "ex3qj3m00000000000000000000000000"
+              "id": "ex3qj3m000000000000000000000000000000000000"
             }
           ],
           "placeholder": "",
@@ -3437,5 +3437,5 @@
   "path": "educationprogramoffering",
   "machineName": "educationProgramOffering",
   "created": "2021-06-28T22:04:18.848Z",
-  "modified": "2021-11-23T00:01:33.832Z"
+  "modified": "2021-11-23T17:51:38.655Z"
 }
