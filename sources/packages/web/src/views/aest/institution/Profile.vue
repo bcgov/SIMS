@@ -143,7 +143,6 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { AESTInstitutionDetailDto } from "@/types";
