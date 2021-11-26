@@ -26,12 +26,10 @@ export default {
   },
   setup(props: any) {
     const icon = computed(() => {
-      switch (props.designationStatus) {
-        case DesignationStatus.designated:
-          return "mdi-check";
-        default:
-          return null;
+      if (props.designationStatus === DesignationStatus.designated) {
+        return "mdi-check";
       }
+      return null;
     });
     return {
       icon,
