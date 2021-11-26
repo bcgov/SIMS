@@ -5,10 +5,13 @@
     >
   </h5>
   <full-page-container>
-    <h2 color="primary-color" class="mb-15">
+    <p class="category-header-large color-blue">
       {{ initialValue.operatingName }}
-      <designation-status-badge designationStatus="DESIGNATED" />
-    </h2>
+      <designation-status-badge
+        class="mb-4 ml-4"
+        designationStatus="DESIGNATED"
+      />
+    </p>
     <!-- TODO: Replace v-btn with vuetify2 equivalent v-tab with icon once veutify3 is released-->
     <v-btn
       text
