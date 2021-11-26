@@ -174,9 +174,8 @@ export class InstitutionApi extends HttpBaseClient {
     institutionId: number,
   ): Promise<AESTInstitutionDetailDto> {
     try {
-      const response = await this.apiClient.get(
+      const response = await this.getCall(
         `institution/${institutionId}/detail`,
-        this.addAuthHeader(),
       );
       return response.data;
     } catch (error) {
@@ -189,10 +188,7 @@ export class InstitutionApi extends HttpBaseClient {
     institutionId: number,
   ): Promise<BasicInstitutionInfo> {
     try {
-      const response = await this.apiClient.get(
-        `institution/${institutionId}`,
-        this.addAuthHeader(),
-      );
+      const response = await this.getCall(`institution/${institutionId}`);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
