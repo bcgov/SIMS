@@ -8,38 +8,38 @@
         <v-col>
           <title-value
             propertyTitle="Legal operating name"
-            :propertyValue="initialValue.legalOperatingName"
+            :propertyValue="institutionProfileDetail.legalOperatingName"
           />
           <title-value
             propertyTitle="Institution name"
-            :propertyValue="initialValue.operatingName"
+            :propertyValue="institutionProfileDetail.operatingName"
           />
           <title-value
             propertyTitle="Type"
-            :propertyValue="initialValue.institutionTypeName"
+            :propertyValue="institutionProfileDetail.institutionTypeName"
           />
           <title-value
             propertyTitle="Regulating body"
-            :propertyValue="initialValue.regulatingBody"
+            :propertyValue="institutionProfileDetail.regulatingBody"
           />
         </v-col>
         <v-divider class="mx-4" vertical></v-divider>
         <v-col>
           <title-value
             propertyTitle="Primary phone number"
-            :propertyValue="initialValue.primaryPhone"
+            :propertyValue="institutionProfileDetail.primaryPhone"
           />
           <title-value
             propertyTitle="Primary email"
-            :propertyValue="initialValue.primaryEmail"
+            :propertyValue="institutionProfileDetail.primaryEmail"
           />
           <title-value
             propertyTitle="Website"
-            :propertyValue="initialValue.website"
+            :propertyValue="institutionProfileDetail.website"
           />
           <title-value
             propertyTitle="Established date"
-            :propertyValue="initialValue.formattedEstablishedDate"
+            :propertyValue="institutionProfileDetail.formattedEstablishedDate"
           />
         </v-col>
       </v-row>
@@ -52,14 +52,14 @@
             INSTITUTION PRIMARY CONTACT
           </h6>
           <v-row class="mt-1 mb-2 ml-0">
-            {{ initialValue.primaryContactFirstName }}
-            {{ initialValue.primaryContactLastName }}
+            {{ institutionProfileDetail.primaryContactFirstName }}
+            {{ institutionProfileDetail.primaryContactLastName }}
           </v-row>
           <v-row class="mt-1 mb-2 ml-0">
-            {{ initialValue.primaryContactEmail }}
+            {{ institutionProfileDetail.primaryContactEmail }}
           </v-row>
           <v-row class="mt-1 mb-2 ml-0">
-            {{ initialValue.primaryContactPhone }}
+            {{ institutionProfileDetail.primaryContactPhone }}
           </v-row>
         </content-group></v-col
       >
@@ -69,14 +69,14 @@
             LEGAL AUTHORIZED AUTHORITY CONTACT
           </h6>
           <v-row class="mt-1 mb-2 ml-0">
-            {{ initialValue.legalAuthorityFirstName }}
-            {{ initialValue.legalAuthorityLastName }}
+            {{ institutionProfileDetail.legalAuthorityFirstName }}
+            {{ institutionProfileDetail.legalAuthorityLastName }}
           </v-row>
           <v-row class="mt-1 mb-2 ml-0">
-            {{ initialValue.legalAuthorityEmail }}
+            {{ institutionProfileDetail.legalAuthorityEmail }}
           </v-row>
           <v-row class="mt-1 mb-2 ml-0">
-            {{ initialValue.legalAuthorityPhone }}
+            {{ institutionProfileDetail.legalAuthorityPhone }}
           </v-row></content-group
         ></v-col
       ></v-row
@@ -85,27 +85,27 @@
     <content-group>
       <title-value
         propertyTitle="Address 1"
-        :propertyValue="initialValue.address?.addressLine1"
+        :propertyValue="institutionProfileDetail.address?.addressLine1"
       />
       <title-value
         propertyTitle="Address 2"
-        :propertyValue="initialValue.address?.addressLine2"
+        :propertyValue="institutionProfileDetail.address?.addressLine2"
       />
       <title-value
         propertyTitle="City"
-        :propertyValue="initialValue.address?.city"
+        :propertyValue="institutionProfileDetail.address?.city"
       />
       <title-value
         propertyTitle="Postal Code"
-        :propertyValue="initialValue.address?.postalCode"
+        :propertyValue="institutionProfileDetail.address?.postalCode"
       />
       <title-value
         propertyTitle="Province"
-        :propertyValue="initialValue.address?.provinceState"
+        :propertyValue="institutionProfileDetail.address?.provinceState"
       />
       <title-value
         propertyTitle="Country"
-        :propertyValue="initialValue.address?.country"
+        :propertyValue="institutionProfileDetail.address?.country"
       />
     </content-group>
   </content-group>
@@ -126,14 +126,14 @@ export default {
     },
   },
   setup(props: any) {
-    const initialValue = ref({} as AESTInstitutionDetailDto);
+    const institutionProfileDetail = ref({} as AESTInstitutionDetailDto);
     onMounted(async () => {
-      initialValue.value = await InstitutionService.shared.getAESTInstitutionDetailById(
+      institutionProfileDetail.value = await InstitutionService.shared.getAESTInstitutionDetailById(
         props.institutionId,
       );
     });
     return {
-      initialValue,
+      institutionProfileDetail,
     };
   },
 };

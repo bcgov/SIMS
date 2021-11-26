@@ -127,7 +127,7 @@ export function getDayOfTheYear(day: Date): number {
 /**
  * Get the extended date format(March, 22 2021) for the date given
  * @param date date to be retrieved as Extended date format
- * @returns extended date format line March, 22 2021
+ * @returns extended date format like March, 22 2021
  */
 export function getExtendedDateFormat(date: Date): string {
   return dayjs(date).format(EXTENDED_DATE_FORMAT);
