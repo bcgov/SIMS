@@ -6,7 +6,7 @@
   </h5>
   <full-page-container>
     <p class="category-header-large color-blue">
-      {{ initialValue.operatingName }}
+      {{ institutionBasicDetail.operatingName }}
       <designation-status-badge
         class="mb-4 ml-4"
         designationStatus="DESIGNATED"
@@ -88,7 +88,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const initialValue = ref({} as BasicInstitutionInfo);
+    const institutionBasicDetail = ref({} as BasicInstitutionInfo);
     const goBack = () => {
       router.push({
         name: AESTRoutesConst.SEARCH_INSTITUTIONS,
@@ -101,13 +101,13 @@ export default {
       });
     };
     onMounted(async () => {
-      initialValue.value = await InstitutionService.shared.getBasicInstitutionInfoById(
+      institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
       );
       showData(AESTRoutesConst.INSTITUTION_PROFILE);
     });
     return {
-      initialValue,
+      institutionBasicDetail,
       showData,
       goBack,
       AESTRoutesConst,
