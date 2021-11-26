@@ -223,4 +223,48 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const repository = disbursementScheduleRepo ?? this.repo;
     return repository.update({ id: In(disbursementIds) }, { dateSent });
   }
+
+  /**
+   * Get disbursement schedule for an application.
+   * This method supports query by studentId | userId
+   * for the support of ministry APIs.
+   * @param applicationId
+   * @param userId
+   * @param studentId
+   * @returns
+   */
+  async getDisbursementSchedule(
+    applicationId: number,
+    userId?: number,
+    studentId?: number,
+  ): Promise<DisbursementSchedule[]> {
+    if (!userId && !studentId) {
+      throw new Error(
+        "Either student id or user id is mandatory to retrieve application disbursement details.",
+      );
+    }
+    const disbursementQuery = this.repo
+      .createQueryBuilder("disbursement")
+      .select([
+        "disbursement.disbursementDate",
+        "disbursementValue.valueType",
+        "disbursementValue.valueCode",
+        "disbursementValue.valueAmount",
+      ])
+      .innerJoin("disbursement.disbursementValues", "disbursementValue")
+      .innerJoin("disbursement.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.id = :applicationId", { applicationId });
+    if (userId) {
+      disbursementQuery.andWhere("user.id = :userId", { userId });
+    }
+
+    if (!userId && studentId) {
+      disbursementQuery.andWhere("student.id = :studentId", { userId });
+    }
+    disbursementQuery.addOrderBy("disbursement.disbursementDate");
+
+    return disbursementQuery.getMany();
+  }
 }

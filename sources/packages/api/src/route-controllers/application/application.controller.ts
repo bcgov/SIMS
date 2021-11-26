@@ -20,6 +20,7 @@ import {
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
+  DisbursementScheduleService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -54,6 +55,7 @@ export class ApplicationController extends BaseController {
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     super();
   }
@@ -442,5 +444,36 @@ export class ApplicationController extends BaseController {
         status: application.applicationStatus,
       } as ApplicationSummaryDTO;
     });
+  }
+  /**
+   * API to get the disbursement details for NOA.
+   * It has dynamic return type as the key of the response object
+   * is based on disbursement code and it lets dynamic codes to be added in future.
+   * @param applicationId
+   * @param userToken
+   * @returns
+   */
+  @Get(":applicationId/disbursements")
+  async getDisbursement(
+    @Param("applicationId") applicationId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<any> {
+    const disbursementSchedules =
+      await this.disbursementScheduleService.getDisbursementSchedule(
+        applicationId,
+        userToken.userId,
+      );
+    const disbursementDetails = {};
+    disbursementSchedules.forEach((schedule, index) => {
+      disbursementDetails["disbursement" + (index + 1) + "Date"] =
+        schedule.disbursementDate;
+      schedule.disbursementValues.forEach((disbursement) => {
+        disbursementDetails[
+          "disbursement" + (index + 1) + disbursement.valueCode.toLowerCase()
+        ] = disbursement.valueAmount;
+      });
+    });
+
+    return disbursementDetails;
   }
 }
