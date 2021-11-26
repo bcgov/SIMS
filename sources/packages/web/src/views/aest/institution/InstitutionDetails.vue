@@ -7,33 +7,55 @@
   <full-page-container>
     <h2 color="primary-color" class="mb-15">
       {{ initialValue.operatingName }}
-      <designation-status-badge designationStatus="&#10004; DESIGNATED" />
+      <designation-status-badge designationStatus="DESIGNATED" />
     </h2>
     <!-- TODO: Replace v-btn with vuetify2 equivalent v-tab with icon once veutify3 is released-->
-    <v-btn text variant="outlined" @click="showProfile(institutionId)"
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_PROFILE)"
       ><v-icon size="25" class="mr-2">mdi-city</v-icon>Profile</v-btn
     >
-    <v-btn text variant="outlined" @click="showPrograms(institutionId)">
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_PROGRAMS)"
+    >
       <v-icon size="25" class="mr-2">mdi-book-open-outline</v-icon
       >Programs</v-btn
     >
-    <v-btn text variant="outlined" @click="showLocations(institutionId)"
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_LOCATIONS)"
       ><v-icon size="25" class="mr-2">mdi-map-marker-outline</v-icon
       >Locations</v-btn
     >
-    <v-btn text variant="outlined" @click="showUsers(institutionId)"
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_USERS)"
       ><v-icon size="25" class="mr-2">mdi-account-group-outline</v-icon
       >Users</v-btn
     >
-    <v-btn text variant="outlined" @click="showDesignation(institutionId)"
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_DESIGNATION)"
       ><v-icon size="25" class="mr-2">mdi-certificate-outline</v-icon
       >Designation</v-btn
     >
-    <v-btn text variant="outlined" @click="showRestrictions(institutionId)"
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_RESTRICTIONS)"
       ><v-icon size="25" class="mr-2">mdi-close-circle-outline</v-icon
       >Restrictions</v-btn
     >
-    <v-btn text variant="outlined" @click="showNotes(institutionId)"
+    <v-btn
+      text
+      variant="outlined"
+      @click="showData(AESTRoutesConst.INSTITUTION_NOTES)"
       ><v-icon size="25" class="mr-2">mdi-clipboard-outline</v-icon>Notes</v-btn
     >
     <hr />
@@ -69,64 +91,23 @@ export default {
         name: AESTRoutesConst.SEARCH_INSTITUTIONS,
       });
     };
-    const showProfile = (institutionId: number) => {
+    const showData = (routeName: symbol) => {
       router.push({
-        name: AESTRoutesConst.PROFILE,
-        params: { institutionId: institutionId },
-      });
-    };
-    const showPrograms = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.PROGRAMS,
-        params: { institutionId: institutionId },
-      });
-    };
-    const showLocations = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.LOCATIONS,
-        params: { institutionId: institutionId },
-      });
-    };
-    const showUsers = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.USERS,
-        params: { institutionId: institutionId },
-      });
-    };
-    const showDesignation = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.DESIGNATION,
-        params: { institutionId: institutionId },
-      });
-    };
-    const showRestrictions = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.RESTRICTIONS,
-        params: { institutionId: institutionId },
-      });
-    };
-    const showNotes = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.NOTES,
-        params: { institutionId: institutionId },
+        name: routeName,
+        params: { institutionId: props.institutionId },
       });
     };
     onMounted(async () => {
       initialValue.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
       );
-      showProfile(props.institutionId);
+      showData(AESTRoutesConst.INSTITUTION_PROFILE);
     });
     return {
       initialValue,
-      showProfile,
-      showPrograms,
-      showLocations,
-      showUsers,
-      showDesignation,
-      showRestrictions,
-      showNotes,
+      showData,
       goBack,
+      AESTRoutesConst,
     };
   },
 };

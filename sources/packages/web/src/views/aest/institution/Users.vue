@@ -1,6 +1,6 @@
 <template>
   <content-group>
-    <h2 class="color-blue">Users</h2>
+    <p class="category-header-large color-blue">Users</p>
   </content-group>
 </template>
 

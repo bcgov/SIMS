@@ -1,7 +1,7 @@
 <template>
   <content-group>
-    <div class="mt-1 mb-4">
-      <h2 class="color-blue font-weight-bold">Profile</h2>
+    <div class="mb-2">
+      <p class="category-header-large color-blue">Profile</p>
     </div>
     <content-group>
       <v-row>
@@ -44,7 +44,7 @@
         </v-col>
       </v-row>
     </content-group>
-    <h2 class="color-blue font-weight-bold pt-4 pb-4">Contact info</h2>
+    <p class="category-header-large color-blue mt-2 mb-2">Contact info</p>
     <v-row>
       <v-col
         ><content-group
@@ -81,7 +81,7 @@
         ></v-col
       ></v-row
     >
-    <h2 class="color-blue font-weight-bold pt-4 pb-4">Mailing address</h2>
+    <p class="category-header-large color-blue mt-2 mb-2">Mailing address</p>
     <content-group>
       <title-value
         propertyTitle="Address 1"

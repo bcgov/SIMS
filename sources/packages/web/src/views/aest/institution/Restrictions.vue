@@ -1,6 +1,6 @@
 <template>
   <content-group>
-    <h2 class="color-blue">Restrictions</h2>
+    <p class="category-header-large color-blue">Restrictions</p>
   </content-group>
 </template>
 

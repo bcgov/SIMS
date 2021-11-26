@@ -1,6 +1,6 @@
 <template>
   <content-group>
-    <h2 class="color-blue">Notes</h2>
+    <p class="category-header-large color-blue">Notes</p>
   </content-group>
 </template>
 

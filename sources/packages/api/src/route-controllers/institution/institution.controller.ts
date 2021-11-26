@@ -28,7 +28,7 @@ import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
-  EXTENDED_DATE_FORMAT,
+  getExtendedDateFormat,
 } from "../../utilities";
 import {
   InstitutionUserRespDto,
@@ -54,7 +54,6 @@ import { InstitutionLocationsSummaryDto } from "../institution-locations/models/
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Institution, InstitutionLocation } from "../../database/entities";
-import * as dayjs from "dayjs";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -464,11 +463,6 @@ export class InstitutionController extends BaseController {
   async getAESTInstitutionDetailById(
     @Param("institutionId") institutionId: number,
   ): Promise<AESTInstitutionDetailDto> {
-    if (!institutionId) {
-      throw new UnprocessableEntityException(
-        "Institution Id is required to fetch the institution detail",
-      );
-    }
     const institutionDetail =
       await this.institutionService.getAESTInstitutionDetailById(institutionId);
     return {
@@ -479,8 +473,8 @@ export class InstitutionController extends BaseController {
       website: institutionDetail.website,
       regulatingBody: institutionDetail.regulatingBody,
       institutionTypeName: institutionDetail.institutionType.name,
-      formattedEstablishedDate: dayjs(institutionDetail.establishedDate).format(
-        EXTENDED_DATE_FORMAT,
+      formattedEstablishedDate: getExtendedDateFormat(
+        institutionDetail.establishedDate,
       ),
       primaryContactEmail:
         institutionDetail.institutionPrimaryContact.primaryContactEmail,
@@ -512,7 +506,7 @@ export class InstitutionController extends BaseController {
   /**
    * Get the Basic Institution info for the ministry institution detail page
    * @param institutionId
-   * @returns AESTInstitutionDetailDto
+   * @returns BasicInstitutionInfo
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
@@ -520,14 +514,10 @@ export class InstitutionController extends BaseController {
   async getBasicInstitutionInfoById(
     @Param("institutionId") institutionId: number,
   ): Promise<BasicInstitutionInfo> {
-    if (!institutionId) {
-      throw new UnprocessableEntityException(
-        "Institution Id is required to fetch the institution detail",
+    const institutionDetail =
+      await this.institutionService.getBasicInstitutionDetailById(
+        institutionId,
       );
-    }
-    const institutionDetail = await this.institutionService.getById(
-      institutionId,
-    );
     return {
       operatingName: institutionDetail.operatingName,
     };

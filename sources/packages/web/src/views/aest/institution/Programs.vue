@@ -1,6 +1,6 @@
 <template>
   <content-group>
-    <h2 class="color-blue">Programs</h2>
+    <p class="category-header-large color-blue">Programs</p>
   </content-group>
 </template>
 

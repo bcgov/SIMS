@@ -1,6 +1,6 @@
 <template>
   <content-group>
-    <h2 class="color-blue">Designation</h2>
+    <p class="category-header-large color-blue">Designation</p>
   </content-group>
 </template>
 

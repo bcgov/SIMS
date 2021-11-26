@@ -122,7 +122,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         children: [
           {
             path: AppRoutes.Profile,
-            name: AESTRoutesConst.PROFILE,
+            name: AESTRoutesConst.INSTITUTION_PROFILE,
             props: true,
             component: Profile,
             meta: {
@@ -131,7 +131,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Programs,
-            name: AESTRoutesConst.PROGRAMS,
+            name: AESTRoutesConst.INSTITUTION_PROGRAMS,
             props: true,
             component: Programs,
             meta: {
@@ -140,7 +140,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Locations,
-            name: AESTRoutesConst.LOCATIONS,
+            name: AESTRoutesConst.INSTITUTION_LOCATIONS,
             props: true,
             component: Locations,
             meta: {
@@ -149,7 +149,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Users,
-            name: AESTRoutesConst.USERS,
+            name: AESTRoutesConst.INSTITUTION_USERS,
             props: true,
             component: Users,
             meta: {
@@ -158,7 +158,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Designation,
-            name: AESTRoutesConst.DESIGNATION,
+            name: AESTRoutesConst.INSTITUTION_DESIGNATION,
             props: true,
             component: Designation,
             meta: {
@@ -167,7 +167,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Restrictions,
-            name: AESTRoutesConst.RESTRICTIONS,
+            name: AESTRoutesConst.INSTITUTION_RESTRICTIONS,
             props: true,
             component: Restrictions,
             meta: {
@@ -176,7 +176,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.Notes,
-            name: AESTRoutesConst.NOTES,
+            name: AESTRoutesConst.INSTITUTION_NOTES,
             props: true,
             component: Notes,
             meta: {
