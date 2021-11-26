@@ -122,3 +122,7 @@ export function getDateOnlyFromFormat(
 export function getDayOfTheYear(day: Date): number {
   return dayjs(day).dayOfYear();
 }
+
+export function formatToDateOnlyIsoFormat(date: Date): string {
+  return dayjs(date).format(DATE_ONLY_ISO_FORMAT);
+}
