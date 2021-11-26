@@ -17,6 +17,8 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import {
+  AESTInstitutionDetailDto,
+  BasicInstitutionInfo,
   CreateInstitutionDto,
   InstitutionDetailDto,
   InstitutionDto,
@@ -24,7 +26,10 @@ import {
 } from "./models/institution.dto";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
+import {
+  INSTITUTION_TYPE_BC_PRIVATE,
+  getExtendedDateFormat,
+} from "../../utilities";
 import {
   InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
@@ -445,5 +450,76 @@ export class InstitutionController extends BaseController {
         postalCode: eachInstitution.institutionAddress.postalCode,
       },
     }));
+  }
+
+  /**
+   * Get the Institution details for the ministry institution detail page
+   * @param institutionId
+   * @returns AESTInstitutionDetailDto
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("/:institutionId/detail")
+  async getAESTInstitutionDetailById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<AESTInstitutionDetailDto> {
+    const institutionDetail =
+      await this.institutionService.getAESTInstitutionDetailById(institutionId);
+    return {
+      legalOperatingName: institutionDetail.legalOperatingName,
+      operatingName: institutionDetail.operatingName,
+      primaryPhone: institutionDetail.primaryPhone,
+      primaryEmail: institutionDetail.primaryEmail,
+      website: institutionDetail.website,
+      regulatingBody: institutionDetail.regulatingBody,
+      institutionTypeName: institutionDetail.institutionType.name,
+      formattedEstablishedDate: getExtendedDateFormat(
+        institutionDetail.establishedDate,
+      ),
+      primaryContactEmail:
+        institutionDetail.institutionPrimaryContact.primaryContactEmail,
+      primaryContactFirstName:
+        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
+      primaryContactLastName:
+        institutionDetail.institutionPrimaryContact.primaryContactLastName,
+      primaryContactPhone:
+        institutionDetail.institutionPrimaryContact.primaryContactPhone,
+      legalAuthorityEmail:
+        institutionDetail.legalAuthorityContact.legalAuthorityEmail,
+      legalAuthorityFirstName:
+        institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
+      legalAuthorityLastName:
+        institutionDetail.legalAuthorityContact.legalAuthorityLastName,
+      legalAuthorityPhone:
+        institutionDetail.legalAuthorityContact.legalAuthorityPhone,
+      address: {
+        addressLine1: institutionDetail.institutionAddress.addressLine1,
+        addressLine2: institutionDetail.institutionAddress.addressLine2,
+        city: institutionDetail.institutionAddress.city,
+        country: institutionDetail.institutionAddress.country,
+        provinceState: institutionDetail.institutionAddress.provinceState,
+        postalCode: institutionDetail.institutionAddress.postalCode,
+      },
+    };
+  }
+
+  /**
+   * Get the Basic Institution info for the ministry institution detail page
+   * @param institutionId
+   * @returns BasicInstitutionInfo
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("/:institutionId")
+  async getBasicInstitutionInfoById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<BasicInstitutionInfo> {
+    const institutionDetail =
+      await this.institutionService.getBasicInstitutionDetailById(
+        institutionId,
+      );
+    return {
+      operatingName: institutionDetail.operatingName,
+    };
   }
 }

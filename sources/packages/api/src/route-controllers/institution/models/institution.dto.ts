@@ -2,6 +2,7 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
 import { Institution } from "../../../database/entities";
+
 /**
  * DTO object for institution creation.
  */
@@ -126,6 +127,37 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
       institutionType: institutionEntity.institutionType.id,
     };
   }
+}
+
+export class AESTInstitutionDetailDto {
+  legalOperatingName: string;
+  operatingName: string;
+  primaryPhone: string;
+  primaryEmail: string;
+  website: string;
+  regulatingBody: string;
+  institutionTypeName: string;
+  formattedEstablishedDate: string;
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  legalAuthorityEmail: string;
+  legalAuthorityFirstName: string;
+  legalAuthorityLastName: string;
+  legalAuthorityPhone: string;
+  address: {
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    country: string;
+    provinceState: string;
+    postalCode: string;
+  };
+}
+
+export interface BasicInstitutionInfo {
+  operatingName: string;
 }
 
 export interface InstitutionDetailDto {
