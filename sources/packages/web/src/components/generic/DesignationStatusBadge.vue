@@ -4,12 +4,15 @@ Used when we need to display the designation status for an Institution
 <!-- TODO: Replace v-badge with vuetify2 equivalent v-chip with icon once veutify3 is released-->
 <template>
   <v-badge
+    bordered
     color="green"
     :content="designationStatus"
-    :icon="icon"
     location="top-right"
     text-color="white"
   >
+    <template v-slot:default>
+      <v-icon :size="25">mdi-map-markers-radius</v-icon>
+    </template>
   </v-badge>
 </template>
 <script lang="ts">
