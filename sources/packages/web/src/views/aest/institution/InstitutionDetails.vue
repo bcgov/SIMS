@@ -104,7 +104,6 @@ export default {
       institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
       );
-      showData(AESTRoutesConst.INSTITUTION_PROFILE);
     });
     return {
       institutionBasicDetail,

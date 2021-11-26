@@ -517,7 +517,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .innerJoinAndSelect("institution.institutionType", "institutionType")
+      .select(["institution", "institutionType.name"])
+      .innerJoin("institution.institutionType", "institutionType")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
   }
