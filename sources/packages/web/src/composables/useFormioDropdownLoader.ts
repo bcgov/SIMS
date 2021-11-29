@@ -61,15 +61,12 @@ export function useFormioDropdownLoader() {
   // a particular ionstitution.
   const loadProgramsForLocationForInstitution = async (
     form: any,
-    locationId: number,
     dropdownName: string,
   ) => {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramService.shared.getLocationProgramsListForInstitutions(
-        locationId,
-      ),
+      EducationProgramService.shared.getLocationProgramsListForInstitutions(),
     );
   };
 

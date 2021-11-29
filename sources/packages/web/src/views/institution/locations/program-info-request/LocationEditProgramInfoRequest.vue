@@ -107,7 +107,6 @@ export default {
 
       await formioDataLoader.loadProgramsForLocationForInstitution(
         form,
-        props.locationId,
         PROGRAMS_DROPDOWN_KEY,
       );
 
