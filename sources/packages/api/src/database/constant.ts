@@ -28,4 +28,5 @@ export const TableNames = {
   SFASRestrictions: "sfas_restrictions",
   DisbursementSchedule: "disbursement_schedules",
   DisbursementValue: "disbursement_values",
+  DisbursementFeedbackErrors: "disbursement_feedback_errors",
 };

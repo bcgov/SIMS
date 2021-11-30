@@ -4,9 +4,9 @@ import { DatabaseService } from "../../database/database.service";
 import { DatabaseModule } from "../../database/database.module";
 import { InstitutionLocationService } from "./institution-location.service";
 import { InstitutionService } from "../institution/institution.service";
-import { BCeIDService } from "../bceid/bceid.service"
-import { UserService } from "../user/user.service"
-import { ConfigService } from  "../config/config.service"
+import { BCeIDService } from "../bceid/bceid.service";
+import { UserService } from "../user/user.service";
+import { ConfigService } from "../config/config.service";
 
 describe("InstitutionLocationService", () => {
   let service: InstitutionLocationService;
@@ -20,7 +20,7 @@ describe("InstitutionLocationService", () => {
         InstitutionService,
         BCeIDService,
         UserService,
-        ConfigService
+        ConfigService,
       ],
     }).compile();
     await module.init();

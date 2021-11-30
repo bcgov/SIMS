@@ -30,13 +30,17 @@ import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../database/entities";
+import * as Client from "ssh2-sftp-client";
+import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 
 /**
  * Manages the file content generation and methods to
  * upload/download the files to SFTP.
  */
 @Injectable()
-export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
+export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
+  ECertResponseRecord[]
+> {
   private readonly esdcConfig: ESDCIntegrationConfig;
 
   constructor(
@@ -212,11 +216,86 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<void> {
   }
 
   /**
-   * Transform the text lines in parsed objects specific to the integration process.
-   * TODO: read the feedback file.
-   * @param remoteFilePath full remote file path with file name.
+   * Get the list of all E-Cert response files from the folder
+   * TODO: NAME OF THE FOLDER
+   * Filename pattern is `PEDU.PBC.CERTSFB.yyyymmdd.001`
+   * @returns full file paths for all response files from the
+   * E-Cert response folder.
    */
-  downloadResponseFile(remoteFilePath: string): Promise<void> {
-    throw new Error("To be implemented.");
+  async getResponseFilesFullPath(): Promise<string[]> {
+    let filesToProcess: Client.FileInfo[];
+    const client = await this.getClient();
+    try {
+      filesToProcess = await client.list(
+        `${this.esdcConfig.ftpResponseFolder}`,
+        /PEDU.PBC.CERTSFB.*\.DAT/i,
+      );
+    } finally {
+      await SshService.closeQuietly(client);
+    }
+    return filesToProcess.map((file) => file.name);
+  }
+
+  // Generate Record
+
+  /**
+   * Transform the text lines in parsed objects specific to the integration process.
+   * @param remoteFilePath full remote file path with file name.
+   * @returns Parsed records from the file.
+   */
+  async downloadResponseFile(
+    remoteFilePath: string,
+  ): Promise<ECertResponseRecord[]> {
+    const fileLines = await this.downloadResponseFileLines(remoteFilePath);
+    /**
+     * Read the first line to check if the header code is the expected one.
+     * and remove header.
+     */
+    const header = ECertFileHeader.createFromLine(fileLines.shift());
+    if (header.recordTypeCode !== RecordTypeCodes.ECertHeader) {
+      this.logger.error(
+        `The E-Cert file ${remoteFilePath} has an invalid transaction code on header: ${header.recordTypeCode}`,
+      );
+      // If the header is not the expected one.
+      throw new Error(
+        "The E-Cert file has an invalid transaction code on header",
+      );
+    }
+
+    /**
+     * Read the last line to check if the trailer code is the expected one
+     * and remove trailer line.
+     */
+    const trailer = ECertFileFooter.createFromLine(fileLines.pop());
+    if (trailer.recordTypeCode !== RecordTypeCodes.ECertFooter) {
+      this.logger.error(
+        `The E-Cert file ${remoteFilePath} has an invalid transaction code on trailer: ${trailer.recordTypeCode}`,
+      );
+      // If the trailer is not the expected one.
+      throw new Error(
+        "The E-Cert file has an invalid transaction code on trailer",
+      );
+    }
+
+    /**
+     * Check if the number of records match the trailer record count
+     * Here total record count is the total records rejected
+     */
+    if (trailer.recordCount !== fileLines.length) {
+      this.logger.error(
+        `The E-Cert file ${remoteFilePath} has invalid number of records, expected ${trailer.recordCount} but got ${fileLines.length}`,
+      );
+      // If the number of records does not match the trailer record count..
+      throw new Error("The E-Cert file has invalid number of records");
+    }
+
+    // Generate the records.
+    const feedbackRecords: ECertResponseRecord[] = [];
+    fileLines.forEach((line: string, index: number) => {
+      const lineNumber = index + 1;
+      const craRecord = new ECertResponseRecord(line, lineNumber);
+      feedbackRecords.push(craRecord);
+    });
+    return feedbackRecords;
   }
 }

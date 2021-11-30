@@ -29,6 +29,7 @@ import {
   SupportingUserService,
   StudentRestrictionService,
   DisbursementScheduleService,
+  DisbursementScheduleErrorsService,
 } from "./services";
 import {
   UserController,
@@ -120,6 +121,7 @@ import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-t
     SupportingUserService,
     StudentRestrictionService,
     DisbursementScheduleService,
+    DisbursementScheduleErrorsService,
   ],
 })
 export class AppModule {}

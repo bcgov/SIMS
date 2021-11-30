@@ -1,4 +1,4 @@
-import { StringBuilder } from "../../../utilities/string-builder";
+import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import {
   DATE_FORMAT,
@@ -31,5 +31,12 @@ export class ECertFileHeader implements FixedFormatFileLine {
     header.appendWithStartFiller(this.sequence.toString(), 6, NUMBER_FILLER);
     header.repeatAppend(SPACE_FILLER, 735); // Trailing space
     return header.toString();
+  }
+
+  public static createFromLine(line: string): ECertFileHeader {
+    const header = new ECertFileHeader();
+    header.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
+    header.processDate = getDateOnlyFromFormat(line.substr(47, 8), DATE_FORMAT);
+    return header;
   }
 }

@@ -223,4 +223,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const repository = disbursementScheduleRepo ?? this.repo;
     return repository.update({ id: In(disbursementIds) }, { dateSent });
   }
+
+  /**
+   * Get DisbursementSchedule by documentNumber
+   * @param documentNumber document Number
+   * @returns DisbursementSchedule respective to passed documentNumber.
+   */
+  async getDisbursementScheduleByDocumentNumber(
+    documentNumber: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo.findOne({ documentNumber: documentNumber });
+  }
 }
