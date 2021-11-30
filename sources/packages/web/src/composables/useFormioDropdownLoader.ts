@@ -56,17 +56,16 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  // Retrieve the list of programs that have some
-  // offering to the locationId authorized for
+  // Retrieve the list of programs
   // a particular ionstitution.
-  const loadProgramsForLocationForInstitution = async (
+  const loadProgramsForInstitution = async (
     form: any,
     dropdownName: string,
   ) => {
     return loadDropdown(
       form,
       dropdownName,
-      EducationProgramService.shared.getLocationProgramsListForInstitutions(),
+      EducationProgramService.shared.getProgramsListForInstitutions(),
     );
   };
 
@@ -137,7 +136,7 @@ export function useFormioDropdownLoader() {
   return {
     loadLocations,
     loadProgramsForLocation,
-    loadProgramsForLocationForInstitution,
+    loadProgramsForInstitution,
     loadOfferingsForLocation,
     loadOfferingsForLocationForInstitution,
     loadInstitutionTypes,

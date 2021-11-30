@@ -105,7 +105,7 @@ export default {
         institutionEnteredDetails.disabled = true;
       }
 
-      await formioDataLoader.loadProgramsForLocationForInstitution(
+      await formioDataLoader.loadProgramsForInstitution(
         form,
         PROGRAMS_DROPDOWN_KEY,
       );

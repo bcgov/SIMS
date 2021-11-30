@@ -252,8 +252,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
   /**
    * Get programs for a particular institution.
-   * @param institutionId id of the location that should have the
-   * offering associated with.
+   * @param institutionId id of the institution.
    * @returns programs under the specified institution.
    */
   async getPrograms(

@@ -240,13 +240,11 @@ export class EducationProgramController {
   }
 
   /**
-   * Get a key/value pair list of all programs that have
-   * at least one offering for the particular institution.
+   * Get a key/value pair list of all programs.
    * @param userToken User token from request.
    * @returns key/value pair list of programs.
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
-  @HasLocationAccess("locationId")
   @Get("programs-list")
   async getLocationProgramsOptionListForInstitution(
     @UserToken() userToken: IInstitutionUserToken,
