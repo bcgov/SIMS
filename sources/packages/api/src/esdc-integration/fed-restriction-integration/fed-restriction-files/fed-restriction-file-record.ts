@@ -25,10 +25,10 @@ export class FedRestrictionFileRecord {
   }
 
   public get restrictionCode(): string {
-    return this.line.substr(85, 1);
+    return this.line.substr(84, 1);
   }
 
   public get restrictionReasonCode(): string {
-    return this.line.substr(86, 1);
+    return this.line.substr(85, 1);
   }
 }

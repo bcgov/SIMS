@@ -1,17 +1,26 @@
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "../../services";
+import { Inject, Injectable } from "@nestjs/common";
+import {
+  ConfigService,
+  FederalRestrictionService,
+  RestrictionService,
+} from "../../services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import { ESDCIntegrationConfig } from "../../types";
 import * as os from "os";
-import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
+import { Connection, InsertResult, Repository } from "typeorm";
+import { FederalRestriction, Restriction } from "../../database/entities";
+import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 
 @Injectable()
 export class FedRestrictionProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
+    @Inject("Connection") private readonly connection: Connection,
     config: ConfigService,
+    private readonly restrictionService: RestrictionService,
+    private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
   ) {
     this.esdcConfig = config.getConfig().ESDCIntegration;
@@ -43,18 +52,54 @@ export class FedRestrictionProcessingService {
   }
 
   private async processAllRestrictions(remoteFilePath: string): Promise<void> {
-    const restrictionsGrouping =
-      await this.integrationService.downloadResponseFile(remoteFilePath);
+    const restrictions = await this.integrationService.downloadResponseFile(
+      remoteFilePath,
+    );
+
+    const federalRestrictionCodes =
+      await this.restrictionService.getAllFederalRestrictions();
+
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    const federalRestrictionRepo =
+      queryRunner.manager.getRepository(FederalRestriction);
+    const restrictionRepo = queryRunner.manager.getRepository(Restriction);
+
+    await this.federalRestrictionService.resetFederalRestrictionsTable(
+      queryRunner.manager,
+    );
 
     // Used to limit the number of asynchronous operations
     // that will start at the same time.
-    const maxPromisesAllowed = os.cpus().length;
+    //const maxPromisesAllowed = os.cpus().length;
+    const maxPromisesAllowed = 1;
     // Hold all the promises that must be processed.
-    const promises: Promise<void>[] = [];
-    for (const [, restrictions] of Object.entries(restrictionsGrouping)) {
-      // Since all restrictions are grouped by students, provide all the
-      // specific student restrictions to be processed altogether.
-      promises.push(this.syncStudentRestrictions(restrictions));
+    const promises: Promise<InsertResult>[] = [];
+    while (restrictions.length > 0) {
+      // DB restriction objects to be inserted to the db.
+      const restrictionsToInsert: FederalRestriction[] = [];
+      // Restrictions retrieved from the import file.
+      // Insert a certain amount every time.
+      const restrictionsToBulkInsert = restrictions.splice(
+        0,
+        FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT,
+      );
+      for (const restriction of restrictionsToBulkInsert) {
+        const newRestriction = new FederalRestriction();
+        newRestriction.lastName = restriction.surname;
+        newRestriction.sin = restriction.sin;
+        newRestriction.birthDate = restriction.dateOfBirth;
+        newRestriction.restriction = await this.ensureFederalRestrictionExists(
+          restriction.restrictionCode,
+          restriction.restrictionReasonCode,
+          federalRestrictionCodes,
+          restrictionRepo,
+        );
+        restrictionsToInsert.push(newRestriction);
+      }
+
+      promises.push(federalRestrictionRepo.insert(restrictionsToInsert));
       if (promises.length >= maxPromisesAllowed) {
         // Waits for all to be processed.
         await Promise.allSettled(promises);
@@ -63,24 +108,52 @@ export class FedRestrictionProcessingService {
       }
     }
 
-    return null;
+    // Waits for all to be processed.
+    await Promise.allSettled(promises);
+
+    // !This bulk update MUST happen before the next operations to assign
+    // !the student foreign keys correctly.
+    await this.federalRestrictionService.bulkUpdateStudentsForeignKey(
+      queryRunner.manager,
+    );
+    // This bulk updates expects that the student foreign key is updated.
+    await this.federalRestrictionService.bulkInsertNewRestrictions(
+      queryRunner.manager,
+    );
+    await this.federalRestrictionService.bulkDeactivateRestrictions(
+      queryRunner.manager,
+    );
+    // This last update is not critical but allows the system to keep track
+    // of the last time that an active restriction was received.
+    await this.federalRestrictionService.bulkUpdateActiveRestrictions(
+      queryRunner.manager,
+    );
+
+    await queryRunner.commitTransaction();
   }
 
-  /**
-   * Receives all restrictions for a specific student (and one
-   * student only) to be processed (inserted, updated, deleted).
-   * @param studentRestrictions all restrictions for one student.
-   */
-  private async syncStudentRestrictions(
-    studentRestrictions: FedRestrictionFileRecord[],
-  ) {
-    // Since all restrictions belongs to the same student, we can use
-    // one as a reference to retrieve the student data from DB fro sync.
-    const refRestriction = studentRestrictions[0];
-    console.log(refRestriction.surname);
-    console.log(refRestriction.sin);
-    console.log(refRestriction.dateOfBirth);
-    console.log("+++++++++++++++++++++++++++++++++++++++++++");
+  private async ensureFederalRestrictionExists(
+    restrictionCode: string,
+    restrictionReasonCode: string,
+    federalRestrictions: Restriction[],
+    externalRepo?: Repository<Restriction>,
+  ): Promise<Restriction> {
+    const code = `${restrictionCode}${restrictionReasonCode}`.trim();
+    const foundRestriction = federalRestrictions.find(
+      (restriction) => restriction.restrictionCode === code,
+    );
+    if (foundRestriction) {
+      return foundRestriction;
+    }
+
+    const newRestriction =
+      await this.restrictionService.createUnidentifiedFederalRestriction(
+        code,
+        externalRepo,
+      );
+    // Updates the current array to allow the new restriction to be reused.
+    federalRestrictions.push(newRestriction);
+    return newRestriction;
   }
 
   @InjectLogger()

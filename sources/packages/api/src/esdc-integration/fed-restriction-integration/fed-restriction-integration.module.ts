@@ -1,6 +1,11 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "../../auth/auth.module";
-import { ConfigService, SshService } from "../../services";
+import {
+  ConfigService,
+  FederalRestrictionService,
+  RestrictionService,
+  SshService,
+} from "../../services";
 import { FedRestrictionIntegrationService } from "./fed-restriction-integration.service";
 import { FedRestrictionProcessingService } from "./fed-restriction-processing.service";
 
@@ -10,6 +15,8 @@ import { FedRestrictionProcessingService } from "./fed-restriction-processing.se
     SshService,
     FedRestrictionIntegrationService,
     FedRestrictionProcessingService,
+    RestrictionService,
+    FederalRestrictionService,
     ConfigService,
   ],
   exports: [FedRestrictionIntegrationService, FedRestrictionProcessingService],
