@@ -1,5 +1,5 @@
 # Base Image
-FROM node:12.18.3-slim
+FROM node:16.13.0
 
 LABEL maintainer="BC GOV"
 

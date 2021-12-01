@@ -8,6 +8,8 @@ import {
   OptionItemDto,
   ApplicationSummaryDTO,
   SearchInstitutionResp,
+  AESTInstitutionDetailDto,
+  BasicInstitutionInfo,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -162,6 +164,32 @@ export class InstitutionApi extends HttpBaseClient {
         `institution/search?${queryString.slice(0, -1)}`,
       );
       return institution.data as SearchInstitutionResp[];
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getAESTInstitutionDetailById(
+    institutionId: number,
+  ): Promise<AESTInstitutionDetailDto> {
+    try {
+      const response = await this.getCall(
+        `institution/${institutionId}/detail`,
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getBasicInstitutionInfoById(
+    institutionId: number,
+  ): Promise<BasicInstitutionInfo> {
+    try {
+      const response = await this.getCall(`institution/${institutionId}`);
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
