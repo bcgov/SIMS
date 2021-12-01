@@ -72,7 +72,7 @@ export class ECertFullTimeResponseService {
     }
 
     try {
-      if (!(result.errorsSummary.length > 0)) {
+      if (result.errorsSummary.length === 0) {
         // if there is an error in the file do not delete the file
         await this.eCertFullTimeService.deleteFile(filePath);
       }
