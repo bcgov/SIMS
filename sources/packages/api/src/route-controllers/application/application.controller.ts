@@ -20,7 +20,6 @@ import {
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
-  DisbursementScheduleService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
