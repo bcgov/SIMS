@@ -260,7 +260,7 @@ export class ApplicationController extends BaseController {
         `Assessment for the application id ${applicationId} was not calculated.`,
       );
     }
-
+    //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
     const disbursementDetails = {};
     application.disbursementSchedules.forEach((schedule, index) => {
       disbursementDetails["disbursement" + (index + 1) + "Date"] =

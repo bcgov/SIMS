@@ -194,6 +194,9 @@ export interface ActiveApplicationDataDto {
   applicationStatus: string;
 }
 
+/**
+ * DTO for NOA view.
+ */
 export interface NOAApplicationDto {
   assessment: Assessment;
   applicationNumber: string;
