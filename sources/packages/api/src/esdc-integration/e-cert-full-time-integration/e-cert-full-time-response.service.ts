@@ -47,7 +47,6 @@ export class ECertFullTimeResponseService {
       responseFile = await this.eCertFullTimeService.downloadResponseFile(
         filePath,
       );
-
     } catch (error) {
       this.logger.error(error);
       result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
@@ -123,7 +122,7 @@ export class ECertFullTimeResponseService {
           // Expected to update 1 and only 1 record.
           if (!updateResult) {
             errorList.push(
-              `Error while creating Error Code: ${errorCode} for document number:${feedbackRecord.documentNumber} , expected 1.`,
+              `Error while saving Error Code: ${errorCode} for document number:${feedbackRecord.documentNumber} , expected 1.`,
             );
           }
         }

@@ -292,25 +292,12 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     }
 
     // Generate the records.
-    const fileContentErrors = [];
     const feedbackRecords: ECertResponseRecord[] = [];
     fileLines.forEach((line: string, index: number) => {
       const lineNumber = index + 1;
-      try {
-        const craRecord = new ECertResponseRecord(line, lineNumber);
-        feedbackRecords.push(craRecord);
-      } catch (error) {
-        fileContentErrors.push(
-          `error file processing file ${remoteFilePath} at line ${lineNumber}, error: ${error}`,
-        );
-        return;
-      }
+      const craRecord = new ECertResponseRecord(line, lineNumber);
+      feedbackRecords.push(craRecord);
     });
-    if (fileContentErrors.length > 0) {
-      throw new Error(
-        `Error while processing the file ${remoteFilePath}, error: ${fileContentErrors}`,
-      );
-    }
     return feedbackRecords;
   }
 }
