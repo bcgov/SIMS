@@ -228,7 +228,10 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     try {
       filesToProcess = await client.list(
         `${this.esdcConfig.ftpResponseFolder}`,
-        /PEDU.PBC.CERTSFB.*\.DAT/i,
+        new RegExp(
+          `^${this.esdcConfig.environmentCode}EDU.PBC.CERTSFB.*\\.DAT`,
+          "i",
+        ),
       );
     } finally {
       await SshService.closeQuietly(client);
