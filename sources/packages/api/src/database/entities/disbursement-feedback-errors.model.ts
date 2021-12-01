@@ -23,7 +23,7 @@ export class DisbursementFeedbackErrors extends RecordDataModel {
    */
   @Column({
     name: "date_received",
-    type: "date",
+    type: "timestamptz",
   })
   dateReceived: Date;
   /**

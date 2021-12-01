@@ -216,8 +216,8 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
   }
 
   /**
-   * Get the list of all E-Cert response files from the folder
-   * TODO: NAME OF THE FOLDER
+   * Get the list of all E-Cert response files from the
+   * MSFT-Response folder
    * Filename pattern is `PEDU.PBC.CERTSFB.yyyymmdd.001`
    * @returns full file paths for all response files from the
    * E-Cert response folder.
@@ -233,7 +233,9 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     } finally {
       await SshService.closeQuietly(client);
     }
-    return filesToProcess.map((file) => file.name);
+    return filesToProcess.map(
+      (file) => `${this.esdcConfig.ftpResponseFolder}/${file.name}`,
+    );
   }
 
   // Generate Record
@@ -290,12 +292,25 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     }
 
     // Generate the records.
+    const fileContentErrors = [];
     const feedbackRecords: ECertResponseRecord[] = [];
     fileLines.forEach((line: string, index: number) => {
       const lineNumber = index + 1;
-      const craRecord = new ECertResponseRecord(line, lineNumber);
-      feedbackRecords.push(craRecord);
+      try {
+        const craRecord = new ECertResponseRecord(line, lineNumber);
+        feedbackRecords.push(craRecord);
+      } catch (error) {
+        fileContentErrors.push(
+          `error file processing file ${remoteFilePath} at line ${lineNumber}, error: ${error}`,
+        );
+        return;
+      }
     });
+    if (fileContentErrors.length > 0) {
+      throw new Error(
+        `Error while processing the file ${remoteFilePath}, error: ${fileContentErrors}`,
+      );
+    }
     return feedbackRecords;
   }
 }

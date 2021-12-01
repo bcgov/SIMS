@@ -47,6 +47,7 @@ export class ECertFullTimeResponseService {
       responseFile = await this.eCertFullTimeService.downloadResponseFile(
         filePath,
       );
+
     } catch (error) {
       this.logger.error(error);
       result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
@@ -65,14 +66,19 @@ export class ECertFullTimeResponseService {
         );
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${feedbackRecord.lineNumber} from file ${filePath}`;
+        const errorDescription = `Error processing record line number ${
+          feedbackRecord.lineNumber + 1
+        } from file ${filePath}, error: ${error}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }
     }
 
     try {
-      await this.eCertFullTimeService.deleteFile(filePath);
+      if (!(result.errorsSummary.length > 0)) {
+        // if there is an error in the file do not delete the file
+        await this.eCertFullTimeService.deleteFile(filePath);
+      }
     } catch (error) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file removal, it will be
@@ -129,7 +135,7 @@ export class ECertFullTimeResponseService {
     }
 
     // Expected to update 1 and only 1 record.
-    if (errorList.length < 1) {
+    if (errorList.length > 0) {
       throw new Error(
         `Error while saving Error codes to the table ${errorList}.`,
       );

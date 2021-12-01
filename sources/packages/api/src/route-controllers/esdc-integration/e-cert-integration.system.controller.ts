@@ -39,7 +39,6 @@ export class ECertIntegrationController {
   @Post("process-responses")
   async processResponses(): Promise<ESDCFileResponseDTO[]> {
     const results = await this.eCertFullTimeResponseService.processResponses();
-    // todo: process below code
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

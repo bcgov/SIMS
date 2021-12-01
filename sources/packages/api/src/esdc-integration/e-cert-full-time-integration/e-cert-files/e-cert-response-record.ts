@@ -24,34 +24,34 @@ export class ECertResponseRecord extends ECertResponseRecordIdentification {
    * error code-1 associated with the document number.
    */
   public get errorCode1(): string {
-    return this.line.substr(641, 10);
+    return this.line.substr(641, 10).trim();
   }
 
   /**
    * error code-2 associated with the document number.
    */
   public get errorCode2(): string {
-    return this.line.substr(651, 10);
+    return this.line.substr(651, 10).trim();
   }
 
   /**
    * error code-3 associated with the document number.
    */
   public get errorCode3(): string {
-    return this.line.substr(661, 10);
+    return this.line.substr(661, 10).trim();
   }
 
   /**
    * error code-4 associated with the document number.
    */
   public get errorCode4(): string {
-    return this.line.substr(671, 10);
+    return this.line.substr(671, 10).trim();
   }
 
   /**
    * error code-5 associated with the document number.
    */
   public get errorCode5(): string {
-    return this.line.substr(681, 10);
+    return this.line.substr(681, 10).trim();
   }
 }

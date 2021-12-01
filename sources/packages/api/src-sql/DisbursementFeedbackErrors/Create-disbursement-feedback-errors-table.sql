@@ -1,7 +1,7 @@
 -- ## Create disbursement_feedback_errors
 CREATE TABLE IF NOT EXISTS sims.disbursement_feedback_errors(
   id SERIAL PRIMARY KEY,
-  date_received TIMESTAMP WITH TIME ZONE,
+  date_received TIMESTAMP WITH TIME ZONE NOT NULL,
   error_code VARCHAR(10) NOT NULL,
   -- Reference Columns
   disbursement_schedule_id INT NOT NULL REFERENCES sims.disbursement_schedules(id) ON DELETE CASCADE,
