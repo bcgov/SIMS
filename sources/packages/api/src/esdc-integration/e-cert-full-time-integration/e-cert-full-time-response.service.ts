@@ -65,9 +65,7 @@ export class ECertFullTimeResponseService {
         );
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${
-          feedbackRecord.lineNumber + 1
-        } from file ${filePath}, error: ${error}`;
+        const errorDescription = `Error processing record line number ${feedbackRecord.lineNumber} from file ${filePath}, error: ${error}`;
         result.errorsSummary.push(errorDescription);
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }

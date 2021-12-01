@@ -4,7 +4,7 @@ export class ECertResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
     this.transactionCode = line.substr(0, 3) as RecordTypeCodes;
     this.line = line;
-    this.lineNumber = lineNumber;
+    this.lineNumber = lineNumber + 1;
   }
 
   /**
