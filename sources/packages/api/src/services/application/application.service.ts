@@ -503,6 +503,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.studyStartDate",
         "offering.studyEndDate",
         "msfaaNumber.msfaaNumber",
+        "disbursementSchedule.disbursementDate",
+        "disbursementValue.valueType",
+        "disbursementValue.valueCode",
+        "disbursementValue.valueAmount",
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
@@ -510,8 +514,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.location", "location")
       .innerJoin("application.msfaaNumber", "msfaaNumber")
+      .innerJoin("application.disbursementSchedules", "disbursementSchedule")
+      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("student.id = :studentId", { studentId })
+      .addOrderBy("disbursementSchedule.disbursementDate")
       .getOne();
   }
 

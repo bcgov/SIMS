@@ -5,6 +5,7 @@ import {
   AssessmentStatus,
   COEStatus,
   Application,
+  Assessment,
 } from "../../../database/entities";
 import {
   dateString,
@@ -194,7 +195,7 @@ export interface ActiveApplicationDataDto {
 }
 
 export interface NOAApplicationDto {
-  assessment: any;
+  assessment: Assessment;
   applicationNumber: string;
   fullName: string;
   programName: string;
@@ -202,6 +203,7 @@ export interface NOAApplicationDto {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
+  disbursement: any;
 }
 
 /**

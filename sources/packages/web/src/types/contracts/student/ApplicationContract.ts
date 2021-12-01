@@ -139,3 +139,46 @@ export interface ApplicationSummaryDTO {
   award: string;
   status: string;
 }
+
+/**
+ * DTO for Notice of Assessment view
+ */
+export interface NoticeOfAssessmentDTO {
+  assessment: Assessment;
+  applicationNumber: string;
+  fullName: string;
+  programName: string;
+  locationName: string;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  msfaaNumber: string;
+  disbursement: any;
+}
+
+/**
+ * DTO for assessment payload
+ */
+export interface Assessment {
+  weeks: number;
+  totalFederalAward: string;
+  totalProvincialAward: string;
+  federalAssessmentNeed: string;
+  provincialAssessmentNeed: string;
+  tuitionCost: string;
+  booksAndSuppliesCost: string;
+  exceptionalEducationCost: string;
+  livingAllowance: string;
+  transportationCost: string;
+  childcareCost: string;
+  alimonyOrChildSupport: string;
+  secondResidenceCost: string;
+  partnerStudentLoanCost: string;
+  totalAssessedCost: string;
+  studentTotalFederalContribution: string;
+  studentTotalProvincialContribution: string;
+  partnerAssessedContribution: string;
+  parentAssessedContribution: string;
+  totalFederalContribution: string;
+  totalProvincialContribution: string;
+  otherAllowableCost: string;
+}

@@ -5,6 +5,7 @@ import {
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   ApplicationSummaryDTO,
+  NoticeOfAssessmentDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -25,7 +26,7 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Retrieve the Notice of Assessment (NOA) for a particular application.
    */
-  public async getNOA(applicationId: number): Promise<any> {
+  public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
     try {
       const response = await this.apiClient.get(
         `application/${applicationId}/assessment`,

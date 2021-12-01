@@ -49,7 +49,7 @@ export class Application extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  assessment: any;
+  assessment: Assessment;
 
   @RelationId((application: Application) => application.student)
   studentId: number;
@@ -239,4 +239,32 @@ export class Application extends RecordDataModel {
     },
   )
   disbursementSchedules?: DisbursementSchedule[];
+}
+
+/**
+ * Interface for assessment payload
+ */
+export interface Assessment {
+  weeks: number;
+  totalFederalAward: string;
+  totalProvincialAward: string;
+  federalAssessmentNeed: string;
+  provincialAssessmentNeed: string;
+  tuitionCost: string;
+  booksAndSuppliesCost: string;
+  exceptionalEducationCost: string;
+  livingAllowance: string;
+  transportationCost: string;
+  childcareCost: string;
+  alimonyOrChildSupport: string;
+  secondResidenceCost: string;
+  partnerStudentLoanCost: string;
+  totalAssessedCost: string;
+  studentTotalFederalContribution: string;
+  studentTotalProvincialContribution: string;
+  partnerAssessedContribution: string;
+  parentAssessedContribution: string;
+  totalFederalContribution: string;
+  totalProvincialContribution: string;
+  otherAllowableCost: string;
 }
