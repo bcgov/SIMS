@@ -204,7 +204,10 @@ export class MSFAAIntegrationService {
     try {
       filesToProcess = await client.list(
         `${this.esdcConfig.ftpResponseFolder}`,
-        /PEDU.PBC.MSFA.REC.*\.DAT/i,
+        new RegExp(
+          `^${this.esdcConfig.environmentCode}EDU.PBC.MSFA.REC.*\\.DAT`,
+          "i",
+        ),
       );
     } finally {
       await SshService.closeQuietly(client);
