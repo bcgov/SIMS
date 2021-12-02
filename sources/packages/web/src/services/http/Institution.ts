@@ -10,6 +10,7 @@ import {
   SearchInstitutionResp,
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
+  AESTInstitutionProgramsSummaryPaginatedDto,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -189,6 +190,20 @@ export class InstitutionApi extends HttpBaseClient {
   ): Promise<BasicInstitutionInfo> {
     try {
       const response = await this.getCall(`institution/${institutionId}`);
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  public async getPaginatedAESTInstitutionProgramsSummary(
+    institutionId: number,
+  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+    try {
+      const response = await this.getCall(
+        `institution/education-program/institution/${institutionId}/programs-list/paginated`,
+      );
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
