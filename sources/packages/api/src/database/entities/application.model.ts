@@ -242,29 +242,36 @@ export class Application extends RecordDataModel {
 }
 
 /**
- * Interface for assessment payload
+ * Interface for assessment payload.
+ *
+ * This interface is to provide contract for the assessment payload
+ * which is stored to database by workflow.
+ * It is possible that more properties can be added to the assessment payload
+ * without updating this interface and displayed in NOA form.
+ * Whenever there is a source code update, please ensure that properties in this interface are in sync with
+ * assessment payload created by camunda workflow.
  */
 export interface Assessment {
   weeks: number;
-  totalFederalAward: string;
-  totalProvincialAward: string;
-  federalAssessmentNeed: string;
-  provincialAssessmentNeed: string;
-  tuitionCost: string;
-  booksAndSuppliesCost: string;
-  exceptionalEducationCost: string;
-  livingAllowance: string;
-  transportationCost: string;
-  childcareCost: string;
-  alimonyOrChildSupport: string;
-  secondResidenceCost: string;
-  partnerStudentLoanCost: string;
-  totalAssessedCost: string;
-  studentTotalFederalContribution: string;
-  studentTotalProvincialContribution: string;
-  partnerAssessedContribution: string;
-  parentAssessedContribution: string;
-  totalFederalContribution: string;
-  totalProvincialContribution: string;
-  otherAllowableCost: string;
+  totalFederalAward: number;
+  totalProvincialAward: number;
+  federalAssessmentNeed: number;
+  provincialAssessmentNeed: number;
+  tuitionCost: number;
+  booksAndSuppliesCost: number;
+  exceptionalEducationCost: number;
+  livingAllowance: number;
+  transportationCost: number;
+  childcareCost: number;
+  alimonyOrChildSupport: number;
+  secondResidenceCost: number;
+  partnerStudentLoanCost: number;
+  totalAssessedCost: number;
+  studentTotalFederalContribution: number;
+  studentTotalProvincialContribution: number;
+  partnerAssessedContribution: number;
+  parentAssessedContribution: number;
+  totalFederalContribution: number;
+  totalProvincialContribution: number;
+  otherAllowableCost: number;
 }

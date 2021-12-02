@@ -94,7 +94,7 @@
       "dbIndex": false,
       "encrypted": false,
       "redrawOn": "",
-      "customDefaultValue": "value=parseFloat(data.assessment.totalFederalAward)+ parseFloat(data.assessment.totalProvincialAward);",
+      "customDefaultValue": "value= ((typeof data.assessment.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0)).toFixed(2);",
       "calculateValue": "",
       "calculateServer": false,
       "key": "eligibleAmount",
@@ -152,7 +152,7 @@
       "showWordCount": false,
       "allowMultipleMasks": false,
       "inputType": "hidden",
-      "id": "ee6tqid"
+      "id": "e87q2yg"
     },
     {
       "label": "NOA",
@@ -2987,7 +2987,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.tuitionCost ? '$' + data.assessment.tuitionCost : '-'}}",
+                    "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3054,7 +3054,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e4tub7j"
+                    "id": "elj37y"
                   }
                 ]
               },
@@ -3070,7 +3070,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.tuitionCost ? '$' + data.assessment.tuitionCost : '-'}}",
+                    "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3137,7 +3137,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e8rn8t8"
+                    "id": "ex14gq"
                   }
                 ]
               }
@@ -3233,7 +3233,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.booksAndSuppliesCost ? '$' + data.assessment?.booksAndSuppliesCost : '-'}}",
+                    "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3300,7 +3300,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e2wzdwi"
+                    "id": "e2ph6ci"
                   }
                 ]
               },
@@ -3316,7 +3316,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.booksAndSuppliesCost ? '$' + data.assessment?.booksAndSuppliesCost : '-'}}",
+                    "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3383,7 +3383,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "emjcy8e"
+                    "id": "ev8kj2v"
                   }
                 ]
               }
@@ -3478,7 +3478,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.exceptionalEducationCost ? '$' + data.assessment.exceptionalEducationCost : '-'}}",
+                    "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3545,7 +3545,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9d2eo2"
+                    "id": "ebywupe"
                   }
                 ]
               },
@@ -3561,7 +3561,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.exceptionalEducationCost ? '$' + data.assessment.exceptionalEducationCost : '-'}}",
+                    "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3628,7 +3628,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "em69g0w"
+                    "id": "e0ndvcz"
                   }
                 ]
               }
@@ -3724,7 +3724,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.livingAllowance ? '$' + data.assessment.livingAllowance : '-'}}",
+                    "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3791,7 +3791,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eqivx2c"
+                    "id": "e287oym"
                   }
                 ]
               },
@@ -3807,7 +3807,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.livingAllowance ? '$' + data.assessment.livingAllowance : '-'}}",
+                    "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -3874,7 +3874,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9n3n4m"
+                    "id": "eyj4th4"
                   }
                 ]
               }
@@ -3969,7 +3969,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.transportationCost ? '$' + data.assessment.transportationCost : '-'}}",
+                    "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -4036,7 +4036,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "efukg8"
+                    "id": "ekz47gn"
                   }
                 ]
               },
@@ -4052,7 +4052,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.transportationCost ? '$' + data.assessment.transportationCost : '-'}}",
+                    "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -4119,7 +4119,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9ahepx"
+                    "id": "e9kgnnl"
                   }
                 ]
               }
@@ -4214,7 +4214,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.childcareCost ? '$' + data.assessment.childcareCost : '-'}}",
+                    "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -4281,7 +4281,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "esiupeo"
+                    "id": "e8zp8i8"
                   }
                 ]
               },
@@ -4297,7 +4297,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.childcareCost ? '$' + data.assessment.childcareCost : '-'}}",
+                    "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -4364,7 +4364,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eg6ub3b"
+                    "id": "e77sj8"
                   }
                 ]
               }
@@ -4459,7 +4459,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.otherAllowableCost ? '$' + data.assessment.otherAllowableCost : '-'}}",
+                    "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -4526,7 +4526,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e1uq9vf"
+                    "id": "euptlp"
                   }
                 ]
               },
@@ -4534,32 +4534,53 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.otherAllowableCost ? '$' + data.assessment.otherAllowableCost : '-'}}",
+                    "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html31",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -4574,7 +4595,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -4584,26 +4604,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e9arhhn"
+                    "id": "e04egac"
                   }
                 ]
               }
@@ -4699,7 +4705,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.totalAssessedCost ? '$' + data.assessment.totalAssessedCost : '-'}}",
+                    "content": "{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
                     "hidden": false,
@@ -4766,7 +4772,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e7hfci5"
+                    "id": "ef4z5bi"
                   }
                 ]
               },
@@ -4782,7 +4788,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.totalAssessedCost ? '$' + data.assessment.totalAssessedCost : '-'}}",
+                    "content": "{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toFixed(2) : '-'}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
                     "hidden": false,
@@ -4849,7 +4855,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e6ixdw"
+                    "id": "em658ve"
                   }
                 ]
               }
@@ -5258,33 +5264,54 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.studentTotalFederalContribution ? '$' + data.assessment.studentTotalFederalContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html46",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "hideOnChildrenHidden": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -5299,7 +5326,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -5309,26 +5335,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "ejo14wd"
+                    "id": "euhigzi"
                   }
                 ]
               },
@@ -5336,33 +5348,54 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.studentTotalProvincialContribution ? '$' + data.assessment.studentTotalProvincialContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html45",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "hideOnChildrenHidden": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -5377,7 +5410,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -5387,26 +5419,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e9mpivg"
+                    "id": "eihqlj1u"
                   }
                 ]
               }
@@ -5494,32 +5512,53 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.partnerAssessedContribution ? '$' + data.assessment.partnerAssessedContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html38",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -5534,7 +5573,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -5544,26 +5582,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e3j3kfm"
+                    "id": "eo87b8b"
                   }
                 ]
               },
@@ -5571,33 +5595,54 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.partnerAssessedContribution ? '$' + data.assessment.partnerAssessedContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html39",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "hideOnChildrenHidden": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -5612,7 +5657,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -5622,26 +5666,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "eiygx3p"
+                    "id": "e40wlva"
                   }
                 ]
               }
@@ -5729,32 +5759,53 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.parentAssessedContribution ? '$' + data.assessment.parentAssessedContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html44",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -5769,7 +5820,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -5779,26 +5829,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "eo4lfme"
+                    "id": "en9n6an"
                   }
                 ]
               },
@@ -5806,32 +5842,53 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.parentAssessedContribution ? '$' + data.assessment.parentAssessedContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
+                    "customClass": "",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html43",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -5846,7 +5903,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -5856,26 +5912,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "eox34a"
+                    "id": "eoxa9nc"
                   }
                 ]
               }
@@ -5963,16 +6005,39 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.totalFederalContribution ? '$' + data.assessment.totalFederalContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html34",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -5984,11 +6049,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -6003,7 +6066,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -6013,26 +6075,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e467lbl"
+                    "id": "ecigk1k"
                   }
                 ]
               },
@@ -6040,16 +6088,39 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.totalProvincialContribution ? '$' + data.assessment.totalProvincialContribution : '-'}}",
+                    "content": "{{typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html47",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -6062,11 +6133,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -6081,7 +6150,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -6091,26 +6159,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e6ldum"
+                    "id": "exip9r"
                   }
                 ]
               }
@@ -6276,16 +6330,39 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.federalAssessmentNeed ? '$' + data.assessment.federalAssessmentNeed : '-'}}",
+                    "content": "{{typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html35",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -6297,11 +6374,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -6316,7 +6391,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -6326,26 +6400,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "ep0iuos"
+                    "id": "eh81f2k"
                   }
                 ]
               },
@@ -6353,16 +6413,39 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{data.assessment?.provincialAssessmentNeed ? '$' + data.assessment.provincialAssessmentNeed : '-'}}",
+                    "content": "{{typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toFixed(2) : '-'}}",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html36",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -6374,11 +6457,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -6393,7 +6474,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -6403,26 +6483,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "ebu93v"
+                    "id": "echoww"
                   }
                 ]
               }
@@ -10506,6 +10572,6 @@
   "name": "noticeofassessment",
   "path": "noticeofassessment",
   "created": "2021-07-14T17:56:22.162Z",
-  "modified": "2021-12-01T08:20:51.413Z",
+  "modified": "2021-12-01T22:51:09.910Z",
   "machineName": "noticeOfAssessment"
 }

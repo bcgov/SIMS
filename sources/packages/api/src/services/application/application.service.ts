@@ -518,7 +518,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("student.id = :studentId", { studentId })
-      .addOrderBy("disbursementSchedule.disbursementDate")
+      .orderBy("disbursementSchedule.disbursementDate")
       .getOne();
   }
 

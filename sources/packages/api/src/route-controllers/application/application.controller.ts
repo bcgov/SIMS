@@ -263,12 +263,15 @@ export class ApplicationController extends BaseController {
     //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
     const disbursementDetails = {};
     application.disbursementSchedules.forEach((schedule, index) => {
-      disbursementDetails["disbursement" + (index + 1) + "Date"] =
-        schedule.disbursementDate;
+      const disbursementKey = `disbursement${index + 1}Date`;
+      disbursementDetails[disbursementKey] = dateString(
+        schedule.disbursementDate,
+      );
       schedule.disbursementValues.forEach((disbursement) => {
-        disbursementDetails[
-          "disbursement" + (index + 1) + disbursement.valueCode.toLowerCase()
-        ] = disbursement.valueAmount;
+        const disbursementValueKey = `disbursement${
+          index + 1
+        }${disbursement.valueCode.toLowerCase()}`;
+        disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
       });
     });
 
