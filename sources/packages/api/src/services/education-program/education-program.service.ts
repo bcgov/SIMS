@@ -309,7 +309,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addGroupBy("locations.name")
       .addGroupBy("programs.approvalStatus")
       .getRawMany();
-    console.log(paginatedProgramSummaryResult);
     return paginatedProgramSummaryResult.map((programSummary) => {
       const paginatedProgramSummaryItem = new ProgramsSummary();
       paginatedProgramSummaryItem.programId = programSummary.programid;

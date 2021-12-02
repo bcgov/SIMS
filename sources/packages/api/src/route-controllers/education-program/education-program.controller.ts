@@ -278,7 +278,6 @@ export class EducationProgramController {
       await this.programService.getPaginatedProgramsForInstitution(
         institutionId,
       );
-    console.log(paginatedProgramSummaryResult);
     const paginatedProgramSummary = paginatedProgramSummaryResult.map(
       (programSummary) => ({
         programId: programSummary.programId,

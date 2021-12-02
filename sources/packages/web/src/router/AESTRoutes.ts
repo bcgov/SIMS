@@ -4,6 +4,7 @@ import Login from "@/views/aest/Login.vue";
 import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/StudentDetails.vue";
+import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
 import Profile from "@/views/aest/institution/Profile.vue";
@@ -102,6 +103,18 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.SEARCH_INSTITUTIONS,
         components: {
           default: SearchInstitutions,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ProgramDetail,
+        name: AESTRoutesConst.PROGRAM_DETAILS,
+        props: true,
+        components: {
+          default: ProgramDetails,
           sidebar: AESTHomeSideBar,
         },
         meta: {

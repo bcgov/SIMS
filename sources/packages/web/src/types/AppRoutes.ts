@@ -38,6 +38,7 @@ export enum AppRoutes {
   AESTDashboard = "dashboard",
   SearchStudents = "search-students",
   StudentDetail = "student-detail",
+  ProgramDetail = "program-detail/:programId",
   SearchInstitutions = "search-institutions",
   InstitutionDetail = "institution-detail/:institutionId",
   Profile = "profile",
