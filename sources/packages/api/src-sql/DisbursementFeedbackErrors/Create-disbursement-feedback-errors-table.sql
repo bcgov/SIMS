@@ -18,11 +18,11 @@ CREATE TABLE IF NOT EXISTS sims.disbursement_feedback_errors(
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.disbursement_feedback_errors IS 'Disbursements Feeback Errors for a Student Application.';
+COMMENT ON TABLE sims.disbursement_feedback_errors IS 'Disbursements Feedback Errors for a Student Application.';
 
 COMMENT ON COLUMN sims.disbursement_feedback_errors.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.disbursement_feedback_errors.date_received IS 'Feedback errors recevied timestamp in UTC.';
+COMMENT ON COLUMN sims.disbursement_feedback_errors.date_received IS 'Feedback errors received timestamp in UTC.';
 
 COMMENT ON COLUMN sims.disbursement_feedback_errors.error_code IS 'Errors code received from feedback file for the disbursement sent to ESDC.';
 

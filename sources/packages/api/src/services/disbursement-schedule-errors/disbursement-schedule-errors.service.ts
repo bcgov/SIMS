@@ -25,13 +25,17 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
    */
   async createECertErrorRecord(
     disbursementSchedule: DisbursementSchedule,
-    errorCode: string,
+    errorCode: string[],
     dateReceived: Date,
-  ): Promise<DisbursementFeedbackErrors> {
-    const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
-    newDisbursementsFeedbackErrors.disbursementSchedule = disbursementSchedule;
-    newDisbursementsFeedbackErrors.errorCode = errorCode;
-    newDisbursementsFeedbackErrors.dateReceived = dateReceived;
-    return this.repo.save(newDisbursementsFeedbackErrors);
+  ): Promise<DisbursementFeedbackErrors[]> {
+    const errorCodesObject = errorCode.map((errorCode) => {
+      const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
+      newDisbursementsFeedbackErrors.disbursementSchedule =
+        disbursementSchedule;
+      newDisbursementsFeedbackErrors.errorCode = errorCode;
+      newDisbursementsFeedbackErrors.dateReceived = dateReceived;
+      return newDisbursementsFeedbackErrors;
+    });
+    return this.repo.save(errorCodesObject);
   }
 }

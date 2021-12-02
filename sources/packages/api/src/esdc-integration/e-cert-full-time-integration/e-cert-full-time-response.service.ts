@@ -3,26 +3,39 @@ import { InjectLogger } from "../../common";
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
+  ConfigService,
 } from "../../services";
 import { ProcessSftpResponseResult } from "./models/e-cert-full-time-integration.model";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import { getUTCNow } from "../../utilities";
+import { ESDCIntegrationConfig } from "../../types";
 
 @Injectable()
 export class ECertFullTimeResponseService {
+  private readonly esdcConfig: ESDCIntegrationConfig;
+
   constructor(
+    config: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly eCertFullTimeService: ECertFullTimeIntegrationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
-  ) {}
+  ) {
+    this.esdcConfig = config.getConfig().ESDCIntegration;
+  }
+
   /**
    * Download all files from E-Cert Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const filePaths =
-      await this.eCertFullTimeService.getResponseFilesFullPath();
+    const filePaths = await this.eCertFullTimeService.getResponseFilesFullPath(
+      this.esdcConfig.ftpResponseFolder,
+      new RegExp(
+        `^${this.esdcConfig.environmentCode}EDU.PBC.CERTSFB.*\\.DAT`,
+        "i",
+      ),
+    );
     const processFiles: ProcessSftpResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(await this.processFile(filePath));
@@ -60,8 +73,8 @@ export class ECertFullTimeResponseService {
     for (const feedbackRecord of responseFile) {
       try {
         await this.processErrorCodeRecords(feedbackRecord);
-        result.processSummary.push(
-          `Status record from line ${feedbackRecord.lineNumber}.`,
+        this.logger.error(
+          `Successfully processed line ${feedbackRecord.lineNumber}.`,
         );
       } catch (error) {
         // Log the error but allow the process to continue.
@@ -89,9 +102,10 @@ export class ECertFullTimeResponseService {
   }
 
   /**
-   * Process the feedback record of the E-Cert response file
-   * by updating database
-   * @param feedbackRecord E-Cert received record with
+   * Process the feedback record from the E-Cert response file
+   * and save the error code and disbursementSchedule_id respective to
+   * the document number in DisbursementFeedbackErrors
+   * @param feedbackRecord E-Cert received record
    */
   private async processErrorCodeRecords(
     feedbackRecord: ECertResponseRecord,
@@ -103,28 +117,24 @@ export class ECertFullTimeResponseService {
       );
     const errorList = [];
     if (disbursementSchedule) {
-      [
-        feedbackRecord.errorCode1,
-        feedbackRecord.errorCode2,
-        feedbackRecord.errorCode3,
-        feedbackRecord.errorCode4,
-        feedbackRecord.errorCode5,
-      ].forEach(async (errorCode) => {
-        if (errorCode) {
-          const updateResult =
-            await this.disbursementScheduleErrorsService.createECertErrorRecord(
-              disbursementSchedule,
-              errorCode,
-              now,
-            );
-          // Expected to update 1 and only 1 record.
-          if (!updateResult) {
-            errorList.push(
-              `Error while saving Error Code: ${errorCode} for document number:${feedbackRecord.documentNumber} , expected 1.`,
-            );
-          }
-        }
-      });
+      const updateResult =
+        await this.disbursementScheduleErrorsService.createECertErrorRecord(
+          disbursementSchedule,
+          [
+            feedbackRecord.errorCode1,
+            feedbackRecord.errorCode2,
+            feedbackRecord.errorCode3,
+            feedbackRecord.errorCode4,
+            feedbackRecord.errorCode5,
+          ].filter((error) => error),
+          now,
+        );
+      // Expected to update 1 and only 1 record.
+      if (updateResult.length === 0) {
+        errorList.push(
+          `Error while saving Error Codes for document number:${feedbackRecord.documentNumber}.`,
+        );
+      }
     } else {
       throw new Error(
         `${feedbackRecord.documentNumber} document number not found in disbursement_schedule table.`,

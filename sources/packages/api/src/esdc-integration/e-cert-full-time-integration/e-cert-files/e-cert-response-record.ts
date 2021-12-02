@@ -14,7 +14,7 @@ export class ECertResponseRecord extends ECertResponseRecordIdentification {
   }
 
   /**
-   * document Number Financial document number associated with this disbursement.
+   * Financial document number associated with this disbursement.
    */
   public get documentNumber(): number {
     return parseInt(this.line.substr(31, 8));
@@ -53,5 +53,12 @@ export class ECertResponseRecord extends ECertResponseRecordIdentification {
    */
   public get errorCode5(): string {
     return this.line.substr(681, 10).trim();
+  }
+
+  /**
+   * SIN associated with the document number.
+   */
+  public get sin(): number {
+    return parseInt(this.line.substr(3, 9));
   }
 }

@@ -30,7 +30,6 @@ import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../database/entities";
-import * as Client from "ssh2-sftp-client";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 
 /**
@@ -215,32 +214,6 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     } as CreateRequestFileNameResult;
   }
 
-  /**
-   * Get the list of all E-Cert response files from the
-   * MSFT-Response folder
-   * Filename pattern is `PEDU.PBC.CERTSFB.yyyymmdd.001`
-   * @returns full file paths for all response files from the
-   * E-Cert response folder.
-   */
-  async getResponseFilesFullPath(): Promise<string[]> {
-    let filesToProcess: Client.FileInfo[];
-    const client = await this.getClient();
-    try {
-      filesToProcess = await client.list(
-        `${this.esdcConfig.ftpResponseFolder}`,
-        new RegExp(
-          `^${this.esdcConfig.environmentCode}EDU.PBC.CERTSFB.*\\.DAT`,
-          "i",
-        ),
-      );
-    } finally {
-      await SshService.closeQuietly(client);
-    }
-    return filesToProcess.map(
-      (file) => `${this.esdcConfig.ftpResponseFolder}/${file.name}`,
-    );
-  }
-
   // Generate Record
 
   /**
@@ -259,7 +232,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     const header = ECertFileHeader.createFromLine(fileLines.shift());
     if (header.recordTypeCode !== RecordTypeCodes.ECertHeader) {
       this.logger.error(
-        `The E-Cert file ${remoteFilePath} has an invalid transaction code on header: ${header.recordTypeCode}`,
+        `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
       );
       // If the header is not the expected one.
       throw new Error(
@@ -296,11 +269,25 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
 
     // Generate the records.
     const feedbackRecords: ECertResponseRecord[] = [];
+    let sumOfAllSin = 0;
     fileLines.forEach((line: string, index: number) => {
-      const lineNumber = index + 1;
-      const craRecord = new ECertResponseRecord(line, lineNumber);
-      feedbackRecords.push(craRecord);
+      const lineNumber = index + 2;
+      const eCertRecord = new ECertResponseRecord(line, lineNumber);
+      sumOfAllSin += eCertRecord.sin;
+      feedbackRecords.push(eCertRecord);
     });
+    /**
+     * Check if the sum total SIN in the records match the trailer SIN hash total
+     */
+    if (sumOfAllSin !== trailer.totalSINHash) {
+      this.logger.error(
+        `The E-Cert file ${remoteFilePath} has SINHash inconsistent with the total sum of sin in the records`,
+      );
+      // If the Sum hash total of SIN in the records does not match the trailer SIN hash total count.
+      throw new Error(
+        "The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records",
+      );
+    }
     return feedbackRecords;
   }
 }

@@ -2,15 +2,15 @@ import { RecordTypeCodes } from "../models/e-cert-full-time-integration.model";
 
 export class ECertResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
-    this.transactionCode = line.substr(0, 3) as RecordTypeCodes;
+    this.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
     this.line = line;
-    this.lineNumber = lineNumber + 1;
+    this.lineNumber = lineNumber;
   }
 
   /**
-   * transactionCode of the line.
+   * recordTypeCode of the line.
    */
-  public readonly transactionCode: RecordTypeCodes;
+  public readonly recordTypeCode: RecordTypeCodes;
   /**
    * Original line read from the E-Cert response file.
    */
