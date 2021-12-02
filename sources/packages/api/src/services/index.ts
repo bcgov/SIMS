@@ -37,3 +37,4 @@ export * from "./sfas/sfas-individual.service";
 export * from "./sfas/sfas-application.service";
 export * from "./sfas/sfas-restriction.service";
 export * from "./disbursement-schedule-service/disbursement-schedule-service";
+export * from "./disbursement-schedule-errors/disbursement-schedule-errors.service";

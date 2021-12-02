@@ -6,6 +6,7 @@ import * as utc from "dayjs/plugin/utc";
 import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
+import { EXTENDED_DATE_FORMAT } from "../utilities";
 
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
@@ -121,4 +122,13 @@ export function getDateOnlyFromFormat(
  */
 export function getDayOfTheYear(day: Date): number {
   return dayjs(day).dayOfYear();
+}
+
+/**
+ * Get the extended date format(March, 22 2021) for the date given
+ * @param date date to be retrieved as Extended date format
+ * @returns extended date format like March, 22 2021
+ */
+export function getExtendedDateFormat(date: Date): string {
+  return dayjs(date).format(EXTENDED_DATE_FORMAT);
 }

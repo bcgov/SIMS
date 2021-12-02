@@ -2,8 +2,7 @@ export interface ESDCFileResultDTO {
   generatedFile: string;
   uploadedRecords: number;
 }
-
-export interface ProcessSFTPResponseDTO {
+export interface ESDCFileResponseDTO {
   processSummary: string[];
   errorsSummary: string[];
 }

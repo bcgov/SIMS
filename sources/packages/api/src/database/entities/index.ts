@@ -37,3 +37,4 @@ export * from "./disbursement-value-type";
 export * from "./disbursement-values.model";
 export * from "./disbursement-schedule.model";
 export * from "./federal-restriction.model";
+export * from "./disbursement-feedback-errors.model";

@@ -83,7 +83,7 @@ export default {
     const institutions = ref([] as SearchInstitutionResp[]);
     const goToViewInstitution = (institutionId: number) => {
       router.push({
-        name: AESTRoutesConst.INSTITUTION_DETAILS,
+        name: AESTRoutesConst.INSTITUTION_PROFILE,
         params: { institutionId: institutionId },
       });
     };

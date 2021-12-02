@@ -26,4 +26,13 @@ export class ECertFileFooter implements FixedFormatFileLine {
     footer.repeatAppend(SPACE_FILLER, 733); //Trailing spaces
     return footer.toString();
   }
+
+  public static createFromLine(line: string): ECertFileFooter {
+    const footer = new ECertFileFooter();
+    footer.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
+    // Here total record count is the total records rejected
+    footer.recordCount = parseInt(line.substr(52, 9));
+    footer.totalSINHash = parseInt(line.substr(61, 15));
+    return footer;
+  }
 }

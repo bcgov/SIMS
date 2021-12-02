@@ -4,13 +4,15 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ECertFullTimeRequestService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-request.service";
-import { ESDCFileResultDTO } from "./models/esdc-model";
+import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
+import { ESDCFileResultDTO, ESDCFileResponseDTO } from "./models/esdc-model";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
 export class ECertIntegrationController {
   constructor(
     private readonly ecertFullTimeRequestService: ECertFullTimeRequestService,
+    private readonly eCertFullTimeResponseService: ECertFullTimeResponseService,
   ) {}
 
   /**
@@ -28,6 +30,21 @@ export class ECertIntegrationController {
       generatedFile: uploadResult.generatedFile,
       uploadedRecords: uploadResult.uploadedRecords,
     };
+  }
+
+  /**
+   * Download all files from E-Cert Response folder on SFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  @Post("process-responses")
+  async processResponses(): Promise<ESDCFileResponseDTO[]> {
+    const results = await this.eCertFullTimeResponseService.processResponses();
+    return results.map((result) => {
+      return {
+        processSummary: result.processSummary,
+        errorsSummary: result.errorsSummary,
+      };
+    });
   }
 
   @InjectLogger()

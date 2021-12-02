@@ -49,7 +49,7 @@ export class Application extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  assessment: any;
+  assessment: Assessment;
 
   @RelationId((application: Application) => application.student)
   studentId: number;
@@ -239,4 +239,39 @@ export class Application extends RecordDataModel {
     },
   )
   disbursementSchedules?: DisbursementSchedule[];
+}
+
+/**
+ * Interface for assessment payload.
+ *
+ * This interface is to provide contract for the assessment payload
+ * which is stored to database by workflow.
+ * It is possible that more properties can be added to the assessment payload
+ * without updating this interface and displayed in NOA form.
+ * Whenever there is a source code update, please ensure that properties in this interface are in sync with
+ * assessment payload created by camunda workflow.
+ */
+export interface Assessment {
+  weeks: number;
+  totalFederalAward: number;
+  totalProvincialAward: number;
+  federalAssessmentNeed: number;
+  provincialAssessmentNeed: number;
+  tuitionCost: number;
+  booksAndSuppliesCost: number;
+  exceptionalEducationCost: number;
+  livingAllowance: number;
+  transportationCost: number;
+  childcareCost: number;
+  alimonyOrChildSupport: number;
+  secondResidenceCost: number;
+  partnerStudentLoanCost: number;
+  totalAssessedCost: number;
+  studentTotalFederalContribution: number;
+  studentTotalProvincialContribution: number;
+  partnerAssessedContribution: number;
+  parentAssessedContribution: number;
+  totalFederalContribution: number;
+  totalProvincialContribution: number;
+  otherAllowableCost: number;
 }

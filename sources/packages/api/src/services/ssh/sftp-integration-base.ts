@@ -119,7 +119,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Generates a new connected SFTP client ready to be used.
    * @returns client
    */
-  private async getClient(): Promise<Client> {
+  public async getClient(): Promise<Client> {
     return this.sshService.createClient(this.sftpConfig);
   }
 
