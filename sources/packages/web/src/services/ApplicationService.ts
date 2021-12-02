@@ -6,6 +6,7 @@ import {
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   ApplicationSummaryDTO,
+  NoticeOfAssessmentDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -17,7 +18,7 @@ export class ApplicationService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getNOA(applicationId: number): Promise<any> {
+  public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
     return ApiClient.Application.getNOA(applicationId);
   }
 
