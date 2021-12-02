@@ -1,3 +1,9 @@
+/*
+ * Inserts into sims.student_restrictions all the federal restrictions
+ * that are not present and active in the table. The same federal restriction
+ * can be activated and deactivated multiple times for the same student,
+ * generating a new record for every time that the restriction changes its state.
+ */
 INSERT INTO
     sims.student_restrictions(student_id, restriction_id, is_active)
 SELECT

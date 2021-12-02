@@ -1,11 +1,12 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Restriction, Student } from ".";
+import { Restriction } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
@@ -21,7 +22,7 @@ export class FederalRestriction {
   @PrimaryGeneratedColumn({ type: "bigint" })
   id: string;
   /**
-   * Last name.
+   * Last name of the student.
    */
   @Column({
     name: "last_name",
@@ -29,7 +30,7 @@ export class FederalRestriction {
   })
   lastName: string;
   /**
-   * Date of birth.
+   * Date of birth of the student.
    */
   @Column({
     name: "birth_date",
@@ -38,14 +39,14 @@ export class FederalRestriction {
   })
   birthDate: Date;
   /**
-   * Social Insurance Number for the student.
+   * SIN of the student.
    */
   @Column({
     name: "sin",
   })
   sin: string;
   /**
-   * Restriction code associated with federal restriction.
+   * Restriction associated with federal record.
    */
   @ManyToOne(() => Restriction, {
     eager: false,
@@ -56,4 +57,11 @@ export class FederalRestriction {
     referencedColumnName: ColumnNames.ID,
   })
   restriction: Restriction;
+  /**
+   * Record creation timestamp.
+   */
+  @CreateDateColumn({
+    name: ColumnNames.CreateTimestamp,
+  })
+  createdAt: Date;
 }

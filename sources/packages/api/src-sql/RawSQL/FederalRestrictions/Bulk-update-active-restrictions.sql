@@ -1,3 +1,10 @@
+/*
+ * Update all active federal restrictions on table sims.student_restrictions
+ * that are still present of federal restrictions. This update is not
+ * critical but it will keep the created date and updated date representing
+ * in a more accurate way when the system received the restriction for the first
+ * time till when the same status was kept in the federal snapshot day after day.
+ */
 UPDATE
     sims.student_restrictions
 SET

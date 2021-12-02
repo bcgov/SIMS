@@ -1,3 +1,9 @@
+/*
+ * After all the federal restrictions are imported, this update
+ * associates all the students ids that matches with the students
+ * currently on the database. This will be used for all subsequent
+ * bulk operations to update the data on the table sims.student_restrictions.
+ */
 UPDATE
     sims.federal_restrictions
 SET

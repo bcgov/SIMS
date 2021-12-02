@@ -32,7 +32,7 @@ export class FedRestrictionProcessingService {
     //const results: ProcessSftpResponseResult[] = [];
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
-      `${this.esdcConfig.environmentCode}CSLS.PBC.RESTR.LIST.D[\w]*\.[0-9]*`,
+      `^${this.esdcConfig.environmentCode}CSLS.PBC.RESTR.LIST.D[\w]*\.[0-9]*`,
       "i",
     );
     const filePaths = await this.integrationService.getResponseFilesFullPath(

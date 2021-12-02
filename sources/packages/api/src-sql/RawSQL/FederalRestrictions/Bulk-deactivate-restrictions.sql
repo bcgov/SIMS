@@ -1,3 +1,9 @@
+/*
+ * Check all currently active federal restrictions present
+ * on the table sims.student_restrictions to verify if they
+ * are still present on the sims.federal_restrictions table.
+ * If they are no longer present, they must be deactivated.
+ */
 UPDATE
     sims.student_restrictions
 SET
