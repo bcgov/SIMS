@@ -151,6 +151,7 @@ export class FedRestrictionProcessingService {
       // Hold all the promises that must be processed.
       const promises: Promise<InsertResult | void>[] = [];
       this.logger.log("Starting bulk insert...");
+      let hasBulkInsertError = false;
       while (sanitizedRestrictions.length > 0) {
         // DB restriction objects to be inserted to the db.
         const restrictionsToInsert: FederalRestriction[] = [];
@@ -180,21 +181,33 @@ export class FedRestrictionProcessingService {
             const lastLineNumber =
               restrictionsToBulkInsert[restrictionsToBulkInsert.length - 1]
                 .lineNumber;
-            const logMessage = `Error while inserting the block of lines from ${firstLineNumber} to ${lastLineNumber}: ${error}`;
+            const logMessage = `Error while inserting the block of lines from ${firstLineNumber} to ${lastLineNumber}`;
             result.errorsSummary.push(logMessage);
+            result.errorsSummary.push(error.message);
             this.logger.error(logMessage);
+            this.logger.error(error);
+            hasBulkInsertError = true;
           });
         promises.push(insertPromises);
         if (promises.length >= maxPromisesAllowed) {
-          // Waits for all to be processed.
-          await Promise.allSettled(promises);
+          // Waits for all to be processed or some to fail.
+          await Promise.all(promises);
           // Clear the array.
           promises.splice(0, promises.length);
         }
       }
 
       // Waits any promise not already executed.
-      await Promise.allSettled(promises);
+      await Promise.all(promises);
+
+      if (hasBulkInsertError) {
+        const logMessage =
+          "Aborting process due to an error on the bulk insert.";
+        result.errorsSummary.push(logMessage);
+        this.logger.error(logMessage);
+        await queryRunner.rollbackTransaction();
+        return result;
+      }
 
       this.logger.log("Bulk data insert finished.");
       this.logger.log(
@@ -210,7 +223,7 @@ export class FedRestrictionProcessingService {
       const logMessage =
         "Unexpected error while processing federal restrictions. Executing rollback.";
       result.errorsSummary.push(logMessage);
-      result.errorsSummary.push(error);
+      result.errorsSummary.push(error.message);
       this.logger.error(logMessage);
       this.logger.error(error);
       await queryRunner.rollbackTransaction();
