@@ -12,6 +12,7 @@ import { getUTCNow } from "../../utilities";
 import { ESDCIntegrationConfig } from "../../types";
 // postgresql unique constraint code, ref: https://www.postgresql.org/docs/9.6/errcodes-appendix.html
 const PG_UNIQUE_CONSTRAINT_VIOLATION = "23505";
+
 @Injectable()
 export class ECertFullTimeResponseService {
   private readonly esdcConfig: ESDCIntegrationConfig;

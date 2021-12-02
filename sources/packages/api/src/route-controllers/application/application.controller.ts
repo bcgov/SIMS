@@ -260,6 +260,18 @@ export class ApplicationController extends BaseController {
         `Assessment for the application id ${applicationId} was not calculated.`,
       );
     }
+    //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
+    const disbursementDetails = {};
+    application.disbursementSchedules.forEach((schedule, index) => {
+      const disbursementIdentifier = `disbursement${index + 1}`;
+      disbursementDetails[`${disbursementIdentifier}Date`] = dateString(
+        schedule.disbursementDate,
+      );
+      schedule.disbursementValues.forEach((disbursement) => {
+        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
+        disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
+      });
+    });
 
     return {
       assessment: application.assessment,
@@ -270,6 +282,7 @@ export class ApplicationController extends BaseController {
       offeringStudyStartDate: dateString(application.offering.studyStartDate),
       offeringStudyEndDate: dateString(application.offering.studyEndDate),
       msfaaNumber: application.msfaaNumber.msfaaNumber,
+      disbursement: disbursementDetails,
     };
   }
 
