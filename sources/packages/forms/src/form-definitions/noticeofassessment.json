@@ -825,6 +825,8 @@
         },
         {
           "label": "Tuition Remittance",
+          "tag": "p",
+          "className": "",
           "attrs": [
             {
               "attr": "",
@@ -832,25 +834,44 @@
             }
           ],
           "content": "Your institution requested {{ data.tuitionRemittanceAmount }} to be directed to them to cover educational costs",
-          "refreshOnChange": false,
+          "refreshOnChange": true,
+          "customClass": "",
+          "hidden": false,
+          "modalEdit": false,
           "key": "tuitionRemittance",
+          "tags": [],
+          "properties": {},
+          "conditional": {
+            "show": null,
+            "when": null,
+            "eq": "",
+            "json": ""
+          },
+          "customConditional": "",
+          "logic": [],
+          "attributes": {},
+          "overlay": {
+            "style": "",
+            "page": "",
+            "left": "",
+            "top": "",
+            "width": "",
+            "height": ""
+          },
           "type": "htmlelement",
           "input": false,
           "tableView": false,
           "placeholder": "",
           "prefix": "",
-          "customClass": "",
           "suffix": "",
           "multiple": false,
           "defaultValue": null,
           "protected": false,
           "unique": false,
           "persistent": false,
-          "hidden": false,
           "clearOnHide": true,
           "refreshOn": "",
           "redrawOn": "",
-          "modalEdit": false,
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -865,7 +886,6 @@
           "calculateValue": "",
           "calculateServer": false,
           "widget": null,
-          "attributes": {},
           "validateOn": "change",
           "validate": {
             "required": false,
@@ -875,26 +895,12 @@
             "multiple": false,
             "unique": false
           },
-          "conditional": {
-            "show": null,
-            "when": null,
-            "eq": ""
-          },
-          "overlay": {
-            "style": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
           "allowCalculateOverride": false,
           "encrypted": false,
           "showCharCount": false,
           "showWordCount": false,
-          "properties": {},
           "allowMultipleMasks": false,
-          "tag": "p",
-          "id": "e4b9z4"
+          "id": "elkl9dc"
         },
         {
           "label": "instructions",
@@ -973,7 +979,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "evrzz3a"
+          "id": "eugleak"
         }
       ],
       "placeholder": "",
@@ -1207,7 +1213,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e65k6k"
+          "id": "e4gi5y0l"
         },
         {
           "html": "<p style=\"margin-left:0cm;\">The National Student Loans Service Centre (NSLSC) will email you instructions for creating an online account. Once you've received the instructions:</p><ul><li><a href=\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/register-account\">Create your account</a></li><li>Complete your master student financial assistance agreement (MSFAA)</li><li>Submit your MSFAA</li></ul><p style=\"margin-left:0cm;\">Once you've submitted your MSFAA and your Confirmation of Enrollment is complete, your money will be deposited to your account.</p>",
@@ -1590,7 +1596,7 @@
               "value": ""
             }
           ],
-          "content": "On or after the following dates:",
+          "content": "On or after the following dates: ",
           "refreshOnChange": false,
           "customClass": "header-md secondary-color",
           "hidden": false,
@@ -1657,7 +1663,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "eb1h1fe"
+          "id": "e39k0y"
         },
         {
           "label": "Table",
@@ -1832,8 +1838,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.disbursement?.disbursement1Date ? data.disbursement.disbursement1Date : ''}}",
-                    "refreshOnChange": false,
+                    "content": "{{data.disbursement?.disbursement1Date ? data.disbursement.disbursement1Date : '-'}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -1899,7 +1905,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "euuc1ko"
+                    "id": "exlna8b"
                   }
                 ]
               }
@@ -1917,7 +1923,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "Date 2 (If applicable): : THE DATE OF DISBURSEMENT 2",
+                    "content": "Date 2 (If applicable): THE DATE OF DISBURSEMENT 2",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -1984,7 +1990,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e2sahf7"
+                    "id": "esgdayc"
                   }
                 ]
               },
@@ -2000,8 +2006,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{data.disbursement?.disbursement2Date ? data.disbursement.disbursement2Date : ''}}",
-                    "refreshOnChange": false,
+                    "content": "{{data.disbursement?.disbursement2Date ? data.disbursement.disbursement2Date : '-'}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -2067,7 +2073,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo54k6"
+                    "id": "ejihdhk"
                   }
                 ]
               }
@@ -2988,7 +2994,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3054,7 +3060,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "elj37y"
+                    "id": "ecl6lg8"
                   }
                 ]
               },
@@ -3071,7 +3077,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3137,7 +3143,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ex14gq"
+                    "id": "eqncvn"
                   }
                 ]
               }
@@ -3234,7 +3240,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3300,7 +3306,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e2ph6ci"
+                    "id": "exi83"
                   }
                 ]
               },
@@ -3317,7 +3323,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3383,7 +3389,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ev8kj2v"
+                    "id": "e95f14h"
                   }
                 ]
               }
@@ -3479,7 +3485,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3545,7 +3551,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ebywupe"
+                    "id": "eg1g01"
                   }
                 ]
               },
@@ -3562,7 +3568,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3628,7 +3634,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e0ndvcz"
+                    "id": "ex2l3rp"
                   }
                 ]
               }
@@ -3725,7 +3731,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3791,7 +3797,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e287oym"
+                    "id": "epdr69q"
                   }
                 ]
               },
@@ -3808,7 +3814,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -3874,7 +3880,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eyj4th4"
+                    "id": "ekvr0r"
                   }
                 ]
               }
@@ -3970,7 +3976,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -4036,7 +4042,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ekz47gn"
+                    "id": "ex169o7"
                   }
                 ]
               },
@@ -4053,7 +4059,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -4119,7 +4125,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9kgnnl"
+                    "id": "eo6t38et"
                   }
                 ]
               }
@@ -4215,7 +4221,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -4281,7 +4287,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e8zp8i8"
+                    "id": "ew1pemj"
                   }
                 ]
               },
@@ -4298,7 +4304,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -4364,7 +4370,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e77sj8"
+                    "id": "enxzzkn"
                   }
                 ]
               }
@@ -4460,7 +4466,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -4526,7 +4532,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "euptlp"
+                    "id": "ej3o1p"
                   }
                 ]
               },
@@ -4543,7 +4549,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -4609,7 +4615,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e04egac"
+                    "id": "eoxbw7p"
                   }
                 ]
               }
@@ -4772,7 +4778,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ef4z5bi"
+                    "id": "eo5bbp4"
                   }
                 ]
               },
@@ -4855,7 +4861,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "em658ve"
+                    "id": "e1ispn"
                   }
                 ]
               }
@@ -5273,7 +5279,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -5340,7 +5346,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "euhigzi"
+                    "id": "e2yp4ao"
                   }
                 ]
               },
@@ -5357,7 +5363,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -5424,7 +5430,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eihqlj1u"
+                    "id": "ehwvj4"
                   }
                 ]
               }
@@ -5521,7 +5527,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -5587,7 +5593,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo87b8b"
+                    "id": "ey6uc1"
                   }
                 ]
               },
@@ -5604,7 +5610,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -5671,7 +5677,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e40wlva"
+                    "id": "eainio"
                   }
                 ]
               }
@@ -5768,7 +5774,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -5834,7 +5840,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "en9n6an"
+                    "id": "et2t9lk"
                   }
                 ]
               },
@@ -5851,7 +5857,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -5917,7 +5923,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eoxa9nc"
+                    "id": "ey0v6h"
                   }
                 ]
               }
@@ -6014,7 +6020,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
                     "hidden": false,
                     "modalEdit": false,
@@ -6080,7 +6086,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ecigk1k"
+                    "id": "etwyy0qe"
                   }
                 ]
               },
@@ -6097,7 +6103,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
                     "hidden": false,
                     "modalEdit": false,
@@ -6164,7 +6170,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "exip9r"
+                    "id": "epotpvi"
                   }
                 ]
               }
@@ -6339,7 +6345,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
                     "hidden": false,
                     "modalEdit": false,
@@ -6405,7 +6411,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eh81f2k"
+                    "id": "erou0pn"
                   }
                 ]
               },
@@ -6422,7 +6428,7 @@
                       }
                     ],
                     "content": "{{typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toFixed(2) : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
                     "hidden": false,
                     "modalEdit": false,
@@ -6488,7 +6494,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "echoww"
+                    "id": "e8clovc"
                   }
                 ]
               }
@@ -7053,7 +7059,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1cslf ? '$'+ data.disbursement.disbursement1cslf : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7119,7 +7125,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eum0ak5"
+                    "id": "erlrof"
                   }
                 ]
               },
@@ -7136,7 +7142,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2cslf ? '$'+ data.disbursement.disbursement2cslf : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7202,7 +7208,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "evqdh87"
+                    "id": "efezetm"
                   }
                 ]
               },
@@ -7218,8 +7224,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1cslf ? data.disbursement.disbursement1cslf : 0) + (data.disbursement?.disbursement2cslf ? data.disbursement.disbursement2cslf : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement.disbursement1cslf) : 0) + (data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement.disbursement2cslf) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7285,7 +7291,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e7x93j"
+                    "id": "e7cob"
                   }
                 ]
               }
@@ -7382,7 +7388,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1bcsl ? '$'+ data.disbursement.disbursement1bcsl : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7449,7 +7455,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ey42yb"
+                    "id": "eliwb0j"
                   }
                 ]
               },
@@ -7466,7 +7472,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2bcsl ? '$'+ data.disbursement.disbursement2bcsl : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7532,7 +7538,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ev3i26c"
+                    "id": "e1n4bdo"
                   }
                 ]
               },
@@ -7548,8 +7554,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1bcsl ? data.disbursement.disbursement1bcsl : 0) + (data.disbursement?.disbursement2bcsl ? data.disbursement.disbursement2bcsl : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement.disbursement1bcsl) : 0) + (data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement.disbursement2bcsl) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7615,7 +7621,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eo4fu1g"
+                    "id": "eglk6qm"
                   }
                 ]
               }
@@ -7711,7 +7717,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1csgp ? '$'+ data.disbursement.disbursement1csgp : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7777,7 +7783,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eg484j"
+                    "id": "ep1si1"
                   }
                 ]
               },
@@ -7794,7 +7800,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2csgp ? '$'+ data.disbursement.disbursement2csgp : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7860,7 +7866,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ej5cx5b"
+                    "id": "e22nzx"
                   }
                 ]
               },
@@ -7876,8 +7882,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1csgp ? data.disbursement.disbursement1csgp : 0) + (data.disbursement?.disbursement2csgp ? data.disbursement.disbursement2csgp : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -7943,7 +7949,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "exmr6dt"
+                    "id": "eh6q2oer"
                   }
                 ]
               }
@@ -8039,7 +8045,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1csgd ? '$'+ data.disbursement.disbursement1csgd : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8105,7 +8111,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "efgolz"
+                    "id": "evv12ei"
                   }
                 ]
               },
@@ -8122,7 +8128,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2csgd ? '$'+ data.disbursement.disbursement2csgd : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8188,7 +8194,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "exa1057"
+                    "id": "e99tz7l"
                   }
                 ]
               },
@@ -8204,8 +8210,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1csgd ? data.disbursement.disbursement1csgd : 0) + (data.disbursement?.disbursement2csgd ? data.disbursement.disbursement2csgd : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8271,7 +8277,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eknwzha"
+                    "id": "ee5y4gh"
                   }
                 ]
               }
@@ -8367,7 +8373,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1csgf ? '$'+ data.disbursement.disbursement1csgf : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8433,7 +8439,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e88xy1l"
+                    "id": "entw7zr"
                   }
                 ]
               },
@@ -8450,7 +8456,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2csgf ? '$'+ data.disbursement.disbursement2csgf : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8516,7 +8522,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e5s5tcv"
+                    "id": "esita3fg"
                   }
                 ]
               },
@@ -8532,8 +8538,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1csgf ? data.disbursement.disbursement1csgf : 0) + (data.disbursement?.disbursement2csgf ? data.disbursement.disbursement2csgf : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement.disbursement1csgf) : 0) + (data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement.disbursement2csgf) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8599,7 +8605,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eqpt2gf"
+                    "id": "echkxf8"
                   }
                 ]
               }
@@ -8696,7 +8702,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1csgt ? '$'+ data.disbursement.disbursement1csgt : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8762,7 +8768,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e03nm6j"
+                    "id": "eelqhb8"
                   }
                 ]
               },
@@ -8779,7 +8785,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2csgt ? '$'+ data.disbursement.disbursement2csgt : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8845,7 +8851,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e5l1wqs"
+                    "id": "e8rsqg"
                   }
                 ]
               },
@@ -8861,8 +8867,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1csgt ? data.disbursement.disbursement1csgt : 0) + (data.disbursement?.disbursement2csgt ? data.disbursement.disbursement2csgt : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement.disbursement1csgt) : 0) + (data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement.disbursement2csgt) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -8928,7 +8934,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "es94ttkh"
+                    "id": "er739n"
                   }
                 ]
               }
@@ -9025,7 +9031,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1bcag ? '$'+ data.disbursement.disbursement1bcag : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9091,7 +9097,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ex6l0jf"
+                    "id": "eqiovbi"
                   }
                 ]
               },
@@ -9108,7 +9114,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2bcag ? '$'+ data.disbursement.disbursement2bcag : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9174,7 +9180,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e4la5nb"
+                    "id": "epnfsbr"
                   }
                 ]
               },
@@ -9190,8 +9196,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1bcag ? data.disbursement.disbursement1bcag : 0) + (data.disbursement?.disbursement2bcag ? data.disbursement.disbursement2bcag : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9257,7 +9263,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ek73st"
+                    "id": "eio71ua"
                   }
                 ]
               }
@@ -9354,7 +9360,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ data.disbursement.disbursement1sbsd : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9421,7 +9427,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "elqynij"
+                    "id": "ed95am"
                   }
                 ]
               },
@@ -9438,7 +9444,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ data.disbursement.disbursement2sbsd : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9504,7 +9510,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ebf0xoh"
+                    "id": "epoxuk"
                   }
                 ]
               },
@@ -9520,8 +9526,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1sbsd ? data.disbursement.disbursement1sbsd : 0) + (data.disbursement?.disbursement2sbsd ? data.disbursement.disbursement2sbsd : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9587,7 +9593,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "esgjy95"
+                    "id": "euq1j6f"
                   }
                 ]
               }
@@ -9684,7 +9690,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1bgpd ? '$'+ data.disbursement.disbursement1bgpd : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9751,7 +9757,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "es625p6"
+                    "id": "eliwmpg"
                   }
                 ]
               },
@@ -9768,7 +9774,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2bgpd ? '$'+ data.disbursement.disbursement2bgpd : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9834,7 +9840,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e5j9n5u"
+                    "id": "ebau4qs"
                   }
                 ]
               },
@@ -9850,8 +9856,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1bgpd ? data.disbursement.disbursement1bgpd : 0) + (data.disbursement?.disbursement2bgpd ? data.disbursement.disbursement2bgpd : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement.disbursement1bgpd) : 0) + (data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement.disbursement2bgpd) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -9917,7 +9923,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e52swuw"
+                    "id": "egygnhn"
                   }
                 ]
               }
@@ -10019,7 +10025,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement1bcsg ? '$'+ data.disbursement.disbursement1bcsg : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -10085,7 +10091,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e9dvzph"
+                    "id": "eyz8zps"
                   }
                 ]
               },
@@ -10102,7 +10108,7 @@
                       }
                     ],
                     "content": "{{data.disbursement?.disbursement2bcsg ? '$'+ data.disbursement.disbursement2bcsg : '-'}}",
-                    "refreshOnChange": false,
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -10168,7 +10174,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eax637n"
+                    "id": "ely8gnd"
                   }
                 ]
               },
@@ -10184,8 +10190,8 @@
                         "value": ""
                       }
                     ],
-                    "content": "{{(data.disbursement?.disbursement1bcsg ? data.disbursement.disbursement1bcsg : 0) + (data.disbursement?.disbursement2bcsg ? data.disbursement.disbursement2bcsg : 0)}}",
-                    "refreshOnChange": false,
+                    "content": "${{((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement.disbursement1bcsg) : 0) + (data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement.disbursement2bcsg) : 0)).toFixed(2)}}",
+                    "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
                     "modalEdit": false,
@@ -10251,7 +10257,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "enl6yp7"
+                    "id": "ebv9u5h"
                   }
                 ]
               }
@@ -10387,7 +10393,7 @@
               "value": ""
             }
           ],
-          "content": "You are eligible to receive {{ data.eligibleAmount }} for {{data.assessment.weeks}} weeks",
+          "content": "You are eligible to receive ${{ data.eligibleAmount }} for {{data.assessment.weeks}} weeks",
           "refreshOnChange": true,
           "customClass": "category-header-medium secondary-color",
           "hidden": false,
@@ -10454,7 +10460,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "e2rhq7f"
+          "id": "ewx6zy"
         }
       ],
       "placeholder": "",
@@ -10572,6 +10578,6 @@
   "name": "noticeofassessment",
   "path": "noticeofassessment",
   "created": "2021-07-14T17:56:22.162Z",
-  "modified": "2021-12-01T22:51:09.910Z",
+  "modified": "2021-12-02T20:34:51.796Z",
   "machineName": "noticeOfAssessment"
 }
