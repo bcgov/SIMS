@@ -236,7 +236,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
       );
       // If the header is not the expected one.
       throw new Error(
-        "The E-Cert file has an invalid transaction code on header",
+        "The E-Cert file has an invalid record type code on header",
       );
     }
 
@@ -247,11 +247,11 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
     const trailer = ECertFileFooter.createFromLine(fileLines.pop());
     if (trailer.recordTypeCode !== RecordTypeCodes.ECertFooter) {
       this.logger.error(
-        `The E-Cert file ${remoteFilePath} has an invalid transaction code on trailer: ${trailer.recordTypeCode}`,
+        `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,
       );
       // If the trailer is not the expected one.
       throw new Error(
-        "The E-Cert file has an invalid transaction code on trailer",
+        "The E-Cert file has an invalid record type code on trailer",
       );
     }
 
