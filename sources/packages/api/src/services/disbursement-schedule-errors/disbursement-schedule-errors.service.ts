@@ -25,10 +25,10 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
    */
   async createECertErrorRecord(
     disbursementSchedule: DisbursementSchedule,
-    errorCode: string[],
+    errorCodes: string[],
     dateReceived: Date,
   ): Promise<DisbursementFeedbackErrors[]> {
-    const errorCodesObject = errorCode.map((errorCode) => {
+    const errorCodesObject = errorCodes.map((errorCode) => {
       const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
       newDisbursementsFeedbackErrors.disbursementSchedule =
         disbursementSchedule;
