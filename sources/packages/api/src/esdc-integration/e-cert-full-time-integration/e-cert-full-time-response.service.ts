@@ -104,7 +104,7 @@ export class ECertFullTimeResponseService {
   /**
    * Process the feedback record from the E-Cert response file
    * and save the error code and disbursementSchedule_id respective to
-   * the document number in DisbursementFeedbackErrors
+   * the document number in DisbursementFeedbackErrors.
    * @param feedbackRecord E-Cert received record
    */
   private async processErrorCodeRecords(
