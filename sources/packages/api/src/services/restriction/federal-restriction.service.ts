@@ -48,19 +48,43 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
     );
   }
 
-  async bulkUpdateStudentsForeignKey(manager: EntityManager): Promise<any> {
+  async executeBulkStepsChanges(manager: EntityManager): Promise<void> {
+    // STEP 1
+    // ! This bulk update MUST happen before the next operations to assign
+    // ! the student foreign keys correctly.
+    await this.bulkUpdateStudentsForeignKey(manager);
+    // This bulk updates expects that the student foreign key is updated.
+    // STEP 2
+    await this.bulkInsertNewRestrictions(manager);
+    // STEP 3
+    await this.bulkDeactivateRestrictions(manager);
+    // This last update is not critical but allows the system to keep track
+    // of the last time that an active restriction was received.
+    // STEP 4
+    await this.bulkUpdateActiveRestrictions(manager);
+  }
+
+  private async bulkUpdateStudentsForeignKey(
+    manager: EntityManager,
+  ): Promise<void> {
     await manager.query(this.bulkUpdateStudentIdSQL);
   }
 
-  async bulkInsertNewRestrictions(manager: EntityManager): Promise<any> {
+  private async bulkInsertNewRestrictions(
+    manager: EntityManager,
+  ): Promise<void> {
     await manager.query(this.bulkInsertNewRestrictionsSQL);
   }
 
-  async bulkDeactivateRestrictions(manager: EntityManager): Promise<any> {
+  private async bulkDeactivateRestrictions(
+    manager: EntityManager,
+  ): Promise<void> {
     await manager.query(this.bulkDeactivateRestrictionsSQL);
   }
 
-  async bulkUpdateActiveRestrictions(manager: EntityManager): Promise<any> {
+  private async bulkUpdateActiveRestrictions(
+    manager: EntityManager,
+  ): Promise<void> {
     await manager.query(this.bulkUpdateActiveRestrictionsSQL);
   }
 }

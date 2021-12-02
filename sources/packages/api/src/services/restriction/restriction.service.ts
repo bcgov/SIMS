@@ -3,6 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Restriction, RestrictionType } from "../../database/entities";
 import { Connection, Repository } from "typeorm";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "../../utilities";
+import { EnsureFederalRestrictionResult } from "./models/federal-restriction.model";
 
 /**
  * Service layer for Restriction
@@ -21,6 +22,30 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
         restrictionType: RestrictionType.Federal,
       })
       .getMany();
+  }
+
+  async ensureFederalRestrictionExists(
+    restrictionCodes: string[],
+    externalRepo?: Repository<Restriction>,
+  ): Promise<EnsureFederalRestrictionResult> {
+    const result = new EnsureFederalRestrictionResult();
+    result.restrictions = await this.getAllFederalRestrictions();
+
+    for (const code of restrictionCodes) {
+      const foundRestriction = result.restrictions.find(
+        (restriction) => restriction.restrictionCode === code,
+      );
+      if (!foundRestriction) {
+        const newRestriction = await this.createUnidentifiedFederalRestriction(
+          code,
+          externalRepo,
+        );
+        result.restrictions.push(newRestriction);
+        result.createdRestrictionsCodes.push(newRestriction.restrictionCode);
+      }
+    }
+
+    return result;
   }
 
   async createUnidentifiedFederalRestriction(

@@ -1,4 +1,4 @@
-import { getDateOnlyFromFormat } from "src/utilities";
+import { getDateOnlyFromFormat } from "../../../utilities";
 import { DATE_FORMAT } from "../fed-restriction-integration.models";
 
 /**
@@ -30,5 +30,25 @@ export class FedRestrictionFileRecord {
 
   public get restrictionReasonCode(): string {
     return this.line.substr(85, 1);
+  }
+
+  public getComposedCode() {
+    return `${this.restrictionCode}${this.restrictionReasonCode}`.trim();
+  }
+
+  public getInvalidDataMessage(): string | null {
+    const errors: string[] = [];
+    if (isNaN(+this.sin)) {
+      errors.push("invalid SIN number");
+    }
+
+    if (isNaN(this.dateOfBirth.getDate())) {
+      errors.push("invalid date of birth");
+    }
+
+    if (!this.getComposedCode()) {
+      errors.push("invalid restriction code");
+    }
+    return errors.join(", ");
   }
 }
