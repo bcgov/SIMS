@@ -42,7 +42,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       .into(DisbursementFeedbackErrors)
       .values(errorCodesObject)
       .onConflict(
-        `ON CONSTRAINT disbursement_schedule_id_error_code_unique DO NOTHING`,
+        "ON CONSTRAINT disbursement_schedule_id_error_code_unique DO NOTHING",
       )
       .execute();
   }
