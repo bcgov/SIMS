@@ -4,6 +4,9 @@ import { DATE_FORMAT } from "../fed-restriction-integration.models";
 /**
  * Federal restriction record that contains the restriction code and restriction reason
  * associated with a Student.
+ * Federal restrictions on the database contains only one code that is the result of the
+ * combination of the 'restriction code' with the 'restriction reason code'(reason code is optional).
+ * The documentation about it is available on the document
  * 'SLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
 export class FedRestrictionFileRecord {
@@ -36,6 +39,10 @@ export class FedRestrictionFileRecord {
     return `${this.restrictionCode}${this.restrictionReasonCode}`.trim();
   }
 
+  /**
+   * Assess the record to know in advance if some invalid data is present.
+   * @returns invalid data message, if any.
+   */
   public getInvalidDataMessage(): string | null {
     const errors: string[] = [];
     if (isNaN(+this.sin)) {

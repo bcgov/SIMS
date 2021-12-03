@@ -15,6 +15,12 @@ import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ProcessSFTPResponseResult } from "./fed-restriction-integration.models";
 
+/**
+ * Manages the process to import the entire snapshot of federal
+ * restrictions, that is received daily, and update the students
+ * restrictions, adding and deactivating accordingly.
+ * * This process does not affect provincial restrictions.
+ */
 @Injectable()
 export class FedRestrictionProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
@@ -28,6 +34,15 @@ export class FedRestrictionProcessingService {
     this.esdcConfig = config.getConfig().ESDCIntegration;
   }
 
+  /**
+   * Import all the federal restrictions from the SFTP and process as below:
+   * 1 - If the restriction is present on federal data and not on the
+   * student data, create a new active restriction;
+   * 2 - If the restriction in present and active on the student data
+   * but it is not present on federal data, deactivate it;
+   * 3 - If the restriction is present on federal data and it is also
+   * present and active on student data, update the updated_at only.
+   */
   async process(): Promise<ProcessSFTPResponseResult> {
     //const results: ProcessSftpResponseResult[] = [];
     // Get the list of all files from SFTP ordered by file name.
