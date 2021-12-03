@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DataModelService } from "../../database/data.model.service";
 import { FederalRestriction } from "../../database/entities";
 import { Connection, EntityManager } from "typeorm";
-import { getSQLFileData } from "src/utilities";
+import { getSQLFileData } from "../../utilities";
 
 const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "RawSQL/FederalRestrictions";
 

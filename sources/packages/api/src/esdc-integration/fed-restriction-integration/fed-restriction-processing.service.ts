@@ -164,7 +164,7 @@ export class FedRestrictionProcessingService {
         for (const restriction of restrictionsToBulkInsert) {
           const codeToFind = restriction.getComposedCode();
           const restrictionRecord = federalRestrictions.restrictions.find(
-            (restriction) => restriction.restrictionCode == codeToFind,
+            (fedRestriction) => fedRestriction.restrictionCode == codeToFind,
           );
           const newRestriction = new FederalRestriction();
           newRestriction.lastName = restriction.surname;
