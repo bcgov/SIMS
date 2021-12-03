@@ -115,36 +115,21 @@ export class ECertFullTimeResponseService {
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
         feedbackRecord.documentNumber,
       );
-    const errorList = [];
     if (disbursementSchedule) {
-      const updateResult =
-        await this.disbursementScheduleErrorsService.createECertErrorRecord(
-          disbursementSchedule,
-          [
-            feedbackRecord.errorCode1,
-            feedbackRecord.errorCode2,
-            feedbackRecord.errorCode3,
-            feedbackRecord.errorCode4,
-            feedbackRecord.errorCode5,
-          ].filter((error) => error),
-          now,
-        );
-      // Expected to update 1 and only 1 record.
-      if (updateResult.length === 0) {
-        errorList.push(
-          `Error while saving Error Codes for document number:${feedbackRecord.documentNumber}.`,
-        );
-      }
+      await this.disbursementScheduleErrorsService.createECertErrorRecord(
+        disbursementSchedule,
+        [
+          feedbackRecord.errorCode1,
+          feedbackRecord.errorCode2,
+          feedbackRecord.errorCode3,
+          feedbackRecord.errorCode4,
+          feedbackRecord.errorCode5,
+        ].filter((error) => error),
+        now,
+      );
     } else {
       throw new Error(
         `${feedbackRecord.documentNumber} document number not found in disbursement_schedule table.`,
-      );
-    }
-
-    // Expected to update 1 and only 1 record.
-    if (errorList.length > 0) {
-      throw new Error(
-        `Error while saving Error codes to the table ${errorList}.`,
       );
     }
   }
