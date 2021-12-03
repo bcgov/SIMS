@@ -1,5 +1,5 @@
 import { Injectable, Inject } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { Connection, InsertResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   DisbursementFeedbackErrors,
@@ -27,7 +27,7 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
     disbursementSchedule: DisbursementSchedule,
     errorCodes: string[],
     dateReceived: Date,
-  ): Promise<DisbursementFeedbackErrors[]> {
+  ): Promise<InsertResult> {
     const errorCodesObject = errorCodes.map((errorCode) => {
       const newDisbursementsFeedbackErrors = new DisbursementFeedbackErrors();
       newDisbursementsFeedbackErrors.disbursementSchedule =
@@ -36,6 +36,14 @@ export class DisbursementScheduleErrorsService extends RecordDataModelService<Di
       newDisbursementsFeedbackErrors.dateReceived = dateReceived;
       return newDisbursementsFeedbackErrors;
     });
-    return this.repo.save(errorCodesObject);
+    return this.repo
+      .createQueryBuilder()
+      .insert()
+      .into(DisbursementFeedbackErrors)
+      .values(errorCodesObject)
+      .onConflict(
+        `ON CONSTRAINT disbursement_schedule_id_error_code_unique DO NOTHING`,
+      )
+      .execute();
   }
 }
