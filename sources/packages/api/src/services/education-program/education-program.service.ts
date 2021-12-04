@@ -3,7 +3,6 @@ import {
   EducationProgram,
   EducationProgramOffering,
   Institution,
-  InstitutionLocation,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
@@ -11,7 +10,6 @@ import {
   SaveEducationProgram,
   EducationProgramsSummary,
   EducationProgramModel,
-  ProgramsSummary,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
@@ -270,55 +268,5 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .orderBy("programs.name")
       .getMany();
-  }
-
-  /**
-   * Get programs for a particular institution in paginated.
-   * @param institutionId id of the institution.
-   * @returns programs under the specified institution.
-   */
-  async getPaginatedProgramsForInstitution(
-    institutionId: number,
-  ): Promise<ProgramsSummary[]> {
-    const paginatedProgramSummaryResult = await this.repo
-      .createQueryBuilder("programs")
-      .select([
-        "programs.id as programid",
-        "programs.name as programname",
-        "programs.createdAt as submitteddate",
-        "locations.name as locationname",
-        "programs.approvalStatus as programstatus",
-      ])
-      .addSelect("COUNT(offerings.id)", "offeringscount")
-      .innerJoin(
-        InstitutionLocation,
-        "locations",
-        "locations.institution = programs.institution",
-      )
-      .innerJoin(
-        EducationProgramOffering,
-        "offerings",
-        "offerings.educationProgram = programs.id AND offerings.institutionLocation = locations.id",
-      )
-      .andWhere("programs.institution.id = :institutionId", { institutionId })
-      .orderBy("programs.createdAt")
-      .groupBy("programs.id")
-      .addGroupBy("programs.name")
-      .addGroupBy("programs.createdAt")
-      .addGroupBy("locations.id")
-      .addGroupBy("locations.name")
-      .addGroupBy("programs.approvalStatus")
-      .getRawMany();
-    return paginatedProgramSummaryResult.map((programSummary) => {
-      const paginatedProgramSummaryItem = new ProgramsSummary();
-      paginatedProgramSummaryItem.programId = programSummary.programid;
-      paginatedProgramSummaryItem.programName = programSummary.programname;
-      paginatedProgramSummaryItem.submittedDate = programSummary.submitteddate;
-      paginatedProgramSummaryItem.locationName = programSummary.locationname;
-      paginatedProgramSummaryItem.programStatus = programSummary.programstatus;
-      paginatedProgramSummaryItem.offeringsCount =
-        programSummary.offeringscount;
-      return paginatedProgramSummaryItem;
-    }) as ProgramsSummary[];
   }
 }

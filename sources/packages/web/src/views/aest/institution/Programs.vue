@@ -5,10 +5,31 @@
     </p>
     <content-group v-if="programsFound">
       <DataTable
-        class="mt-4"
-        :autoLayout="true"
         :value="institutionProgramsSummary.programsSummary"
+        class="mt-4"
+        currentPageReportTemplate="{{first}} - {{last}} of {{totalRecords}}"
+        :paginator="true"
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        v-model:filters="filters"
+        filterDisplay="menu"
       >
+        <template #filter>
+          <span class="p-input-icon-right">
+            <i class="pi pi-search" />
+            <InputText
+              type="text"
+              v-model="filters['programName']"
+              class="p-column-filter"
+            />
+          </span>
+        </template>
+        <template #empty>
+          No customers found.
+        </template>
+        <template #loading>
+          Loading customers data. Please wait.
+        </template>
         <Column field="submittedDate" header="Date Submitted" :sortable="true">
           <template #body="slotProps">
             <div class="p-text-capitalize">
@@ -16,7 +37,11 @@
             </div>
           </template>
         </Column>
-        <Column field="programName" header="Program Name">
+        <Column
+          field="programName"
+          filterField="programName"
+          header="Program Name"
+        >
           <template #body="slotProps">
             <div class="p-text-capitalize">
               {{ slotProps.data.programName }}
@@ -27,13 +52,6 @@
           <template #body="slotProps">
             <div class="p-text-capitalize">
               {{ slotProps.data.locationName }}
-            </div>
-          </template>
-        </Column>
-        <Column field="offeringsCount" header="Study Periods">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.offeringsCount }}
             </div>
           </template>
         </Column>
@@ -71,6 +89,7 @@ import {
 } from "@/types";
 import { useToastMessage } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { FilterMatchMode, FilterOperator } from "primevue/api";
 export default {
   components: { ContentGroup },
   props: {
@@ -78,6 +97,14 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  data() {
+    return {
+      filters: {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        programName: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      },
+    };
   },
   setup(props: any) {
     const toast = useToastMessage();
@@ -88,6 +115,10 @@ export default {
     onMounted(async () => {
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
+        10,
+        0,
+        "DESC",
+        "",
       );
       if (institutionProgramsSummary.value.programsSummary.length === 0) {
         toast.warn(

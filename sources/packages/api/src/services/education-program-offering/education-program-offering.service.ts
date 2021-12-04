@@ -15,6 +15,7 @@ import {
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
+import { SortDBOrder } from "src/types/sortDBOrder";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -282,5 +283,49 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    */
   async getOfferingById(offeringId: number): Promise<EducationProgramOffering> {
     return this.repo.findOne(offeringId);
+  }
+
+  /**
+   * Get programs for a particular institution in paginated.
+   * @param institutionId id of the institution.
+   * @returns programs under the specified institution.
+   */
+  async getPaginatedProgramsForInstitution(
+    institutionId: number,
+    take: number,
+    skip: number,
+    dateSubmittedOrder: SortDBOrder,
+    searchName: string,
+  ): Promise<[EducationProgramOffering[], number]> {
+    const paginatedProgramQuery = await this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "programs.id",
+        "programs.name",
+        "programs.createdAt",
+        "locations.name",
+        "programs.approvalStatus",
+      ])
+      .innerJoin("offerings.educationProgram", "programs")
+      .innerJoin("offerings.institutionLocation", "locations")
+      .where("programs.institution.id = :institutionId", { institutionId });
+    if (searchName) {
+      paginatedProgramQuery.andWhere("programs.name = :searchName", {
+        searchName,
+      });
+    }
+    paginatedProgramQuery
+      .take(take)
+      .skip(skip)
+      .groupBy("offerings.id")
+      .addGroupBy("locations.id")
+      .addGroupBy("locations.name")
+      .addGroupBy("programs.id")
+      .addGroupBy("programs.name")
+      .addGroupBy("programs.createdAt")
+      .addGroupBy("programs.approvalStatus")
+      .orderBy("programs.createdAt", dateSubmittedOrder);
+    return paginatedProgramQuery.getManyAndCount();
   }
 }

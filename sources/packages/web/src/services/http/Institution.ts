@@ -199,10 +199,24 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
+    take: number,
+    skip: number,
+    dateSubmittedOrder: string,
+    searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
     try {
-      const response = await this.getCall(
-        `institution/education-program/institution/${institutionId}/programs-list/paginated`,
+      let queryString = "";
+      if (searchName) {
+        queryString += `searchName=${searchName}&`;
+      }
+      if (dateSubmittedOrder) {
+        queryString += `dateSubmittedOrder=${dateSubmittedOrder}`;
+      } else {
+        queryString += `dateSubmittedOrder=ASC`;
+      }
+      const response = await this.apiClient.get(
+        `institution/offering/institution/${institutionId}/programs/take/${take}/skip/${skip}?${queryString}`,
+        this.addAuthHeader(),
       );
       return response.data;
     } catch (error) {

@@ -15,6 +15,7 @@ import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
+  Groups,
 } from "../../auth/decorators";
 import {
   SaveEducationProgramOfferingDto,
@@ -32,6 +33,9 @@ import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
 import { getOfferingNameAndPeriod } from "../../utilities";
+import { UserGroups } from "../../auth/user-groups.enum";
+import { ProgramsOfferingSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
+import { SortDBOrder } from "../../types/sortDBOrder";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -283,6 +287,45 @@ export class EducationProgramOfferingController {
     }
     return {
       studyStartDate: offering.studyStartDate,
+    };
+  }
+
+  /**
+   * Get a key/value pair list of all programs.
+   * @param institutionId institutionId from request.
+   * @returns key/value pair list of programs.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("institution/:institutionId/programs/take/:take/skip/:skip")
+  async getPaginatedProgramsForInstitution(
+    @Param("institutionId") institutionId: number,
+    @Param("take") take: number,
+    @Param("skip") skip: number,
+    @Query("dateSubmittedOrder") dateSubmittedOrder: SortDBOrder,
+    @Query("searchName") searchName: string,
+  ): Promise<ProgramsOfferingSummaryPaginated> {
+    const paginatedProgramOfferingSummaryResult =
+      await this.programOfferingService.getPaginatedProgramsForInstitution(
+        institutionId,
+        take,
+        skip,
+        dateSubmittedOrder,
+        searchName,
+      );
+    const paginatedProgramOfferingSummary =
+      paginatedProgramOfferingSummaryResult[0].map(
+        (programOfferingSummary) => ({
+          programId: programOfferingSummary.educationProgram.id,
+          programName: programOfferingSummary.educationProgram.name,
+          submittedDate: programOfferingSummary.educationProgram.createdAt,
+          locationName: programOfferingSummary.institutionLocation.name,
+          programStatus: programOfferingSummary.educationProgram.approvalStatus,
+        }),
+      );
+    return {
+      programsSummary: paginatedProgramOfferingSummary,
+      programsCount: paginatedProgramOfferingSummaryResult[1],
     };
   }
 }

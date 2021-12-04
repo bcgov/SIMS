@@ -14,15 +14,11 @@ import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
-  Groups,
 } from "../../auth/decorators";
 import { EducationProgramDto } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
-import {
-  ProgramsSummaryPaginated,
-  SaveEducationProgram,
-} from "../../services/education-program/education-program.service.models";
+import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import {
   SummaryEducationProgramDto,
   SubsetEducationProgramDto,
@@ -30,7 +26,6 @@ import {
 import { EducationProgram } from "../../database/entities";
 import { OptionItem } from "../../types";
 import { credentialTypeToDisplay } from "../../utilities";
-import { UserGroups } from "../../auth/user-groups.enum";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -261,36 +256,5 @@ export class EducationProgramController {
       id: program.id,
       description: program.name,
     }));
-  }
-
-  /**
-   * Get a key/value pair list of all programs.
-   * @param institutionId institutionId from request.
-   * @returns key/value pair list of programs.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId/programs-list/paginated")
-  async getPaginatedProgramsForInstitution(
-    @Param("institutionId") institutionId: number,
-  ): Promise<ProgramsSummaryPaginated> {
-    const paginatedProgramSummaryResult =
-      await this.programService.getPaginatedProgramsForInstitution(
-        institutionId,
-      );
-    const paginatedProgramSummary = paginatedProgramSummaryResult.map(
-      (programSummary) => ({
-        programId: programSummary.programId,
-        programName: programSummary.programName,
-        submittedDate: programSummary.submittedDate,
-        locationName: programSummary.locationName,
-        programStatus: programSummary.programStatus,
-        offeringsCount: programSummary.offeringsCount,
-      }),
-    );
-    return {
-      programsSummary: paginatedProgramSummary,
-      programsCount: paginatedProgramSummaryResult.length,
-    };
   }
 }

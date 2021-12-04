@@ -1,6 +1,5 @@
 import { EducationProgramDto } from "../../route-controllers/education-program/models/save-education-program.dto";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
-import { ApprovalStatus } from "./constants";
 /**
  * DTO that is used to persist the eduction programs form data.
  */
@@ -30,18 +29,4 @@ export class EducationProgramModel {
   approvalStatus: string;
   programIntensity: ProgramIntensity;
   institutionProgramCode: string;
-}
-
-export class ProgramsSummary {
-  programId: number;
-  programName: string;
-  submittedDate: Date;
-  locationName: string;
-  programStatus: ApprovalStatus;
-  offeringsCount: number;
-}
-
-export class ProgramsSummaryPaginated {
-  programsSummary: ProgramsSummary[];
-  programsCount: number;
 }

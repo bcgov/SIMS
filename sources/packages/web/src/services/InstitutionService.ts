@@ -330,9 +330,17 @@ export class InstitutionService {
    */
   async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
+    take: number,
+    skip: number,
+    dateSubmittedOrder: string,
+    searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
     return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
       institutionId,
+      take,
+      skip,
+      dateSubmittedOrder,
+      searchName,
     );
   }
 }
