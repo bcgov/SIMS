@@ -302,7 +302,7 @@ export class EducationProgramOfferingController {
     @Param("institutionId") institutionId: number,
     @Param("take") take: number,
     @Param("skip") skip: number,
-    @Query("dateSubmittedOrder") dateSubmittedOrder: SortDBOrder,
+    @Query("dateSubmittedOrder") dateSubmittedOrder: number,
     @Query("searchName") searchProgramName: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
     const paginatedProgramOfferingSummaryQuery =
@@ -310,7 +310,7 @@ export class EducationProgramOfferingController {
         institutionId,
         take,
         skip,
-        dateSubmittedOrder,
+        dateSubmittedOrder === -1 ? SortDBOrder.DESC : SortDBOrder.ASC,
         searchProgramName,
       );
     const programsCountQuery =

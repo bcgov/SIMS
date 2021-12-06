@@ -7,29 +7,19 @@
       <DataTable
         :value="institutionProgramsSummary.programsSummary"
         class="mt-4"
-        currentPageReportTemplate="{{first}} - {{last}} of {{totalRecords}}"
+        :lazy="true"
         :paginator="true"
-        :rows="10"
-        :rowsPerPageOptions="[10, 20, 50]"
-        v-model:filters="filters"
+        :rows="defaultNoOfRows"
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        :totalRecords="institutionProgramsSummary.programsCount"
+        @page="onPage($event)"
+        @sort="onSort($event)"
+        @filter="onFilter($event)"
         filterDisplay="menu"
+        :globalFilterFields="[programName]"
+        responsiveLayout="scroll"
+        :loading="loading"
       >
-        <template #filter>
-          <span class="p-input-icon-right">
-            <em class="pi pi-search" />
-            <InputText
-              type="text"
-              v-model="filters['programName']"
-              class="p-column-filter"
-            />
-          </span>
-        </template>
-        <template #empty>
-          No customers found.
-        </template>
-        <template #loading>
-          Loading customers data. Please wait.
-        </template>
         <Column field="submittedDate" header="Date Submitted" :sortable="true">
           <template #body="slotProps">
             <div class="p-text-capitalize">
@@ -39,7 +29,7 @@
         </Column>
         <Column
           field="programName"
-          filterField="programName"
+          filterMatchMode="startsWith"
           header="Program Name"
         >
           <template #body="slotProps">
@@ -119,12 +109,15 @@ export default {
     const institutionProgramsSummary = ref(
       {} as AESTInstitutionProgramsSummaryPaginatedDto,
     );
+    const defaultNoOfRows = 2;
+    const defaultSortOrder = "DESC";
+    const loading = ref(false);
     onMounted(async () => {
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
-        10,
+        defaultNoOfRows,
         0,
-        "DESC",
+        defaultSortOrder,
         "",
       );
       if (institutionProgramsSummary.value.programsSummary.length === 0) {
@@ -153,11 +146,52 @@ export default {
           return "";
       }
     };
+
+    const onPage = async (event: any) => {
+      console.log("On Page load event", event);
+      loading.value = true;
+      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+        props.institutionId,
+        event.rows,
+        event.rows * event.page,
+        event.sortOrder,
+        "",
+      );
+      loading.value = false;
+    };
+    const onSort = async (event: any) => {
+      console.log("On Sort load event", event);
+      loading.value = true;
+      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+        props.institutionId,
+        event.rows,
+        event.page ? event.rows * event.page : event.rows * 0,
+        event.sortOrder,
+        "",
+      );
+      loading.value = false;
+    };
+    const onFilter = async (event: any) => {
+      console.log("On Filter load event", event);
+      loading.value = true;
+      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+        props.institutionId,
+        event.rows,
+        event.page ? event.rows * event.page : event.rows * 0,
+        event.sortOrder,
+        "",
+      );
+      loading.value = false;
+    };
     return {
       institutionProgramsSummary,
       programsFound,
       goToViewProgramDetail,
       getProgramStatusColorClass,
+      defaultNoOfRows,
+      onPage,
+      onSort,
+      loading,
     };
   },
 };
