@@ -340,23 +340,29 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getOverallProgramsCountForInstitution(
     institutionId: number,
     searchProgramName: string,
-  ): Promise<number> {
-    const paginatedProgramQuery = await this.repo
+  ): Promise<ProgramsOfferingSummary[]> {
+    const countProgramQuery = await this.repo
       .createQueryBuilder("offerings")
+      .select("programs.id", "programId")
+      .addSelect("programs.name", "programName")
+      .addSelect("programs.createdAt", "submittedDate")
+      .addSelect("locations.name", "locationName")
+      .addSelect("programs.approvalStatus", "programStatus")
+      .addSelect("COUNT(offerings.id)", "offeringsCount")
       .innerJoin("offerings.educationProgram", "programs")
       .innerJoin("offerings.institutionLocation", "locations")
       .where("programs.institution.id = :institutionId", { institutionId });
     if (searchProgramName) {
-      paginatedProgramQuery.andWhere("programName = :searchName", {
+      countProgramQuery.andWhere("programName = :searchName", {
         searchProgramName,
       });
     }
-    paginatedProgramQuery
+    countProgramQuery
       .groupBy("programs.id")
       .addGroupBy("programs.name")
       .addGroupBy("programs.createdAt")
       .addGroupBy("locations.name")
       .addGroupBy("programs.approvalStatus");
-    return paginatedProgramQuery.getCount();
+    return countProgramQuery.getRawMany();
   }
 }

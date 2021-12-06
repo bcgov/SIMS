@@ -335,7 +335,7 @@ export class EducationProgramOfferingController {
       }));
     return {
       programsSummary: paginatedProgramOfferingSummary,
-      programsCount: programsCount,
+      programsCount: programsCount.length,
     };
   }
 }
