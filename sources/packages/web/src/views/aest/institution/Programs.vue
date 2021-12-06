@@ -16,7 +16,7 @@
       >
         <template #filter>
           <span class="p-input-icon-right">
-            <i class="pi pi-search" />
+            <em class="pi pi-search" />
             <InputText
               type="text"
               v-model="filters['programName']"
@@ -52,6 +52,13 @@
           <template #body="slotProps">
             <div class="p-text-capitalize">
               {{ slotProps.data.locationName }}
+            </div>
+          </template>
+        </Column>
+        <Column field="offeringsCount" header="Study periods">
+          <template #body="slotProps">
+            <div class="p-text-capitalize">
+              {{ slotProps.data.offeringsCount }}
             </div>
           </template>
         </Column>

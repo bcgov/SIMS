@@ -303,29 +303,39 @@ export class EducationProgramOfferingController {
     @Param("take") take: number,
     @Param("skip") skip: number,
     @Query("dateSubmittedOrder") dateSubmittedOrder: SortDBOrder,
-    @Query("searchName") searchName: string,
+    @Query("searchName") searchProgramName: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
-    const paginatedProgramOfferingSummaryResult =
-      await this.programOfferingService.getPaginatedProgramsForInstitution(
+    const paginatedProgramOfferingSummaryQuery =
+      this.programOfferingService.getPaginatedProgramsForInstitution(
         institutionId,
         take,
         skip,
         dateSubmittedOrder,
-        searchName,
+        searchProgramName,
       );
+    const programsCountQuery =
+      this.programOfferingService.getOverallProgramsCountForInstitution(
+        institutionId,
+        searchProgramName,
+      );
+
+    const [paginatedProgramOfferingSummaryResult, programsCount] =
+      await Promise.all([
+        paginatedProgramOfferingSummaryQuery,
+        programsCountQuery,
+      ]);
     const paginatedProgramOfferingSummary =
-      paginatedProgramOfferingSummaryResult[0].map(
-        (programOfferingSummary) => ({
-          programId: programOfferingSummary.educationProgram.id,
-          programName: programOfferingSummary.educationProgram.name,
-          submittedDate: programOfferingSummary.educationProgram.createdAt,
-          locationName: programOfferingSummary.institutionLocation.name,
-          programStatus: programOfferingSummary.educationProgram.approvalStatus,
-        }),
-      );
+      paginatedProgramOfferingSummaryResult.map((programOfferingSummary) => ({
+        programId: programOfferingSummary.programId,
+        programName: programOfferingSummary.programName,
+        submittedDate: programOfferingSummary.submittedDate,
+        locationName: programOfferingSummary.locationName,
+        programStatus: programOfferingSummary.programStatus,
+        offeringsCount: programOfferingSummary.offeringsCount,
+      }));
     return {
       programsSummary: paginatedProgramOfferingSummary,
-      programsCount: paginatedProgramOfferingSummaryResult[1],
+      programsCount: programsCount,
     };
   }
 }

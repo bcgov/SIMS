@@ -51,8 +51,8 @@ export class ProgramsOfferingSummary {
   submittedDate: Date;
   locationName: string;
   programStatus: string;
+  offeringsCount: number;
 }
-
 export class ProgramsOfferingSummaryPaginated {
   programsSummary: ProgramsOfferingSummary[];
   programsCount: number;

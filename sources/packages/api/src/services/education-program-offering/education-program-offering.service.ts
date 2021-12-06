@@ -12,6 +12,7 @@ import { SaveEducationProgramOfferingDto } from "../../route-controllers/educati
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
+  ProgramsOfferingSummary,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
@@ -288,44 +289,74 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get programs for a particular institution in paginated.
    * @param institutionId id of the institution.
-   * @returns programs under the specified institution.
+   * @param take is the number of rows shown in the table
+   * @param skip is the number of rows that is skipped/offset from the total list
+   * in page 2 the skip would be 10 when we select 10 rows per page.
+   * @param dateSubmittedOrder the sorting order of the submitted date, default its ascending
+   * @param searchProgramName Search the program name in the query
+   * @returns programs, locations and offerings count under the specified institution.
    */
   async getPaginatedProgramsForInstitution(
     institutionId: number,
     take: number,
     skip: number,
     dateSubmittedOrder: SortDBOrder,
-    searchName: string,
-  ): Promise<[EducationProgramOffering[], number]> {
+    searchProgramName: string,
+  ): Promise<ProgramsOfferingSummary[]> {
     const paginatedProgramQuery = await this.repo
       .createQueryBuilder("offerings")
-      .select([
-        "offerings.id",
-        "programs.id",
-        "programs.name",
-        "programs.createdAt",
-        "locations.name",
-        "programs.approvalStatus",
-      ])
+      .select("programs.id", "programId")
+      .addSelect("programs.name", "programName")
+      .addSelect("programs.createdAt", "submittedDate")
+      .addSelect("locations.name", "locationName")
+      .addSelect("programs.approvalStatus", "programStatus")
+      .addSelect("COUNT(offerings.id)", "offeringsCount")
       .innerJoin("offerings.educationProgram", "programs")
       .innerJoin("offerings.institutionLocation", "locations")
       .where("programs.institution.id = :institutionId", { institutionId });
-    if (searchName) {
-      paginatedProgramQuery.andWhere("programs.name = :searchName", {
-        searchName,
+    if (searchProgramName) {
+      paginatedProgramQuery.andWhere("programName = :searchName", {
+        searchProgramName,
       });
     }
     paginatedProgramQuery
-      .take(take)
-      .skip(skip)
-      .groupBy("offerings.id")
-      .addGroupBy("locations.id")
-      .addGroupBy("locations.name")
-      .addGroupBy("programs.id")
+      .groupBy("programs.id")
       .addGroupBy("programs.name")
       .addGroupBy("programs.createdAt")
+      .addGroupBy("locations.name")
       .addGroupBy("programs.approvalStatus")
+      .limit(take)
+      .offset(skip)
       .orderBy("programs.createdAt", dateSubmittedOrder);
-    return paginatedProgramQuery.getManyAndCount();
+    return paginatedProgramQuery.getRawMany();
+  }
+
+  /**
+   * Get programs count for a particular institution.
+   * @param institutionId id of the institution.
+   * @param searchProgramName Search the program name in the query
+   * @returns programs count for the specified criteria.
+   */
+  async getOverallProgramsCountForInstitution(
+    institutionId: number,
+    searchProgramName: string,
+  ): Promise<number> {
+    const paginatedProgramQuery = await this.repo
+      .createQueryBuilder("offerings")
+      .innerJoin("offerings.educationProgram", "programs")
+      .innerJoin("offerings.institutionLocation", "locations")
+      .where("programs.institution.id = :institutionId", { institutionId });
+    if (searchProgramName) {
+      paginatedProgramQuery.andWhere("programName = :searchName", {
+        searchProgramName,
+      });
+    }
+    paginatedProgramQuery
+      .groupBy("programs.id")
+      .addGroupBy("programs.name")
+      .addGroupBy("programs.createdAt")
+      .addGroupBy("locations.name")
+      .addGroupBy("programs.approvalStatus");
+    return paginatedProgramQuery.getCount();
   }
 }
