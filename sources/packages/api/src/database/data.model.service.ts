@@ -1,8 +1,7 @@
 import { Connection, Repository } from "typeorm";
-import { BaseModel } from "./entities/base.model";
 import { RecordDataModel } from "./entities/record.model";
 
-export class DataModelService<DataModel extends BaseModel> {
+export class DataModelService<DataModel> {
   static getRepo<DataModel>(
     connection: Connection,
     entity: Function,
@@ -40,5 +39,5 @@ export class DataModelService<DataModel extends BaseModel> {
 }
 
 export class RecordDataModelService<
-  DataModel extends RecordDataModel
+  DataModel extends RecordDataModel,
 > extends DataModelService<DataModel> {}
