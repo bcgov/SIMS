@@ -36,6 +36,7 @@ import { getOfferingNameAndPeriod } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ProgramsOfferingSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
 import { SortDBOrder } from "../../types/sortDBOrder";
+import { getDateOnlyFormat } from "../../utilities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -324,6 +325,9 @@ export class EducationProgramOfferingController {
           programId: programOfferingSummary.programId,
           programName: programOfferingSummary.programName,
           submittedDate: programOfferingSummary.submittedDate,
+          formattedSubmittedDate: getDateOnlyFormat(
+            programOfferingSummary.submittedDate,
+          ),
           locationName: programOfferingSummary.locationName,
           programStatus: programOfferingSummary.programStatus,
           offeringsCount: programOfferingSummary.offeringsCount,

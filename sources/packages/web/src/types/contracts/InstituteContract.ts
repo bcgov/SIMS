@@ -49,6 +49,7 @@ export interface AESTInstitutionProgramsSummaryDto {
   locationName: string;
   programStatus: ApprovalStatus;
   offeringsCount: number;
+  formattedSubmittedDate: string;
 }
 
 export interface AESTInstitutionProgramsSummaryPaginatedDto {

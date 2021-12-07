@@ -52,6 +52,7 @@ export class ProgramsOfferingSummary {
   locationName: string;
   programStatus: string;
   offeringsCount: number;
+  formattedSubmittedDate: string;
 }
 export class ProgramsOfferingSummaryPaginated {
   programsSummary: ProgramsOfferingSummary[];

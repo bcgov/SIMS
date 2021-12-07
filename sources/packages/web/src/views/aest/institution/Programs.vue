@@ -39,7 +39,7 @@
         <Column field="submittedDate" header="Date Submitted" :sortable="true">
           <template #body="slotProps">
             <div class="p-text-capitalize">
-              {{ slotProps.data.submittedDate }}
+              {{ slotProps.data.formattedSubmittedDate }}
             </div>
           </template>
         </Column>
