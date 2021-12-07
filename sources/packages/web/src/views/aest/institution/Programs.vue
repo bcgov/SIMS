@@ -174,7 +174,6 @@ export default {
     };
     const goToSearchProgramName = async (programName: string) => {
       loading.value = true;
-      defaultNoOfRows.value;
       searchProgramName.value = programName;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
