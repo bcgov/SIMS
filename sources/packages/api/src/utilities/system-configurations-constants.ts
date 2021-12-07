@@ -29,3 +29,19 @@ export const SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE = 1000;
  * federal government.
  */
 export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 5;
+/**
+ * While importing the federal restrictions to our DB for processing
+ * a series of bulk inserts are executed. The amount of each bulk
+ * insert is defined by below number.
+ * 200 = 1:20.134
+ * 500 = 1:04.731
+ * 1000 = 1:08.829
+ */
+export const FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT = 500;
+/**
+ * While importing the federal restrictions and it is detected that
+ * some code is not present in the our DB yet, a new restriction
+ * will be created using the below text.
+ */
+export const FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION =
+  "Unidentified federal restriction";

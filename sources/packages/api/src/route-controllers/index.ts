@@ -18,3 +18,4 @@ export * from "./supporting-user/supporting-user.controller";
 export * from "./esdc-integration/msfaa-integration.system.controller";
 export * from "./sfas-integration/sfas-integration.system.controller";
 export * from "./esdc-integration/e-cert-integration.system.controller";
+export * from "./esdc-integration/fed-restrictions-integration.system.controller";

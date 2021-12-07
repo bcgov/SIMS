@@ -29,6 +29,7 @@ import {
   SupportingUserService,
   StudentRestrictionService,
   DisbursementScheduleService,
+  DisbursementScheduleErrorsService,
 } from "./services";
 import {
   UserController,
@@ -51,6 +52,7 @@ import {
   MSFAAIntegrationController,
   SFASIntegrationController,
   ECertIntegrationController,
+  FedRestrictionsIntegrationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -58,6 +60,7 @@ import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
+import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 
 @Module({
   imports: [
@@ -68,6 +71,7 @@ import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-t
     MSFAAIntegrationModule,
     SFASIntegrationModule,
     ECertFullTimeIntegrationModule,
+    FedRestrictionIntegrationModule,
   ],
   controllers: [
     AppController,
@@ -91,6 +95,7 @@ import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-t
     MSFAAIntegrationController,
     SFASIntegrationController,
     ECertIntegrationController,
+    FedRestrictionsIntegrationController,
   ],
   providers: [
     AppService,
@@ -120,6 +125,7 @@ import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-t
     SupportingUserService,
     StudentRestrictionService,
     DisbursementScheduleService,
+    DisbursementScheduleErrorsService,
   ],
 })
 export class AppModule {}
