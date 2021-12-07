@@ -32,11 +32,10 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import { getOfferingNameAndPeriod } from "../../utilities";
+import { getOfferingNameAndPeriod, getDateOnlyFormat } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ProgramsOfferingSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
 import { SortDBOrder } from "../../types/sortDBOrder";
-import { getDateOnlyFormat } from "../../utilities";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
