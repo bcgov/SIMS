@@ -22,37 +22,41 @@ export class ECertResponseRecord extends ECertResponseRecordIdentification {
 
   /**
    * error code-1 associated with the document number.
+   * Index of the first error code is 731 not 641
+   * because `Grant Award Code` and `Grant Award Amount`
+   * be will repeating 10 times, which is not mentioned
+   * in the doc 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
    */
   public get errorCode1(): string {
-    return this.line.substr(641, 10).trim();
+    return this.line.substr(731, 10).trim();
   }
 
   /**
    * error code-2 associated with the document number.
    */
   public get errorCode2(): string {
-    return this.line.substr(651, 10).trim();
+    return this.line.substr(741, 10).trim();
   }
 
   /**
    * error code-3 associated with the document number.
    */
   public get errorCode3(): string {
-    return this.line.substr(661, 10).trim();
+    return this.line.substr(751, 10).trim();
   }
 
   /**
    * error code-4 associated with the document number.
    */
   public get errorCode4(): string {
-    return this.line.substr(671, 10).trim();
+    return this.line.substr(761, 10).trim();
   }
 
   /**
    * error code-5 associated with the document number.
    */
   public get errorCode5(): string {
-    return this.line.substr(681, 10).trim();
+    return this.line.substr(771, 10).trim();
   }
 
   /**
