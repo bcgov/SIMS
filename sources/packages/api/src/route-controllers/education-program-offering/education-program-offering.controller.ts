@@ -291,9 +291,14 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Get a key/value pair list of all programs.
-   * @param institutionId institutionId from request.
-   * @returns key/value pair list of programs.
+   * Get programs for a particular institution in paginated.
+   * @param institutionId id of the institution.
+   * @param take is the number of rows shown in the table
+   * @param skip is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param dateSubmittedOrder the sorting order of the submitted date, default its ascending
+   * @param searchProgramName Search the program name in the query
+   * @returns ProgramsOfferingSummaryPaginated.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)

@@ -191,7 +191,7 @@ export default {
       if (institutionProgramsSummary.value.programsSummary.length === 0) {
         toast.warn(
           "No Programs found",
-          "No Programs found for the Institution",
+          "No Programs found for the Search Criteria",
         );
       }
       loading.value = false;
