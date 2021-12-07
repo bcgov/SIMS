@@ -24,7 +24,7 @@
         :lazy="true"
         :paginator="true"
         :rows="defaultNoOfRows"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
+        :rowsPerPageOptions="[2, 5, 10, 20, 50]"
         :totalRecords="institutionProgramsSummary.programsCount"
         @page="onPage($event)"
         @sort="onSort($event)"
@@ -108,13 +108,13 @@ export default {
     );
     const searchProgramName = ref("");
     const defaultPage = 0;
-    const defaultNoOfRows = 2;
+    const defaultNoOfRows = ref(2);
     const defaultSortOrder = -1;
     const loading = ref(false);
     onMounted(async () => {
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
-        defaultNoOfRows,
+        defaultNoOfRows.value,
         defaultPage,
         defaultSortOrder,
         searchProgramName.value,
@@ -148,10 +148,11 @@ export default {
 
     const onPage = async (event: any) => {
       loading.value = true;
+      defaultNoOfRows.value = event.rows;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
-        event.rows,
-        event.rows * event.page,
+        defaultNoOfRows.value,
+        defaultNoOfRows.value * event.page,
         event.sortOrder,
         searchProgramName.value,
       );
@@ -159,10 +160,13 @@ export default {
     };
     const onSort = async (event: any) => {
       loading.value = true;
+      defaultNoOfRows.value = event.rows;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
-        event.rows,
-        event.page ? event.rows * event.page : event.rows * 0,
+        defaultNoOfRows.value,
+        event.page
+          ? defaultNoOfRows.value * event.page
+          : defaultNoOfRows.value * 0,
         event.sortOrder,
         searchProgramName.value,
       );
@@ -170,10 +174,11 @@ export default {
     };
     const goToSearchProgramName = async (programName: string) => {
       loading.value = true;
+      defaultNoOfRows.value;
       searchProgramName.value = programName;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
-        defaultNoOfRows,
+        defaultNoOfRows.value,
         defaultPage,
         defaultSortOrder,
         programName,
