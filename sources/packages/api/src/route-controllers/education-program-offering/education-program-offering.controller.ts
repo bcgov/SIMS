@@ -305,37 +305,28 @@ export class EducationProgramOfferingController {
     @Query("dateSubmittedOrder") dateSubmittedOrder: number,
     @Query("searchProgramName") searchProgramName: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
-    const paginatedProgramOfferingSummaryQuery =
-      this.programOfferingService.getPaginatedProgramsForInstitution(
+    const paginatedProgramOfferingSummaryResult =
+      await this.programOfferingService.getPaginatedProgramsForInstitution(
         institutionId,
         take,
         skip,
         dateSubmittedOrder === -1 ? SortDBOrder.DESC : SortDBOrder.ASC,
         searchProgramName,
       );
-    const programsCountQuery =
-      this.programOfferingService.getOverallProgramsCountForInstitution(
-        institutionId,
-        searchProgramName,
-      );
-
-    const [paginatedProgramOfferingSummaryResult, programsCount] =
-      await Promise.all([
-        paginatedProgramOfferingSummaryQuery,
-        programsCountQuery,
-      ]);
     const paginatedProgramOfferingSummary =
-      paginatedProgramOfferingSummaryResult.map((programOfferingSummary) => ({
-        programId: programOfferingSummary.programId,
-        programName: programOfferingSummary.programName,
-        submittedDate: programOfferingSummary.submittedDate,
-        locationName: programOfferingSummary.locationName,
-        programStatus: programOfferingSummary.programStatus,
-        offeringsCount: programOfferingSummary.offeringsCount,
-      }));
+      paginatedProgramOfferingSummaryResult[0].map(
+        (programOfferingSummary) => ({
+          programId: programOfferingSummary.programId,
+          programName: programOfferingSummary.programName,
+          submittedDate: programOfferingSummary.submittedDate,
+          locationName: programOfferingSummary.locationName,
+          programStatus: programOfferingSummary.programStatus,
+          offeringsCount: programOfferingSummary.offeringsCount,
+        }),
+      );
     return {
       programsSummary: paginatedProgramOfferingSummary,
-      programsCount: programsCount.length,
+      programsCount: paginatedProgramOfferingSummaryResult[1],
     };
   }
 }

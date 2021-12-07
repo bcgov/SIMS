@@ -302,7 +302,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     skip: number,
     dateSubmittedOrder: SortDBOrder,
     searchProgramName: string,
-  ): Promise<ProgramsOfferingSummary[]> {
+  ): Promise<[ProgramsOfferingSummary[], number]> {
     const paginatedProgramQuery = await this.repo
       .createQueryBuilder("offerings")
       .select("programs.id", "programId")
@@ -324,45 +324,19 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addGroupBy("programs.name")
       .addGroupBy("programs.createdAt")
       .addGroupBy("locations.name")
-      .addGroupBy("programs.approvalStatus")
+      .addGroupBy("programs.approvalStatus");
+
+    const programsCountQuery = paginatedProgramQuery.getRawMany();
+    const programsQuery = paginatedProgramQuery
       .limit(take)
       .offset(skip)
-      .orderBy("programs.createdAt", dateSubmittedOrder);
-    return paginatedProgramQuery.getRawMany();
-  }
+      .orderBy("programs.createdAt", dateSubmittedOrder)
+      .getRawMany();
 
-  /**
-   * Get programs count for a particular institution.
-   * @param institutionId id of the institution.
-   * @param searchProgramName Search the program name in the query
-   * @returns programs count for the specified criteria.
-   */
-  async getOverallProgramsCountForInstitution(
-    institutionId: number,
-    searchProgramName: string,
-  ): Promise<ProgramsOfferingSummary[]> {
-    const countProgramQuery = await this.repo
-      .createQueryBuilder("offerings")
-      .select("programs.id", "programId")
-      .addSelect("programs.name", "programName")
-      .addSelect("programs.createdAt", "submittedDate")
-      .addSelect("locations.name", "locationName")
-      .addSelect("programs.approvalStatus", "programStatus")
-      .addSelect("COUNT(offerings.id)", "offeringsCount")
-      .innerJoin("offerings.educationProgram", "programs")
-      .innerJoin("offerings.institutionLocation", "locations")
-      .where("programs.institution.id = :institutionId", { institutionId });
-    if (searchProgramName) {
-      countProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
-        searchProgramName: `%${searchProgramName}%`,
-      });
-    }
-    countProgramQuery
-      .groupBy("programs.id")
-      .addGroupBy("programs.name")
-      .addGroupBy("programs.createdAt")
-      .addGroupBy("locations.name")
-      .addGroupBy("programs.approvalStatus");
-    return countProgramQuery.getRawMany();
+    const [paginatedProgramOfferingSummaryResult, programsCount] =
+      await Promise.all([programsQuery, programsCountQuery]);
+    console.log(paginatedProgramOfferingSummaryResult);
+    console.log(programsCount);
+    return [paginatedProgramOfferingSummaryResult, programsCount.length];
   }
 }

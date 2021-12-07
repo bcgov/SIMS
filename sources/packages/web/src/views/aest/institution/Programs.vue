@@ -2,22 +2,28 @@
   <content-group>
     <p class="category-header-large color-blue">
       All Programs ({{ institutionProgramsSummary.programsCount }})
+      <v-row class="float-right">
+        <v-col>
+          <InputText
+            name="searchProgramName"
+            v-model="searchProgramName"
+            placeholder="Search Program Name"
+          />
+        </v-col>
+        <v-col>
+          <v-btn
+            color="primary"
+            @click="goToSearchProgramName(searchProgramName)"
+            >Search</v-btn
+          >
+        </v-col>
+        <v-col>
+          <v-btn color="primary" @click="goToSearchProgramName('')"
+            >Clear</v-btn
+          >
+        </v-col>
+      </v-row>
     </p>
-    <InputText
-      name="searchProgramName"
-      v-model="searchProgramName"
-      placeholder="Search Program Name"
-    />
-    <v-btn
-      :disabled="!searchProgramName"
-      class="ml-5"
-      color="primary"
-      @click="goToSearchProgramName(searchProgramName)"
-      >Search</v-btn
-    >
-    <v-btn class="ml-5" color="primary" @click="goToSearchProgramName('')"
-      >Clear Search</v-btn
-    >
     <content-group v-if="programsFound">
       <DataTable
         :value="institutionProgramsSummary.programsSummary"
