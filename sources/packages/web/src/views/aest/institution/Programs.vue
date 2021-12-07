@@ -30,7 +30,7 @@
         :lazy="true"
         :paginator="true"
         :rows="defaultNoOfRows"
-        :rowsPerPageOptions="[2, 5, 10, 20, 50]"
+        :rowsPerPageOptions="[10, 20, 50]"
         :totalRecords="institutionProgramsSummary.programsCount"
         @page="onPage($event)"
         @sort="onSort($event)"
@@ -114,7 +114,7 @@ export default {
     );
     const searchProgramName = ref("");
     const defaultPage = 0;
-    const defaultNoOfRows = ref(2);
+    const defaultNoOfRows = ref(10);
     const defaultSortOrder = -1;
     const loading = ref(false);
     onMounted(async () => {

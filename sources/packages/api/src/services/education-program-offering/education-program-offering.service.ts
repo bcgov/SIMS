@@ -294,7 +294,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * in page 2 the skip would be 10 when we select 10 rows per page.
    * @param dateSubmittedOrder the sorting order of the submitted date, default its ascending
    * @param searchProgramName Search the program name in the query
-   * @returns programs, locations and offerings count under the specified institution.
+   * @returns programs, locations and offerings count, programs count under the specified institution.
    */
   async getPaginatedProgramsForInstitution(
     institutionId: number,
@@ -335,8 +335,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
 
     const [paginatedProgramOfferingSummaryResult, programsCount] =
       await Promise.all([programsQuery, programsCountQuery]);
-    console.log(paginatedProgramOfferingSummaryResult);
-    console.log(programsCount);
     return [paginatedProgramOfferingSummaryResult, programsCount.length];
   }
 }
