@@ -332,7 +332,7 @@ export class InstitutionService {
     institutionId: number,
     take: number,
     skip: number,
-    dateSubmittedOrder: string,
+    dateSubmittedOrder: number,
     searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
     return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(

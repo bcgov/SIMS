@@ -315,8 +315,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.institutionLocation", "locations")
       .where("programs.institution.id = :institutionId", { institutionId });
     if (searchProgramName) {
-      paginatedProgramQuery.andWhere("programName = :searchName", {
-        searchProgramName,
+      paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
+        searchProgramName: `%${searchProgramName}%`,
       });
     }
     paginatedProgramQuery
@@ -353,8 +353,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.institutionLocation", "locations")
       .where("programs.institution.id = :institutionId", { institutionId });
     if (searchProgramName) {
-      countProgramQuery.andWhere("programName = :searchName", {
-        searchProgramName,
+      countProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
+        searchProgramName: `%${searchProgramName}%`,
       });
     }
     countProgramQuery

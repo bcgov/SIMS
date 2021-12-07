@@ -201,18 +201,18 @@ export class InstitutionApi extends HttpBaseClient {
     institutionId: number,
     take: number,
     skip: number,
-    dateSubmittedOrder: string,
+    dateSubmittedOrder: number,
     searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
     try {
       let queryString = "";
       if (searchName) {
-        queryString += `searchName=${searchName}&`;
+        queryString += `searchProgramName=${searchName}&`;
       }
       if (dateSubmittedOrder) {
         queryString += `dateSubmittedOrder=${dateSubmittedOrder}`;
       } else {
-        queryString += `dateSubmittedOrder=ASC`;
+        queryString += `dateSubmittedOrder=1`;
       }
       const response = await this.apiClient.get(
         `institution/offering/institution/${institutionId}/programs/take/${take}/skip/${skip}?${queryString}`,

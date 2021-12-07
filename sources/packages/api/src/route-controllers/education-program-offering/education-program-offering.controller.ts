@@ -303,7 +303,7 @@ export class EducationProgramOfferingController {
     @Param("take") take: number,
     @Param("skip") skip: number,
     @Query("dateSubmittedOrder") dateSubmittedOrder: number,
-    @Query("searchName") searchProgramName: string,
+    @Query("searchProgramName") searchProgramName: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
     const paginatedProgramOfferingSummaryQuery =
       this.programOfferingService.getPaginatedProgramsForInstitution(

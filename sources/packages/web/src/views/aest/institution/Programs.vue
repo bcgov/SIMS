@@ -3,10 +3,24 @@
     <p class="category-header-large color-blue">
       All Programs ({{ institutionProgramsSummary.programsCount }})
     </p>
+    <InputText
+      name="searchProgramName"
+      v-model="searchProgramName"
+      placeholder="Search Program Name"
+    />
+    <v-btn
+      :disabled="!searchProgramName"
+      class="ml-5"
+      color="primary"
+      @click="goToSearchProgramName(searchProgramName)"
+      >Search</v-btn
+    >
+    <v-btn class="ml-5" color="primary" @click="goToSearchProgramName('')"
+      >Clear Search</v-btn
+    >
     <content-group v-if="programsFound">
       <DataTable
         :value="institutionProgramsSummary.programsSummary"
-        class="mt-4"
         :lazy="true"
         :paginator="true"
         :rows="defaultNoOfRows"
@@ -14,10 +28,6 @@
         :totalRecords="institutionProgramsSummary.programsCount"
         @page="onPage($event)"
         @sort="onSort($event)"
-        @filter="onFilter($event)"
-        filterDisplay="menu"
-        :globalFilterFields="[programName]"
-        responsiveLayout="scroll"
         :loading="loading"
       >
         <Column field="submittedDate" header="Date Submitted" :sortable="true">
@@ -27,11 +37,7 @@
             </div>
           </template>
         </Column>
-        <Column
-          field="programName"
-          filterMatchMode="startsWith"
-          header="Program Name"
-        >
+        <Column field="programName" header="Program Name">
           <template #body="slotProps">
             <div class="p-text-capitalize">
               {{ slotProps.data.programName }}
@@ -95,30 +101,24 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      filters: {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        programName: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      },
-    };
-  },
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
     const institutionProgramsSummary = ref(
       {} as AESTInstitutionProgramsSummaryPaginatedDto,
     );
+    const searchProgramName = ref("");
+    const defaultPage = 0;
     const defaultNoOfRows = 2;
-    const defaultSortOrder = "DESC";
+    const defaultSortOrder = -1;
     const loading = ref(false);
     onMounted(async () => {
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
         defaultNoOfRows,
-        0,
+        defaultPage,
         defaultSortOrder,
-        "",
+        searchProgramName.value,
       );
       if (institutionProgramsSummary.value.programsSummary.length === 0) {
         toast.warn(
@@ -148,39 +148,43 @@ export default {
     };
 
     const onPage = async (event: any) => {
-      console.log("On Page load event", event);
       loading.value = true;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
         event.rows,
         event.rows * event.page,
         event.sortOrder,
-        "",
+        searchProgramName.value,
       );
       loading.value = false;
     };
     const onSort = async (event: any) => {
-      console.log("On Sort load event", event);
       loading.value = true;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
         event.rows,
         event.page ? event.rows * event.page : event.rows * 0,
         event.sortOrder,
-        "",
+        searchProgramName.value,
       );
       loading.value = false;
     };
-    const onFilter = async (event: any) => {
-      console.log("On Filter load event", event);
+    const goToSearchProgramName = async (programName: string) => {
       loading.value = true;
+      searchProgramName.value = programName;
       institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
         props.institutionId,
-        event.rows,
-        event.page ? event.rows * event.page : event.rows * 0,
-        event.sortOrder,
-        "",
+        defaultNoOfRows,
+        defaultPage,
+        defaultSortOrder,
+        programName,
       );
+      if (institutionProgramsSummary.value.programsSummary.length === 0) {
+        toast.warn(
+          "No Programs found",
+          "No Programs found for the Institution",
+        );
+      }
       loading.value = false;
     };
     return {
@@ -191,6 +195,8 @@ export default {
       defaultNoOfRows,
       onPage,
       onSort,
+      goToSearchProgramName,
+      searchProgramName,
       loading,
     };
   },
