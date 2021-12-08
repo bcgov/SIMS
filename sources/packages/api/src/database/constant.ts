@@ -31,6 +31,7 @@ export const TableNames = {
   SFASRestrictions: "sfas_restrictions",
   DisbursementSchedule: "disbursement_schedules",
   DisbursementValue: "disbursement_values",
+  FederalRestrictions: "federal_restrictions",
   DisbursementFeedbackErrors: "disbursement_feedback_errors",
   Notes: "notes",
   StudentNotes: "student_notes",
