@@ -12,6 +12,8 @@ import {
   User,
   InstitutionLocation,
   InstitutionType,
+  Note,
+  NoteType,
 } from "../../database/entities";
 import { Connection, Repository, getConnection } from "typeorm";
 import {
@@ -536,5 +538,30 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .select("institution.operatingName")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
+  }
+
+  async getInstitutionNotes(
+    institutionId: number,
+    noteType?: NoteType,
+  ): Promise<Note[]> {
+    const institutionNoteQuery = this.repo
+      .createQueryBuilder("institution")
+      .select([
+        "institution.id",
+        "note.noteType",
+        "note.description",
+        "note.createdAt",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("institution.notes", "note")
+      .innerJoin("note.creator", "user")
+      .where("institution.id = :institutionId", { institutionId });
+    if (noteType) {
+      institutionNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    }
+
+    const institution = await institutionNoteQuery.getOne();
+    return institution ? institution.notes : [];
   }
 }
