@@ -4,6 +4,9 @@ export const ColumnNames = {
   UpdateTimestamp: "updated_at",
   Creator: "creator",
   Modifier: "modifier",
+  StudentId: "student_id",
+  NoteId: "note_id",
+  InstitutionId: "institution_id",
 };
 
 export const TableNames = {
@@ -29,4 +32,7 @@ export const TableNames = {
   DisbursementSchedule: "disbursement_schedules",
   DisbursementValue: "disbursement_values",
   DisbursementFeedbackErrors: "disbursement_feedback_errors",
+  Notes: "notes",
+  StudentNotes: "student_notes",
+  InstitutionNotes: "institution_notes",
 };

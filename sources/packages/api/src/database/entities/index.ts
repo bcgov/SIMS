@@ -37,3 +37,5 @@ export * from "./disbursement-value-type";
 export * from "./disbursement-values.model";
 export * from "./disbursement-schedule.model";
 export * from "./disbursement-feedback-errors.model";
+export * from "./note.model";
+export * from "./note.type";

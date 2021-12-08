@@ -52,6 +52,7 @@ import {
   MSFAAIntegrationController,
   SFASIntegrationController,
   ECertIntegrationController,
+  NotesController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -92,6 +93,7 @@ import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-t
     MSFAAIntegrationController,
     SFASIntegrationController,
     ECertIntegrationController,
+    NotesController,
   ],
   providers: [
     AppService,

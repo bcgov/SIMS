@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS sims.notes (
-    id INT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     note_type sims.note_types NOT NULL,
     description VARCHAR(1000) NOT NULL,
     -- Audit columns

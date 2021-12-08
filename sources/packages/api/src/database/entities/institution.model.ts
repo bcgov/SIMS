@@ -6,6 +6,8 @@ import {
   RelationId,
   ManyToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -16,6 +18,7 @@ import {
 } from "../../types";
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
+import { Note } from ".";
 
 @Entity({ name: TableNames.Institution })
 export class Institution extends RecordDataModel {
@@ -96,4 +99,12 @@ export class Institution extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   institutionType: InstitutionType;
+
+  @ManyToMany(() => Note)
+  @JoinTable({
+    name: TableNames.InstitutionNotes,
+    joinColumn: { name: ColumnNames.InstitutionId },
+    inverseJoinColumn: { name: ColumnNames.NoteId },
+  })
+  notes: Note[];
 }
