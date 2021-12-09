@@ -304,7 +304,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     sortOrder?: SortDBOrder,
     searchProgramName?: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
-    let sortByColumn = "programs.createdAt"; //Default sort column
+    const sortByColumn = "programs.createdAt"; //Default sort column
     const paginatedProgramQuery = await this.repo
       .createQueryBuilder("offerings")
       .select("programs.id", "programId")
@@ -335,9 +335,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       paginatedProgramQuery.offset(page * pageSize);
     } else {
       paginatedProgramQuery.offset(0);
-    }
-    if (sortColumn === "submittedDate") {
-      sortByColumn = "programs.createdAt";
     }
     paginatedProgramQuery.orderBy(sortByColumn, sortOrder);
     const programsQuery = paginatedProgramQuery.getRawMany();

@@ -178,7 +178,7 @@ export default {
       }
     };
     const pageSortEvent = async (event: any) => {
-      getProgramsSummaryList(
+      await getProgramsSummaryList(
         props.institutionId,
         event.rows,
         event.page,
@@ -191,7 +191,7 @@ export default {
       programName: string,
       ...event: any
     ) => {
-      getProgramsSummaryList(
+      await getProgramsSummaryList(
         props.institutionId,
         event.rows,
         DEFAULT_PAGE,
