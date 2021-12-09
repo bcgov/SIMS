@@ -188,7 +188,7 @@ export default {
       );
     };
     const goToSearchProgramName = async (
-      searchProgramName: string,
+      programName: string,
       ...event: any
     ) => {
       getProgramsSummaryList(
@@ -197,7 +197,7 @@ export default {
         DEFAULT_PAGE,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
-        searchProgramName,
+        programName,
       );
     };
     return {
