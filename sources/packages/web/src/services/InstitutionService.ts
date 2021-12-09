@@ -22,6 +22,8 @@ import {
   OptionItemDto,
   ApplicationSummaryDTO,
   ApplicationDetails,
+  AESTInstitutionProgramsSummaryPaginatedDto,
+  SortDBOrder,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -320,5 +322,28 @@ export class InstitutionService {
     institutionId: number,
   ): Promise<BasicInstitutionInfo> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
+  }
+
+  /**
+   * Get the Institution programs summary for the ministry institution detail page
+   * @param institutionId
+   * @returns AESTInstitutionProgramsSummaryPaginatedDto
+   */
+  async getPaginatedAESTInstitutionProgramsSummary(
+    institutionId: number,
+    pageSize: number,
+    page: number,
+    sortColumn: string,
+    sortOrder: SortDBOrder,
+    searchName: string,
+  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+    return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
+      institutionId,
+      pageSize,
+      page,
+      sortColumn,
+      sortOrder,
+      searchName,
+    );
   }
 }

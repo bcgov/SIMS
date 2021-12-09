@@ -240,20 +240,18 @@ export class EducationProgramController {
   }
 
   /**
-   * Get a key/value pair list of all programs that have
-   * at least one offering for the particular location.
-   * Executes a location-based authentication (locations
-   * must have access to their specifics programs only).
-   * @param locationId location id.
+   * Get a key/value pair list of all programs.
+   * @param userToken User token from request.
    * @returns key/value pair list of programs.
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
-  @HasLocationAccess("locationId")
-  @Get("location/:locationId/programs-list")
+  @Get("programs-list")
   async getLocationProgramsOptionListForInstitution(
-    @Param("locationId") locationId: number,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<OptionItem[]> {
-    const programs = await this.programService.getPrograms(locationId);
+    const programs = await this.programService.getPrograms(
+      userToken.authorizations.institutionId,
+    );
     return programs.map((program) => ({
       id: program.id,
       description: program.name,

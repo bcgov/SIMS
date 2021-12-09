@@ -14,6 +14,7 @@ dayjs.extend(timezone);
 dayjs.extend(dayOfYear);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
+export const DATE_ONLY_FORMAT = "YYYY MMM DD";
 
 /**
  * get utc date time now
@@ -131,4 +132,13 @@ export function getDayOfTheYear(day: Date): number {
  */
 export function getExtendedDateFormat(date: Date): string {
   return dayjs(date).format(EXTENDED_DATE_FORMAT);
+}
+
+/**
+ * Get the extended date format(2021 Mar 22) for the date given
+ * @param date date to be retrieved as Extended date format
+ * @returns extended date format like March, 22 2021
+ */
+export function getDateOnlyFormat(date: Date): string {
+  return dayjs(date).format(DATE_ONLY_FORMAT);
 }

@@ -1,4 +1,4 @@
-import { Address } from "..";
+import { Address, ApprovalStatus } from "..";
 
 export interface Institute {
   name: string;
@@ -40,4 +40,19 @@ export interface AESTInstitutionDetailDto {
   legalAuthorityPhone: string;
   address: Address;
   institutionTypeName: string;
+}
+
+export interface AESTInstitutionProgramsSummaryDto {
+  programId: number;
+  programName: string;
+  submittedDate: Date;
+  locationName: string;
+  programStatus: ApprovalStatus;
+  offeringsCount: number;
+  formattedSubmittedDate: string;
+}
+
+export interface AESTInstitutionProgramsSummaryPaginatedDto {
+  programsSummary: AESTInstitutionProgramsSummaryDto[];
+  programsCount: number;
 }
