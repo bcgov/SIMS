@@ -182,12 +182,12 @@ export class InstitutionController extends BaseController {
   @IsInstitutionAdmin()
   @Get("/users")
   async allUsers(
-    @UserToken() user: IInstitutionUserToken,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
     @Query("searchName") searchName: string,
     @Query("sortField") sortField: UserFields,
     @Query("sortOrder") sortOrder: FieldSortOrder,
+    @UserToken() user: IInstitutionUserToken,
   ): Promise<InstitutionUserAndCount> {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
@@ -636,12 +636,12 @@ export class InstitutionController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/:institutionId/user-summary")
   async usersSummaryForAEST(
-    @Param("institutionId") institutionId: number,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
     @Query("searchName") searchName: string,
     @Query("sortField") sortField: UserFields,
     @Query("sortOrder") sortOrder: FieldSortOrder,
+    @Param("institutionId") institutionId: number,
   ): Promise<InstitutionUserAndCount> {
     const institutionUserAndCount = await this.institutionService.allUsers(
       page,

@@ -40,7 +40,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   UserFields,
 } from "../../route-controllers/institution/models/institution-datatable";
-import { InstitutionUsersListWithTotalCount } from "../../route-controllers/institution/models/institution.user.res.dto";
+
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
   @InjectLogger()

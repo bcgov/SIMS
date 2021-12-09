@@ -7,7 +7,11 @@
         </span>
       </div>
       <div>
-        <InputText v-model="searchBox" placeholder="Search User" @keyup="searchUserTable()"/>
+        <InputText
+          v-model="searchBox"
+          placeholder="Search User"
+          @keyup.enter="searchUserTable()"
+        />
       </div>
       <div>
         <v-btn
@@ -322,5 +326,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

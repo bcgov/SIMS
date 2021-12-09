@@ -25,6 +25,6 @@ export enum DataTableSortOrder {
   ASC = 1,
 }
 
-export const DEFAULT_PAGE_LIMIT = 2;
+export const DEFAULT_PAGE_LIMIT = 10;
 export const DEFAULT_PAGE_NUMBER = 0;
-export const PAGINATION_LIST = [1, 2, 5, 10, 20, 50];
+export const PAGINATION_LIST = [10, 20, 50];

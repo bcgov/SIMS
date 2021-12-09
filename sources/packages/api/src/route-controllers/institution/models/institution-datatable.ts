@@ -17,5 +17,5 @@ export enum UserFields {
   IsActive = "isActive",
 }
 
-export const DEFAULT_PAGE_LIMIT = 2;
+export const DEFAULT_PAGE_LIMIT = 10;
 export const DEFAULT_PAGE_NUMBER = 0;

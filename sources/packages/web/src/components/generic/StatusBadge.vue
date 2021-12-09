@@ -10,7 +10,7 @@ status Badge
   </v-badge>
 </template>
 <script lang="ts">
-import { computed } from "vue";
+import { ref, onMounted } from "vue";
 import { GeneralStatus } from "@/types";
 
 export default {
@@ -21,54 +21,33 @@ export default {
     },
   },
   setup(props: any) {
-    const badgeClass = computed(() => {
+    const badgeClass = ref("");
+    const textColor = ref("#333A47");
+    const backGroundColor = ref("#FFFFFF");
+    const iconColor = ref("");
+
+    const setStyles = () => {
       switch (props.status) {
         case GeneralStatus.Active:
           // css class for active status
-          return "status-badge-active";
+          badgeClass.value = "status-badge-active";
+          textColor.value = "#333A47";
+          backGroundColor.value = "#FFFFFF";
+          iconColor.value = "#16C92E";
+          break;
         case GeneralStatus.InActive:
           // css class for inactive status
-          return "status-badge-inactive";
-        default:
-          return "";
+          badgeClass.value = "status-badge-inactive";
+          textColor.value = "#333A47";
+          backGroundColor.value = "#FFFFFF";
+          iconColor.value = "#333A47";
+          break;
       }
+    };
+    onMounted(() => {
+      setStyles();
     });
-    const textColor = computed(() => {
-      switch (props.status) {
-        case GeneralStatus.Active:
-          // textColor for active status
-          return "#333A47";
-        case GeneralStatus.InActive:
-          // textColor for inactive status
-          return "#333A47";
-        default:
-          return "#333A47";
-      }
-    });
-    const backGroundColor = computed(() => {
-      switch (props.status) {
-        case GeneralStatus.Active:
-          // backGroundColor for active status
-          return "#FFFFFF";
-        case GeneralStatus.InActive:
-          // backGroundColor for inactive status
-          return "#FFFFFF";
-        default:
-          return "#FFFFFF";
-      }
-    });
-    const iconColor = computed(() => {
-      switch (props.status) {
-        case GeneralStatus.Active:
-          // iconColor for active status
-          return "#16C92E";
-        case GeneralStatus.InActive:
-          // iconColor for inactive status
-          return "#333A47";
-        default:
-          return "";
-      }
-    });
+
     return {
       badgeClass,
       textColor,
