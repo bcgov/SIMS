@@ -57,3 +57,23 @@ html * {
 .p-md-4 {
   padding: 0.5rem !important;
 }
+
+// active badge
+.status-badge-active .v-badge__badge {
+  border-color: #16C92E;
+    border-width: 1px;
+    padding: 15px;
+    border-style: solid;
+    border-radius: 30px;
+    position: static;
+}
+
+// inactive badge
+.status-badge-inactive .v-badge__badge {
+  border-color: #333A47;
+  border-width: 1px;
+  padding: 15px;
+  border-style: solid;
+  border-radius: 30px;
+  position: static;
+}

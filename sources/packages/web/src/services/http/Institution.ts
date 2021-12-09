@@ -10,6 +10,7 @@ import {
   SearchInstitutionResp,
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
+  InstitutionUserAndCount,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -60,12 +61,11 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getUsers(): Promise<InstitutionUserResDto[]> {
+  public async institutionSummary(
+    url: string,
+  ): Promise<InstitutionUserAndCount> {
     try {
-      const resp = await this.apiClient.get(
-        "institution/users",
-        this.addAuthHeader(),
-      );
+      const resp = await this.apiClient.get(url, this.addAuthHeader());
       return resp.data;
     } catch (error) {
       this.handleRequestError(error);
@@ -188,8 +188,28 @@ export class InstitutionApi extends HttpBaseClient {
     institutionId: number,
   ): Promise<BasicInstitutionInfo> {
     try {
-      const response = await this.getCall(`institution/${institutionId}`);
+      const response = await this.getCall(
+        `institution/${institutionId}/basic-details`,
+      );
       return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Controller method to get all institution users with the
+   * given institutionId ministry user.
+   * @param institutionId institution id
+   * @returns All the institution users for the given institution.
+   */
+  public async institutionSummaryForAEST(
+    url: string,
+  ): Promise<InstitutionUserAndCount> {
+    try {
+      const resp = await this.apiClient.get(url, this.addAuthHeader());
+      return resp.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

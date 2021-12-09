@@ -1,13 +1,24 @@
 <template>
-  <content-group>
-    <p class="category-header-large color-blue">Locations</p>
-  </content-group>
+  <LocationSummary
+    :clientType="ClientIdType.AEST"
+    :institutionId="institutionId"
+  />
 </template>
 
 <script lang="ts">
-import ContentGroup from "@/components/generic/ContentGroup.vue";
+import LocationSummary from "@/components/common/LocationSummary.vue";
+import { ClientIdType } from "@/types";
+
 export default {
-  components: { ContentGroup },
-  //TODO, create and fetch an API to fetch Locations
+  components: { LocationSummary },
+  props: {
+    institutionId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup() {
+    return { ClientIdType };
+  },
 };
 </script>

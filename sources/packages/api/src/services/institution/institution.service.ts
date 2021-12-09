@@ -34,7 +34,13 @@ import {
 } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
-
+import {
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  UserFields,
+} from "../../route-controllers/institution/models/institution-datatable";
+import { InstitutionUsersListWithTotalCount } from "../../route-controllers/institution/models/institution.user.res.dto";
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
   @InjectLogger()
@@ -347,16 +353,75 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     };
   }
 
-  async allUsers(institutionId: number): Promise<InstitutionUser[]> {
-    return this.institutionUserRepo
+  /**
+   * service method to get all institution users with the
+   * given institutionId r.
+   * @queryParm page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @queryParm pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @queryParm searchName, user's name keyword to be searched
+   * @queryParm sortField, field to be sorted
+   * @queryParm sortOrder, oder to be sorted
+   * @param institutionId institution id
+   * @returns All the institution users for the given institution
+   * with total count.
+   */
+  async allUsers(
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    searchName: string,
+    sortField: UserFields,
+    sortOrder: FieldSortOrder,
+    institutionId: number,
+  ): Promise<[InstitutionUser[], number]> {
+    const institutionUsers = this.institutionUserRepo
       .createQueryBuilder("institutionUser")
-      .leftJoinAndSelect("institutionUser.user", "user")
-      .leftJoin("institutionUser.institution", "institution")
-      .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
-      .leftJoinAndSelect("authorizations.location", "location")
-      .leftJoinAndSelect("authorizations.authType", "authType")
-      .where("institution.id = :institutionId", { institutionId })
-      .getMany();
+      .select([
+        "institutionUser.id",
+        "user.email",
+        "user.firstName",
+        "user.lastName",
+        "user.userName",
+        "user.isActive",
+        "authorizations",
+        "authorizations.authType",
+        "authorizations.id",
+        "authType.role",
+        "authType.type",
+        "authorizations.location",
+        "location.name",
+      ])
+      .innerJoin("institutionUser.user", "user")
+      .innerJoin("institutionUser.institution", "institution")
+      .leftJoin("institutionUser.authorizations", "authorizations")
+      .leftJoin("authorizations.location", "location")
+      .leftJoin("authorizations.authType", "authType")
+      .where("institution.id = :institutionId", { institutionId });
+
+    // search by user's name
+    if (searchName) {
+      institutionUsers.andWhere(
+        "user.firstName Ilike :searchUser OR user.lastName Ilike :searchUser",
+        {
+          searchUser: `%${searchName}%`,
+        },
+      );
+    }
+    // sorting
+    if (sortField === UserFields.DisplayName && sortOrder) {
+      institutionUsers
+        .orderBy("user.firstName", sortOrder)
+        .addOrderBy("user.lastName", sortOrder);
+    }
+    if (sortField === UserFields.Email && sortOrder) {
+      institutionUsers.orderBy("user.email", sortOrder);
+    }
+    // pagination
+    institutionUsers.take(pageLimit).skip(page * pageLimit);
+
+    // result
+    return institutionUsers.getManyAndCount();
   }
 
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
@@ -424,7 +489,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     permissionInfo: InstitutionUserPermissionDto,
     institutionUser: InstitutionUser,
   ): Promise<void> {
-    let newAuthorizationEntries = [] as InstitutionUserAuth[];
+    const newAuthorizationEntries = [] as InstitutionUserAuth[];
     // Create the permissions for the user under the institution.
     for (const permission of permissionInfo.permissions) {
       const newAuthorization = new InstitutionUserAuth();

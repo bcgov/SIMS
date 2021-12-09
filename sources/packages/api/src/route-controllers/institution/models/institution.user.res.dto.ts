@@ -2,6 +2,7 @@ import {
   User,
   InstitutionLocation,
   InstitutionUserTypeAndRole,
+  InstitutionUser,
 } from "../../../database/entities";
 export interface InstitutionUserRespDto {
   id: number;
@@ -47,4 +48,15 @@ export interface InstitutionUserAndAuthDetailsDto {
     isActive: boolean;
     email: string;
   };
+}
+
+export interface InstitutionUsersListWithTotalCount {
+  users: InstitutionUser[];
+  totalUsers: number;
+}
+
+
+export interface InstitutionUserAndCount {
+  users: InstitutionUserRespDto[];
+  totalUsers: number;
 }

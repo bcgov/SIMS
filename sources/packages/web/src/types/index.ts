@@ -27,3 +27,5 @@ export * from "@/types/contracts/Assessment";
 export * from "@/types/contracts/institution/Application";
 export * from "@/types/contracts/Common";
 export * from "@/types/contracts/supporting-user/SupportingUserContracts";
+export * from "@/types/contracts/GeneralStatus";
+export * from "@/types/contracts/DataTableContract";

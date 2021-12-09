@@ -36,6 +36,7 @@ import {
   InstitutionUserAuthorizations,
   InstitutionUserAndAuthDetailsDto,
   InstitutionUserAuth,
+  InstitutionUserAndCount,
 } from "./models/institution.user.res.dto";
 import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import {
@@ -50,10 +51,19 @@ import {
   Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
+import {
+  InstitutionLocationsSummaryDto,
+  InstitutionLocationsDetailsDto,
+} from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Institution, InstitutionLocation } from "../../database/entities";
+import {
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  UserFields,
+} from "./models/institution-datatable";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -155,18 +165,42 @@ export class InstitutionController extends BaseController {
     await this.institutionService.syncInstitution(token);
   }
 
+  /**
+   * Controller method to get all institution users with the
+   * given institutionId institution Admin.
+   * @param institutionId institution id
+   * @queryParm page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @queryParm pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @queryParm searchName, user's name keyword to be searched
+   * @queryParm sortField, field to be sorted
+   * @queryParm sortOrder, oder to be sorted
+   * @returns All the institution users for the given institution
+   * with total count.
+   */
   @IsInstitutionAdmin()
   @Get("/users")
   async allUsers(
     @UserToken() user: IInstitutionUserToken,
-  ): Promise<InstitutionUserRespDto[]> {
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+    @Query("searchName") searchName: string,
+    @Query("sortField") sortField: UserFields,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
+  ): Promise<InstitutionUserAndCount> {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
     );
-    const allInstitutionUsers = await this.institutionService.allUsers(
+    const institutionUserAndCount = await this.institutionService.allUsers(
+      page,
+      pageLimit,
+      searchName,
+      sortField,
+      sortOrder,
       institution.id,
     );
-    return allInstitutionUsers.map((institutionUser) => {
+    const usersList = institutionUserAndCount[0].map((institutionUser) => {
       const institutionUserResp: InstitutionUserRespDto = {
         id: institutionUser.id,
         authorizations: institutionUser.authorizations.map((auth) => ({
@@ -189,6 +223,10 @@ export class InstitutionController extends BaseController {
       };
       return institutionUserResp;
     });
+    return {
+      users: usersList,
+      totalUsers: institutionUserAndCount[1],
+    };
   }
 
   /**
@@ -510,7 +548,7 @@ export class InstitutionController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("/:institutionId")
+  @Get("/:institutionId/basic-details")
   async getBasicInstitutionInfoById(
     @Param("institutionId") institutionId: number,
   ): Promise<BasicInstitutionInfo> {
@@ -521,5 +559,121 @@ export class InstitutionController extends BaseController {
     return {
       operatingName: institutionDetail.operatingName,
     };
+  }
+
+  /**
+   * Controller method to get all institution locations with the
+   * given institutionId for  ministry user.
+   * @param institutionId institution id
+   * @returns All the institution locations for the given institution.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/:institutionId/location-summary")
+  async getAllInstitutionLocationSummary(
+    @Param("institutionId") institutionId: number,
+  ): Promise<InstitutionLocationsDetailsDto[]> {
+    // get all institution locations.
+    const InstitutionLocationData =
+      await this.locationService.getAllInstitutionLocations(institutionId);
+    return InstitutionLocationData.map(
+      (institutionLocation: InstitutionLocation) => {
+        return {
+          id: institutionLocation.id,
+          name: institutionLocation.name,
+          data: {
+            address: {
+              addressLine1: institutionLocation.data.address?.addressLine1,
+              addressLine2: institutionLocation.data.address?.addressLine2,
+              province: institutionLocation.data.address?.province,
+              country: institutionLocation.data.address?.country,
+              city: institutionLocation.data.address?.city,
+              postalCode: institutionLocation.data.address?.postalCode,
+            },
+          },
+          primaryContact: {
+            primaryContactFirstName:
+              institutionLocation.primaryContact.firstName,
+            primaryContactLastName: institutionLocation.primaryContact.lastName,
+            primaryContactEmail: institutionLocation.primaryContact.email,
+            primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
+          },
+          institution: {
+            institutionPrimaryContact: {
+              primaryContactEmail:
+                institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactEmail,
+              primaryContactFirstName:
+                institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactFirstName,
+              primaryContactLastName:
+                institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactLastName,
+              primaryContactPhone:
+                institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactPhone,
+            },
+          },
+          institutionCode: institutionLocation.institutionCode,
+        } as InstitutionLocationsDetailsDto;
+      },
+    );
+  }
+
+  /**
+   * Controller method to get all institution users with the
+   * given institutionId ministry user.
+   * @param institutionId institution id
+   * @queryParm page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @queryParm pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @queryParm searchName, user's name keyword to be searched
+   * @queryParm sortField, field to be sorted
+   * @queryParm sortOrder, oder to be sorted
+   * @returns All the institution users for the given institution
+   * with total count.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/:institutionId/user-summary")
+  async usersSummaryForAEST(
+    @Param("institutionId") institutionId: number,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+    @Query("searchName") searchName: string,
+    @Query("sortField") sortField: UserFields,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
+  ): Promise<InstitutionUserAndCount> {
+    const institutionUserAndCount = await this.institutionService.allUsers(
+      page,
+      pageLimit,
+      searchName,
+      sortField,
+      sortOrder,
+      institutionId,
+    );
+    const users = institutionUserAndCount[0].map((institutionUser) => {
+      const institutionUserResp: InstitutionUserRespDto = {
+        id: institutionUser.id,
+        authorizations: institutionUser.authorizations.map((auth) => ({
+          id: auth.id,
+          authType: {
+            role: auth.authType?.role,
+            type: auth.authType?.type,
+          },
+          location: {
+            name: auth.location?.name,
+          },
+        })),
+        user: {
+          email: institutionUser.user.email,
+          firstName: institutionUser.user.firstName,
+          lastName: institutionUser.user.lastName,
+          userName: institutionUser.user.userName,
+          isActive: institutionUser.user.isActive,
+        },
+      };
+      return institutionUserResp;
+    });
+    return { users: users, totalUsers: institutionUserAndCount[1] };
   }
 }

@@ -29,8 +29,19 @@ import Dropdown from "primevue/dropdown";
 import InputNumber from "primevue/inputnumber";
 import ProgressSpinner from "primevue/progressspinner";
 import Chip from "primevue/chip";
+import TabMenu from "primevue/tabmenu";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import {
+  faMapPin,
+  faCheck,
+  faCircle,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+library.add(faMapPin, faCheck, faCircle, faSearch);
 
 // Configure the UI validations rules globally available.
 configValidationRules();
@@ -58,5 +69,7 @@ AppConfigService.shared.init().then(() => {
     .component("InputNumber", InputNumber)
     .component("ProgressSpinner", ProgressSpinner)
     .component("Chip", Chip)
+    .component("TabMenu", TabMenu)
+    .component("font-awesome-icon", FontAwesomeIcon)
     .mount("#app");
 });

@@ -6,7 +6,7 @@ import {
   InstitutionLocationUserAuthDto,
   LocationStateForStore,
   OptionItemDto,
-  ApplicationDetails
+  ApplicationDetails,
 } from "../../types";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
@@ -178,5 +178,28 @@ export class InstitutionLocationApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  /**
+   * Controller method to get institution locations for the given
+   * institutionId for  ministry user.
+   * @param institutionId institution id
+   * @returns All the institution locations for the given institution.
+   */
+  public async getAllInstitutionLocationSummary(
+    institutionId: number,
+  ): Promise<InstitutionLocationsDetails[]> {
+    let data: InstitutionLocationsDetails[] = [];
+    try {
+      const res = await this.apiClient.get(
+        `institution/${institutionId}/location-summary`,
+        this.addAuthHeader(),
+      );
+      data = res?.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+    return data;
   }
 }
