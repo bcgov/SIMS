@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { NoteDTO } from "@/types/contracts/NoteContract";
+import { NoteDTO, NoteBaseDTO } from "@/types/contracts/NoteContract";
 
 export class NoteService {
   // Shared Instance
@@ -11,7 +11,7 @@ export class NoteService {
 
   async addInstitutionNote(
     institutionId: number,
-    note: NoteDTO,
+    note: NoteBaseDTO,
   ): Promise<void> {
     await ApiClient.NoteApi.addInstitutionNote(institutionId, note);
   }
@@ -25,5 +25,20 @@ export class NoteService {
       noteType,
     );
     return institutionNotes;
+  }
+
+  async addStudentNote(studentId: number, note: NoteBaseDTO): Promise<void> {
+    await ApiClient.NoteApi.addStudentNote(studentId, note);
+  }
+
+  public async getStudentNotes(
+    studentId: number,
+    noteType?: string,
+  ): Promise<NoteDTO[]> {
+    const studentNotes = await ApiClient.NoteApi.getStudentNotes(
+      studentId,
+      noteType,
+    );
+    return studentNotes;
   }
 }

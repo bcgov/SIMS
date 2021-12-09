@@ -31,7 +31,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useToastMessage } from "@/composables";
-import { InstitutionNoteType, NoteDTO } from "@/types";
+import { InstitutionNoteType, NoteBaseDTO } from "@/types";
 
 export default {
   components: { ContentGroup, Notes },
@@ -47,7 +47,7 @@ export default {
     const { dateOnlyLongString, timeOnlyString } = useFormatters();
     const toast = useToastMessage();
 
-    const filterNotes = async (noteType?: InstitutionNoteType) => {
+    const filterNotes = async (noteType?: InstitutionNoteType | string) => {
       filteredNoteType.value = noteType ? noteType : "";
       notes.value = await NoteService.shared.getInstitutionNotes(
         props.institutionId,
@@ -55,13 +55,22 @@ export default {
       );
     };
 
-    const addNote = async (data: NoteDTO) => {
-      await NoteService.shared.addInstitutionNote(props.institutionId, data);
-      await filterNotes(filteredNoteType.value);
-      toast.success(
-        "Note added successfully",
-        "The note has been added to the institution.",
-      );
+    const addNote = async (data: NoteBaseDTO) => {
+      try {
+        await Promise.all([
+          NoteService.shared.addInstitutionNote(props.institutionId, data),
+          filterNotes(filteredNoteType.value),
+        ]);
+        toast.success(
+          "Note added successfully",
+          "The note has been added to the institution.",
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "Unexpected error while adding the note.",
+        );
+      }
     };
 
     onMounted(async () => {
@@ -82,8 +91,5 @@ export default {
 <style lang="scss">
 .filter-button {
   max-height: 30px;
-}
-.p-button:enabled:focus {
-  background: #2965c5;
 }
 </style>

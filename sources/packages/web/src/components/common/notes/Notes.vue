@@ -21,7 +21,25 @@
         }}</v-col>
         <v-col>
           <div class="content-header">{{ slotProps.item.noteType }}</div>
-          <div class="header mt-2">{{ slotProps.item.description }}</div>
+          <div v-if="showMoreNotes(slotProps.item)" class="header mt-2">
+            {{ slotProps.item.description.substring(0, 150) }}
+            <a
+              @click="toggleNotes(slotProps.item)"
+              target="_blank"
+              class="primary-color"
+              >Show more...</a
+            >
+          </div>
+          <div v-else class="header mt-2">
+            {{ slotProps.item.description }}
+            <a
+              v-if="slotProps.item.showMore"
+              @click="toggleNotes(slotProps.item)"
+              target="_blank"
+              class="primary-color"
+              >Show less...</a
+            >
+          </div>
           <div class="content-footer mt-2 mb-8 secondary-color-light">
             <span>{{ timeOnlyString(slotProps.item.createdAt) }}</span>
             <span class="ml-6">{{
@@ -38,6 +56,7 @@
 <script lang="ts">
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
+import { NoteBaseDTO } from "@/types";
 import { ref } from "vue";
 export default {
   components: { CreateNoteModal },
@@ -52,16 +71,27 @@ export default {
     },
   },
   emits: ["submitData"],
-  setup(props: any, context: any) {
+  setup(context: any) {
     const { dateOnlyLongString, timeOnlyString } = useFormatters();
     const showModal = ref(false);
     const createNotesModal = ref({} as ModalDialog<void>);
     const addNewNote = async () => {
       await createNotesModal.value.showModal();
     };
-    const emitToParent = async (data: NoteDTO) => {
+    const emitToParent = async (data: NoteBaseDTO) => {
       context.emit("submitData", data);
     };
+
+    const toggleNotes = (item: any) => {
+      item.showMore = !item.showMore;
+    };
+
+    const showMoreNotes = (item: any) => {
+      return (
+        item.description && item.description.length > 150 && !item.showMore
+      );
+    };
+
     return {
       dateOnlyLongString,
       timeOnlyString,
@@ -69,11 +99,15 @@ export default {
       createNotesModal,
       showModal,
       emitToParent,
+      toggleNotes,
+      showMoreNotes,
     };
   },
 };
 </script>
 <style lang="scss">
+/** Styles for the note component overriding the color and typography of timeline */
+
 .p-timeline-event-marker {
   background-color: #2965c5 !important;
 }

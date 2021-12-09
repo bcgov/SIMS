@@ -4,7 +4,7 @@ import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { NoteType, Note, User } from "../../database/entities";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { NoteDTO } from "./models/note.dto";
+import { NoteDTO, NoteBaseDTO } from "./models/note.dto";
 import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 
@@ -46,14 +46,12 @@ export class NotesController extends BaseController {
   async getInstitutionDetails(
     @Param("institutionId") institutionId: number,
     @Param("noteType") noteType: string,
-    @UserToken() userToken: IUserToken,
   ): Promise<NoteDTO[]> {
-    console.log(userToken);
     const notes = await this.institutionService.getInstitutionNotes(
       institutionId,
       noteType as NoteType,
     );
-    console.log(notes);
+
     if (!notes) {
       return [];
     }
@@ -72,9 +70,8 @@ export class NotesController extends BaseController {
   async addInstitutionNote(
     @UserToken() userToken: IUserToken,
     @Param("institutionId") institutionId: number,
-    @Body() payload: NoteDTO,
+    @Body() payload: NoteBaseDTO,
   ): Promise<void> {
-    console.log(userToken);
     const institutionNote = {
       noteType: payload.noteType,
       description: payload.description,
@@ -92,7 +89,7 @@ export class NotesController extends BaseController {
   async addStudentNote(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
-    @Body() payload: NoteDTO,
+    @Body() payload: NoteBaseDTO,
   ): Promise<void> {
     const studentNote = {
       noteType: payload.noteType,

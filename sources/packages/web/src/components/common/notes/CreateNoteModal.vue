@@ -20,11 +20,10 @@
 
 <script lang="ts">
 import { ref } from "vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
-import { NoteDTO } from "@/types";
+import { NoteBaseDTO } from "@/types";
 export default {
   components: { ModalDialogBase, formio },
   emits: ["submitData"],
@@ -40,8 +39,7 @@ export default {
     const submitForm = async () => {
       return formData.value.submit();
     };
-    const submitNote = async (data: NoteDTO) => {
-      console.log(data);
+    const submitNote = async (data: NoteBaseDTO) => {
       context.emit("submitData", data);
     };
     const addNewNote = async () => {

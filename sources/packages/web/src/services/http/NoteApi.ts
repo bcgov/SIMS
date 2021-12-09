@@ -1,9 +1,9 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { NoteDTO } from "@/types/contracts/NoteContract";
+import { NoteDTO, NoteBaseDTO } from "@/types/contracts/NoteContract";
 export class NoteApi extends HttpBaseClient {
   public async addInstitutionNote(
     institutionId: number,
-    note: NoteDTO,
+    note: NoteBaseDTO,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
@@ -17,7 +17,10 @@ export class NoteApi extends HttpBaseClient {
     }
   }
 
-  public async addStudentNote(studentId: number, note: NoteDTO): Promise<void> {
+  public async addStudentNote(
+    studentId: number,
+    note: NoteBaseDTO,
+  ): Promise<void> {
     try {
       await this.apiClient.patch(
         `notes/student/${studentId}`,
