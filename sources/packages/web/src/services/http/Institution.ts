@@ -206,6 +206,7 @@ export class InstitutionApi extends HttpBaseClient {
     sortOrder: SortDBOrder,
     searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+    const sortByOrder = sortOrder === SortDBOrder.ASC ? "ASC" : "DESC"; //Default sort order
     try {
       let queryString = "";
       if (searchName) {
@@ -215,7 +216,7 @@ export class InstitutionApi extends HttpBaseClient {
         queryString += `sortColumn=${sortColumn}&`;
       }
       if (sortOrder) {
-        queryString += `sortOrder=${sortOrder}&`;
+        queryString += `sortOrder=${sortByOrder}&`;
       }
       if (pageSize) {
         queryString += `pageSize=${pageSize}&`;
