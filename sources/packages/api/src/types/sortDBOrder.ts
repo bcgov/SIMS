@@ -2,6 +2,6 @@
  * Enumeration for DB Sort order
  */
 export enum SortDBOrder {
-  DESC = "ASC",
-  ASC = "DESC",
+  DESC = -1,
+  ASC = 1,
 }
