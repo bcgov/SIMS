@@ -215,7 +215,7 @@ export class InstitutionApi extends HttpBaseClient {
       if (sortColumn) {
         queryString += `sortColumn=${sortColumn}&`;
       }
-      if (sortOrder) {
+      if (sortByOrder) {
         queryString += `sortOrder=${sortByOrder}&`;
       }
       if (pageSize) {
