@@ -1,27 +1,27 @@
 <template>
-  <v-row class="mb-2">
-    <v-col cols="3" class="category-header-large">Notes</v-col>
+  <v-row>
+    <v-col cols="3" class="category-header-large mb-2">Notes</v-col>
     <v-col class="text-center">
       <div class="float-right">
         <Button
           label="All Notes"
-          class="p-button-rounded mr-2 button-not-selected"
-          :class="{ 'button-selected': !filteredNoteType }"
+          class="p-button-rounded mr-2 mb-2 secondary-btn-background-lt filter-button"
+          :class="{ 'primary-btn-background': !filteredNoteType }"
           @click="filterNotes()"
         />
         <Button
           v-for="item in InstitutionNoteType"
           :key="item"
           :label="item"
-          class="p-button-rounded mr-2 button-not-selected"
-          :class="{ 'button-selected': filteredNoteType === item }"
+          class="p-button-rounded mr-2 mb-2 secondary-btn-background-lt filter-button"
+          :class="{ 'primary-btn-background': filteredNoteType === item }"
           @click="filterNotes(item)"
         />
       </div>
     </v-col>
   </v-row>
   <content-group>
-    <Notes title="Past Notes" :notes="notes"></Notes>
+    <Notes title="Past Notes" :notes="notes" @submitData="addNote"></Notes>
   </content-group>
 </template>
 
@@ -30,8 +30,8 @@ import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
-import { useFormatters } from "@/composables";
-import { InstitutionNoteType } from "@/types/contracts/NoteContract";
+import { useFormatters, useToastMessage } from "@/composables";
+import { InstitutionNoteType, NoteDTO } from "@/types";
 
 export default {
   components: { ContentGroup, Notes },
@@ -45,12 +45,22 @@ export default {
     const notes = ref();
     const filteredNoteType = ref("");
     const { dateOnlyLongString, timeOnlyString } = useFormatters();
+    const toast = useToastMessage();
 
     const filterNotes = async (noteType?: InstitutionNoteType) => {
       filteredNoteType.value = noteType ? noteType : "";
       notes.value = await NoteService.shared.getInstitutionNotes(
         props.institutionId,
         filteredNoteType.value,
+      );
+    };
+
+    const addNote = async (data: NoteDTO) => {
+      await NoteService.shared.addInstitutionNote(props.institutionId, data);
+      await filterNotes(filteredNoteType.value);
+      toast.success(
+        "Note added successfully",
+        "The note has been added to the institution.",
       );
     };
 
@@ -64,19 +74,13 @@ export default {
       InstitutionNoteType,
       filterNotes,
       filteredNoteType,
+      addNote,
     };
   },
 };
 </script>
 <style lang="scss">
-.button-not-selected {
-  background: #8692a4;
-  color: #ffffff;
-  max-height: 30px;
-}
-.button-selected {
-  background: #2965c5;
-  color: #ffffff;
+.filter-button {
   max-height: 30px;
 }
 .p-button:enabled:focus {

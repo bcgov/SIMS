@@ -1,5 +1,18 @@
 <template>
-  <p class="category-header-medium color-blue">{{ title }}</p>
+  <v-row class="m-2">
+    <v-col class="category-header-medium color-blue">{{ title }}</v-col>
+    <v-col
+      ><v-btn @click="addNewNote()" class="float-right primary-btn-background">
+        <v-icon left dark size="25"> mdi-open-in-new </v-icon>Create new
+        note</v-btn
+      ></v-col
+    >
+  </v-row>
+  <v-row class="m-2" v-if="!notes || notes.length === 0"
+    ><v-col
+      >No notes found. Please click on create new note to add one.</v-col
+    ></v-row
+  >
   <Timeline :value="notes">
     <template #content="slotProps">
       <v-row>
@@ -19,11 +32,15 @@
       </v-row>
     </template>
   </Timeline>
+  <CreateNoteModal ref="createNotesModal" @submitData="emitToParent" />
 </template>
 
 <script lang="ts">
-import { useFormatters } from "@/composables";
+import { useFormatters, ModalDialog } from "@/composables";
+import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
+import { ref } from "vue";
 export default {
+  components: { CreateNoteModal },
   props: {
     notes: {
       type: Array,
@@ -34,9 +51,25 @@ export default {
       required: true,
     },
   },
-  setup() {
+  emits: ["submitData"],
+  setup(props: any, context: any) {
     const { dateOnlyLongString, timeOnlyString } = useFormatters();
-    return { dateOnlyLongString, timeOnlyString };
+    const showModal = ref(false);
+    const createNotesModal = ref({} as ModalDialog<void>);
+    const addNewNote = async () => {
+      await createNotesModal.value.showModal();
+    };
+    const emitToParent = async (data: NoteDTO) => {
+      context.emit("submitData", data);
+    };
+    return {
+      dateOnlyLongString,
+      timeOnlyString,
+      addNewNote,
+      createNotesModal,
+      showModal,
+      emitToParent,
+    };
   },
 };
 </script>
