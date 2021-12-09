@@ -13,7 +13,7 @@
         <v-col>
           <v-btn
             color="primary"
-            @click="goToSearchProgramName(searchProgramName, $event)"
+            @click="goToSearchProgramName(searchProgramName)"
             >Search</v-btn
           >
         </v-col>
@@ -116,6 +116,7 @@ export default {
     const searchProgramName = ref("");
     const DEFAULT_PAGE = 0;
     const DEFAULT_ROW_SIZE = 10;
+    const currentPageSize = ref();
     const DEFAULT_SORT_COLUMN = "submittedDate";
     const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
     const loading = ref(false);
@@ -178,6 +179,7 @@ export default {
       }
     };
     const pageSortEvent = async (event: any) => {
+      currentPageSize.value = event?.rows;
       await getProgramsSummaryList(
         props.institutionId,
         event.rows,
@@ -187,13 +189,10 @@ export default {
         searchProgramName.value,
       );
     };
-    const goToSearchProgramName = async (
-      programName: string,
-      ...event: any
-    ) => {
+    const goToSearchProgramName = async (programName: string) => {
       await getProgramsSummaryList(
         props.institutionId,
-        event.rows,
+        currentPageSize.value ? currentPageSize.value : DEFAULT_ROW_SIZE,
         DEFAULT_PAGE,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
