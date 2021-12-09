@@ -291,7 +291,7 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Get programs for a particular institution in paginated.
+   * Get programs for a particular institution with pagination.
    * @param institutionId id of the institution.
    * @param pageSize is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.
