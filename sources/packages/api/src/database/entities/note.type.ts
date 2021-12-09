@@ -9,7 +9,7 @@ export enum NoteType {
   /**
    * Note type Restriction.
    */
-  Restriction = "Provincial",
+  Restriction = "Restriction",
   /**
    * Note type System.
    */

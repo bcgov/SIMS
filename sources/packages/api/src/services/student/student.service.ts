@@ -320,6 +320,14 @@ export class StudentService extends RecordDataModelService<Student> {
     return student ? student.notes : [];
   }
 
+  async saveStudentNote(studentId: number, note: Note): Promise<void> {
+    const student = await this.repo.findOne(studentId, {
+      relations: ["notes"],
+    });
+    student.notes.push(note);
+    await this.repo.save(student);
+  }
+
   @InjectLogger()
   logger: LoggerService;
 }

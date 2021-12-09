@@ -564,4 +564,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     const institution = await institutionNoteQuery.getOne();
     return institution ? institution.notes : [];
   }
+
+  async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
+    const institution = await this.repo.findOne(institutionId, {
+      relations: ["notes"],
+    });
+    institution.notes.push(note);
+    await this.repo.save(institution);
+  }
 }

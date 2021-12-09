@@ -100,7 +100,7 @@ export class Institution extends RecordDataModel {
   })
   institutionType: InstitutionType;
 
-  @ManyToMany(() => Note)
+  @ManyToMany(() => Note, { eager: false, cascade: true })
   @JoinTable({
     name: TableNames.InstitutionNotes,
     joinColumn: { name: ColumnNames.InstitutionId },
