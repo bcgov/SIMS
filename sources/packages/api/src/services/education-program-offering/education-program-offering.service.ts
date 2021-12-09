@@ -298,10 +298,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    */
   async getPaginatedProgramsForInstitution(
     institutionId: number,
-    pageSize: number,
-    page: number,
-    sortColumn: string,
-    sortOrder: SortDBOrder,
+    pageSize?: number,
+    page?: number,
+    sortColumn?: string,
+    sortOrder?: SortDBOrder,
     searchProgramName?: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
     let sortByColumn = "programs.createdAt"; //Default sort column
