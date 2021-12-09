@@ -122,7 +122,7 @@ export class EducationProgramApi extends HttpBaseClient {
   public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/education-program/programs-list`,
+        "institution/education-program/programs-list",
         this.addAuthHeader(),
       );
       return response.data;

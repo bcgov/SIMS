@@ -23,6 +23,7 @@ import {
   ApplicationSummaryDTO,
   ApplicationDetails,
   AESTInstitutionProgramsSummaryPaginatedDto,
+  SortDBOrder,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -330,16 +331,18 @@ export class InstitutionService {
    */
   async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
-    take: number,
-    skip: number,
-    dateSubmittedOrder: number,
+    pageSize: number,
+    page: number,
+    sortColumn: string,
+    sortOrder: SortDBOrder,
     searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
     return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
       institutionId,
-      take,
-      skip,
-      dateSubmittedOrder,
+      pageSize,
+      page,
+      sortColumn,
+      sortOrder,
       searchName,
     );
   }

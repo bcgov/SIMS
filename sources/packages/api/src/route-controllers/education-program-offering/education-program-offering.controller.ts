@@ -293,33 +293,36 @@ export class EducationProgramOfferingController {
   /**
    * Get programs for a particular institution in paginated.
    * @param institutionId id of the institution.
-   * @param take is the number of rows shown in the table
-   * @param skip is the number of rows that is skipped/offset from the total list.
+   * @param pageSize is the number of rows shown in the table
+   * @param page is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param dateSubmittedOrder the sorting order of the submitted date, default its ascending
+   * @param sortColumn the sorting column.
+   * @param sortOrder sorting order default is descending.
    * @param searchProgramName Search the program name in the query
    * @returns ProgramsOfferingSummaryPaginated.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId/programs/take/:take/skip/:skip")
+  @Get("institution/:institutionId/programs")
   async getPaginatedProgramsForInstitution(
     @Param("institutionId") institutionId: number,
-    @Param("take") take: number,
-    @Param("skip") skip: number,
-    @Query("dateSubmittedOrder") dateSubmittedOrder: number,
+    @Query("pageSize") pageSize: number,
+    @Query("page") page: number,
+    @Query("sortColumn") sortColumn: string,
+    @Query("sortOrder") sortOrder: SortDBOrder,
     @Query("searchProgramName") searchProgramName: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
     const paginatedProgramOfferingSummaryResult =
       await this.programOfferingService.getPaginatedProgramsForInstitution(
         institutionId,
-        take,
-        skip,
-        dateSubmittedOrder === -1 ? SortDBOrder.DESC : SortDBOrder.ASC,
+        pageSize,
+        page,
+        sortColumn,
+        sortOrder,
         searchProgramName,
       );
     const paginatedProgramOfferingSummary =
-      paginatedProgramOfferingSummaryResult[0].map(
+      paginatedProgramOfferingSummaryResult.programsSummary.map(
         (programOfferingSummary) => ({
           programId: programOfferingSummary.programId,
           programName: programOfferingSummary.programName,
@@ -334,7 +337,7 @@ export class EducationProgramOfferingController {
       );
     return {
       programsSummary: paginatedProgramOfferingSummary,
-      programsCount: paginatedProgramOfferingSummaryResult[1],
+      programsCount: paginatedProgramOfferingSummaryResult.programsCount,
     };
   }
 }

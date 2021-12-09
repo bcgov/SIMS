@@ -12,12 +12,11 @@ import { SaveEducationProgramOfferingDto } from "../../route-controllers/educati
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
-  ProgramsOfferingSummary,
+  ProgramsOfferingSummaryPaginated,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
-import { SortDBOrder } from "src/types/sortDBOrder";
-
+import { SortDBOrder } from "../../types/sortDBOrder";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(@Inject("Connection") connection: Connection) {
@@ -289,20 +288,24 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get programs for a particular institution in paginated.
    * @param institutionId id of the institution.
-   * @param take is the number of rows shown in the table
+   * @param pageSize is the number of rows shown in the table
    * @param skip is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param dateSubmittedOrder the sorting order of the submitted date, default its ascending
+   * @param sortColumn the sorting column.
+   * @param sortOrder sorting order default is descending.
    * @param searchProgramName Search the program name in the query
    * @returns programs, locations and offerings count, programs count under the specified institution.
    */
   async getPaginatedProgramsForInstitution(
     institutionId: number,
-    take: number,
-    skip: number,
-    dateSubmittedOrder: SortDBOrder,
-    searchProgramName: string,
-  ): Promise<[ProgramsOfferingSummary[], number]> {
+    pageSize: number,
+    page: number,
+    sortColumn: string,
+    sortOrder: SortDBOrder,
+    searchProgramName?: string,
+  ): Promise<ProgramsOfferingSummaryPaginated> {
+    let sortByColumn = "programs.createdAt"; //Default sort column
+    const sortByOrder = sortOrder === SortDBOrder.ASC ? "ASC" : "DESC"; //Default sort order
     const paginatedProgramQuery = await this.repo
       .createQueryBuilder("offerings")
       .select("programs.id", "programId")
@@ -325,16 +328,25 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addGroupBy("programs.createdAt")
       .addGroupBy("locations.name")
       .addGroupBy("programs.approvalStatus");
-
     const programsCountQuery = paginatedProgramQuery.getRawMany();
-    const programsQuery = paginatedProgramQuery
-      .limit(take)
-      .offset(skip)
-      .orderBy("programs.createdAt", dateSubmittedOrder)
-      .getRawMany();
-
+    if (pageSize) {
+      paginatedProgramQuery.limit(pageSize);
+    }
+    if (page) {
+      paginatedProgramQuery.offset(page * pageSize);
+    } else {
+      paginatedProgramQuery.offset(0);
+    }
+    if (sortColumn === "submittedDate") {
+      sortByColumn = "programs.createdAt";
+    }
+    paginatedProgramQuery.orderBy(sortByColumn, sortByOrder);
+    const programsQuery = paginatedProgramQuery.getRawMany();
     const [paginatedProgramOfferingSummaryResult, programsCount] =
       await Promise.all([programsQuery, programsCountQuery]);
-    return [paginatedProgramOfferingSummaryResult, programsCount.length];
+    return {
+      programsSummary: paginatedProgramOfferingSummaryResult,
+      programsCount: programsCount.length,
+    };
   }
 }

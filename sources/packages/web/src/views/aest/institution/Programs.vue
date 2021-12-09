@@ -13,7 +13,7 @@
         <v-col>
           <v-btn
             color="primary"
-            @click="goToSearchProgramName(searchProgramName)"
+            @click="goToSearchProgramName(searchProgramName, $event)"
             >Search</v-btn
           >
         </v-col>
@@ -29,11 +29,11 @@
         :value="institutionProgramsSummary.programsSummary"
         :lazy="true"
         :paginator="true"
-        :rows="defaultNoOfRows"
+        :rows="DEFAULT_ROW_SIZE"
         :rowsPerPageOptions="[10, 20, 50]"
         :totalRecords="institutionProgramsSummary.programsCount"
-        @page="onPage($event)"
-        @sort="onSort($event)"
+        @page="pageSortEvent($event)"
+        @sort="pageSortEvent($event)"
         :loading="loading"
       >
         <Column field="submittedDate" header="Date Submitted" :sortable="true">
@@ -95,6 +95,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
   AESTInstitutionProgramsSummaryPaginatedDto,
   ApprovalStatus,
+  SortDBOrder,
 } from "@/types";
 import { useToastMessage } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -113,24 +114,49 @@ export default {
       {} as AESTInstitutionProgramsSummaryPaginatedDto,
     );
     const searchProgramName = ref("");
-    const defaultPage = 0;
-    const defaultNoOfRows = ref(10);
-    const defaultSortOrder = -1;
+    const DEFAULT_PAGE = 0;
+    const DEFAULT_ROW_SIZE = 10;
+    const DEFAULT_SORT_COLUMN = "submittedDate";
+    const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
     const loading = ref(false);
+    const getProgramsSummaryList = async (
+      institutionId: number,
+      rowsPerPage: number,
+      page: number,
+      sortColumn: string,
+      sortOrder: SortDBOrder,
+      programName: string,
+    ) => {
+      try {
+        loading.value = true;
+        searchProgramName.value = programName;
+        institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+          institutionId,
+          rowsPerPage,
+          page,
+          sortColumn,
+          sortOrder,
+          programName,
+        );
+        if (institutionProgramsSummary.value.programsSummary.length === 0) {
+          toast.warn(
+            "No Programs found",
+            "No Programs found for the Institution/ Search Criteria",
+          );
+        }
+      } finally {
+        loading.value = false;
+      }
+    };
     onMounted(async () => {
-      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+      await getProgramsSummaryList(
         props.institutionId,
-        defaultNoOfRows.value,
-        defaultPage,
-        defaultSortOrder,
+        DEFAULT_ROW_SIZE,
+        DEFAULT_PAGE,
+        DEFAULT_SORT_COLUMN,
+        DEFAULT_SORT_ORDER,
         searchProgramName.value,
       );
-      if (institutionProgramsSummary.value.programsSummary.length === 0) {
-        toast.warn(
-          "No Programs found",
-          "No Programs found for the Institution",
-        );
-      }
     });
     const programsFound = computed(() => {
       return institutionProgramsSummary.value.programsCount > 0;
@@ -151,59 +177,36 @@ export default {
           return "";
       }
     };
-
-    const onPage = async (event: any) => {
-      loading.value = true;
-      defaultNoOfRows.value = event.rows;
-      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+    const pageSortEvent = async (event: any) => {
+      getProgramsSummaryList(
         props.institutionId,
-        defaultNoOfRows.value,
-        defaultNoOfRows.value * event.page,
+        event.rows,
+        event.page,
+        event.sortField,
         event.sortOrder,
         searchProgramName.value,
       );
-      loading.value = false;
     };
-    const onSort = async (event: any) => {
-      loading.value = true;
-      defaultNoOfRows.value = event.rows;
-      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+    const goToSearchProgramName = async (
+      searchProgramName: string,
+      ...event: any
+    ) => {
+      getProgramsSummaryList(
         props.institutionId,
-        defaultNoOfRows.value,
-        event.page
-          ? defaultNoOfRows.value * event.page
-          : defaultNoOfRows.value * 0,
-        event.sortOrder,
-        searchProgramName.value,
+        event.rows,
+        DEFAULT_PAGE,
+        DEFAULT_SORT_COLUMN,
+        DEFAULT_SORT_ORDER,
+        searchProgramName,
       );
-      loading.value = false;
-    };
-    const goToSearchProgramName = async (programName: string) => {
-      loading.value = true;
-      searchProgramName.value = programName;
-      institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
-        props.institutionId,
-        defaultNoOfRows.value,
-        defaultPage,
-        defaultSortOrder,
-        programName,
-      );
-      if (institutionProgramsSummary.value.programsSummary.length === 0) {
-        toast.warn(
-          "No Programs found",
-          "No Programs found for the Search Criteria",
-        );
-      }
-      loading.value = false;
     };
     return {
       institutionProgramsSummary,
       programsFound,
       goToViewProgramDetail,
       getProgramStatusColorClass,
-      defaultNoOfRows,
-      onPage,
-      onSort,
+      DEFAULT_ROW_SIZE,
+      pageSortEvent,
       goToSearchProgramName,
       searchProgramName,
       loading,

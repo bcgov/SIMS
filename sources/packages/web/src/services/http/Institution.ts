@@ -11,6 +11,7 @@ import {
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   AESTInstitutionProgramsSummaryPaginatedDto,
+  SortDBOrder,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -199,9 +200,10 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
-    take: number,
-    skip: number,
-    dateSubmittedOrder: number,
+    pageSize: number,
+    page: number,
+    sortColumn: string,
+    sortOrder: SortDBOrder,
     searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
     try {
@@ -209,13 +211,21 @@ export class InstitutionApi extends HttpBaseClient {
       if (searchName) {
         queryString += `searchProgramName=${searchName}&`;
       }
-      if (dateSubmittedOrder) {
-        queryString += `dateSubmittedOrder=${dateSubmittedOrder}`;
-      } else {
-        queryString += `dateSubmittedOrder=1`;
+      if (sortColumn) {
+        queryString += `sortColumn=${sortColumn}&`;
       }
+      if (sortOrder) {
+        queryString += `sortOrder=${sortOrder}&`;
+      }
+      if (pageSize) {
+        queryString += `pageSize=${pageSize}&`;
+      }
+      queryString += `page=${page}&`;
       const response = await this.apiClient.get(
-        `institution/offering/institution/${institutionId}/programs/take/${take}/skip/${skip}?${queryString}`,
+        `institution/offering/institution/${institutionId}/programs?${queryString.slice(
+          0,
+          -1,
+        )}`,
         this.addAuthHeader(),
       );
       return response.data;
