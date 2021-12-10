@@ -59,6 +59,9 @@
         @sort="paginationAndSortEvent($event)"
         :loading="loading"
       >
+        <template #empty>
+          <p class="text-center font-weight-bold">No records found.</p>
+        </template>
         <Column
           :field="UserFields.DisplayName"
           header="Name"
