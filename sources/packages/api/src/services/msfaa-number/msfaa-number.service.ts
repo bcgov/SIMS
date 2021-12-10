@@ -95,6 +95,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .andWhere("msfaaNumber.offeringIntensity= :offeringIntensity", {
         offeringIntensity,
       })
+      .andWhere("msfaaNumber.cancelledDate is null")
       .andWhere(
         new Brackets((qb) => {
           qb.where("msfaaNumber.dateSigned is null");

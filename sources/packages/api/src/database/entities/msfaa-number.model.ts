@@ -90,17 +90,23 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   referenceApplication: Application;
-
+  /**
+   * Offering Intensity of the reference application.
+   */
   @Column({
     name: "offering_intensity",
   })
   offeringIntensity: string;
-
+  /**
+   * Cancelled date of the MSFAA Number.
+   */
   @Column({
     name: "cancelled_date",
   })
   cancelledDate: Date;
-
+  /**
+   * Province which issued the new MSFAA number.
+   */
   @Column({
     name: "new_issuing_province",
   })
