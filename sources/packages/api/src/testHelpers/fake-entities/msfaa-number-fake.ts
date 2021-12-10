@@ -1,8 +1,4 @@
-import {
-  MSFAANumber,
-  OfferingIntensity,
-  Student,
-} from "../../database/entities";
+import { MSFAANumber, Student } from "../../database/entities";
 import { createFakeStudent } from "./student-fake";
 import * as faker from "faker";
 
@@ -15,6 +11,6 @@ export function createFakeMSFAANumber(student?: Student): MSFAANumber {
       max: 9999999999,
     })
     .toString();
-  msfaaNumber.offeringIntensity = OfferingIntensity.fullTime;
+  msfaaNumber.offeringIntensity = "Full Time";
   return msfaaNumber;
 }
