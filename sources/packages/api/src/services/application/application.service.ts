@@ -19,6 +19,7 @@ import {
   PIRDeniedReason,
   MSFAANumber,
   COEDeniedReason,
+  OfferingIntensity,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -154,6 +155,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     const newApplication = new Application();
     newApplication.applicationNumber = application.applicationNumber;
+    newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.submitted;
@@ -1255,7 +1257,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * existing one instead.
    * @param applicationId application id to receive an MSFAA.
    */
-  async associateMSFAANumber(applicationId: number): Promise<Application> {
+  async associateMSFAANumber(
+    applicationId: number,
+    offeringIntensity: OfferingIntensity,
+  ): Promise<Application> {
     const application = await this.repo.findOne(applicationId, {
       relations: ["offering"],
     });
@@ -1279,6 +1284,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const existingValidMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
         application.studentId,
+        offeringIntensity,
       );
     if (existingValidMSFAANumber) {
       // Reuse the MSFAA that is still valid and avoid creating a new one.
@@ -1305,6 +1311,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
           application.studentId,
           applicationId,
+          offeringIntensity,
         );
         msfaaNumberId = newMSFAANumber.id;
       }

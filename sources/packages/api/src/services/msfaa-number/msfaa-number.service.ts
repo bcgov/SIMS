@@ -39,9 +39,12 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   async createMSFAANumber(
     studentId: number,
     referenceApplicationId: number,
+    offeringIntensity: OfferingIntensity,
   ): Promise<MSFAANumber> {
     const newMSFAANumber = new MSFAANumber();
-    newMSFAANumber.msfaaNumber = await this.consumeNextSequence();
+    newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
+      offeringIntensity,
+    );
     newMSFAANumber.student = { id: studentId } as Student;
     newMSFAANumber.referenceApplication = {
       id: referenceApplicationId,
@@ -53,10 +56,12 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * Generates the next number for an MSFAA.
    * @returns number to be used for the next MSFAA.
    */
-  private async consumeNextSequence(): Promise<string> {
+  private async consumeNextSequence(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<string> {
     let nextNumber: number;
     await this.sequenceService.consumeNextSequence(
-      "MSFAA_STUDENT_NUMBER",
+      offeringIntensity + "_MSFAA_STUDENT_NUMBER",
       async (nextSequenceNumber: number) => {
         nextNumber = nextSequenceNumber;
       },
@@ -75,7 +80,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student id to filter.
    * @returns current valid MSFAA record.
    */
-  async getCurrentValidMSFAANumber(studentId: number): Promise<MSFAANumber> {
+  async getCurrentValidMSFAANumber(
+    studentId: number,
+    offeringIntensity: OfferingIntensity,
+  ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
       .subtract(MAX_MFSAA_VALID_DAYS, "days")
       .toDate();
@@ -83,6 +91,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
+      .andWhere("msfaaNumber.referenceApplication is not null")
+      .andWhere("msfaaNumber.offeringIntensity= :offeringIntensity", {
+        offeringIntensity,
+      })
       .andWhere(
         new Brackets((qb) => {
           qb.where("msfaaNumber.dateSigned is null");

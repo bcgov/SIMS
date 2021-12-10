@@ -36,6 +36,7 @@ import {
   CreateDisbursementsDTO,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
+import { OfferingIntensity } from "src/database/entities";
 
 /**
  * Allow system access to the application data.
@@ -296,12 +297,16 @@ export class ApplicationSystemController {
    * existing one instead.
    * @param applicationId application id to receive an MSFAA.
    */
-  @Patch(":applicationId/msfaa-number")
+  @Patch(":applicationId/offeringIntensity/:offeringIntensity/msfaa-number")
   async associateMSFAANumber(
     @Param("applicationId") applicationId: number,
+    @Param("offeringIntensity") offeringIntensity: OfferingIntensity,
   ): Promise<void> {
     try {
-      await this.applicationService.associateMSFAANumber(applicationId);
+      await this.applicationService.associateMSFAANumber(
+        applicationId,
+        offeringIntensity,
+      );
     } catch (error) {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:

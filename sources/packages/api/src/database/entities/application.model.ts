@@ -189,6 +189,11 @@ export class Application extends RecordDataModel {
   })
   pirDeniedOtherDesc?: string;
 
+  @Column({
+    name: "relationship_status",
+  })
+  relationshipStatus: string;
+
   @RelationId((application: Application) => application.msfaaNumber)
   msfaaNumberId?: number;
 

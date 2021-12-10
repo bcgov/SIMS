@@ -90,4 +90,9 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   referenceApplication: Application;
+
+  @Column({
+    name: "offering_intensity",
+  })
+  offeringIntensity: string;
 }
