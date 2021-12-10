@@ -36,7 +36,7 @@ import {
   CreateDisbursementsDTO,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
-import { OfferingIntensity } from "src/database/entities";
+import { OfferingIntensity } from "../../database/entities";
 
 /**
  * Allow system access to the application data.
