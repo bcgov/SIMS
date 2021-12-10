@@ -3,7 +3,6 @@ import {
   InstitutionDto,
   InstitutionDetailDto,
   UpdateInstitutionDto,
-  InstitutionUserResDto,
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
   ApplicationSummaryDTO,
@@ -55,18 +54,6 @@ export class InstitutionApi extends HttpBaseClient {
   public async sync() {
     try {
       await this.apiClient.patch("institution/sync", {}, this.addAuthHeader());
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async institutionSummary(
-    url: string,
-  ): Promise<InstitutionUserAndCount> {
-    try {
-      const resp = await this.apiClient.get(url, this.addAuthHeader());
-      return resp.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -201,10 +188,18 @@ export class InstitutionApi extends HttpBaseClient {
   /**
    * Controller method to get all institution users with the
    * given institutionId ministry user.
+   * ! Because of code duplication, this function
+   * ! is used in both AEST(Ministry) institution summary
+   * ! as well as institution admin user summary.
+   * ! only passed URL value will be different.
+   * ! Both are using same interface
+   * ! In future, if any of them needs a
+   * ! different interface, use create a
+   * ! different functions for both
    * @param institutionId institution id
    * @returns All the institution users for the given institution.
    */
-  public async institutionSummaryForAEST(
+  public async institutionSummary(
     url: string,
   ): Promise<InstitutionUserAndCount> {
     try {

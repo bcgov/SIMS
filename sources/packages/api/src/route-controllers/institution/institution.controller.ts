@@ -651,29 +651,34 @@ export class InstitutionController extends BaseController {
       sortOrder,
       institutionId,
     );
-    const users = institutionUserAndCount[0].map((institutionUser) => {
-      const institutionUserResp: InstitutionUserRespDto = {
-        id: institutionUser.id,
-        authorizations: institutionUser.authorizations.map((auth) => ({
-          id: auth.id,
-          authType: {
-            role: auth.authType?.role,
-            type: auth.authType?.type,
+    const institutionUsers = institutionUserAndCount[0].map(
+      (eachInstitutionUser) => {
+        const institutionUserResp: InstitutionUserRespDto = {
+          id: eachInstitutionUser.id,
+          authorizations: eachInstitutionUser.authorizations.map(
+            (authorization) => ({
+              id: authorization.id,
+              authType: {
+                role: authorization.authType?.role,
+                type: authorization.authType?.type,
+              },
+              location: {
+                name: authorization.location?.name,
+              },
+            }),
+          ),
+          user: {
+            email: eachInstitutionUser.user.email,
+            firstName: eachInstitutionUser.user.firstName,
+            lastName: eachInstitutionUser.user.lastName,
+            userName: eachInstitutionUser.user.userName,
+            isActive: eachInstitutionUser.user.isActive,
           },
-          location: {
-            name: auth.location?.name,
-          },
-        })),
-        user: {
-          email: institutionUser.user.email,
-          firstName: institutionUser.user.firstName,
-          lastName: institutionUser.user.lastName,
-          userName: institutionUser.user.userName,
-          isActive: institutionUser.user.isActive,
-        },
-      };
-      return institutionUserResp;
-    });
-    return { users: users, totalUsers: institutionUserAndCount[1] };
+        };
+        return institutionUserResp;
+      },
+    );
+    return { users: institutionUsers, totalUsers: institutionUserAndCount[1] };
   }
 }
+

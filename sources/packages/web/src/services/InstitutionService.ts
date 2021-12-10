@@ -362,7 +362,7 @@ export class InstitutionService {
    * @returns All the institution locations for the given institution.
    */
   async getAllInstitutionLocationSummary(institutionId: number) {
-    return await ApiClient.InstitutionLocation.getAllInstitutionLocationSummary(
+    return ApiClient.InstitutionLocation.getAllInstitutionLocationSummary(
       institutionId,
     );
   }
@@ -392,7 +392,7 @@ export class InstitutionService {
           : FieldSortOrder.DESC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
-    const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummaryForAEST(
+    const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(
       URL,
     );
     return {
