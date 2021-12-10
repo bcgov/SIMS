@@ -7,7 +7,11 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { NoteDTO, NoteBaseDTO } from "./models/note.dto";
 import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
-
+import { transformToNoteDTO, transformToNoteEntity } from "../../utilities";
+/**
+ * Controller for Notes.
+ * This consists of all Rest APIs for notes.
+ */
 @Controller("notes")
 export class NotesController extends BaseController {
   constructor(
@@ -17,6 +21,12 @@ export class NotesController extends BaseController {
     super();
   }
 
+  /**
+   * Rest API to get notes for a student.
+   * @param studentId
+   * @param noteType
+   * @returns Notes
+   */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/student/:studentId/:noteType?")
@@ -24,22 +34,22 @@ export class NotesController extends BaseController {
     @Param("studentId") studentId: number,
     @Param("noteType") noteType: string,
   ): Promise<NoteDTO[]> {
-    const notes = await this.studentService.getStudentNotes(
+    const studentNotes = await this.studentService.getStudentNotes(
       studentId,
       noteType as NoteType,
     );
-    if (!notes) {
+    if (!studentNotes) {
       return [];
     }
-    return notes.map((note) => ({
-      noteType: note.noteType,
-      description: note.description,
-      firstName: note.creator.firstName,
-      lastName: note.creator.lastName,
-      createdAt: note.createdAt,
-    }));
+    return studentNotes.map((note) => transformToNoteDTO(note));
   }
 
+  /**
+   * Rest API to gets notes for an Institution.
+   * @param institutionId
+   * @param noteType
+   * @returns Notes.
+   */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/institution/:institutionId/:noteType?")
@@ -47,23 +57,23 @@ export class NotesController extends BaseController {
     @Param("institutionId") institutionId: number,
     @Param("noteType") noteType: string,
   ): Promise<NoteDTO[]> {
-    const notes = await this.institutionService.getInstitutionNotes(
+    const institutionNotes = await this.institutionService.getInstitutionNotes(
       institutionId,
       noteType as NoteType,
     );
 
-    if (!notes) {
+    if (!institutionNotes) {
       return [];
     }
-    return notes.map((note) => ({
-      noteType: note.noteType,
-      description: note.description,
-      firstName: note.creator.firstName,
-      lastName: note.creator.lastName,
-      createdAt: note.createdAt,
-    }));
+    return institutionNotes.map((note) => transformToNoteDTO(note));
   }
 
+  /**
+   * Rest API to add note for an Institution.
+   * @param userToken
+   * @param institutionId
+   * @param payload
+   */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Patch("/institution/:institutionId")
@@ -72,17 +82,19 @@ export class NotesController extends BaseController {
     @Param("institutionId") institutionId: number,
     @Body() payload: NoteBaseDTO,
   ): Promise<void> {
-    const institutionNote = {
-      noteType: payload.noteType,
-      description: payload.description,
-      creator: { id: userToken.userId } as User,
-    } as Note;
+    const institutionNote = transformToNoteEntity(payload, userToken.userId);
     await this.institutionService.saveInstitutionNote(
       institutionId,
       institutionNote,
     );
   }
 
+  /**
+   * Rest API to add note for a Student.
+   * @param userToken
+   * @param studentId
+   * @param payload
+   */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Patch("/student/:studentId")
@@ -91,11 +103,7 @@ export class NotesController extends BaseController {
     @Param("studentId") studentId: number,
     @Body() payload: NoteBaseDTO,
   ): Promise<void> {
-    const studentNote = {
-      noteType: payload.noteType,
-      description: payload.description,
-      creator: { id: userToken.userId } as User,
-    } as Note;
+    const studentNote = transformToNoteEntity(payload, userToken.userId);
     await this.studentService.saveStudentNote(studentId, studentNote);
   }
 }

@@ -540,6 +540,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getOne();
   }
 
+  /**
+   * Service to get notes for a student.
+   * @param institutionId
+   * @param noteType
+   * @returns Notes
+   */
   async getInstitutionNotes(
     institutionId: number,
     noteType?: NoteType,
@@ -565,6 +571,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return institution ? institution.notes : [];
   }
 
+  /**
+   * Service to add note for an Institution.
+   * @param institutionId
+   * @param note
+   */
   async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
     const institution = await this.repo.findOne(institutionId, {
       relations: ["notes"],

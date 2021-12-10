@@ -295,6 +295,12 @@ export class StudentService extends RecordDataModelService<Student> {
     return searchQuery.getMany();
   }
 
+  /**
+   * Service to get notes for a student.
+   * @param studentId
+   * @param noteType
+   * @returns Notes
+   */
   async getStudentNotes(
     studentId: number,
     noteType?: NoteType,
@@ -320,6 +326,11 @@ export class StudentService extends RecordDataModelService<Student> {
     return student ? student.notes : [];
   }
 
+  /**
+   * Service to add note for an Institution.
+   * @param studentId
+   * @param note
+   */
   async saveStudentNote(studentId: number, note: Note): Promise<void> {
     const student = await this.repo.findOne(studentId, {
       relations: ["notes"],

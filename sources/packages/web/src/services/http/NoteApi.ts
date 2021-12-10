@@ -1,5 +1,9 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import { NoteDTO, NoteBaseDTO } from "@/types/contracts/NoteContract";
+
+/**
+ * Http API client for Notes.
+ */
 export class NoteApi extends HttpBaseClient {
   public async addInstitutionNote(
     institutionId: number,
