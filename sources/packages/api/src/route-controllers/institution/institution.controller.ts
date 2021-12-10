@@ -171,11 +171,11 @@ export class InstitutionController extends BaseController {
    * @param institutionId institution id
    * @queryParm page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, limit of the page if nothing is
+   * @queryParm pageLimit, page size or records per page, if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @queryParm searchName, user's name keyword to be searched
    * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, oder to be sorted
+   * @queryParm sortOrder, order to be sorted
    * @returns All the institution users for the given institution
    * with total count.
    */
@@ -629,7 +629,7 @@ export class InstitutionController extends BaseController {
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @queryParm searchName, user's name keyword to be searched
    * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, oder to be sorted
+   * @queryParm sortOrder, order to be sorted
    * @returns All the institution users for the given institution
    * with total count.
    */

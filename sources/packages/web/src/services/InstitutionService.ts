@@ -140,9 +140,7 @@ export class InstitutionService {
         isActive: institutionUser.user.isActive,
         disableRemove:
           AuthService.shared.userToken?.userName ===
-          institutionUser.user.userName
-            ? true
-            : false,
+          institutionUser.user.userName,
       };
 
       return viewModel;

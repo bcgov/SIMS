@@ -362,7 +362,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @queryParm searchName, user's name keyword to be searched
    * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, oder to be sorted
+   * @queryParm sortOrder, order to be sorted
    * @param institutionId institution id
    * @returns All the institution users for the given institution
    * with total count.
