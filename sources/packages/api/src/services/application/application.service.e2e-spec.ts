@@ -19,6 +19,7 @@ import {
   Application,
   ApplicationStatus,
   MSFAANumber,
+  OfferingIntensity,
   Student,
 } from "../../database/entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
@@ -88,7 +89,10 @@ describe("ApplicationService", () => {
       const testApplication = await applicationRepository.save(fakeApplication);
 
       try {
-        await applicationService.associateMSFAANumber(testApplication.id);
+        await applicationService.associateMSFAANumber(
+          testApplication.id,
+          OfferingIntensity.fullTime,
+        );
       } catch (error) {
         expect(error.name === INVALID_OPERATION_IN_THE_CURRENT_STATUS);
       } finally {
@@ -111,6 +115,7 @@ describe("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
@@ -136,6 +141,7 @@ describe("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
@@ -175,6 +181,7 @@ describe("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).not.toBe(testMSFAANumber.id);
@@ -219,6 +226,7 @@ describe("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);

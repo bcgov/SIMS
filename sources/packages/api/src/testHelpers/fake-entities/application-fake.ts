@@ -22,5 +22,6 @@ export function createFakeApplication(
   application.offering = offering ?? createFakeEducationProgramOffering();
   application.applicationStatusUpdatedOn = getUTCNow();
   application.applicationStatus = ApplicationStatus.submitted;
+  application.relationshipStatus = "single";
   return application;
 }
