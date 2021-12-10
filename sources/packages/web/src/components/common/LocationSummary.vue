@@ -73,19 +73,6 @@
           />
         </v-col>
       </v-row>
-      <!-- TODO:commented codes are dummy values as per as figma, for future enhancement not part of MVP -->
-      <!-- <v-divider></v-divider> -->
-      <!-- <v-row>
-        <v-col>
-          <span><b>250</b></span> Students
-        </v-col>
-        <v-col>
-          <span><b>250</b></span> Programs
-        </v-col>
-        <v-col>
-          <span><b>250</b></span> Users
-        </v-col>
-      </v-row> -->
     </ContentGroup>
   </v-container>
 </template>
