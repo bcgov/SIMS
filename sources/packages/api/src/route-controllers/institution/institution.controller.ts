@@ -569,7 +569,7 @@ export class InstitutionController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/:institutionId/location-summary")
-  async getAllInstitutionLocationSummary(
+  async getAllInstitutionLocationSummaryForAEST(
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations.
