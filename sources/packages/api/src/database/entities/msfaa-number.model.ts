@@ -95,4 +95,14 @@ export class MSFAANumber extends RecordDataModel {
     name: "offering_intensity",
   })
   offeringIntensity: string;
+
+  @Column({
+    name: "cancelled_date",
+  })
+  cancelledDate: Date;
+
+  @Column({
+    name: "new_issuing_province",
+  })
+  newIssuingProvince: string;
 }

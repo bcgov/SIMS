@@ -222,4 +222,38 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       },
     );
   }
+
+  /**
+   * Once the MSFAA response file is processed, updates the
+   * MSFAA received cancelled records on the database with the
+   * information received. If the information was already received
+   * the record will not be updated.
+   * @param msfaaNumber MSFAA number
+   * @param cancelledDate date when the MSFAA was cancelled.
+   * @param newIssusingProvince New province which is issuing the MSFAA.
+   * @returns update result. Only one row is supposed to be affected.
+   */
+  async updateCancelledReceivedFile(
+    msfaaNumber: string,
+    cancelledDate: Date,
+    newIssuingProvince: string,
+  ): Promise<UpdateResult> {
+    if (!cancelledDate || !newIssuingProvince) {
+      throw new Error(
+        "Not all required fields to update a received MSFAA record were provided.",
+      );
+    }
+
+    return this.repo.update(
+      {
+        msfaaNumber: msfaaNumber,
+        cancelledDate: IsNull(),
+        newIssuingProvince: IsNull(),
+      },
+      {
+        cancelledDate,
+        newIssuingProvince,
+      },
+    );
+  }
 }

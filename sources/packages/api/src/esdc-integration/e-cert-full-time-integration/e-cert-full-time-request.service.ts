@@ -156,8 +156,7 @@ export class ECertFullTimeRequestService {
       country: addressInfo.country,
       email: disbursement.application.student.user.email,
       gender: disbursement.application.student.gender,
-      // TODO: get the maritalStatus from profile or application (to be defined).
-      maritalStatus: "married",
+      maritalStatus: disbursement.application.relationshipStatus,
       // TODO: student number to be saved alongside the application (to be defined).
       studentNumber:
         disbursement.application.data?.studentNumber.toString() || "",

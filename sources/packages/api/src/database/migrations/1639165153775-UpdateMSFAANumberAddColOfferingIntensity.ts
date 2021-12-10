@@ -6,13 +6,13 @@ export class UpdateMSFAANumberAddColOfferingIntensity1639165153775
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-col-offering-intensity.sql", "MSFAANumbers"),
+      getSQLFileData("Add-col-offering-cancelled.sql", "MSFAANumbers"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-col-offering-intensity.sql", "MSFAANumbers"),
+      getSQLFileData("Drop-col-offering-cancelled.sql", "MSFAANumbers"),
     );
   }
 }

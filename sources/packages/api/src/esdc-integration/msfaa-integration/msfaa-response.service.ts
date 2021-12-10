@@ -5,6 +5,7 @@ import {
   MSFAASFTPResponseFile,
   ProcessSftpResponseResult,
 } from "./models/msfaa-integration.model";
+import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
 
@@ -67,7 +68,19 @@ export class MSFAAResponseService {
         this.logger.error(`${errorDescription}. Error: ${error}`);
       }
     }
-    //TODO response file cancelled records has to be processed
+    for (const cancelledRecord of responseFile.cancelledRecords) {
+      try {
+        await this.processCancelledRecords(cancelledRecord);
+        result.processSummary.push(
+          `Status cancelled record from line ${cancelledRecord.lineNumber}.`,
+        );
+      } catch (error) {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Error processing cancelled record line number ${cancelledRecord.lineNumber} from file ${responseFile.filePath}`;
+        result.errorsSummary.push(errorDescription);
+        this.logger.error(`${errorDescription}. Error: ${error}`);
+      }
+    }
     try {
       await this.msfaaService.deleteFile(responseFile.filePath);
     } catch (error) {
@@ -101,6 +114,30 @@ export class MSFAAResponseService {
     if (updateResult.affected !== 1) {
       throw new Error(
         `Error while updating MSFAA number: ${receivedRecord.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
+      );
+    }
+  }
+
+  /**
+   * Process the cancelled record of the MSFAA response file
+   * by updating the columns of MSFAA Numbers table
+   * @param cancelledRecord MSFAA received record with
+   * cancelledDate and newIssusingProvince.
+   */
+  private async processCancelledRecords(
+    cancelledRecord: MSFAAResponseCancelledRecord,
+  ): Promise<void> {
+    const updateResult =
+      await this.msfaaNumberService.updateCancelledReceivedFile(
+        cancelledRecord.msfaaNumber,
+        cancelledRecord.cancelledDate,
+        cancelledRecord.newIssusingProvince,
+      );
+
+    // Expected to update 1 and only 1 record.
+    if (updateResult.affected !== 1) {
+      throw new Error(
+        `Error while updating MSFAA number: ${cancelledRecord.msfaaNumber}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
     }
   }
