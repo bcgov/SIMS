@@ -182,23 +182,23 @@ export class InstitutionController extends BaseController {
   @IsInstitutionAdmin()
   @Get("/users")
   async allUsers(
-    @Query("page") page = DEFAULT_PAGE_NUMBER,
-    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
     @Query("searchName") searchName: string,
     @Query("sortField") sortField: UserFields,
     @Query("sortOrder") sortOrder: FieldSortOrder,
     @UserToken() user: IInstitutionUserToken,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<InstitutionUserAndCount> {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
     );
     const institutionUserAndCount = await this.institutionService.allUsers(
-      page,
-      pageLimit,
       searchName,
       sortField,
       sortOrder,
       institution.id,
+      page,
+      pageLimit,
     );
     const usersList = institutionUserAndCount[0].map((institutionUser) => {
       const institutionUserResp: InstitutionUserRespDto = {
@@ -636,20 +636,20 @@ export class InstitutionController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/:institutionId/user-summary")
   async usersSummaryForAEST(
-    @Query("page") page = DEFAULT_PAGE_NUMBER,
-    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
     @Query("searchName") searchName: string,
     @Query("sortField") sortField: UserFields,
     @Query("sortOrder") sortOrder: FieldSortOrder,
     @Param("institutionId") institutionId: number,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<InstitutionUserAndCount> {
     const institutionUserAndCount = await this.institutionService.allUsers(
-      page,
-      pageLimit,
       searchName,
       sortField,
       sortOrder,
       institutionId,
+      page,
+      pageLimit,
     );
     const institutionUsers = institutionUserAndCount[0].map(
       (eachInstitutionUser) => {
@@ -681,4 +681,3 @@ export class InstitutionController extends BaseController {
     return { users: institutionUsers, totalUsers: institutionUserAndCount[1] };
   }
 }
-

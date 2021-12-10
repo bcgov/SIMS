@@ -368,12 +368,12 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * with total count.
    */
   async allUsers(
-    page = DEFAULT_PAGE_NUMBER,
-    pageLimit = DEFAULT_PAGE_LIMIT,
     searchName: string,
     sortField: UserFields,
     sortOrder: FieldSortOrder,
     institutionId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<[InstitutionUser[], number]> {
     const institutionUsers = this.institutionUserRepo
       .createQueryBuilder("institutionUser")
