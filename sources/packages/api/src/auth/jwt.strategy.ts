@@ -53,7 +53,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ].includes(userToken.authorizedParty)
     ) {
       // Get DB user information to be added to the token.
-      console.log("DB user called");
       const dbUser = await this.userService.getUserLoginInfo(
         userToken.userName,
       );
