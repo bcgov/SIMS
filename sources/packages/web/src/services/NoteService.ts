@@ -23,7 +23,7 @@ export class NoteService {
     institutionId: number,
     noteType?: string,
   ): Promise<NoteDTO[]> {
-    return await ApiClient.NoteApi.getInstitutionNotes(institutionId, noteType);
+    return ApiClient.NoteApi.getInstitutionNotes(institutionId, noteType);
   }
 
   async addStudentNote(studentId: number, note: NoteBaseDTO): Promise<void> {
@@ -34,6 +34,6 @@ export class NoteService {
     studentId: number,
     noteType?: string,
   ): Promise<NoteDTO[]> {
-    return await ApiClient.NoteApi.getStudentNotes(studentId, noteType);
+    return ApiClient.NoteApi.getStudentNotes(studentId, noteType);
   }
 }

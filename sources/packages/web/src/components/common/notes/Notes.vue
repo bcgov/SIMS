@@ -71,7 +71,7 @@ export default {
     },
   },
   emits: ["submitData"],
-  setup(context: any) {
+  setup(props: any, context: any) {
     const { dateOnlyLongString, timeOnlyString } = useFormatters();
     const showModal = ref(false);
     const createNotesModal = ref({} as ModalDialog<void>);

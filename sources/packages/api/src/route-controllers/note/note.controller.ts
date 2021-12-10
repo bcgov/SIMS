@@ -2,7 +2,7 @@ import { Controller, Get, Param, Patch, Body } from "@nestjs/common";
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { NoteType, Note, User } from "../../database/entities";
+import { NoteType } from "../../database/entities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { NoteDTO, NoteBaseDTO } from "./models/note.dto";
 import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
@@ -83,6 +83,7 @@ export class NotesController extends BaseController {
     @Body() payload: NoteBaseDTO,
   ): Promise<void> {
     const institutionNote = transformToNoteEntity(payload, userToken.userId);
+    console.log(institutionNote);
     await this.institutionService.saveInstitutionNote(
       institutionId,
       institutionNote,

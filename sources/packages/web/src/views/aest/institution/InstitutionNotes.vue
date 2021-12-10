@@ -57,10 +57,8 @@ export default {
 
     const addNote = async (data: NoteBaseDTO) => {
       try {
-        await Promise.all([
-          NoteService.shared.addInstitutionNote(props.institutionId, data),
-          filterNotes(filteredNoteType.value),
-        ]);
+        await NoteService.shared.addInstitutionNote(props.institutionId, data);
+        await filterNotes(filteredNoteType.value);
         toast.success(
           "Note added successfully",
           "The note has been added to the institution.",
