@@ -7,7 +7,7 @@
         </p>
       </v-col>
       <v-col cols="4" v-if="clientType === ClientIdType.Institution">
-        <v-btn class="float-right" @click="goToAddNewLocation()">
+        <v-btn class="float-right" @click="goToAddNewLocation()" color="primary">
           <v-icon :size="25" left>mdi-map-marker-plus</v-icon>Add New Location
         </v-btn>
       </v-col>
