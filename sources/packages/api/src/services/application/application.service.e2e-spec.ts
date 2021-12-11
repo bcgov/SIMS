@@ -122,6 +122,7 @@ describe("ApplicationService", () => {
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
+        await studentRepository.remove(testStudent);
       }
     });
 
@@ -146,6 +147,7 @@ describe("ApplicationService", () => {
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
+        await studentRepository.remove(testStudent);
       }
     });
 
