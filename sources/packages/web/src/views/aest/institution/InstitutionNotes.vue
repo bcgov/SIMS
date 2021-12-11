@@ -3,6 +3,8 @@
     <v-col cols="3" class="category-header-large mb-2">Notes</v-col>
     <v-col class="text-center">
       <div class="float-right">
+        <!-- Prime vue button used here as Vuetify alpha version is not supporting rounded buttons.
+             TODO: when moving to vuetify change the button component to v-btn of vuetify -->
         <Button
           label="All Notes"
           class="p-button-rounded mr-2 mb-2 secondary-btn-background-lt filter-button"
@@ -44,7 +46,7 @@ export default {
   setup(props: any) {
     const notes = ref();
     const filteredNoteType = ref("");
-    const { dateOnlyLongString, timeOnlyString } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const toast = useToastMessage();
 
     const filterNotes = async (noteType?: InstitutionNoteType | string) => {
@@ -77,7 +79,6 @@ export default {
     return {
       notes,
       dateOnlyLongString,
-      timeOnlyString,
       InstitutionNoteType,
       filterNotes,
       filteredNoteType,

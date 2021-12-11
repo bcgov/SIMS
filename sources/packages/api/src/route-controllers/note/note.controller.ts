@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Body } from "@nestjs/common";
+import { Controller, Get, Param, Post, Body, Query } from "@nestjs/common";
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -24,66 +24,58 @@ export class NotesController extends BaseController {
   /**
    * Rest API to get notes for a student.
    * @param studentId
-   * @param noteType
-   * @returns Notes
+   * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
+   * @returns Student Notes.
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/student/:studentId/:noteType?")
+  @Get("/student/:studentId")
   async getStudentDetails(
     @Param("studentId") studentId: number,
-    @Param("noteType") noteType: string,
+    @Query("noteType") noteType: string,
   ): Promise<NoteDTO[]> {
     const studentNotes = await this.studentService.getStudentNotes(
       studentId,
       noteType as NoteType,
     );
-    if (!studentNotes) {
-      return [];
-    }
-    return studentNotes.map((note) => transformToNoteDTO(note));
+    return studentNotes?.map((note) => transformToNoteDTO(note));
   }
 
   /**
    * Rest API to gets notes for an Institution.
    * @param institutionId
-   * @param noteType
-   * @returns Notes.
+   * @param noteType Note type(General|Restriction|System Actions|Program) which is passed to filter the notes.
+   * @returns Institution Notes.
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/institution/:institutionId/:noteType?")
+  @Get("/institution/:institutionId")
   async getInstitutionDetails(
     @Param("institutionId") institutionId: number,
-    @Param("noteType") noteType: string,
+    @Query("noteType") noteType: string,
   ): Promise<NoteDTO[]> {
     const institutionNotes = await this.institutionService.getInstitutionNotes(
       institutionId,
       noteType as NoteType,
     );
-
-    if (!institutionNotes) {
-      return [];
-    }
-    return institutionNotes.map((note) => transformToNoteDTO(note));
+    return institutionNotes?.map((note) => transformToNoteDTO(note));
   }
 
   /**
    * Rest API to add note for an Institution.
    * @param userToken
    * @param institutionId
-   * @param payload
+   * @param payload Note create object.
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Patch("/institution/:institutionId")
+  @Post("/institution/:institutionId")
   async addInstitutionNote(
     @UserToken() userToken: IUserToken,
     @Param("institutionId") institutionId: number,
     @Body() payload: NoteBaseDTO,
   ): Promise<void> {
     const institutionNote = transformToNoteEntity(payload, userToken.userId);
-    console.log(institutionNote);
     await this.institutionService.saveInstitutionNote(
       institutionId,
       institutionNote,
@@ -94,11 +86,11 @@ export class NotesController extends BaseController {
    * Rest API to add note for a Student.
    * @param userToken
    * @param studentId
-   * @param payload
+   * @param payload Note create object.
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Patch("/student/:studentId")
+  @Post("/student/:studentId")
   async addStudentNote(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,

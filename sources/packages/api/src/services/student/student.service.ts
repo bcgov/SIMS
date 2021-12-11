@@ -323,7 +323,7 @@ export class StudentService extends RecordDataModelService<Student> {
     }
 
     const student = await studentNoteQuery.getOne();
-    return student ? student.notes : [];
+    return student?.notes;
   }
 
   /**

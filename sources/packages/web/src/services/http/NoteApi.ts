@@ -10,7 +10,7 @@ export class NoteApi extends HttpBaseClient {
     note: NoteBaseDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.patch(
+      await this.apiClient.post(
         `notes/institution/${institutionId}`,
         note,
         this.addAuthHeader(),
@@ -26,7 +26,7 @@ export class NoteApi extends HttpBaseClient {
     note: NoteBaseDTO,
   ): Promise<void> {
     try {
-      await this.apiClient.patch(
+      await this.apiClient.post(
         `notes/student/${studentId}`,
         note,
         this.addAuthHeader(),
@@ -41,8 +41,9 @@ export class NoteApi extends HttpBaseClient {
     institutionId: number,
     noteType?: string,
   ): Promise<NoteDTO[]> {
+    const queryString = noteType ? `?noteType=${noteType}` : ``;
     const institutionNotes = await this.getCall(
-      `notes/institution/${institutionId}${noteType ? "/" + noteType : ""}`,
+      `notes/institution/${institutionId}${queryString}`,
     );
     return institutionNotes.data as NoteDTO[];
   }
@@ -51,8 +52,9 @@ export class NoteApi extends HttpBaseClient {
     studentId: number,
     noteType?: string,
   ): Promise<NoteDTO[]> {
+    const queryString = noteType ? `?noteType=${noteType}` : ``;
     const studentNotes = await this.getCall(
-      `notes/institution/${studentId}${noteType ? "/" + noteType : ""}`,
+      `notes/institution/${studentId}${queryString}`,
     );
     return studentNotes.data as NoteDTO[];
   }

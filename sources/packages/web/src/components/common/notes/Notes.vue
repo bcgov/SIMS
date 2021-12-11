@@ -13,6 +13,8 @@
       >No notes found. Please click on create new note to add one.</v-col
     ></v-row
   >
+  <!-- Prime vue timeline used here as Vuetify alpha version is not supporting timeline. 
+             TODO: when moving to vuetify change the timeline component to vuetify -->
   <Timeline :value="notes">
     <template #content="slotProps">
       <v-row>
@@ -23,10 +25,7 @@
           <div class="content-header">{{ slotProps.item.noteType }}</div>
           <div v-if="showMoreNotes(slotProps.item)" class="header mt-2">
             {{ slotProps.item.description.substring(0, 150) }}
-            <a
-              @click="toggleNotes(slotProps.item)"
-              target="_blank"
-              class="primary-color"
+            <a @click="toggleNotes(slotProps.item)" class="primary-color"
               >Show more...</a
             >
           </div>
@@ -35,13 +34,14 @@
             <a
               v-if="slotProps.item.showMore"
               @click="toggleNotes(slotProps.item)"
-              target="_blank"
               class="primary-color"
               >Show less...</a
             >
           </div>
           <div class="content-footer mt-2 mb-8 secondary-color-light">
-            <span>{{ timeOnlyString(slotProps.item.createdAt) }}</span>
+            <span>{{
+              timeOnlyInHoursAndMinutes(slotProps.item.createdAt)
+            }}</span>
             <span class="ml-6">{{
               `${slotProps.item.lastName}, ${slotProps.item.firstName}`
             }}</span>
@@ -56,7 +56,7 @@
 <script lang="ts">
 import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
-import { NoteBaseDTO } from "@/types";
+import { NoteBaseDTO, NoteDTO } from "@/types";
 import { ref } from "vue";
 export default {
   components: { CreateNoteModal },
@@ -72,7 +72,7 @@ export default {
   },
   emits: ["submitData"],
   setup(props: any, context: any) {
-    const { dateOnlyLongString, timeOnlyString } = useFormatters();
+    const { dateOnlyLongString, timeOnlyInHoursAndMinutes } = useFormatters();
     const showModal = ref(false);
     const createNotesModal = ref({} as ModalDialog<void>);
     const addNewNote = async () => {
@@ -82,11 +82,11 @@ export default {
       context.emit("submitData", data);
     };
 
-    const toggleNotes = (item: any) => {
+    const toggleNotes = (item: NoteDTO) => {
       item.showMore = !item.showMore;
     };
 
-    const showMoreNotes = (item: any) => {
+    const showMoreNotes = (item: NoteDTO) => {
       return (
         item.description && item.description.length > 150 && !item.showMore
       );
@@ -94,7 +94,7 @@ export default {
 
     return {
       dateOnlyLongString,
-      timeOnlyString,
+      timeOnlyInHoursAndMinutes,
       addNewNote,
       createNotesModal,
       showModal,

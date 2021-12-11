@@ -33,7 +33,12 @@ export function useFormatters() {
     return "";
   };
 
-  const timeOnlyString = (date: string | Date): string => {
+  /**
+   * Extract time from any given date in HH:mm format.
+   * @param date
+   * @returns Formatted time.
+   */
+  const timeOnlyInHoursAndMinutes = (date: string | Date): string => {
     if (date) {
       return dayjs(date).format("HH:mm");
     }
@@ -92,6 +97,6 @@ export function useFormatters() {
     dateOnlyLongString,
     getDatesDiff,
     getFormattedAddress,
-    timeOnlyString,
+    timeOnlyInHoursAndMinutes,
   };
 }

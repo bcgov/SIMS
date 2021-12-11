@@ -18,7 +18,7 @@ COMMENT ON TABLE sims.notes IS 'Table that holds note details that are entered f
 
 COMMENT ON COLUMN sims.notes.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.notes.note_type IS 'Note type enumeration.Consists of note type for student and institution.';
+COMMENT ON COLUMN sims.notes.note_type IS 'Note type enumeration consists of note type for student and institution.';
 
 COMMENT ON COLUMN sims.notes.description IS 'Description of a note';
 

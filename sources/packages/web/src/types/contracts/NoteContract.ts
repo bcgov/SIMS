@@ -13,6 +13,7 @@ export interface NoteDTO extends NoteBaseDTO {
   firstName: string;
   lastName: string;
   createdAt: Date;
+  showMore?: boolean;
 }
 
 /**
@@ -30,7 +31,7 @@ export enum InstitutionNoteType {
   /**
    * Note type System.
    */
-  System = "System",
+  System = "System Actions",
   /**
    * Note type Program.
    */

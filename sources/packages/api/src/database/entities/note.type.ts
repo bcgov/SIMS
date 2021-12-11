@@ -5,7 +5,7 @@ export enum NoteType {
   /**
    * Note type general.
    */
-  General = "Federal",
+  General = "General",
   /**
    * Note type Restriction.
    */
@@ -13,7 +13,7 @@ export enum NoteType {
   /**
    * Note type System.
    */
-  System = "System",
+  System = "System Actions",
   /**
    * Note type Program.
    */

@@ -568,7 +568,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     }
 
     const institution = await institutionNoteQuery.getOne();
-    return institution ? institution.notes : [];
+    return institution?.notes;
   }
 
   /**
