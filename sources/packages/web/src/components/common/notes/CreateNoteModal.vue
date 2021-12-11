@@ -22,19 +22,35 @@
 import { ref } from "vue";
 import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog } from "@/composables";
-import { NoteBaseDTO } from "@/types";
+import { useModalDialog, useFormioUtils } from "@/composables";
+import { NoteBaseDTO, InstitutionNoteType, NoteEntityType } from "@/types";
 export default {
   components: { ModalDialogBase, formio },
+  props: {
+    entityType: {
+      type: String,
+      required: true,
+    },
+  },
   emits: ["submitData"],
   setup(props: any, context: any) {
     const { showDialog, showModal } = useModalDialog<void>();
     const formData = ref();
+    const formioUtils = useFormioUtils();
     const dialogClosed = () => {
       showDialog.value = false;
     };
     const formLoaded = async (form: any) => {
       formData.value = form;
+      const dropdown = formioUtils.getComponent(form, "noteType");
+      const options = [];
+      if (props.entityType === NoteEntityType.Institution) {
+        for (const noteType in InstitutionNoteType) {
+          options.push({ label: noteType, value: noteType });
+        }
+      }
+      dropdown.component.data.values = options;
+      dropdown.redraw();
     };
     const submitForm = async () => {
       return formData.value.submit();

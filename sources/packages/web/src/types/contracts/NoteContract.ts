@@ -37,3 +37,17 @@ export enum InstitutionNoteType {
    */
   Program = "Program",
 }
+
+/**
+ * Enumeration types for Entity owning the note.
+ */
+export enum NoteEntityType {
+  /**
+   * Entity type student
+   */
+  Student = "student",
+  /**
+   * Entity type institution
+   */
+  Institution = "institution",
+}

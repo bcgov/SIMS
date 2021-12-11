@@ -23,7 +23,12 @@
     </v-col>
   </v-row>
   <content-group>
-    <Notes title="Past Notes" :notes="notes" @submitData="addNote"></Notes>
+    <Notes
+      title="Past Notes"
+      :entityType="NoteEntityType.Institution"
+      :notes="notes"
+      @submitData="addNote"
+    ></Notes>
   </content-group>
 </template>
 
@@ -33,7 +38,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useToastMessage } from "@/composables";
-import { InstitutionNoteType, NoteBaseDTO } from "@/types";
+import { InstitutionNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
 
 export default {
   components: { ContentGroup, Notes },
@@ -83,6 +88,7 @@ export default {
       filterNotes,
       filteredNoteType,
       addNote,
+      NoteEntityType,
     };
   },
 };

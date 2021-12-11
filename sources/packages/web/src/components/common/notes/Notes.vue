@@ -50,7 +50,11 @@
       </v-row>
     </template>
   </Timeline>
-  <CreateNoteModal ref="createNotesModal" @submitData="emitToParent" />
+  <CreateNoteModal
+    ref="createNotesModal"
+    :entityType="entityType"
+    @submitData="emitToParent"
+  />
 </template>
 
 <script lang="ts">
@@ -68,7 +72,11 @@ export default {
       required: true,
     },
     title: {
-      type: Array,
+      type: String,
+      required: true,
+    },
+    entityType: {
+      type: String,
       required: true,
     },
   },
