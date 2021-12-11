@@ -108,10 +108,11 @@ describe("ApplicationService", () => {
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Enforce that the MSFAA will be in pending state.
       fakeMSFAANumber.dateSigned = null;
-      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
       const testApplication = await applicationRepository.save(fakeApplication);
+      fakeMSFAANumber.referenceApplication = fakeApplication;
+      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
 
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
@@ -121,9 +122,9 @@ describe("ApplicationService", () => {
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
-        await applicationRepository.remove(testApplication);
-        await msfaaNumberRepository.remove(testMSFAANumber);
-        await studentRepository.remove(testStudent);
+        //await applicationRepository.remove(testApplication);
+        //await msfaaNumberRepository.remove(testMSFAANumber);
+        //await studentRepository.remove(testStudent);
       }
     });
 
@@ -134,10 +135,11 @@ describe("ApplicationService", () => {
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Enforce that the MSFAA will be in a valid period.
       fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(-1);
-      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
       const testApplication = await applicationRepository.save(fakeApplication);
+      fakeMSFAANumber.referenceApplication = fakeApplication;
+      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
 
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
@@ -147,9 +149,9 @@ describe("ApplicationService", () => {
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
-        await applicationRepository.remove(testApplication);
-        await msfaaNumberRepository.remove(testMSFAANumber);
-        await studentRepository.remove(testStudent);
+        //await applicationRepository.remove(testApplication);
+        //await msfaaNumberRepository.remove(testMSFAANumber);
+        //await studentRepository.remove(testStudent);
       }
     });
 

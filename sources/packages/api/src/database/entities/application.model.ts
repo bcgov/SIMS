@@ -191,8 +191,9 @@ export class Application extends RecordDataModel {
 
   @Column({
     name: "relationship_status",
+    nullable: false,
   })
-  relationshipStatus: string;
+  relationshipStatus?: string;
 
   @RelationId((application: Application) => application.msfaaNumber)
   msfaaNumberId?: number;

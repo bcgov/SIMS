@@ -49,6 +49,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     newMSFAANumber.referenceApplication = {
       id: referenceApplicationId,
     } as Application;
+    newMSFAANumber.offeringIntensity = offeringIntensity;
     return this.repo.save(newMSFAANumber);
   }
 

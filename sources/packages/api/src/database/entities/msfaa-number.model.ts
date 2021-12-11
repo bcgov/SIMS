@@ -68,6 +68,30 @@ export class MSFAANumber extends RecordDataModel {
   })
   serviceProviderReceivedDate?: Date;
   /**
+   * Offering Intensity of the reference application.
+   */
+  @Column({
+    name: "offering_intensity",
+    nullable: false,
+  })
+  offeringIntensity: string;
+  /**
+   * Cancelled date of the MSFAA Number.
+   */
+  @Column({
+    name: "cancelled_date",
+    nullable: true,
+  })
+  cancelledDate?: Date;
+  /**
+   * Province which issued the new MSFAA number.
+   */
+  @Column({
+    name: "new_issuing_province",
+    nullable: true,
+  })
+  newIssuingProvince?: string;
+  /**
    * Student id related to this MSFAA.
    */
   @RelationId((msfaaNumber: MSFAANumber) => msfaaNumber.student)
@@ -90,25 +114,4 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   referenceApplication: Application;
-  /**
-   * Offering Intensity of the reference application.
-   */
-  @Column({
-    name: "offering_intensity",
-  })
-  offeringIntensity: string;
-  /**
-   * Cancelled date of the MSFAA Number.
-   */
-  @Column({
-    name: "cancelled_date",
-  })
-  cancelledDate: Date;
-  /**
-   * Province which issued the new MSFAA number.
-   */
-  @Column({
-    name: "new_issuing_province",
-  })
-  newIssuingProvince: string;
 }
