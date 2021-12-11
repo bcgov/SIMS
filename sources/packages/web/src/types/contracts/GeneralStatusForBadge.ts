@@ -1,4 +1,4 @@
-export enum GeneralStatus {
+export enum GeneralStatusForBadge {
   Active = "active",
   InActive = "inactive",
 }

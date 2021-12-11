@@ -160,9 +160,9 @@ export class InstitutionService {
     }
     if (sortField && sortOrder) {
       const sortDBOrder =
-        sortOrder === DataTableSortOrder.ASC
-          ? FieldSortOrder.ASC
-          : FieldSortOrder.DESC;
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
     const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(
@@ -385,9 +385,9 @@ export class InstitutionService {
     }
     if (sortField && sortOrder) {
       const sortDBOrder =
-        sortOrder === DataTableSortOrder.ASC
-          ? FieldSortOrder.ASC
-          : FieldSortOrder.DESC;
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
     const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(

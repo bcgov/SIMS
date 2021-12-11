@@ -6,16 +6,7 @@ export enum FieldSortOrder {
   ASC = "ASC",
 }
 /**
- * Enum for Institution User Table
+ * default user summary table sort order
  */
-export enum UserFields {
-  DisplayName = "displayName",
-  Email = "email",
-  UserType = "userType",
-  Role = "role",
-  Location = "location",
-  IsActive = "isActive",
-}
-
 export const DEFAULT_PAGE_LIMIT = 10;
 export const DEFAULT_PAGE_NUMBER = 0;

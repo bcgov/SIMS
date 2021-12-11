@@ -14,12 +14,7 @@
         />
       </div>
       <div>
-        <v-btn
-          @click="searchUserTable()"
-          color="primary"
-          tile
-          class="float-left ml-1"
-        >
+        <v-btn @click="searchUserTable()" color="primary" tile class="ml-2">
           <font-awesome-icon icon="search" />
         </v-btn>
       </div>
@@ -85,9 +80,12 @@
           ><template #body="slotProps">
             <StatusBadge
               v-if="slotProps.data.isActive"
-              :status="GeneralStatus.Active"
+              :status="GeneralStatusForBadge.Active"
             />
-            <StatusBadge v-else :status="GeneralStatus.InActive" /> </template
+            <StatusBadge
+              v-else
+              :status="GeneralStatusForBadge.InActive"
+            /> </template
         ></Column>
         <Column
           field=""
@@ -144,7 +142,7 @@ import {
   InstitutionUserViewModel,
   InstitutionUserAndCountForDataTable,
   ClientIdType,
-  GeneralStatus,
+  GeneralStatusForBadge,
   UserFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
@@ -203,7 +201,7 @@ export default {
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField = UserFields.DisplayName,
-      sortOrder = DataTableSortOrder.DESC,
+      sortOrder = DataTableSortOrder.ASC,
     ) => {
       switch (props.clientType) {
         case ClientIdType.Institution:
@@ -315,7 +313,7 @@ export default {
       updateUserStatus,
       parsedToken,
       ClientIdType,
-      GeneralStatus,
+      GeneralStatusForBadge,
       paginationAndSortEvent,
       loading,
       defaultSortOrder,

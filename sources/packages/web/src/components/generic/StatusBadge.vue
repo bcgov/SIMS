@@ -11,7 +11,7 @@ status Badge
 </template>
 <script lang="ts">
 import { ref, onMounted } from "vue";
-import { GeneralStatus } from "@/types";
+import { GeneralStatusForBadge } from "@/types";
 
 export default {
   props: {
@@ -28,14 +28,14 @@ export default {
 
     const setStyles = () => {
       switch (props.status) {
-        case GeneralStatus.Active:
+        case GeneralStatusForBadge.Active:
           // css class for active status
           badgeClass.value = "status-badge-active";
           textColor.value = "#333A47";
           backGroundColor.value = "#FFFFFF";
           iconColor.value = "#16C92E";
           break;
-        case GeneralStatus.InActive:
+        case GeneralStatusForBadge.InActive:
           // css class for inactive status
           badgeClass.value = "status-badge-inactive";
           textColor.value = "#333A47";

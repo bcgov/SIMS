@@ -38,8 +38,8 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
-  UserFields,
 } from "../../route-controllers/institution/models/institution-datatable";
+import { databaseFieldOfUserDataTable } from "../../utilities";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -369,12 +369,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    */
   async allUsers(
     searchName: string,
-    sortField: UserFields,
-    sortOrder: FieldSortOrder,
+    sortField: string,
     institutionId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageLimit = DEFAULT_PAGE_LIMIT,
+    sortOrder = FieldSortOrder.ASC,
   ): Promise<[InstitutionUser[], number]> {
+    // Default sort oder for user summary DataTable
+    const DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE = "displayName";
+
     const institutionUsers = this.institutionUserRepo
       .createQueryBuilder("institutionUser")
       .select([
@@ -409,17 +412,19 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       );
     }
     // sorting
-    if (sortField === UserFields.DisplayName && sortOrder) {
-      institutionUsers
-        .orderBy("user.firstName", sortOrder)
-        .addOrderBy("user.lastName", sortOrder);
-    }
-    if (sortField === UserFields.Email && sortOrder) {
-      institutionUsers.orderBy("user.email", sortOrder);
-    }
+    databaseFieldOfUserDataTable(
+      sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
+    ).forEach((sortElement, index) => {
+      if (index === 0) {
+        institutionUsers.orderBy(sortElement, sortOrder);
+      } else {
+        institutionUsers.addOrderBy(sortElement, sortOrder);
+      }
+    });
+
     // pagination
     institutionUsers.take(pageLimit).skip(page * pageLimit);
-
+    console.log(institutionUsers.getSql());
     // result
     return institutionUsers.getManyAndCount();
   }

@@ -62,7 +62,6 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
-  UserFields,
 } from "./models/institution-datatable";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -183,7 +182,7 @@ export class InstitutionController extends BaseController {
   @Get("/users")
   async allUsers(
     @Query("searchName") searchName: string,
-    @Query("sortField") sortField: UserFields,
+    @Query("sortField") sortField: string,
     @Query("sortOrder") sortOrder: FieldSortOrder,
     @UserToken() user: IInstitutionUserToken,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
@@ -195,10 +194,10 @@ export class InstitutionController extends BaseController {
     const institutionUserAndCount = await this.institutionService.allUsers(
       searchName,
       sortField,
-      sortOrder,
       institution.id,
       page,
       pageLimit,
+      sortOrder,
     );
     const usersList = institutionUserAndCount[0].map((institutionUser) => {
       const institutionUserResp: InstitutionUserRespDto = {
@@ -568,6 +567,7 @@ export class InstitutionController extends BaseController {
    * @returns All the institution locations for the given institution.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
   @Get("/:institutionId/location-summary")
   async getAllInstitutionLocationSummaryForAEST(
     @Param("institutionId") institutionId: number,
@@ -634,10 +634,11 @@ export class InstitutionController extends BaseController {
    * with total count.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
   @Get("/:institutionId/user-summary")
   async usersSummaryForAEST(
     @Query("searchName") searchName: string,
-    @Query("sortField") sortField: UserFields,
+    @Query("sortField") sortField: string,
     @Query("sortOrder") sortOrder: FieldSortOrder,
     @Param("institutionId") institutionId: number,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
@@ -646,10 +647,10 @@ export class InstitutionController extends BaseController {
     const institutionUserAndCount = await this.institutionService.allUsers(
       searchName,
       sortField,
-      sortOrder,
       institutionId,
       page,
       pageLimit,
+      sortOrder,
     );
     const institutionUsers = institutionUserAndCount[0].map(
       (eachInstitutionUser) => {

@@ -202,12 +202,7 @@ export class InstitutionApi extends HttpBaseClient {
   public async institutionSummary(
     url: string,
   ): Promise<InstitutionUserAndCount> {
-    try {
-      const resp = await this.apiClient.get(url, this.addAuthHeader());
-      return resp.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    const response = await this.getCall(url);
+    return response.data as InstitutionUserAndCount;
   }
 }

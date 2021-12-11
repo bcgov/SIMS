@@ -189,17 +189,9 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async getAllInstitutionLocationSummary(
     institutionId: number,
   ): Promise<InstitutionLocationsDetails[]> {
-    let data: InstitutionLocationsDetails[] = [];
-    try {
-      const res = await this.apiClient.get(
-        `institution/${institutionId}/location-summary`,
-        this.addAuthHeader(),
-      );
-      data = res?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-    return data;
+    const response = await this.getCall(
+      `institution/${institutionId}/location-summary`,
+    );
+    return (response.data as InstitutionLocationsDetails[]) ?? [];
   }
 }
