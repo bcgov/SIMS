@@ -58,6 +58,8 @@ import { useFormatters, ModalDialog } from "@/composables";
 import CreateNoteModal from "@/components/common/notes/CreateNoteModal.vue";
 import { NoteBaseDTO, NoteDTO } from "@/types";
 import { ref } from "vue";
+import "@/assets/css/notes.scss";
+
 export default {
   components: { CreateNoteModal },
   props: {
@@ -105,48 +107,3 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-/** Styles for the note component overriding the color and typography of timeline */
-
-.p-timeline-event-marker {
-  background-color: #2965c5 !important;
-}
-
-.content-header {
-  color: #333a47;
-  font-weight: 700;
-  font-size: 17px;
-  line-height: 22px;
-  font-style: normal;
-}
-
-.content-body {
-  color: #333a47;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 22px;
-  font-style: normal;
-}
-
-.content-footer {
-  color: #333a47;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 21px;
-  font-style: normal;
-}
-div.p-timeline-event-opposite {
-  max-width: 0 !important;
-}
-
-.marker-text {
-  font-weight: 700;
-  font-size: 17px;
-  line-height: 22px;
-  font-style: normal;
-}
-
-.p-timeline .p-timeline-event-connector {
-  background-color: #e8e8e8;
-}
-</style>
