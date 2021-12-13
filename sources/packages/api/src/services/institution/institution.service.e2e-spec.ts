@@ -100,8 +100,13 @@ describe("InstitutionService", () => {
     });
 
     // Test
-    const [users, totalUsers]: [InstitutionUser[], number] =
-      await service.allUsers(null, null, institution.id, null, null);
+    const [users]: [InstitutionUser[], number] = await service.allUsers(
+      null,
+      null,
+      institution.id,
+      null,
+      null,
+    );
     expect(users.length).toEqual(2);
 
     // User1
@@ -162,7 +167,7 @@ describe("InstitutionService", () => {
     expect(auth.location).toBeDefined();
     expect(auth.location.id).toEqual(location.id);
 
-    const [allUsers, totalCount] = await service.allUsers(
+    const [allUsers] = await service.allUsers(
       null,
       null,
       institution.id,
