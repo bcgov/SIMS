@@ -50,12 +50,12 @@ export default {
   },
   setup(props: any) {
     const notes = ref();
-    const filteredNoteType = ref("");
+    const filteredNoteType = ref();
     const { dateOnlyLongString } = useFormatters();
     const toast = useToastMessage();
 
-    const filterNotes = async (noteType?: InstitutionNoteType | string) => {
-      filteredNoteType.value = noteType ? noteType : "";
+    const filterNotes = async (noteType?: InstitutionNoteType) => {
+      filteredNoteType.value = noteType;
       notes.value = await NoteService.shared.getInstitutionNotes(
         props.institutionId,
         filteredNoteType.value,
