@@ -1,13 +1,15 @@
-import { OfferingIntensity } from "../database/entities";
+import { OfferingIntensity, RelationshipStatus } from "../database/entities";
 
 /**
  * Gets the marital status code conversion for the MSFAA request file
  */
-export function getMaritalStatusCode(maritalStatus: string): string {
-  if (maritalStatus === "married") {
+export function getMaritalStatusCode(
+  maritalStatus: RelationshipStatus,
+): string {
+  if (maritalStatus === RelationshipStatus.Married) {
     return "M";
   }
-  return maritalStatus === "single" ? "S" : "O";
+  return maritalStatus === RelationshipStatus.Single ? "S" : "O";
 }
 
 /**
