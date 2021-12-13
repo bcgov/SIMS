@@ -100,8 +100,13 @@ describe("InstitutionService", () => {
     });
 
     // Test
-    const users: InstitutionUser[] = await service.allUsers(institution.id);
-
+    const [users]: [InstitutionUser[], number] = await service.allUsers(
+      null,
+      null,
+      institution.id,
+      null,
+      null,
+    );
     expect(users.length).toEqual(2);
 
     // User1
@@ -162,7 +167,13 @@ describe("InstitutionService", () => {
     expect(auth.location).toBeDefined();
     expect(auth.location.id).toEqual(location.id);
 
-    const allUsers = await service.allUsers(institution.id);
+    const [allUsers] = await service.allUsers(
+      null,
+      null,
+      institution.id,
+      null,
+      null,
+    );
     const newSubjects = allUsers.filter(
       (user) => user.id === institutionUser.id,
     );

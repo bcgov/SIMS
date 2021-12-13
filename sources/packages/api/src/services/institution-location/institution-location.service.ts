@@ -107,6 +107,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institution.institutionPrimaryContact",
         "institution_location.id",
         "institution_location.primaryContact",
+        "institution_location.institutionCode",
       ])
       .leftJoin("institution_location.institution", "institution")
       .where("institution.id = :id", { id: institutionId })
