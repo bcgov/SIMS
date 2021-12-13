@@ -424,7 +424,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
     // pagination
     institutionUsers.take(pageLimit).skip(page * pageLimit);
-    console.log(institutionUsers.getSql());
     // result
     return institutionUsers.getManyAndCount();
   }
