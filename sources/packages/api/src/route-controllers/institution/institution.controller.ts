@@ -166,7 +166,7 @@ export class InstitutionController extends BaseController {
 
   /**
    * Controller method to get all institution users with the
-   * given institutionId institution Admin.
+   * given institutionId for institution Admin.
    * @param institutionId institution id
    * @queryParm page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
