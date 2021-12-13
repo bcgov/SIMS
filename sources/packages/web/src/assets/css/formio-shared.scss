@@ -5,6 +5,7 @@ $secondary-header-color-lt: #8692a4;
 $app-content-color: #333a47;
 $panel-warning-color: #f3b229;
 $panel-error-color: #dc2525;
+$button-font-color: #ffffff;
 
 /** SCSS Font Size variables **/
 $font-header-large: 27px;
@@ -29,6 +30,21 @@ $border-color-info: #6554c0;
 /** Primary theme color of the application**/
 .primary-color {
   color: $primary-header-color !important;
+}
+
+.secondary-btn-background {
+  background: $secondary-header-color !important;
+  color: $button-font-color !important;
+}
+
+.secondary-btn-background-lt {
+  background: $secondary-header-color-lt !important;
+  color: $button-font-color !important;
+}
+
+.primary-btn-background {
+  background: $primary-header-color !important;
+  color: $button-font-color !important;
 }
 
 /**Secondary theme color of the application**/
@@ -268,4 +284,8 @@ $border-color-info: #6554c0;
 */
 .align-column-content-bottom div {
   margin-top: auto !important;
+}
+
+.min-width-modal {
+  min-width: 500px;
 }

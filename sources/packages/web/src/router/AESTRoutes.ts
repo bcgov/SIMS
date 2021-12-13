@@ -4,6 +4,7 @@ import Login from "@/views/aest/Login.vue";
 import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/StudentDetails.vue";
+import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
 import Profile from "@/views/aest/institution/Profile.vue";
@@ -12,7 +13,7 @@ import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
 import Designation from "@/views/aest/institution/Designation.vue";
 import Restrictions from "@/views/aest/institution/Restrictions.vue";
-import Notes from "@/views/aest/institution/Notes.vue";
+import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import {
@@ -109,6 +110,18 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.ProgramDetail,
+        name: AESTRoutesConst.PROGRAM_DETAILS,
+        props: true,
+        components: {
+          default: ProgramDetails,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
         path: AppRoutes.InstitutionDetail,
         name: AESTRoutesConst.INSTITUTION_DETAILS,
         props: true,
@@ -178,7 +191,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Notes,
             name: AESTRoutesConst.INSTITUTION_NOTES,
             props: true,
-            component: Notes,
+            component: InstitutionNotes,
             meta: {
               clientType: ClientIdType.AEST,
             },

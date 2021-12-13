@@ -14,3 +14,4 @@ export * from "./esdc-utils";
 export * from "./string-utils";
 export * from "./disbursements-utils";
 export * from "./users-datatable-database-mapping-utils";
+export * from "./note-utils";

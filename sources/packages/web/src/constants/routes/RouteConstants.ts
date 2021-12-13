@@ -65,6 +65,7 @@ export const AESTRoutesConst = {
   AEST_DASHBOARD: Symbol(),
   SEARCH_STUDENTS: Symbol(),
   STUDENT_DETAILS: Symbol(),
+  PROGRAM_DETAILS: Symbol(),
   SEARCH_INSTITUTIONS: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
   INSTITUTION_PROGRAMS: Symbol(),

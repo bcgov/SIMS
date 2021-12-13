@@ -4,12 +4,15 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { ContactInfo } from "../../types";
 import { User } from "./user.model";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
+import { Note } from ".";
 
 @Entity({ name: TableNames.Student })
 export class Student extends RecordDataModel {
@@ -70,4 +73,12 @@ export class Student extends RecordDataModel {
     nullable: true,
   })
   studentPDUpdateAt?: Date;
+
+  @ManyToMany(() => Note)
+  @JoinTable({
+    name: TableNames.StudentNotes,
+    joinColumn: { name: ColumnNames.StudentId },
+    inverseJoinColumn: { name: ColumnNames.NoteId },
+  })
+  notes: Note[];
 }

@@ -10,6 +10,8 @@ import {
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   InstitutionUserAndCount,
+  AESTInstitutionProgramsSummaryPaginatedDto,
+  SortDBOrder,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -204,5 +206,43 @@ export class InstitutionApi extends HttpBaseClient {
   ): Promise<InstitutionUserAndCount> {
     const response = await this.getCall(url);
     return response.data as InstitutionUserAndCount;
+  }
+
+  public async getPaginatedAESTInstitutionProgramsSummary(
+    institutionId: number,
+    pageSize: number,
+    page: number,
+    sortColumn: string,
+    sortOrder: SortDBOrder,
+    searchName: string,
+  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+    const sortByOrder = sortOrder === SortDBOrder.ASC ? "ASC" : "DESC"; //Default sort order
+    try {
+      let queryString = "";
+      if (searchName) {
+        queryString += `searchProgramName=${searchName}&`;
+      }
+      if (sortColumn) {
+        queryString += `sortColumn=${sortColumn}&`;
+      }
+      if (sortByOrder) {
+        queryString += `sortOrder=${sortByOrder}&`;
+      }
+      if (pageSize) {
+        queryString += `pageSize=${pageSize}&`;
+      }
+      queryString += `page=${page}&`;
+      const response = await this.apiClient.get(
+        `institution/offering/institution/${institutionId}/programs?${queryString.slice(
+          0,
+          -1,
+        )}`,
+        this.addAuthHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }

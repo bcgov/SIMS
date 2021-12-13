@@ -62,14 +62,9 @@ export class EducationProgramService {
 
   /**
    * Gets location programs list authorized for institutions.
-   * @param locationId location id.
    * @returns location programs list for institutions.
    */
-  public async getLocationProgramsListForInstitutions(
-    locationId: number,
-  ): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgram.getLocationProgramsListForInstitutions(
-      locationId,
-    );
+  public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
+    return ApiClient.EducationProgram.getProgramsListForInstitutions();
   }
 }

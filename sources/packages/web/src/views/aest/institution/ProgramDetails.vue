@@ -1,6 +1,8 @@
 <template>
   <content-group>
-    <p class="category-header-large color-blue">Notes</p>
+    <p class="category-header-large color-blue">
+      Program Details - To Be Developed
+    </p>
   </content-group>
 </template>
 

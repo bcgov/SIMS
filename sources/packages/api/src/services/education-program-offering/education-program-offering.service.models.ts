@@ -44,3 +44,17 @@ export interface ProgramOfferingModel {
   studyBreaks?: StudyBreak[];
   offeringDeclaration: boolean;
 }
+
+export class ProgramsOfferingSummary {
+  programId: number;
+  programName: string;
+  submittedDate: Date;
+  locationName: string;
+  programStatus: string;
+  offeringsCount: number;
+  formattedSubmittedDate: string;
+}
+export class ProgramsOfferingSummaryPaginated {
+  programsSummary: ProgramsOfferingSummary[];
+  programsCount: number;
+}

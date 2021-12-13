@@ -46,9 +46,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Check if it is expected that a user exists on DB for the
     // specific authorized party (only Students and Institution for now).
     if (
-      [AuthorizedParties.institution, AuthorizedParties.student].includes(
-        userToken.authorizedParty,
-      )
+      [
+        AuthorizedParties.institution,
+        AuthorizedParties.student,
+        AuthorizedParties.aest,
+      ].includes(userToken.authorizedParty)
     ) {
       // Get DB user information to be added to the token.
       const dbUser = await this.userService.getUserLoginInfo(

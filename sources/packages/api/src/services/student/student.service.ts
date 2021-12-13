@@ -5,6 +5,8 @@ import {
   ApplicationStatus,
   Student,
   User,
+  Note,
+  NoteType,
 } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
@@ -291,6 +293,50 @@ export class StudentService extends RecordDataModelService<Student> {
         });
     }
     return searchQuery.getMany();
+  }
+
+  /**
+   * Service to get notes for a student.
+   * @param studentId
+   * @param noteType
+   * @returns Notes
+   */
+  async getStudentNotes(
+    studentId: number,
+    noteType?: NoteType,
+  ): Promise<Note[]> {
+    const studentNoteQuery = this.repo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "note.noteType",
+        "note.description",
+        "note.createdAt",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("student.notes", "note")
+      .innerJoin("note.creator", "user")
+      .where("student.id = :studentId", { studentId });
+    if (noteType) {
+      studentNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    }
+
+    const student = await studentNoteQuery.getOne();
+    return student?.notes;
+  }
+
+  /**
+   * Service to add note for an Institution.
+   * @param studentId
+   * @param note
+   */
+  async saveStudentNote(studentId: number, note: Note): Promise<void> {
+    const student = await this.repo.findOne(studentId, {
+      relations: ["notes"],
+    });
+    student.notes.push(note);
+    await this.repo.save(student);
   }
 
   @InjectLogger()

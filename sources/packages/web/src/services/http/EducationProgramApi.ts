@@ -117,15 +117,12 @@ export class EducationProgramApi extends HttpBaseClient {
 
   /**
    * Gets location programs list authorized for institutions.
-   * @param locationId location id.
    * @returns location programs list for institutions.
    */
-  public async getLocationProgramsListForInstitutions(
-    locationId: number,
-  ): Promise<OptionItemDto[]> {
+  public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/education-program/location/${locationId}/programs-list`,
+        "institution/education-program/programs-list",
         this.addAuthHeader(),
       );
       return response.data;

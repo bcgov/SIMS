@@ -32,6 +32,7 @@ import Chip from "primevue/chip";
 import TabMenu from "primevue/tabmenu";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
+import Timeline from "primevue/timeline";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -71,5 +72,6 @@ AppConfigService.shared.init().then(() => {
     .component("Chip", Chip)
     .component("TabMenu", TabMenu)
     .component("font-awesome-icon", FontAwesomeIcon)
+    .component("Timeline", Timeline)
     .mount("#app");
 });
