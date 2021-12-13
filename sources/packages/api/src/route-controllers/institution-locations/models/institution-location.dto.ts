@@ -44,6 +44,7 @@ export interface InstitutionLocationsDetailsDto {
   institution: {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
+  institutionCode: string;
 }
 
 export interface UserLocationDto {

@@ -4,7 +4,8 @@ Used when we need to display the designation status for an Institution
 <template>
   <v-badge bordered color="green" text-color="white">
     <template v-slot:badge>
-      <v-icon left size="15"> {{ icon }} </v-icon>{{ designationStatus }}
+      <font-awesome-icon :icon="icon" class="mr-1" />
+      {{ designationStatus }}
     </template>
   </v-badge>
 </template>
@@ -23,7 +24,7 @@ export default {
   setup(props: any) {
     const icon = computed(() => {
       if (props.designationStatus === DesignationStatus.designated) {
-        return "mdi-check";
+        return "check";
       }
       return null;
     });

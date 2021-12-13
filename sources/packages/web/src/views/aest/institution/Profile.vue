@@ -51,14 +51,14 @@
           ><h6 class="color-blue font-weight-bold">
             INSTITUTION PRIMARY CONTACT
           </h6>
-          <v-row class="mt-1 mb-2 ml-0">
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
             {{ institutionProfileDetail.primaryContactFirstName }}
             {{ institutionProfileDetail.primaryContactLastName }}
           </v-row>
-          <v-row class="mt-1 mb-2 ml-0">
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
             {{ institutionProfileDetail.primaryContactEmail }}
           </v-row>
-          <v-row class="mt-1 mb-2 ml-0">
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
             {{ institutionProfileDetail.primaryContactPhone }}
           </v-row>
         </content-group></v-col
@@ -68,14 +68,14 @@
           ><h6 class="color-blue font-weight-bold">
             LEGAL AUTHORIZED AUTHORITY CONTACT
           </h6>
-          <v-row class="mt-1 mb-2 ml-0">
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
             {{ institutionProfileDetail.legalAuthorityFirstName }}
             {{ institutionProfileDetail.legalAuthorityLastName }}
           </v-row>
-          <v-row class="mt-1 mb-2 ml-0">
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
             {{ institutionProfileDetail.legalAuthorityEmail }}
           </v-row>
-          <v-row class="mt-1 mb-2 ml-0">
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
             {{ institutionProfileDetail.legalAuthorityPhone }}
           </v-row></content-group
         ></v-col
