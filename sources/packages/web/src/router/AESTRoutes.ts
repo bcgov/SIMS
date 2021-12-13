@@ -13,7 +13,7 @@ import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
 import Designation from "@/views/aest/institution/Designation.vue";
 import Restrictions from "@/views/aest/institution/Restrictions.vue";
-import Notes from "@/views/aest/institution/Notes.vue";
+import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import {
@@ -191,7 +191,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.Notes,
             name: AESTRoutesConst.INSTITUTION_NOTES,
             props: true,
-            component: Notes,
+            component: InstitutionNotes,
             meta: {
               clientType: ClientIdType.AEST,
             },

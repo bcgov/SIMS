@@ -31,6 +31,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import Chip from "primevue/chip";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
+import Timeline from "primevue/timeline";
 
 // Configure the UI validations rules globally available.
 configValidationRules();
@@ -58,5 +59,6 @@ AppConfigService.shared.init().then(() => {
     .component("InputNumber", InputNumber)
     .component("ProgressSpinner", ProgressSpinner)
     .component("Chip", Chip)
+    .component("Timeline", Timeline)
     .mount("#app");
 });
