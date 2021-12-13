@@ -16,6 +16,7 @@ import Restrictions from "@/views/aest/institution/Restrictions.vue";
 import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
+import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import {
   AESTRoutesConst,
   SharedRouteConst,
@@ -117,6 +118,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           default: ProgramDetails,
           sidebar: AESTHomeSideBar,
         },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentNotes,
+        name: AESTRoutesConst.STUDENT_NOTES,
+        props: true,
+        component: StudentNotes,
         meta: {
           clientType: ClientIdType.AEST,
         },

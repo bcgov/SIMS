@@ -51,3 +51,21 @@ export enum NoteEntityType {
    */
   Institution = "institution",
 }
+
+/**
+ * Enumeration types for Student Notes.
+ */
+export enum StudentNoteType {
+  /**
+   * Note type general.
+   */
+  General = "General",
+  /**
+   * Note type Restriction.
+   */
+  Restriction = "Restriction",
+  /**
+   * Note type System.
+   */
+  System = "System Actions",
+}

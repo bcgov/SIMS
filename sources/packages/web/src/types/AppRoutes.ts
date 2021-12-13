@@ -61,4 +61,5 @@ export enum AppRoutes {
   UnknownUser = "login/unknown-user",
   ForbiddenUser = "/forbidden-user",
   NotAllowedUser = "login/not-allowed-user",
+  StudentNotes = "student-notes/:studentId",
 }
