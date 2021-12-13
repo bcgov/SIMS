@@ -1,13 +1,13 @@
 <template>
-  <v-row>
-    <v-col cols="3" class="category-header-large mb-2">Notes</v-col>
+  <v-row class="mb-2 mt-2">
+    <v-col cols="3" class="category-header-large">Notes</v-col>
     <v-col class="text-center">
       <div class="float-right">
         <!-- Prime vue button used here as Vuetify alpha version is not supporting rounded buttons.
              TODO: when moving to vuetify change the button component to v-btn of vuetify -->
         <Button
           label="All Notes"
-          class="p-button-rounded mr-2 mb-2 secondary-btn-background-lt filter-button"
+          class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
           :class="{ 'primary-btn-background': !filteredNoteType }"
           @click="filterNotes()"
         />
@@ -15,7 +15,7 @@
           v-for="item in InstitutionNoteType"
           :key="item"
           :label="item"
-          class="p-button-rounded mr-2 mb-2 secondary-btn-background-lt filter-button"
+          class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
           :class="{ 'primary-btn-background': filteredNoteType === item }"
           @click="filterNotes(item)"
         />
