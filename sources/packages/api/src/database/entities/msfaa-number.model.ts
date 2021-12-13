@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Application, Student } from ".";
+import { Application, OfferingIntensity, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
@@ -74,7 +74,7 @@ export class MSFAANumber extends RecordDataModel {
     name: "offering_intensity",
     nullable: false,
   })
-  offeringIntensity: string;
+  offeringIntensity: OfferingIntensity;
   /**
    * Cancelled date of the MSFAA Number.
    */

@@ -1,15 +1,15 @@
--- Create offering_intensity
+-- Add offering_intensity
 ALTER TABLE
     sims.msfaa_numbers
 ADD
-    COLUMN IF NOT EXISTS offering_intensity VARCHAR(10) NOT NULL DEFAULT 'Full Time';
+    COLUMN IF NOT EXISTS offering_intensity sims.offering_intensity NOT NULL DEFAULT 'Full Time';
 
 COMMENT ON COLUMN sims.msfaa_numbers.offering_intensity IS 'Offering intensity for the MSFAA Number Part Time/ Full Time.';
 
 ALTER TABLE
     sims.msfaa_numbers
 ADD
-    COLUMN IF NOT EXISTS new_issuing_province VARCHAR(2);
+    COLUMN IF NOT EXISTS new_issuing_province CHAR(2);
 
 COMMENT ON COLUMN sims.msfaa_numbers.new_issuing_province IS 'MSFAA Number New issuing Province.';
 

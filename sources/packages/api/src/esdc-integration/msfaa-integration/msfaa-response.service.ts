@@ -57,7 +57,7 @@ export class MSFAAResponseService {
 
     for (const receivedRecord of responseFile.receivedRecords) {
       try {
-        await this.processReceivedRecords(receivedRecord);
+        await this.processReceivedRecord(receivedRecord);
         result.processSummary.push(
           `Status record from line ${receivedRecord.lineNumber}.`,
         );
@@ -70,7 +70,7 @@ export class MSFAAResponseService {
     }
     for (const cancelledRecord of responseFile.cancelledRecords) {
       try {
-        await this.processCancelledRecords(cancelledRecord);
+        await this.processCancelledRecord(cancelledRecord);
         result.processSummary.push(
           `Status cancelled record from line ${cancelledRecord.lineNumber}.`,
         );
@@ -101,7 +101,7 @@ export class MSFAAResponseService {
    * @param receivedRecord MSFAA received record with
    * borrowerSignedDate and serviceProviderReceivedDate
    */
-  private async processReceivedRecords(
+  private async processReceivedRecord(
     receivedRecord: MSFAAResponseReceivedRecord,
   ): Promise<void> {
     const updateResult = await this.msfaaNumberService.updateReceivedFile(
@@ -124,7 +124,7 @@ export class MSFAAResponseService {
    * @param cancelledRecord MSFAA received record with
    * cancelledDate and newIssusingProvince.
    */
-  private async processCancelledRecords(
+  private async processCancelledRecord(
     cancelledRecord: MSFAAResponseCancelledRecord,
   ): Promise<void> {
     const updateResult =

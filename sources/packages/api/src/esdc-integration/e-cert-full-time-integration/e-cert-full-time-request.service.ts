@@ -157,9 +157,7 @@ export class ECertFullTimeRequestService {
       email: disbursement.application.student.user.email,
       gender: disbursement.application.student.gender,
       maritalStatus: disbursement.application.relationshipStatus,
-      // TODO: student number to be saved alongside the application (to be defined).
-      studentNumber:
-        disbursement.application.data?.studentNumber.toString() || "",
+      studentNumber: disbursement.application.studentNumber,
       awards,
     } as ECertRecord;
   }

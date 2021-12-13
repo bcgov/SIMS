@@ -38,3 +38,4 @@ export * from "./disbursement-values.model";
 export * from "./disbursement-schedule.model";
 export * from "./federal-restriction.model";
 export * from "./disbursement-feedback-errors.model";
+export * from "./relationship-status.type";

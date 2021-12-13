@@ -20,6 +20,7 @@ import {
   ApplicationStatus,
   MSFAANumber,
   OfferingIntensity,
+  RelationshipStatus,
   Student,
 } from "../../database/entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
@@ -36,7 +37,7 @@ const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();
   fakeApplication.student = student;
   fakeApplication.offering = createFakeEducationProgramOffering();
-  fakeApplication.relationshipStatus = "single";
+  fakeApplication.relationshipStatus = RelationshipStatus.Single;
   fakeApplication.offering.studyStartDate = new Date();
   fakeApplication.applicationStatus = ApplicationStatus.assessment;
   return fakeApplication;

@@ -3,6 +3,7 @@ import {
   ApplicationStatus,
   EducationProgramOffering,
   ProgramYear,
+  RelationshipStatus,
   Student,
 } from "../../database/entities";
 import { createFakeEducationProgramOffering } from "./education-program-offering-fake";
@@ -22,6 +23,6 @@ export function createFakeApplication(
   application.offering = offering ?? createFakeEducationProgramOffering();
   application.applicationStatusUpdatedOn = getUTCNow();
   application.applicationStatus = ApplicationStatus.submitted;
-  application.relationshipStatus = "single";
+  application.relationshipStatus = RelationshipStatus.Single;
   return application;
 }
