@@ -384,6 +384,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .createQueryBuilder("institutionUser")
       .select([
         "institutionUser.id",
+        "user.id",
         "user.email",
         "user.firstName",
         "user.lastName",
