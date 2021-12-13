@@ -128,6 +128,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
       application.data = applicationData;
       application.applicationStatus = ApplicationStatus.submitted;
+      application.relationshipStatus = applicationData.relationshipStatus;
+      application.studentNumber = applicationData.studentNumber;
       application.applicationStatusUpdatedOn = getUTCNow();
       application.studentFiles = await this.getSyncedApplicationFiles(
         studentId,
@@ -155,8 +157,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     const newApplication = new Application();
     newApplication.applicationNumber = application.applicationNumber;
-    newApplication.relationshipStatus = applicationData.relationshipStatus;
-    newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.submitted;
