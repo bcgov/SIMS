@@ -321,8 +321,7 @@ export class StudentService extends RecordDataModelService<Student> {
     if (noteType) {
       studentNoteQuery.andWhere("note.noteType = :noteType", { noteType });
     }
-
-    const student = await studentNoteQuery.getOne();
+    const student = await studentNoteQuery.orderBy("note.id", "DESC").getOne();
     return student?.notes;
   }
 

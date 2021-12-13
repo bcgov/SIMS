@@ -54,7 +54,7 @@ export class NoteApi extends HttpBaseClient {
   ): Promise<NoteDTO[]> {
     const queryString = noteType ? `?noteType=${noteType}` : ``;
     const studentNotes = await this.getCall(
-      `notes/institution/${studentId}${queryString}`,
+      `notes/student/${studentId}${queryString}`,
     );
     return studentNotes.data as NoteDTO[];
   }
