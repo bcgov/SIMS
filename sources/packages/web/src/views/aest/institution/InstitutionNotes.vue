@@ -93,8 +93,3 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.filter-button {
-  max-height: 30px;
-}
-</style>
