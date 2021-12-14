@@ -4,9 +4,9 @@
   </p>
   <p class="category-header-large">
     {{ institutionBasicDetail.operatingName }}
-    <designation-status-badge
+    <designation-and-restriction-status-badge
       class="mb-4 ml-4"
-      designationStatus="DESIGNATED"
+      status="designated"
     />
   </p>
   <!-- TODO:replace prime tabMenu with vuetify3-->
@@ -19,10 +19,10 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import DesignationStatusBadge from "@/components/generic/DesignationStatusBadge.vue";
+import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
 import { BasicInstitutionInfo } from "@/types";
 export default {
-  components: { DesignationStatusBadge },
+  components: { DesignationAndRestrictionStatusBadge },
   props: {
     institutionId: {
       type: Number,

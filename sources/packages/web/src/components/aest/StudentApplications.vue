@@ -1,57 +1,103 @@
 <template>
   <p class="category-header-large color-blue">Applications</p>
-  <v-col>
-    <DataTable
-      :value="applicationAndCount.applications"
-      :lazy="true"
-      :paginator="true"
-      :rows="DEFAULT_PAGE_LIMIT"
-      :rowsPerPageOptions="PAGINATION_LIST"
-      :totalRecords="applicationAndCount.totalApplications"
-      @page="paginationAndSortEvent($event)"
-      @sort="paginationAndSortEvent($event)"
-      :loading="loading"
+  <DataTable
+    :value="applicationAndCount.applications"
+    :lazy="true"
+    :paginator="true"
+    :rows="DEFAULT_PAGE_LIMIT"
+    :rowsPerPageOptions="PAGINATION_LIST"
+    :totalRecords="applicationAndCount.totalApplications"
+    @page="paginationAndSortEvent($event)"
+    @sort="paginationAndSortEvent($event)"
+    :loading="loading"
+  >
+    <template #empty>
+      <p class="text-center font-weight-bold">No records found.</p>
+    </template>
+    <Column
+      :field="StudentApplicationFields.ApplicationNumber"
+      sortable="true"
+      header="Application #"
     >
-      <template #empty>
-        <p class="text-center font-weight-bold">No records found.</p>
+    </Column>
+    <Column :field="StudentApplicationFields.ApplicationName" header="Name">
+      <template #body="slotProps">
+        <v-btn
+          v-if="clientType === ClientIdType.Student"
+          plain
+          @click="goToApplication(slotProps.data.id)"
+          color="primary"
+          v-tooltip="'Click To View this Application'"
+          >{{ slotProps.data.applicationName }}
+        </v-btn>
+        <span v-if="clientType === ClientIdType.AEST"
+          >{{ slotProps.data.applicationName }}
+        </span>
       </template>
-      <Column
-        :field="StudentApplicationFields.ApplicationNumber"
-        sortable="true"
-        header="Application #"
-      >
-      </Column>
-      <Column :field="StudentApplicationFields.ApplicationName" header="Name">
-        <template #body="slotProps">
-          <v-btn plain color="primary">{{
-            slotProps.data.applicationName
-          }}</v-btn>
-        </template></Column
-      >
-      <Column
-        :field="StudentApplicationFields.StudyPeriod"
-        header="Study Period"
-      >
-        <template #body="slotProps">
-          <span>
-            {{ dateString(slotProps.data.studyStartPeriod) }} -
-            {{ dateString(slotProps.data.studyEndPeriod) }}
+    </Column>
+    <Column
+      :field="StudentApplicationFields.Submitted"
+      header="Submitted"
+    ></Column>
+    <Column :field="StudentApplicationFields.StudyPeriod" header="Study Period">
+      <template #body="slotProps">
+        <span>
+          {{ dateString(slotProps.data.studyStartPeriod) }} -
+          {{ dateString(slotProps.data.studyEndPeriod) }}
+        </span>
+      </template></Column
+    >
+    <Column :field="StudentApplicationFields.Status" header="Status">
+      <template #body="slotProps">
+        <Status :statusValue="slotProps.data.status" />
+      </template>
+    </Column>
+    <Column :field="StudentApplicationFields.Actions" header="">
+      <template #body="slotProps">
+        <span v-if="clientType === ClientIdType.Student">
+          <span
+            v-if="
+              !(
+                slotProps.data.status === ApplicationStatus.cancelled ||
+                slotProps.data.status === ApplicationStatus.completed
+              )
+            "
+          >
+            <v-btn :disabled="hasRestriction" plain>
+              <v-icon
+                size="25"
+                v-tooltip="'Click To Edit this Application'"
+                @click="
+                  slotProps.data.status !== ApplicationStatus.draft
+                    ? confirmEditApplication(slotProps.data.id)
+                    : editApplicaion(slotProps.data.id)
+                "
+                >mdi-pencil</v-icon
+              ></v-btn
+            >
+            <v-btn :disabled="hasRestriction" plain>
+              <v-icon
+                size="25"
+                v-tooltip="'Click To Cancel this Application'"
+                @click="openConfirmCancel(slotProps.data.id)"
+                >mdi-trash-can-outline</v-icon
+              >
+            </v-btn>
           </span>
-        </template></Column
-      >
-      <Column :field="StudentApplicationFields.Award" header="Award"></Column>
-      <Column :field="StudentApplicationFields.Status" header="Status">
-        <template #body="slotProps">
-          <Status :statusValue="slotProps.data.status" />
-        </template>
-      </Column>
-      <Column :field="StudentApplicationFields.Actions" header="Status">
-        <template #body>
-          <v-btn>View</v-btn>
-        </template>
-      </Column>
-    </DataTable>
-  </v-col>
+        </span>
+        <span v-if="clientType === ClientIdType.AEST">
+          <v-btn outlined>View</v-btn>
+        </span>
+      </template>
+    </Column>
+  </DataTable>
+  <CancelApplication
+    :showModal="showModal"
+    :applicationId="selectedApplicationId"
+    @showHideCancelApplication="showHideCancelApplication"
+    @reloadData="reloadApplication"
+  />
+  <ConfirmEditApplication ref="editApplicationModal" />
 </template>
 
 <script lang="ts">
@@ -65,14 +111,29 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
   StudentApplicationFields,
+  ProgramYearOfApplicationDto,
+  ClientIdType,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters } from "@/composables";
+import { StudentService } from "@/services/StudentService";
+import { useFormatters, ModalDialog } from "@/composables";
 import Status from "@/views/student/ApplicationStatus.vue";
+import { useRouter } from "vue-router";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import Tooltip from "primevue/tooltip";
 
 export default {
-  components: { Status },
+  components: { Status, ConfirmEditApplication, CancelApplication },
+  directives: {
+    tooltip: Tooltip,
+  },
   props: {
+    clientType: {
+      type: String,
+      required: true,
+    },
     studentId: {
       type: Number,
       required: true,
@@ -86,23 +147,57 @@ export default {
     const currentPage = ref();
     const currentPageLimit = ref();
     const { dateString } = useFormatters();
+    const router = useRouter();
+    const hasRestriction = ref(false);
+    const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const programYear = ref({} as ProgramYearOfApplicationDto);
+    const showModal = ref(false);
+    const selectedApplicationId = ref(0);
 
+    /**
+     * function to load applicationListAndCount respective to the client type
+     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
+     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
+     * @param sortField sort field, if nothing passed then StudentApplicationFields.ApplicationNumber
+     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.ASC
+     */
     const getStudentApplications = async (
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
       sortField = StudentApplicationFields.ApplicationNumber,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
-      applicationAndCount.value = await ApplicationService.shared.getAllApplicationsForStudent(
-        props.studentId,
-        page,
-        pageCount,
-        sortField,
-        sortOrder,
-      );
+      switch (props.clientType) {
+        case ClientIdType.Student:
+          applicationAndCount.value = await StudentService.shared.getAllStudentApplications(
+            page,
+            pageCount,
+            sortField,
+            sortOrder,
+          );
+          break;
+        case ClientIdType.AEST:
+          applicationAndCount.value = await ApplicationService.shared.getAllApplicationsForStudent(
+            props.studentId,
+            page,
+            pageCount,
+            sortField,
+            sortOrder,
+          );
+          break;
+      }
     };
-    onMounted(async () => {
+
+    const reloadApplication = async () => {
       await getStudentApplications();
+    };
+
+    onMounted(async () => {
+      if (props.clientType === ClientIdType.Student) {
+        const restrictions = await StudentService.shared.getStudentRestriction();
+        hasRestriction.value = restrictions.hasRestriction;
+      }
+      reloadApplication();
     });
 
     // pagination sort event callback
@@ -118,6 +213,48 @@ export default {
       );
       loading.value = false;
     };
+
+    const openConfirmCancel = (id: number) => {
+      showModal.value = true;
+      selectedApplicationId.value = id;
+    };
+
+    const showHideCancelApplication = () => {
+      showModal.value = !showModal.value;
+    };
+
+    const goToApplication = (id: number) => {
+      return router.push({
+        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+        params: {
+          id: id,
+        },
+      });
+    };
+
+    const getProgramYear = async (applicationId: number) => {
+      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
+        applicationId,
+      );
+    };
+
+    const editApplicaion = async (applicationId: number) => {
+      await getProgramYear(applicationId);
+      router.push({
+        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+        params: {
+          selectedForm: programYear.value.formName,
+          programYearId: programYear.value.programYearId,
+          id: applicationId,
+        },
+      });
+    };
+    const confirmEditApplication = async (id: number) => {
+      if (await editApplicationModal.value.showModal()) {
+        editApplicaion(id);
+      }
+    };
+
     return {
       studentDetail,
       dateString,
@@ -131,6 +268,17 @@ export default {
       loading,
       defaultSortOrder,
       StudentApplicationFields,
+      goToApplication,
+      hasRestriction,
+      confirmEditApplication,
+      editApplicationModal,
+      editApplicaion,
+      openConfirmCancel,
+      showModal,
+      selectedApplicationId,
+      showHideCancelApplication,
+      ClientIdType,
+      reloadApplication,
     };
   },
 };

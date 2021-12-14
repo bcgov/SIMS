@@ -2,11 +2,15 @@
   <p class="text-muted category-header-medium">
     Student Details
   </p>
-  <p class="category-header-large color-blue">
-    {{ institutionBasicDetail.operatingName }}
-    <designation-status-badge
+  <p class="category-header-large">
+    {{ studentDetails.firstName }} {{ studentDetails.lastName }}
+    <designation-and-restriction-status-badge
       class="mb-4 ml-4"
-      designationStatus="DESIGNATED"
+      :status="
+        restrictions.hasRestriction
+          ? DesignationAndRestrictionStatus.restriction
+          : DesignationAndRestrictionStatus.noRestriction
+      "
     />
   </p>
   <!-- TODO:replace prime tabMenu with vuetify3-->
@@ -17,12 +21,17 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionService } from "@/services/InstitutionService";
+import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import DesignationStatusBadge from "@/components/generic/DesignationStatusBadge.vue";
-import { BasicInstitutionInfo } from "@/types";
+import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
+import {
+  StudentDetail,
+  StudentRestrictionStatus,
+  DesignationAndRestrictionStatus,
+} from "@/types";
+
 export default {
-  components: { DesignationStatusBadge },
+  components: { DesignationAndRestrictionStatusBadge },
   props: {
     studentId: {
       type: Number,
@@ -31,8 +40,9 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const institutionBasicDetail = ref({} as BasicInstitutionInfo);
-    // TODO: replace all fa isons with fas as per figma with replace with vuetify3
+    const studentDetails = ref({} as StudentDetail);
+    const restrictions = ref({} as StudentRestrictionStatus);
+    // TODO: replace all fa icons with fas as per figma with replace with vuetify3
     const items = ref([
       {
         label: "Profile",
@@ -84,15 +94,20 @@ export default {
     };
 
     onMounted(async () => {
-      institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
-        props.institutionId,
-      );
+      const [restriction, studentDetail] = await Promise.all([
+        StudentService.shared.getStudentRestriction(),
+        StudentService.shared.getStudentDetail(props.studentId),
+      ]);
+      restrictions.value = restriction;
+      studentDetails.value = studentDetail;
     });
     return {
-      institutionBasicDetail,
       goBack,
       AESTRoutesConst,
       items,
+      restrictions,
+      studentDetails,
+      DesignationAndRestrictionStatus,
     };
   },
 };

@@ -36,7 +36,10 @@ import {
 } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
-
+import {
+  InstitutionUserAndCount,
+  InstitutionUserRespDto,
+} from "../../route-controllers/institution/models/institution.user.res.dto";
 import {
   databaseFieldOfUserDataTable,
   FieldSortOrder,
@@ -354,6 +357,66 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution,
       account,
     };
+  }
+
+  /**
+   * service method to get all institution users with the
+   * given institutionId.
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @param institutionId institution id
+   * @returns All the institution users for the given institution
+   * with total count.
+   */
+  async getAllUsersAndCount(
+    searchName: string,
+    sortField: string,
+    institutionId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    sortOrder = FieldSortOrder.ASC,
+  ): Promise<InstitutionUserAndCount> {
+    const institutionUserAndCount = await this.allUsers(
+      searchName,
+      sortField,
+      institutionId,
+      page,
+      pageLimit,
+      sortOrder,
+    );
+    const institutionUsers = institutionUserAndCount[0].map(
+      (eachInstitutionUser) => {
+        const institutionUserResp: InstitutionUserRespDto = {
+          id: eachInstitutionUser.id,
+          authorizations: eachInstitutionUser.authorizations.map(
+            (authorization) => ({
+              id: authorization.id,
+              authType: {
+                role: authorization.authType?.role,
+                type: authorization.authType?.type,
+              },
+              location: {
+                name: authorization.location?.name,
+              },
+            }),
+          ),
+          user: {
+            email: eachInstitutionUser.user.email,
+            firstName: eachInstitutionUser.user.firstName,
+            lastName: eachInstitutionUser.user.lastName,
+            userName: eachInstitutionUser.user.userName,
+            isActive: eachInstitutionUser.user.isActive,
+          },
+        };
+        return institutionUserResp;
+      },
+    );
+    return { users: institutionUsers, totalUsers: institutionUserAndCount[1] };
   }
 
   /**

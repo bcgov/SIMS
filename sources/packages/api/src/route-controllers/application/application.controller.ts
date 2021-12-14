@@ -33,7 +33,6 @@ import {
   NOAApplicationDto,
   transformToApplicationDto,
   transformToApplicationDetailDto,
-  ApplicationSummaryDTO,
   StudentApplicationAndCount,
 } from "./models/application.model";
 import {
@@ -44,7 +43,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApplicationStatus, Application } from "../../database/entities";
+import { ApplicationStatus } from "../../database/entities";
 import { ApiProcessError } from "../../types";
 import {
   dateString,
@@ -456,30 +455,12 @@ export class ApplicationController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<StudentApplicationAndCount> {
-    const applicationsAndCount =
-      await this.applicationService.getAllStudentApplications(
-        sortField,
-        studentId,
-        page,
-        pageLimit,
-        sortOrder,
-      );
-
-    return {
-      applications: applicationsAndCount[0].map((application: Application) => {
-        return {
-          applicationNumber: application.applicationNumber,
-          id: application.id,
-          studyStartPeriod: application.offering?.studyStartDate ?? "",
-          studyEndPeriod: application.offering?.studyEndDate ?? "",
-          // TODO: when application name is captured, update the below line
-          applicationName: "Financial Aid Application",
-          // TODO: when award is captured, update the below line
-          award: "5500",
-          status: application.applicationStatus,
-        } as ApplicationSummaryDTO;
-      }),
-      totalApplications: applicationsAndCount[1],
-    };
+    return await this.applicationService.getStudentAppicationAndProcessDTO(
+      sortField,
+      studentId,
+      page,
+      pageLimit,
+      sortOrder,
+    );
   }
 }

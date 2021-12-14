@@ -39,6 +39,10 @@ import {
   DEFAULT_PAGE_LIMIT,
   databaseFieldOfApplicationDataTable,
 } from "../../utilities";
+import {
+  ApplicationSummaryDTO,
+  StudentApplicationAndCount,
+} from "../../route-controllers/application/models/application.model";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -524,6 +528,50 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("student.id = :studentId", { studentId })
       .orderBy("disbursementSchedule.disbursementDate")
       .getOne();
+  }
+
+  /**
+   * get all student applications.
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @param studentId student id .
+   * @returns student Application list.
+   */
+  async getStudentAppicationAndProcessDTO(
+    sortField: string,
+    studentId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    sortOrder = FieldSortOrder.ASC,
+  ): Promise<StudentApplicationAndCount> {
+    const applicationsAndCount = await this.getAllStudentApplications(
+      sortField,
+      studentId,
+      page,
+      pageLimit,
+      sortOrder,
+    );
+
+    return {
+      applications: applicationsAndCount[0].map((application: Application) => {
+        return {
+          applicationNumber: application.applicationNumber,
+          id: application.id,
+          studyStartPeriod: application.offering?.studyStartDate ?? "",
+          studyEndPeriod: application.offering?.studyEndDate ?? "",
+          // TODO: when application name is captured, update the below line
+          applicationName: "Financial Aid Application",
+          // TODO: when award is captured, update the below line
+          award: "5500",
+          status: application.applicationStatus,
+        } as ApplicationSummaryDTO;
+      }),
+      totalApplications: applicationsAndCount[1],
+    };
   }
 
   /**

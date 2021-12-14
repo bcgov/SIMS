@@ -34,7 +34,6 @@ import {
   DEFAULT_PAGE_LIMIT,
 } from "../../utilities";
 import {
-  InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthorizations,
   InstitutionUserAndAuthDetailsDto,
@@ -189,7 +188,12 @@ export class InstitutionController extends BaseController {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
     );
-    const institutionUserAndCount = await this.institutionService.allUsers(
+    if (!institution) {
+      throw new UnprocessableEntityException(
+        "The user has no institution associated with.",
+      );
+    }
+    return await this.institutionService.getAllUsersAndCount(
       searchName,
       sortField,
       institution.id,
@@ -197,33 +201,6 @@ export class InstitutionController extends BaseController {
       pageLimit,
       sortOrder,
     );
-    const usersList = institutionUserAndCount[0].map((institutionUser) => {
-      const institutionUserResp: InstitutionUserRespDto = {
-        id: institutionUser.id,
-        authorizations: institutionUser.authorizations.map((auth) => ({
-          id: auth.id,
-          authType: {
-            role: auth.authType?.role,
-            type: auth.authType?.type,
-          },
-          location: {
-            name: auth.location?.name,
-          },
-        })),
-        user: {
-          email: institutionUser.user.email,
-          firstName: institutionUser.user.firstName,
-          lastName: institutionUser.user.lastName,
-          userName: institutionUser.user.userName,
-          isActive: institutionUser.user.isActive,
-        },
-      };
-      return institutionUserResp;
-    });
-    return {
-      users: usersList,
-      totalUsers: institutionUserAndCount[1],
-    };
   }
 
   /**
@@ -642,7 +619,7 @@ export class InstitutionController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<InstitutionUserAndCount> {
-    const institutionUserAndCount = await this.institutionService.allUsers(
+    return await this.institutionService.getAllUsersAndCount(
       searchName,
       sortField,
       institutionId,
@@ -650,33 +627,5 @@ export class InstitutionController extends BaseController {
       pageLimit,
       sortOrder,
     );
-    const institutionUsers = institutionUserAndCount[0].map(
-      (eachInstitutionUser) => {
-        const institutionUserResp: InstitutionUserRespDto = {
-          id: eachInstitutionUser.id,
-          authorizations: eachInstitutionUser.authorizations.map(
-            (authorization) => ({
-              id: authorization.id,
-              authType: {
-                role: authorization.authType?.role,
-                type: authorization.authType?.type,
-              },
-              location: {
-                name: authorization.location?.name,
-              },
-            }),
-          ),
-          user: {
-            email: eachInstitutionUser.user.email,
-            firstName: eachInstitutionUser.user.firstName,
-            lastName: eachInstitutionUser.user.lastName,
-            userName: eachInstitutionUser.user.userName,
-            isActive: eachInstitutionUser.user.isActive,
-          },
-        };
-        return institutionUserResp;
-      },
-    );
-    return { users: institutionUsers, totalUsers: institutionUserAndCount[1] };
   }
 }

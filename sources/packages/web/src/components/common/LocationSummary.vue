@@ -1,84 +1,78 @@
 <template>
-  <v-container>
+  <v-row>
+    <v-col cols="8">
+      <p class="category-header-large color-blue">
+        All Locations({{ institutionLocationList.length ?? 0 }})
+      </p>
+    </v-col>
+    <v-col cols="4" v-if="clientType === ClientIdType.Institution">
+      <v-btn class="float-right" @click="goToAddNewLocation()" color="primary">
+        <v-icon :size="25" left>mdi-map-marker-plus</v-icon>Add New Location
+      </v-btn>
+    </v-col>
+  </v-row>
+  <ContentGroup
+    v-for="item in institutionLocationList"
+    :key="item"
+    class="ma-2"
+  >
     <v-row>
-      <v-col cols="8">
-        <p class="category-header-large color-blue">
-          All Locations({{ institutionLocationList.length ?? 0 }})
-        </p>
+      <v-col cols="10">
+        <span>
+          <font-awesome-icon icon="map-pin" />
+          <span class="category-header-medium mx-2">{{ item.name }}</span>
+          <designation-and-restriction-status-badge
+            class="mb-4 ml-4"
+            status="designated"
+          />
+        </span>
       </v-col>
-      <v-col cols="4" v-if="clientType === ClientIdType.Institution">
-        <v-btn
-          class="float-right"
-          @click="goToAddNewLocation()"
-          color="primary"
-        >
-          <v-icon :size="25" left>mdi-map-marker-plus</v-icon>Add New Location
+      <v-col cols="2" v-if="clientType === ClientIdType.Institution">
+        <v-btn plain @click="getLocation(item.id)">
+          <v-icon :size="25" right class="mr-2"> mdi-cog-outline </v-icon>
+          Edit
         </v-btn>
       </v-col>
     </v-row>
-    <ContentGroup
-      v-for="item in institutionLocationList"
-      :key="item"
-      class="ma-2"
-    >
-      <v-row>
-        <v-col cols="10">
-          <span>
-            <font-awesome-icon icon="map-pin" />
-            <span class="category-header-medium mx-2">{{ item.name }}</span>
-            <DesignationStatusBadge
-              class="mb-4 ml-4"
-              designationStatus="DESIGNATED"
-            />
-          </span>
-        </v-col>
-        <v-col cols="2" v-if="clientType === ClientIdType.Institution">
-          <v-btn plain @click="getLocation(item.id)">
-            <v-icon :size="25" right class="mr-2"> mdi-cog-outline </v-icon>
-            Edit
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
-        <!-- Address 1 -->
-        <v-col>
-          <TitleValue propertyTitle="Address 1" />
-          <span
-            class="text-muted clearfix"
-            v-for="addressLine in addressList1(item)"
-            :key="addressLine"
-          >
-            {{ addressLine }}
-          </span>
-        </v-col>
+    <v-row>
+      <!-- Address 1 -->
+      <v-col>
+        <TitleValue propertyTitle="Address 1" />
+        <span
+          class="text-muted clearfix"
+          v-for="addressLine in addressList1(item)"
+          :key="addressLine"
+        >
+          {{ addressLine }}
+        </span>
+      </v-col>
 
-        <!-- Address 2 -->
-        <v-col>
-          <TitleValue propertyTitle="Address 2" />
-          <span>---</span>
-        </v-col>
+      <!-- Address 2 -->
+      <v-col>
+        <TitleValue propertyTitle="Address 2" />
+        <span>---</span>
+      </v-col>
 
-        <!-- Primary contact -->
-        <v-col>
-          <TitleValue propertyTitle=" Primary Contact" />
-          <span
-            class="text-muted clearfix"
-            v-for="contactLine in primaryContactList(item)"
-            :key="contactLine"
-          >
-            {{ contactLine }}
-          </span>
-        </v-col>
-        <!-- Institution code -->
-        <v-col>
-          <TitleValue
-            propertyTitle="Institution code"
-            :propertyValue="item.institutionCode"
-          />
-        </v-col>
-      </v-row>
-    </ContentGroup>
-  </v-container>
+      <!-- Primary contact -->
+      <v-col>
+        <TitleValue propertyTitle=" Primary Contact" />
+        <span
+          class="text-muted clearfix"
+          v-for="contactLine in primaryContactList(item)"
+          :key="contactLine"
+        >
+          {{ contactLine }}
+        </span>
+      </v-col>
+      <!-- Institution code -->
+      <v-col>
+        <TitleValue
+          propertyTitle="Institution code"
+          :propertyValue="item.institutionCode"
+        />
+      </v-col>
+    </v-row>
+  </ContentGroup>
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
@@ -87,12 +81,16 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
-import DesignationStatusBadge from "@/components/generic/DesignationStatusBadge.vue";
+import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
 
 export default {
-  components: { ContentGroup, DesignationStatusBadge, TitleValue },
+  components: {
+    ContentGroup,
+    DesignationAndRestrictionStatusBadge,
+    TitleValue,
+  },
   props: {
     clientType: {
       type: String,

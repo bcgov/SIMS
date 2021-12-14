@@ -24,7 +24,7 @@ export enum StudentApplicationFields {
   ApplicationNumber = "applicationNumber",
   ApplicationName = "applicationName",
   StudyPeriod = "studyPeriod",
-  Award = "award",
+  Submitted = "submitted",
   Status = "status",
   Actions = "id",
 }

@@ -135,15 +135,6 @@ export interface ApplicationDataDto {
   student: ApplicationStudentDetails;
 }
 
-export interface StudentApplicationDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  id: number;
-  applicationName: string;
-  award: string;
-  status: string;
-}
 
 export interface ActiveApplicationSummaryDTO {
   applicationNumber: string;

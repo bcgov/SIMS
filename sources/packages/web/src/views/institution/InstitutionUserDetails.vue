@@ -2,9 +2,9 @@
   <v-container>
     <h5 class="text-muted">Manage Users</h5>
     <h2>User Summary</h2>
-    <v-sheet elevation="1" class="mx-auto">
+    <v-card class="mt-6 py-4 px-4">
       <InstitutionUserSummary :clientType="ClientIdType.Institution" />
-    </v-sheet>
+    </v-card>
   </v-container>
 </template>
 
