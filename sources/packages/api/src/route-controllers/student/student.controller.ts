@@ -449,9 +449,7 @@ export class StudentController extends BaseController {
         `No student was found with the student id ${userToken.userId}`,
       );
     }
-    const application = await this.applicationService.getAllStudentApplications(
-      existingStudent.id,
-    );
+    await this.applicationService.getAllStudentApplications(existingStudent.id);
     return application.map((eachApplication: Application) => {
       return {
         applicationNumber: eachApplication.applicationNumber,

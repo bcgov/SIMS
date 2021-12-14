@@ -34,6 +34,10 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  databaseFieldOfApplicationDataTable,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -524,11 +528,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * get all student applications.
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
    * @param studentId student id .
    * @returns student Application list.
    */
-  async getAllStudentApplications(studentId: number): Promise<Application[]> {
-    return this.repo
+  async getAllStudentApplications(
+    sortField: string,
+    studentId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    sortOrder = FieldSortOrder.ASC,
+  ): Promise<[Application[], number]> {
+    // Default sort oder for application summary DataTable
+    const DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE = "applicationNumber";
+
+    const application = this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
@@ -554,8 +573,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
             ELSE 8
           END`,
       )
-      .addOrderBy("application.applicationNumber")
-      .getMany();
+      .addOrderBy("application.applicationNumber");
+
+    // sorting
+    application.orderBy(
+      databaseFieldOfApplicationDataTable(
+        sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
+      ),
+      sortOrder,
+    );
+
+    // pagination
+    application.take(pageLimit).skip(page * pageLimit);
+
+    // result
+    return application.getManyAndCount();
   }
 
   /**

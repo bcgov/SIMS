@@ -188,3 +188,8 @@ export interface Assessment {
   totalProvincialContribution: number;
   otherAllowableCost: number;
 }
+
+export interface StudentApplicationAndCount {
+  applications: ApplicationSummaryDTO[];
+  totalApplications: number
+}

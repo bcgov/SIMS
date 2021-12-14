@@ -3,7 +3,11 @@ import AppAEST from "@/views/aest/AppAEST.vue";
 import Login from "@/views/aest/Login.vue";
 import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
-import StudentDetails from "@/views/aest/StudentDetails.vue";
+import StudentDetails from "@/views/aest/student/StudentDetails.vue";
+import StudentProfile from "@/views/aest/student/Profile.vue";
+import StudentApplications from "@/views/aest/student/Applications.vue";
+import StudentRestrictions from "@/views/aest/student/Restrictions.vue";
+import StudentNotes from "@/views/aest/student/Notes.vue";
 import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
@@ -74,6 +78,44 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.AEST,
         },
+        children: [
+          {
+            path: AppRoutes.Profile,
+            name: AESTRoutesConst.STUDENT_PROFILE,
+            props: true,
+            component: StudentProfile,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Applications,
+            name: AESTRoutesConst.STUDENT_APPLICATIONS,
+            props: true,
+            component: StudentApplications,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Restrictions,
+            name: AESTRoutesConst.STUDENT_RESTRICTION,
+            props: true,
+            component: StudentRestrictions,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.Notes,
+            name: AESTRoutesConst.STUDENT_NOTES,
+            props: true,
+            component: StudentNotes,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+        ],
       },
       {
         path: AppRoutes.ApplicationDetail,

@@ -4,7 +4,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
-  ApplicationSummaryDTO,
+  StudentApplicationAndCount,
   NoticeOfAssessmentDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
@@ -155,15 +155,13 @@ export class ApplicationApi extends HttpBaseClient {
 
   /**
    * API Client for applications of a student.
-   * @param studentId
+   * @param url to be sent
    * @returns
    */
   public async getAllApplicationsForStudent(
-    studentId: number,
-  ): Promise<ApplicationSummaryDTO[]> {
-    const response = await this.getCall(
-      `application/student/${studentId}/aest`,
-    );
-    return response.data as ApplicationSummaryDTO[];
+    url: string,
+  ): Promise<StudentApplicationAndCount> {
+    const response = await this.getCall(url);
+    return response.data as StudentApplicationAndCount;
   }
 }

@@ -6,13 +6,21 @@
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12 p-md-4">
             <label class="field-required" for="legalName">Legal Name</label>
-            <InputText name="legalName" v-model="legalName" />
+            <InputText
+              name="legalName"
+              v-model="legalName"
+              @keyup.enter="searchInstitutions"
+            />
           </div>
           <div class="p-field p-col-12 p-md-4">
             <label class="field-required" for="operatingName"
               >Operating Name</label
             >
-            <InputText name="operatingName" v-model="operatingName" />
+            <InputText
+              name="operatingName"
+              v-model="operatingName"
+              @keyup.enter="searchInstitutions"
+            />
           </div></div
       ></v-col>
       <v-col class="mt-9" cols="auto"

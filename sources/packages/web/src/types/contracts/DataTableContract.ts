@@ -18,6 +18,18 @@ export enum UserFields {
 }
 
 /**
+ * Enum for Student Application Table
+ */
+export enum StudentApplicationFields {
+  ApplicationNumber = "applicationNumber",
+  ApplicationName = "applicationName",
+  StudyPeriod = "studyPeriod",
+  Award = "award",
+  Status = "status",
+  Actions = "id",
+}
+
+/**
  * SORT ORDER  of datatable
  */
 export enum DataTableSortOrder {

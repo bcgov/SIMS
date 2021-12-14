@@ -222,6 +222,11 @@ export interface ApplicationSummaryDTO {
   status: string;
 }
 
+export interface StudentApplicationAndCount {
+  applications: ApplicationSummaryDTO[];
+  totalApplications: number;
+}
+
 /**
  * Transformation util for Application.
  * @param application

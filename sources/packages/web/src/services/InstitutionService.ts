@@ -149,6 +149,19 @@ export class InstitutionService {
     });
   }
 
+  /**
+   * Controller method to get all institution users with the
+   * given institutionId for institution admin.
+   * @param institutionId institution id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns All the institution users for the given institution.
+   */
   public async institutionSummary(
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
@@ -371,6 +384,13 @@ export class InstitutionService {
    * Controller method to get all institution users with the
    * given institutionId ministry user.
    * @param institutionId institution id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
    * @returns All the institution users for the given institution.
    */
   public async institutionSummaryForAEST(

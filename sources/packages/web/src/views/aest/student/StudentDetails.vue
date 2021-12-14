@@ -1,8 +1,8 @@
 <template>
   <p class="text-muted category-header-medium">
-    Institution Details
+    Student Details
   </p>
-  <p class="category-header-large">
+  <p class="category-header-large color-blue">
     {{ institutionBasicDetail.operatingName }}
     <designation-status-badge
       class="mb-4 ml-4"
@@ -24,7 +24,7 @@ import { BasicInstitutionInfo } from "@/types";
 export default {
   components: { DesignationStatusBadge },
   props: {
-    institutionId: {
+    studentId: {
       type: Number,
       required: true,
     },
@@ -36,61 +36,31 @@ export default {
     const items = ref([
       {
         label: "Profile",
-        icon: "fa fa-university",
+        icon: "fa fa-id-card-o",
         command: () => {
           router.push({
-            name: AESTRoutesConst.INSTITUTION_PROFILE,
-            params: { institutionId: props.institutionId },
+            name: AESTRoutesConst.STUDENT_PROFILE,
+            params: { studentId: props.studentId },
           });
         },
       },
       {
-        label: "Programs",
-        icon: "fa fa-book",
+        label: "Applications",
+        icon: "fa fa-folder-o",
         command: () => {
           router.push({
-            name: AESTRoutesConst.INSTITUTION_PROGRAMS,
-            params: { institutionId: props.institutionId },
-          });
-        },
-      },
-      {
-        label: "Locations",
-        icon: "fa fa-map-marker",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.INSTITUTION_LOCATIONS,
-            params: { institutionId: props.institutionId },
-          });
-        },
-      },
-      {
-        label: "Users",
-        icon: "fa fa-users",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.INSTITUTION_USERS,
-            params: { institutionId: props.institutionId },
-          });
-        },
-      },
-      {
-        label: "Designation",
-        icon: "fa fa-pencil",
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.INSTITUTION_DESIGNATION,
-            params: { institutionId: props.institutionId },
+            name: AESTRoutesConst.STUDENT_APPLICATIONS,
+            params: { studentId: props.studentId },
           });
         },
       },
       {
         label: "Restrictions",
-        icon: "fa fa-times-circle-o",
+        icon: "fa fa-map-marker",
         command: () => {
           router.push({
-            name: AESTRoutesConst.INSTITUTION_RESTRICTIONS,
-            params: { institutionId: props.institutionId },
+            name: AESTRoutesConst.STUDENT_RESTRICTION,
+            params: { studentId: props.studentId },
           });
         },
       },
@@ -100,12 +70,18 @@ export default {
 
         command: () => {
           router.push({
-            name: AESTRoutesConst.INSTITUTION_NOTES,
-            params: { institutionId: props.institutionId },
+            name: AESTRoutesConst.STUDENT_NOTES,
+            params: { studentId: props.studentId },
           });
         },
       },
     ]);
+
+    const goBack = () => {
+      router.push({
+        name: AESTRoutesConst.SEARCH_STUDENTS,
+      });
+    };
 
     onMounted(async () => {
       institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
@@ -114,6 +90,7 @@ export default {
     });
     return {
       institutionBasicDetail,
+      goBack,
       AESTRoutesConst,
       items,
     };

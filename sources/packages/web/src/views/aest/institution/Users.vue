@@ -1,8 +1,12 @@
 <template>
-  <InstitutionUserSummary
-    :clientType="ClientIdType.AEST"
-    :institutionId="institutionId"
-  />
+  <v-card class="mt-4">
+    <div class="mx-5 py-4">
+      <InstitutionUserSummary
+        :clientType="ClientIdType.AEST"
+        :institutionId="institutionId"
+      />
+    </div>
+  </v-card>
 </template>
 
 <script lang="ts">

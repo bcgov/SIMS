@@ -8,7 +8,11 @@
 
 <script lang="ts">
 export default {
-  components: {},
-  //TODO, create and fetch an API to fetch Restrictions
+  props: {
+    studentId: {
+      type: Number,
+      required: true,
+    },
+  },
 };
 </script>

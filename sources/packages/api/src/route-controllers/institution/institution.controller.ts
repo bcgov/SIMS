@@ -29,6 +29,9 @@ import BaseController from "../BaseController";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
 } from "../../utilities";
 import {
   InstitutionUserRespDto,
@@ -58,11 +61,6 @@ import {
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Institution, InstitutionLocation } from "../../database/entities";
-import {
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-} from "./models/institution-datatable";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")

@@ -2,7 +2,7 @@
 Used when we need to display the designation status for an Institution
 -->
 <template>
-  <v-badge bordered color="green" text-color="white">
+  <v-badge color="green" text-color="white">
     <template v-slot:badge>
       <font-awesome-icon :icon="icon" class="mr-1" />
       {{ designationStatus }}
