@@ -102,4 +102,22 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .addGroupBy("restrictions.id")
       .having("count(*) > restrictions.allowedCount");
   }
+
+  async getStudentRestrictionsById(
+    studentId: number,
+  ): Promise<StudentRestriction[]> {
+    return this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select([
+        "studentRestrictions.isActive",
+        "studentRestrictions.updatedAt",
+        "studentRestrictions.createdAt",
+        "restriction.restrictionType",
+        "restriction.description",
+      ])
+      .innerJoin("studentRestrictions.restriction", "restriction")
+      .innerJoin("studentRestrictions.student", "student")
+      .where("student.id = :studentId", { studentId })
+      .getMany();
+  }
 }

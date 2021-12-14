@@ -20,3 +20,4 @@ export * from "./sfas-integration/sfas-integration.system.controller";
 export * from "./esdc-integration/e-cert-integration.system.controller";
 export * from "./esdc-integration/fed-restrictions-integration.system.controller";
 export * from "./note/note.controller";
+export * from "./restriction/restriction.controller";
