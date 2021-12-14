@@ -145,7 +145,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "students.sin",
         "institutionLocation.institutionCode",
         "students.birthDate",
-        //"students.maritalStatus",
+        "referenceApplication.relationshipStatus",
         "users.lastName",
         "users.firstName",
         "students.gender",
