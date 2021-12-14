@@ -44,7 +44,7 @@ import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationAndCount } from "../application/models/application.model";
-import { Application, Student } from "../../database/entities";
+import { Student } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -468,7 +468,7 @@ export class StudentController extends BaseController {
         `No student was found with the student id ${userToken.userId}`,
       );
     }
-    return await this.applicationService.getStudentAppicationAndProcessDTO(
+    return this.applicationService.getStudentAppicationAndProcessDTO(
       sortField,
       existingStudent.id,
       page,

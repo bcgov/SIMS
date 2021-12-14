@@ -193,7 +193,7 @@ export class InstitutionController extends BaseController {
         "The user has no institution associated with.",
       );
     }
-    return await this.institutionService.getAllUsersAndCount(
+    return this.institutionService.getAllUsersAndCount(
       searchName,
       sortField,
       institution.id,
@@ -619,7 +619,7 @@ export class InstitutionController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<InstitutionUserAndCount> {
-    return await this.institutionService.getAllUsersAndCount(
+    return this.institutionService.getAllUsersAndCount(
       searchName,
       sortField,
       institutionId,

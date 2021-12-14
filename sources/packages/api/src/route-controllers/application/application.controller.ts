@@ -455,7 +455,7 @@ export class ApplicationController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<StudentApplicationAndCount> {
-    return await this.applicationService.getStudentAppicationAndProcessDTO(
+    return this.applicationService.getStudentAppicationAndProcessDTO(
       sortField,
       studentId,
       page,
