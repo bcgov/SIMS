@@ -114,6 +114,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return this.repo
       .createQueryBuilder("studentRestrictions")
       .select([
+        "studentRestrictions.id",
         "studentRestrictions.isActive",
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",

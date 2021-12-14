@@ -5,9 +5,7 @@ status Badge
   <v-badge :color="backGroundColor" :text-color="textColor" :class="badgeClass">
     <template v-slot:badge>
       <font-awesome-icon icon="circle" class="mr-1" :color="iconColor" />
-      <span class="text-uppercase">{{
-        status === GeneralStatusForBadge.ActiveRestriction ? "active" : status
-      }}</span>
+      <span class="text-uppercase">{{ label }}</span>
     </template>
   </v-badge>
 </template>
@@ -23,12 +21,17 @@ export default {
     },
   },
   setup(props: any) {
+    const label = ref("");
     const badgeClass = ref("");
     const textColor = ref("#333A47");
     const backGroundColor = ref("#FFFFFF");
     const iconColor = ref("");
 
     const setStyles = () => {
+      label.value =
+        props.status === GeneralStatusForBadge.ActiveRestriction
+          ? "active"
+          : props.status;
       switch (props.status) {
         case GeneralStatusForBadge.Active:
           // css class for active status
@@ -64,6 +67,7 @@ export default {
       backGroundColor,
       iconColor,
       GeneralStatusForBadge,
+      label,
     };
   },
 };

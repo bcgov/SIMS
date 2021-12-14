@@ -11,8 +11,8 @@
     <DataTable
       :value="studentRestrictions"
       :paginator="true"
-      :rows="10"
-      :rowsPerPageOptions="[10, 20, 50]"
+      :rows="DEFAULT_PAGE_LIMIT"
+      :rowsPerPageOptions="PAGINATION_LIST"
     >
       <template #empty>
         <p class="text-center font-weight-bold">No records found.</p>
@@ -42,6 +42,12 @@
           />
         </template>
       </Column>
+      <!-- Place holder button for view restrictions -->
+      <Column field="restrictionId" header="">
+        <template #body="">
+          <v-btn outlined>View</v-btn>
+        </template></Column
+      >
     </DataTable>
   </content-group>
 </template>
@@ -51,7 +57,11 @@ import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import { useFormatters } from "@/composables";
-import { GeneralStatusForBadge } from "@/types";
+import {
+  GeneralStatusForBadge,
+  DEFAULT_PAGE_LIMIT,
+  PAGINATION_LIST,
+} from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 
 export default {
@@ -75,6 +85,8 @@ export default {
       dateOnlyLongString,
       studentRestrictions,
       GeneralStatusForBadge,
+      DEFAULT_PAGE_LIMIT,
+      PAGINATION_LIST,
     };
   },
 };
