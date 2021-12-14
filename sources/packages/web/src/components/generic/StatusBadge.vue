@@ -28,10 +28,7 @@ export default {
     const iconColor = ref("");
 
     const setStyles = () => {
-      label.value =
-        props.status === GeneralStatusForBadge.ActiveRestriction
-          ? "active"
-          : props.status;
+      label.value = props.status;
       switch (props.status) {
         case GeneralStatusForBadge.Active:
           // css class for active status
@@ -49,7 +46,8 @@ export default {
           iconColor.value = "#333A47";
           break;
         case GeneralStatusForBadge.ActiveRestriction:
-          // css class for active status
+          // css class for active restriction status
+          label.value = "active";
           badgeClass.value = "status-badge-active-restriction";
           textColor.value = "#FF7a00";
           backGroundColor.value = "#FFFFFF";
