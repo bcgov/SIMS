@@ -174,6 +174,7 @@ export class InstitutionLocationsController extends BaseController {
               el.institution.institutionPrimaryContact.primaryContactPhone,
           },
         },
+        institutionCode: el.institutionCode,
       } as InstitutionLocationsDetailsDto;
     });
   }

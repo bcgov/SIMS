@@ -12,6 +12,8 @@ import {
   User,
   InstitutionLocation,
   InstitutionType,
+  Note,
+  NoteType,
 } from "../../database/entities";
 import { Connection, Repository, getConnection } from "typeorm";
 import {
@@ -34,6 +36,12 @@ import {
 } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
+import {
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+} from "../../route-controllers/institution/models/institution-datatable";
+import { databaseFieldOfUserDataTable } from "../../utilities";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -347,16 +355,80 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     };
   }
 
-  async allUsers(institutionId: number): Promise<InstitutionUser[]> {
-    return this.institutionUserRepo
+  /**
+   * service method to get all institution users with the
+   * given institutionId r.
+   * @queryParm page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @queryParm pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @queryParm searchName, user's name keyword to be searched
+   * @queryParm sortField, field to be sorted
+   * @queryParm sortOrder, order to be sorted
+   * @param institutionId institution id
+   * @returns All the institution users for the given institution
+   * with total count.
+   */
+  async allUsers(
+    searchName: string,
+    sortField: string,
+    institutionId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    sortOrder = FieldSortOrder.ASC,
+  ): Promise<[InstitutionUser[], number]> {
+    // Default sort oder for user summary DataTable
+    const DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE = "displayName";
+
+    const institutionUsers = this.institutionUserRepo
       .createQueryBuilder("institutionUser")
-      .leftJoinAndSelect("institutionUser.user", "user")
-      .leftJoin("institutionUser.institution", "institution")
-      .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
-      .leftJoinAndSelect("authorizations.location", "location")
-      .leftJoinAndSelect("authorizations.authType", "authType")
-      .where("institution.id = :institutionId", { institutionId })
-      .getMany();
+      .select([
+        "institutionUser.id",
+        "user.id",
+        "user.email",
+        "user.firstName",
+        "user.lastName",
+        "user.userName",
+        "user.isActive",
+        "authorizations",
+        "authorizations.authType",
+        "authorizations.id",
+        "authType.role",
+        "authType.type",
+        "authorizations.location",
+        "location.name",
+      ])
+      .innerJoin("institutionUser.user", "user")
+      .innerJoin("institutionUser.institution", "institution")
+      .leftJoin("institutionUser.authorizations", "authorizations")
+      .leftJoin("authorizations.location", "location")
+      .leftJoin("authorizations.authType", "authType")
+      .where("institution.id = :institutionId", { institutionId });
+
+    // search by user's name
+    if (searchName) {
+      institutionUsers.andWhere(
+        "user.firstName Ilike :searchUser OR user.lastName Ilike :searchUser",
+        {
+          searchUser: `%${searchName}%`,
+        },
+      );
+    }
+    // sorting
+    databaseFieldOfUserDataTable(
+      sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
+    ).forEach((sortElement, index) => {
+      if (index === 0) {
+        institutionUsers.orderBy(sortElement, sortOrder);
+      } else {
+        institutionUsers.addOrderBy(sortElement, sortOrder);
+      }
+    });
+
+    // pagination
+    institutionUsers.take(pageLimit).skip(page * pageLimit);
+    // result
+    return institutionUsers.getManyAndCount();
   }
 
   async getUserTypesAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
@@ -424,7 +496,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     permissionInfo: InstitutionUserPermissionDto,
     institutionUser: InstitutionUser,
   ): Promise<void> {
-    let newAuthorizationEntries = [] as InstitutionUserAuth[];
+    const newAuthorizationEntries = [] as InstitutionUserAuth[];
     // Create the permissions for the user under the institution.
     for (const permission of permissionInfo.permissions) {
       const newAuthorization = new InstitutionUserAuth();
@@ -536,5 +608,51 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .select("institution.operatingName")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
+  }
+
+  /**
+   * Service to get notes for a student.
+   * @param institutionId
+   * @param noteType
+   * @returns Notes
+   */
+  async getInstitutionNotes(
+    institutionId: number,
+    noteType?: NoteType,
+  ): Promise<Note[]> {
+    const institutionNoteQuery = this.repo
+      .createQueryBuilder("institution")
+      .select([
+        "institution.id",
+        "note.noteType",
+        "note.description",
+        "note.createdAt",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("institution.notes", "note")
+      .innerJoin("note.creator", "user")
+      .where("institution.id = :institutionId", { institutionId });
+    if (noteType) {
+      institutionNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    }
+
+    const institution = await institutionNoteQuery
+      .orderBy("note.id", "DESC")
+      .getOne();
+    return institution?.notes;
+  }
+
+  /**
+   * Service to add note for an Institution.
+   * @param institutionId
+   * @param note
+   */
+  async saveInstitutionNote(institutionId: number, note: Note): Promise<void> {
+    const institution = await this.repo.findOne(institutionId, {
+      relations: ["notes"],
+    });
+    institution.notes.push(note);
+    await this.repo.save(institution);
   }
 }

@@ -1,13 +1,24 @@
 <template>
-  <content-group>
-    <p class="category-header-large color-blue">Users</p>
-  </content-group>
+  <InstitutionUserSummary
+    :clientType="ClientIdType.AEST"
+    :institutionId="institutionId"
+  />
 </template>
 
 <script lang="ts">
-import ContentGroup from "@/components/generic/ContentGroup.vue";
+import InstitutionUserSummary from "@/components/aest/InstitutionUserSummary.vue";
+import { ClientIdType } from "@/types";
+
 export default {
-  components: { ContentGroup },
-  //TODO, create and fetch an API to fetch Users
+  components: { InstitutionUserSummary },
+  props: {
+    institutionId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup() {
+    return { ClientIdType };
+  },
 };
 </script>

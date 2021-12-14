@@ -12,61 +12,9 @@
         designationStatus="DESIGNATED"
       />
     </p>
-    <!-- TODO: Replace v-btn with vuetify2 equivalent v-tab with icon once veutify3 is released-->
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_PROFILE)"
-      ><v-icon size="25" class="mr-2">mdi-city</v-icon>Profile</v-btn
-    >
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_PROGRAMS)"
-    >
-      <v-icon size="25" class="mr-2">mdi-book-open-outline</v-icon
-      >Programs</v-btn
-    >
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_LOCATIONS)"
-      ><v-icon size="25" class="mr-2">mdi-map-marker-outline</v-icon
-      >Locations</v-btn
-    >
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_USERS)"
-      ><v-icon size="25" class="mr-2">mdi-account-group-outline</v-icon
-      >Users</v-btn
-    >
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_DESIGNATION)"
-      ><v-icon size="25" class="mr-2">mdi-certificate-outline</v-icon
-      >Designation</v-btn
-    >
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_RESTRICTIONS)"
-      ><v-icon size="25" class="mr-2">mdi-close-circle-outline</v-icon
-      >Restrictions</v-btn
-    >
-    <v-btn
-      text
-      variant="outlined"
-      @click="showData(AESTRoutesConst.INSTITUTION_NOTES)"
-      ><v-icon size="25" class="mr-2">mdi-clipboard-outline</v-icon>Notes</v-btn
-    >
-    <hr />
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
+    <!-- TODO:replace prime tabMenu with vuetify3-->
+    <TabMenu :model="items" />
+    <router-view />
   </full-page-container>
 </template>
 
@@ -89,17 +37,86 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const institutionBasicDetail = ref({} as BasicInstitutionInfo);
+    const items = ref([
+      {
+        label: "Profile",
+        icon: "fa fa-university",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_PROFILE,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+      {
+        label: "Programs",
+        icon: "fa fa-book",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_PROGRAMS,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+      {
+        label: "Locations",
+        icon: "fa fa-map-marker",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_LOCATIONS,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+      {
+        label: "Users",
+        icon: "fa fa-users",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_USERS,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+      {
+        label: "Designation",
+        icon: "fa fa-pencil",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_DESIGNATION,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+      {
+        label: "Restrictions",
+        icon: "fa fa-window-close",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_RESTRICTIONS,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+      {
+        label: "Notes",
+        icon: "fa fa-sticky-note-o",
+
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.INSTITUTION_NOTES,
+            params: { institutionId: props.institutionId },
+          });
+        },
+      },
+    ]);
+
     const goBack = () => {
       router.push({
         name: AESTRoutesConst.SEARCH_INSTITUTIONS,
       });
     };
-    const showData = (routeName: symbol) => {
-      router.push({
-        name: routeName,
-        params: { institutionId: props.institutionId },
-      });
-    };
+
     onMounted(async () => {
       institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
@@ -107,9 +124,9 @@ export default {
     });
     return {
       institutionBasicDetail,
-      showData,
       goBack,
       AESTRoutesConst,
+      items,
     };
   },
 };

@@ -22,6 +22,13 @@ import {
   OptionItemDto,
   ApplicationSummaryDTO,
   ApplicationDetails,
+  DataTableSortOrder,
+  UserFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  InstitutionUserAndCount,
+  InstitutionUserAndCountForDataTable,
+  FieldSortOrder,
   AESTInstitutionProgramsSummaryPaginatedDto,
   SortDBOrder,
 } from "../types";
@@ -104,45 +111,69 @@ export class InstitutionService {
     return await ApiClient.InstitutionLocation.allInstitutionLocationsApi();
   }
 
-  public async users(): Promise<InstitutionUserViewModel[]> {
-    const response: InstitutionUserResDto[] = await ApiClient.Institution.getUsers();
-    const viewModels: InstitutionUserViewModel[] = response.map(
-      institutionUser => {
-        const roleArray = institutionUser.authorizations
-          .map(auth => auth.authType.role || "")
-          .filter(institutionUserRole => institutionUserRole !== "");
-        const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
-        const locationArray = institutionUser.authorizations
-          .map(auth => auth.location?.name || "")
-          .filter(loc => loc !== "");
-        const userType = institutionUser.authorizations
-          .map(auth => auth.authType.type)
-          .join(" ");
-        const location = userType.toLowerCase().includes("admin")
-          ? "All"
-          : locationArray.length > 0
-          ? locationArray.join(" ")
-          : "";
+  mapUserRolesAndLocation(
+    response: InstitutionUserResDto[],
+  ): InstitutionUserViewModel[] {
+    return response.map(institutionUser => {
+      const roleArray = institutionUser.authorizations
+        .map(auth => auth.authType.role || "")
+        .filter(institutionUserRole => institutionUserRole !== "");
+      const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
+      const locationArray = institutionUser.authorizations
+        .map(auth => auth.location?.name || "")
+        .filter(loc => loc !== "");
+      const userType = institutionUser.authorizations
+        .map(auth => auth.authType.type)
+        .join(" ");
+      const location = userType.toLowerCase().includes("admin")
+        ? ["All"]
+        : locationArray.length > 0
+        ? locationArray
+        : [];
 
-        const viewModel: InstitutionUserViewModel = {
-          id: institutionUser.id,
-          displayName: `${institutionUser.user.firstName} ${institutionUser.user.lastName}`,
-          email: institutionUser.user.email,
-          userName: institutionUser.user.userName,
-          userType,
-          role,
-          location,
-          isActive: institutionUser.user.isActive,
-          disableRemove:
-            AuthService.shared.userToken?.userName ===
-            institutionUser.user.userName
-              ? true
-              : false,
-        };
-        return viewModel;
-      },
+      const viewModel: InstitutionUserViewModel = {
+        id: institutionUser.id,
+        displayName: `${institutionUser.user.firstName} ${institutionUser.user.lastName}`,
+        email: institutionUser.user.email,
+        userName: institutionUser.user.userName,
+        userType,
+        role,
+        location,
+        isActive: institutionUser.user.isActive,
+        disableRemove:
+          AuthService.shared.userToken?.userName ===
+          institutionUser.user.userName,
+      };
+
+      return viewModel;
+    });
+  }
+
+  public async institutionSummary(
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchName?: string,
+    sortField?: UserFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<InstitutionUserAndCountForDataTable> {
+    let URL = `institution/users?page=${page}&pageLimit=${pageCount}`;
+    if (searchName) {
+      URL = `${URL}&searchName=${searchName}`;
+    }
+    if (sortField && sortOrder) {
+      const sortDBOrder =
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
+      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    }
+    const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(
+      URL,
     );
-    return viewModels;
+    return {
+      users: this.mapUserRolesAndLocation(response.users),
+      totalUsers: response.totalUsers,
+    };
   }
 
   async removeUser(id: number) {
@@ -322,6 +353,52 @@ export class InstitutionService {
     institutionId: number,
   ): Promise<BasicInstitutionInfo> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
+  }
+
+  /**
+   * Controller method to get institution locations for the given
+   * institutionId for  ministry user.
+   * @param institutionId institution id
+   * @returns All the institution locations for the given institution.
+   */
+  async getAllInstitutionLocationSummary(institutionId: number) {
+    return ApiClient.InstitutionLocation.getAllInstitutionLocationSummary(
+      institutionId,
+    );
+  }
+
+  /**
+   * Controller method to get all institution users with the
+   * given institutionId ministry user.
+   * @param institutionId institution id
+   * @returns All the institution users for the given institution.
+   */
+  public async institutionSummaryForAEST(
+    institutionId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchName?: string,
+    sortField?: UserFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<InstitutionUserAndCountForDataTable> {
+    let URL = `institution/${institutionId}/user-summary?page=${page}&pageLimit=${pageCount}`;
+    if (searchName) {
+      URL = `${URL}&searchName=${searchName}`;
+    }
+    if (sortField && sortOrder) {
+      const sortDBOrder =
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
+      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    }
+    const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(
+      URL,
+    );
+    return {
+      users: this.mapUserRolesAndLocation(response.users),
+      totalUsers: response.totalUsers,
+    };
   }
 
   /**
