@@ -79,6 +79,7 @@ export const AESTRoutesConst = {
   LOGIN: Symbol(),
   LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),
   STUDENT_NOTES: Symbol(),
+  STUDENT_RESTRICTIONS: Symbol(),
 };
 
 /**
