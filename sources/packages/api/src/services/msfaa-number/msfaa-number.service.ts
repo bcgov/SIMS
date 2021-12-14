@@ -39,13 +39,17 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   async createMSFAANumber(
     studentId: number,
     referenceApplicationId: number,
+    offeringIntensity: OfferingIntensity,
   ): Promise<MSFAANumber> {
     const newMSFAANumber = new MSFAANumber();
-    newMSFAANumber.msfaaNumber = await this.consumeNextSequence();
+    newMSFAANumber.msfaaNumber = await this.consumeNextSequence(
+      offeringIntensity,
+    );
     newMSFAANumber.student = { id: studentId } as Student;
     newMSFAANumber.referenceApplication = {
       id: referenceApplicationId,
     } as Application;
+    newMSFAANumber.offeringIntensity = offeringIntensity;
     return this.repo.save(newMSFAANumber);
   }
 
@@ -53,10 +57,12 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * Generates the next number for an MSFAA.
    * @returns number to be used for the next MSFAA.
    */
-  private async consumeNextSequence(): Promise<string> {
+  private async consumeNextSequence(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<string> {
     let nextNumber: number;
     await this.sequenceService.consumeNextSequence(
-      "MSFAA_STUDENT_NUMBER",
+      offeringIntensity + "_MSFAA_STUDENT_NUMBER",
       async (nextSequenceNumber: number) => {
         nextNumber = nextSequenceNumber;
       },
@@ -75,7 +81,10 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * @param studentId student id to filter.
    * @returns current valid MSFAA record.
    */
-  async getCurrentValidMSFAANumber(studentId: number): Promise<MSFAANumber> {
+  async getCurrentValidMSFAANumber(
+    studentId: number,
+    offeringIntensity: OfferingIntensity,
+  ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
       .subtract(MAX_MFSAA_VALID_DAYS, "days")
       .toDate();
@@ -83,6 +92,11 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
+      .andWhere("msfaaNumber.referenceApplication is not null")
+      .andWhere("msfaaNumber.offeringIntensity= :offeringIntensity", {
+        offeringIntensity,
+      })
+      .andWhere("msfaaNumber.cancelledDate is null")
       .andWhere(
         new Brackets((qb) => {
           qb.where("msfaaNumber.dateSigned is null");
@@ -131,7 +145,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "students.sin",
         "institutionLocation.institutionCode",
         "students.birthDate",
-        //"students.maritalStatus",
+        "referenceApplication.relationshipStatus",
         "users.lastName",
         "users.firstName",
         "students.gender",
@@ -207,6 +221,40 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       {
         dateSigned,
         serviceProviderReceivedDate,
+      },
+    );
+  }
+
+  /**
+   * Once the MSFAA response file is processed, updates the
+   * MSFAA received cancelled records on the database with the
+   * information received. If the information was already received
+   * the record will not be updated.
+   * @param msfaaNumber MSFAA number
+   * @param cancelledDate date when the MSFAA was cancelled.
+   * @param newIssusingProvince New province which is issuing the MSFAA.
+   * @returns update result. Only one row is supposed to be affected.
+   */
+  async updateCancelledReceivedFile(
+    msfaaNumber: string,
+    cancelledDate: Date,
+    newIssuingProvince: string,
+  ): Promise<UpdateResult> {
+    if (!cancelledDate || !newIssuingProvince) {
+      throw new Error(
+        "Not all required fields to update a received MSFAA record were provided.",
+      );
+    }
+
+    return this.repo.update(
+      {
+        msfaaNumber: msfaaNumber,
+        cancelledDate: IsNull(),
+        newIssuingProvince: IsNull(),
+      },
+      {
+        cancelledDate,
+        newIssuingProvince,
       },
     );
   }

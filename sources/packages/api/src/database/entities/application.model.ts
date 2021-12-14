@@ -15,6 +15,7 @@ import {
   MSFAANumber,
   PIRDeniedReason,
   COEDeniedReason,
+  RelationshipStatus,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
@@ -188,6 +189,24 @@ export class Application extends RecordDataModel {
     name: "pir_denied_other_desc",
   })
   pirDeniedOtherDesc?: string;
+
+  /**
+   * Relationship status given by the student in the application.
+   */
+  @Column({
+    name: "relationship_status",
+    nullable: true,
+  })
+  relationshipStatus?: RelationshipStatus;
+
+  /**
+   * Student number given by the student in the application.
+   */
+  @Column({
+    name: "student_number",
+    nullable: true,
+  })
+  studentNumber?: string;
 
   @RelationId((application: Application) => application.msfaaNumber)
   msfaaNumberId?: number;
