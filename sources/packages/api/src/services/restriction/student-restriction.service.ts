@@ -103,6 +103,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .having("count(*) > restrictions.allowedCount");
   }
 
+  /**
+   * Service method to get all restrictions as a summary for a student.
+   * @param studentId
+   * @returns Student restrictions.
+   */
   async getStudentRestrictionsById(
     studentId: number,
   ): Promise<StudentRestriction[]> {
