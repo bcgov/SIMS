@@ -134,7 +134,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: AppRoutes.StudentRestrictions,
-        name: AESTRoutesConst.STUDENT_NOTES,
+        name: AESTRoutesConst.STUDENT_RESTRICTIONS,
         props: true,
         component: StudentRestrictions,
         meta: {

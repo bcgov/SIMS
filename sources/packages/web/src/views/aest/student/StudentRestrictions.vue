@@ -7,7 +7,8 @@
         >
         <v-col
           ><v-btn class="float-right primary-btn-background"
-            >Add restriction</v-btn
+            ><font-awesome-icon icon="plus" class="mr-2" />Add
+            restriction</v-btn
           ></v-col
         >
       </v-row>
@@ -32,7 +33,17 @@
             dateOnlyLongString(slotProps.data.createdAt)
           }}</template></Column
         >
-        <Column field="isActive" header="Status"></Column>
+        <Column field="isActive" header="Status">
+          <template #body="slotProps">
+            <StatusBadge
+              :status="
+                slotProps.data.isActive
+                  ? GeneralStatusForBadge.ActiveRestriction
+                  : GeneralStatusForBadge.ResolvedRestriction
+              "
+            />
+          </template>
+        </Column>
       </DataTable>
     </content-group>
   </full-page-container>
@@ -43,10 +54,12 @@ import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import { useFormatters } from "@/composables";
+import { GeneralStatusForBadge } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import StatusBadge from "@/components/generic/StatusBadge.vue";
 
 export default {
-  components: { ContentGroup, FullPageContainer },
+  components: { ContentGroup, FullPageContainer, StatusBadge },
   props: {
     studentId: {
       type: Number,
@@ -65,6 +78,7 @@ export default {
     return {
       dateOnlyLongString,
       studentRestrictions,
+      GeneralStatusForBadge,
     };
   },
 };

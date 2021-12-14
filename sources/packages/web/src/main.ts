@@ -40,9 +40,10 @@ import {
   faCheck,
   faCircle,
   faSearch,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(faMapPin, faCheck, faCircle, faSearch);
+library.add(faMapPin, faCheck, faCircle, faSearch, faPlus);
 
 // Configure the UI validations rules globally available.
 configValidationRules();

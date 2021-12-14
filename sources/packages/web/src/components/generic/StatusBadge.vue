@@ -5,7 +5,9 @@ status Badge
   <v-badge :color="backGroundColor" :text-color="textColor" :class="badgeClass">
     <template v-slot:badge>
       <font-awesome-icon icon="circle" class="mr-1" :color="iconColor" />
-      <span class="text-uppercase">{{ status }}</span>
+      <span class="text-uppercase">{{
+        status === GeneralStatusForBadge.ActiveRestriction ? "active" : status
+      }}</span>
     </template>
   </v-badge>
 </template>
@@ -36,11 +38,19 @@ export default {
           iconColor.value = "#16C92E";
           break;
         case GeneralStatusForBadge.InActive:
+        case GeneralStatusForBadge.ResolvedRestriction:
           // css class for inactive status
           badgeClass.value = "status-badge-inactive";
           textColor.value = "#333A47";
           backGroundColor.value = "#FFFFFF";
           iconColor.value = "#333A47";
+          break;
+        case GeneralStatusForBadge.ActiveRestriction:
+          // css class for active status
+          badgeClass.value = "status-badge-active-restriction";
+          textColor.value = "#FF7a00";
+          backGroundColor.value = "#FFFFFF";
+          iconColor.value = "#FF7a00";
           break;
       }
     };
@@ -53,6 +63,7 @@ export default {
       textColor,
       backGroundColor,
       iconColor,
+      GeneralStatusForBadge,
     };
   },
 };

@@ -58,9 +58,8 @@ html * {
   padding: 0.5rem !important;
 }
 
-// active badge
-.status-badge-active .v-badge__badge {
-  border-color: #16c92e;
+/** Moving the dimension and position properties of status badge to common class **/
+.status_badge {
   border-width: 1px;
   padding: 15px;
   border-style: solid;
@@ -68,17 +67,29 @@ html * {
   position: static;
 }
 
+// active badge
+.status-badge-active .v-badge__badge {
+  @extend .status_badge;
+  border-color: #16c92e;
+}
+
 // inactive badge
 .status-badge-inactive .v-badge__badge {
+  @extend .status_badge;
   border-color: #333a47;
-  border-width: 1px;
-  padding: 15px;
-  border-style: solid;
-  border-radius: 30px;
-  position: static;
+}
+
+//active restriction badge
+.status-badge-active-restriction .v-badge__badge {
+  @extend .status_badge;
+  border-color: #ff7a00;
 }
 
 //Defining the height of rounded filter button
 .filter-button {
   max-height: 30px;
+}
+
+.p-paginator .p-dropdown .p-dropdown-label {
+  margin-top: 8px;
 }
