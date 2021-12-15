@@ -1,5 +1,5 @@
 import { StudentPDStatus } from "../types/pdStatus";
-import { Student } from "../database/entities";
+import { OfferingIntensity, Student } from "../database/entities";
 
 /**
  * Determines the permanent disability status from Student Entity.
@@ -31,3 +31,14 @@ export const deliveryMethod = (
   }
   return "Online";
 };
+
+/**
+ * Gets the offering intensity from code
+ */
+export function getOfferingIntensity(
+  offeringIntensityCode: string,
+): OfferingIntensity {
+  return offeringIntensityCode === "FT"
+    ? OfferingIntensity.fullTime
+    : OfferingIntensity.partTime;
+}
