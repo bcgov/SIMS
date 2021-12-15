@@ -595,9 +595,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     pageLimit = DEFAULT_PAGE_LIMIT,
     sortOrder = FieldSortOrder.ASC,
   ): Promise<[Application[], number]> {
-    // Default sort oder for application summary DataTable
-    const DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE = "applicationNumber";
-
     const application = this.repo
       .createQueryBuilder("application")
       .select([
@@ -611,31 +608,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.student_id = :studentId", { studentId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .orderBy(
-        `CASE application.applicationStatus
-            WHEN '${ApplicationStatus.draft}' THEN 1
-            WHEN '${ApplicationStatus.submitted}' THEN 2
-            WHEN '${ApplicationStatus.inProgress}' THEN 3
-            WHEN '${ApplicationStatus.assessment}' THEN 4
-            WHEN '${ApplicationStatus.enrollment}' THEN 5
-            WHEN '${ApplicationStatus.completed}' THEN 6
-            WHEN '${ApplicationStatus.cancelled}' THEN 7
-            ELSE 8
-          END`,
-      )
-      .addOrderBy("application.applicationNumber");
+      });
 
     // sorting
-    application.orderBy(
-      databaseFieldOfApplicationDataTable(
-        sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
-      ),
-      sortOrder,
-    );
+    if (sortField && sortField !== "status") {
+      application.orderBy(
+        databaseFieldOfApplicationDataTable(sortField),
+        sortOrder,
+      );
+    } else {
+      application.orderBy(
+        `CASE application.applicationStatus
+              WHEN '${ApplicationStatus.draft}' THEN 1
+              WHEN '${ApplicationStatus.submitted}' THEN 2
+              WHEN '${ApplicationStatus.inProgress}' THEN 3
+              WHEN '${ApplicationStatus.assessment}' THEN 4
+              WHEN '${ApplicationStatus.enrollment}' THEN 5
+              WHEN '${ApplicationStatus.completed}' THEN 6
+              WHEN '${ApplicationStatus.cancelled}' THEN 7
+              ELSE 8
+            END`,
+        sortOrder,
+      );
+    }
 
     // pagination
-    application.take(pageLimit).skip(page * pageLimit);
+    application.limit(pageLimit).offset(page * pageLimit);
 
     // result
     return application.getManyAndCount();

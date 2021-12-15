@@ -32,10 +32,6 @@ export const databaseFieldOfApplicationDataTable = (
   // TODO: Update the application field name
   const databaseFieldOfApplicationDataTableMap = {
     applicationNumber: "application.applicationNumber",
-    applicationName: "",
-    award: "",
-    status: "application.applicationStatus",
-    studyPeriod: "offering.studyStartDate",
   };
   return databaseFieldOfApplicationDataTableMap[fieldName] ?? null;
 };

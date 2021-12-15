@@ -47,7 +47,11 @@
         </span>
       </template></Column
     >
-    <Column :field="StudentApplicationFields.Status" header="Status">
+    <Column
+      :field="StudentApplicationFields.Status"
+      header="Status"
+      sortable="true"
+    >
       <template #body="slotProps">
         <Status :statusValue="slotProps.data.status" />
       </template>
@@ -158,13 +162,13 @@ export default {
      * function to load applicationListAndCount respective to the client type
      * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
      * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
-     * @param sortField sort field, if nothing passed then StudentApplicationFields.ApplicationNumber
+     * @param sortField sort field, if nothing passed then StudentApplicationFields.status
      * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.ASC
      */
     const getStudentApplications = async (
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = StudentApplicationFields.ApplicationNumber,
+      sortField = StudentApplicationFields.Status,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       switch (props.clientType) {
