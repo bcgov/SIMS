@@ -17,6 +17,7 @@ import {
   COEStatus,
   ApplicationStatus,
   SupportingUserType,
+  OfferingIntensity,
 } from "../../../database/entities";
 import { Type } from "class-transformer";
 
@@ -60,6 +61,11 @@ export class UpdateApplicationStatusDto {
 export class UpdateApplicationStatusWorkflowIdDto extends UpdateApplicationStatusDto {
   @IsNotEmpty()
   workflowId: string;
+}
+
+export class UpdateOfferingIntensity extends UpdateApplicationStatusDto {
+  @IsEnum(OfferingIntensity)
+  offeringIntensity: OfferingIntensity;
 }
 
 export interface CRAVerificationIncomeDetailsDto {

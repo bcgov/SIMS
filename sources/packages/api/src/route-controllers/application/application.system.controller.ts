@@ -34,9 +34,9 @@ import {
   CreateIncomeVerificationDto,
   CRAVerificationIncomeDetailsDto,
   CreateDisbursementsDTO,
+  UpdateOfferingIntensity,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
-import { getOfferingIntensity } from "../../utilities";
 
 /**
  * Allow system access to the application data.
@@ -296,16 +296,17 @@ export class ApplicationSystemController {
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
    * @param applicationId application id to receive an MSFAA.
+   * @param payload Offering Intensity of the student
    */
-  @Patch(":applicationId/offeringIntensity/:offeringIntensity/msfaa-number")
+  @Patch(":applicationId/msfaa-number")
   async associateMSFAANumber(
     @Param("applicationId") applicationId: number,
-    @Param("offeringIntensity") offeringIntensity: string,
+    @Body() payload: UpdateOfferingIntensity,
   ): Promise<void> {
     try {
       await this.applicationService.associateMSFAANumber(
         applicationId,
-        getOfferingIntensity(offeringIntensity),
+        payload.offeringIntensity,
       );
     } catch (error) {
       switch (error.name) {
