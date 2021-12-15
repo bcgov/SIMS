@@ -515,7 +515,7 @@ export class StudentController extends BaseController {
    * @param userToken
    * @returns Student Restriction
    */
-  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("restriction")
   async getStudentRestrictions(
     @UserToken() userToken: IUserToken,
