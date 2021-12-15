@@ -157,6 +157,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     const newApplication = new Application();
     newApplication.applicationNumber = application.applicationNumber;
+    newApplication.relationshipStatus = applicationData.relationshipStatus;
+    newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.submitted;
