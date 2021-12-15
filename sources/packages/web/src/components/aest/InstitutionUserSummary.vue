@@ -1,4 +1,5 @@
 <template>
+  <!-- This component is shared between ministry and student users -->
   <div class="row">
     <div class="col align-self-start">
       <span class="category-header-large color-blue">

@@ -568,8 +568,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
           studyEndPeriod: application.offering?.studyEndDate ?? "",
           // TODO: when application name is captured, update the below line
           applicationName: "Financial Aid Application",
-          // TODO: when award is captured, update the below line
-          award: "5500",
+          // TODO: when each status date are captured updated below line
+          submitted: "",
           status: application.applicationStatus,
         } as ApplicationSummaryDTO;
       }),
@@ -611,7 +611,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
 
     // sorting
-    if (sortField && sortField !== "status") {
+    if (
+      sortField &&
+      sortField !== "status" &&
+      databaseFieldOfApplicationDataTable(sortField)
+    ) {
       application.orderBy(
         databaseFieldOfApplicationDataTable(sortField),
         sortOrder,

@@ -135,7 +135,6 @@ export interface ApplicationDataDto {
   student: ApplicationStudentDetails;
 }
 
-
 export interface ActiveApplicationSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
@@ -209,7 +208,7 @@ export interface ApplicationSummaryDTO {
   studyEndPeriod: string;
   id: number;
   applicationName: string;
-  award: string;
+  submitted: string;
   status: string;
 }
 

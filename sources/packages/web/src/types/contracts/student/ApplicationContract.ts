@@ -136,7 +136,7 @@ export interface ApplicationSummaryDTO {
   studyEndPeriod: string;
   id: number;
   applicationName: string;
-  award: string;
+  submitted: string;
   status: string;
 }
 

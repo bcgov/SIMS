@@ -1,4 +1,5 @@
 <template>
+  <!-- This component is shared between ministry and student users -->
   <p class="category-header-large color-blue">Applications</p>
   <DataTable
     :value="applicationAndCount.applications"
@@ -56,7 +57,7 @@
         <Status :statusValue="slotProps.data.status" />
       </template>
     </Column>
-    <Column :field="StudentApplicationFields.Actions" header="">
+    <Column :field="StudentApplicationFields.Actions" header="Actions">
       <template #body="slotProps">
         <span v-if="clientType === ClientIdType.Student">
           <span

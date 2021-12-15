@@ -1,4 +1,5 @@
 <template>
+  <!-- This component is shared between ministry and student users -->
   <v-row>
     <v-col cols="8">
       <p class="category-header-large color-blue">
