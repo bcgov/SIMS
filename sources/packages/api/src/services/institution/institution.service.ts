@@ -701,7 +701,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institutionNoteQuery.andWhere("note.noteType = :noteType", { noteType });
     }
 
-    const institution = await institutionNoteQuery.getOne();
+    const institution = await institutionNoteQuery
+      .orderBy("note.id", "DESC")
+      .getOne();
     return institution?.notes;
   }
 

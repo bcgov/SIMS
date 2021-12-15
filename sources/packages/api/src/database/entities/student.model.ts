@@ -74,7 +74,7 @@ export class Student extends RecordDataModel {
   })
   studentPDUpdateAt?: Date;
 
-  @ManyToMany(() => Note)
+  @ManyToMany(() => Note, { eager: false, cascade: true })
   @JoinTable({
     name: TableNames.StudentNotes,
     joinColumn: { name: ColumnNames.StudentId },

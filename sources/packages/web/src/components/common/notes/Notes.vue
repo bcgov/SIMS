@@ -3,8 +3,7 @@
     <v-col class="category-header-medium color-blue">{{ title }}</v-col>
     <v-col
       ><v-btn @click="addNewNote()" class="float-right primary-btn-background">
-        <v-icon left dark size="25"> mdi-open-in-new </v-icon>Create new
-        note</v-btn
+        <font-awesome-icon icon="plus" class="mr-2" />Create new note</v-btn
       ></v-col
     >
   </v-row>

@@ -191,5 +191,5 @@ export interface Assessment {
 
 export interface StudentApplicationAndCount {
   applications: ApplicationSummaryDTO[];
-  totalApplications: number
+  totalApplications: number;
 }

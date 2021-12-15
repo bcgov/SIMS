@@ -14,7 +14,7 @@
               @click="filterNotes()"
             />
             <Button
-              v-for="item in InstitutionNoteType"
+              v-for="item in StudentNoteType"
               :key="item"
               :label="item"
               class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
@@ -27,7 +27,7 @@
       <content-group>
         <Notes
           title="Past Notes"
-          :entityType="NoteEntityType.Institution"
+          :entityType="NoteEntityType.Student"
           :notes="notes"
           @submitData="addNote"
         ></Notes>
@@ -42,12 +42,12 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import Notes from "@/components/common/notes/Notes.vue";
 import { NoteService } from "@/services/NoteService";
 import { useFormatters, useToastMessage } from "@/composables";
-import { InstitutionNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
+import { StudentNoteType, NoteBaseDTO, NoteEntityType } from "@/types";
 
 export default {
   components: { ContentGroup, Notes },
   props: {
-    institutionId: {
+    studentId: {
       type: Number,
       required: true,
     },
@@ -58,21 +58,21 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const toast = useToastMessage();
 
-    const filterNotes = async (noteType?: InstitutionNoteType) => {
+    const filterNotes = async (noteType?: StudentNoteType) => {
       filteredNoteType.value = noteType;
-      notes.value = await NoteService.shared.getInstitutionNotes(
-        props.institutionId,
+      notes.value = await NoteService.shared.getStudentNotes(
+        props.studentId,
         filteredNoteType.value,
       );
     };
 
     const addNote = async (data: NoteBaseDTO) => {
       try {
-        await NoteService.shared.addInstitutionNote(props.institutionId, data);
+        await NoteService.shared.addStudentNote(props.studentId, data);
         await filterNotes(filteredNoteType.value);
         toast.success(
           "Note added successfully",
-          "The note has been added to the institution.",
+          "The note has been added to the student.",
         );
       } catch (error) {
         toast.error(
@@ -88,7 +88,7 @@ export default {
     return {
       notes,
       dateOnlyLongString,
-      InstitutionNoteType,
+      StudentNoteType,
       filterNotes,
       filteredNoteType,
       addNote,

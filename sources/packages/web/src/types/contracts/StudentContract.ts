@@ -122,4 +122,5 @@ export interface StudentDetail {
   pdVerified: boolean;
   validSin: boolean;
   pdStatus: string;
+  hasRestriction: boolean;
 }

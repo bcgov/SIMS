@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Application, Student } from ".";
+import { Application, OfferingIntensity, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
@@ -67,6 +67,30 @@ export class MSFAANumber extends RecordDataModel {
     nullable: true,
   })
   serviceProviderReceivedDate?: Date;
+  /**
+   * Offering Intensity of the reference application.
+   */
+  @Column({
+    name: "offering_intensity",
+    nullable: false,
+  })
+  offeringIntensity: OfferingIntensity;
+  /**
+   * Cancelled date of the MSFAA Number.
+   */
+  @Column({
+    name: "cancelled_date",
+    nullable: true,
+  })
+  cancelledDate?: Date;
+  /**
+   * Province which issued the new MSFAA number.
+   */
+  @Column({
+    name: "new_issuing_province",
+    nullable: true,
+  })
+  newIssuingProvince?: string;
   /**
    * Student id related to this MSFAA.
    */

@@ -1,4 +1,7 @@
-import { DisbursementValue } from "../../../database/entities";
+import {
+  DisbursementValue,
+  RelationshipStatus,
+} from "../../../database/entities";
 
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
@@ -37,7 +40,7 @@ export interface ECertRecord {
   country: string;
   email: string;
   gender: string;
-  maritalStatus: string;
+  maritalStatus: RelationshipStatus;
   studentNumber: string;
   awards: Award[];
 }

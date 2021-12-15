@@ -7,7 +7,7 @@
     <designation-and-restriction-status-badge
       class="mb-4 ml-4"
       :status="
-        restrictions.hasRestriction
+        studentDetails.hasRestriction
           ? DesignationAndRestrictionStatus.restriction
           : DesignationAndRestrictionStatus.noRestriction
       "
@@ -24,11 +24,7 @@ import { useRouter } from "vue-router";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
-import {
-  StudentDetail,
-  StudentRestrictionStatus,
-  DesignationAndRestrictionStatus,
-} from "@/types";
+import { StudentDetail, DesignationAndRestrictionStatus } from "@/types";
 
 export default {
   components: { DesignationAndRestrictionStatusBadge },
@@ -41,7 +37,6 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const studentDetails = ref({} as StudentDetail);
-    const restrictions = ref({} as StudentRestrictionStatus);
     // TODO: replace all fa icons with fas as per figma with replace with vuetify3
     const items = ref([
       {
@@ -94,18 +89,15 @@ export default {
     };
 
     onMounted(async () => {
-      const [restriction, studentDetail] = await Promise.all([
-        StudentService.shared.getStudentRestriction(),
-        StudentService.shared.getStudentDetail(props.studentId),
-      ]);
-      restrictions.value = restriction;
-      studentDetails.value = studentDetail;
+      studentDetails.value = await StudentService.shared.getStudentDetail(
+        props.studentId,
+      );
     });
+
     return {
       goBack,
       AESTRoutesConst,
       items,
-      restrictions,
       studentDetails,
       DesignationAndRestrictionStatus,
     };

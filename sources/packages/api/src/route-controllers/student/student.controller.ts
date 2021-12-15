@@ -546,6 +546,10 @@ export class StudentController extends BaseController {
     @Param("studentId") studentId: number,
   ): Promise<StudentDetailDTO> {
     const student = await this.studentService.findById(studentId);
+    const studentRestrictionStatus =
+      await this.studentRestrictionService.getStudentRestrictionsByUserId(
+        student.user.id,
+      );
     const address = student.contactInfo.addresses[0];
     return {
       firstName: student.user.firstName,
@@ -563,6 +567,7 @@ export class StudentController extends BaseController {
         postalCode: address.postalCode,
       },
       pdStatus: determinePDStatus(student),
+      hasRestriction: studentRestrictionStatus.hasRestriction,
     } as StudentDetailDTO;
   }
 }

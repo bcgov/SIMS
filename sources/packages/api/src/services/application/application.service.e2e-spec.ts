@@ -19,6 +19,8 @@ import {
   Application,
   ApplicationStatus,
   MSFAANumber,
+  OfferingIntensity,
+  RelationshipStatus,
   Student,
 } from "../../database/entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
@@ -35,6 +37,7 @@ const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();
   fakeApplication.student = student;
   fakeApplication.offering = createFakeEducationProgramOffering();
+  fakeApplication.relationshipStatus = RelationshipStatus.Single;
   fakeApplication.offering.studyStartDate = new Date();
   fakeApplication.applicationStatus = ApplicationStatus.assessment;
   return fakeApplication;
@@ -88,7 +91,10 @@ describe("ApplicationService", () => {
       const testApplication = await applicationRepository.save(fakeApplication);
 
       try {
-        await applicationService.associateMSFAANumber(testApplication.id);
+        await applicationService.associateMSFAANumber(
+          testApplication.id,
+          OfferingIntensity.fullTime,
+        );
       } catch (error) {
         expect(error.name === INVALID_OPERATION_IN_THE_CURRENT_STATUS);
       } finally {
@@ -103,20 +109,20 @@ describe("ApplicationService", () => {
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Enforce that the MSFAA will be in pending state.
       fakeMSFAANumber.dateSigned = null;
-      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
       const testApplication = await applicationRepository.save(fakeApplication);
+      fakeMSFAANumber.referenceApplication = fakeApplication;
+      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
 
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
-        await applicationRepository.remove(testApplication);
-        await msfaaNumberRepository.remove(testMSFAANumber);
         await studentRepository.remove(testStudent);
       }
     });
@@ -128,20 +134,20 @@ describe("ApplicationService", () => {
       const fakeMSFAANumber = createFakeMSFAANumber(testStudent);
       // Enforce that the MSFAA will be in a valid period.
       fakeMSFAANumber.dateSigned = createDateInMSFAAValidPeriod(-1);
-      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
       // Create fake application to have the MSFAA associated.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
       const testApplication = await applicationRepository.save(fakeApplication);
+      fakeMSFAANumber.referenceApplication = fakeApplication;
+      const testMSFAANumber = await msfaaNumberRepository.save(fakeMSFAANumber);
 
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
       } finally {
-        await applicationRepository.remove(testApplication);
-        await msfaaNumberRepository.remove(testMSFAANumber);
         await studentRepository.remove(testStudent);
       }
     });
@@ -175,6 +181,7 @@ describe("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).not.toBe(testMSFAANumber.id);
@@ -219,6 +226,7 @@ describe("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
+          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);

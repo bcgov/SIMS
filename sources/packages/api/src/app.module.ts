@@ -54,6 +54,7 @@ import {
   ECertIntegrationController,
   FedRestrictionsIntegrationController,
   NotesController,
+  RestrictionController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -98,6 +99,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     ECertIntegrationController,
     FedRestrictionsIntegrationController,
     NotesController,
+    RestrictionController,
   ],
   providers: [
     AppService,

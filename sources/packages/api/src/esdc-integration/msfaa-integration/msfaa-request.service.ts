@@ -133,8 +133,8 @@ export class MSFAARequestService {
       surname: pendingMSFAARecords.student.user.lastName,
       givenName: pendingMSFAARecords.student.user.firstName,
       gender: pendingMSFAARecords.student.gender,
-      //TODO needed to make it dynamic, in the future stories
-      maritalStatus: "married",
+      maritalStatus:
+        pendingMSFAARecords.referenceApplication.relationshipStatus,
       addressLine1: addressInfo.addressLine1,
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,

@@ -10,7 +10,7 @@ Used when we need to display the designation status for an Institution
   </v-badge>
 </template>
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { DesignationAndRestrictionStatus } from "@/types";
 
 export default {
@@ -44,6 +44,12 @@ export default {
           break;
       }
     };
+    watch(
+      () => props.status,
+      () => {
+        setIcons();
+      },
+    );
 
     onMounted(() => {
       setIcons();

@@ -6,8 +6,6 @@ import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/student/StudentDetails.vue";
 import StudentProfile from "@/views/aest/student/Profile.vue";
 import StudentApplications from "@/views/aest/student/Applications.vue";
-import StudentRestrictions from "@/views/aest/student/Restrictions.vue";
-import StudentNotes from "@/views/aest/student/Notes.vue";
 import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
@@ -20,6 +18,8 @@ import Restrictions from "@/views/aest/institution/Restrictions.vue";
 import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
+import StudentNotes from "@/views/aest/student/StudentNotes.vue";
+import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import {
   AESTRoutesConst,
   SharedRouteConst,

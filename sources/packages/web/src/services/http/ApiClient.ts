@@ -14,6 +14,7 @@ import { ProgramInfoRequestApi } from "@/services/http/ProgramInfoRequestApi";
 import { ConfirmationOfEnrollmentApi } from "@/services/http/ConfirmationOfEnrollmentApi";
 import { SupportingUserApi } from "@/services/http/SupportingUserApi";
 import { NoteApi } from "@/services/http/NoteApi";
+import { RestrictionApi } from "@/services/http/RestrictionApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -32,6 +33,7 @@ const ApiClient = {
   ConfirmationOfEnrollment: new ConfirmationOfEnrollmentApi(),
   SupportingUserApi: new SupportingUserApi(),
   NoteApi: new NoteApi(),
+  RestrictionApi: new RestrictionApi(),
 };
 
 export default ApiClient;

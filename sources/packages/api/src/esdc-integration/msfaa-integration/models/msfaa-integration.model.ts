@@ -1,3 +1,4 @@
+import { RelationshipStatus } from "../../../database/entities";
 import { MSFAAResponseCancelledRecord } from "../msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "../msfaa-files/msfaa-response-received-record";
 
@@ -20,7 +21,7 @@ export interface MSFAARecord {
   surname: string;
   givenName: string;
   gender: string;
-  maritalStatus: string;
+  maritalStatus: RelationshipStatus;
   addressLine1: string;
   addressLine2: string;
   city: string;

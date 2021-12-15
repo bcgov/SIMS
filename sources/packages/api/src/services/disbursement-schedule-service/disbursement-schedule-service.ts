@@ -151,6 +151,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "application.applicationNumber",
         "application.data",
         "application.assessment",
+        "application.relationshipStatus",
+        "application.studentNumber",
         "offering.id",
         "offering.studyStartDate",
         "offering.studyEndDate",

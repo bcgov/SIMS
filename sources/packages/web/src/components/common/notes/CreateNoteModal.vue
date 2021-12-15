@@ -23,7 +23,12 @@ import { ref } from "vue";
 import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog, useFormioUtils } from "@/composables";
-import { NoteBaseDTO, InstitutionNoteType, NoteEntityType } from "@/types";
+import {
+  NoteBaseDTO,
+  InstitutionNoteType,
+  StudentNoteType,
+  NoteEntityType,
+} from "@/types";
 export default {
   components: { ModalDialogBase, formio },
   props: {
@@ -46,6 +51,11 @@ export default {
       const options = [];
       if (props.entityType === NoteEntityType.Institution) {
         for (const noteType in InstitutionNoteType) {
+          options.push({ label: noteType, value: noteType });
+        }
+      }
+      if (props.entityType === NoteEntityType.Student) {
+        for (const noteType in StudentNoteType) {
           options.push({ label: noteType, value: noteType });
         }
       }

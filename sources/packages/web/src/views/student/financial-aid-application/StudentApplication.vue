@@ -47,7 +47,7 @@ import { ProgramYearService } from "@/services/ProgramYearService";
 
 export default {
   components: { formio, ModalDialogBase },
-  setup(props: any) {
+  setup() {
     const initialData = ref({});
     const router = useRouter();
     const toast = useToastMessage();
