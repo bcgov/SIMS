@@ -36,7 +36,6 @@ import {
 } from "../../route-controllers/institution/models/institution-user-type-role.res.dto";
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
-import { InstitutionUserAndCount } from "../../route-controllers/institution/models/institution.user.res.dto";
 import {
   databaseFieldOfUserDataTable,
   FieldSortOrder,

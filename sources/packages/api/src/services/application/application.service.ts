@@ -40,10 +40,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   databaseFieldOfApplicationDataTable,
 } from "../../utilities";
-import {
-  ApplicationSummaryDTO,
-  StudentApplicationAndCount,
-} from "../../route-controllers/application/models/application.model";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
