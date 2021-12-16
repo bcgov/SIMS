@@ -14,13 +14,20 @@
       />
     </div>
     <div>
-      <v-btn @click="searchUserTable()" color="primary" tile class="ml-2">
+      <v-btn
+        @click="searchUserTable()"
+        tile
+        class="ml-2 primary-btn-background"
+      >
         <font-awesome-icon icon="search" />
       </v-btn>
     </div>
     <div v-if="clientType === ClientIdType.Institution" class="mx-2">
-      <v-btn class="float-right" @click="openNewUserModal()" color="primary">
-        <v-icon size="25" left> mdi-plus-circle </v-icon>
+      <v-btn
+        class="float-right primary-btn-background"
+        @click="openNewUserModal()"
+      >
+        <font-awesome-icon icon="external-link-square-alt" class="mr-2" />
         Add New User
       </v-btn>
 
@@ -75,12 +82,11 @@
       <Column :field="UserFields.IsActive" header="Status"
         ><template #body="slotProps">
           <StatusBadge
-            v-if="slotProps.data.isActive"
-            :status="GeneralStatusForBadge.Active"
-          />
-          <StatusBadge
-            v-else
-            :status="GeneralStatusForBadge.InActive"
+            :status="
+              slotProps.data.isActive
+                ? GeneralStatusForBadge.Active
+                : GeneralStatusForBadge.InActive
+            "
           /> </template
       ></Column>
       <Column
@@ -128,7 +134,6 @@ import { ref, onMounted } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import Tooltip from "primevue/tooltip";
 import { useToast } from "primevue/usetoast";
 import { useAuth } from "@/composables";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -153,9 +158,6 @@ export default {
     ContentGroup,
     StatusBadge,
     InputSwitch,
-  },
-  directives: {
-    tooltip: Tooltip,
   },
   props: {
     clientType: {
@@ -265,10 +267,10 @@ export default {
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
       await getAllInstitutionUsers(
-        event?.page,
-        event?.rows,
-        event?.sortField,
-        event?.sortOrder,
+        event.page,
+        event.rows,
+        event.sortField,
+        event.sortOrder,
       );
       loading.value = false;
     };

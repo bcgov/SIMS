@@ -445,7 +445,7 @@ export class StudentController extends BaseController {
    * This API will be used by students.
    * @queryParm page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, limit of the page if nothing is
+   * @queryParm pageLimit, page size or records per page, if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @queryParm sortField, field to be sorted
    * @queryParm sortOrder, order to be sorted

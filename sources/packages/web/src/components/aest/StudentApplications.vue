@@ -69,17 +69,17 @@
             "
           >
             <v-btn :disabled="hasRestriction" plain>
-              <v-icon
-                size="25"
+              <font-awesome-icon
+                icon="pen"
+                class="mr-2"
                 v-tooltip="'Click To Edit this Application'"
                 @click="
                   slotProps.data.status !== ApplicationStatus.draft
                     ? confirmEditApplication(slotProps.data.id)
                     : editApplicaion(slotProps.data.id)
                 "
-                >mdi-pencil</v-icon
-              ></v-btn
-            >
+              />
+            </v-btn>
             <v-btn :disabled="hasRestriction" plain>
               <v-icon
                 size="25"
@@ -127,13 +127,9 @@ import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import Tooltip from "primevue/tooltip";
 
 export default {
   components: { Status, ConfirmEditApplication, CancelApplication },
-  directives: {
-    tooltip: Tooltip,
-  },
   props: {
     clientType: {
       type: String,
@@ -211,10 +207,10 @@ export default {
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
       await getStudentApplications(
-        event?.page,
-        event?.rows,
-        event?.sortField,
-        event?.sortOrder,
+        event.page,
+        event.rows,
+        event.sortField,
+        event.sortOrder,
       );
       loading.value = false;
     };

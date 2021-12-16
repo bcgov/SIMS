@@ -564,8 +564,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         return {
           applicationNumber: application.applicationNumber,
           id: application.id,
-          studyStartPeriod: application.offering?.studyStartDate ?? "",
-          studyEndPeriod: application.offering?.studyEndDate ?? "",
+          studyStartPeriod: application.offering?.studyStartDate
+            ? application.offering?.studyStartDate
+            : "",
+          studyEndPeriod: application.offering?.studyEndDate
+            ? application.offering?.studyEndDate
+            : "",
           // TODO: when application name is captured, update the below line
           applicationName: "Financial Aid Application",
           // TODO: when each status date are captured updated below line
@@ -595,7 +599,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     pageLimit = DEFAULT_PAGE_LIMIT,
     sortOrder = FieldSortOrder.ASC,
   ): Promise<[Application[], number]> {
-    const application = this.repo
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
@@ -616,12 +620,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       sortField !== "status" &&
       databaseFieldOfApplicationDataTable(sortField)
     ) {
-      application.orderBy(
+      applicationQuery.orderBy(
         databaseFieldOfApplicationDataTable(sortField),
         sortOrder,
       );
     } else {
-      application.orderBy(
+      applicationQuery.orderBy(
         `CASE application.applicationStatus
               WHEN '${ApplicationStatus.draft}' THEN 1
               WHEN '${ApplicationStatus.submitted}' THEN 2
@@ -637,10 +641,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     // pagination
-    application.limit(pageLimit).offset(page * pageLimit);
+    applicationQuery.limit(pageLimit).offset(page * pageLimit);
 
     // result
-    return application.getManyAndCount();
+    return applicationQuery.getManyAndCount();
   }
 
   /**
@@ -661,7 +665,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     status?: ApplicationStatus,
     applicationId?: number,
   ): Promise<Application> {
-    let query = this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .select([
         "application",
