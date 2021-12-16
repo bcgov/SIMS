@@ -32,6 +32,7 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
+  transformToInstitutionUserRespDto,
 } from "../../utilities";
 import {
   InstitutionLocationUserAuthDto,
@@ -59,7 +60,11 @@ import {
 } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { Institution, InstitutionLocation } from "../../database/entities";
+import {
+  Institution,
+  InstitutionLocation,
+  InstitutionUser,
+} from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -193,7 +198,7 @@ export class InstitutionController extends BaseController {
         "The user has no institution associated with.",
       );
     }
-    return this.institutionService.getAllUsersAndCount(
+    const institutionUserAndCount = await this.institutionService.allUsers(
       searchName,
       sortField,
       institution.id,
@@ -201,6 +206,14 @@ export class InstitutionController extends BaseController {
       pageLimit,
       sortOrder,
     );
+    return {
+      users: institutionUserAndCount[0].map(
+        (eachInstitutionUser: InstitutionUser) => {
+          return transformToInstitutionUserRespDto(eachInstitutionUser);
+        },
+      ),
+      totalUsers: institutionUserAndCount[1],
+    };
   }
 
   /**
@@ -619,7 +632,7 @@ export class InstitutionController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<InstitutionUserAndCount> {
-    return this.institutionService.getAllUsersAndCount(
+    const institutionUserAndCount = await this.institutionService.allUsers(
       searchName,
       sortField,
       institutionId,
@@ -627,5 +640,13 @@ export class InstitutionController extends BaseController {
       pageLimit,
       sortOrder,
     );
+    return {
+      users: institutionUserAndCount[0].map(
+        (eachInstitutionUser: InstitutionUser) => {
+          return transformToInstitutionUserRespDto(eachInstitutionUser);
+        },
+      ),
+      totalUsers: institutionUserAndCount[1],
+    };
   }
 }

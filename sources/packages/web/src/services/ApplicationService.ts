@@ -112,7 +112,7 @@ export class ApplicationService {
    * @param sortOrder, order to be sorted
    * @returns StudentApplicationAndCount
    */
-  async getAllApplicationsForStudent(
+  async getAllApplicationAndCount(
     studentId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
@@ -127,6 +127,6 @@ export class ApplicationService {
           : FieldSortOrder.ASC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
-    return ApiClient.Application.getAllApplicationsForStudent(URL);
+    return ApiClient.Application.getAllApplicationAndCount(URL);
   }
 }

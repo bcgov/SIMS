@@ -43,7 +43,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApplicationStatus } from "../../database/entities";
+import { ApplicationStatus, Application } from "../../database/entities";
 import { ApiProcessError } from "../../types";
 import {
   dateString,
@@ -51,6 +51,7 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
+  transformToApplicationSummaryDTO,
 } from "../../utilities";
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -455,12 +456,20 @@ export class ApplicationController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<StudentApplicationAndCount> {
-    return this.applicationService.getStudentAppicationAndProcessDTO(
-      sortField,
-      studentId,
-      page,
-      pageLimit,
-      sortOrder,
-    );
+    const applicationsAndCount =
+     await this.applicationService.getAllStudentApplications(
+        sortField,
+        studentId,
+        page,
+        pageLimit,
+        sortOrder,
+      );
+
+    return {
+      applications: applicationsAndCount[0].map((application: Application) => {
+        return transformToApplicationSummaryDTO(application);
+      }),
+      totalApplications: applicationsAndCount[1],
+    };
   }
 }

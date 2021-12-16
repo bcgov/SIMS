@@ -96,24 +96,22 @@
         ><template #body="slotProps">
           <span v-if="slotProps.data.userName !== parsedToken?.userName">
             <v-btn plain>
-              <v-icon
-                size="25"
+              <font-awesome-icon
+                icon="pen"
                 v-if="slotProps.data.isActive"
                 right
-                class="mr-2"
                 @click="editInstitutionUser(slotProps.data.userName)"
                 v-tooltip="'Edit User'"
               >
-                mdi-pencil </v-icon
-              ><v-icon
-                size="25"
+              </font-awesome-icon
+              ><font-awesome-icon
+                icon="pen"
                 v-else
                 right
-                class="mr-2"
                 v-tooltip="'Disabled User Cannot Be Edited'"
               >
                 mdi-pencil
-              </v-icon>
+              </font-awesome-icon>
             </v-btn>
             <InputSwitch
               v-model="slotProps.data.isActive"

@@ -44,7 +44,7 @@ import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationAndCount } from "../application/models/application.model";
-import { Student } from "../../database/entities";
+import { Student, Application } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -55,6 +55,7 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
+  transformToApplicationSummaryDTO,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
@@ -468,13 +469,21 @@ export class StudentController extends BaseController {
         `No student was found with the student id ${userToken.userId}`,
       );
     }
-    return this.applicationService.getStudentAppicationAndProcessDTO(
-      sortField,
-      existingStudent.id,
-      page,
-      pageLimit,
-      sortOrder,
-    );
+    const applicationsAndCount =
+      await this.applicationService.getAllStudentApplications(
+        sortField,
+        existingStudent.id,
+        page,
+        pageLimit,
+        sortOrder,
+      );
+
+    return {
+      applications: applicationsAndCount[0].map((application: Application) => {
+        return transformToApplicationSummaryDTO(application);
+      }),
+      totalApplications: applicationsAndCount[1],
+    };
   }
 
   /**

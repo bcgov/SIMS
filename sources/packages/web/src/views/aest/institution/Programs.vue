@@ -9,17 +9,20 @@
               name="searchProgramName"
               v-model="searchProgramName"
               placeholder="Search Program Name"
+              @keyup.enter="goToSearchProgramName(searchProgramName)"
             />
           </v-col>
           <v-col>
             <v-btn
-              color="primary"
+              class="primary-btn-background"
               @click="goToSearchProgramName(searchProgramName)"
               >Search</v-btn
             >
           </v-col>
           <v-col>
-            <v-btn color="primary" @click="goToSearchProgramName('')"
+            <v-btn
+              class="primary-btn-background"
+              @click="goToSearchProgramName('')"
               >Clear</v-btn
             >
           </v-col>

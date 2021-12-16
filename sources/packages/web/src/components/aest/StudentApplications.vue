@@ -81,12 +81,12 @@
               />
             </v-btn>
             <v-btn :disabled="hasRestriction" plain>
-              <v-icon
-                size="25"
+              <font-awesome-icon
+                icon="trash"
                 v-tooltip="'Click To Cancel this Application'"
                 @click="openConfirmCancel(slotProps.data.id)"
-                >mdi-trash-can-outline</v-icon
-              >
+              />
+              
             </v-btn>
           </span>
         </span>
@@ -178,7 +178,7 @@ export default {
           );
           break;
         case ClientIdType.AEST:
-          applicationAndCount.value = await ApplicationService.shared.getAllApplicationsForStudent(
+          applicationAndCount.value = await ApplicationService.shared.getAllApplicationAndCount(
             props.studentId,
             page,
             pageCount,

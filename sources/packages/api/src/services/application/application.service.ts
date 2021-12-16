@@ -544,54 +544,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param studentId student id .
    * @returns student Application list.
    */
-  async getStudentAppicationAndProcessDTO(
-    sortField: string,
-    studentId: number,
-    page = DEFAULT_PAGE_NUMBER,
-    pageLimit = DEFAULT_PAGE_LIMIT,
-    sortOrder = FieldSortOrder.ASC,
-  ): Promise<StudentApplicationAndCount> {
-    const applicationsAndCount = await this.getAllStudentApplications(
-      sortField,
-      studentId,
-      page,
-      pageLimit,
-      sortOrder,
-    );
-
-    return {
-      applications: applicationsAndCount[0].map((application: Application) => {
-        return {
-          applicationNumber: application.applicationNumber,
-          id: application.id,
-          studyStartPeriod: application.offering?.studyStartDate
-            ? application.offering?.studyStartDate
-            : "",
-          studyEndPeriod: application.offering?.studyEndDate
-            ? application.offering?.studyEndDate
-            : "",
-          // TODO: when application name is captured, update the below line
-          applicationName: "Financial Aid Application",
-          // TODO: when each status date are captured updated below line
-          submitted: "",
-          status: application.applicationStatus,
-        } as ApplicationSummaryDTO;
-      }),
-      totalApplications: applicationsAndCount[1],
-    };
-  }
-
-  /**
-   * get all student applications.
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param sortField, field to be sorted
-   * @param sortOrder, order to be sorted
-   * @param studentId student id .
-   * @returns student Application list.
-   */
   async getAllStudentApplications(
     sortField: string,
     studentId: number,

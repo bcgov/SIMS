@@ -166,7 +166,7 @@ export class ApplicationApi extends HttpBaseClient {
    * @param url to be send
    * @returns
    */
-  public async getAllApplicationsForStudent(
+  public async getAllApplicationAndCount(
     url: string,
   ): Promise<StudentApplicationAndCount> {
     const response = await this.getCall(url);

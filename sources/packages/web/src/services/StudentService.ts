@@ -84,7 +84,7 @@ export class StudentService {
           : FieldSortOrder.ASC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
-    return ApiClient.Application.getAllApplicationsForStudent(URL);
+    return ApiClient.Application.getAllApplicationAndCount(URL);
   }
 
   public async checkStudent(): Promise<boolean> {
