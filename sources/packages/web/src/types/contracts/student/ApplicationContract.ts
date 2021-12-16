@@ -136,7 +136,7 @@ export interface ApplicationSummaryDTO {
   studyEndPeriod: string;
   id: number;
   applicationName: string;
-  award: string;
+  submitted: string;
   status: string;
 }
 
@@ -187,4 +187,9 @@ export interface Assessment {
   totalFederalContribution: number;
   totalProvincialContribution: number;
   otherAllowableCost: number;
+}
+
+export interface StudentApplicationAndCount {
+  applications: ApplicationSummaryDTO[];
+  totalApplications: number;
 }

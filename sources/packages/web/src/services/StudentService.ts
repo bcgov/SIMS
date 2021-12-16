@@ -4,11 +4,16 @@ import {
   StudentContact,
   CreateStudent,
   StudentFormInfo,
-  StudentApplication,
+  StudentApplicationAndCount,
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
-} from "@/types/contracts/StudentContract";
+  DataTableSortOrder,
+  StudentApplicationFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  FieldSortOrder,
+} from "@/types";
 
 export class StudentService {
   // Share Instance
@@ -55,8 +60,31 @@ export class StudentService {
     return ApiClient.Students.applyForPDStatus();
   }
 
-  async getAllStudentApplications(): Promise<StudentApplication[]> {
-    return ApiClient.Students.getAllStudentApplications();
+  /**
+   * Get all the applications for a student
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns StudentApplicationAndCount
+   */
+  async getAllStudentApplications(
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    sortField?: StudentApplicationFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<StudentApplicationAndCount> {
+    let URL = `students/application-summary?page=${page}&pageLimit=${pageCount}`;
+    if (sortField && sortOrder) {
+      const sortDBOrder =
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
+      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    }
+    return ApiClient.Application.getAllApplicationAndCount(URL);
   }
 
   public async checkStudent(): Promise<boolean> {

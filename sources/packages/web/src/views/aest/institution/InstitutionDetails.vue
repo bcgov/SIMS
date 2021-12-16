@@ -1,21 +1,17 @@
 <template>
-  <h5 class="text-muted">
-    <a @click="goBack()">
-      <v-icon left> mdi-arrow-left </v-icon> Back to Institution</a
-    >
-  </h5>
-  <full-page-container>
-    <p class="category-header-large color-blue">
-      {{ institutionBasicDetail.operatingName }}
-      <designation-status-badge
-        class="mb-4 ml-4"
-        designationStatus="DESIGNATED"
-      />
-    </p>
-    <!-- TODO:replace prime tabMenu with vuetify3-->
-    <TabMenu :model="items" />
-    <router-view />
-  </full-page-container>
+  <p class="text-muted category-header-medium">
+    Institution Details
+  </p>
+  <p class="category-header-large">
+    {{ institutionBasicDetail.operatingName }}
+    <designation-and-restriction-status-badge
+      class="mb-4 ml-4"
+      status="designated"
+    />
+  </p>
+  <!-- TODO:replace prime tabMenu with vuetify3-->
+  <TabMenu :model="items" />
+  <router-view />
 </template>
 
 <script lang="ts">
@@ -23,11 +19,10 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import DesignationStatusBadge from "@/components/generic/DesignationStatusBadge.vue";
+import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
 import { BasicInstitutionInfo } from "@/types";
 export default {
-  components: { FullPageContainer, DesignationStatusBadge },
+  components: { DesignationAndRestrictionStatusBadge },
   props: {
     institutionId: {
       type: Number,
@@ -37,6 +32,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const institutionBasicDetail = ref({} as BasicInstitutionInfo);
+    // TODO: replace all fa isons with fas as per figma with replace with vuetify3
     const items = ref([
       {
         label: "Profile",
@@ -90,7 +86,7 @@ export default {
       },
       {
         label: "Restrictions",
-        icon: "fa fa-window-close",
+        icon: "fa fa-times-circle-o",
         command: () => {
           router.push({
             name: AESTRoutesConst.INSTITUTION_RESTRICTIONS,
@@ -111,12 +107,6 @@ export default {
       },
     ]);
 
-    const goBack = () => {
-      router.push({
-        name: AESTRoutesConst.SEARCH_INSTITUTIONS,
-      });
-    };
-
     onMounted(async () => {
       institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
         props.institutionId,
@@ -124,7 +114,6 @@ export default {
     });
     return {
       institutionBasicDetail,
-      goBack,
       AESTRoutesConst,
       items,
     };

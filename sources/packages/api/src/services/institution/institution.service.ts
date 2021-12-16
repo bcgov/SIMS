@@ -37,11 +37,11 @@ import {
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 import {
+  databaseFieldOfUserDataTable,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
-} from "../../route-controllers/institution/models/institution-datatable";
-import { databaseFieldOfUserDataTable } from "../../utilities";
+} from "../../utilities";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -357,14 +357,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * service method to get all institution users with the
-   * given institutionId r.
-   * @queryParm page, page number if nothing is passed then
+   * given institutionId.
+   * @param page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, limit of the page if nothing is
+   * @param pageLimit, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm searchName, user's name keyword to be searched
-   * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, order to be sorted
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
    * @param institutionId institution id
    * @returns All the institution users for the given institution
    * with total count.
@@ -408,9 +408,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     // search by user's name
     if (searchName) {
       institutionUsers.andWhere(
-        "user.firstName Ilike :searchUser OR user.lastName Ilike :searchUser",
+        "CONCAT(user.firstName,  ' ', user.lastName ) ILIKE :searchUser",
         {
-          searchUser: `%${searchName}%`,
+          searchUser: `%${searchName.trim()}%`,
         },
       );
     }

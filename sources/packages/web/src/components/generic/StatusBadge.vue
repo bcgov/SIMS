@@ -10,7 +10,7 @@ status Badge
   </v-badge>
 </template>
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { GeneralStatusForBadge } from "@/types";
 
 export default {
@@ -55,6 +55,13 @@ export default {
           break;
       }
     };
+    watch(
+      () => props.status,
+      () => {
+        setStyles();
+      },
+    );
+
     onMounted(() => {
       setStyles();
     });

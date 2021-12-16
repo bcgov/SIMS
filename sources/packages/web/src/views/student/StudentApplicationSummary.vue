@@ -15,193 +15,41 @@
         /></span>
       </v-col>
       <v-col cols="12">
-        <DataTable :autoLayout="true" :value="myApplications" class="p-m-4">
-          <Column field="applicationNumber" header="Application #"> </Column>
-          <Column field="applicationName" header="Name"
-            ><template #body="slotProps">
-              <v-btn
-                plain
-                @click="goToApplication(slotProps.data.id)"
-                color="primary"
-                v-tooltip="'Click To View this Application'"
-                >{{ slotProps.data.applicationName }}
-              </v-btn>
-            </template>
-          </Column>
-          <Column field="studyStartPeriod" header="Study Period">
-            <template #body="slotProps">
-              <span>
-                {{ dateString(slotProps.data.studyStartPeriod) }} -
-                {{ dateString(slotProps.data.studyEndPeriod) }}
-              </span>
-            </template></Column
-          >
-          <Column field="award" header="Award"></Column>
-          <Column field="status" header="Status">
-            <template #body="slotProps">
-              <Status :statusValue="slotProps.data.status" />
-            </template>
-          </Column>
-          <Column field="id" header=""
-            ><template #body="slotProps">
-              <span
-                v-if="
-                  !(
-                    slotProps.data.status === ApplicationStatus.cancelled ||
-                    slotProps.data.status === ApplicationStatus.completed
-                  )
-                "
-              >
-                <v-btn :disabled="hasRestriction" plain>
-                  <v-icon
-                    size="25"
-                    v-tooltip="'Click To Edit this Application'"
-                    @click="
-                      slotProps.data.status !== ApplicationStatus.draft
-                        ? confirmEditApplication(slotProps.data.id)
-                        : editApplicaion(slotProps.data.id)
-                    "
-                    >mdi-pencil</v-icon
-                  ></v-btn
-                >
-                <v-btn :disabled="hasRestriction" plain>
-                  <v-icon
-                    size="25"
-                    v-tooltip="'Click To Cancel this Application'"
-                    @click="openConfirmCancel(slotProps.data.id)"
-                    >mdi-trash-can-outline</v-icon
-                  >
-                </v-btn>
-              </span>
-            </template>
-          </Column>
-        </DataTable>
+        <StudentApplications :clientType="ClientIdType.Student" />
       </v-col>
     </v-row>
-    <CancelApplication
-      :showModal="showModal"
-      :applicationId="selectedApplicationId"
-      @showHideCancelApplication="showHideCancelApplication"
-      @reloadData="loadApplicationSummary"
-    />
-    <ConfirmEditApplication ref="editApplicationModal" />
   </div>
 </template>
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
-import { useFormatters, ModalDialog } from "@/composables";
-import Tooltip from "primevue/tooltip";
-import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import {
-  ApplicationStatus,
-  ProgramYearOfApplicationDto,
-  StudentApplication,
-} from "@/types";
-import { ApplicationService } from "@/services/ApplicationService";
-import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import Status from "@/views/student/ApplicationStatus.vue";
+import { ApplicationStatus, ClientIdType } from "@/types";
+import StudentApplications from "@/components/aest/StudentApplications.vue";
 
 export default {
   components: {
     StartApplication,
-    DataTable,
-    Column,
-    CancelApplication,
-    ConfirmEditApplication,
     RestrictionBanner,
-    Status,
-  },
-  directives: {
-    tooltip: Tooltip,
+    StudentApplications,
   },
   setup() {
-    const showModal = ref(false);
-    const router = useRouter();
-    const selectedApplicationId = ref(0);
-    const { dateString } = useFormatters();
-    const myApplications = ref([] as StudentApplication[]);
-    const programYear = ref({} as ProgramYearOfApplicationDto);
-    const editApplicationModal = ref({} as ModalDialog<boolean>);
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
 
-    const openConfirmCancel = (id: number) => {
-      showModal.value = true;
-      selectedApplicationId.value = id;
-    };
-
-    const showHideCancelApplication = () => {
-      showModal.value = !showModal.value;
-    };
-
-    const goToApplication = (id: number) => {
-      return router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
-        params: {
-          id: id,
-        },
-      });
-    };
-
-    const loadApplicationSummary = async () => {
-      myApplications.value = await StudentService.shared.getAllStudentApplications();
-    };
-
-    const getProgramYear = async (applicationId: number) => {
-      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
-        applicationId,
-      );
-    };
-
-    const editApplicaion = async (applicationId: number) => {
-      await getProgramYear(applicationId);
-      router.push({
-        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-        params: {
-          selectedForm: programYear.value.formName,
-          programYearId: programYear.value.programYearId,
-          id: applicationId,
-        },
-      });
-    };
-
-    const confirmEditApplication = async (id: number) => {
-      if (await editApplicationModal.value.showModal()) {
-        editApplicaion(id);
-      }
-    };
-
     onMounted(async () => {
-      const [restrictions] = await Promise.all([
-        StudentService.shared.getStudentRestriction(),
-        loadApplicationSummary(),
-      ]);
+      const restrictions = await StudentService.shared.getStudentRestriction();
+
       hasRestriction.value = restrictions.hasRestriction;
       restrictionMessage.value = restrictions.restrictionMessage;
     });
 
     return {
-      myApplications,
-      goToApplication,
-      dateString,
-      openConfirmCancel,
-      showModal,
-      selectedApplicationId,
-      showHideCancelApplication,
-      loadApplicationSummary,
       ApplicationStatus,
-      editApplicaion,
-      editApplicationModal,
-      confirmEditApplication,
       hasRestriction,
       restrictionMessage,
+      ClientIdType,
     };
   },
 };

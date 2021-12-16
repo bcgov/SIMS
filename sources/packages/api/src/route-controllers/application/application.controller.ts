@@ -9,6 +9,7 @@ import {
   Post,
   Patch,
   UnprocessableEntityException,
+  Query,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -32,7 +33,7 @@ import {
   NOAApplicationDto,
   transformToApplicationDto,
   transformToApplicationDetailDto,
-  ApplicationSummaryDTO,
+  StudentApplicationAndCount,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -44,8 +45,14 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationStatus, Application } from "../../database/entities";
 import { ApiProcessError } from "../../types";
-import { dateString, getUserFullName } from "../../utilities";
-
+import {
+  dateString,
+  getUserFullName,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  transformToApplicationSummaryDTO,
+} from "../../utilities";
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
@@ -430,30 +437,39 @@ export class ApplicationController extends BaseController {
   /**
    * API to fetch all the applications that belong to student.
    * This API will be used by ministry users.
-   * @param applicationId
-   * @param userId
-   * @returns Application details
+   * @param studentId student id
+   * @queryParm page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @queryParm pageLimit, page size or records per page, if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @queryParm sortField, field to be sorted
+   * @queryParm sortOrder, order to be sorted
+   * @returns Student Application list with total count
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("student/:studentId/aest")
   async getSummaryByStudentId(
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
     @Param("studentId") studentId: number,
-  ): Promise<ApplicationSummaryDTO[]> {
-    const applications =
-      await this.applicationService.getAllStudentApplications(studentId);
-    return applications.map((application: Application) => {
-      return {
-        applicationNumber: application.applicationNumber,
-        id: application.id,
-        studyStartPeriod: application.offering?.studyStartDate ?? "",
-        studyEndPeriod: application.offering?.studyEndDate ?? "",
-        // TODO: when application name is captured, update the below line
-        applicationName: "Financial Aid Application",
-        // TODO: when award is captured, update the below line
-        award: "5500",
-        status: application.applicationStatus,
-      } as ApplicationSummaryDTO;
-    });
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+  ): Promise<StudentApplicationAndCount> {
+    const applicationsAndCount =
+     await this.applicationService.getAllStudentApplications(
+        sortField,
+        studentId,
+        page,
+        pageLimit,
+        sortOrder,
+      );
+
+    return {
+      applications: applicationsAndCount[0].map((application: Application) => {
+        return transformToApplicationSummaryDTO(application);
+      }),
+      totalApplications: applicationsAndCount[1],
+    };
   }
 }

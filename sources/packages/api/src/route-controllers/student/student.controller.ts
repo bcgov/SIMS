@@ -43,8 +43,8 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
-import { StudentApplicationDTO } from "../application/models/application.model";
-import { Application, Student } from "../../database/entities";
+import { StudentApplicationAndCount } from "../application/models/application.model";
+import { Student, Application } from "../../database/entities";
 import {
   determinePDStatus,
   deliveryMethod,
@@ -52,6 +52,10 @@ import {
   defaultFileFilter,
   uploadLimits,
   credentialTypeToDisplay,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  transformToApplicationSummaryDTO,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
@@ -436,11 +440,27 @@ export class StudentController extends BaseController {
 
     stream.pipe(response);
   }
+
+  /**
+   * API to fetch all the applications that belong to student.
+   * This API will be used by students.
+   * @queryParm page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @queryParm pageLimit, page size or records per page, if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @queryParm sortField, field to be sorted
+   * @queryParm sortOrder, order to be sorted
+   * @returns Student Application list with total count
+   */
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("application-summary")
   async getStudentApplicationSummary(
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
     @UserToken() userToken: IUserToken,
-  ): Promise<StudentApplicationDTO[]> {
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+  ): Promise<StudentApplicationAndCount> {
     const existingStudent = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
@@ -449,22 +469,21 @@ export class StudentController extends BaseController {
         `No student was found with the student id ${userToken.userId}`,
       );
     }
-    const application = await this.applicationService.getAllStudentApplications(
-      existingStudent.id,
-    );
-    return application.map((eachApplication: Application) => {
-      return {
-        applicationNumber: eachApplication.applicationNumber,
-        id: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
-        // TODO: when application name is captured, update the below line
-        applicationName: "Financial Aid Application",
-        // TODO: when award is captured, update the below line
-        award: "5500",
-        status: eachApplication.applicationStatus,
-      };
-    }) as StudentApplicationDTO[];
+    const applicationsAndCount =
+      await this.applicationService.getAllStudentApplications(
+        sortField,
+        existingStudent.id,
+        page,
+        pageLimit,
+        sortOrder,
+      );
+
+    return {
+      applications: applicationsAndCount[0].map((application: Application) => {
+        return transformToApplicationSummaryDTO(application);
+      }),
+      totalApplications: applicationsAndCount[1],
+    };
   }
 
   /**
@@ -536,6 +555,10 @@ export class StudentController extends BaseController {
     @Param("studentId") studentId: number,
   ): Promise<StudentDetailDTO> {
     const student = await this.studentService.findById(studentId);
+    const studentRestrictionStatus =
+      await this.studentRestrictionService.getStudentRestrictionsByUserId(
+        student.user.id,
+      );
     const address = student.contactInfo.addresses[0];
     return {
       firstName: student.user.firstName,
@@ -553,6 +576,7 @@ export class StudentController extends BaseController {
         postalCode: address.postalCode,
       },
       pdStatus: determinePDStatus(student),
+      hasRestriction: studentRestrictionStatus.hasRestriction,
     } as StudentDetailDTO;
   }
 }

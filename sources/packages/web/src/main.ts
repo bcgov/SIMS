@@ -33,7 +33,7 @@ import TabMenu from "primevue/tabmenu";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 import Timeline from "primevue/timeline";
-
+import Tooltip from "primevue/tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faMapPin,
@@ -41,9 +41,25 @@ import {
   faCircle,
   faSearch,
   faPlus,
+  faTimes,
+  faExternalLinkSquareAlt,
+  faPen,
+  faCog,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(faMapPin, faCheck, faCircle, faSearch, faPlus);
+library.add(
+  faMapPin,
+  faCheck,
+  faCircle,
+  faSearch,
+  faPlus,
+  faTimes,
+  faExternalLinkSquareAlt,
+  faPen,
+  faCog,
+  faTrash
+);
 
 // Configure the UI validations rules globally available.
 configValidationRules();
@@ -74,5 +90,6 @@ AppConfigService.shared.init().then(() => {
     .component("TabMenu", TabMenu)
     .component("font-awesome-icon", FontAwesomeIcon)
     .component("Timeline", Timeline)
+    .directive("tooltip", Tooltip)
     .mount("#app");
 });

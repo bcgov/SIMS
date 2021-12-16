@@ -197,8 +197,12 @@ export class InstitutionLocationsController extends BaseController {
       return {
         applicationNumber: eachApplication.applicationNumber,
         applicationId: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
+        studyStartPeriod: eachApplication.offering?.studyStartDate
+          ? eachApplication.offering?.studyStartDate
+          : "",
+        studyEndPeriod: eachApplication.offering?.studyEndDate
+          ? eachApplication.offering?.studyEndDate
+          : "",
         applicationStatus: eachApplication.applicationStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };

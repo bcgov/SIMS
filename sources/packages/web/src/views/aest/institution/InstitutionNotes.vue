@@ -1,35 +1,39 @@
 <template>
-  <v-row class="mb-2 mt-2">
-    <v-col cols="3" class="category-header-large">Notes</v-col>
-    <v-col class="text-center">
-      <div class="float-right">
-        <!-- Prime vue button used here as Vuetify alpha version is not supporting rounded buttons.
+  <v-card class="mt-4">
+    <div class="mx-5 py-4">
+      <v-row class="mb-2 mt-2">
+        <v-col cols="3" class="category-header-large">Notes</v-col>
+        <v-col class="text-center">
+          <div class="float-right">
+            <!-- Prime vue button used here as Vuetify alpha version is not supporting rounded buttons.
              TODO: when moving to vuetify change the button component to v-btn of vuetify -->
-        <Button
-          label="All Notes"
-          class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
-          :class="{ 'primary-btn-background': !filteredNoteType }"
-          @click="filterNotes()"
-        />
-        <Button
-          v-for="item in InstitutionNoteType"
-          :key="item"
-          :label="item"
-          class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
-          :class="{ 'primary-btn-background': filteredNoteType === item }"
-          @click="filterNotes(item)"
-        />
-      </div>
-    </v-col>
-  </v-row>
-  <content-group>
-    <Notes
-      title="Past Notes"
-      :entityType="NoteEntityType.Institution"
-      :notes="notes"
-      @submitData="addNote"
-    ></Notes>
-  </content-group>
+            <Button
+              label="All Notes"
+              class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
+              :class="{ 'primary-btn-background': !filteredNoteType }"
+              @click="filterNotes()"
+            />
+            <Button
+              v-for="item in InstitutionNoteType"
+              :key="item"
+              :label="item"
+              class="p-button-rounded mr-2 secondary-btn-background-lt filter-button"
+              :class="{ 'primary-btn-background': filteredNoteType === item }"
+              @click="filterNotes(item)"
+            />
+          </div>
+        </v-col>
+      </v-row>
+      <content-group>
+        <Notes
+          title="Past Notes"
+          :entityType="NoteEntityType.Institution"
+          :notes="notes"
+          @submitData="addNote"
+        ></Notes>
+      </content-group>
+    </div>
+  </v-card>
 </template>
 
 <script lang="ts">

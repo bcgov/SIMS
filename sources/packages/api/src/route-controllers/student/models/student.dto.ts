@@ -77,4 +77,5 @@ export interface StudentDetailDTO {
   contact: StudentContact;
   pdVerified: boolean;
   pdStatus: StudentPDStatus;
+  hasRestriction: boolean;
 }

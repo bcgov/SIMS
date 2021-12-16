@@ -35,6 +35,10 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  databaseFieldOfApplicationDataTable,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -529,11 +533,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * get all student applications.
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
    * @param studentId student id .
    * @returns student Application list.
    */
-  async getAllStudentApplications(studentId: number): Promise<Application[]> {
-    return this.repo
+  async getAllStudentApplications(
+    sortField: string,
+    studentId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    sortOrder = FieldSortOrder.ASC,
+  ): Promise<[Application[], number]> {
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
@@ -546,21 +562,39 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.student_id = :studentId", { studentId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .orderBy(
+      });
+
+    // sorting
+    if (
+      sortField &&
+      sortField !== "status" &&
+      databaseFieldOfApplicationDataTable(sortField)
+    ) {
+      applicationQuery.orderBy(
+        databaseFieldOfApplicationDataTable(sortField),
+        sortOrder,
+      );
+    } else {
+      applicationQuery.orderBy(
         `CASE application.applicationStatus
-            WHEN '${ApplicationStatus.draft}' THEN 1
-            WHEN '${ApplicationStatus.submitted}' THEN 2
-            WHEN '${ApplicationStatus.inProgress}' THEN 3
-            WHEN '${ApplicationStatus.assessment}' THEN 4
-            WHEN '${ApplicationStatus.enrollment}' THEN 5
-            WHEN '${ApplicationStatus.completed}' THEN 6
-            WHEN '${ApplicationStatus.cancelled}' THEN 7
-            ELSE 8
-          END`,
-      )
-      .addOrderBy("application.applicationNumber")
-      .getMany();
+              WHEN '${ApplicationStatus.draft}' THEN 1
+              WHEN '${ApplicationStatus.submitted}' THEN 2
+              WHEN '${ApplicationStatus.inProgress}' THEN 3
+              WHEN '${ApplicationStatus.assessment}' THEN 4
+              WHEN '${ApplicationStatus.enrollment}' THEN 5
+              WHEN '${ApplicationStatus.completed}' THEN 6
+              WHEN '${ApplicationStatus.cancelled}' THEN 7
+              ELSE 8
+            END`,
+        sortOrder,
+      );
+    }
+
+    // pagination
+    applicationQuery.limit(pageLimit).offset(page * pageLimit);
+
+    // result
+    return applicationQuery.getManyAndCount();
   }
 
   /**
@@ -581,7 +615,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     status?: ApplicationStatus,
     applicationId?: number,
   ): Promise<Application> {
-    let query = this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .select([
         "application",

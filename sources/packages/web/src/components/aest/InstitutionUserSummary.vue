@@ -1,131 +1,130 @@
 <template>
-  <v-container>
-    <div class="row">
-      <div class="col align-self-start">
-        <span class="category-header-large color-blue">
-          All Users({{ usersListAndCount.totalUsers }})
-        </span>
-      </div>
-      <div>
-        <InputText
-          v-model="searchBox"
-          placeholder="Search User"
-          @keyup.enter="searchUserTable()"
-        />
-      </div>
-      <div>
-        <v-btn @click="searchUserTable()" color="primary" tile class="ml-2">
-          <font-awesome-icon icon="search" />
-        </v-btn>
-      </div>
-      <div v-if="clientType === ClientIdType.Institution" class="mx-2">
-        <v-btn class="float-right" @click="openNewUserModal()" color="primary">
-          <v-icon size="25" left> mdi-plus-circle </v-icon>
-          Add New User
-        </v-btn>
-
-        <!-- Add user -->
-        <AddInstitutionUser
-          :userType="userType"
-          :showAddUser="showAddUser"
-          @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
-
-        <!-- edit user -->
-        <EditInstitutionUser
-          :userType="userType"
-          :showEditUser="showEditUser"
-          :institutionUserName="institutionUserName"
-          @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
-      </div>
+  <!-- This component is shared between ministry and student users -->
+  <div class="row">
+    <div class="col align-self-start">
+      <span class="category-header-large color-blue">
+        All Users({{ usersListAndCount.totalUsers }})
+      </span>
     </div>
-    <ContentGroup class="mt-2">
-      <DataTable
-        :value="usersListAndCount.users"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="usersListAndCount.totalUsers"
-        @page="paginationAndSortEvent($event)"
-        @sort="paginationAndSortEvent($event)"
-        :loading="loading"
+    <div>
+      <InputText
+        v-model="searchBox"
+        placeholder="Search User"
+        @keyup.enter="searchUserTable()"
+      />
+    </div>
+    <div>
+      <v-btn
+        @click="searchUserTable()"
+        tile
+        class="ml-2 primary-btn-background"
       >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          :field="UserFields.DisplayName"
-          header="Name"
-          sortable="true"
-        ></Column>
-        <Column
-          :field="UserFields.Email"
-          header="Email"
-          sortable="true"
-        ></Column>
-        <Column :field="UserFields.UserType" header="User Type"></Column>
-        <Column :field="UserFields.Role" header="Role"></Column>
-        <Column :field="UserFields.Location" header="Locations"
-          ><template #body="slotProps">
-            <ul v-for="location in slotProps.data.location" :key="location">
-              <li>{{ location }}</li>
-            </ul></template
-          ></Column
-        >
-        <Column :field="UserFields.IsActive" header="Status"
-          ><template #body="slotProps">
-            <StatusBadge
-              v-if="slotProps.data.isActive"
-              :status="GeneralStatusForBadge.Active"
+        <font-awesome-icon icon="search" />
+      </v-btn>
+    </div>
+    <div v-if="clientType === ClientIdType.Institution" class="mx-2">
+      <v-btn
+        class="float-right primary-btn-background"
+        @click="openNewUserModal()"
+      >
+        <font-awesome-icon icon="external-link-square-alt" class="mr-2" />
+        Add New User
+      </v-btn>
+
+      <!-- Add user -->
+      <AddInstitutionUser
+        :userType="userType"
+        :showAddUser="showAddUser"
+        @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
+        @getAllInstitutionUsers="getAllInstitutionUsers"
+      />
+
+      <!-- edit user -->
+      <EditInstitutionUser
+        :userType="userType"
+        :showEditUser="showEditUser"
+        :institutionUserName="institutionUserName"
+        @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+        @getAllInstitutionUsers="getAllInstitutionUsers"
+      />
+    </div>
+  </div>
+  <ContentGroup class="mt-2">
+    <DataTable
+      :value="usersListAndCount.users"
+      :lazy="true"
+      :paginator="true"
+      :rows="DEFAULT_PAGE_LIMIT"
+      :rowsPerPageOptions="PAGINATION_LIST"
+      :totalRecords="usersListAndCount.totalUsers"
+      @page="paginationAndSortEvent($event)"
+      @sort="paginationAndSortEvent($event)"
+      :loading="loading"
+    >
+      <template #empty>
+        <p class="text-center font-weight-bold">No records found.</p>
+      </template>
+      <Column
+        :field="UserFields.DisplayName"
+        header="Name"
+        sortable="true"
+      ></Column>
+      <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
+      <Column :field="UserFields.UserType" header="User Type"></Column>
+      <Column :field="UserFields.Role" header="Role"></Column>
+      <Column :field="UserFields.Location" header="Locations"
+        ><template #body="slotProps">
+          <ul v-for="location in slotProps.data.location" :key="location">
+            <li>{{ location }}</li>
+          </ul></template
+        ></Column
+      >
+      <Column :field="UserFields.IsActive" header="Status"
+        ><template #body="slotProps">
+          <StatusBadge
+            :status="
+              slotProps.data.isActive
+                ? GeneralStatusForBadge.Active
+                : GeneralStatusForBadge.InActive
+            "
+          /> </template
+      ></Column>
+      <Column
+        field=""
+        header="Actions"
+        v-if="clientType === ClientIdType.Institution"
+        ><template #body="slotProps">
+          <span v-if="slotProps.data.userName !== parsedToken?.userName">
+            <v-btn plain>
+              <font-awesome-icon
+                icon="pen"
+                v-if="slotProps.data.isActive"
+                right
+                @click="editInstitutionUser(slotProps.data.userName)"
+                v-tooltip="'Edit User'"
+              >
+              </font-awesome-icon
+              ><font-awesome-icon
+                icon="pen"
+                v-else
+                right
+                v-tooltip="'Disabled User Cannot Be Edited'"
+              >
+                mdi-pencil
+              </font-awesome-icon>
+            </v-btn>
+            <InputSwitch
+              v-model="slotProps.data.isActive"
+              v-tooltip="
+                slotProps.data.isActive ? 'Disable User' : 'Enable User'
+              "
+              @change="updateUserStatus(slotProps.data)"
             />
-            <StatusBadge
-              v-else
-              :status="GeneralStatusForBadge.InActive"
-            /> </template
-        ></Column>
-        <Column
-          field=""
-          header="Actions"
-          v-if="clientType === ClientIdType.Institution"
-          ><template #body="slotProps">
-            <span v-if="slotProps.data.userName !== parsedToken?.userName">
-              <v-btn plain>
-                <v-icon
-                  size="25"
-                  v-if="slotProps.data.isActive"
-                  right
-                  class="mr-2"
-                  @click="editInstitutionUser(slotProps.data.userName)"
-                  v-tooltip="'Edit User'"
-                >
-                  mdi-pencil </v-icon
-                ><v-icon
-                  size="25"
-                  v-else
-                  right
-                  class="mr-2"
-                  v-tooltip="'Disabled User Cannot Be Edited'"
-                >
-                  mdi-pencil
-                </v-icon>
-              </v-btn>
-              <InputSwitch
-                v-model="slotProps.data.isActive"
-                v-tooltip="
-                  slotProps.data.isActive ? 'Disable User' : 'Enable User'
-                "
-                @change="updateUserStatus(slotProps.data)"
-              />
-            </span>
-          </template>
-        </Column>
-      </DataTable>
-    </ContentGroup>
-  </v-container>
+          </span>
+        </template>
+      </Column>
+    </DataTable>
+  </ContentGroup>
 </template>
 
 <script lang="ts">
@@ -133,7 +132,6 @@ import { ref, onMounted } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
-import Tooltip from "primevue/tooltip";
 import { useToast } from "primevue/usetoast";
 import { useAuth } from "@/composables";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -158,9 +156,6 @@ export default {
     ContentGroup,
     StatusBadge,
     InputSwitch,
-  },
-  directives: {
-    tooltip: Tooltip,
   },
   props: {
     clientType: {
@@ -270,10 +265,10 @@ export default {
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
       await getAllInstitutionUsers(
-        event?.page,
-        event?.rows,
-        event?.sortField,
-        event?.sortOrder,
+        event.page,
+        event.rows,
+        event.sortField,
+        event.sortOrder,
       );
       loading.value = false;
     };

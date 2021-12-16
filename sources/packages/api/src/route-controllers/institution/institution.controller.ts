@@ -29,9 +29,12 @@ import BaseController from "../BaseController";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  transformToInstitutionUserRespDto,
 } from "../../utilities";
 import {
-  InstitutionUserRespDto,
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthorizations,
   InstitutionUserAndAuthDetailsDto,
@@ -57,12 +60,11 @@ import {
 } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { Institution, InstitutionLocation } from "../../database/entities";
 import {
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-} from "./models/institution-datatable";
+  Institution,
+  InstitutionLocation,
+  InstitutionUser,
+} from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -191,6 +193,11 @@ export class InstitutionController extends BaseController {
     const institution = await this.institutionService.getInstituteByUserName(
       user.userName,
     );
+    if (!institution) {
+      throw new UnprocessableEntityException(
+        "The user has no institution associated with.",
+      );
+    }
     const institutionUserAndCount = await this.institutionService.allUsers(
       searchName,
       sortField,
@@ -199,31 +206,12 @@ export class InstitutionController extends BaseController {
       pageLimit,
       sortOrder,
     );
-    const usersList = institutionUserAndCount[0].map((institutionUser) => {
-      const institutionUserResp: InstitutionUserRespDto = {
-        id: institutionUser.id,
-        authorizations: institutionUser.authorizations.map((auth) => ({
-          id: auth.id,
-          authType: {
-            role: auth.authType?.role,
-            type: auth.authType?.type,
-          },
-          location: {
-            name: auth.location?.name,
-          },
-        })),
-        user: {
-          email: institutionUser.user.email,
-          firstName: institutionUser.user.firstName,
-          lastName: institutionUser.user.lastName,
-          userName: institutionUser.user.userName,
-          isActive: institutionUser.user.isActive,
-        },
-      };
-      return institutionUserResp;
-    });
     return {
-      users: usersList,
+      users: institutionUserAndCount[0].map(
+        (eachInstitutionUser: InstitutionUser) => {
+          return transformToInstitutionUserRespDto(eachInstitutionUser);
+        },
+      ),
       totalUsers: institutionUserAndCount[1],
     };
   }
@@ -625,7 +613,7 @@ export class InstitutionController extends BaseController {
    * @param institutionId institution id
    * @queryParm page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, limit of the page if nothing is
+   * @queryParm pageLimit, page size or records per page, if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @queryParm searchName, user's name keyword to be searched
    * @queryParm sortField, field to be sorted
@@ -652,33 +640,13 @@ export class InstitutionController extends BaseController {
       pageLimit,
       sortOrder,
     );
-    const institutionUsers = institutionUserAndCount[0].map(
-      (eachInstitutionUser) => {
-        const institutionUserResp: InstitutionUserRespDto = {
-          id: eachInstitutionUser.id,
-          authorizations: eachInstitutionUser.authorizations.map(
-            (authorization) => ({
-              id: authorization.id,
-              authType: {
-                role: authorization.authType?.role,
-                type: authorization.authType?.type,
-              },
-              location: {
-                name: authorization.location?.name,
-              },
-            }),
-          ),
-          user: {
-            email: eachInstitutionUser.user.email,
-            firstName: eachInstitutionUser.user.firstName,
-            lastName: eachInstitutionUser.user.lastName,
-            userName: eachInstitutionUser.user.userName,
-            isActive: eachInstitutionUser.user.isActive,
-          },
-        };
-        return institutionUserResp;
-      },
-    );
-    return { users: institutionUsers, totalUsers: institutionUserAndCount[1] };
+    return {
+      users: institutionUserAndCount[0].map(
+        (eachInstitutionUser: InstitutionUser) => {
+          return transformToInstitutionUserRespDto(eachInstitutionUser);
+        },
+      ),
+      totalUsers: institutionUserAndCount[1],
+    };
   }
 }

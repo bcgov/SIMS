@@ -1,90 +1,99 @@
 <template>
-  <content-group>
-    <p class="category-header-large color-blue">
-      All Programs ({{ institutionProgramsSummary.programsCount }})
-      <v-row class="float-right">
-        <v-col>
-          <InputText
-            name="searchProgramName"
-            v-model="searchProgramName"
-            placeholder="Search Program Name"
-          />
-        </v-col>
-        <v-col>
-          <v-btn
-            color="primary"
-            @click="goToSearchProgramName(searchProgramName)"
-            >Search</v-btn
-          >
-        </v-col>
-        <v-col>
-          <v-btn color="primary" @click="goToSearchProgramName('')"
-            >Clear</v-btn
-          >
-        </v-col>
-      </v-row>
-    </p>
-    <content-group v-if="programsFound">
-      <DataTable
-        :value="institutionProgramsSummary.programsSummary"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_ROW_SIZE"
-        :rowsPerPageOptions="[10, 20, 50]"
-        :totalRecords="institutionProgramsSummary.programsCount"
-        @page="pageSortEvent($event)"
-        @sort="pageSortEvent($event)"
-        :loading="loading"
-      >
-        <Column field="submittedDate" header="Date Submitted" :sortable="true">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.formattedSubmittedDate }}
-            </div>
-          </template>
-        </Column>
-        <Column field="programName" header="Program Name">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.programName }}
-            </div>
-          </template>
-        </Column>
-        <Column field="locationName" header="Location">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.locationName }}
-            </div>
-          </template>
-        </Column>
-        <Column field="offeringsCount" header="Study periods">
-          <template #body="slotProps">
-            <div class="p-text-capitalize">
-              {{ slotProps.data.offeringsCount }}
-            </div>
-          </template>
-        </Column>
-        <Column field="programStatus" header="Status"
-          ><template #body="slotProps">
-            <Chip
-              :label="slotProps.data.programStatus"
-              class="p-mr-2 p-mb-2 p-text-uppercase"
-              :class="
-                getProgramStatusColorClass(slotProps.data.programStatus)
-              "/></template
-        ></Column>
-        <Column>
-          <template #body="slotProps">
+  <v-card class="mt-4">
+    <div class="mx-5 py-4">
+      <p class="category-header-large color-blue">
+        All Programs ({{ institutionProgramsSummary.programsCount }})
+        <v-row class="float-right">
+          <v-col>
+            <InputText
+              name="searchProgramName"
+              v-model="searchProgramName"
+              placeholder="Search Program Name"
+              @keyup.enter="goToSearchProgramName(searchProgramName)"
+            />
+          </v-col>
+          <v-col>
             <v-btn
-              outlined
-              @click="goToViewProgramDetail(slotProps.data.programId)"
-              >View</v-btn
+              class="primary-btn-background"
+              @click="goToSearchProgramName(searchProgramName)"
+              >Search</v-btn
             >
-          </template>
-        </Column>
-      </DataTable>
-    </content-group>
-  </content-group>
+          </v-col>
+          <v-col>
+            <v-btn
+              class="primary-btn-background"
+              @click="goToSearchProgramName('')"
+              >Clear</v-btn
+            >
+          </v-col>
+        </v-row>
+      </p>
+      <content-group v-if="programsFound">
+        <DataTable
+          :value="institutionProgramsSummary.programsSummary"
+          :lazy="true"
+          :paginator="true"
+          :rows="DEFAULT_ROW_SIZE"
+          :rowsPerPageOptions="[10, 20, 50]"
+          :totalRecords="institutionProgramsSummary.programsCount"
+          @page="pageSortEvent($event)"
+          @sort="pageSortEvent($event)"
+          :loading="loading"
+        >
+          <Column
+            field="submittedDate"
+            header="Date Submitted"
+            :sortable="true"
+          >
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.formattedSubmittedDate }}
+              </div>
+            </template>
+          </Column>
+          <Column field="programName" header="Program Name">
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.programName }}
+              </div>
+            </template>
+          </Column>
+          <Column field="locationName" header="Location">
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.locationName }}
+              </div>
+            </template>
+          </Column>
+          <Column field="offeringsCount" header="Study periods">
+            <template #body="slotProps">
+              <div class="p-text-capitalize">
+                {{ slotProps.data.offeringsCount }}
+              </div>
+            </template>
+          </Column>
+          <Column field="programStatus" header="Status"
+            ><template #body="slotProps">
+              <Chip
+                :label="slotProps.data.programStatus"
+                class="p-mr-2 p-mb-2 p-text-uppercase"
+                :class="
+                  getProgramStatusColorClass(slotProps.data.programStatus)
+                "/></template
+          ></Column>
+          <Column>
+            <template #body="slotProps">
+              <v-btn
+                outlined
+                @click="goToViewProgramDetail(slotProps.data.programId)"
+                >View</v-btn
+              >
+            </template>
+          </Column>
+        </DataTable>
+      </content-group>
+    </div>
+  </v-card>
 </template>
 
 <script lang="ts">

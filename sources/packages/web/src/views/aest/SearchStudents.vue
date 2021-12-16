@@ -7,9 +7,21 @@
       ><v-col><label for="lastName">Last Name</label></v-col> <v-col></v-col
     ></v-row>
     <v-row
-      ><v-col><InputText type="text" v-model="appNumber"/></v-col
-      ><v-col><InputText type="text" v-model="firstName"/></v-col
-      ><v-col><InputText type="text" v-model="lastName"/></v-col
+      ><v-col
+        ><InputText
+          type="text"
+          v-model="appNumber"
+          @keyup.enter="searchStudents()"/></v-col
+      ><v-col
+        ><InputText
+          type="text"
+          v-model="firstName"
+          @keyup.enter="searchStudents()"/></v-col
+      ><v-col
+        ><InputText
+          type="text"
+          v-model="lastName"
+          @keyup.enter="searchStudents()"/></v-col
       ><v-col
         ><v-btn
           :disabled="!appNumber && !firstName && !lastName"
@@ -82,7 +94,7 @@ export default {
     const students = ref([] as SearchStudentResp[]);
     const goToViewStudent = (studentId: number) => {
       router.push({
-        name: AESTRoutesConst.STUDENT_DETAILS,
+        name: AESTRoutesConst.STUDENT_PROFILE,
         params: { studentId: studentId },
       });
     };

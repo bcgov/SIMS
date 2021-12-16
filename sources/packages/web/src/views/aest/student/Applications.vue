@@ -1,22 +1,22 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <InstitutionUserSummary
+      <StudentApplications
+        :studentId="studentId"
         :clientType="ClientIdType.AEST"
-        :institutionId="institutionId"
       />
     </div>
   </v-card>
 </template>
 
 <script lang="ts">
-import InstitutionUserSummary from "@/components/aest/InstitutionUserSummary.vue";
+import StudentApplications from "@/components/aest/StudentApplications.vue";
 import { ClientIdType } from "@/types";
 
 export default {
-  components: { InstitutionUserSummary },
+  components: { StudentApplications },
   props: {
-    institutionId: {
+    studentId: {
       type: Number,
       required: true,
     },

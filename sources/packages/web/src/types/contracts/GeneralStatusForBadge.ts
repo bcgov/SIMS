@@ -4,3 +4,9 @@ export enum GeneralStatusForBadge {
   ActiveRestriction = "active restriction",
   ResolvedRestriction = "resolved",
 }
+
+export enum DesignationAndRestrictionStatus {
+  designated = "designated",
+  noRestriction = "no restriction",
+  restriction = "restriction",
+}

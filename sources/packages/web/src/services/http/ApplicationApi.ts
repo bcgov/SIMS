@@ -4,7 +4,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
-  ApplicationSummaryDTO,
+  StudentApplicationAndCount,
   NoticeOfAssessmentDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
@@ -154,16 +154,22 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   /**
-   * API Client for applications of a student.
-   * @param studentId
+   * API Client to get student applications.
+   * ! Because of code duplication, this function
+   * ! is used in both AEST(Ministry) student application summary
+   * ! as well as student application summary.
+   * ! only passed URL value will be different.
+   * ! Both are using same interface
+   * ! In future, if any of them needs a
+   * ! different interface, use create a
+   * ! different functions for both
+   * @param url to be send
    * @returns
    */
-  public async getAllApplicationsForStudent(
-    studentId: number,
-  ): Promise<ApplicationSummaryDTO[]> {
-    const response = await this.getCall(
-      `application/student/${studentId}/aest`,
-    );
-    return response.data as ApplicationSummaryDTO[];
+  public async getAllApplicationAndCount(
+    url: string,
+  ): Promise<StudentApplicationAndCount> {
+    const response = await this.getCall(url);
+    return response.data as StudentApplicationAndCount;
   }
 }

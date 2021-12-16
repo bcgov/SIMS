@@ -65,6 +65,10 @@ export const AESTRoutesConst = {
   AEST_DASHBOARD: Symbol(),
   SEARCH_STUDENTS: Symbol(),
   STUDENT_DETAILS: Symbol(),
+  STUDENT_PROFILE: Symbol(),
+  STUDENT_APPLICATIONS: Symbol(),
+  STUDENT_RESTRICTION: Symbol(),
+  STUDENT_NOTES: Symbol(),
   PROGRAM_DETAILS: Symbol(),
   SEARCH_INSTITUTIONS: Symbol(),
   INSTITUTION_PROFILE: Symbol(),
@@ -78,8 +82,6 @@ export const AESTRoutesConst = {
   APPLICATION_DETAILS: Symbol(),
   LOGIN: Symbol(),
   LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),
-  STUDENT_NOTES: Symbol(),
-  STUDENT_RESTRICTIONS: Symbol(),
 };
 
 /**

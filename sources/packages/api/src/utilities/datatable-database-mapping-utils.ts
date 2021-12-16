@@ -17,3 +17,21 @@ export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
   };
   return databaseFieldOfUserDataTableMap[fieldName] ?? [];
 };
+
+/**
+ * Util to get the list of database field names
+ * with relation
+ * respective to application dataTable field name
+ * that need to be sorted.
+ * @param fieldName
+ * @returns fieldName
+ */
+export const databaseFieldOfApplicationDataTable = (
+  fieldName: string,
+): string => {
+  // TODO: Update the application field name
+  const databaseFieldOfApplicationDataTableMap = {
+    applicationNumber: "application.applicationNumber",
+  };
+  return databaseFieldOfApplicationDataTableMap[fieldName] ?? null;
+};
