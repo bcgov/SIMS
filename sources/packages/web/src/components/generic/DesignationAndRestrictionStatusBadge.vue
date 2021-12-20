@@ -29,16 +29,16 @@ export default {
       label.value = props.status;
       switch (props.status) {
         case DesignationAndRestrictionStatus.designated:
-          icon.value = "check";
+          icon.value = ["fas", "check"];
           color.value = "#16C92E";
           break;
         case DesignationAndRestrictionStatus.noRestriction:
-          icon.value = "check";
+          icon.value = ["fas", "check"];
           label.value = "";
           color.value = "#16C92E";
           break;
         case DesignationAndRestrictionStatus.restriction:
-          icon.value = "times";
+          icon.value = ["fas", "times"];
           label.value = "ACTIVE RESTRICTIONS";
           color.value = "#FFAD00";
           break;

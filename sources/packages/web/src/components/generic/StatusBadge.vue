@@ -4,7 +4,11 @@ status Badge
 <template>
   <v-badge :color="backGroundColor" :text-color="textColor" :class="badgeClass">
     <template v-slot:badge>
-      <font-awesome-icon icon="circle" class="mr-1" :color="iconColor" />
+      <font-awesome-icon
+        :icon="['fas', 'circle']"
+        class="mr-1"
+        :color="iconColor"
+      />
       <span class="text-uppercase">{{ label }}</span>
     </template>
   </v-badge>

@@ -8,7 +8,7 @@
           >
           <v-col
             ><v-btn class="float-right primary-btn-background"
-              ><font-awesome-icon icon="plus" class="mr-2" />Add
+              ><font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />Add
               restriction</v-btn
             ></v-col
           >

@@ -20,6 +20,8 @@ export interface GetProgramInfoRequestDto
   studentStudyEndDate: string;
   pirStatus: ProgramInfoStatus;
   programYearId: number;
+  pirDenyReasonId?: number;
+  otherReasonDesc?: string;
 }
 
 export interface GetPIRDeniedReasonDto {

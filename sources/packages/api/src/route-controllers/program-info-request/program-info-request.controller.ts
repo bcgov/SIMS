@@ -73,7 +73,6 @@ export class ProgramInfoRequestController {
         "The application was not found under the provided location.",
       );
     }
-
     if (
       !application.pirStatus ||
       application.pirStatus === ProgramInfoStatus.notRequired
@@ -120,6 +119,8 @@ export class ProgramInfoRequestController {
       result.offeringIntensity = application.offering.offeringIntensity;
     }
 
+    result.pirDenyReasonId = application.pirDeniedReasonId?.id;
+    result.otherReasonDesc = application.pirDeniedOtherDesc;
     return result;
   }
 
