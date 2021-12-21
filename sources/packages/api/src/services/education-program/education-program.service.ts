@@ -27,7 +27,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * to the expected institution including the institution
    * id in the query.
    * @param programId Program id.
-   * @param institutionId Expected intitution id.
+   * @param institutionId Expected institution id.
    * @returns program
    */
   async getInstitutionProgram(
@@ -260,8 +260,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   ): Promise<Partial<EducationProgram>[]> {
     return this.repo
       .createQueryBuilder("programs")
-      .select("programs.id")
-      .addSelect("programs.name")
+      .select(["programs.id", "programs.name"])
       .where("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,
       })

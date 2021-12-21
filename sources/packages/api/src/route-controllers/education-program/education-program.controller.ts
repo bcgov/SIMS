@@ -58,64 +58,6 @@ export class EducationProgramController {
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
-  @Get(":id")
-  async getProgram(
-    @Param("id") id: number,
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<EducationProgramDto> {
-    const program = await this.programService.getInstitutionProgram(
-      id,
-      userToken.authorizations.institutionId,
-    );
-
-    if (!program) {
-      throw new NotFoundException("Not able to find the requested program.");
-    }
-
-    return {
-      name: program.name,
-      description: program.description,
-      credentialType: program.credentialType,
-      cipCode: program.cipCode,
-      nocCode: program.nocCode,
-      sabcCode: program.sabcCode,
-      regulatoryBody: program.regulatoryBody,
-      programDeliveryTypes: {
-        deliveredOnSite: program.deliveredOnSite,
-        deliveredOnline: program.deliveredOnline,
-      },
-      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
-      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
-      earnAcademicCreditsOtherInstitution:
-        program.earnAcademicCreditsOtherInstitution,
-      courseLoadCalculation: program.courseLoadCalculation,
-      completionYears: program.completionYears,
-      eslEligibility: program.eslEligibility,
-      hasJointInstitution: program.hasJointInstitution,
-      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-      programIntensity: program.programIntensity,
-      institutionProgramCode: program.institutionProgramCode,
-      minHoursWeek: program.minHoursWeek,
-      isAviationProgram: program.isAviationProgram,
-      minHoursWeekAvi: program.minHoursWeekAvi,
-      entranceRequirements: {
-        hasMinimumAge: program.hasMinimumAge,
-        minHighSchool: program.minHighSchool,
-        requirementsByInstitution: program.requirementsByInstitution,
-        requirementsByBCITA: program.requirementsByBCITA,
-      },
-      hasWILComponent: program.hasWILComponent,
-      isWILApproved: program.isWILApproved,
-      wilProgramEligibility: program.wilProgramEligibility,
-      hasTravel: program.hasTravel,
-      travelProgramEligibility: program.travelProgramEligibility,
-      hasIntlExchange: program.hasIntlExchange,
-      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
-      programDeclaration: program.programDeclaration,
-    };
-  }
-
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @Post()
   async create(
     @Body() payload: EducationProgramDto,
@@ -243,6 +185,12 @@ export class EducationProgramController {
    * Get a key/value pair list of all programs.
    * @param userToken User token from request.
    * @returns key/value pair list of programs.
+   * ! This is conflicting with @Get(":id"),
+   * ! so, always move @Get(":id") below all
+   * ! router that have similar pattern to @Get(":id"),
+   * ! i.e , Dynamic api should be on bottom
+   * ! ref: https://stackoverflow.com/questions/58707933/node-js-express-route-conflict-issue
+   * ! https://poopcode.com/how-to-resolve-parameterized-route-conficts-in-express-js/
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get("programs-list")
@@ -256,5 +204,75 @@ export class EducationProgramController {
       id: program.id,
       description: program.name,
     }));
+  }
+
+  /**
+   * Get program details for an program id.
+   * @param userToken User token from request.
+   * @param id program id
+   * @returns programs DTO.
+   * ! This dynamic router will conflict with its similar patter router,
+   * ! eg, @Get("programs-list"). so, always move @Get(":id") below all
+   * ! router that have similar pattern to @Get(":id"),
+   * ! i.e , Dynamic api should be on bottom
+   * ! ref: https://stackoverflow.com/questions/58707933/node-js-express-route-conflict-issue
+   * ! https://poopcode.com/how-to-resolve-parameterized-route-conficts-in-express-js/
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @Get(":id")
+  async getProgram(
+    @Param("id") id: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<EducationProgramDto> {
+    const program = await this.programService.getInstitutionProgram(
+      id,
+      userToken.authorizations.institutionId,
+    );
+
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+
+    return {
+      name: program.name,
+      description: program.description,
+      credentialType: program.credentialType,
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      regulatoryBody: program.regulatoryBody,
+      programDeliveryTypes: {
+        deliveredOnSite: program.deliveredOnSite,
+        deliveredOnline: program.deliveredOnline,
+      },
+      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+      earnAcademicCreditsOtherInstitution:
+        program.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: program.courseLoadCalculation,
+      completionYears: program.completionYears,
+      eslEligibility: program.eslEligibility,
+      hasJointInstitution: program.hasJointInstitution,
+      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+      programIntensity: program.programIntensity,
+      institutionProgramCode: program.institutionProgramCode,
+      minHoursWeek: program.minHoursWeek,
+      isAviationProgram: program.isAviationProgram,
+      minHoursWeekAvi: program.minHoursWeekAvi,
+      entranceRequirements: {
+        hasMinimumAge: program.hasMinimumAge,
+        minHighSchool: program.minHighSchool,
+        requirementsByInstitution: program.requirementsByInstitution,
+        requirementsByBCITA: program.requirementsByBCITA,
+      },
+      hasWILComponent: program.hasWILComponent,
+      isWILApproved: program.isWILApproved,
+      wilProgramEligibility: program.wilProgramEligibility,
+      hasTravel: program.hasTravel,
+      travelProgramEligibility: program.travelProgramEligibility,
+      hasIntlExchange: program.hasIntlExchange,
+      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+      programDeclaration: program.programDeclaration,
+    };
   }
 }

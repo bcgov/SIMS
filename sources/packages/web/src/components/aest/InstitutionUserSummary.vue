@@ -19,7 +19,7 @@
         tile
         class="ml-2 primary-btn-background"
       >
-        <font-awesome-icon icon="search" />
+        <font-awesome-icon :icon="['fas', 'search']" />
       </v-btn>
     </div>
     <div v-if="clientType === ClientIdType.Institution" class="mx-2">
@@ -27,7 +27,10 @@
         class="float-right primary-btn-background"
         @click="openNewUserModal()"
       >
-        <font-awesome-icon icon="external-link-square-alt" class="mr-2" />
+        <font-awesome-icon
+          :icon="['fas', 'external-link-square-alt']"
+          class="mr-2"
+        />
         Add New User
       </v-btn>
 
@@ -97,7 +100,7 @@
           <span v-if="slotProps.data.userName !== parsedToken?.userName">
             <v-btn plain>
               <font-awesome-icon
-                icon="pen"
+                :icon="['fas', 'pen']"
                 v-if="slotProps.data.isActive"
                 right
                 @click="editInstitutionUser(slotProps.data.userName)"
@@ -105,7 +108,7 @@
               >
               </font-awesome-icon
               ><font-awesome-icon
-                icon="pen"
+                :icon="['fas', 'pen']"
                 v-else
                 right
                 v-tooltip="'Disabled User Cannot Be Edited'"

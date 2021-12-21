@@ -11,8 +11,10 @@
         class="float-right primary-btn-background"
         @click="goToAddNewLocation()"
       >
-        <font-awesome-icon icon="external-link-square-alt" class="mr-2" />Add
-        New Location
+        <font-awesome-icon
+          :icon="['fas', 'external-link-square-alt']"
+          class="mr-2"
+        />Add New Location
       </v-btn>
     </v-col>
   </v-row>
@@ -24,7 +26,7 @@
     <v-row>
       <v-col cols="10">
         <span>
-          <font-awesome-icon icon="map-pin" />
+          <font-awesome-icon :icon="['fas', 'map-pin']" />
           <span class="category-header-medium mx-2">{{ item.name }}</span>
           <designation-and-restriction-status-badge
             class="mb-4 ml-4"
@@ -34,7 +36,7 @@
       </v-col>
       <v-col cols="2" v-if="clientType === ClientIdType.Institution">
         <v-btn plain @click="getLocation(item.id)">
-          <font-awesome-icon icon="cog" class="mr-2" />
+          <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>
       </v-col>

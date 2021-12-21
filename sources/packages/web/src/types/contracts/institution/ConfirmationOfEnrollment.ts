@@ -1,3 +1,5 @@
+import { ProgramInfoStatus } from "@/types";
+
 export interface COESummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
@@ -26,12 +28,13 @@ export interface ApplicationDetailsForCOEDTO {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
-  applicationCOEStatus: string;
+  applicationCOEStatus: COEStatus;
   applicationId: number;
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
   applicationDeniedReason?: string;
   studyBreaks?: StudyBreakCOE[];
+  applicationPIRStatus: ProgramInfoStatus;
 }
 
 /**
