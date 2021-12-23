@@ -1016,16 +1016,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getProgramYearOfApplication(
     studentId: number,
     applicationId: number,
+    includeInActivePY?: boolean,
   ): Promise<Application> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .innerJoinAndSelect("application.programYear", "programYear")
       .where("application.student.id = :studentId", { studentId })
-      .andWhere("programYear.active = true")
       .andWhere("application.id = :applicationId", {
         applicationId,
-      })
-      .getOne();
+      });
+    if (!includeInActivePY) {
+      query.andWhere("programYear.active = true");
+    }
+    return query.getOne();
   }
 
   /**

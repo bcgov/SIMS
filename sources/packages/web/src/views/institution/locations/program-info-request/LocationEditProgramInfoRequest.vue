@@ -73,6 +73,7 @@ export default {
           props.locationId,
           OFFERINGS_DROPDOWN_KEY,
           programRequestData.value.programYearId,
+          true,
         );
       }
       formioUtils.redrawComponent(form, OFFERINGS_DROPDOWN_KEY);

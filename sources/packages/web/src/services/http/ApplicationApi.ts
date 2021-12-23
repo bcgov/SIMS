@@ -124,12 +124,14 @@ export class ApplicationApi extends HttpBaseClient {
 
   public async getProgramYearOfApplication(
     applicationId: number,
+    includeInActivePY?: boolean,
   ): Promise<ProgramYearOfApplicationDto> {
     try {
-      const response = await this.apiClient.get(
-        `application/${applicationId}/program-year`,
-        this.addAuthHeader(),
-      );
+      let url = `application/${applicationId}/program-year`;
+      if (includeInActivePY) {
+        url = `${url}?includeInActivePY=${includeInActivePY}`;
+      }
+      const response = await this.apiClient.get(url, this.addAuthHeader());
       return response.data as ProgramYearOfApplicationDto;
     } catch (error) {
       this.handleRequestError(error);

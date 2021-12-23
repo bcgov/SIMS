@@ -253,11 +253,14 @@ export default {
       );
 
       if (selectedLocationId) {
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
         await formioDataLoader.loadProgramsForLocation(
           form,
           +selectedLocationId,
           PROGRAMS_DROPDOWN_KEY,
           props.programYearId,
+          isReadOnly.value,
         );
       }
 
@@ -275,6 +278,9 @@ export default {
           selectedProgramId,
           SELECTED_PROGRAM_DESC_KEY,
         );
+
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
         await formioDataLoader.loadOfferingsForLocation(
           form,
           selectedProgramId,
@@ -282,6 +288,7 @@ export default {
           OFFERINGS_DROPDOWN_KEY,
           props.programYearId,
           selectedIntensity,
+          isReadOnly.value,
         );
       }
     };
@@ -295,6 +302,9 @@ export default {
         form,
         PROGRAMS_DROPDOWN_KEY,
       );
+
+      // when isReadOnly.value is true, then consider
+      // both active and inactive program year.
       await formioDataLoader.loadOfferingsForLocation(
         form,
         educationProgramIdFromForm,
@@ -302,6 +312,7 @@ export default {
         OFFERINGS_DROPDOWN_KEY,
         props.programYearId,
         selectedIntensity,
+        isReadOnly.value,
       );
     };
 
@@ -319,11 +330,15 @@ export default {
         await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
           programnotListed: false,
         });
+
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
         await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
           PROGRAMS_DROPDOWN_KEY,
           props.programYearId,
+          isReadOnly.value,
         );
       }
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {

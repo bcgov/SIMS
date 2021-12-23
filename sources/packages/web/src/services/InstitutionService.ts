@@ -306,7 +306,8 @@ export class InstitutionService {
     );
   }
 
-  public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
+  public async getLocationsOptionsList(
+  ): Promise<OptionItemDto[]> {
     return ApiClient.InstitutionLocation.getOptionsList();
   }
 

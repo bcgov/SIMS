@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
@@ -162,6 +163,8 @@ export class EducationProgramController {
    * Executes the students-based authorization
    * (students must have access to all programs).
    * @param locationId location id.
+   * @query includeInActivePY includeInActivePY, if includeInActivePY, then both active
+   * and not active program year is considered
    * @returns key/value pair list of programs.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -169,10 +172,12 @@ export class EducationProgramController {
   async getLocationProgramsOptionList(
     @Param("locationId") locationId: number,
     @Param("programYearId") programYearId: number,
+    @Query("includeInActivePY") includeInActivePY?: boolean,
   ): Promise<OptionItem[]> {
     const programs = await this.programService.getProgramsForLocation(
       locationId,
       programYearId,
+      includeInActivePY,
     );
 
     return programs.map((program) => ({

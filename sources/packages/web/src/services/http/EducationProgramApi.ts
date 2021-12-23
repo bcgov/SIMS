@@ -102,12 +102,14 @@ export class EducationProgramApi extends HttpBaseClient {
   public async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
+    includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
-      const response = await this.apiClient.get(
-        `institution/education-program/location/${locationId}/program-year/${programYearId}/options-list`,
-        this.addAuthHeader(),
-      );
+      let url = `institution/education-program/location/${locationId}/program-year/${programYearId}/options-list`;
+      if (includeInActivePY) {
+        url = `${url}?includeInActivePY=${includeInActivePY}`;
+      }
+      const response = await this.apiClient.get(url, this.addAuthHeader());
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
