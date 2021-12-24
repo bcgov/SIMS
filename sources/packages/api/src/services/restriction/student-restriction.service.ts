@@ -6,6 +6,8 @@ import {
   Student,
   Restriction,
   Note,
+  NoteType,
+  User,
 } from "../../database/entities";
 import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
@@ -182,9 +184,13 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     studentRestrictionEntity.student = { id: studentId } as Student;
     studentRestrictionEntity.restriction = { id: restrictionId } as Restriction;
 
-    if (studentRestriction.resolutionNote) {
-      studentRestrictionEntity.resolutionNote = {
-        description: studentRestriction.resolutionNote.description,
+    if (studentRestriction.restrictionNote) {
+      studentRestrictionEntity.restrictionNote = {
+        description: studentRestriction.restrictionNote.description,
+        noteType: NoteType.Restriction,
+        creator: {
+          id: studentRestriction.creator.id,
+        } as User,
       } as Note;
     }
     return this.repo.save(studentRestrictionEntity);

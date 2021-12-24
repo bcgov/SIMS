@@ -1,14 +1,27 @@
-import { Controller, Get, Param } from "@nestjs/common";
-import { StudentRestrictionService, RestrictionService } from "../../services";
+import { Controller, Get, Param, Post, Body } from "@nestjs/common";
+import {
+  StudentRestrictionService,
+  RestrictionService,
+  StudentService,
+} from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import { IUserToken } from "../../auth/userToken.interface";
 import {
   StudentRestrictionSummary,
   StudentRestrictionDetail,
+  UpdateRestrictionDTO,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
+import {
+  Restriction,
+  StudentRestriction,
+  Student,
+  User,
+  Note,
+} from "../../database/entities";
 /**
  * Controller for Restrictions.
  * This consists of all Rest APIs for restrictions.
@@ -18,6 +31,7 @@ export class RestrictionController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -112,5 +126,39 @@ export class RestrictionController extends BaseController {
       restrictionNote: studentRestriction.restrictionNote?.description,
       resolutionNote: studentRestriction.restrictionNote?.description,
     };
+  }
+
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Post("/student/:studentId/restriction/:restrictionId")
+  async addStudentRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("studentId") studentId: number,
+    @Param("restrictionId") restrictionId: number,
+    @Body() payload: UpdateRestrictionDTO,
+  ): Promise<void> {
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.restriction = { id: restrictionId } as Restriction;
+    studentRestriction.creator = { id: userToken.userId } as User;
+
+    if (payload.noteDescription) {
+      studentRestriction.restrictionNote = {
+        description: payload.noteDescription,
+      } as Note;
+    }
+
+    const updatedRestriction =
+      await this.studentRestrictionService.addStudentRestriction(
+        studentId,
+        restrictionId,
+        studentRestriction,
+      );
+    if (updatedRestriction.restrictionNote) {
+      await this.studentService.saveStudentNote(
+        studentId,
+        updatedRestriction.restrictionNote,
+      );
+    }
   }
 }
