@@ -1,6 +1,12 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { StudentRestriction, RestrictionType } from "../../database/entities";
+import {
+  StudentRestriction,
+  RestrictionType,
+  Student,
+  Restriction,
+  Note,
+} from "../../database/entities";
 import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
   RESTRICTION_FEDERAL_MESSAGE,
@@ -119,11 +125,68 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
         "restriction.restrictionType",
+        "restriction.restrictionCategory",
         "restriction.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
       .getMany();
+  }
+
+  /**
+   *
+   * @param studentId
+   * @param restrictionId
+   * @returns
+   */
+  async getStudentRestrictionDetailsById(
+    studentId: number,
+    restrictionId: number,
+  ): Promise<StudentRestriction> {
+    return this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select([
+        "studentRestrictions.id",
+        "studentRestrictions.isActive",
+        "studentRestrictions.updatedAt",
+        "studentRestrictions.createdAt",
+        "creator.firstName",
+        "creator.lastName",
+        "modifier.firstName",
+        "modifier.lastName",
+        "restriction.restrictionType",
+        "restriction.restrictionCategory",
+        "restriction.description",
+        "restrictionNote.description",
+        "resolutionNote.description",
+      ])
+      .innerJoin("studentRestrictions.restriction", "restriction")
+      .innerJoin("studentRestrictions.creator", "creator")
+      .leftJoin("studentRestrictions.modifier", "modifier")
+      .innerJoin("studentRestrictions.student", "student")
+      .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
+      .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
+      .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.id = :restrictionId", { restrictionId })
+      .getOne();
+  }
+
+  async addStudentRestriction(
+    studentId: number,
+    restrictionId: number,
+    studentRestriction: StudentRestriction,
+  ): Promise<StudentRestriction> {
+    const studentRestrictionEntity = new StudentRestriction();
+    studentRestrictionEntity.creator = studentRestriction.creator;
+    studentRestrictionEntity.student = { id: studentId } as Student;
+    studentRestrictionEntity.restriction = { id: restrictionId } as Restriction;
+
+    if (studentRestriction.resolutionNote) {
+      studentRestrictionEntity.resolutionNote = {
+        description: studentRestriction.resolutionNote.description,
+      } as Note;
+    }
+    return this.repo.save(studentRestrictionEntity);
   }
 }

@@ -1,10 +1,14 @@
 import { Controller, Get, Param } from "@nestjs/common";
-import { StudentRestrictionService } from "../../services";
+import { StudentRestrictionService, RestrictionService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
-import { StudentRestrictionSummary } from "./models/restriction.dto";
+import {
+  StudentRestrictionSummary,
+  StudentRestrictionDetail,
+} from "./models/restriction.dto";
+import { OptionItem } from "../../types";
 /**
  * Controller for Restrictions.
  * This consists of all Rest APIs for restrictions.
@@ -13,6 +17,7 @@ import { StudentRestrictionSummary } from "./models/restriction.dto";
 export class RestrictionController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly restrictionService: RestrictionService,
   ) {
     super();
   }
@@ -35,10 +40,77 @@ export class RestrictionController extends BaseController {
     return studentRestrictions?.map((studentRestriction) => ({
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
+      restrictionCategory: studentRestriction.restriction.restrictionCategory,
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
       isActive: studentRestriction.isActive,
     }));
+  }
+  /**
+   * REST API to provide the list of restriction categories for drop-down
+   * @returns Categories option list.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/categories/options-list")
+  async getCategoriesOptionsList(): Promise<OptionItem[]> {
+    const categories =
+      await this.restrictionService.getAllRestrictionCategories();
+    return categories.map((category) => ({
+      id: category.id,
+      description: category.restrictionCategory,
+    }));
+  }
+
+  /**
+   * REST API to provide the list of restriction reasons for selected category.
+   * @returns Reasons option list.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/reasons/options-list/category/:restrictionCategory")
+  async getReasonsOptionsList(
+    @Param("restrictionCategory") restrictionCategory: string,
+  ): Promise<OptionItem[]> {
+    const reasons =
+      await this.restrictionService.getRestrictionReasonsByCategory(
+        restrictionCategory,
+      );
+    return reasons.map((reason) => ({
+      id: reason.id,
+      description: `${reason.restrictionCode} - ${reason.description}`,
+    }));
+  }
+
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/student/:studentId/restriction/:restrictionId")
+  async getStudentRestrictionDetail(
+    @Param("studentId") studentId: number,
+    @Param("restrictionId") restrictionId: number,
+  ): Promise<StudentRestrictionDetail> {
+    const studentRestriction =
+      await this.studentRestrictionService.getStudentRestrictionDetailsById(
+        studentId,
+        restrictionId,
+      );
+    return {
+      restrictionId: studentRestriction.id,
+      restrictionType: studentRestriction.restriction.restrictionType,
+      restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      description: studentRestriction.restriction.description,
+      createdAt: studentRestriction.createdAt,
+      updatedAt: studentRestriction.updatedAt,
+      createdBy: studentRestriction.creator
+        ? `${studentRestriction.creator.lastName}, ${studentRestriction.creator.firstName}`
+        : "",
+      updatedBy: studentRestriction.modifier
+        ? `${studentRestriction.modifier.lastName}, ${studentRestriction.modifier.firstName}`
+        : "",
+      isActive: studentRestriction.isActive,
+      restrictionNote: studentRestriction.restrictionNote?.description,
+      resolutionNote: studentRestriction.restrictionNote?.description,
+    };
   }
 }

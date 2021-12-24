@@ -86,4 +86,39 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     newRestriction.restrictionType = RestrictionType.Federal;
     return repo.save(newRestriction);
   }
+
+  /**
+   * Returns all distinct restriction categories
+   * @returns
+   */
+  async getAllRestrictionCategories(): Promise<Restriction[]> {
+    return this.repo
+      .createQueryBuilder("restriction")
+      .select(["restriction.id", "restriction.restrictionCategory"])
+      .where("restriction.restrictionCategory != 'Federal'")
+      .distinctOn(["restriction.restrictionCategory"])
+      .getMany();
+  }
+
+  /**
+   * Returns all restriction reasons(description) for a given category.
+   * @param restrictionCategory
+   * @returns
+   */
+  async getRestrictionReasonsByCategory(
+    restrictionCategory: string,
+  ): Promise<Restriction[]> {
+    return this.repo
+      .createQueryBuilder("restriction")
+      .select([
+        "restriction.id",
+        "restriction.restrictionCode",
+        "restriction.description",
+      ])
+      .where("restriction.restrictionCategory = :restrictionCategory", {
+        restrictionCategory,
+      })
+      .andWhere("restriction.restrictionCategory != 'Federal'")
+      .getMany();
+  }
 }

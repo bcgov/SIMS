@@ -4,6 +4,7 @@
 export interface StudentRestrictionSummary {
   restrictionId: number;
   restrictionType: RestrictionType;
+  restrictionCategory: string;
   description: string;
   createdAt: Date;
   updatedAt: Date;
