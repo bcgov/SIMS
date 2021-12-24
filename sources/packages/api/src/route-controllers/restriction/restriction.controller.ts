@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Post, Body } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   StudentRestrictionService,
   RestrictionService,
@@ -131,15 +138,22 @@ export class RestrictionController extends BaseController {
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Post("/student/:studentId/restriction/:restrictionId")
-  async addStudentRestriction(
+  async addStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
     @Param("restrictionId") restrictionId: number,
     @Body() payload: UpdateRestrictionDTO,
   ): Promise<void> {
+    const restriction =
+      await this.restrictionService.getProvincialRestrictionById(restrictionId);
+    if (!restriction) {
+      throw new UnprocessableEntityException(
+        "The given restriction type is not Provincial. Only provincial restrictions can be added. ",
+      );
+    }
     const studentRestriction = new StudentRestriction();
     studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.restriction = { id: restrictionId } as Restriction;
+    studentRestriction.restriction = restriction;
     studentRestriction.creator = { id: userToken.userId } as User;
 
     if (payload.noteDescription) {
@@ -149,7 +163,7 @@ export class RestrictionController extends BaseController {
     }
 
     const updatedRestriction =
-      await this.studentRestrictionService.addStudentRestriction(
+      await this.studentRestrictionService.addStudentProvincialRestriction(
         studentId,
         restrictionId,
         studentRestriction,

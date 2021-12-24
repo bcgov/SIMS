@@ -23,7 +23,7 @@
             <p class="text-center font-weight-bold">No records found.</p>
           </template>
           <Column
-            field="restrictionType"
+            field="restrictionCategory"
             header="Type"
             sortable="true"
           ></Column>

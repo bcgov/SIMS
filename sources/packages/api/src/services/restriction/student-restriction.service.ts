@@ -133,6 +133,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
+      .orderBy("studentRestrictions.isActive", "DESC")
       .getMany();
   }
 
@@ -174,7 +175,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .getOne();
   }
 
-  async addStudentRestriction(
+  async addStudentProvincialRestriction(
     studentId: number,
     restrictionId: number,
     studentRestriction: StudentRestriction,

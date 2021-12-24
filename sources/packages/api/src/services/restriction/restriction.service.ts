@@ -103,7 +103,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   /**
    * Returns all restriction reasons(description) for a given category.
    * @param restrictionCategory
-   * @returns
+   * @returns restriction reasons.
    */
   async getRestrictionReasonsByCategory(
     restrictionCategory: string,
@@ -120,5 +120,21 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       })
       .andWhere("restriction.restrictionCategory != 'Federal'")
       .getMany();
+  }
+
+  /**
+   * Returns a provincial restriction by Id.
+   * @param restrictionId
+   * @returns provincial restriction.
+   */
+  async getProvincialRestrictionById(
+    restrictionId: number,
+  ): Promise<Restriction> {
+    return this.repo
+      .createQueryBuilder("restriction")
+      .select(["restriction.id"])
+      .where("restriction.id = :restrictionId", { restrictionId })
+      .andWhere("restriction.restrictionType = 'Provincial'")
+      .getOne();
   }
 }
