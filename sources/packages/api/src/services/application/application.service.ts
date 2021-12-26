@@ -354,6 +354,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "educationProgram.id",
         "application.data",
         "programYear.id",
+        "application.pirDeniedOtherDesc",
+        "PIRDeniedReason.reason",
+        "PIRDeniedReason.id",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
@@ -362,6 +365,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
+      .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
       .where("application.id = :applicationId", {
         applicationId,
       })
@@ -1036,17 +1040,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
     locationId: number,
     applicationId: number,
   ): Promise<ApplicationOverriddenResult> {
+    //only override application when pir status is not "not required"
     const appToOverride = await this.repo.findOne(
       {
         id: applicationId,
         location: { id: locationId },
-      },
+        pirStatus: Not(ProgramInfoStatus.notRequired),
+    },
       { relations: ["studentFiles"] },
     );
 
     if (!appToOverride) {
       throw new CustomNamedError(
-        "Student Application not found or the location does not have access to it",
+        "Student Application not found or the location does not have access to it or PIR not required Application",
         APPLICATION_NOT_FOUND,
       );
     }

@@ -55,6 +55,10 @@ export interface GetProgramInfoRequestDto
   studentStudyEndDate: string;
   pirStatus: ProgramInfoStatus;
   programYearId: number;
+  pirDenyReasonId?: number;
+  otherReasonDesc?: string;
+  // for `Deny program information request` checkbox
+  denyProgramInformationRequest: boolean;
 }
 
 export interface GetPIRDeniedReasonDto {

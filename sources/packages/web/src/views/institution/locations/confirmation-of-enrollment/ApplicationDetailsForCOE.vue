@@ -49,6 +49,7 @@ import {
   COEStatus,
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollment,
+  ProgramInfoStatus,
 } from "@/types";
 import ConfirmCOE from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEModal.vue";
 import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEEditModal.vue";
@@ -183,13 +184,18 @@ export default {
           class: "font-weight-bold",
           command: denyProgramInformation,
         },
-        { separator: true },
-        {
+      ];
+
+      if (
+        ProgramInfoStatus.notRequired !== initialData.value.applicationPIRStatus
+      ) {
+        items.value.push({ separator: true });
+        items.value.push({
           label: "Edit Program Information",
           class: "font-weight-bold",
           command: editProgramInformation,
-        },
-      ];
+        });
+      }
     };
 
     watch(

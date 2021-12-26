@@ -23,8 +23,6 @@ import {
   COEStatus,
   ApplicationStatus,
 } from "../../database/entities";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
-import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import { dateString, COE_WINDOW, getCOEDeniedReason } from "../../utilities";
@@ -126,7 +124,6 @@ export class ConfirmationOfEnrollmentController {
   async getApplicationForCOE(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<ApplicationDetailsForCOEDTO> {
     const application =
       await this.applicationService.getApplicationDetailsForCOE(
@@ -170,6 +167,7 @@ export class ConfirmationOfEnrollmentController {
         breakStartDate: dateString(studyBreak.breakStartDate),
         breakEndDate: dateString(studyBreak.breakEndDate),
       })),
+      applicationPIRStatus: application.pirStatus,
     };
   }
 

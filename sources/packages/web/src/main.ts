@@ -45,7 +45,7 @@ import {
   faExternalLinkSquareAlt,
   faPen,
   faCog,
-  faTrash
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -58,7 +58,7 @@ library.add(
   faExternalLinkSquareAlt,
   faPen,
   faCog,
-  faTrash
+  faTrash,
 );
 
 // Configure the UI validations rules globally available.

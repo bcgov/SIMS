@@ -70,7 +70,7 @@
           >
             <v-btn :disabled="hasRestriction" plain>
               <font-awesome-icon
-                icon="pen"
+                :icon="['fas', 'pen']"
                 class="mr-2"
                 v-tooltip="'Click To Edit this Application'"
                 @click="
@@ -82,11 +82,10 @@
             </v-btn>
             <v-btn :disabled="hasRestriction" plain>
               <font-awesome-icon
-                icon="trash"
+                :icon="['fas', 'trash']"
                 v-tooltip="'Click To Cancel this Application'"
                 @click="openConfirmCancel(slotProps.data.id)"
               />
-              
             </v-btn>
           </span>
         </span>

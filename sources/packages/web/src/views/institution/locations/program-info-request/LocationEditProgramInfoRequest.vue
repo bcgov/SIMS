@@ -18,8 +18,8 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ProgramInfoRequestService } from "../../../../services/ProgramInfoRequestService";
-import formio from "../../../../components/generic/formio.vue";
+import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
+import formio from "@/components/generic/formio.vue";
 import { ref } from "vue";
 import {
   useFormioUtils,
@@ -28,7 +28,11 @@ import {
   useToastMessage,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
+import {
+  FormIOCustomEvent,
+  FormIOCustomEventTypes,
+  GetProgramInfoRequestDto,
+} from "@/types";
 
 export default {
   components: { formio },
@@ -46,7 +50,7 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     const { dateString } = useFormatters();
-    const initialData = ref({});
+    const initialData = ref({} as GetProgramInfoRequestDto);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
@@ -87,6 +91,11 @@ export default {
         ),
         studentStudyEndDate: dateString(
           programRequestData.value.studentStudyEndDate,
+        ),
+        // for `Deny program information request` checkbox
+        denyProgramInformationRequest: !!(
+          programRequestData.value.pirDenyReasonId ||
+          programRequestData.value.otherReasonDesc
         ),
       };
 

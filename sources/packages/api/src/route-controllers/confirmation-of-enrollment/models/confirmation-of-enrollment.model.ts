@@ -1,4 +1,7 @@
 import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
+import { COEStatus } from "../../../database/entities/coe-status.type";
+import { ProgramInfoStatus } from "../../../database/entities/program-info-status.type";
+
 export interface ApplicationDetailsForCOEDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
@@ -18,12 +21,13 @@ export interface ApplicationDetailsForCOEDTO {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
-  applicationCOEStatus: string;
+  applicationCOEStatus: COEStatus;
   applicationId: number;
   applicationWithinCOEWindow: boolean;
   applicationLocationId: number;
   applicationDeniedReason?: string;
   studyBreaks?: StudyBreak[];
+  applicationPIRStatus: ProgramInfoStatus;
 }
 
 export interface COEDeniedReasonDto {
