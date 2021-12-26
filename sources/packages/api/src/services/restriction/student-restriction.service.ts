@@ -175,25 +175,57 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .getOne();
   }
 
-  async addStudentProvincialRestriction(
-    studentId: number,
-    restrictionId: number,
+  async addProvincialRestriction(
     studentRestriction: StudentRestriction,
   ): Promise<StudentRestriction> {
     const studentRestrictionEntity = new StudentRestriction();
     studentRestrictionEntity.creator = studentRestriction.creator;
-    studentRestrictionEntity.student = { id: studentId } as Student;
-    studentRestrictionEntity.restriction = { id: restrictionId } as Restriction;
+    studentRestrictionEntity.student = studentRestriction.student;
+    studentRestrictionEntity.restriction = studentRestriction.restriction;
+    studentRestrictionEntity.restrictionNote =
+      studentRestriction.restrictionNote;
+    return this.repo.save(studentRestrictionEntity);
+  }
 
-    if (studentRestriction.restrictionNote) {
-      studentRestrictionEntity.restrictionNote = {
-        description: studentRestriction.restrictionNote.description,
-        noteType: NoteType.Restriction,
-        creator: {
-          id: studentRestriction.creator.id,
-        } as User,
-      } as Note;
+  async resolveProvincialRestriction(
+    studentRestriction: StudentRestriction,
+  ): Promise<StudentRestriction> {
+    const studentRestrictionEntity = await this.repo.findOne(
+      {
+        id: studentRestriction.id,
+        student: studentRestriction.student,
+        isActive: true,
+      },
+      {
+        relations: ["resolutionNote", "modifier", "restriction"],
+      },
+    );
+
+    if (!studentRestrictionEntity) {
+      throw new Error(
+        "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+      );
     }
+
+    if (
+      !(
+        studentRestrictionEntity.restriction.restrictionType ===
+        RestrictionType.Provincial
+      )
+    ) {
+      throw new Error(
+        "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
+      );
+    }
+    studentRestrictionEntity.isActive = false;
+    studentRestrictionEntity.modifier = studentRestriction.modifier;
+    studentRestrictionEntity.resolutionNote = {
+      description: studentRestriction.resolutionNote.description,
+      noteType: NoteType.Restriction,
+      creator: {
+        id: studentRestriction.modifier.id,
+      } as User,
+    } as Note;
     return this.repo.save(studentRestrictionEntity);
   }
 }

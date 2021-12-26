@@ -4,6 +4,7 @@ import {
   Param,
   Post,
   Body,
+  Patch,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -23,11 +24,11 @@ import {
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
 import {
-  Restriction,
   StudentRestriction,
   Student,
   User,
   Note,
+  NoteType,
 } from "../../database/entities";
 /**
  * Controller for Restrictions.
@@ -104,6 +105,12 @@ export class RestrictionController extends BaseController {
     }));
   }
 
+  /**
+   * Rest API to get the details for view student restriction.
+   * @param studentId
+   * @param restrictionId
+   * @returns Student restriction detail view.
+   */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/student/:studentId/restriction/:restrictionId")
@@ -135,6 +142,14 @@ export class RestrictionController extends BaseController {
     };
   }
 
+  /**
+   * Rest API to add a new provincial restriction to Student.
+   * Note: Federal restrictions are added/resolved by nightly job not through this API.
+   * @param userToken
+   * @param studentId
+   * @param restrictionId
+   * @param payload
+   */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Post("/student/:studentId/restriction/:restrictionId")
@@ -155,17 +170,17 @@ export class RestrictionController extends BaseController {
     studentRestriction.student = { id: studentId } as Student;
     studentRestriction.restriction = restriction;
     studentRestriction.creator = { id: userToken.userId } as User;
-
     if (payload.noteDescription) {
       studentRestriction.restrictionNote = {
         description: payload.noteDescription,
+        noteType: NoteType.Restriction,
+        creator: {
+          id: studentRestriction.creator.id,
+        } as User,
       } as Note;
     }
-
     const updatedRestriction =
-      await this.studentRestrictionService.addStudentProvincialRestriction(
-        studentId,
-        restrictionId,
+      await this.studentRestrictionService.addProvincialRestriction(
         studentRestriction,
       );
     if (updatedRestriction.restrictionNote) {
@@ -174,5 +189,48 @@ export class RestrictionController extends BaseController {
         updatedRestriction.restrictionNote,
       );
     }
+  }
+
+  /**
+   * Rest API to resolve a provincial restriction.
+   * Note: Federal restrictions are added/resolved by nightly job not through this API.
+   * @param userToken
+   * @param studentId
+   * @param studentRestrictionId
+   * @param payload
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Patch("/student/:studentId/studentRestriction/:studentRestrictionId/resolve")
+  async resolveStudentProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("studentId") studentId: number,
+    @Param("studentRestrictionId") studentRestrictionId: number,
+    @Body() payload: UpdateRestrictionDTO,
+  ): Promise<void> {
+    if (!payload.noteDescription) {
+      throw new UnprocessableEntityException(
+        "Resolution Notes are mandatory to resolve the restriction.",
+      );
+    }
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.id = studentRestrictionId;
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.modifier = { id: userToken.userId } as User;
+    studentRestriction.resolutionNote = {
+      description: payload.noteDescription,
+      noteType: NoteType.Restriction,
+      creator: { id: userToken.userId } as User,
+    } as Note;
+
+    const updatedRestriction =
+      await this.studentRestrictionService.resolveProvincialRestriction(
+        studentRestriction,
+      );
+
+    await this.studentService.saveStudentNote(
+      studentId,
+      updatedRestriction.resolutionNote,
+    );
   }
 }
