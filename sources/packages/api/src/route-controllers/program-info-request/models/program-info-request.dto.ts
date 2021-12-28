@@ -22,6 +22,7 @@ export interface GetProgramInfoRequestDto
   programYearId: number;
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
+  activeProgramYear: boolean;
 }
 
 export interface GetPIRDeniedReasonDto {

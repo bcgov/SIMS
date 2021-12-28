@@ -133,7 +133,23 @@ export default {
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
+    const checkProgramYear = async () => {
+      // check program year, if not active allow only readonly mode with a toast
+      const programYearDetails = await ApplicationService.shared.getProgramYearOfApplication(
+        props.id,
+        true,
+      );
+      if (!programYearDetails.active) {
+        isReadOnly.value = true;
+        toast.error(
+          "Program Year not active",
+          "Application with inactive program year will not be considered",
+          TOAST_ERROR_DISPLAY_TIME,
+        );
+      }
+    };
     onMounted(async () => {
       //Get the student information, application information and student restriction.
       const [
@@ -154,9 +170,11 @@ export default {
           ApplicationStatus.cancelled,
           ApplicationStatus.overwritten,
         ].includes(applicationData.applicationStatus) || !!props.readOnly;
+
       notDraft.value =
         !!props.readOnly ||
         ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
+
       const address = studentInfo.contact;
       // TODO: Move formatted address to a common place in Vue app or API.
       const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
@@ -172,6 +190,7 @@ export default {
       };
       initialData.value = { ...applicationData.data, ...studentFormData };
       existingApplication.value = applicationData;
+      await checkProgramYear();
     });
 
     // Save the current state of the student application skipping all validations.
@@ -230,6 +249,7 @@ export default {
 
     const formLoaded = async (form: any) => {
       applicationWizard = form;
+      await checkProgramYear();
       // Disable internal submit button.
       formioUtils.disableWizardButtons(applicationWizard);
       applicationWizard.options.buttonSettings.showSubmit = false;

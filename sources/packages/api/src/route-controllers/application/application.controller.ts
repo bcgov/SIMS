@@ -408,6 +408,7 @@ export class ApplicationController extends BaseController {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
+      active: applicationProgramYear.programYear.active
     } as ProgramYearOfApplicationDto;
   }
 

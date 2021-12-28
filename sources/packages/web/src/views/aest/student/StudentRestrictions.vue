@@ -7,9 +7,9 @@
             >All Restrictions</v-col
           >
           <v-col
-            ><v-btn class="float-right primary-btn-background"
-              ><font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />Add
-              restriction</v-btn
+            ><v-btn class="float-right primary-btn-background">
+              <font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />
+              Add restriction</v-btn
             ></v-col
           >
         </v-row>

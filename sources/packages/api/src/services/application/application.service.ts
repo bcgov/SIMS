@@ -357,6 +357,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.pirDeniedOtherDesc",
         "PIRDeniedReason.reason",
         "PIRDeniedReason.id",
+        "programYear.active",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
@@ -1049,7 +1050,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: applicationId,
         location: { id: locationId },
         pirStatus: Not(ProgramInfoStatus.notRequired),
-    },
+      },
       { relations: ["studentFiles"] },
     );
 
