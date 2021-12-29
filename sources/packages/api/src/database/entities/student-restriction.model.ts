@@ -10,7 +10,7 @@ import { RecordDataModel } from "./record.model";
 import { Student, Application, Restriction } from ".";
 
 /**
- * Entity for student restrictions
+ * Entity for student restrictions.
  */
 @Entity({ name: TableNames.StudentRestrictions })
 export class StudentRestriction extends RecordDataModel {
