@@ -71,7 +71,7 @@ export class RestrictionController extends BaseController {
     }));
   }
   /**
-   * REST API to provide the list of restriction categories for drop-down
+   * REST API to provide the list of restriction categories for drop-down.
    * @returns Categories option list.
    */
   @Groups(UserGroups.AESTUser)
