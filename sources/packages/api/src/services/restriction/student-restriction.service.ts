@@ -1,6 +1,12 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { StudentRestriction, RestrictionType } from "../../database/entities";
+import {
+  StudentRestriction,
+  RestrictionType,
+  Note,
+  NoteType,
+  User,
+} from "../../database/entities";
 import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
   RESTRICTION_FEDERAL_MESSAGE,
@@ -119,11 +125,115 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
         "restriction.restrictionType",
+        "restriction.restrictionCategory",
         "restriction.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
+      .orderBy("studentRestrictions.isActive", "DESC")
       .getMany();
+  }
+
+  /**
+   * Get student restriction detail.
+   * @param studentId
+   * @param restrictionId
+   * @returns
+   */
+  async getStudentRestrictionDetailsById(
+    studentId: number,
+    studentRestrictionId: number,
+  ): Promise<StudentRestriction> {
+    return this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select([
+        "studentRestrictions.id",
+        "studentRestrictions.isActive",
+        "studentRestrictions.updatedAt",
+        "studentRestrictions.createdAt",
+        "creator.firstName",
+        "creator.lastName",
+        "modifier.firstName",
+        "modifier.lastName",
+        "restriction.restrictionType",
+        "restriction.restrictionCategory",
+        "restriction.description",
+        "restrictionNote.description",
+        "resolutionNote.description",
+      ])
+      .innerJoin("studentRestrictions.restriction", "restriction")
+      .innerJoin("studentRestrictions.creator", "creator")
+      .leftJoin("studentRestrictions.modifier", "modifier")
+      .innerJoin("studentRestrictions.student", "student")
+      .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
+      .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
+      .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.id = :studentRestrictionId", {
+        studentRestrictionId,
+      })
+      .getOne();
+  }
+
+  /**
+   * Add provincial restriction to student.
+   * @param studentRestriction
+   * @returns persisted student restriction.
+   */
+  async addProvincialRestriction(
+    studentRestriction: StudentRestriction,
+  ): Promise<StudentRestriction> {
+    const studentRestrictionEntity = new StudentRestriction();
+    studentRestrictionEntity.creator = studentRestriction.creator;
+    studentRestrictionEntity.student = studentRestriction.student;
+    studentRestrictionEntity.restriction = studentRestriction.restriction;
+    studentRestrictionEntity.restrictionNote =
+      studentRestriction.restrictionNote;
+    return this.repo.save(studentRestrictionEntity);
+  }
+
+  /**
+   * Resolve provincial restriction.
+   * @param studentRestriction
+   * @returns resolved student restriction.
+   */
+  async resolveProvincialRestriction(
+    studentRestriction: StudentRestriction,
+  ): Promise<StudentRestriction> {
+    const studentRestrictionEntity = await this.repo.findOne(
+      {
+        id: studentRestriction.id,
+        student: studentRestriction.student,
+        isActive: true,
+      },
+      {
+        relations: ["resolutionNote", "modifier", "restriction"],
+      },
+    );
+
+    if (!studentRestrictionEntity) {
+      throw new Error(
+        "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+      );
+    }
+
+    if (
+      studentRestrictionEntity.restriction.restrictionType !==
+      RestrictionType.Provincial
+    ) {
+      throw new Error(
+        "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
+      );
+    }
+    studentRestrictionEntity.isActive = false;
+    studentRestrictionEntity.modifier = studentRestriction.modifier;
+    studentRestrictionEntity.resolutionNote = {
+      description: studentRestriction.resolutionNote.description,
+      noteType: NoteType.Restriction,
+      creator: {
+        id: studentRestriction.modifier.id,
+      } as User,
+    } as Note;
+    return this.repo.save(studentRestrictionEntity);
   }
 }
