@@ -113,15 +113,15 @@ export class RestrictionController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/student/:studentId/restriction/:restrictionId")
+  @Get("/student/:studentId/studentRestriction/:studentRestrictionId")
   async getStudentRestrictionDetail(
     @Param("studentId") studentId: number,
-    @Param("restrictionId") restrictionId: number,
+    @Param("studentRestrictionId") studentRestrictionId: number,
   ): Promise<StudentRestrictionDetail> {
     const studentRestriction =
       await this.studentRestrictionService.getStudentRestrictionDetailsById(
         studentId,
-        restrictionId,
+        studentRestrictionId,
       );
     return {
       restrictionId: studentRestriction.id,
@@ -138,7 +138,7 @@ export class RestrictionController extends BaseController {
         : "",
       isActive: studentRestriction.isActive,
       restrictionNote: studentRestriction.restrictionNote?.description,
-      resolutionNote: studentRestriction.restrictionNote?.description,
+      resolutionNote: studentRestriction.resolutionNote?.description,
     };
   }
 

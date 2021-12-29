@@ -53,21 +53,34 @@
           </Column>
           <!-- Place holder button for view restrictions -->
           <Column field="restrictionId" header="">
-            <template #body="">
-              <v-btn outlined>View</v-btn>
+            <template #body="slotProps">
+              <v-btn
+                outlined
+                @click="viewStudentRestriction(slotProps.data.restrictionId)"
+                >View</v-btn
+              >
             </template></Column
           >
         </DataTable>
       </content-group>
     </div>
   </v-card>
+  <div>
+    <ViewRestrictionModal
+      ref="viewRestriction"
+      :studentRestriction="studentRestriction"
+      @submitData="resolveRestriction"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
-import { useFormatters } from "@/composables";
+import ViewRestrictionModal from "@/views/aest/student/ViewStudentRestriction.vue";
+import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
+import { StudentRestrictionDetail, UpdateRestrictionDTO } from "@/types";
 import {
   GeneralStatusForBadge,
   DEFAULT_PAGE_LIMIT,
@@ -76,7 +89,7 @@ import {
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 
 export default {
-  components: { ContentGroup, StatusBadge },
+  components: { ContentGroup, StatusBadge, ViewRestrictionModal },
   props: {
     studentId: {
       type: Number,
@@ -86,11 +99,59 @@ export default {
   setup(props: any) {
     const studentRestrictions = ref();
     const { dateOnlyLongString } = useFormatters();
+    const showModal = ref(false);
+    const viewRestriction = ref({} as ModalDialog<void>);
+    const studentRestriction = ref();
+    const toast = useToastMessage();
 
-    onMounted(async () => {
+    const loadStudentRestrictions = async () => {
       studentRestrictions.value = await RestrictionService.shared.getStudentRestrictions(
         props.studentId,
       );
+    };
+
+    const viewStudentRestriction = async (restrictionId: number) => {
+      studentRestriction.value = await RestrictionService.shared.getStudentRestrictionDetail(
+        props.studentId,
+        restrictionId,
+      );
+      studentRestriction.value.createdAt = dateOnlyLongString(
+        studentRestriction.value.createdAt,
+      );
+      if (studentRestriction.value.updatedAt) {
+        studentRestriction.value.updatedAt = dateOnlyLongString(
+          studentRestriction.value.updatedAt,
+        );
+      }
+
+      await viewRestriction.value.showModal();
+    };
+
+    const resolveRestriction = async (data: StudentRestrictionDetail) => {
+      try {
+        const payload = {
+          noteDescription: data.resolutionNote,
+        } as UpdateRestrictionDTO;
+        await RestrictionService.shared.resolveStudentRestriction(
+          props.studentId,
+          data.restrictionId,
+          payload,
+        );
+        await loadStudentRestrictions();
+        toast.success(
+          "Restriction Resolved",
+          "The given restriction has been resolved and resolution notes added.",
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "Unexpected error while resolving the restriction.",
+        );
+      }
+    };
+
+    onMounted(async () => {
+      await loadStudentRestrictions();
     });
     return {
       dateOnlyLongString,
@@ -98,6 +159,11 @@ export default {
       GeneralStatusForBadge,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
+      studentRestriction,
+      viewStudentRestriction,
+      viewRestriction,
+      showModal,
+      resolveRestriction,
     };
   },
 };

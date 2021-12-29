@@ -1,5 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentRestrictionSummary } from "@/types/contracts/RestrictionContract";
+import {
+  StudentRestrictionSummary,
+  StudentRestrictionDetail,
+  UpdateRestrictionDTO,
+} from "@/types/contracts/RestrictionContract";
 
 /**
  * Client service layer for Restrictions.
@@ -16,5 +20,27 @@ export class RestrictionService {
     studentId: number,
   ): Promise<StudentRestrictionSummary[]> {
     return ApiClient.RestrictionApi.getStudentRestrictions(studentId);
+  }
+
+  public async getStudentRestrictionDetail(
+    studentId: number,
+    studentRestrictionId: number,
+  ): Promise<StudentRestrictionDetail> {
+    return ApiClient.RestrictionApi.getStudentRestrictionDetail(
+      studentId,
+      studentRestrictionId,
+    );
+  }
+
+  public async resolveStudentRestriction(
+    studentId: number,
+    studentRestrictionId: number,
+    payload: UpdateRestrictionDTO,
+  ): Promise<void> {
+    return ApiClient.RestrictionApi.resolveStudentRestriction(
+      studentId,
+      studentRestrictionId,
+      payload,
+    );
   }
 }

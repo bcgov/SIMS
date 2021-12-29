@@ -138,14 +138,14 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   *
+   * Get student restriction detail.
    * @param studentId
    * @param restrictionId
    * @returns
    */
   async getStudentRestrictionDetailsById(
     studentId: number,
-    restrictionId: number,
+    studentRestrictionId: number,
   ): Promise<StudentRestriction> {
     return this.repo
       .createQueryBuilder("studentRestrictions")
@@ -171,10 +171,17 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
       .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
       .where("student.id = :studentId", { studentId })
-      .andWhere("studentRestrictions.id = :restrictionId", { restrictionId })
+      .andWhere("studentRestrictions.id = :studentRestrictionId", {
+        studentRestrictionId,
+      })
       .getOne();
   }
 
+  /**
+   * Add provincial restriction to student.
+   * @param studentRestriction
+   * @returns persisted student restriction.
+   */
   async addProvincialRestriction(
     studentRestriction: StudentRestriction,
   ): Promise<StudentRestriction> {
@@ -187,6 +194,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return this.repo.save(studentRestrictionEntity);
   }
 
+  /**
+   * Resolve provincial restriction.
+   * @param studentRestriction
+   * @returns resolved student restriction.
+   */
   async resolveProvincialRestriction(
     studentRestriction: StudentRestriction,
   ): Promise<StudentRestriction> {
