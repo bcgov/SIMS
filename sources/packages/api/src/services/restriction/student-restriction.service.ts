@@ -3,8 +3,6 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import {
   StudentRestriction,
   RestrictionType,
-  Student,
-  Restriction,
   Note,
   NoteType,
   User,
@@ -220,10 +218,8 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     }
 
     if (
-      !(
-        studentRestrictionEntity.restriction.restrictionType ===
-        RestrictionType.Provincial
-      )
+      studentRestrictionEntity.restriction.restrictionType !==
+      RestrictionType.Provincial
     ) {
       throw new Error(
         "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",

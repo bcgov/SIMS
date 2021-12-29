@@ -20,7 +20,6 @@ import {
   TokensService,
   WorkflowActionsService,
   WorkflowService,
-  RestrictionService,
 } from "../../services";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import { setGlobalPipes } from "../../utilities/auth-utils";
@@ -76,7 +75,6 @@ describe("Test system-access/application Controller", () => {
         createMockedJwtService(),
         DisbursementScheduleService,
         StudentRestrictionService,
-        RestrictionService,
       ],
     }).compile();
 

@@ -15,7 +15,6 @@ import {
   MSFAANumberService,
   EducationProgramService,
   StudentRestrictionService,
-  RestrictionService,
   FormService,
   SFASIndividualService,
 } from "../../services";
@@ -49,7 +48,6 @@ describe("StudentController", () => {
         createMockedJwtService(),
         StudentRestrictionService,
         SFASIndividualService,
-        RestrictionService,
       ],
       controllers: [StudentController],
     }).compile();
