@@ -4,10 +4,7 @@ import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
-import {
-  StudentRestrictionSummary,
-  StudentRestrictionDetail,
-} from "./models/restriction.dto";
+import { StudentRestrictionSummary } from "./models/restriction.dto";
 /**
  * Controller for Restrictions.
  * This consists of all Rest APIs for restrictions.
@@ -44,42 +41,5 @@ export class RestrictionController extends BaseController {
       updatedAt: studentRestriction.updatedAt,
       isActive: studentRestriction.isActive,
     }));
-  }
-
-  /**
-   * Rest API to get the details for view student restriction.
-   * @param studentId
-   * @param restrictionId
-   * @returns Student restriction detail view.
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("/student/:studentId/studentRestriction/:studentRestrictionId")
-  async getStudentRestrictionDetail(
-    @Param("studentId") studentId: number,
-    @Param("studentRestrictionId") studentRestrictionId: number,
-  ): Promise<StudentRestrictionDetail> {
-    const studentRestriction =
-      await this.studentRestrictionService.getStudentRestrictionDetailsById(
-        studentId,
-        studentRestrictionId,
-      );
-    return {
-      restrictionId: studentRestriction.id,
-      restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
-      description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: studentRestriction.updatedAt,
-      createdBy: studentRestriction.creator
-        ? `${studentRestriction.creator.lastName}, ${studentRestriction.creator.firstName}`
-        : "",
-      updatedBy: studentRestriction.modifier
-        ? `${studentRestriction.modifier.lastName}, ${studentRestriction.modifier.firstName}`
-        : "",
-      isActive: studentRestriction.isActive,
-      restrictionNote: studentRestriction.restrictionNote?.description,
-      resolutionNote: studentRestriction.resolutionNote?.description,
-    };
   }
 }
