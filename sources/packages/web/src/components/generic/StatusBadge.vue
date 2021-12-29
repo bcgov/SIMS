@@ -35,6 +35,7 @@ export default {
       label.value = props.status;
       switch (props.status) {
         case GeneralStatusForBadge.Active:
+        case GeneralStatusForBadge.ResolvedRestriction:
           // css class for active status
           badgeClass.value = "status-badge-active";
           textColor.value = "#333A47";
@@ -42,7 +43,6 @@ export default {
           iconColor.value = "#16C92E";
           break;
         case GeneralStatusForBadge.InActive:
-        case GeneralStatusForBadge.ResolvedRestriction:
           // css class for inactive status
           badgeClass.value = "status-badge-inactive";
           textColor.value = "#333A47";

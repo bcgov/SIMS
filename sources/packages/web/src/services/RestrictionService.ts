@@ -3,7 +3,9 @@ import {
   StudentRestrictionSummary,
   StudentRestrictionDetail,
   UpdateRestrictionDTO,
-} from "@/types/contracts/RestrictionContract";
+  OptionItemDto,
+  AddStudentRestrictionDTO,
+} from "@/types";
 
 /**
  * Client service layer for Restrictions.
@@ -30,6 +32,23 @@ export class RestrictionService {
       studentId,
       studentRestrictionId,
     );
+  }
+
+  public async getRestrictionCategories(): Promise<OptionItemDto[]> {
+    return ApiClient.RestrictionApi.getRestrictionCategories();
+  }
+
+  public async getRestrictionReasons(
+    restrictionCategory: string,
+  ): Promise<OptionItemDto[]> {
+    return ApiClient.RestrictionApi.getRestrictionReasons(restrictionCategory);
+  }
+
+  public async addStudentRestriction(
+    studentId: number,
+    payload: AddStudentRestrictionDTO,
+  ): Promise<void> {
+    return ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
   }
 
   public async resolveStudentRestriction(

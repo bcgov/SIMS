@@ -7,7 +7,9 @@
             >All Restrictions</v-col
           >
           <v-col
-            ><v-btn class="float-right primary-btn-background"
+            ><v-btn
+              @click="addStudentRestriction"
+              class="float-right primary-btn-background"
               ><font-awesome-icon :icon="['fas', 'plus']" class="mr-2" />Add
               restriction</v-btn
             ></v-col
@@ -65,13 +67,16 @@
       </content-group>
     </div>
   </v-card>
-  <div>
-    <ViewRestrictionModal
-      ref="viewRestriction"
-      :studentRestriction="studentRestriction"
-      @submitData="resolveRestriction"
-    />
-  </div>
+  <ViewRestrictionModal
+    ref="viewRestriction"
+    :studentRestriction="studentRestriction"
+    @submitResolutionData="resolveRestriction"
+  />
+  <AddStudentRestrictionModal
+    ref="addRestriction"
+    :studentRestriction="studentRestriction"
+    @submitRestrictionData="createNewRestriction"
+  />
 </template>
 
 <script lang="ts">
@@ -79,17 +84,25 @@ import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/views/aest/student/ViewStudentRestriction.vue";
+import AddStudentRestrictionModal from "@/views/aest/student/AddStudentRestriction.vue";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
-import { StudentRestrictionDetail, UpdateRestrictionDTO } from "@/types";
 import {
   GeneralStatusForBadge,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
+  AddStudentRestrictionDTO,
+  StudentRestrictionDetail,
+  UpdateRestrictionDTO,
 } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 
 export default {
-  components: { ContentGroup, StatusBadge, ViewRestrictionModal },
+  components: {
+    ContentGroup,
+    StatusBadge,
+    ViewRestrictionModal,
+    AddStudentRestrictionModal,
+  },
   props: {
     studentId: {
       type: Number,
@@ -101,6 +114,7 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<void>);
+    const addRestriction = ref({} as ModalDialog<void>);
     const studentRestriction = ref();
     const toast = useToastMessage();
 
@@ -150,6 +164,29 @@ export default {
       }
     };
 
+    const addStudentRestriction = async () => {
+      await addRestriction.value.showModal();
+    };
+
+    const createNewRestriction = async (data: AddStudentRestrictionDTO) => {
+      try {
+        await RestrictionService.shared.addStudentRestriction(
+          props.studentId,
+          data,
+        );
+        await loadStudentRestrictions();
+        toast.success(
+          "Restriction Added",
+          "The restriction has been added to student.",
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "Unexpected error while adding the restriction.",
+        );
+      }
+    };
+
     onMounted(async () => {
       await loadStudentRestrictions();
     });
@@ -164,6 +201,9 @@ export default {
       viewRestriction,
       showModal,
       resolveRestriction,
+      addRestriction,
+      addStudentRestriction,
+      createNewRestriction,
     };
   },
 };

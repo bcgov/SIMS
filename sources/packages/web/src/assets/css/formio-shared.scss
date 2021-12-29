@@ -291,10 +291,10 @@ $border-color-info: #6554c0;
 }
 
 .restriction-modal {
-  min-width: 700px;
+  min-width: 600px;
 }
 
-.form-status {
+.form-status-badge {
   border-width: 1px;
   padding-left: 10px;
   padding-right: 10px;
@@ -305,12 +305,12 @@ $border-color-info: #6554c0;
   font-size: 12px !important;
 }
 
-.form-active-restriction {
+.status-active-restriction {
   border-color: #ff7a00;
   color: #ff7a00;
 }
 
-.form-resolved-restriction {
+.status-resolved-restriction {
   border-color: #16c92e;
   color: #16c92e;
 }

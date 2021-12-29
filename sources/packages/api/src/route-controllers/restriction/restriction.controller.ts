@@ -21,6 +21,7 @@ import {
   StudentRestrictionSummary,
   StudentRestrictionDetail,
   UpdateRestrictionDTO,
+  AddStudentRestrictionDTO,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
 import {
@@ -152,15 +153,16 @@ export class RestrictionController extends BaseController {
    */
   @Groups(UserGroups.AESTUser)
   @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Post("/student/:studentId/restriction/:restrictionId")
+  @Post("/student/:studentId")
   async addStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
-    @Param("restrictionId") restrictionId: number,
-    @Body() payload: UpdateRestrictionDTO,
+    @Body() payload: AddStudentRestrictionDTO,
   ): Promise<void> {
     const restriction =
-      await this.restrictionService.getProvincialRestrictionById(restrictionId);
+      await this.restrictionService.getProvincialRestrictionById(
+        payload.restriction,
+      );
     if (!restriction) {
       throw new UnprocessableEntityException(
         "The given restriction type is not Provincial. Only provincial restrictions can be added. ",

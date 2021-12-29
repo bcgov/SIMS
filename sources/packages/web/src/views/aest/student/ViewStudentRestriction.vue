@@ -40,7 +40,7 @@ export default {
       required: true,
     },
   },
-  emits: ["submitData"],
+  emits: ["submitResolutionData"],
   setup(props: any, context: any) {
     const { showDialog, showModal } = useModalDialog<void>();
     const formData = ref();
@@ -55,7 +55,7 @@ export default {
       return formData.value.submit();
     };
     const submitResolution = async (data: any) => {
-      context.emit("submitData", data);
+      context.emit("submitResolutionData", data);
     };
     const resolveRestriction = async () => {
       const formSubmitted = await submitForm();

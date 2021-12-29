@@ -30,8 +30,15 @@ export interface StudentRestrictionDetail extends StudentRestrictionSummary {
 }
 
 /**
- * DTO to add or resolve restriction to a student/institution.
+ * DTO to resolve restriction to a student/institution.
  */
 export interface UpdateRestrictionDTO {
   noteDescription: string;
+}
+
+/**
+ * DTO to add restriction to a student/institution.
+ */
+export interface AddStudentRestrictionDTO extends UpdateRestrictionDTO {
+  restriction: number;
 }
