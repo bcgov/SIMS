@@ -20,15 +20,6 @@ export class Restriction extends RecordDataModel {
   })
   restrictionType: RestrictionType;
   /**
-   * Restriction category of the restriction.
-   * This category is fixed for federal restrictions as Federal.
-   */
-  @Column({
-    name: "restriction_category",
-    nullable: false,
-  })
-  restrictionCategory: string;
-  /**
    * Restriction code of the restriction
    */
   @Column({

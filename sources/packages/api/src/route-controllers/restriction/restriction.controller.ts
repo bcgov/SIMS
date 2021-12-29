@@ -35,7 +35,7 @@ export class RestrictionController extends BaseController {
     return studentRestrictions?.map((studentRestriction) => ({
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
-      restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      restrictionCategory: studentRestriction.restriction.restrictionType,
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
