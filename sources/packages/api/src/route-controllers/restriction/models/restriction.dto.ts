@@ -1,44 +1,14 @@
 import { RestrictionType } from "../../../database/entities";
 
 /**
- * Base DTO for restriction
+ * DTO interface for student restriction summary.
  */
-export interface RestrictionBaseDTO {
+export interface StudentRestrictionSummary {
   restrictionId: number;
   restrictionType: RestrictionType;
   restrictionCategory: string;
   description: string;
-}
-
-/**
- * DTO interface for student restriction summary.
- */
-export interface StudentRestrictionSummary extends RestrictionBaseDTO {
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;
-}
-
-/**
- * DTO interface for student restriction details.
- */
-export interface StudentRestrictionDetail extends StudentRestrictionSummary {
-  createdBy: string;
-  updatedBy: string;
-  restrictionNote: string;
-  resolutionNote: string;
-}
-
-/**
- * DTO to resolve restriction to a student/institution.
- */
-export interface UpdateRestrictionDTO {
-  noteDescription: string;
-}
-
-/**
- * DTO to add restriction to a student/institution.
- */
-export interface AddStudentRestrictionDTO extends UpdateRestrictionDTO {
-  restriction: number;
 }
