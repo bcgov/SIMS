@@ -10,7 +10,7 @@ export class AddRestrictionColumns1640131464891 implements MigrationInterface {
       getSQLFileData("Add-cols-restriction-resolved-notes.sql", "Restrictions"),
     );
     await queryRunner.query(
-      getSQLFileData("Insert-provincial-restrictions.sql", "Restrictions"),
+      getSQLFileData("Create-provincial-restrictions.sql", "Restrictions"),
     );
   }
 
