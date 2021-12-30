@@ -13,6 +13,9 @@ import {
   RESTRICTION_PROVINCIAL_MESSAGE,
 } from "./constants";
 import { Connection, SelectQueryBuilder } from "typeorm";
+import { CustomNamedError } from "../../utilities";
+export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
+export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
 /**
  * Service layer for Student Restriction.
@@ -212,8 +215,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     );
 
     if (!studentRestrictionEntity) {
-      throw new Error(
+      throw new CustomNamedError(
         "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+        RESTRICTION_NOT_ACTIVE,
       );
     }
 
@@ -221,8 +225,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       studentRestrictionEntity.restriction.restrictionType !==
       RestrictionType.Provincial
     ) {
-      throw new Error(
+      throw new CustomNamedError(
         "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
+        RESTRICTION_NOT_PROVINCIAL,
       );
     }
     studentRestrictionEntity.isActive = false;

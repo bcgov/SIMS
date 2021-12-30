@@ -6,11 +6,15 @@ import {
   Body,
   Patch,
   UnprocessableEntityException,
+  NotFoundException,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
   RestrictionService,
   StudentService,
+  RESTRICTION_NOT_ACTIVE,
+  RESTRICTION_NOT_PROVINCIAL,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -124,6 +128,9 @@ export class RestrictionController extends BaseController {
         studentId,
         studentRestrictionId,
       );
+    if (!studentRestriction) {
+      throw new NotFoundException("The student restriction does not exist.");
+    }
     return {
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
@@ -165,7 +172,7 @@ export class RestrictionController extends BaseController {
       );
     if (!restriction) {
       throw new UnprocessableEntityException(
-        "The given restriction type is not Provincial. Only provincial restrictions can be added. ",
+        "The given restriction type is not Provincial. Only provincial restrictions can be added.",
       );
     }
     const studentRestriction = new StudentRestriction();
@@ -185,6 +192,7 @@ export class RestrictionController extends BaseController {
       await this.studentRestrictionService.addProvincialRestriction(
         studentRestriction,
       );
+    /**mapping the note added for restriction to student notes**/
     if (updatedRestriction.restrictionNote) {
       await this.studentService.saveStudentNote(
         studentId,
@@ -224,15 +232,27 @@ export class RestrictionController extends BaseController {
       noteType: NoteType.Restriction,
       creator: { id: userToken.userId } as User,
     } as Note;
+    try {
+      const updatedRestriction =
+        await this.studentRestrictionService.resolveProvincialRestriction(
+          studentRestriction,
+        );
 
-    const updatedRestriction =
-      await this.studentRestrictionService.resolveProvincialRestriction(
-        studentRestriction,
+      /**mapping the note added for resolution to student notes**/
+      await this.studentService.saveStudentNote(
+        studentId,
+        updatedRestriction.resolutionNote,
       );
-
-    await this.studentService.saveStudentNote(
-      studentId,
-      updatedRestriction.resolutionNote,
-    );
+    } catch (error) {
+      if (
+        error.name === RESTRICTION_NOT_ACTIVE ||
+        error.name === RESTRICTION_NOT_PROVINCIAL
+      ) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw new InternalServerErrorException(
+        "Unexpected error while resolving restriction",
+      );
+    }
   }
 }
