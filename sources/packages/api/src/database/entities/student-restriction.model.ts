@@ -3,14 +3,15 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Student, Application, Restriction } from ".";
+import { Student, Application, Restriction, Note } from ".";
 
 /**
- * Entity for student restrictions.
+ * Entity for student restrictions
  */
 @Entity({ name: TableNames.StudentRestrictions })
 export class StudentRestriction extends RecordDataModel {
@@ -51,4 +52,22 @@ export class StudentRestriction extends RecordDataModel {
     nullable: false,
   })
   isActive: boolean;
+  /**
+   * Note entered during restriction creation.
+   */
+  @OneToOne(() => Note, { eager: false, cascade: true })
+  @JoinColumn({
+    name: "restriction_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  restrictionNote: Note;
+  /**
+   * Note entered during restriction resolution.
+   */
+  @OneToOne(() => Note, { eager: false, cascade: true })
+  @JoinColumn({
+    name: "resolution_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  resolutionNote: Note;
 }
