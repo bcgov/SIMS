@@ -26,7 +26,7 @@
           </template>
           <Column
             field="restrictionCategory"
-            header="Type"
+            header="Category"
             sortable="true"
           ></Column>
           <Column field="description" header="Reason"></Column>
