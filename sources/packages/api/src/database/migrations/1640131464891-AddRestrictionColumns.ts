@@ -9,9 +9,15 @@ export class AddRestrictionColumns1640131464891 implements MigrationInterface {
     await queryRunner.query(
       getSQLFileData("Add-cols-restriction-resolved-notes.sql", "Restrictions"),
     );
+    await queryRunner.query(
+      getSQLFileData("Insert-provincial-restrictions.sql", "Restrictions"),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData("Delete-provincial-restrictions.sql", "Restrictions"),
+    );
     await queryRunner.query(
       getSQLFileData(
         "Drop-cols-restriction-resolved-notes.sql",
