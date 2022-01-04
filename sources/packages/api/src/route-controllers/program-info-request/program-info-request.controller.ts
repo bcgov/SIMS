@@ -100,7 +100,7 @@ export class ProgramInfoRequestController {
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
     result.programYearId = application.programYear.id;
-    result.activeProgramYear = application.programYear.active;
+    result.isActiveProgramYear = application.programYear.active;
 
     if (application.offering) {
       result.offeringName = application.offering.name;

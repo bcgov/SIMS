@@ -131,7 +131,7 @@ export class ApplicationApi extends HttpBaseClient {
       if (includeInActivePY) {
         url = `${url}?includeInActivePY=${includeInActivePY}`;
       }
-      const response = await this.apiClient.get(url, this.addAuthHeader());
+      const response = await this.getCall(url);
       return response.data as ProgramYearOfApplicationDto;
     } catch (error) {
       this.handleRequestError(error);

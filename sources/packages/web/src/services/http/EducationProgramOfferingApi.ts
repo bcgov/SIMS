@@ -102,7 +102,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       if (includeInActivePY) {
         url = `${url}&includeInActivePY=${includeInActivePY}`;
       }
-      const response = await this.apiClient.get(url, this.addAuthHeader());
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
@@ -149,7 +149,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       if (includeInActivePY) {
         url = `${url}?includeInActivePY=${includeInActivePY}`;
       }
-      const response = await this.apiClient.get(url, this.addAuthHeader());
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

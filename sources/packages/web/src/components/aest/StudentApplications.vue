@@ -252,7 +252,11 @@ export default {
           },
         });
       } catch (error) {
-        toast.error("Program Year not active", "", TOAST_ERROR_DISPLAY_TIME);
+        toast.error(
+          "Program Year not active",
+          undefined,
+          TOAST_ERROR_DISPLAY_TIME,
+        );
       }
     };
     const confirmEditApplication = async (id: number) => {

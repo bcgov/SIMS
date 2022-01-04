@@ -224,7 +224,7 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
     @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
-    @Query("includeInActivePY") includeInActivePY?: boolean,
+    @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
@@ -260,7 +260,7 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
-    @Query("includeInActivePY") includeInActivePY?: boolean,
+    @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(

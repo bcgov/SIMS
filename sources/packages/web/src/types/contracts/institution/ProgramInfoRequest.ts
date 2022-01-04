@@ -59,7 +59,7 @@ export interface GetProgramInfoRequestDto
   otherReasonDesc?: string;
   // for `Deny program information request` checkbox
   denyProgramInformationRequest: boolean;
-  activeProgramYear: boolean;
+  isActiveProgramYear: boolean;
 }
 
 export interface GetPIRDeniedReasonDto {

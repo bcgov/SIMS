@@ -172,7 +172,7 @@ export class EducationProgramController {
   async getLocationProgramsOptionList(
     @Param("locationId") locationId: number,
     @Param("programYearId") programYearId: number,
-    @Query("includeInActivePY") includeInActivePY?: boolean,
+    @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const programs = await this.programService.getProgramsForLocation(
       locationId,

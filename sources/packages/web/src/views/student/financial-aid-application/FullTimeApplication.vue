@@ -190,7 +190,7 @@ export default {
       };
       initialData.value = { ...applicationData.data, ...studentFormData };
       existingApplication.value = applicationData;
-      await checkProgramYear();
+      // await checkProgramYear();
     });
 
     // Save the current state of the student application skipping all validations.

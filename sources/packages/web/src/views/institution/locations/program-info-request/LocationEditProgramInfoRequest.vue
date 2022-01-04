@@ -85,7 +85,7 @@ export default {
         props.locationId,
         props.applicationId,
       );
-      if (!programRequestData.value?.activeProgramYear) {
+      if (!programRequestData.value?.isActiveProgramYear) {
         toast.error(
           "Program Year Not Active",
           `Program year respective to this application (${programRequestData.value?.applicationNumber}) is not active.`,
