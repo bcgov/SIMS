@@ -28,13 +28,7 @@ import {
   AddStudentRestrictionDTO,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
-import {
-  StudentRestriction,
-  Student,
-  User,
-  Note,
-  NoteType,
-} from "../../database/entities";
+
 /**
  * Controller for Restrictions.
  * This consists of all Rest APIs for restrictions.
