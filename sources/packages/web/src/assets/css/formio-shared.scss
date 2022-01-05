@@ -286,10 +286,17 @@ $border-color-info: #6554c0;
   margin-top: auto !important;
 }
 
+/**
+* TODO: This style has been added as v-dialog is not being responsive. 
+* Once This bug is resolved in Vuetify3, this style can be removed.
+*/
 .min-width-modal {
   min-width: 500px;
 }
-
+/**
+* TODO: This style has been added as v-dialog is not being responsive. 
+* Once This bug is resolved in Vuetify3, this style can be removed.
+*/
 .restriction-modal {
   min-width: 600px;
 }

@@ -33,6 +33,7 @@ import {
   useFormioDropdownLoader,
 } from "@/composables";
 import { AddStudentRestrictionDTO } from "@/types";
+export const CATEGORY_KEY = "category";
 export default {
   components: { ModalDialogBase, formio },
   props: {
@@ -53,7 +54,7 @@ export default {
     };
     const formLoaded = async (form: any) => {
       formData.value = form;
-      const dropdown = formioUtils.getComponent(form, "category");
+      const dropdown = formioUtils.getComponent(form, CATEGORY_KEY);
       const categories = await RestrictionService.shared.getRestrictionCategories();
       const options = [];
       for (const category of categories) {
@@ -67,11 +68,10 @@ export default {
     };
 
     const formChanged = async (form: any, event: any) => {
-      if (event.changed?.component.key === "category") {
-        form.data.restriction = undefined;
+      if (event.changed?.component.key === CATEGORY_KEY) {
         const selectedRestrictionCategory: string = formioUtils.getComponentValueByKey(
           form,
-          "category",
+          CATEGORY_KEY,
         );
         formioDataLoader.loadRestrictionReasons(
           form,

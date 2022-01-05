@@ -92,6 +92,7 @@ export class RestrictionController extends BaseController {
 
   /**
    * REST API to provide the list of restriction reasons for selected category.
+   * @param restrictionCategory Selected Category from category list.
    * @returns Reasons option list.
    */
   @Groups(UserGroups.AESTUser)
@@ -113,7 +114,7 @@ export class RestrictionController extends BaseController {
   /**
    * Rest API to get the details for view student restriction.
    * @param studentId
-   * @param restrictionId
+   * @param studentRestrictionId
    * @returns Student restriction detail view.
    */
   @Groups(UserGroups.AESTUser)
@@ -152,7 +153,7 @@ export class RestrictionController extends BaseController {
 
   /**
    * Rest API to add a new provincial restriction to Student.
-   * Note: Federal restrictions are added/resolved by nightly job not through this API.
+   * * Note: Federal restrictions are added/resolved by nightly job not through this API.
    * @param userToken
    * @param studentId
    * @param restrictionId
@@ -168,7 +169,7 @@ export class RestrictionController extends BaseController {
   ): Promise<void> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
-        payload.restriction,
+        payload.restrictionId,
       );
     if (!restriction) {
       throw new UnprocessableEntityException(
@@ -203,7 +204,7 @@ export class RestrictionController extends BaseController {
 
   /**
    * Rest API to resolve a provincial restriction.
-   * Note: Federal restrictions are added/resolved by nightly job not through this API.
+   * * Note: Federal restrictions are added/resolved by nightly job not through this API.
    * @param userToken
    * @param studentId
    * @param studentRestrictionId

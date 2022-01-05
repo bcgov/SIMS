@@ -38,7 +38,7 @@ export interface UpdateRestrictionDTO {
  * DTO to add restriction to a student/institution.
  */
 export interface AddStudentRestrictionDTO extends UpdateRestrictionDTO {
-  restriction: number;
+  restrictionId: number;
 }
 
 /**
