@@ -75,7 +75,7 @@ export default {
         );
         formioDataLoader.loadRestrictionReasons(
           form,
-          "restriction",
+          "restrictionId",
           selectedRestrictionCategory,
         );
       }

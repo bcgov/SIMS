@@ -176,22 +176,11 @@ export class RestrictionController extends BaseController {
         "The given restriction type is not Provincial. Only provincial restrictions can be added.",
       );
     }
-    const studentRestriction = new StudentRestriction();
-    studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.restriction = restriction;
-    studentRestriction.creator = { id: userToken.userId } as User;
-    if (payload.noteDescription) {
-      studentRestriction.restrictionNote = {
-        description: payload.noteDescription,
-        noteType: NoteType.Restriction,
-        creator: {
-          id: studentRestriction.creator.id,
-        } as User,
-      } as Note;
-    }
     const updatedRestriction =
       await this.studentRestrictionService.addProvincialRestriction(
-        studentRestriction,
+        studentId,
+        userToken.userId,
+        payload,
       );
     /**mapping the note added for restriction to student notes**/
     if (updatedRestriction.restrictionNote) {
@@ -224,19 +213,13 @@ export class RestrictionController extends BaseController {
         "Resolution Notes are mandatory to resolve the restriction.",
       );
     }
-    const studentRestriction = new StudentRestriction();
-    studentRestriction.id = studentRestrictionId;
-    studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.modifier = { id: userToken.userId } as User;
-    studentRestriction.resolutionNote = {
-      description: payload.noteDescription,
-      noteType: NoteType.Restriction,
-      creator: { id: userToken.userId } as User,
-    } as Note;
     try {
       const updatedRestriction =
         await this.studentRestrictionService.resolveProvincialRestriction(
-          studentRestriction,
+          studentId,
+          studentRestrictionId,
+          userToken.userId,
+          payload,
         );
 
       /**mapping the note added for resolution to student notes**/

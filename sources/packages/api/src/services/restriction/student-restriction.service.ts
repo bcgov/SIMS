@@ -6,8 +6,14 @@ import {
   Note,
   NoteType,
   User,
+  Restriction,
+  Student,
 } from "../../database/entities";
 import { StudentRestrictionStatus } from "./models/student-restriction.model";
+import {
+  AddStudentRestrictionDTO,
+  UpdateRestrictionDTO,
+} from "../../route-controllers/restriction/models/restriction.dto";
 import {
   RESTRICTION_FEDERAL_MESSAGE,
   RESTRICTION_PROVINCIAL_MESSAGE,
@@ -180,33 +186,52 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
 
   /**
    * Add provincial restriction to student.
-   * @param studentRestriction
+   * @param studentId
+   * @param userId
+   * @param addStudentRestrictionDTO
    * @returns persisted student restriction.
    */
   async addProvincialRestriction(
-    studentRestriction: StudentRestriction,
+    studentId: number,
+    userId: number,
+    addStudentRestrictionDTO: AddStudentRestrictionDTO,
   ): Promise<StudentRestriction> {
-    const studentRestrictionEntity = new StudentRestriction();
-    studentRestrictionEntity.creator = studentRestriction.creator;
-    studentRestrictionEntity.student = studentRestriction.student;
-    studentRestrictionEntity.restriction = studentRestriction.restriction;
-    studentRestrictionEntity.restrictionNote =
-      studentRestriction.restrictionNote;
-    return this.repo.save(studentRestrictionEntity);
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.restriction = {
+      id: addStudentRestrictionDTO.restrictionId,
+    } as Restriction;
+    studentRestriction.creator = { id: userId } as User;
+    if (addStudentRestrictionDTO.noteDescription) {
+      studentRestriction.restrictionNote = {
+        description: addStudentRestrictionDTO.noteDescription,
+        noteType: NoteType.Restriction,
+        creator: {
+          id: studentRestriction.creator.id,
+        } as User,
+      } as Note;
+    }
+    return this.repo.save(studentRestriction);
   }
 
   /**
    * Resolve provincial restriction.
-   * @param studentRestriction
+   * @param studentId
+   * @param studentRestrictionId
+   * @param userId
+   * @param updateRestrictionDTO
    * @returns resolved student restriction.
    */
   async resolveProvincialRestriction(
-    studentRestriction: StudentRestriction,
+    studentId: number,
+    studentRestrictionId: number,
+    userId: number,
+    updateRestrictionDTO: UpdateRestrictionDTO,
   ): Promise<StudentRestriction> {
     const studentRestrictionEntity = await this.repo.findOne(
       {
-        id: studentRestriction.id,
-        student: studentRestriction.student,
+        id: studentRestrictionId,
+        student: { id: studentId } as Student,
         isActive: true,
       },
       {
@@ -231,12 +256,12 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       );
     }
     studentRestrictionEntity.isActive = false;
-    studentRestrictionEntity.modifier = studentRestriction.modifier;
+    studentRestrictionEntity.modifier = { id: userId } as User;
     studentRestrictionEntity.resolutionNote = {
-      description: studentRestriction.resolutionNote.description,
+      description: updateRestrictionDTO.noteDescription,
       noteType: NoteType.Restriction,
       creator: {
-        id: studentRestriction.modifier.id,
+        id: studentRestrictionEntity.modifier.id,
       } as User,
     } as Note;
     return this.repo.save(studentRestrictionEntity);
