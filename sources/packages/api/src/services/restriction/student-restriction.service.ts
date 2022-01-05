@@ -1,12 +1,27 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { StudentRestriction, RestrictionType } from "../../database/entities";
+import {
+  StudentRestriction,
+  RestrictionType,
+  Note,
+  NoteType,
+  User,
+  Restriction,
+  Student,
+} from "../../database/entities";
 import { StudentRestrictionStatus } from "./models/student-restriction.model";
+import {
+  AddStudentRestrictionDTO,
+  UpdateRestrictionDTO,
+} from "../../route-controllers/restriction/models/restriction.dto";
 import {
   RESTRICTION_FEDERAL_MESSAGE,
   RESTRICTION_PROVINCIAL_MESSAGE,
 } from "./constants";
 import { Connection, SelectQueryBuilder } from "typeorm";
+import { CustomNamedError } from "../../utilities";
+export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
+export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
 /**
  * Service layer for Student Restriction.
@@ -119,11 +134,136 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
         "restriction.restrictionType",
+        "restriction.restrictionCategory",
         "restriction.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
+      .orderBy("studentRestrictions.isActive", "DESC")
       .getMany();
+  }
+
+  /**
+   * Get student restriction detail.
+   * @param studentId
+   * @param restrictionId
+   * @returns
+   */
+  async getStudentRestrictionDetailsById(
+    studentId: number,
+    studentRestrictionId: number,
+  ): Promise<StudentRestriction> {
+    return this.repo
+      .createQueryBuilder("studentRestrictions")
+      .select([
+        "studentRestrictions.id",
+        "studentRestrictions.isActive",
+        "studentRestrictions.updatedAt",
+        "studentRestrictions.createdAt",
+        "creator.firstName",
+        "creator.lastName",
+        "modifier.firstName",
+        "modifier.lastName",
+        "restriction.restrictionType",
+        "restriction.restrictionCategory",
+        "restriction.description",
+        "restrictionNote.description",
+        "resolutionNote.description",
+      ])
+      .innerJoin("studentRestrictions.restriction", "restriction")
+      .innerJoin("studentRestrictions.creator", "creator")
+      .leftJoin("studentRestrictions.modifier", "modifier")
+      .innerJoin("studentRestrictions.student", "student")
+      .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
+      .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
+      .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.id = :studentRestrictionId", {
+        studentRestrictionId,
+      })
+      .getOne();
+  }
+
+  /**
+   * Add provincial restriction to student.
+   * @param studentId
+   * @param userId
+   * @param addStudentRestrictionDTO
+   * @returns persisted student restriction.
+   */
+  async addProvincialRestriction(
+    studentId: number,
+    userId: number,
+    addStudentRestrictionDTO: AddStudentRestrictionDTO,
+  ): Promise<StudentRestriction> {
+    const studentRestriction = new StudentRestriction();
+    studentRestriction.student = { id: studentId } as Student;
+    studentRestriction.restriction = {
+      id: addStudentRestrictionDTO.restrictionId,
+    } as Restriction;
+    studentRestriction.creator = { id: userId } as User;
+    if (addStudentRestrictionDTO.noteDescription) {
+      studentRestriction.restrictionNote = {
+        description: addStudentRestrictionDTO.noteDescription,
+        noteType: NoteType.Restriction,
+        creator: {
+          id: studentRestriction.creator.id,
+        } as User,
+      } as Note;
+    }
+    return this.repo.save(studentRestriction);
+  }
+
+  /**
+   * Resolve provincial restriction.
+   * @param studentId
+   * @param studentRestrictionId
+   * @param userId
+   * @param updateRestrictionDTO
+   * @returns resolved student restriction.
+   */
+  async resolveProvincialRestriction(
+    studentId: number,
+    studentRestrictionId: number,
+    userId: number,
+    updateRestrictionDTO: UpdateRestrictionDTO,
+  ): Promise<StudentRestriction> {
+    const studentRestrictionEntity = await this.repo.findOne(
+      {
+        id: studentRestrictionId,
+        student: { id: studentId } as Student,
+        isActive: true,
+      },
+      {
+        relations: ["resolutionNote", "modifier", "restriction"],
+      },
+    );
+
+    if (!studentRestrictionEntity) {
+      throw new CustomNamedError(
+        "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+        RESTRICTION_NOT_ACTIVE,
+      );
+    }
+
+    if (
+      studentRestrictionEntity.restriction.restrictionType !==
+      RestrictionType.Provincial
+    ) {
+      throw new CustomNamedError(
+        "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
+        RESTRICTION_NOT_PROVINCIAL,
+      );
+    }
+    studentRestrictionEntity.isActive = false;
+    studentRestrictionEntity.modifier = { id: userId } as User;
+    studentRestrictionEntity.resolutionNote = {
+      description: updateRestrictionDTO.noteDescription,
+      noteType: NoteType.Restriction,
+      creator: {
+        id: studentRestrictionEntity.modifier.id,
+      } as User,
+    } as Note;
+    return this.repo.save(studentRestrictionEntity);
   }
 }

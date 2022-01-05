@@ -286,6 +286,38 @@ $border-color-info: #6554c0;
   margin-top: auto !important;
 }
 
+/**
+* TODO: This style has been added as v-dialog is not being responsive. 
+* Once This bug is resolved in Vuetify3, this style can be removed.
+*/
 .min-width-modal {
   min-width: 500px;
+}
+/**
+* TODO: This style has been added as v-dialog is not being responsive. 
+* Once This bug is resolved in Vuetify3, this style can be removed.
+*/
+.restriction-modal {
+  min-width: 600px;
+}
+
+.form-status-badge {
+  border-width: 1px;
+  padding-left: 10px;
+  padding-right: 10px;
+  position: absolute;
+  border-radius: 30px;
+  border-style: solid;
+  text-transform: uppercase;
+  font-size: 12px !important;
+}
+
+.status-active-restriction {
+  border-color: #ff7a00;
+  color: #ff7a00;
+}
+
+.status-resolved-restriction {
+  border-color: #16c92e;
+  color: #16c92e;
 }
