@@ -142,3 +142,17 @@ export function getExtendedDateFormat(date: Date): string {
 export function getDateOnlyFormat(date: Date): string {
   return dayjs(date).format(DATE_ONLY_FORMAT);
 }
+
+/**
+ * Get the extended date format(2021 Mar 22) for the date given
+ * @param date date to be retrieved as Extended date format
+ * @returns extended date format like March, 22 2021
+ */
+export function getDateDifferenceInMonth(
+  firstDate: Date | string,
+  secondDate: Date | string,
+): number {
+  const date1 = dayjs(firstDate);
+  const date2 = dayjs(secondDate);
+  return date1.diff(date2);
+}

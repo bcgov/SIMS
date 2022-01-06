@@ -33,6 +33,7 @@ import {
   FormIOCustomEventTypes,
   GetProgramInfoRequestDto,
 } from "@/types";
+export const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
 
 export default {
   components: { formio },
@@ -54,7 +55,6 @@ export default {
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -85,13 +85,6 @@ export default {
         props.locationId,
         props.applicationId,
       );
-      if (!programRequestData.value?.isActiveProgramYear) {
-        toast.error(
-          "Program Year Not Active",
-          `Program year respective to this application (${programRequestData.value?.applicationNumber}) is not active.`,
-          TOAST_ERROR_DISPLAY_TIME,
-        );
-      }
       initialData.value = {
         ...programRequestData.value,
         studentStudyStartDate: dateString(
@@ -175,10 +168,14 @@ export default {
           },
         });
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened while saving the Program Information Request.",
-        );
+        let errorLabel = "Unexpected error";
+        let errorMsg =
+          "An error happened while saving the Program Information Request.";
+        if (error.includes(OFFERING_START_DATE_ERROR)) {
+          errorMsg = error.replace(OFFERING_START_DATE_ERROR, "").trim();
+          errorLabel = OFFERING_START_DATE_ERROR;
+        }
+        toast.error(errorLabel, errorMsg);
       }
     };
     return {

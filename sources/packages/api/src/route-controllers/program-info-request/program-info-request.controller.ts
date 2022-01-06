@@ -26,7 +26,11 @@ import {
   FormService,
   PIRDeniedReasonService,
 } from "../../services";
-import { getUserFullName } from "../../utilities/auth-utils";
+import {
+  getUserFullName,
+  getDateDifferenceInMonth,
+  CustomNamedError,
+} from "../../utilities";
 import {
   EducationProgramOffering,
   ProgramInfoStatus,
@@ -34,6 +38,7 @@ import {
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
+const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -100,7 +105,6 @@ export class ProgramInfoRequestController {
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
     result.programYearId = application.programYear.id;
-    result.isActiveProgramYear = application.programYear.active;
 
     if (application.offering) {
       result.offeringName = application.offering.name;
@@ -219,6 +223,30 @@ export class ProgramInfoRequestController {
           submissionResult.data.data,
         );
       }
+      const offering = await this.offeringService.getOfferingById(
+        payload.selectedOffering,
+      );
+
+      const application = await this.applicationService.getApplicationById(
+        applicationId,
+      );
+      if (
+        !(
+          getDateDifferenceInMonth(
+            offering?.studyStartDate ?? payload?.studyStartDate,
+            application?.programYear?.startDate,
+          ) >= 0 &&
+          getDateDifferenceInMonth(
+            application?.programYear?.endDate,
+            offering?.studyStartDate ?? payload?.studyStartDate,
+          ) >= 0
+        )
+      ) {
+        throw new CustomNamedError(
+          "study start date should be within the program year of the students application",
+          OFFERING_START_DATE_ERROR,
+        );
+      }
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
@@ -233,10 +261,15 @@ export class ProgramInfoRequestController {
         );
       }
     } catch (error) {
-      if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
-        throw new UnprocessableEntityException(error.message);
+      if (
+        [PIR_REQUEST_NOT_FOUND_ERROR, OFFERING_START_DATE_ERROR].includes(
+          error.name,
+        )
+      ) {
+        throw new UnprocessableEntityException(
+          `${error.name} ${error.message}`,
+        );
       }
-
       throw new InternalServerErrorException(
         "Error while completing a Program Information Request (PIR).",
       );

@@ -145,7 +145,7 @@ export default {
         isReadOnly.value = true;
         toast.error(
           "Program Year not active",
-          "Application with inactive program year will not be considered",
+          "This application can no longer be edited or submitted",
           TOAST_ERROR_DISPLAY_TIME,
         );
       }

@@ -24,11 +24,19 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     applicationId: number,
     data: CompleteProgramInfoRequestDto,
   ): Promise<void> {
-    await this.apiClient.patch(
-      `institution/location/${locationId}/program-info-request/application/${applicationId}/complete`,
-      { ...data },
-      this.addAuthHeader(),
-    );
+    await this.apiClient
+      .patch(
+        `institution/location/${locationId}/program-info-request/application/${applicationId}/complete`,
+        { ...data },
+        this.addAuthHeader(),
+      )
+      .catch(error => {
+        console.log(error.response);
+        if (error.response) {
+          this.handleRequestError(error.response?.data?.message);
+          throw error.response?.data?.message;
+        }
+      });
   }
 
   public async denyProgramInfoRequest(

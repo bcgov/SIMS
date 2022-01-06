@@ -193,7 +193,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const sequenceNumberSize =
       MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
 
-    let nextApplicationSequence: number = NaN;
+    let nextApplicationSequence = NaN;
     await this.sequenceService.consumeNextSequence(
       sequenceName,
       async (nextSequenceNumber: number) => {
