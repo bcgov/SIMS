@@ -833,16 +833,39 @@
                                 },
                                 {
                                     "label": "Created By Content",
+                                    "tag": "p",
+                                    "className": "",
                                     "attrs": [
                                         {
                                             "attr": "",
                                             "value": ""
                                         }
                                     ],
-                                    "content": "{{data.createdBy}}",
+                                    "content": "{{data.createdBy ? data.createdBy : '-'}}",
                                     "refreshOnChange": true,
                                     "customClass": "mt-n4",
+                                    "hidden": false,
+                                    "modalEdit": false,
                                     "key": "createdByContent",
+                                    "tags": [],
+                                    "properties": {},
+                                    "conditional": {
+                                        "show": null,
+                                        "when": null,
+                                        "eq": "",
+                                        "json": ""
+                                    },
+                                    "customConditional": "",
+                                    "logic": [],
+                                    "attributes": {},
+                                    "overlay": {
+                                        "style": "",
+                                        "page": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
                                     "type": "htmlelement",
                                     "input": false,
                                     "tableView": false,
@@ -855,11 +878,9 @@
                                     "protected": false,
                                     "unique": false,
                                     "persistent": false,
-                                    "hidden": false,
                                     "clearOnHide": true,
                                     "refreshOn": "",
                                     "redrawOn": "",
-                                    "modalEdit": false,
                                     "dataGridLabel": false,
                                     "labelPosition": "top",
                                     "description": "",
@@ -874,7 +895,6 @@
                                     "calculateValue": "",
                                     "calculateServer": false,
                                     "widget": null,
-                                    "attributes": {},
                                     "validateOn": "change",
                                     "validate": {
                                         "required": false,
@@ -884,26 +904,12 @@
                                         "multiple": false,
                                         "unique": false
                                     },
-                                    "conditional": {
-                                        "show": null,
-                                        "when": null,
-                                        "eq": ""
-                                    },
-                                    "overlay": {
-                                        "style": "",
-                                        "left": "",
-                                        "top": "",
-                                        "width": "",
-                                        "height": ""
-                                    },
                                     "allowCalculateOverride": false,
                                     "encrypted": false,
                                     "showCharCount": false,
                                     "showWordCount": false,
-                                    "properties": {},
                                     "allowMultipleMasks": false,
-                                    "tag": "p",
-                                    "id": "eu7i24o"
+                                    "id": "emq9l7l"
                                 }
                             ],
                             "width": 4,
@@ -2071,6 +2077,6 @@
     "name": "viewRestriction",
     "path": "viewrestriction",
     "created": "2021-12-27T06:22:11.679Z",
-    "modified": "2021-12-30T19:57:33.124Z",
+    "modified": "2022-01-06T00:52:57.724Z",
     "machineName": "viewRestriction"
 }
