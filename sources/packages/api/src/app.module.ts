@@ -30,6 +30,7 @@ import {
   StudentRestrictionService,
   DisbursementScheduleService,
   DisbursementScheduleErrorsService,
+  RestrictionService,
 } from "./services";
 import {
   UserController,
@@ -130,6 +131,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     StudentRestrictionService,
     DisbursementScheduleService,
     DisbursementScheduleErrorsService,
+    RestrictionService,
   ],
 })
 export class AppModule {}
