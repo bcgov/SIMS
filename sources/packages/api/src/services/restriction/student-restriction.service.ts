@@ -172,7 +172,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "resolutionNote.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
-      .innerJoin("studentRestrictions.creator", "creator")
+      .leftJoin("studentRestrictions.creator", "creator")
       .leftJoin("studentRestrictions.modifier", "modifier")
       .innerJoin("studentRestrictions.student", "student")
       .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
