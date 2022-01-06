@@ -81,8 +81,12 @@ export class ApplicationService {
 
   public async getProgramYearOfApplication(
     applicationId: number,
+    includeInActivePY?: boolean,
   ): Promise<ProgramYearOfApplicationDto> {
-    return ApiClient.Application.getProgramYearOfApplication(applicationId);
+    return ApiClient.Application.getProgramYearOfApplication(
+      applicationId,
+      includeInActivePY,
+    );
   }
 
   /**

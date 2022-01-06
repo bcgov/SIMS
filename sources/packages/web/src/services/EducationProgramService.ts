@@ -53,10 +53,12 @@ export class EducationProgramService {
   public async getLocationProgramsOptionList(
     locationId: number,
     programYearId: number,
+    includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getLocationProgramsOptionList(
       locationId,
       programYearId,
+      includeInActivePY,
     );
   }
 

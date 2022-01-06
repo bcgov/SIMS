@@ -169,6 +169,7 @@ export interface ProgramYearOfApplicationDto {
   applicationId: number;
   formName: string;
   programYearId: number;
+  active: boolean;
 }
 
 export interface ActiveApplicationDataDto {

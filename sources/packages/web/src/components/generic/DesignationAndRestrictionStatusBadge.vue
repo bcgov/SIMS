@@ -4,7 +4,7 @@ Used when we need to display the designation status for an Institution
 <template>
   <v-badge :color="color" text-color="white">
     <template v-slot:badge>
-      <font-awesome-icon :icon="icon" class="mx-1 my-1" />
+      <font-awesome-icon :icon="icon" class="mx-1 my-1" v-if="icon" />
       <span class="text-uppercase">{{ label }}</span>
     </template>
   </v-badge>

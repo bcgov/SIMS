@@ -210,6 +210,9 @@ export class EducationProgramOfferingController {
    * to all offerings).
    * @param locationId location id.
    * @param programId program id.
+   * @query selectedIntensity selectedIntensity,
+   * @query includeInActivePY includeInActivePY, if includeInActivePY, then both active
+   * and not active program year is considered
    * @returns key/value pair list of programs for students.
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -221,6 +224,7 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
     @Query("selectedIntensity") selectedIntensity: OfferingIntensity,
+    @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
@@ -228,6 +232,7 @@ export class EducationProgramOfferingController {
         programId,
         programYearId,
         selectedIntensity,
+        includeInActivePY,
       );
     return offerings.map((offering) => ({
       id: offering.id,
@@ -242,6 +247,8 @@ export class EducationProgramOfferingController {
    * access to their specific offerings only).
    * @param locationId location id.
    * @param programId program id.
+   * @query includeInActivePY, if includeInActivePY is true,
+   * then consider both active and inactive program year.
    * @returns key/value pair list of programs for students.
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -253,12 +260,15 @@ export class EducationProgramOfferingController {
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
     @Param("programYearId") programYearId: number,
+    @Query("includeInActivePY") includeInActivePY = false,
   ): Promise<OptionItem[]> {
     const offerings =
       await this.programOfferingService.getProgramOfferingsForLocation(
         locationId,
         programId,
         programYearId,
+        undefined,
+        includeInActivePY,
       );
     return offerings.map((offering) => ({
       id: offering.id,

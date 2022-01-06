@@ -31,7 +31,10 @@ export function useFormioDropdownLoader() {
 
   // Retrieve the list of locations from the API and
   // populate a dropdown in a Form.IO component.
-  const loadLocations = async (form: any, dropdownName: string) => {
+  const loadLocations = async (
+    form: any,
+    dropdownName: string,
+  ) => {
     return loadDropdown(
       form,
       dropdownName,
@@ -46,6 +49,7 @@ export function useFormioDropdownLoader() {
     locationId: number,
     dropdownName: string,
     programYearId: number,
+    includeInActivePY?: boolean,
   ) => {
     return loadDropdown(
       form,
@@ -53,12 +57,13 @@ export function useFormioDropdownLoader() {
       EducationProgramService.shared.getLocationProgramsOptionList(
         locationId,
         programYearId,
+        includeInActivePY,
       ),
     );
   };
 
   // Retrieve the list of programs
-  // a particular ionstitution.
+  // a particular institution.
   const loadProgramsForInstitution = async (
     form: any,
     dropdownName: string,
@@ -78,6 +83,7 @@ export function useFormioDropdownLoader() {
     dropdownName: string,
     programYearId: number,
     selectedIntensity: OfferingIntensity,
+    includeInActivePY?: boolean,
   ) => {
     return loadDropdown(
       form,
@@ -87,6 +93,7 @@ export function useFormioDropdownLoader() {
         programId,
         programYearId,
         selectedIntensity,
+        includeInActivePY,
       ),
     );
   };
@@ -98,6 +105,7 @@ export function useFormioDropdownLoader() {
     locationId: number,
     dropdownName: string,
     programYearId: number,
+    includeInActivePY?: boolean,
   ) => {
     return loadDropdown(
       form,
@@ -106,6 +114,7 @@ export function useFormioDropdownLoader() {
         locationId,
         programId,
         programYearId,
+        includeInActivePY,
       ),
     );
   };

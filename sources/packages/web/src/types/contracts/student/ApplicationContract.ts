@@ -14,6 +14,7 @@ export interface ProgramYearOfApplicationDto {
   applicationId: number;
   formName: string;
   programYearId: number;
+  active: boolean;
 }
 /**
  * Possible status of a Student Application.

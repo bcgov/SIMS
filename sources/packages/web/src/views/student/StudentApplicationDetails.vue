@@ -72,7 +72,7 @@ import CancelApplication from "@/components/students/modals/CancelApplicationMod
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
-import { useFormatters, ModalDialog } from "@/composables";
+import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import {
   ProgramYearOfApplicationDto,
   GetApplicationDataDto,
@@ -118,6 +118,9 @@ export default {
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
+    const toast = useToastMessage();
+    const TOAST_ERROR_DISPLAY_TIME = 15000;
+
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
     };
@@ -133,25 +136,34 @@ export default {
         name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
       });
     };
-    const getProgramYear = async () => {
+    const getProgramYear = async (includeInActivePY?: boolean) => {
       programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
         props.id,
+        includeInActivePY,
       );
     };
 
     const editApplicaion = async () => {
-      await getProgramYear();
-      router.push({
-        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-        params: {
-          selectedForm: programYear.value.formName,
-          programYearId: programYear.value.programYearId,
-          id: props.id,
-        },
-      });
+      try {
+        await getProgramYear();
+        router.push({
+          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+          params: {
+            selectedForm: programYear.value.formName,
+            programYearId: programYear.value.programYearId,
+            id: props.id,
+          },
+        });
+      } catch (error) {
+        toast.error(
+          "Program Year not active",
+          undefined,
+          TOAST_ERROR_DISPLAY_TIME,
+        );
+      }
     };
     const viewApplicaion = async () => {
-      await getProgramYear();
+      await getProgramYear(true);
       router.push({
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
         params: {

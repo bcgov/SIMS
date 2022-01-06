@@ -120,7 +120,7 @@ import {
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, ModalDialog } from "@/composables";
+import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import Status from "@/views/student/ApplicationStatus.vue";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -153,6 +153,8 @@ export default {
     const programYear = ref({} as ProgramYearOfApplicationDto);
     const showModal = ref(false);
     const selectedApplicationId = ref(0);
+    const toast = useToastMessage();
+    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     /**
      * function to load applicationListAndCount respective to the client type
@@ -239,15 +241,23 @@ export default {
     };
 
     const editApplicaion = async (applicationId: number) => {
-      await getProgramYear(applicationId);
-      router.push({
-        name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-        params: {
-          selectedForm: programYear.value.formName,
-          programYearId: programYear.value.programYearId,
-          id: applicationId,
-        },
-      });
+      try {
+        await getProgramYear(applicationId);
+        router.push({
+          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+          params: {
+            selectedForm: programYear.value.formName,
+            programYearId: programYear.value.programYearId,
+            id: applicationId,
+          },
+        });
+      } catch (error) {
+        toast.error(
+          "Program Year not active",
+          undefined,
+          TOAST_ERROR_DISPLAY_TIME,
+        );
+      }
     };
     const confirmEditApplication = async (id: number) => {
       if (await editApplicationModal.value.showModal()) {
