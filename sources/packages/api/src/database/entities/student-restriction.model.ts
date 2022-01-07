@@ -1,20 +1,13 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import { RecordDataModel } from "./record.model";
-import { Student, Application, Restriction, Note } from ".";
+import { BaseRestrictionModel } from "./base-restriction.model";
+import { Student, Application } from ".";
 
 /**
  * Entity for student restrictions
  */
 @Entity({ name: TableNames.StudentRestrictions })
-export class StudentRestriction extends RecordDataModel {
+export class StudentRestriction extends BaseRestrictionModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
@@ -35,39 +28,4 @@ export class StudentRestriction extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
-  /**
-   * Restriction details
-   */
-  @ManyToOne(() => Restriction, { eager: false, cascade: false })
-  @JoinColumn({
-    name: "restriction_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  restriction: Restriction;
-  /**
-   * Active flag which decides if the restriction is active
-   */
-  @Column({
-    name: "is_active",
-    nullable: false,
-  })
-  isActive: boolean;
-  /**
-   * Note entered during restriction creation.
-   */
-  @OneToOne(() => Note, { eager: false, cascade: true })
-  @JoinColumn({
-    name: "restriction_note_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  restrictionNote: Note;
-  /**
-   * Note entered during restriction resolution.
-   */
-  @OneToOne(() => Note, { eager: false, cascade: true })
-  @JoinColumn({
-    name: "resolution_note_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  resolutionNote: Note;
 }
