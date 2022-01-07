@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
+  InstitutionRestrictionService,
   RestrictionService,
   StudentService,
   RESTRICTION_NOT_ACTIVE,
@@ -39,6 +40,7 @@ export class RestrictionController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
   ) {
     super();
   }
@@ -232,5 +234,77 @@ export class RestrictionController extends BaseController {
         "Unexpected error while resolving restriction",
       );
     }
+  }
+
+  /**
+   * Rest API to get restrictions for an institution.
+   * @param institutionId
+   * @returns Institution Restrictions.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/institution/:institutionId")
+  async getInstitutionRestrictions(
+    @Param("studentId") institutionId: number,
+  ): Promise<RestrictionSummaryDTO[]> {
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictionsById(
+        institutionId,
+      );
+    return institutionRestrictions?.map((institutionRestriction) => ({
+      restrictionId: institutionRestriction.id,
+      restrictionType: institutionRestriction.restriction.restrictionType,
+      restrictionCategory:
+        institutionRestriction.restriction.restrictionCategory,
+      description: institutionRestriction.restriction.description,
+      createdAt: institutionRestriction.createdAt,
+      updatedAt: institutionRestriction.updatedAt,
+      isActive: institutionRestriction.isActive,
+    }));
+  }
+
+  /**
+   * Rest API to get the details for view institution restriction.
+   * @param institutionId
+   * @param institutionRestrictionId
+   * @returns Institution restriction detail view.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get(
+    "/institution/:institutionId/institutionRestriction/:institutionRestrictionId",
+  )
+  async getInstitutionRestrictionDetail(
+    @Param("institutionId") institutionId: number,
+    @Param("institutionRestrictionId") institutionRestrictionId: number,
+  ): Promise<RestrictionDetailDTO> {
+    const institutionRestriction =
+      await this.institutionRestrictionService.getInstitutionRestrictionDetailsById(
+        institutionId,
+        institutionRestrictionId,
+      );
+    if (!institutionRestriction) {
+      throw new NotFoundException(
+        "The institution restriction does not exist.",
+      );
+    }
+    return {
+      restrictionId: institutionRestriction.id,
+      restrictionType: institutionRestriction.restriction.restrictionType,
+      restrictionCategory:
+        institutionRestriction.restriction.restrictionCategory,
+      description: institutionRestriction.restriction.description,
+      createdAt: institutionRestriction.createdAt,
+      updatedAt: institutionRestriction.updatedAt,
+      createdBy: institutionRestriction.creator
+        ? `${institutionRestriction.creator.lastName}, ${institutionRestriction.creator.firstName}`
+        : "",
+      updatedBy: institutionRestriction.modifier
+        ? `${institutionRestriction.modifier.lastName}, ${institutionRestriction.modifier.firstName}`
+        : "",
+      isActive: institutionRestriction.isActive,
+      restrictionNote: institutionRestriction.restrictionNote?.description,
+      resolutionNote: institutionRestriction.resolutionNote?.description,
+    };
   }
 }

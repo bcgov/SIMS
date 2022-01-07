@@ -41,3 +41,4 @@ export * from "./disbursement-feedback-errors.model";
 export * from "./relationship-status.type";
 export * from "./note.model";
 export * from "./note.type";
+export * from "./institution-restriction.model";

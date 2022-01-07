@@ -97,7 +97,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     return this.repo
       .createQueryBuilder("restriction")
       .select(["restriction.id", "restriction.restrictionCategory"])
-      .where("restriction.restrictionCategory != 'Federal'")
+      .where("restriction.restrictionCategory NOT IN ('Federal','Designation')")
       .distinctOn(["restriction.restrictionCategory"])
       .getMany();
   }
