@@ -22,10 +22,10 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
-  StudentRestrictionSummary,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
-  AddStudentRestrictionDTO,
+  RestrictionSummaryDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
+  AssignRestrictionDTO,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
 
@@ -53,7 +53,7 @@ export class RestrictionController extends BaseController {
   @Get("/student/:studentId")
   async getStudentRestrictions(
     @Param("studentId") studentId: number,
-  ): Promise<StudentRestrictionSummary[]> {
+  ): Promise<RestrictionSummaryDTO[]> {
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentId,
@@ -117,7 +117,7 @@ export class RestrictionController extends BaseController {
   async getStudentRestrictionDetail(
     @Param("studentId") studentId: number,
     @Param("studentRestrictionId") studentRestrictionId: number,
-  ): Promise<StudentRestrictionDetail> {
+  ): Promise<RestrictionDetailDTO> {
     const studentRestriction =
       await this.studentRestrictionService.getStudentRestrictionDetailsById(
         studentId,
@@ -159,7 +159,7 @@ export class RestrictionController extends BaseController {
   async addStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
-    @Body() payload: AddStudentRestrictionDTO,
+    @Body() payload: AssignRestrictionDTO,
   ): Promise<void> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
@@ -200,7 +200,7 @@ export class RestrictionController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
     @Param("studentRestrictionId") studentRestrictionId: number,
-    @Body() payload: UpdateRestrictionDTO,
+    @Body() payload: ResolveRestrictionDTO,
   ): Promise<void> {
     if (!payload.noteDescription) {
       throw new UnprocessableEntityException(

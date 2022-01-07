@@ -91,9 +91,9 @@ import {
   GeneralStatusForBadge,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  AddStudentRestrictionDTO,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
+  AssignRestrictionDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
 } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 
@@ -142,11 +142,11 @@ export default {
       await viewRestriction.value.showModal();
     };
 
-    const resolveRestriction = async (data: StudentRestrictionDetail) => {
+    const resolveRestriction = async (data: RestrictionDetailDTO) => {
       try {
         const payload = {
           noteDescription: data.resolutionNote,
-        } as UpdateRestrictionDTO;
+        } as ResolveRestrictionDTO;
         await RestrictionService.shared.resolveStudentRestriction(
           props.studentId,
           data.restrictionId,
@@ -169,7 +169,7 @@ export default {
       await addRestriction.value.showModal();
     };
 
-    const createNewRestriction = async (data: AddStudentRestrictionDTO) => {
+    const createNewRestriction = async (data: AssignRestrictionDTO) => {
       try {
         await RestrictionService.shared.addStudentRestriction(
           props.studentId,

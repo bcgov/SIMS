@@ -1,10 +1,10 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  StudentRestrictionSummary,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
+  RestrictionSummaryDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
   OptionItemDto,
-  AddStudentRestrictionDTO,
+  AssignRestrictionDTO,
 } from "@/types";
 
 /**
@@ -20,14 +20,14 @@ export class RestrictionService {
 
   public async getStudentRestrictions(
     studentId: number,
-  ): Promise<StudentRestrictionSummary[]> {
+  ): Promise<RestrictionSummaryDTO[]> {
     return ApiClient.RestrictionApi.getStudentRestrictions(studentId);
   }
 
   public async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<StudentRestrictionDetail> {
+  ): Promise<RestrictionDetailDTO> {
     return ApiClient.RestrictionApi.getStudentRestrictionDetail(
       studentId,
       studentRestrictionId,
@@ -46,7 +46,7 @@ export class RestrictionService {
 
   public async addStudentRestriction(
     studentId: number,
-    payload: AddStudentRestrictionDTO,
+    payload: AssignRestrictionDTO,
   ): Promise<void> {
     return ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
   }
@@ -54,7 +54,7 @@ export class RestrictionService {
   public async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: UpdateRestrictionDTO,
+    payload: ResolveRestrictionDTO,
   ): Promise<void> {
     return ApiClient.RestrictionApi.resolveStudentRestriction(
       studentId,

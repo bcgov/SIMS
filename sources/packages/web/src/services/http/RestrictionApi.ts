@@ -1,10 +1,10 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  StudentRestrictionSummary,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
+  RestrictionSummaryDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
   OptionItemDto,
-  AddStudentRestrictionDTO,
+  AssignRestrictionDTO,
 } from "@/types";
 
 /**
@@ -13,11 +13,11 @@ import {
 export class RestrictionApi extends HttpBaseClient {
   public async getStudentRestrictions(
     studentId: number,
-  ): Promise<StudentRestrictionSummary[]> {
+  ): Promise<RestrictionSummaryDTO[]> {
     const studentNotes = await this.getCall(
       `restrictions/student/${studentId}`,
     );
-    return studentNotes.data as StudentRestrictionSummary[];
+    return studentNotes.data as RestrictionSummaryDTO[];
   }
 
   public async getRestrictionCategories(): Promise<OptionItemDto[]> {
@@ -39,16 +39,16 @@ export class RestrictionApi extends HttpBaseClient {
   public async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<StudentRestrictionDetail> {
+  ): Promise<RestrictionDetailDTO> {
     const studentNotes = await this.getCall(
       `restrictions/student/${studentId}/studentRestriction/${studentRestrictionId}`,
     );
-    return studentNotes.data as StudentRestrictionDetail;
+    return studentNotes.data as RestrictionDetailDTO;
   }
 
   public async addStudentRestriction(
     studentId: number,
-    payload: AddStudentRestrictionDTO,
+    payload: AssignRestrictionDTO,
   ): Promise<void> {
     try {
       await this.apiClient.post(
@@ -65,7 +65,7 @@ export class RestrictionApi extends HttpBaseClient {
   public async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: UpdateRestrictionDTO,
+    payload: ResolveRestrictionDTO,
   ): Promise<void> {
     try {
       await this.apiClient.patch(

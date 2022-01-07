@@ -36,4 +36,5 @@ export const TableNames = {
   Notes: "notes",
   StudentNotes: "student_notes",
   InstitutionNotes: "institution_notes",
+  InstitutionRestrictions: "institution_restrictions",
 };

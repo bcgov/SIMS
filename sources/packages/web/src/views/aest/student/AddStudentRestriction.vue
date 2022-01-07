@@ -32,7 +32,7 @@ import {
   useFormioUtils,
   useFormioDropdownLoader,
 } from "@/composables";
-import { AddStudentRestrictionDTO } from "@/types";
+import { AssignRestrictionDTO } from "@/types";
 export const CATEGORY_KEY = "category";
 export default {
   components: { ModalDialogBase, formio },
@@ -83,7 +83,7 @@ export default {
     const submitForm = async () => {
       return formData.value.submit();
     };
-    const submitRestriction = async (data: AddStudentRestrictionDTO) => {
+    const submitRestriction = async (data: AssignRestrictionDTO) => {
       context.emit("submitRestrictionData", data);
     };
     const addRestriction = async () => {
