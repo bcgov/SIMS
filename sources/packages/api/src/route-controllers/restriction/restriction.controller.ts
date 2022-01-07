@@ -14,6 +14,7 @@ import {
   InstitutionRestrictionService,
   RestrictionService,
   StudentService,
+  InstitutionService,
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
 } from "../../services";
@@ -41,6 +42,7 @@ export class RestrictionController extends BaseController {
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
+    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -245,7 +247,7 @@ export class RestrictionController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Get("/institution/:institutionId")
   async getInstitutionRestrictions(
-    @Param("studentId") institutionId: number,
+    @Param("institutionId") institutionId: number,
   ): Promise<RestrictionSummaryDTO[]> {
     const institutionRestrictions =
       await this.institutionRestrictionService.getInstitutionRestrictionsById(
@@ -306,5 +308,92 @@ export class RestrictionController extends BaseController {
       restrictionNote: institutionRestriction.restrictionNote?.description,
       resolutionNote: institutionRestriction.resolutionNote?.description,
     };
+  }
+
+  /**
+   * Rest API to add a new provincial restriction to Institution.
+   * @param userToken
+   * @param institutionId
+   * @param restrictionId
+   * @param payload
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Post("/institution/:institutionId")
+  async addInstitutionProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("institutionId") institutionId: number,
+    @Body() payload: AssignRestrictionDTO,
+  ): Promise<void> {
+    const restriction =
+      await this.restrictionService.getProvincialRestrictionById(
+        payload.restrictionId,
+        true,
+      );
+    if (!restriction) {
+      throw new UnprocessableEntityException(
+        "The given restriction type is either not Provincial or  not Institution.",
+      );
+    }
+    const updatedRestriction =
+      await this.institutionRestrictionService.addProvincialRestriction(
+        institutionId,
+        userToken.userId,
+        payload,
+      );
+    /**mapping the note added for restriction to institution notes**/
+    if (updatedRestriction.restrictionNote) {
+      await this.institutionService.saveInstitutionNote(
+        institutionId,
+        updatedRestriction.restrictionNote,
+      );
+    }
+  }
+
+  /**
+   * Rest API to resolve a provincial restriction for Institution.
+   * @param userToken
+   * @param institutionId
+   * @param institutionRestrictionId
+   * @param payload
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Patch(
+    "/institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
+  )
+  async resolveInstitutionProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("institutionId") institutionId: number,
+    @Param("institutionRestrictionId") institutionRestrictionId: number,
+    @Body() payload: ResolveRestrictionDTO,
+  ): Promise<void> {
+    if (!payload.noteDescription) {
+      throw new UnprocessableEntityException(
+        "Resolution Notes are mandatory to resolve the restriction.",
+      );
+    }
+    try {
+      const updatedRestriction =
+        await this.institutionRestrictionService.resolveProvincialRestriction(
+          institutionId,
+          institutionRestrictionId,
+          userToken.userId,
+          payload,
+        );
+
+      /**mapping the note added for resolution to student notes**/
+      await this.institutionService.saveInstitutionNote(
+        institutionId,
+        updatedRestriction.resolutionNote,
+      );
+    } catch (error) {
+      if (error.name === RESTRICTION_NOT_ACTIVE) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw new InternalServerErrorException(
+        "Unexpected error while resolving restriction",
+      );
+    }
   }
 }

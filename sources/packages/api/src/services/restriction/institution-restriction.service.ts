@@ -1,7 +1,25 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import { InstitutionRestriction } from "../../database/entities";
+import {
+  RESTRICTION_NOT_PROVINCIAL,
+  RESTRICTION_NOT_ACTIVE,
+} from "./student-restriction.service";
+
+import {
+  InstitutionRestriction,
+  Restriction,
+  User,
+  Note,
+  NoteType,
+  Institution,
+  RestrictionType,
+} from "../../database/entities";
+import {
+  AssignRestrictionDTO,
+  ResolveRestrictionDTO,
+} from "../../route-controllers/restriction/models/restriction.dto";
+import { CustomNamedError } from "../../utilities";
 
 /**
  * Service layer for institution Restriction.
@@ -76,5 +94,79 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         institutionRestrictionId,
       })
       .getOne();
+  }
+
+  /**
+   * Add provincial restriction to institution.
+   * @param institutionId
+   * @param userId
+   * @param assignRestrictionDTO
+   * @returns persisted institution restriction.
+   */
+  async addProvincialRestriction(
+    institutionId: number,
+    userId: number,
+    assignRestrictionDTO: AssignRestrictionDTO,
+  ): Promise<InstitutionRestriction> {
+    const institutionRestriction = new InstitutionRestriction();
+    institutionRestriction.institution = { id: institutionId } as Institution;
+    institutionRestriction.restriction = {
+      id: assignRestrictionDTO.restrictionId,
+    } as Restriction;
+    institutionRestriction.creator = { id: userId } as User;
+    if (assignRestrictionDTO.noteDescription) {
+      institutionRestriction.restrictionNote = {
+        description: assignRestrictionDTO.noteDescription,
+        noteType: NoteType.Restriction,
+        creator: {
+          id: institutionRestriction.creator.id,
+        } as User,
+      } as Note;
+    }
+    return this.repo.save(institutionRestriction);
+  }
+
+  /**
+   * Resolve provincial restriction.
+   * @param institutionId
+   * @param institutionRestrictionId
+   * @param userId
+   * @param resolveRestrictionDTO
+   * @returns resolved institution restriction.
+   */
+  async resolveProvincialRestriction(
+    institutionId: number,
+    institutionRestrictionId: number,
+    userId: number,
+    resolveRestrictionDTO: ResolveRestrictionDTO,
+  ): Promise<InstitutionRestriction> {
+    const institutionRestrictionEntity = await this.repo.findOne(
+      {
+        id: institutionRestrictionId,
+        institution: { id: institutionId } as Institution,
+        isActive: true,
+      },
+      {
+        relations: ["resolutionNote", "modifier", "restriction"],
+      },
+    );
+
+    if (!institutionRestrictionEntity) {
+      throw new CustomNamedError(
+        "The restriction neither assigned to institution nor active. Only active restrictions can be resolved.",
+        RESTRICTION_NOT_ACTIVE,
+      );
+    }
+
+    institutionRestrictionEntity.isActive = false;
+    institutionRestrictionEntity.modifier = { id: userId } as User;
+    institutionRestrictionEntity.resolutionNote = {
+      description: resolveRestrictionDTO.noteDescription,
+      noteType: NoteType.Restriction,
+      creator: {
+        id: institutionRestrictionEntity.modifier.id,
+      } as User,
+    } as Note;
+    return this.repo.save(institutionRestrictionEntity);
   }
 }

@@ -188,7 +188,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Add provincial restriction to student.
    * @param studentId
    * @param userId
-   * @param addStudentRestrictionDTO
+   * @param assignRestrictionDTO
    * @returns persisted student restriction.
    */
   async addProvincialRestriction(
@@ -219,7 +219,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param studentId
    * @param studentRestrictionId
    * @param userId
-   * @param updateRestrictionDTO
+   * @param resolveRestrictionDTO
    * @returns resolved student restriction.
    */
   async resolveProvincialRestriction(
