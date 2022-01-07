@@ -32,17 +32,17 @@ import {
   useFormioUtils,
   useFormioDropdownLoader,
 } from "@/composables";
-import { AssignRestrictionDTO } from "@/types";
+import { AssignRestrictionDTO, RestrictionEntityType } from "@/types";
 export const CATEGORY_KEY = "category";
 export default {
   components: { ModalDialogBase, formio },
+  emits: ["submitRestrictionData"],
   props: {
-    studentRestriction: {
-      type: Object,
+    entityType: {
+      type: String,
       required: true,
     },
   },
-  emits: ["submitRestrictionData"],
   setup(props: any, context: any) {
     const { showDialog, showModal } = useModalDialog<void>();
     const formData = ref();
@@ -57,12 +57,20 @@ export default {
       const dropdown = formioUtils.getComponent(form, CATEGORY_KEY);
       const categories = await RestrictionService.shared.getRestrictionCategories();
       const options = [];
-      for (const category of categories) {
+      if (props.entityType === RestrictionEntityType.Student) {
+        for (const category of categories) {
+          options.push({
+            label: category.description,
+            value: category.description,
+          });
+        }
+      } else {
         options.push({
-          label: category.description,
-          value: category.description,
+          label: "Designation",
+          value: "Designation",
         });
       }
+
       dropdown.component.data.values = options;
       dropdown.redraw();
     };

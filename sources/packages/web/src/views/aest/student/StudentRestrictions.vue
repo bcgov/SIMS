@@ -70,12 +70,12 @@
   </v-card>
   <ViewRestrictionModal
     ref="viewRestriction"
-    :studentRestriction="studentRestriction"
+    :restrictionData="studentRestriction"
     @submitResolutionData="resolveRestriction"
   />
   <AddStudentRestrictionModal
     ref="addRestriction"
-    :studentRestriction="studentRestriction"
+    :entityType="RestrictionEntityType.Student"
     @submitRestrictionData="createNewRestriction"
   />
 </template>
@@ -84,8 +84,8 @@
 import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
-import ViewRestrictionModal from "@/views/aest/student/ViewStudentRestriction.vue";
-import AddStudentRestrictionModal from "@/views/aest/student/AddStudentRestriction.vue";
+import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
+import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import {
   GeneralStatusForBadge,
@@ -94,6 +94,7 @@ import {
   AssignRestrictionDTO,
   RestrictionDetailDTO,
   ResolveRestrictionDTO,
+  RestrictionEntityType,
 } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 
@@ -205,6 +206,7 @@ export default {
       addRestriction,
       addStudentRestriction,
       createNewRestriction,
+      RestrictionEntityType,
     };
   },
 };

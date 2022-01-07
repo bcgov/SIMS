@@ -54,3 +54,16 @@ export enum RestrictionType {
    */
   Provincial = "Provincial",
 }
+/**
+ * Enumeration for restriction entity
+ */
+export enum RestrictionEntityType {
+  /**
+   * Student entity type
+   */
+  Student = "Student",
+  /**
+   * Institution entity type
+   */
+  Institution = "Institution",
+}
