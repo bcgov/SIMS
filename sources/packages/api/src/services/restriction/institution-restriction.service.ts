@@ -1,10 +1,7 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
-import {
-  RESTRICTION_NOT_PROVINCIAL,
-  RESTRICTION_NOT_ACTIVE,
-} from "./student-restriction.service";
+import { RESTRICTION_NOT_ACTIVE } from "./student-restriction.service";
 
 import {
   InstitutionRestriction,
@@ -13,7 +10,6 @@ import {
   Note,
   NoteType,
   Institution,
-  RestrictionType,
 } from "../../database/entities";
 import {
   AssignRestrictionDTO,

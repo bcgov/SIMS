@@ -62,4 +62,42 @@ export class RestrictionService {
       payload,
     );
   }
+
+  public async getInstitutionRestrictions(
+    institutionId: number,
+  ): Promise<RestrictionSummaryDTO[]> {
+    return ApiClient.RestrictionApi.getInstitutionRestrictions(institutionId);
+  }
+
+  public async getInstitutionRestrictionDetail(
+    institutionId: number,
+    institutionRestrictionId: number,
+  ): Promise<RestrictionDetailDTO> {
+    return ApiClient.RestrictionApi.getInstitutionRestrictionDetail(
+      institutionId,
+      institutionRestrictionId,
+    );
+  }
+
+  public async addInstitutionRestriction(
+    institutionId: number,
+    payload: AssignRestrictionDTO,
+  ): Promise<void> {
+    return ApiClient.RestrictionApi.addInstitutionRestriction(
+      institutionId,
+      payload,
+    );
+  }
+
+  public async resolveInstitutionRestriction(
+    institutionId: number,
+    institutionRestrictionId: number,
+    payload: ResolveRestrictionDTO,
+  ): Promise<void> {
+    return ApiClient.RestrictionApi.resolveInstitutionRestriction(
+      institutionId,
+      institutionRestrictionId,
+      payload,
+    );
+  }
 }
