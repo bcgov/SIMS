@@ -61,7 +61,7 @@ export default {
       },
       {
         label: "Restrictions",
-        icon: "fa fa-map-marker",
+        icon: "fa fa-times-circle-o",
         command: () => {
           router.push({
             name: AESTRoutesConst.STUDENT_RESTRICTION,

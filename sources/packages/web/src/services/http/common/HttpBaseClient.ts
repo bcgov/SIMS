@@ -35,4 +35,22 @@ export default abstract class HttpBaseClient {
       throw error;
     }
   }
+
+  protected async postCall<T>(url: string, payload: T): Promise<void> {
+    try {
+      await this.apiClient.post(url, payload, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  protected async patchCall<T>(url: string, payload: T): Promise<void> {
+    try {
+      await this.apiClient.patch(url, payload, this.addAuthHeader());
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

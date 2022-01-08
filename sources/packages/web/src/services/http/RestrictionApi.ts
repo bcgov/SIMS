@@ -102,16 +102,10 @@ export class RestrictionApi extends HttpBaseClient {
     institutionId: number,
     payload: AssignRestrictionDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        `restrictions/institution/${institutionId}`,
-        payload,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall<AssignRestrictionDTO>(
+      `restrictions/institution/${institutionId}`,
+      payload,
+    );
   }
 
   public async resolveInstitutionRestriction(
@@ -119,15 +113,9 @@ export class RestrictionApi extends HttpBaseClient {
     institutionRestrictionId: number,
     payload: ResolveRestrictionDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
-        payload,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.patchCall<ResolveRestrictionDTO>(
+      `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
+      payload,
+    );
   }
 }
