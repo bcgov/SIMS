@@ -10,16 +10,19 @@ export class StudentProfile {
   gender?: string;
   givenName?: string;
   middleName?: string;
+  validSIN: any;
 }
 
 export class StudentState {
   profile: StudentProfile = new StudentProfile();
   hasStudentAccount = false;
+  validSIN: any = null;
 }
 
 const initialState: StudentState = {
   profile: new StudentProfile(),
   hasStudentAccount: false,
+  validSIN: null
 };
 
 export const student = {
@@ -43,9 +46,17 @@ export const student = {
     SET_HAS_STUDENT_ACCOUNT(state: StudentState, hasStudentAccount: boolean) {
       state.hasStudentAccount = hasStudentAccount;
     },
+
+    SET_VALID_SIN(state: StudentState, validSIN: any) {
+      state.validSIN = validSIN;
+    },
   },
 
   actions: {
+    setHasValidSIN({ commit }: { commit: Function }, validSIN: any) {
+      commit("SET_VALID_SIN", validSIN);
+    },
+
     setStudentProfileData({ commit }: { commit: Function }, token: any) {
       commit("SET_STUDENT_PROFILE_DATA", token.tokenParsed);
     },

@@ -3,6 +3,7 @@
     v-if="hasRestriction"
     :restrictionMessage="restrictionMessage"
   />
+  <CheckValidSINBanner />
   <full-page-container>
     <span v-if="showApplyPDButton">
       <v-btn
@@ -65,6 +66,7 @@ import {
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
+import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 
 enum FormModes {
   edit = "edit",
@@ -82,7 +84,7 @@ type StudentFormData = Pick<
   };
 
 export default {
-  components: { formio, RestrictionBanner, FullPageContainer },
+  components: { formio, RestrictionBanner, FullPageContainer, CheckValidSINBanner },
   props: {
     editMode: {
       type: Boolean,
