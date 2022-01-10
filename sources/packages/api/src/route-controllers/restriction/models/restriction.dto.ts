@@ -42,3 +42,10 @@ export interface ResolveRestrictionDTO {
 export interface AssignRestrictionDTO extends ResolveRestrictionDTO {
   restrictionId: number;
 }
+
+/**
+ * DTO to identify if a student/institution has valid restriction assigned.
+ */
+export interface RestrictionStatus {
+  isActive: boolean;
+}

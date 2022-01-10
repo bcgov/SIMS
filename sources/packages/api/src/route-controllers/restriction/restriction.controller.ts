@@ -28,6 +28,7 @@ import {
   RestrictionDetailDTO,
   ResolveRestrictionDTO,
   AssignRestrictionDTO,
+  RestrictionStatus,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
 
@@ -395,5 +396,27 @@ export class RestrictionController extends BaseController {
         "Unexpected error while resolving restriction",
       );
     }
+  }
+
+  /**
+   * Rest API to get restriction status for an institution.
+   * @param institutionId
+   * @returns Institution Restriction.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/institution/:institutionId/status")
+  async getRestrictionStatusById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<RestrictionStatus> {
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getRestrictionStatusById(
+        institutionId,
+      );
+    return {
+      isActive: !!(
+        institutionRestrictions && institutionRestrictions.length > 0
+      ),
+    } as RestrictionStatus;
   }
 }

@@ -165,4 +165,26 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     } as Note;
     return this.repo.save(institutionRestrictionEntity);
   }
+
+  /**
+   * Service method to find if Institution has any restriction institution.
+   * @param institutionId
+   * @returns Institution restriction.
+   */
+  async getRestrictionStatusById(
+    institutionId: number,
+  ): Promise<InstitutionRestriction[]> {
+    return this.repo
+      .createQueryBuilder("institutionRestrictions")
+      .select("restriction.id")
+      .addSelect("count(*)", "restrictionCount")
+      .innerJoin("institutionRestrictions.restriction", "restriction")
+      .innerJoin("institutionRestrictions.institution", "institution")
+      .where("institution.id = :institutionId", { institutionId })
+      .andWhere("institutionRestrictions.isActive = true")
+      .groupBy("institutionRestrictions.institution.id")
+      .addGroupBy("restriction.id")
+      .having("count(*) > restriction.allowedCount")
+      .getRawMany();
+  }
 }
