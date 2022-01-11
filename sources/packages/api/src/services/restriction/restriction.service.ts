@@ -97,7 +97,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     return this.repo
       .createQueryBuilder("restriction")
       .select(["restriction.id", "restriction.restrictionCategory"])
-      .where("restriction.restrictionCategory != 'Federal'")
+      .where("restriction.restrictionCategory NOT IN ('Federal','Designation')")
       .distinctOn(["restriction.restrictionCategory"])
       .getMany();
   }
@@ -131,12 +131,18 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
    */
   async getProvincialRestrictionById(
     restrictionId: number,
+    isInstitutionRestriction?: boolean,
   ): Promise<Restriction> {
-    return this.repo
+    const restrictionQuery = this.repo
       .createQueryBuilder("restriction")
       .select(["restriction.id"])
       .where("restriction.id = :restrictionId", { restrictionId })
-      .andWhere("restriction.restrictionType = 'Provincial'")
-      .getOne();
+      .andWhere("restriction.restrictionType = 'Provincial'");
+    if (isInstitutionRestriction) {
+      restrictionQuery.andWhere(
+        "restriction.restrictionCategory = 'Designation'",
+      );
+    }
+    return restrictionQuery.getOne();
   }
 }

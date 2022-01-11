@@ -4,7 +4,7 @@
       <v-container class="restriction-modal">
         <formio
           formName="viewRestriction"
-          :data="studentRestriction"
+          :data="restrictionData"
           @loaded="formLoaded"
           @submitted="submitResolution"
         ></formio>
@@ -14,8 +14,8 @@
       <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
       <v-btn
         v-if="
-          studentRestriction.isActive &&
-            studentRestriction.restrictionType === RestrictionType.Provincial
+          restrictionData.isActive &&
+            restrictionData.restrictionType === RestrictionType.Provincial
         "
         @click="resolveRestriction()"
         class="float-right primary-btn-background"
@@ -35,7 +35,7 @@ import { RestrictionType } from "@/types";
 export default {
   components: { ModalDialogBase, formio },
   props: {
-    studentRestriction: {
+    restrictionData: {
       type: Object,
       required: true,
     },

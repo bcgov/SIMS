@@ -70,12 +70,12 @@
   </v-card>
   <ViewRestrictionModal
     ref="viewRestriction"
-    :studentRestriction="studentRestriction"
+    :restrictionData="studentRestriction"
     @submitResolutionData="resolveRestriction"
   />
   <AddStudentRestrictionModal
     ref="addRestriction"
-    :studentRestriction="studentRestriction"
+    :entityType="RestrictionEntityType.Student"
     @submitRestrictionData="createNewRestriction"
   />
 </template>
@@ -84,16 +84,17 @@
 import { onMounted, ref } from "vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { RestrictionService } from "@/services/RestrictionService";
-import ViewRestrictionModal from "@/views/aest/student/ViewStudentRestriction.vue";
-import AddStudentRestrictionModal from "@/views/aest/student/AddStudentRestriction.vue";
+import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
+import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
 import {
   GeneralStatusForBadge,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  AddStudentRestrictionDTO,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
+  AssignRestrictionDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
+  RestrictionEntityType,
 } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 
@@ -142,11 +143,11 @@ export default {
       await viewRestriction.value.showModal();
     };
 
-    const resolveRestriction = async (data: StudentRestrictionDetail) => {
+    const resolveRestriction = async (data: RestrictionDetailDTO) => {
       try {
         const payload = {
           noteDescription: data.resolutionNote,
-        } as UpdateRestrictionDTO;
+        } as ResolveRestrictionDTO;
         await RestrictionService.shared.resolveStudentRestriction(
           props.studentId,
           data.restrictionId,
@@ -169,7 +170,7 @@ export default {
       await addRestriction.value.showModal();
     };
 
-    const createNewRestriction = async (data: AddStudentRestrictionDTO) => {
+    const createNewRestriction = async (data: AssignRestrictionDTO) => {
       try {
         await RestrictionService.shared.addStudentRestriction(
           props.studentId,
@@ -205,6 +206,7 @@ export default {
       addRestriction,
       addStudentRestriction,
       createNewRestriction,
+      RestrictionEntityType,
     };
   },
 };

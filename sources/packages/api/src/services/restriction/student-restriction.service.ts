@@ -11,8 +11,8 @@ import {
 } from "../../database/entities";
 import { StudentRestrictionStatus } from "./models/student-restriction.model";
 import {
-  AddStudentRestrictionDTO,
-  UpdateRestrictionDTO,
+  AssignRestrictionDTO,
+  ResolveRestrictionDTO,
 } from "../../route-controllers/restriction/models/restriction.dto";
 import {
   RESTRICTION_FEDERAL_MESSAGE,
@@ -188,13 +188,13 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Add provincial restriction to student.
    * @param studentId
    * @param userId
-   * @param addStudentRestrictionDTO
+   * @param assignRestrictionDTO
    * @returns persisted student restriction.
    */
   async addProvincialRestriction(
     studentId: number,
     userId: number,
-    addStudentRestrictionDTO: AddStudentRestrictionDTO,
+    addStudentRestrictionDTO: AssignRestrictionDTO,
   ): Promise<StudentRestriction> {
     const studentRestriction = new StudentRestriction();
     studentRestriction.student = { id: studentId } as Student;
@@ -219,14 +219,14 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param studentId
    * @param studentRestrictionId
    * @param userId
-   * @param updateRestrictionDTO
+   * @param resolveRestrictionDTO
    * @returns resolved student restriction.
    */
   async resolveProvincialRestriction(
     studentId: number,
     studentRestrictionId: number,
     userId: number,
-    updateRestrictionDTO: UpdateRestrictionDTO,
+    updateRestrictionDTO: ResolveRestrictionDTO,
   ): Promise<StudentRestriction> {
     const studentRestrictionEntity = await this.repo.findOne(
       {

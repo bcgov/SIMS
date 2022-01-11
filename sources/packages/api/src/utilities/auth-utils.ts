@@ -67,3 +67,23 @@ export function getUserFullName(user: {
     user.lastName ?? ""
   ).trim()}`.trim();
 }
+
+/**
+ * Convert a given username to following pattern.
+ * [lastName], [firstName]
+ * Null checks are done as name can be Mononymous.
+ * @param firstName
+ * @param lastName
+ * @returns full name.
+ */
+export const getIDIRUserFullName = (user: {
+  firstName: string;
+  lastName: string;
+}): string => {
+  const seperator = user && user.firstName && user.lastName ? "," : "";
+  return user
+    ? `${(user.lastName || "").trim()}${seperator} ${(
+        user.firstName || ""
+      ).trim()}`
+    : "";
+};

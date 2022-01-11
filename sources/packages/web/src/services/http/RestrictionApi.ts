@@ -1,10 +1,10 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  StudentRestrictionSummary,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
+  RestrictionSummaryDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
   OptionItemDto,
-  AddStudentRestrictionDTO,
+  AssignRestrictionDTO,
 } from "@/types";
 
 /**
@@ -13,11 +13,11 @@ import {
 export class RestrictionApi extends HttpBaseClient {
   public async getStudentRestrictions(
     studentId: number,
-  ): Promise<StudentRestrictionSummary[]> {
-    const studentNotes = await this.getCall(
+  ): Promise<RestrictionSummaryDTO[]> {
+    const studentRestrictions = await this.getCall(
       `restrictions/student/${studentId}`,
     );
-    return studentNotes.data as StudentRestrictionSummary[];
+    return studentRestrictions.data as RestrictionSummaryDTO[];
   }
 
   public async getRestrictionCategories(): Promise<OptionItemDto[]> {
@@ -39,16 +39,16 @@ export class RestrictionApi extends HttpBaseClient {
   public async getStudentRestrictionDetail(
     studentId: number,
     studentRestrictionId: number,
-  ): Promise<StudentRestrictionDetail> {
-    const studentNotes = await this.getCall(
+  ): Promise<RestrictionDetailDTO> {
+    const studentRestriction = await this.getCall(
       `restrictions/student/${studentId}/studentRestriction/${studentRestrictionId}`,
     );
-    return studentNotes.data as StudentRestrictionDetail;
+    return studentRestriction.data as RestrictionDetailDTO;
   }
 
   public async addStudentRestriction(
     studentId: number,
-    payload: AddStudentRestrictionDTO,
+    payload: AssignRestrictionDTO,
   ): Promise<void> {
     try {
       await this.apiClient.post(
@@ -65,7 +65,7 @@ export class RestrictionApi extends HttpBaseClient {
   public async resolveStudentRestriction(
     studentId: number,
     studentRestrictionId: number,
-    payload: UpdateRestrictionDTO,
+    payload: ResolveRestrictionDTO,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
@@ -77,5 +77,45 @@ export class RestrictionApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  public async getInstitutionRestrictions(
+    institutionId: number,
+  ): Promise<RestrictionSummaryDTO[]> {
+    const institutionRestrictions = await this.getCall(
+      `restrictions/institution/${institutionId}`,
+    );
+    return institutionRestrictions.data as RestrictionSummaryDTO[];
+  }
+
+  public async getInstitutionRestrictionDetail(
+    institutionId: number,
+    institutionRestrictionId: number,
+  ): Promise<RestrictionDetailDTO> {
+    const institutionRestriction = await this.getCall(
+      `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}`,
+    );
+    return institutionRestriction.data as RestrictionDetailDTO;
+  }
+
+  public async addInstitutionRestriction(
+    institutionId: number,
+    payload: AssignRestrictionDTO,
+  ): Promise<void> {
+    await this.postCall<AssignRestrictionDTO>(
+      `restrictions/institution/${institutionId}`,
+      payload,
+    );
+  }
+
+  public async resolveInstitutionRestriction(
+    institutionId: number,
+    institutionRestrictionId: number,
+    payload: ResolveRestrictionDTO,
+  ): Promise<void> {
+    await this.patchCall<ResolveRestrictionDTO>(
+      `restrictions/institution/${institutionId}/institutionRestriction/${institutionRestrictionId}/resolve`,
+      payload,
+    );
   }
 }

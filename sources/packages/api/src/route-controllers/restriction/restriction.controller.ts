@@ -11,8 +11,10 @@ import {
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
+  InstitutionRestrictionService,
   RestrictionService,
   StudentService,
+  InstitutionService,
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
 } from "../../services";
@@ -22,12 +24,14 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
-  StudentRestrictionSummary,
-  StudentRestrictionDetail,
-  UpdateRestrictionDTO,
-  AddStudentRestrictionDTO,
+  RestrictionSummaryDTO,
+  RestrictionDetailDTO,
+  ResolveRestrictionDTO,
+  AssignRestrictionDTO,
+  RestrictionStatus,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
+import { getIDIRUserFullName } from "../../utilities";
 
 /**
  * Controller for Restrictions.
@@ -39,6 +43,8 @@ export class RestrictionController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly studentService: StudentService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
+    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -53,7 +59,7 @@ export class RestrictionController extends BaseController {
   @Get("/student/:studentId")
   async getStudentRestrictions(
     @Param("studentId") studentId: number,
-  ): Promise<StudentRestrictionSummary[]> {
+  ): Promise<RestrictionSummaryDTO[]> {
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentId,
@@ -117,7 +123,7 @@ export class RestrictionController extends BaseController {
   async getStudentRestrictionDetail(
     @Param("studentId") studentId: number,
     @Param("studentRestrictionId") studentRestrictionId: number,
-  ): Promise<StudentRestrictionDetail> {
+  ): Promise<RestrictionDetailDTO> {
     const studentRestriction =
       await this.studentRestrictionService.getStudentRestrictionDetailsById(
         studentId,
@@ -133,12 +139,8 @@ export class RestrictionController extends BaseController {
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
-      createdBy: studentRestriction.creator
-        ? `${studentRestriction.creator.lastName}, ${studentRestriction.creator.firstName}`
-        : "",
-      updatedBy: studentRestriction.modifier
-        ? `${studentRestriction.modifier.lastName}, ${studentRestriction.modifier.firstName}`
-        : "",
+      createdBy: getIDIRUserFullName(studentRestriction.creator),
+      updatedBy: getIDIRUserFullName(studentRestriction.modifier),
       isActive: studentRestriction.isActive,
       restrictionNote: studentRestriction.restrictionNote?.description,
       resolutionNote: studentRestriction.resolutionNote?.description,
@@ -159,7 +161,7 @@ export class RestrictionController extends BaseController {
   async addStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
-    @Body() payload: AddStudentRestrictionDTO,
+    @Body() payload: AssignRestrictionDTO,
   ): Promise<void> {
     const restriction =
       await this.restrictionService.getProvincialRestrictionById(
@@ -200,7 +202,7 @@ export class RestrictionController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("studentId") studentId: number,
     @Param("studentRestrictionId") studentRestrictionId: number,
-    @Body() payload: UpdateRestrictionDTO,
+    @Body() payload: ResolveRestrictionDTO,
   ): Promise<void> {
     if (!payload.noteDescription) {
       throw new UnprocessableEntityException(
@@ -232,5 +234,183 @@ export class RestrictionController extends BaseController {
         "Unexpected error while resolving restriction",
       );
     }
+  }
+
+  /**
+   * Rest API to get restrictions for an institution.
+   * @param institutionId
+   * @returns Institution Restrictions.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/institution/:institutionId")
+  async getInstitutionRestrictions(
+    @Param("institutionId") institutionId: number,
+  ): Promise<RestrictionSummaryDTO[]> {
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictionsById(
+        institutionId,
+      );
+    return institutionRestrictions?.map((institutionRestriction) => ({
+      restrictionId: institutionRestriction.id,
+      restrictionType: institutionRestriction.restriction.restrictionType,
+      restrictionCategory:
+        institutionRestriction.restriction.restrictionCategory,
+      description: institutionRestriction.restriction.description,
+      createdAt: institutionRestriction.createdAt,
+      updatedAt: institutionRestriction.updatedAt,
+      isActive: institutionRestriction.isActive,
+    }));
+  }
+
+  /**
+   * Rest API to get the details for view institution restriction.
+   * @param institutionId
+   * @param institutionRestrictionId
+   * @returns Institution restriction detail view.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get(
+    "/institution/:institutionId/institutionRestriction/:institutionRestrictionId",
+  )
+  async getInstitutionRestrictionDetail(
+    @Param("institutionId") institutionId: number,
+    @Param("institutionRestrictionId") institutionRestrictionId: number,
+  ): Promise<RestrictionDetailDTO> {
+    const institutionRestriction =
+      await this.institutionRestrictionService.getInstitutionRestrictionDetailsById(
+        institutionId,
+        institutionRestrictionId,
+      );
+    if (!institutionRestriction) {
+      throw new NotFoundException(
+        "The institution restriction does not exist.",
+      );
+    }
+    return {
+      restrictionId: institutionRestriction.id,
+      restrictionType: institutionRestriction.restriction.restrictionType,
+      restrictionCategory:
+        institutionRestriction.restriction.restrictionCategory,
+      description: institutionRestriction.restriction.description,
+      createdAt: institutionRestriction.createdAt,
+      updatedAt: institutionRestriction.updatedAt,
+      createdBy: getIDIRUserFullName(institutionRestriction.creator),
+      updatedBy: getIDIRUserFullName(institutionRestriction.modifier),
+      isActive: institutionRestriction.isActive,
+      restrictionNote: institutionRestriction.restrictionNote?.description,
+      resolutionNote: institutionRestriction.resolutionNote?.description,
+    };
+  }
+
+  /**
+   * Rest API to add a new provincial restriction to Institution.
+   * * Note: Only provincial restriction of category Designation can be added to institution.
+   * @param userToken
+   * @param institutionId
+   * @param restrictionId
+   * @param payload
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Post("/institution/:institutionId")
+  async addInstitutionProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("institutionId") institutionId: number,
+    @Body() payload: AssignRestrictionDTO,
+  ): Promise<void> {
+    const restriction =
+      await this.restrictionService.getProvincialRestrictionById(
+        payload.restrictionId,
+        true,
+      );
+    if (!restriction) {
+      throw new UnprocessableEntityException(
+        "The given restriction type is either not Provincial or not Institution.",
+      );
+    }
+    const updatedRestriction =
+      await this.institutionRestrictionService.addProvincialRestriction(
+        institutionId,
+        userToken.userId,
+        payload,
+      );
+    /**mapping the note added for restriction to institution notes**/
+    if (updatedRestriction.restrictionNote) {
+      await this.institutionService.saveInstitutionNote(
+        institutionId,
+        updatedRestriction.restrictionNote,
+      );
+    }
+  }
+
+  /**
+   * Rest API to resolve a provincial restriction for Institution.
+   * @param userToken
+   * @param institutionId
+   * @param institutionRestrictionId
+   * @param payload
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Patch(
+    "/institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
+  )
+  async resolveInstitutionProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("institutionId") institutionId: number,
+    @Param("institutionRestrictionId") institutionRestrictionId: number,
+    @Body() payload: ResolveRestrictionDTO,
+  ): Promise<void> {
+    if (!payload.noteDescription) {
+      throw new UnprocessableEntityException(
+        "Resolution Notes are mandatory to resolve the restriction.",
+      );
+    }
+    try {
+      const updatedRestriction =
+        await this.institutionRestrictionService.resolveProvincialRestriction(
+          institutionId,
+          institutionRestrictionId,
+          userToken.userId,
+          payload,
+        );
+
+      /**mapping the note added for resolution to student notes**/
+      await this.institutionService.saveInstitutionNote(
+        institutionId,
+        updatedRestriction.resolutionNote,
+      );
+    } catch (error) {
+      if (error.name === RESTRICTION_NOT_ACTIVE) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw new InternalServerErrorException(
+        "Unexpected error while resolving restriction",
+      );
+    }
+  }
+
+  /**
+   * Rest API to get restriction status for an institution.
+   * @param institutionId
+   * @returns Institution Restriction.
+   */
+  @Groups(UserGroups.AESTUser)
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Get("/institution/:institutionId/status")
+  async getRestrictionStatusById(
+    @Param("institutionId") institutionId: number,
+  ): Promise<RestrictionStatus> {
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getRestrictionStatusById(
+        institutionId,
+      );
+    return {
+      isActive: !!(
+        institutionRestrictions && institutionRestrictions.length > 0
+      ),
+    } as RestrictionStatus;
   }
 }
