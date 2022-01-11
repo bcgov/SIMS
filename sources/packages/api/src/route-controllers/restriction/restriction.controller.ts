@@ -31,6 +31,7 @@ import {
   RestrictionStatus,
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
+import { getIDIRUserFullName } from "../../utilities";
 
 /**
  * Controller for Restrictions.
@@ -138,12 +139,8 @@ export class RestrictionController extends BaseController {
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
-      createdBy: studentRestriction.creator
-        ? `${studentRestriction.creator.lastName}, ${studentRestriction.creator.firstName}`
-        : "",
-      updatedBy: studentRestriction.modifier
-        ? `${studentRestriction.modifier.lastName}, ${studentRestriction.modifier.firstName}`
-        : "",
+      createdBy: getIDIRUserFullName(studentRestriction.creator),
+      updatedBy: getIDIRUserFullName(studentRestriction.modifier),
       isActive: studentRestriction.isActive,
       restrictionNote: studentRestriction.restrictionNote?.description,
       resolutionNote: studentRestriction.resolutionNote?.description,
@@ -299,12 +296,8 @@ export class RestrictionController extends BaseController {
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
       updatedAt: institutionRestriction.updatedAt,
-      createdBy: institutionRestriction.creator
-        ? `${institutionRestriction.creator.lastName}, ${institutionRestriction.creator.firstName}`
-        : "",
-      updatedBy: institutionRestriction.modifier
-        ? `${institutionRestriction.modifier.lastName}, ${institutionRestriction.modifier.firstName}`
-        : "",
+      createdBy: getIDIRUserFullName(institutionRestriction.creator),
+      updatedBy: getIDIRUserFullName(institutionRestriction.modifier),
       isActive: institutionRestriction.isActive,
       restrictionNote: institutionRestriction.restrictionNote?.description,
       resolutionNote: institutionRestriction.resolutionNote?.description,
@@ -313,6 +306,7 @@ export class RestrictionController extends BaseController {
 
   /**
    * Rest API to add a new provincial restriction to Institution.
+   * * Note: Only provincial restriction of category Designation can be added to institution.
    * @param userToken
    * @param institutionId
    * @param restrictionId
@@ -333,7 +327,7 @@ export class RestrictionController extends BaseController {
       );
     if (!restriction) {
       throw new UnprocessableEntityException(
-        "The given restriction type is either not Provincial or  not Institution.",
+        "The given restriction type is either not Provincial or not Institution.",
       );
     }
     const updatedRestriction =

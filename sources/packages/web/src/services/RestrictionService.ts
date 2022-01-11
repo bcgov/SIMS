@@ -48,7 +48,7 @@ export class RestrictionService {
     studentId: number,
     payload: AssignRestrictionDTO,
   ): Promise<void> {
-    return ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
+    await ApiClient.RestrictionApi.addStudentRestriction(studentId, payload);
   }
 
   public async resolveStudentRestriction(
@@ -56,7 +56,7 @@ export class RestrictionService {
     studentRestrictionId: number,
     payload: ResolveRestrictionDTO,
   ): Promise<void> {
-    return ApiClient.RestrictionApi.resolveStudentRestriction(
+    await ApiClient.RestrictionApi.resolveStudentRestriction(
       studentId,
       studentRestrictionId,
       payload,
@@ -83,7 +83,7 @@ export class RestrictionService {
     institutionId: number,
     payload: AssignRestrictionDTO,
   ): Promise<void> {
-    return ApiClient.RestrictionApi.addInstitutionRestriction(
+    await ApiClient.RestrictionApi.addInstitutionRestriction(
       institutionId,
       payload,
     );
@@ -94,7 +94,7 @@ export class RestrictionService {
     institutionRestrictionId: number,
     payload: ResolveRestrictionDTO,
   ): Promise<void> {
-    return ApiClient.RestrictionApi.resolveInstitutionRestriction(
+    await ApiClient.RestrictionApi.resolveInstitutionRestriction(
       institutionId,
       institutionRestrictionId,
       payload,
