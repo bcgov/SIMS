@@ -177,6 +177,14 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
+  * Gets all the students that have the SIN validation pending.
+  * @returns Students pending SIN validation.
+  */
+  async getStudentSinStatus(userId: number): Promise<boolean> {
+    return !!(await this.repo.findOne({ user: { id: userId } })).validSIN;
+  }
+
+  /**
    * Update the SIN validation information on a student that
    * is marked with a pending validation.
    * If the SIN validation status is already set, it needs to be

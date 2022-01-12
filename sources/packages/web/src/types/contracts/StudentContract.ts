@@ -92,6 +92,15 @@ export enum StudentPDStatus {
 }
 
 /**
+ * Enumeration for student sin status.
+ */
+export enum SinStatusEnum {
+  VALID = 1,
+  PENDING = 2,
+  INVALID = 3,
+}
+
+/**
  * Interface for student search API response
  */
 export interface SearchStudentResp {

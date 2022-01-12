@@ -53,6 +53,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
 } from "../../utilities";
+import { CheckSinValidation } from "src/auth/decorators/check-sin-status.decorator";
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
@@ -93,6 +94,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be changed to submitted.
    * @param userToken token from the authenticated student.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
@@ -159,6 +161,7 @@ export class ApplicationController extends BaseController {
    * @returns the application id of the created draft or an
    * HTTP exception if it is not possible to create it.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
@@ -207,6 +210,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId draft application id.
    * @param userToken token from the authenticated student.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")

@@ -1,13 +1,12 @@
 <template>
   <SINStatusBanner
-    v-if="sinStatus !== 1"
-    :message="message"
-    :severity="severity"
+    v-if="sinValidity.sinStatus !== SinStatusEnum.VALID"
+    :message="sinValidity.message"
+    :severity="sinValidity.severity"
   />
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import SINStatusBanner from "@/views/student/SINStatusBanner.vue";
 
@@ -15,37 +14,37 @@ import {
   PENDING_SIN_MESSAGE,
   INVALID_SIN_MESSAGE,
 } from "@/constants/message-constants";
+import { SinStatusEnum } from "@/types";
 
 export default {
   components: { SINStatusBanner },
   props: {},
-  setup(props: any) {
-    const store = useStore();
-    const message = ref("");
-    const sinStatus = ref(1);
-    const severity = ref("");
-
-    const checkValidSIN = () => {
-      const isValidSIN = store.state.student.validSIN;
-      if (isValidSIN === false) {
-        sinStatus.value = 3;
-        message.value = INVALID_SIN_MESSAGE;
-        severity.value = "error";
-      } else if (isValidSIN === null) {
-        sinStatus.value = 2;
-        message.value = PENDING_SIN_MESSAGE;
-        severity.value = "warn";
+  computed: {
+    sinValidity() {
+      const store = useStore();
+      if (store.state.student.validSIN === false) {
+        return {
+          sinStatus: SinStatusEnum.INVALID,
+          severity: "error",
+          message: INVALID_SIN_MESSAGE,
+        };
+      } else if (store.state.student.validSIN === null) {
+        return {
+          sinStatus: SinStatusEnum.PENDING,
+          severity: "warn",
+          message: PENDING_SIN_MESSAGE,
+        };
       }
-    };
-
-    onMounted(async () => {
-      checkValidSIN();
-    });
-
+      return {
+        sinStatus: SinStatusEnum.VALID,
+        severity: "",
+        message: "",
+      };
+    },
+  },
+  setup() {
     return {
-      sinStatus,
-      message,
-      severity,
+      SinStatusEnum,
     };
   },
 };
