@@ -301,7 +301,6 @@ export class ApplicationController extends BaseController {
    * Confirm Assessment of a Student.
    * @param applicationId application id to be updated.
    */
-  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
