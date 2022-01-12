@@ -170,7 +170,7 @@ export default {
           },
         });
       } catch (error) {
-        let errorLabel = "Unexpected error!";
+        const errorLabel = "Unexpected error!";
         let errorMsg =
           "An error happened while saving the Program Information Request.";
         [
@@ -180,7 +180,6 @@ export default {
         ].forEach(customError => {
           if (error.includes(customError)) {
             errorMsg = error.replace(customError, "").trim();
-            errorLabel = customError;
           }
         });
         toast.error(errorLabel, errorMsg);

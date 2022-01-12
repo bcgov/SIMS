@@ -14,7 +14,6 @@ dayjs.extend(dayOfYear);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
-export const DATE_WITH_LOCAL_OFFSET = "YYYY-MM-DDTHH:mm:ssZ";
 
 /**
  * get utc date time now

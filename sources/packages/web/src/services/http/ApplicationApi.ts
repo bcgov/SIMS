@@ -8,7 +8,6 @@ import {
   NoticeOfAssessmentDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { AxiosResponse } from "axios";
 
 export class ApplicationApi extends HttpBaseClient {
   public async getApplicationData(applicationId: number): Promise<any> {
@@ -110,8 +109,8 @@ export class ApplicationApi extends HttpBaseClient {
   public async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
-  ): Promise<void | AxiosResponse<any>> {
-    return this.apiClient
+  ): Promise<void> {
+    await this.apiClient
       .patch(
         `application/${applicationId}/submit`,
         payload,

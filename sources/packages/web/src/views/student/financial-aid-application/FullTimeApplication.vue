@@ -234,13 +234,12 @@ export default {
           "Thank you, your application has been submitted.",
         );
       } catch (error) {
-        let errorLabel = "Unexpected error!";
+        const errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
         [INVALID_STUDY_DATES, OFFERING_START_DATE_ERROR].forEach(
           customError => {
             if (error.includes(customError)) {
               errorMsg = error.replace(customError, "").trim();
-              errorLabel = customError;
             }
           },
         );

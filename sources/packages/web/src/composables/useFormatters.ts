@@ -1,9 +1,6 @@
 import { Address } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 
-import utc from "dayjs/plugin/utc";
-dayjs.extend(utc);
-
 /**
  * Helpers to adjust how values are shown in the UI.
  */
