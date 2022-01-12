@@ -159,15 +159,3 @@ export function getDateDifferenceInMonth(
   }
   return NaN;
 }
-
-/***
- * Format a string or date with offset
- * @param date date to be processed
- * @returns date with offset.
- */
-export function toLocalDateString(date?: Date | string): string | undefined {
-  if (date) {
-    return dayjs(date).format(DATE_WITH_LOCAL_OFFSET);
-  }
-  return undefined;
-}

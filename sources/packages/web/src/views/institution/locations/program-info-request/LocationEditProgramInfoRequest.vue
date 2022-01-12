@@ -52,7 +52,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const { dateString, formatDateOnly } = useFormatters();
+    const { dateString } = useFormatters();
     const initialData = ref({} as GetProgramInfoRequestDto);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
