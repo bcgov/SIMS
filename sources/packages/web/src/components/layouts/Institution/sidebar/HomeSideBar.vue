@@ -154,27 +154,30 @@ export default {
                 ],
               }
             : undefined;
-        const locationUserMenu =
-          isAdmin.value ||
-          userAuth.value?.some(
-            (el: InstitutionUserAuthRolesAndLocation) =>
-              el?.locationId === data?.id &&
-              el?.userType === InstitutionUserTypes.locationManager,
-          )
-            ? {
-                label: "Users",
-                icon: "mdi-account-multiple-outline",
-                command: () => {
-                  router.push({
-                    name: InstitutionRoutesConst.LOCATION_USERS,
-                    params: {
-                      locationId: data.id,
-                      locationName: data.name,
-                    },
-                  });
-                },
-              }
-            : undefined;
+
+        // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
+        // TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
+        // const locationUserMenu =
+        //   isAdmin.value ||
+        //   userAuth.value?.some(
+        //     (el: InstitutionUserAuthRolesAndLocation) =>
+        //       el?.locationId === data?.id &&
+        //       el?.userType === InstitutionUserTypes.locationManager,
+        //   )
+        //     ? {
+        //         label: "Users",
+        //         icon: "mdi-account-multiple-outline",
+        //         command: () => {
+        //           router.push({
+        //             name: InstitutionRoutesConst.LOCATION_USERS,
+        //             params: {
+        //               locationId: data.id,
+        //               locationName: data.name,
+        //             },
+        //           });
+        //         },
+        //       }
+        //     : undefined;
 
         if (locationMenu) {
           // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,

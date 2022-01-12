@@ -113,9 +113,9 @@ export class ProgramInfoRequestController {
     result.isActiveProgramYear = application.programYear.active;
     if (application.offering) {
       result.offeringName = application.offering.name;
-      (result.studyStartDate = application.offering.studyStartDate),
-        (result.studyEndDate = application.offering.studyEndDate),
-        (result.actualTuitionCosts = application.offering.actualTuitionCosts);
+      result.studyStartDate = application.offering.studyStartDate;
+      result.studyEndDate = application.offering.studyEndDate;
+      result.actualTuitionCosts = application.offering.actualTuitionCosts;
       result.programRelatedCosts = application.offering.programRelatedCosts;
       result.mandatoryFees = application.offering.mandatoryFees;
       result.exceptionalExpenses = application.offering.exceptionalExpenses;
@@ -201,9 +201,6 @@ export class ProgramInfoRequestController {
           "Not able to complete the Program Information Request due to an invalid request.",
         );
       }
-      const offering = payload.selectedOffering
-        ? await this.offeringService.getOfferingById(payload.selectedOffering)
-        : undefined;
       const application = await this.applicationService.getApplicationById(
         applicationId,
       );
@@ -216,15 +213,25 @@ export class ProgramInfoRequestController {
           OFFERING_INTENSITY_MISMATCH,
         );
       }
+
+      let studyStartDate = payload.studyStartDate;
+      if (payload.selectedOffering) {
+        const offering = await this.offeringService.getOfferingById(
+          payload.selectedOffering,
+        );
+        if (offering) {
+          studyStartDate = offering?.studyStartDate;
+        }
+      }
       if (
         !(
           getDateDifferenceInMonth(
-            offering?.studyStartDate ?? payload?.studyStartDate,
+            studyStartDate,
             application?.programYear?.startDate,
           ) >= 0 &&
           getDateDifferenceInMonth(
             application?.programYear?.endDate,
-            offering?.studyStartDate ?? payload?.studyStartDate,
+            studyStartDate,
           ) >= 0
         )
       ) {

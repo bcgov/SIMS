@@ -110,50 +110,12 @@ export class ApplicationController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // calculate the no. of days between start and end date
-    const Difference_In_Days = dateDifference(
-      payload.data?.studystartDate,
-      payload.data?.studyendDate,
-    );
-    const notValidDates =
-      payload.data?.studystartDate && payload.data?.studyendDate
-        ? Difference_In_Days >= 42 && Difference_In_Days <= 365
-          ? false
-          : "Invalid Study Period, Dates must be between 42 and 365 days"
-        : "Invalid Study dates";
-    if (notValidDates) {
-      throw new UnprocessableEntityException(
-        `${INVALID_STUDY_DATES} ${notValidDates}`,
-      );
-    }
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request",
-      );
-    }
-    const offering = payload.data.selectedOffering
-      ? await this.offeringService.getOfferingById(
-          payload.data.selectedOffering,
-        )
-      : undefined;
-
-    if (
-      !(
-        getDateDifferenceInMonth(
-          offering?.studyStartDate ?? payload.data.studystartDate,
-          programYear.startDate,
-        ) >= 0 &&
-        getDateDifferenceInMonth(
-          programYear.endDate,
-          offering?.studyStartDate ?? payload.data.studystartDate,
-        ) >= 0
-      )
-    ) {
-      throw new UnprocessableEntityException(
-        `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
       );
     }
     const submissionResult = await this.formService.dryRunSubmission(
@@ -163,6 +125,48 @@ export class ApplicationController extends BaseController {
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create an application due to an invalid request.",
+      );
+    }
+    let notValidDates;
+    if (payload.data.studystartDate && payload.data.studyendDate) {
+      // calculate the no. of days between start and end date
+      const Difference_In_Days = dateDifference(
+        payload.data?.studystartDate,
+        payload.data?.studyendDate,
+      );
+      if (Difference_In_Days >= 42 && Difference_In_Days <= 365) {
+        notValidDates = false;
+      } else {
+        notValidDates =
+          "Invalid Study Period, Dates must be between 42 and 365 days";
+      }
+    } else {
+      notValidDates = "Invalid Study dates";
+    }
+    if (notValidDates) {
+      throw new UnprocessableEntityException(
+        `${INVALID_STUDY_DATES} ${notValidDates}`,
+      );
+    }
+    let studyStartDate = payload.data.studystartDate;
+
+    if (payload.data.selectedOffering) {
+      const offering = await this.offeringService.getOfferingById(
+        payload.data.selectedOffering,
+      );
+      if (offering) {
+        studyStartDate = offering.studyStartDate;
+      }
+    }
+
+    if (
+      !(
+        getDateDifferenceInMonth(studyStartDate, programYear.startDate) >= 0 &&
+        getDateDifferenceInMonth(programYear.endDate, studyStartDate) >= 0
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
       );
     }
 
