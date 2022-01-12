@@ -84,7 +84,12 @@ type StudentFormData = Pick<
   };
 
 export default {
-  components: { formio, RestrictionBanner, FullPageContainer, CheckValidSINBanner },
+  components: {
+    formio,
+    RestrictionBanner,
+    FullPageContainer,
+    CheckValidSINBanner,
+  },
   props: {
     editMode: {
       type: Boolean,
