@@ -30,7 +30,7 @@ export class ProgramInfoRequestService {
     applicationId: number,
     data: CompleteProgramInfoRequestDto,
   ): Promise<void> {
-    return ApiClient.ProgramInfoRequest.completeProgramInfoRequest(
+    await ApiClient.ProgramInfoRequest.completeProgramInfoRequest(
       locationId,
       applicationId,
       data,
