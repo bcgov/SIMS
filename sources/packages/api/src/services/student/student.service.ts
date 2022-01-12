@@ -177,11 +177,17 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-  * Gets all the students that have the SIN validation pending.
-  * @returns Students pending SIN validation.
-  */
-  async getStudentSinStatus(userId: number): Promise<boolean> {
-    return !!(await this.repo.findOne({ user: { id: userId } })).validSIN;
+   * Gets a student's valid sin status
+   * @returns Students SIN validation status.
+   */
+  async getStudentSinStatus(userId: number): Promise<boolean | null> {
+    const sinStatus = await this.repo
+      .createQueryBuilder("student")
+      .leftJoinAndSelect("student.user", "user")
+      .where("student.userId = :userIdParam", { userIdParam: userId })
+      .select("student.validSin")
+      .getOne();
+    return sinStatus.validSIN;
   }
 
   /**
