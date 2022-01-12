@@ -53,8 +53,8 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
-  dateDifference,
-  getDateDifferenceInMonth,
+  checkStudyStartDateWithinProgramYear,
+  checkValidStudyPeriod,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
@@ -127,43 +127,26 @@ export class ApplicationController extends BaseController {
         "Not able to create an application due to an invalid request.",
       );
     }
-    let notValidDates;
-    if (payload.data.studystartDate && payload.data.studyendDate) {
-      // calculate the no. of days between start and end date
-      const Difference_In_Days = dateDifference(
-        payload.data?.studystartDate,
-        payload.data?.studyendDate,
-      );
-      // if the differnce between study should be between 42 to 365 days
-      if (!(Difference_In_Days >= 42 && Difference_In_Days <= 365)) {
-        notValidDates =
-          "Invalid Study Period, Dates must be between 42 and 365 days";
-      }
-    } else {
-      notValidDates = "Invalid Study dates";
-    }
-    if (notValidDates) {
-      throw new UnprocessableEntityException(
-        `${INVALID_STUDY_DATES} ${notValidDates}`,
-      );
-    }
-    let studyStartDate = payload.data.studystartDate;
 
+    let studyStartDate = payload.data.studystartDate;
     if (payload.data.selectedOffering) {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
       );
-      if (offering) {
-        studyStartDate = offering.studyStartDate;
+      studyStartDate = offering.studyStartDate;
+    } else {
+      const notValidDates = checkValidStudyPeriod(
+        payload.data.studystartDate,
+        payload.data.studyendDate,
+      );
+      if (notValidDates) {
+        throw new UnprocessableEntityException(
+          `${INVALID_STUDY_DATES} ${notValidDates}`,
+        );
       }
     }
 
-    if (
-      !(
-        getDateDifferenceInMonth(studyStartDate, programYear.startDate) >= 0 &&
-        getDateDifferenceInMonth(programYear.endDate, studyStartDate) >= 0
-      )
-    ) {
+    if (!checkStudyStartDateWithinProgramYear(studyStartDate, programYear)) {
       throw new UnprocessableEntityException(
         `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
       );

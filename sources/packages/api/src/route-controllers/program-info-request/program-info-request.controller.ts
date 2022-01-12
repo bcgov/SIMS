@@ -31,6 +31,8 @@ import {
   getDateDifferenceInMonth,
   CustomNamedError,
   dateDifference,
+  checkValidStudyPeriod,
+  checkStudyStartDateWithinProgramYear,
 } from "../../utilities";
 import {
   EducationProgramOffering,
@@ -219,20 +221,12 @@ export class ProgramInfoRequestController {
         const offering = await this.offeringService.getOfferingById(
           payload.selectedOffering,
         );
-        if (offering) {
-          studyStartDate = offering?.studyStartDate;
-        }
+        studyStartDate = offering.studyStartDate;
       }
       if (
-        !(
-          getDateDifferenceInMonth(
-            studyStartDate,
-            application?.programYear?.startDate,
-          ) >= 0 &&
-          getDateDifferenceInMonth(
-            application?.programYear?.endDate,
-            studyStartDate,
-          ) >= 0
+        !checkStudyStartDateWithinProgramYear(
+          studyStartDate,
+          application.programYear,
         )
       ) {
         throw new CustomNamedError(
@@ -259,17 +253,11 @@ export class ProgramInfoRequestController {
           id: payload.selectedOffering,
         } as EducationProgramOffering;
       } else {
-        // calculate the no. of days between start and end date
-        const Difference_In_Days = dateDifference(
+        // check valid study period
+        const notValidDates = checkValidStudyPeriod(
           payload.studyStartDate,
           payload.studyEndDate,
         );
-        const notValidDates =
-          payload.studyStartDate && payload.studyEndDate
-            ? Difference_In_Days >= 42 && Difference_In_Days <= 365
-              ? false
-              : "Invalid Study Period, Dates must be between 42 and 365 days"
-            : "Invalid Study dates";
         if (notValidDates) {
           throw new CustomNamedError(notValidDates, INVALID_STUDY_DATES);
         }
