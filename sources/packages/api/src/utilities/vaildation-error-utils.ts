@@ -1,6 +1,9 @@
 import { dateDifference, getDateDifferenceInMonth } from "./date-utils";
-import { ProgramYear } from "../database/entities/program-year.model";
-
+import {
+  ProgramYear,
+  OfferingIntensity,
+  Application,
+} from "../database/entities";
 /**
  * check valid study period
  * @param startDate start date.
@@ -41,5 +44,25 @@ export const checkStudyStartDateWithinProgramYear = (
     return (
       getDateDifferenceInMonth(studyStartDate, programYear.startDate) >= 0 &&
       getDateDifferenceInMonth(programYear.endDate, studyStartDate) >= 0
+    );
+};
+
+/**
+ * check if selected offering intensity
+ * and intensity selected by student is same
+ * @param application Application.
+ * @param selectedOfferingIntensity selectedOfferingIntensity.
+ * @returns [true] if selected offering intensity
+ * and intensity selected by student is same
+ * return [false] if not
+ */
+export const checkOfferingIntensityMismatch = (
+  application: Application,
+  selectedOfferingIntensity: OfferingIntensity,
+): boolean => {
+  if (application && selectedOfferingIntensity)
+    return (
+      application.data.howWillYouBeAttendingTheProgram ===
+      selectedOfferingIntensity
     );
 };

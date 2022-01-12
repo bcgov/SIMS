@@ -31,6 +31,7 @@ import {
   CustomNamedError,
   checkNotValidStudyPeriod,
   checkStudyStartDateWithinProgramYear,
+  checkOfferingIntensityMismatch,
 } from "../../utilities";
 import {
   EducationProgramOffering,
@@ -205,8 +206,7 @@ export class ProgramInfoRequestController {
         applicationId,
       );
       if (
-        application?.data.howWillYouBeAttendingTheProgram ===
-        payload.offeringIntensity
+        !checkOfferingIntensityMismatch(application, payload.offeringIntensity)
       ) {
         throw new CustomNamedError(
           "Offering Intensity does not match the students intensity",
