@@ -1,7 +1,13 @@
 import { dateDifference, getDateDifferenceInMonth } from "./date-utils";
 import { ProgramYear } from "../database/entities/program-year.model";
 
-export const checkValidStudyPeriod = (
+/**
+ * check valid study period
+ * @param startDate start date.
+ * @param endDate end date.
+ * @returns error msg if the study period is not valid.
+ */
+export const checkNotValidStudyPeriod = (
   startDate: Date | string,
   endDate: Date | string,
 ): string => {
@@ -18,6 +24,15 @@ export const checkValidStudyPeriod = (
   }
 };
 
+/**
+ * check if study start date is within
+ * program year student applied for
+ * @param studyStartDate start date.
+ * @param programYear programYear.
+ * @returns [true] if study start date is
+ * within program year student applied for
+ * return [false] if not
+ */
 export const checkStudyStartDateWithinProgramYear = (
   studyStartDate: Date | string,
   programYear: ProgramYear,

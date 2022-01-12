@@ -54,7 +54,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
-  checkValidStudyPeriod,
+  checkNotValidStudyPeriod,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
@@ -135,7 +135,7 @@ export class ApplicationController extends BaseController {
       );
       studyStartDate = offering.studyStartDate;
     } else {
-      const notValidDates = checkValidStudyPeriod(
+      const notValidDates = checkNotValidStudyPeriod(
         payload.data.studystartDate,
         payload.data.studyendDate,
       );

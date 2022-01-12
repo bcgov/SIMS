@@ -28,10 +28,8 @@ import {
 } from "../../services";
 import {
   getUserFullName,
-  getDateDifferenceInMonth,
   CustomNamedError,
-  dateDifference,
-  checkValidStudyPeriod,
+  checkNotValidStudyPeriod,
   checkStudyStartDateWithinProgramYear,
 } from "../../utilities";
 import {
@@ -254,7 +252,7 @@ export class ProgramInfoRequestController {
         } as EducationProgramOffering;
       } else {
         // check valid study period
-        const notValidDates = checkValidStudyPeriod(
+        const notValidDates = checkNotValidStudyPeriod(
           payload.studyStartDate,
           payload.studyEndDate,
         );

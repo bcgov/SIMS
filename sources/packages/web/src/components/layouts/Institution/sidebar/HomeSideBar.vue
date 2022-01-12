@@ -53,7 +53,9 @@ import { useStore } from "vuex";
 import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
-import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+// TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
+// TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
+// import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { useInstitutionAuth } from "../../../../composables/institution/useInstitutionAuth";
 import { MenuModel } from "@/types";
 
