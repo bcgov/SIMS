@@ -301,6 +301,8 @@ export class ApplicationController extends BaseController {
    * Confirm Assessment of a Student.
    * @param applicationId application id to be updated.
    */
+  @CheckSinValidation()
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
@@ -405,14 +407,14 @@ export class ApplicationController extends BaseController {
       await this.applicationService.getProgramYearOfApplication(
         student.id,
         applicationId,
-        includeInActivePY
+        includeInActivePY,
       );
 
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
-      active: applicationProgramYear.programYear.active
+      active: applicationProgramYear.programYear.active,
     } as ProgramYearOfApplicationDto;
   }
 
