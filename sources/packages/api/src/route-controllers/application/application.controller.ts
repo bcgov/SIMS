@@ -134,9 +134,8 @@ export class ApplicationController extends BaseController {
         payload.data?.studystartDate,
         payload.data?.studyendDate,
       );
-      if (Difference_In_Days >= 42 && Difference_In_Days <= 365) {
-        notValidDates = false;
-      } else {
+      // if the differnce between study should be between 42 to 365 days
+      if (!(Difference_In_Days >= 42 && Difference_In_Days <= 365)) {
         notValidDates =
           "Invalid Study Period, Dates must be between 42 and 365 days";
       }
