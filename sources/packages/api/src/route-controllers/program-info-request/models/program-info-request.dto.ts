@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsInt, Min, IsOptional } from "class-validator";
 import { SaveEducationProgramOfferingDto } from "../../education-program-offering/models/education-program-offering.dto";
 import { ProgramInfoStatus } from "../../../database/entities";
+import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 
 export interface CompleteProgramInfoRequestDto
   extends SaveEducationProgramOfferingDto {
@@ -23,6 +24,7 @@ export interface GetProgramInfoRequestDto
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
   isActiveProgramYear: boolean;
+  offeringIntensitySelectedByStudent: OfferingIntensity;
 }
 
 export interface GetPIRDeniedReasonDto {

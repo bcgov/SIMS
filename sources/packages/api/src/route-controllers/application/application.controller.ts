@@ -21,6 +21,7 @@ import {
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
+  EducationProgramOfferingService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -52,7 +53,14 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
+  dateDifference,
+  getDateDifferenceInMonth,
 } from "../../utilities";
+import {
+  INVALID_STUDY_DATES,
+  OFFERING_START_DATE_ERROR,
+} from "../program-info-request/program-info-request.controller";
+
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
@@ -61,6 +69,7 @@ export class ApplicationController extends BaseController {
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
+    private readonly offeringService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -101,16 +110,52 @@ export class ApplicationController extends BaseController {
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
+    // calculate the no. of days between start and end date
+    const Difference_In_Days = dateDifference(
+      payload.data?.studystartDate,
+      payload.data?.studyendDate,
+    );
+    const notValidDates =
+      payload.data?.studystartDate && payload.data?.studyendDate
+        ? Difference_In_Days >= 42 && Difference_In_Days <= 365
+          ? false
+          : "Invalid Study Period, Dates must be between 42 and 365 days"
+        : "Invalid Study dates";
+    if (notValidDates) {
+      throw new UnprocessableEntityException(
+        `${INVALID_STUDY_DATES} ${notValidDates}`,
+      );
+    }
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request",
       );
     }
+    const offering = payload.data.selectedOffering
+      ? await this.offeringService.getOfferingById(
+          payload.data.selectedOffering,
+        )
+      : undefined;
 
+    if (
+      !(
+        getDateDifferenceInMonth(
+          offering?.studyStartDate ?? payload.data.studystartDate,
+          programYear.startDate,
+        ) >= 0 &&
+        getDateDifferenceInMonth(
+          programYear.endDate,
+          offering?.studyStartDate ?? payload.data.studystartDate,
+        ) >= 0
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
+      );
+    }
     const submissionResult = await this.formService.dryRunSubmission(
       programYear.formName,
       payload.data,
@@ -401,14 +446,14 @@ export class ApplicationController extends BaseController {
       await this.applicationService.getProgramYearOfApplication(
         student.id,
         applicationId,
-        includeInActivePY
+        includeInActivePY,
       );
 
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
-      active: applicationProgramYear.programYear.active
+      active: applicationProgramYear.programYear.active,
     } as ProgramYearOfApplicationDto;
   }
 

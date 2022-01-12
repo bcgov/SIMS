@@ -30,6 +30,7 @@ import {
   getUserFullName,
   getDateDifferenceInMonth,
   CustomNamedError,
+  dateDifference,
 } from "../../utilities";
 import {
   EducationProgramOffering,
@@ -38,7 +39,9 @@ import {
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
-const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
+export const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
+export const INVALID_STUDY_DATES = "INVALID_STUDY_DATES";
+export const OFFERING_INTENSITY_MISMATCH = "OFFERING_INTENSITY_MISMATCH";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -104,14 +107,15 @@ export class ProgramInfoRequestController {
       application.data.programDescription;
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
+    result.offeringIntensitySelectedByStudent =
+      application.data.howWillYouBeAttendingTheProgram;
     result.programYearId = application.programYear.id;
     result.isActiveProgramYear = application.programYear.active;
-
     if (application.offering) {
       result.offeringName = application.offering.name;
-      result.studyStartDate = application.offering.studyStartDate;
-      result.studyEndDate = application.offering.studyEndDate;
-      result.actualTuitionCosts = application.offering.actualTuitionCosts;
+      (result.studyStartDate = application.offering.studyStartDate),
+        (result.studyEndDate = application.offering.studyEndDate),
+        (result.actualTuitionCosts = application.offering.actualTuitionCosts);
       result.programRelatedCosts = application.offering.programRelatedCosts;
       result.mandatoryFees = application.offering.mandatoryFees;
       result.exceptionalExpenses = application.offering.exceptionalExpenses;
@@ -192,12 +196,44 @@ export class ProgramInfoRequestController {
         FormNames.ProgramInformationRequest,
         payload,
       );
-
       if (!submissionResult.valid) {
         throw new BadRequestException(
           "Not able to complete the Program Information Request due to an invalid request.",
         );
       }
+      const offering = payload.selectedOffering
+        ? await this.offeringService.getOfferingById(payload.selectedOffering)
+        : undefined;
+      const application = await this.applicationService.getApplicationById(
+        applicationId,
+      );
+      if (
+        application?.data.howWillYouBeAttendingTheProgram ===
+        payload.offeringIntensity
+      ) {
+        throw new CustomNamedError(
+          "Offering Intensity does not match the students intensity",
+          OFFERING_INTENSITY_MISMATCH,
+        );
+      }
+      if (
+        !(
+          getDateDifferenceInMonth(
+            offering?.studyStartDate ?? payload?.studyStartDate,
+            application?.programYear?.startDate,
+          ) >= 0 &&
+          getDateDifferenceInMonth(
+            application?.programYear?.endDate,
+            offering?.studyStartDate ?? payload?.studyStartDate,
+          ) >= 0
+        )
+      ) {
+        throw new CustomNamedError(
+          "study start date should be within the program year of the students application",
+          OFFERING_START_DATE_ERROR,
+        );
+      }
+
       let offeringToCompletePIR: EducationProgramOffering;
       if (payload.selectedOffering) {
         // Check if the offering belongs to the location.
@@ -216,6 +252,20 @@ export class ProgramInfoRequestController {
           id: payload.selectedOffering,
         } as EducationProgramOffering;
       } else {
+        // calculate the no. of days between start and end date
+        const Difference_In_Days = dateDifference(
+          payload.studyStartDate,
+          payload.studyEndDate,
+        );
+        const notValidDates =
+          payload.studyStartDate && payload.studyEndDate
+            ? Difference_In_Days >= 42 && Difference_In_Days <= 365
+              ? false
+              : "Invalid Study Period, Dates must be between 42 and 365 days"
+            : "Invalid Study dates";
+        if (notValidDates) {
+          throw new CustomNamedError(notValidDates, INVALID_STUDY_DATES);
+        }
         // Offering does not exists and it is going to be created and
         // associated with the application to complete the PIR.
         offeringToCompletePIR = this.offeringService.populateProgramOffering(
@@ -224,30 +274,7 @@ export class ProgramInfoRequestController {
           submissionResult.data.data,
         );
       }
-      const offering = await this.offeringService.getOfferingById(
-        payload.selectedOffering,
-      );
 
-      const application = await this.applicationService.getApplicationById(
-        applicationId,
-      );
-      if (
-        !(
-          getDateDifferenceInMonth(
-            offering?.studyStartDate ?? payload?.studyStartDate,
-            application?.programYear?.startDate,
-          ) >= 0 &&
-          getDateDifferenceInMonth(
-            application?.programYear?.endDate,
-            offering?.studyStartDate ?? payload?.studyStartDate,
-          ) >= 0
-        )
-      ) {
-        throw new CustomNamedError(
-          "study start date should be within the program year of the students application",
-          OFFERING_START_DATE_ERROR,
-        );
-      }
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
@@ -263,9 +290,12 @@ export class ProgramInfoRequestController {
       }
     } catch (error) {
       if (
-        [PIR_REQUEST_NOT_FOUND_ERROR, OFFERING_START_DATE_ERROR].includes(
-          error.name,
-        )
+        [
+          PIR_REQUEST_NOT_FOUND_ERROR,
+          OFFERING_START_DATE_ERROR,
+          INVALID_STUDY_DATES,
+          OFFERING_INTENSITY_MISMATCH,
+        ].includes(error.name)
       ) {
         throw new UnprocessableEntityException(
           `${error.name} ${error.message}`,

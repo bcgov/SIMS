@@ -1,6 +1,9 @@
 import { Address } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
+
 /**
  * Helpers to adjust how values are shown in the UI.
  */
@@ -92,11 +95,27 @@ export function useFormatters() {
     return formattedAddress.join(", ");
   };
 
+  /***
+   * Format a date in the same expected format that a date only
+   * string is received from Typeorm entity when mapping a
+   * Date only field on database.
+   */
+  const formatDateOnly = (date?: Date): string | undefined => {
+    if (date) {
+      // return dayjs(date).utc().format("MM/DD/YYYY");
+      return dayjs(date)
+        .utc()
+        .format("YYYY-MM-DD");
+    }
+    return undefined;
+  };
+
   return {
     dateString,
     dateOnlyLongString,
     getDatesDiff,
     getFormattedAddress,
     timeOnlyInHoursAndMinutes,
+    formatDateOnly,
   };
 }

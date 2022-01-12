@@ -177,7 +177,9 @@ export default {
             : undefined;
 
         if (locationMenu) {
-          if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
+          // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
+          // TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
+          // if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
           locationsMenu.value.push(locationMenu);
         }
       }

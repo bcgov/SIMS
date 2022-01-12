@@ -7,7 +7,6 @@ import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import { EXTENDED_DATE_FORMAT } from "../utilities";
-
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -15,6 +14,7 @@ dayjs.extend(dayOfYear);
 
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "YYYY MMM DD";
+export const DATE_WITH_LOCAL_OFFSET = "YYYY-MM-DDTHH:mm:ssZ";
 
 /**
  * get utc date time now
@@ -152,7 +152,22 @@ export function getDateDifferenceInMonth(
   firstDate: Date | string,
   secondDate: Date | string,
 ): number {
-  const date1 = dayjs(firstDate);
-  const date2 = dayjs(secondDate);
-  return date1.diff(date2);
+  if (firstDate && secondDate) {
+    const date1 = dayjs(firstDate);
+    const date2 = dayjs(secondDate);
+    return date1.diff(date2);
+  }
+  return NaN;
+}
+
+/***
+ * Format a string or date with offset
+ * @param date date to be processed
+ * @returns date with offset.
+ */
+export function toLocalDateString(date?: Date | string): string | undefined {
+  if (date) {
+    return dayjs(date).format(DATE_WITH_LOCAL_OFFSET);
+  }
+  return undefined;
 }

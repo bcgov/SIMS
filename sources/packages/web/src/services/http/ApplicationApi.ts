@@ -8,6 +8,7 @@ import {
   NoticeOfAssessmentDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { AxiosResponse } from "axios";
 
 export class ApplicationApi extends HttpBaseClient {
   public async getApplicationData(applicationId: number): Promise<any> {
@@ -109,17 +110,19 @@ export class ApplicationApi extends HttpBaseClient {
   public async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
-  ): Promise<void> {
-    try {
-      return await this.apiClient.patch(
+  ): Promise<void | AxiosResponse<any>> {
+    return this.apiClient
+      .patch(
         `application/${applicationId}/submit`,
         payload,
         this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+      )
+      .catch(error => {
+        if (error.response) {
+          this.handleRequestError(error.response?.data?.message);
+          throw error.response?.data?.message;
+        }
+      });
   }
 
   public async getProgramYearOfApplication(

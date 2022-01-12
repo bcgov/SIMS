@@ -15,6 +15,7 @@ import {
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
+import { AxiosResponse } from "axios";
 export class ApplicationService {
   // Share Instance
   private static instance: ApplicationService;
@@ -75,7 +76,7 @@ export class ApplicationService {
   public async submitApplication(
     applicationId: number,
     payload: SaveStudentApplicationDto,
-  ): Promise<void> {
+  ): Promise<void | AxiosResponse<any>> {
     return ApiClient.Application.submitApplication(applicationId, payload);
   }
 

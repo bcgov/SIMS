@@ -31,7 +31,6 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
         this.addAuthHeader(),
       )
       .catch(error => {
-        console.log(error.response);
         if (error.response) {
           this.handleRequestError(error.response?.data?.message);
           throw error.response?.data?.message;

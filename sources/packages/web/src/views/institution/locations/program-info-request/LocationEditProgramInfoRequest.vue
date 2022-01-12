@@ -34,6 +34,8 @@ import {
   GetProgramInfoRequestDto,
 } from "@/types";
 export const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
+export const INVALID_STUDY_DATES = "INVALID_STUDY_DATES";
+export const OFFERING_INTENSITY_MISMATCH = "OFFERING_INTENSITY_MISMATCH";
 
 export default {
   components: { formio },
@@ -50,7 +52,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const { dateString } = useFormatters();
+    const { dateString, formatDateOnly } = useFormatters();
     const initialData = ref({} as GetProgramInfoRequestDto);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -168,13 +170,19 @@ export default {
           },
         });
       } catch (error) {
-        let errorLabel = "Unexpected error";
+        let errorLabel = "Unexpected error!";
         let errorMsg =
           "An error happened while saving the Program Information Request.";
-        if (error.includes(OFFERING_START_DATE_ERROR)) {
-          errorMsg = error.replace(OFFERING_START_DATE_ERROR, "").trim();
-          errorLabel = OFFERING_START_DATE_ERROR;
-        }
+        [
+          OFFERING_START_DATE_ERROR,
+          INVALID_STUDY_DATES,
+          OFFERING_INTENSITY_MISMATCH,
+        ].forEach(customError => {
+          if (error.includes(customError)) {
+            errorMsg = error.replace(customError, "").trim();
+            errorLabel = customError;
+          }
+        });
         toast.error(errorLabel, errorMsg);
       }
     };

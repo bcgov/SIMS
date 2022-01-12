@@ -90,6 +90,10 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import {
+  INVALID_STUDY_DATES,
+  OFFERING_START_DATE_ERROR,
+} from "@/views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 
 export default {
   components: {
@@ -230,7 +234,17 @@ export default {
           "Thank you, your application has been submitted.",
         );
       } catch (error) {
-        toast.error("Unexpected error!", "An unexpected error happen.");
+        let errorLabel = "Unexpected error!";
+        let errorMsg = "An unexpected error happen.";
+        [INVALID_STUDY_DATES, OFFERING_START_DATE_ERROR].forEach(
+          customError => {
+            if (error.includes(customError)) {
+              errorMsg = error.replace(customError, "").trim();
+              errorLabel = customError;
+            }
+          },
+        );
+        toast.error(errorLabel, errorMsg);
       } finally {
         submittingApplication.value = false;
       }
