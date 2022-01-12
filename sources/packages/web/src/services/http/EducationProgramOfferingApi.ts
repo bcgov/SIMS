@@ -95,12 +95,15 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     programYearId: number,
     selectedIntensity: OfferingIntensity,
+    includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
-      const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/options-list?selectedIntensity=${selectedIntensity}`,
-        this.addAuthHeader(),
-      );
+      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/options-list`;
+      url = `${url}?selectedIntensity=${selectedIntensity}`;
+      if (includeInActivePY) {
+        url = `${url}&includeInActivePY=${includeInActivePY}`;
+      }
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
@@ -140,12 +143,14 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     locationId: number,
     programId: number,
     programYearId: number,
+    includeInActivePY?: boolean,
   ): Promise<OptionItemDto[]> {
     try {
-      const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list`,
-        this.addAuthHeader(),
-      );
+      let url = `institution/offering/location/${locationId}/education-program/${programId}/program-year/${programYearId}/offerings-list`;
+      if (includeInActivePY) {
+        url = `${url}?includeInActivePY=${includeInActivePY}`;
+      }
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

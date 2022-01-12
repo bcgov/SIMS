@@ -85,16 +85,16 @@ export default {
 
     const updateSummaryList = async (locationId: number) => {
       applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
-        locationId
+        locationId,
       );
     };
 
     watch(
       () => props.locationId,
-      async (currValue) => {
+      async currValue => {
         //update the list
         await updateSummaryList(currValue);
-      }
+      },
     );
 
     onMounted(async () => {

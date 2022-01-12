@@ -380,6 +380,8 @@ export class ApplicationController extends BaseController {
   /**
    * Get program year details for the application.
    * @param applicationId application id to be updated.
+   * @query includeInActivePY, if includeInActivePY is true,
+   * then consider both active and inactive program year.
    * @returns program year details of the application
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -387,6 +389,7 @@ export class ApplicationController extends BaseController {
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
+    @Query("includeInActivePY") includeInActivePY?: boolean,
   ): Promise<ProgramYearOfApplicationDto> {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
@@ -402,12 +405,14 @@ export class ApplicationController extends BaseController {
       await this.applicationService.getProgramYearOfApplication(
         student.id,
         applicationId,
+        includeInActivePY
       );
 
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
+      active: applicationProgramYear.programYear.active
     } as ProgramYearOfApplicationDto;
   }
 
@@ -461,7 +466,7 @@ export class ApplicationController extends BaseController {
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<StudentApplicationAndCount> {
     const applicationsAndCount =
-     await this.applicationService.getAllStudentApplications(
+      await this.applicationService.getAllStudentApplications(
         sortField,
         studentId,
         page,

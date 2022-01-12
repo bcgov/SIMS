@@ -133,7 +133,23 @@ export default {
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
+    const checkProgramYear = async () => {
+      // check program year, if not active allow only readonly mode with a toast
+      const programYearDetails = await ApplicationService.shared.getProgramYearOfApplication(
+        props.id,
+        true,
+      );
+      if (!programYearDetails.active) {
+        isReadOnly.value = true;
+        toast.error(
+          "Program Year not active",
+          "Application with inactive program year will not be considered",
+          TOAST_ERROR_DISPLAY_TIME,
+        );
+      }
+    };
     onMounted(async () => {
       //Get the student information, application information and student restriction.
       const [
@@ -154,9 +170,11 @@ export default {
           ApplicationStatus.cancelled,
           ApplicationStatus.overwritten,
         ].includes(applicationData.applicationStatus) || !!props.readOnly;
+
       notDraft.value =
         !!props.readOnly ||
         ![ApplicationStatus.draft].includes(applicationData.applicationStatus);
+
       const address = studentInfo.contact;
       // TODO: Move formatted address to a common place in Vue app or API.
       const formattedAddress = `${address.addressLine1} ${address.addressLine2} ${address.city} ${address.provinceState} ${address.postalCode}  ${address.country}`;
@@ -230,6 +248,7 @@ export default {
 
     const formLoaded = async (form: any) => {
       applicationWizard = form;
+      await checkProgramYear();
       // Disable internal submit button.
       formioUtils.disableWizardButtons(applicationWizard);
       applicationWizard.options.buttonSettings.showSubmit = false;
@@ -253,11 +272,14 @@ export default {
       );
 
       if (selectedLocationId) {
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
         await formioDataLoader.loadProgramsForLocation(
           form,
           +selectedLocationId,
           PROGRAMS_DROPDOWN_KEY,
           props.programYearId,
+          isReadOnly.value,
         );
       }
 
@@ -275,6 +297,9 @@ export default {
           selectedProgramId,
           SELECTED_PROGRAM_DESC_KEY,
         );
+
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
         await formioDataLoader.loadOfferingsForLocation(
           form,
           selectedProgramId,
@@ -282,6 +307,7 @@ export default {
           OFFERINGS_DROPDOWN_KEY,
           props.programYearId,
           selectedIntensity,
+          isReadOnly.value,
         );
       }
     };
@@ -295,6 +321,9 @@ export default {
         form,
         PROGRAMS_DROPDOWN_KEY,
       );
+
+      // when isReadOnly.value is true, then consider
+      // both active and inactive program year.
       await formioDataLoader.loadOfferingsForLocation(
         form,
         educationProgramIdFromForm,
@@ -302,6 +331,7 @@ export default {
         OFFERINGS_DROPDOWN_KEY,
         props.programYearId,
         selectedIntensity,
+        isReadOnly.value,
       );
     };
 
@@ -319,11 +349,15 @@ export default {
         await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
           programnotListed: false,
         });
+
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
         await formioDataLoader.loadProgramsForLocation(
           form,
           +event.changed.value,
           PROGRAMS_DROPDOWN_KEY,
           props.programYearId,
+          isReadOnly.value,
         );
       }
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {

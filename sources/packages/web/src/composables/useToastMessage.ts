@@ -16,7 +16,11 @@ export function useToastMessage() {
     });
   };
 
-  const error = (summary: string, detail: string, displayTime = 5000): void => {
+  const error = (
+    summary: string,
+    detail: string | undefined,
+    displayTime = 5000,
+  ): void => {
     toast.add({
       severity: "error",
       summary,

@@ -54,6 +54,7 @@ export default {
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const programRequestData = ref();
+    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -73,6 +74,7 @@ export default {
           props.locationId,
           OFFERINGS_DROPDOWN_KEY,
           programRequestData.value.programYearId,
+          true,
         );
       }
       formioUtils.redrawComponent(form, OFFERINGS_DROPDOWN_KEY);
@@ -83,7 +85,13 @@ export default {
         props.locationId,
         props.applicationId,
       );
-
+      if (!programRequestData.value?.isActiveProgramYear) {
+        toast.error(
+          "Program Year Not Active",
+          `Program year respective to this application (${programRequestData.value?.applicationNumber}) is not active.`,
+          TOAST_ERROR_DISPLAY_TIME,
+        );
+      }
       initialData.value = {
         ...programRequestData.value,
         studentStudyStartDate: dateString(
