@@ -220,6 +220,7 @@ export class InstitutionService {
       payload.permissions = [
         {
           userType: data.userType,
+          userRole: data.userRole === "admin" ? undefined : data.userRole,
         },
       ];
     }
@@ -252,11 +253,13 @@ export class InstitutionService {
   public async prepareAddUserPayload(
     isAdmin: boolean,
     selectUser: UserAuth,
+    adminRole: string,
     institutionLocationList: InstitutionLocationsDetails[],
   ) {
     return {
       userId: selectUser.code,
       userType: isAdmin ? "admin" : undefined,
+      userRole: isAdmin ? adminRole : undefined,
       userGuid: selectUser.id,
       location: !isAdmin
         ? (institutionLocationList
@@ -276,11 +279,13 @@ export class InstitutionService {
   public async prepareEditUserPayload(
     institutionUserName: string,
     isAdmin: boolean,
+    adminRole: string,
     institutionLocationList: InstitutionUserWithUserType[],
   ) {
     return {
       userGuid: institutionUserName ? institutionUserName : undefined,
       userType: isAdmin ? "admin" : undefined,
+      userRole: isAdmin ? adminRole : undefined,
       location: !isAdmin
         ? (institutionLocationList
             .map((el: InstitutionUserWithUserType) => {
@@ -306,8 +311,7 @@ export class InstitutionService {
     );
   }
 
-  public async getLocationsOptionsList(
-  ): Promise<OptionItemDto[]> {
+  public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
     return ApiClient.InstitutionLocation.getOptionsList();
   }
 

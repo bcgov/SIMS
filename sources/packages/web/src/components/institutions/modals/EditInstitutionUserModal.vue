@@ -12,7 +12,7 @@
     <v-sheet color="white" elevation="1">
       <v-container>
         <form>
-          <v-row>
+          <v-row cols="12">
             <v-col>
               <span class="form-text text-muted mb-2"
                 ><strong>User Name</strong></span
@@ -30,6 +30,17 @@
                 </strong>
               </span>
               <InputSwitch v-model="isAdmin" />
+            </v-col>
+            <v-col v-if="isAdmin">
+              <span class="form-text text-muted mb-2"
+                ><strong>Select Admin Role</strong></span
+              >
+              <Dropdown
+                v-model="selectedAdminRole"
+                :options="adminRoles"
+                :style="{ width: '20vw' }"
+                optionLabel="name"
+              />
             </v-col>
           </v-row>
           <span v-if="!isAdmin">
@@ -101,6 +112,8 @@ import { useToast } from "primevue/usetoast";
 import {
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthDetails,
+  InstitutionAuth,
+  UserAuth,
 } from "@/types";
 
 export default {
@@ -118,6 +131,10 @@ export default {
       type: String,
       default: "",
     },
+    adminRoles: {
+      type: Array,
+      required: true,
+    },
   },
   emits: ["updateShowEditInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
@@ -128,6 +145,9 @@ export default {
     const display = ref(true);
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
+    /**Initialized with default value */
+    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
+
     const closeEditUser = async () => {
       context.emit("updateShowEditInstitutionModal");
       invalidUserType.value = false;
@@ -174,10 +194,25 @@ export default {
     };
     const getInstitutionUserDetails = async () => {
       try {
-        const respUser = await InstitutionService.shared.getInstitutionLocationUserDetails(
+        userData.value = await InstitutionService.shared.getInstitutionLocationUserDetails(
           props.institutionUserName,
         );
-        userData.value = respUser;
+        console.log(userData.value);
+
+        const adminAuth = userData.value.authorizations?.find(
+          (role: InstitutionAuth) => role.authType?.type === "admin",
+        );
+
+        if (adminAuth) {
+          selectedAdminRole.value = {
+            name: adminAuth.authType.role
+              ? adminAuth.authType.role
+              : adminAuth.authType.type,
+            code: adminAuth.authType.role
+              ? adminAuth.authType.role
+              : adminAuth.authType.type,
+          };
+        }
       } catch (error) {
         toast.add({
           severity: "error",
@@ -193,6 +228,7 @@ export default {
       payLoad.value = await InstitutionService.shared.prepareEditUserPayload(
         props.institutionUserName,
         isAdmin.value,
+        selectedAdminRole.value?.code,
         institutionLocationList.value,
       );
       if (
@@ -245,6 +281,7 @@ export default {
       isAdmin,
       submitEditUser,
       userData,
+      selectedAdminRole,
     };
   },
 };

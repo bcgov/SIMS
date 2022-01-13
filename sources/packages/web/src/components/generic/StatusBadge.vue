@@ -53,7 +53,7 @@ export default {
           // css class for active restriction status
           label.value = "active";
           badgeClass.value = "status-badge-active-restriction";
-          textColor.value = "#FF7a00";
+          textColor.value = "#333A47";
           backGroundColor.value = "#FFFFFF";
           iconColor.value = "#FF7a00";
           break;

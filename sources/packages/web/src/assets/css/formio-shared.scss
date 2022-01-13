@@ -1,31 +1,4 @@
-/** SCSS Color variables **/
-$primary-header-color: #2965c5;
-$secondary-header-color: #333a47;
-$secondary-header-color-lt: #8692a4;
-$app-content-color: #333a47;
-$panel-warning-color: #f3b229;
-$panel-error-color: #dc2525;
-$button-font-color: #ffffff;
-
-/** SCSS Font Size variables **/
-$font-header-large: 27px;
-$font-header-medium: 20px;
-$font-header-small: 17px;
-$line-height-header-lg: 34px;
-$line-height-header-md: 27px;
-$line-height-header-sm: 22px;
-$formio-content: 16px;
-$formio-content-lh: 24px;
-$formio-header-margin: 0.5rem;
-$formio-header-wt: 700;
-
-/** SCSS Banner size variables **/
-$background-alert: rgba(217, 37, 48, 0.05);
-$background-warning: rgba(243, 178, 41, 0.1);
-$background-info: rgba(101, 84, 192, 0.1);
-$border-color-alert: #d92530;
-$border-color-warning: #f3b229;
-$border-color-info: #6554c0;
+@import "./global-style-variables.scss";
 
 /** Primary theme color of the application**/
 .primary-color {
@@ -312,12 +285,20 @@ $border-color-info: #6554c0;
   font-size: 12px !important;
 }
 
-.status-active-restriction {
-  border-color: #ff7a00;
+.status-active-restriction .form-status-badge {
+  font-weight: 700;
+  border-color: $badge-border-warning;
+}
+
+.status-active-restriction .fa-circle::before {
   color: #ff7a00;
 }
 
-.status-resolved-restriction {
-  border-color: #16c92e;
+.status-resolved-restriction .form-status-badge {
+  font-weight: 700;
+  border-color: $badge-border-success;
+}
+
+.status-resolved-restriction .fa-circle::before {
   color: #16c92e;
 }

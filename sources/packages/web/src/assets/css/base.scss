@@ -1,3 +1,4 @@
+@import "./global-style-variables.scss";
 html * {
   font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "primeicons";
   font-style: normal;
@@ -65,24 +66,25 @@ html * {
   border-style: solid;
   border-radius: 30px;
   position: static;
+  font-weight: 700;
 }
 
 // active badge
 .status-badge-active .v-badge__badge {
   @extend .status_badge;
-  border-color: #16c92e;
+  border-color: $badge-border-success;
 }
 
 // inactive badge
 .status-badge-inactive .v-badge__badge {
   @extend .status_badge;
-  border-color: #333a47;
+  border-color: $badge-border-inactive;
 }
 
 //active restriction badge
 .status-badge-active-restriction .v-badge__badge {
   @extend .status_badge;
-  border-color: #ff7a00;
+  border-color: $badge-border-warning;
 }
 
 //Defining the height of rounded filter button

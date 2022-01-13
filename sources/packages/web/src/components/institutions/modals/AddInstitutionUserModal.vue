@@ -39,6 +39,17 @@
               >
               <InputSwitch v-model="isAdmin" />
             </v-col>
+            <v-col v-if="isAdmin">
+              <span class="form-text text-muted mb-2"
+                ><strong>Select Admin Role</strong></span
+              >
+              <Dropdown
+                v-model="selectedAdminRole"
+                :options="adminRoles"
+                :style="{ width: '20vw' }"
+                optionLabel="name"
+              />
+            </v-col>
           </v-row>
           <span v-if="!isAdmin && selectUser.name">
             <v-divider></v-divider>
@@ -122,6 +133,10 @@ export default {
         return [];
       },
     },
+    adminRoles: {
+      type: Array,
+      required: true,
+    },
   },
   emits: ["updateShowAddInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
@@ -134,6 +149,7 @@ export default {
     const usersList = ref();
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
+    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
     const getInstitutionLocationList = async () => {
       //Get Institution Locations
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
@@ -152,6 +168,7 @@ export default {
       payLoad.value = await InstitutionService.shared.prepareAddUserPayload(
         isAdmin.value,
         selectUser.value,
+        selectedAdminRole.value?.code,
         institutionLocationList.value,
       );
       if (
@@ -212,6 +229,7 @@ export default {
       invalidName,
       invalidUserType,
       display,
+      selectedAdminRole,
     };
   },
 };

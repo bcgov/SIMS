@@ -38,7 +38,7 @@ export interface InstitutionAuthType {
 }
 export interface InstitutionAuth {
   id?: number;
-  authType?: InstitutionAuthType;
+  authType: InstitutionAuthType;
   location?: InstitutionLocationData;
 }
 
@@ -87,6 +87,7 @@ export interface InstitutionUserWithUserType
 
 export interface InstitutionUserAuthDetails {
   userType?: string;
+  userRole?: string;
   location?: InstitutionUserRoleLocation[];
   userGuid?: string;
   userId?: string;

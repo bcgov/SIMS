@@ -1,7 +1,9 @@
+@import "./global-style-variables.scss";
+
 .color-blue {
-  color: #2965C5;
+  color: #2965c5;
 }
-.spaced-text{
+.spaced-text {
   letter-spacing: 0.5em !important;
 }
 .coe-menu-option {
@@ -11,10 +13,10 @@
 .coe-info-border {
   padding: 2%;
   border-style: solid;
-  border-color: #16C92E !important;
+  border-color: #16c92e !important;
   border-radius: 10px;
   word-wrap: break-word;
-  background-color: #EDFFEF  !important;
+  background-color: #edffef !important;
 }
 
 .coe-ocw-info-border {
@@ -27,17 +29,16 @@
 .coe-icw-info-border {
   padding: 2%;
   border-style: solid;
-  border-color: #2965C5 !important;
+  border-color: #2965c5 !important;
   border-radius: 10px;
   word-wrap: break-word;
-  background-color: #EFF5FF  !important;
-
+  background-color: #eff5ff !important;
 }
 .coe-denied-info-border {
   padding: 2%;
   border-style: solid;
-  border-color: #EB5757 !important;
+  border-color: #eb5757 !important;
   border-radius: 10px;
   word-wrap: break-word;
-  background-color:  #FFF2F1 !important;
+  background-color: #fff2f1 !important;
 }
