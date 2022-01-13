@@ -39,6 +39,7 @@ import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
+  CheckSinValidation,
   Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -53,7 +54,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
 } from "../../utilities";
-import { CheckSinValidation } from "src/auth/decorators/check-sin-status.decorator";
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
