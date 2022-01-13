@@ -25,6 +25,8 @@ export interface GetProgramInfoRequestDto
   otherReasonDesc?: string;
   isActiveProgramYear: boolean;
   offeringIntensitySelectedByStudent: OfferingIntensity;
+  programYearStartDate: Date;
+  programYearEndDate: Date;
 }
 
 export interface GetPIRDeniedReasonDto {

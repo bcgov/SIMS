@@ -40,9 +40,11 @@ import {
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
-export const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
-export const INVALID_STUDY_DATES = "INVALID_STUDY_DATES";
-export const OFFERING_INTENSITY_MISMATCH = "OFFERING_INTENSITY_MISMATCH";
+import {
+  OFFERING_START_DATE_ERROR,
+  INVALID_STUDY_DATES,
+  OFFERING_INTENSITY_MISMATCH,
+} from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -132,6 +134,9 @@ export class ProgramInfoRequestController {
 
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
+    result.programYearStartDate = application.programYear.startDate;
+    result.programYearEndDate = application.programYear.endDate;
+
     return result;
   }
 
@@ -213,12 +218,15 @@ export class ProgramInfoRequestController {
           OFFERING_INTENSITY_MISMATCH,
         );
       }
-
+      // studyStartDate from payload is set as studyStartDate
       let studyStartDate = payload.studyStartDate;
       if (payload.selectedOffering) {
         const offering = await this.offeringService.getOfferingById(
           payload.selectedOffering,
         );
+        // if  studyStartDate is not in payload
+        // then selectedOffering will be there in payload,
+        // then study start date taken from offering
         studyStartDate = offering.studyStartDate;
       }
       if (

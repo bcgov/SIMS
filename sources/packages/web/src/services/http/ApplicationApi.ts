@@ -110,6 +110,8 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<void> {
+    // this.apiClient.patch is used to catch the errors
+    // this errors are displayed in client side in toast message
     await this.apiClient
       .patch(
         `application/${applicationId}/submit`,

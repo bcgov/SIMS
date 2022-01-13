@@ -33,9 +33,11 @@ import {
   FormIOCustomEventTypes,
   GetProgramInfoRequestDto,
 } from "@/types";
-export const OFFERING_START_DATE_ERROR = "OFFERING_START_DATE_ERROR";
-export const INVALID_STUDY_DATES = "INVALID_STUDY_DATES";
-export const OFFERING_INTENSITY_MISMATCH = "OFFERING_INTENSITY_MISMATCH";
+import {
+  OFFERING_START_DATE_ERROR,
+  INVALID_STUDY_DATES,
+  OFFERING_INTENSITY_MISMATCH,
+} from "@/constants";
 
 export default {
   components: { formio },

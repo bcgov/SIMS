@@ -59,7 +59,7 @@ import {
 import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
-} from "../program-info-request/program-info-request.controller";
+} from "../../constants";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -127,14 +127,18 @@ export class ApplicationController extends BaseController {
         "Not able to create an application due to an invalid request.",
       );
     }
-
+    // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
     if (payload.data.selectedOffering) {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
       );
+      // if  studyStartDate is not in payload
+      // then selectedOffering will be there in payload,
+      // then study start date taken from offering
       studyStartDate = offering.studyStartDate;
     } else {
+      // when selectedOffering is not selected
       const notValidDates = checkNotValidStudyPeriod(
         payload.data.studystartDate,
         payload.data.studyendDate,

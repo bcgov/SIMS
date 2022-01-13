@@ -4294,6 +4294,77 @@
                                 {
                                     "components": [
                                         {
+                                            "label": "programYearStartDate",
+                                            "customClass": "",
+                                            "modalEdit": false,
+                                            "defaultValue": null,
+                                            "persistent": true,
+                                            "protected": false,
+                                            "dbIndex": false,
+                                            "encrypted": false,
+                                            "redrawOn": "",
+                                            "customDefaultValue": "value = data.programYearStartDate;",
+                                            "calculateValue": "",
+                                            "calculateServer": false,
+                                            "key": "programYearStartDate",
+                                            "tags": [],
+                                            "properties": {},
+                                            "logic": [],
+                                            "attributes": {},
+                                            "overlay": {
+                                                "style": "",
+                                                "page": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
+                                            "type": "hidden",
+                                            "input": true,
+                                            "placeholder": "",
+                                            "prefix": "",
+                                            "suffix": "",
+                                            "multiple": false,
+                                            "unique": false,
+                                            "hidden": false,
+                                            "clearOnHide": true,
+                                            "refreshOn": "",
+                                            "tableView": false,
+                                            "dataGridLabel": false,
+                                            "labelPosition": "top",
+                                            "description": "",
+                                            "errorLabel": "",
+                                            "tooltip": "",
+                                            "hideLabel": false,
+                                            "tabindex": "",
+                                            "disabled": false,
+                                            "autofocus": false,
+                                            "widget": {
+                                                "type": "input"
+                                            },
+                                            "validateOn": "change",
+                                            "validate": {
+                                                "required": false,
+                                                "custom": "",
+                                                "customPrivate": false,
+                                                "strictDateValidation": false,
+                                                "multiple": false,
+                                                "unique": false
+                                            },
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": ""
+                                            },
+                                            "allowCalculateOverride": false,
+                                            "showCharCount": false,
+                                            "showWordCount": false,
+                                            "allowMultipleMasks": false,
+                                            "inputType": "hidden",
+                                            "id": "e3rzmya",
+                                            "hideOnChildrenHidden": false
+                                        },
+                                        {
                                             "label": "Study start date",
                                             "labelPosition": "top",
                                             "displayInTimezone": "viewer",
@@ -4358,7 +4429,7 @@
                                             "validate": {
                                                 "required": true,
                                                 "customMessage": "",
-                                                "custom": "",
+                                                "custom": "// To calculate the time difference of studyStartDate and programYearStartDate\r\nconst first_difference_In_Time =\r\n  new Date(data.studyStartDate).getTime() -\r\n  new Date(data.programYearStartDate).getTime();\r\n// To calculate the time difference of programYearEndDate and studyStartDate\r\nconst last_difference_In_Time =\r\n  new Date(data.programYearEndDate).getTime() -\r\n  new Date(data.studyStartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst first_difference_In_Days = first_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// To calculate the no. of days between two dates\r\nconst last_difference_In_Days = last_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// studystartDate should be equal or in between program year start and end date\r\nvalid =\r\n  first_difference_In_Days >= 0 && last_difference_In_Days >= 0\r\n    ? true\r\n    : \"Study start date should be within the program year\";\r\n",
                                                 "customPrivate": false,
                                                 "json": "",
                                                 "strictDateValidation": false,
@@ -4421,7 +4492,7 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "datepickerMode": "day",
-                                            "id": "em00hod"
+                                            "id": "e1fndss"
                                         }
                                     ],
                                     "width": 6,
@@ -4432,6 +4503,77 @@
                                 },
                                 {
                                     "components": [
+                                        {
+                                            "label": "programYearEndDate",
+                                            "customClass": "",
+                                            "modalEdit": false,
+                                            "defaultValue": null,
+                                            "persistent": true,
+                                            "protected": false,
+                                            "dbIndex": false,
+                                            "encrypted": false,
+                                            "redrawOn": "",
+                                            "customDefaultValue": "value = data.programYearEndDate;",
+                                            "calculateValue": "",
+                                            "calculateServer": false,
+                                            "key": "programYearEndDate",
+                                            "tags": [],
+                                            "properties": {},
+                                            "logic": [],
+                                            "attributes": {},
+                                            "overlay": {
+                                                "style": "",
+                                                "page": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
+                                            "type": "hidden",
+                                            "input": true,
+                                            "placeholder": "",
+                                            "prefix": "",
+                                            "suffix": "",
+                                            "multiple": false,
+                                            "unique": false,
+                                            "hidden": false,
+                                            "clearOnHide": true,
+                                            "refreshOn": "",
+                                            "tableView": false,
+                                            "dataGridLabel": false,
+                                            "labelPosition": "top",
+                                            "description": "",
+                                            "errorLabel": "",
+                                            "tooltip": "",
+                                            "hideLabel": false,
+                                            "tabindex": "",
+                                            "disabled": false,
+                                            "autofocus": false,
+                                            "widget": {
+                                                "type": "input"
+                                            },
+                                            "validateOn": "change",
+                                            "validate": {
+                                                "required": false,
+                                                "custom": "",
+                                                "customPrivate": false,
+                                                "strictDateValidation": false,
+                                                "multiple": false,
+                                                "unique": false
+                                            },
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": ""
+                                            },
+                                            "allowCalculateOverride": false,
+                                            "showCharCount": false,
+                                            "showWordCount": false,
+                                            "allowMultipleMasks": false,
+                                            "inputType": "hidden",
+                                            "id": "ejrcz9h",
+                                            "hideOnChildrenHidden": false
+                                        },
                                         {
                                             "label": "Study end date",
                                             "labelPosition": "top",
@@ -5284,7 +5426,7 @@
                                             "id": "eptyzeo"
                                         }
                                     ],
-                                    "id": "eurf0na00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "eurf0na000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -7261,6 +7403,6 @@
     "name": "programInformationRequest",
     "path": "programinformationrequest",
     "created": "2021-07-30T18:07:34.916Z",
-    "modified": "2022-01-12T22:20:22.742Z",
+    "modified": "2022-01-13T22:04:48.901Z",
     "machineName": "programInformationRequest"
 }

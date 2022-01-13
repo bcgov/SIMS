@@ -58,6 +58,8 @@ export interface GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationCOEStatus: COEStatus;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
+  programYearStartDate: Date;
+  programYearEndDate: Date;
 }
 
 export interface ApplicationOfferingDetails {
@@ -263,5 +265,7 @@ export const transformToApplicationDetailDto = (
     applicationProgramYearID: applicationDetail.programYear.id,
     applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
     applicationCOEDeniedReason: getCOEDeniedReason(applicationDetail),
+    programYearStartDate: applicationDetail.programYear.startDate,
+    programYearEndDate: applicationDetail.programYear.endDate,
   };
 };
