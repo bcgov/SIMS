@@ -1,9 +1,5 @@
 import { dateDifference, getDateDifferenceInMonth } from "./date-utils";
-import {
-  ProgramYear,
-  OfferingIntensity,
-  Application,
-} from "../database/entities";
+import { ProgramYear, OfferingIntensity } from "../database/entities";
 
 /**
  * check valid study period
