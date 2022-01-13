@@ -10,7 +10,9 @@ export interface InstitutionUserPermissionDto {
     userRole?: string;
   }[];
 }
-
+/**
+ * DTO To load the admin roles dropdown component
+ */
 export interface UserRoleOptionDTO {
   name: string;
   code: string;
