@@ -210,8 +210,14 @@ export class ProgramInfoRequestController {
       const application = await this.applicationService.getApplicationById(
         applicationId,
       );
+      if (!application) {
+        throw new BadRequestException("Application not found.");
+      }
       if (
-        !checkOfferingIntensityMismatch(application, payload.offeringIntensity)
+        !checkOfferingIntensityMismatch(
+          application.data.howWillYouBeAttendingTheProgram,
+          payload.offeringIntensity,
+        )
       ) {
         throw new CustomNamedError(
           "Offering Intensity does not match the students intensity",

@@ -58,12 +58,9 @@ export const checkStudyStartDateWithinProgramYear = (
  * return [false] if not
  */
 export const checkOfferingIntensityMismatch = (
-  application: Application,
+  studentOfferingIntensity: OfferingIntensity,
   selectedOfferingIntensity: OfferingIntensity,
 ): boolean => {
-  if (application && selectedOfferingIntensity)
-    return (
-      application.data.howWillYouBeAttendingTheProgram ===
-      selectedOfferingIntensity
-    );
+  if (studentOfferingIntensity && selectedOfferingIntensity)
+    return studentOfferingIntensity === selectedOfferingIntensity;
 };
