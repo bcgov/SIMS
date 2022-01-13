@@ -17,6 +17,7 @@ export class SinValidationGuard implements CanActivate {
    * With the user token, it checks for sin validation for the user.
    * @param context
    * @returns Promise<boolean>
+   * return true for valid SIN and false for invalid SIN
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const checkSinValidation = this.reflector.getAllAndOverride<boolean>(
