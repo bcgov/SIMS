@@ -16,13 +16,13 @@ export class StudentProfile {
 export class StudentState {
   profile: StudentProfile = new StudentProfile();
   hasStudentAccount = false;
-  validSIN: any = null;
+  validSIN = null;
 }
 
 const initialState: StudentState = {
   profile: new StudentProfile(),
   hasStudentAccount: false,
-  validSIN: null
+  validSIN: null,
 };
 
 export const student = {
@@ -53,7 +53,7 @@ export const student = {
   },
 
   actions: {
-    setHasValidSIN({ commit }: { commit: Function }, validSIN: any) {
+    setHasValidSIN({ commit }: { commit: Function }, validSIN: boolean | null) {
       commit("SET_VALID_SIN", validSIN);
     },
 
