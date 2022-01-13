@@ -10,8 +10,8 @@ export default {
       type: String,
     },
     severity: {
-        type: String
-    }
+      type: String,
+    },
   },
 };
 </script>
