@@ -10,3 +10,8 @@ export interface InstitutionUserPermissionDto {
     userRole?: string;
   }[];
 }
+
+export interface UserRoleOptionDTO {
+  name: string;
+  code: string;
+}

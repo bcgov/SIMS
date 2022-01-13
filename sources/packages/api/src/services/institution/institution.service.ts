@@ -655,4 +655,16 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.notes.push(note);
     await this.repo.save(institution);
   }
+
+  /**
+   * Service to get the admin roles .
+   * @returns Admin roles.
+   */
+  async getAdminRoles(): Promise<InstitutionUserTypeAndRole[]> {
+    return this.institutionUserTypeAndRoleRepo
+      .createQueryBuilder("userRole")
+      .select(["userRole.type", "userRole.role"])
+      .where("userRole.type = 'admin'")
+      .getMany();
+  }
 }

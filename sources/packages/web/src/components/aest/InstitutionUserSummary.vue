@@ -295,17 +295,7 @@ export default {
             )
           : [];
 
-        adminRoles.value = [
-          { name: "admin", code: "admin" },
-          {
-            name: "legal-signing-authority",
-            code: "legal-signing-authority",
-          },
-          {
-            code: "primary-contact",
-            name: "primary-contact",
-          },
-        ];
+        adminRoles.value = await InstitutionService.shared.getGetAdminRoleOptions();
       }
     });
     return {

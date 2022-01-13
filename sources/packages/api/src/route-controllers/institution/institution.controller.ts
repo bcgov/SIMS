@@ -45,6 +45,7 @@ import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,
+  UserRoleOptionDTO,
 } from "./models/institution-user-type-role.res.dto";
 import { UserDto } from "../user/models/user.dto";
 import {
@@ -648,5 +649,18 @@ export class InstitutionController extends BaseController {
       ),
       totalUsers: institutionUserAndCount[1],
     };
+  }
+  /**
+   * API to get the lookup values for admin role.
+   * @returns Admin Roles.
+   */
+  @IsInstitutionAdmin()
+  @Get("admin-roles")
+  async getAdminRoles(): Promise<UserRoleOptionDTO[]> {
+    const userRoles = await this.institutionService.getAdminRoles();
+    return userRoles.map((role) => ({
+      name: role.role || role.type,
+      code: role.role || role.type,
+    }));
   }
 }

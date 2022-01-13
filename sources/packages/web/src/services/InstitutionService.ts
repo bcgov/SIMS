@@ -448,4 +448,8 @@ export class InstitutionService {
       searchName,
     );
   }
+
+  public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
+    return ApiClient.Institution.getGetAdminRoleOptions();
+  }
 }
