@@ -20,7 +20,7 @@ export class SinValidationGuard implements CanActivate {
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const checkSinValidation = this.reflector.getAllAndOverride<boolean>(
-        CHECK_SIN_VALIDATION_KEY,
+      CHECK_SIN_VALIDATION_KEY,
       [context.getHandler(), context.getClass()],
     );
 
@@ -29,8 +29,6 @@ export class SinValidationGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    return await this.studentService.getStudentSinStatus(
-        userToken.userId,
-      );    
+    return await this.studentService.getStudentSinStatus(userToken.userId);
   }
 }
