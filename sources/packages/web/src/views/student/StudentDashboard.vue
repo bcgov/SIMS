@@ -33,8 +33,6 @@ export default {
     const restrictionMessage = ref("");
 
     onMounted(async () => {
-      const studentInfo = await StudentService.shared.getStudentInfo();
-      await store.dispatch("student/setHasValidSIN", studentInfo.validSin);
       const studentRestriction = await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;

@@ -1,4 +1,9 @@
-import { Address } from "@/types";
+import {
+  INVALID_SIN_MESSAGE,
+  PENDING_SIN_MESSAGE,
+} from "@/constants/message-constants";
+import { SINValidStatus } from "@/store/modules/student/student";
+import { Address, SinStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
 
 /**
@@ -92,11 +97,33 @@ export function useFormatters() {
     return formattedAddress.join(", ");
   };
 
+  const parseSINValidStatus = (data?: boolean): SINValidStatus => {
+    if (data === null) {
+      return {
+        sinStatus: SinStatusEnum.PENDING,
+        severity: "warn",
+        message: PENDING_SIN_MESSAGE,
+      };
+    } else if (data === false) {
+      return {
+        sinStatus: SinStatusEnum.INVALID,
+        severity: "error",
+        message: INVALID_SIN_MESSAGE,
+      };
+    }
+    return {
+      sinStatus: SinStatusEnum.VALID,
+      severity: "",
+      message: "",
+    };
+  };
+
   return {
     dateString,
     dateOnlyLongString,
     getDatesDiff,
     getFormattedAddress,
     timeOnlyInHoursAndMinutes,
+    parseSINValidStatus,
   };
 }
