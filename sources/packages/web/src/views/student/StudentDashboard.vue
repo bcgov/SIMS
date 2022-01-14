@@ -31,7 +31,6 @@ export default {
     const user = computed(() => store.state.student.profile);
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
-    const isStoreDispatched = ref(false);
 
     onMounted(async () => {
       const studentInfo = await StudentService.shared.getStudentInfo();
@@ -45,7 +44,6 @@ export default {
       user,
       hasRestriction,
       restrictionMessage,
-      isStoreDispatched,
     };
   },
 };

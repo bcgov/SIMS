@@ -10,19 +10,19 @@ export class StudentProfile {
   gender?: string;
   givenName?: string;
   middleName?: string;
-  validSIN: any;
+  validSIN?: boolean | null;
 }
 
 export class StudentState {
   profile: StudentProfile = new StudentProfile();
   hasStudentAccount = false;
-  validSIN = null;
+  validSIN = false;
 }
 
 const initialState: StudentState = {
   profile: new StudentProfile(),
   hasStudentAccount: false,
-  validSIN: null,
+  validSIN: false,
 };
 
 export const student = {
@@ -47,7 +47,7 @@ export const student = {
       state.hasStudentAccount = hasStudentAccount;
     },
 
-    SET_VALID_SIN(state: StudentState, validSIN: any) {
+    SET_VALID_SIN(state: StudentState, validSIN: boolean) {
       state.validSIN = validSIN;
     },
   },

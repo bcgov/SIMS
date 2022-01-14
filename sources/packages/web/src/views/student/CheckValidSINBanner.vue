@@ -1,14 +1,14 @@
 <template>
-  <SINStatusBanner
+  <Message
     v-if="sinValidity.sinStatus !== SinStatusEnum.VALID"
-    :message="sinValidity.message"
     :severity="sinValidity.severity"
-  />
+  >
+    {{ sinValidity.message }}
+  </Message>
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
-import SINStatusBanner from "@/views/student/SINStatusBanner.vue";
 
 import {
   PENDING_SIN_MESSAGE,
@@ -17,8 +17,14 @@ import {
 import { SinStatusEnum } from "@/types";
 
 export default {
-  components: { SINStatusBanner },
-  props: {},
+  props: {
+    message: {
+      type: String,
+    },
+    severity: {
+      type: String,
+    },
+  },
   computed: {
     sinValidity() {
       const store = useStore();

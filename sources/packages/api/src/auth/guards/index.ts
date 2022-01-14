@@ -5,3 +5,4 @@ export * from "./jwt-auth.guard";
 export * from "./active-user.guard";
 export * from "./groups.guard";
 export * from "./restrictions.guard";
+export * from "./sin-validation.guard";

@@ -4,10 +4,10 @@ import { StudentService } from "../../services";
 import { CHECK_SIN_VALIDATION_KEY } from "../decorators/check-sin-status.decorator";
 import { IUserToken } from "../userToken.interface";
 /**
- * This guard validates an API for Valid Sin if it is decorated with @CheckRestriction.
+ * This guard validates an API for Valid SIN if it is decorated with @CheckRestriction.
  */
 @Injectable()
-export class SinValidationGuard implements CanActivate {
+export class SINValidationGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private readonly studentService: StudentService,
@@ -30,6 +30,6 @@ export class SinValidationGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    return await this.studentService.getStudentSinStatus(userToken.userId);
+    return this.studentService.getStudentSinStatus(userToken.userId);
   }
 }
