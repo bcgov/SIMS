@@ -94,7 +94,7 @@ export enum StudentPDStatus {
 /**
  * Enumeration for student sin status.
  */
-export enum SinStatusEnum {
+export enum SINStatusEnum {
   VALID = 1,
   PENDING = 2,
   INVALID = 3,

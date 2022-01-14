@@ -1,4 +1,4 @@
-import { SinStatusEnum } from "@/types/contracts/StudentContract";
+import { SINStatusEnum } from "@/types/contracts/StudentContract";
 
 export class StudentProfile {
   name?: string;
@@ -16,7 +16,7 @@ export class StudentProfile {
 }
 
 export class SINValidStatus {
-  sinStatus?: SinStatusEnum;
+  sinStatus?: SINStatusEnum;
   severity?: string;
   message?: string;
 }

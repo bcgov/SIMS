@@ -1,6 +1,6 @@
 <template>
   <Message
-    v-if="sinValidity.sinStatus !== SinStatusEnum.VALID"
+    v-if="sinValidity.sinStatus !== SINStatusEnum.VALID"
     :severity="sinValidity.severity"
   >
     {{ sinValidity?.message }}
@@ -10,7 +10,7 @@
 <script lang="ts">
 import { useStore } from "vuex";
 
-import { SinStatusEnum } from "@/types";
+import { SINStatusEnum } from "@/types";
 
 export default {
   props: {
@@ -33,7 +33,7 @@ export default {
   },
   setup() {
     return {
-      SinStatusEnum,
+      SINStatusEnum,
     };
   },
 };
