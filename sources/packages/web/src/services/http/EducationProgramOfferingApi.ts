@@ -133,11 +133,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
 
   /**
    * Gets program offerings for location authorized
-   * for a apticular institution.
+   * for a particular institution.
    * @param locationId location id.
    * @param programId program id.
    * @returns program offerings for location authorized
-   * for a apticular institution.
+   * for a particular institution.
    */
   public async getProgramOfferingsForLocationForInstitution(
     locationId: number,

@@ -26,7 +26,13 @@ import {
   FormService,
   PIRDeniedReasonService,
 } from "../../services";
-import { getUserFullName } from "../../utilities/auth-utils";
+import {
+  getUserFullName,
+  CustomNamedError,
+  checkNotValidStudyPeriod,
+  checkStudyStartDateWithinProgramYear,
+  checkOfferingIntensityMismatch,
+} from "../../utilities";
 import {
   EducationProgramOffering,
   ProgramInfoStatus,
@@ -34,6 +40,11 @@ import {
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
+import {
+  OFFERING_START_DATE_ERROR,
+  INVALID_STUDY_DATES,
+  OFFERING_INTENSITY_MISMATCH,
+} from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -99,9 +110,10 @@ export class ProgramInfoRequestController {
       application.data.programDescription;
     result.studentStudyStartDate = application.data.studystartDate;
     result.studentStudyEndDate = application.data.studyendDate;
+    result.offeringIntensitySelectedByStudent =
+      application.data.howWillYouBeAttendingTheProgram;
     result.programYearId = application.programYear.id;
     result.isActiveProgramYear = application.programYear.active;
-
     if (application.offering) {
       result.offeringName = application.offering.name;
       result.studyStartDate = application.offering.studyStartDate;
@@ -122,6 +134,9 @@ export class ProgramInfoRequestController {
 
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
+    result.programYearStartDate = application.programYear.startDate;
+    result.programYearEndDate = application.programYear.endDate;
+
     return result;
   }
 
@@ -187,12 +202,51 @@ export class ProgramInfoRequestController {
         FormNames.ProgramInformationRequest,
         payload,
       );
-
       if (!submissionResult.valid) {
         throw new BadRequestException(
           "Not able to complete the Program Information Request due to an invalid request.",
         );
       }
+      const application = await this.applicationService.getApplicationById(
+        applicationId,
+      );
+      if (!application) {
+        throw new BadRequestException("Application not found.");
+      }
+      if (
+        !checkOfferingIntensityMismatch(
+          application.data.howWillYouBeAttendingTheProgram,
+          payload.offeringIntensity,
+        )
+      ) {
+        throw new CustomNamedError(
+          "Offering Intensity does not match the students intensity",
+          OFFERING_INTENSITY_MISMATCH,
+        );
+      }
+      // studyStartDate from payload is set as studyStartDate
+      let studyStartDate = payload.studyStartDate;
+      if (payload.selectedOffering) {
+        const offering = await this.offeringService.getOfferingById(
+          payload.selectedOffering,
+        );
+        // if  studyStartDate is not in payload
+        // then selectedOffering will be there in payload,
+        // then study start date taken from offering
+        studyStartDate = offering.studyStartDate;
+      }
+      if (
+        !checkStudyStartDateWithinProgramYear(
+          studyStartDate,
+          application.programYear,
+        )
+      ) {
+        throw new CustomNamedError(
+          "study start date should be within the program year of the students application",
+          OFFERING_START_DATE_ERROR,
+        );
+      }
+
       let offeringToCompletePIR: EducationProgramOffering;
       if (payload.selectedOffering) {
         // Check if the offering belongs to the location.
@@ -211,6 +265,14 @@ export class ProgramInfoRequestController {
           id: payload.selectedOffering,
         } as EducationProgramOffering;
       } else {
+        // check valid study period
+        const notValidDates = checkNotValidStudyPeriod(
+          payload.studyStartDate,
+          payload.studyEndDate,
+        );
+        if (notValidDates) {
+          throw new CustomNamedError(notValidDates, INVALID_STUDY_DATES);
+        }
         // Offering does not exists and it is going to be created and
         // associated with the application to complete the PIR.
         offeringToCompletePIR = this.offeringService.populateProgramOffering(
@@ -219,6 +281,7 @@ export class ProgramInfoRequestController {
           submissionResult.data.data,
         );
       }
+
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
@@ -233,10 +296,18 @@ export class ProgramInfoRequestController {
         );
       }
     } catch (error) {
-      if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
-        throw new UnprocessableEntityException(error.message);
+      if (
+        [
+          PIR_REQUEST_NOT_FOUND_ERROR,
+          OFFERING_START_DATE_ERROR,
+          INVALID_STUDY_DATES,
+          OFFERING_INTENSITY_MISMATCH,
+        ].includes(error.name)
+      ) {
+        throw new UnprocessableEntityException(
+          `${error.name} ${error.message}`,
+        );
       }
-
       throw new InternalServerErrorException(
         "Error while completing a Program Information Request (PIR).",
       );

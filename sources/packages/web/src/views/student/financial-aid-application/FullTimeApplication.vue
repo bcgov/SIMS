@@ -90,6 +90,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import { OFFERING_START_DATE_ERROR, INVALID_STUDY_DATES } from "@/constants";
 
 export default {
   components: {
@@ -145,7 +146,7 @@ export default {
         isReadOnly.value = true;
         toast.error(
           "Program Year not active",
-          "Application with inactive program year will not be considered",
+          "This application can no longer be edited or submitted",
           TOAST_ERROR_DISPLAY_TIME,
         );
       }
@@ -188,7 +189,15 @@ export default {
         studentEmail: studentInfo.email,
         pdStatus: studentInfo.pdStatus,
       };
-      initialData.value = { ...applicationData.data, ...studentFormData };
+      const programYear = {
+        programYearStartDate: applicationData.programYearStartDate,
+        programYearEndDate: applicationData.programYearEndDate,
+      };
+      initialData.value = {
+        ...applicationData.data,
+        ...studentFormData,
+        ...programYear,
+      };
       existingApplication.value = applicationData;
     });
 
@@ -230,7 +239,16 @@ export default {
           "Thank you, your application has been submitted.",
         );
       } catch (error) {
-        toast.error("Unexpected error!", "An unexpected error happen.");
+        const errorLabel = "Unexpected error!";
+        let errorMsg = "An unexpected error happen.";
+        [INVALID_STUDY_DATES, OFFERING_START_DATE_ERROR].forEach(
+          customError => {
+            if (error.includes(customError)) {
+              errorMsg = error.replace(customError, "").trim();
+            }
+          },
+        );
+        toast.error(errorLabel, errorMsg);
       } finally {
         submittingApplication.value = false;
       }
@@ -297,7 +315,6 @@ export default {
           selectedProgramId,
           SELECTED_PROGRAM_DESC_KEY,
         );
-
         // when isReadOnly.value is true, then consider
         // both active and inactive program year.
         await formioDataLoader.loadOfferingsForLocation(
@@ -321,18 +338,19 @@ export default {
         form,
         PROGRAMS_DROPDOWN_KEY,
       );
-
-      // when isReadOnly.value is true, then consider
-      // both active and inactive program year.
-      await formioDataLoader.loadOfferingsForLocation(
-        form,
-        educationProgramIdFromForm,
-        locationId,
-        OFFERINGS_DROPDOWN_KEY,
-        props.programYearId,
-        selectedIntensity,
-        isReadOnly.value,
-      );
+      if (educationProgramIdFromForm && selectedIntensity) {
+        // when isReadOnly.value is true, then consider
+        // both active and inactive program year.
+        await formioDataLoader.loadOfferingsForLocation(
+          form,
+          educationProgramIdFromForm,
+          locationId,
+          OFFERINGS_DROPDOWN_KEY,
+          props.programYearId,
+          selectedIntensity,
+          isReadOnly.value,
+        );
+      }
     };
 
     const formChanged = async (form: any, event: any) => {
@@ -368,8 +386,7 @@ export default {
             SELECTED_PROGRAM_DESC_KEY,
           );
         }
-      }
-      if (event.changed.component.key === OFFERING_INTENSITY_KEY) {
+
         /*
           If `offeringnotListed` is already checked in the draft and
           when student edit the draft application and changes the

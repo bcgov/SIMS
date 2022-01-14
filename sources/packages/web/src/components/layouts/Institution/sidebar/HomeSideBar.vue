@@ -53,7 +53,9 @@ import { useStore } from "vuex";
 import { ref, onMounted, computed, watch } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
-import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
+// TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
+// TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
+// import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { useInstitutionAuth } from "../../../../composables/institution/useInstitutionAuth";
 import { MenuModel } from "@/types";
 
@@ -154,30 +156,35 @@ export default {
                 ],
               }
             : undefined;
-        const locationUserMenu =
-          isAdmin.value ||
-          userAuth.value?.some(
-            (el: InstitutionUserAuthRolesAndLocation) =>
-              el?.locationId === data?.id &&
-              el?.userType === InstitutionUserTypes.locationManager,
-          )
-            ? {
-                label: "Users",
-                icon: "mdi-account-multiple-outline",
-                command: () => {
-                  router.push({
-                    name: InstitutionRoutesConst.LOCATION_USERS,
-                    params: {
-                      locationId: data.id,
-                      locationName: data.name,
-                    },
-                  });
-                },
-              }
-            : undefined;
+
+        // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
+        // TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
+        // const locationUserMenu =
+        //   isAdmin.value ||
+        //   userAuth.value?.some(
+        //     (el: InstitutionUserAuthRolesAndLocation) =>
+        //       el?.locationId === data?.id &&
+        //       el?.userType === InstitutionUserTypes.locationManager,
+        //   )
+        //     ? {
+        //         label: "Users",
+        //         icon: "mdi-account-multiple-outline",
+        //         command: () => {
+        //           router.push({
+        //             name: InstitutionRoutesConst.LOCATION_USERS,
+        //             params: {
+        //               locationId: data.id,
+        //               locationName: data.name,
+        //             },
+        //           });
+        //         },
+        //       }
+        //     : undefined;
 
         if (locationMenu) {
-          if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
+          // TODO: SINCE USERS ARE NOT PART OF MVP, COMMENTING THE BELOW CODE,
+          // TODO: PLEASE UNCOMMENT IT WHEN IT IS TAKEN FOR DEVELOPMENT
+          // if (locationUserMenu) locationMenu?.items?.push(locationUserMenu);
           locationsMenu.value.push(locationMenu);
         }
       }
