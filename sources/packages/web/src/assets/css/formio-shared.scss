@@ -2,7 +2,7 @@
 
 /** Primary theme color of the application**/
 .primary-color {
-  color: $primary-header-color !important;
+  color: $brand-blue !important;
 }
 
 .secondary-btn-background {
@@ -16,7 +16,7 @@
 }
 
 .primary-btn-background {
-  background: $primary-header-color !important;
+  background: $brand-blue !important;
   color: $button-font-color !important;
 }
 
@@ -88,7 +88,7 @@
 
 .btn-formio-primary-outlined {
   background: #ffffff;
-  color: #2965c5;
+  color: $brand-blue;
 }
 
 .panel-error .card-body {
@@ -171,7 +171,7 @@
 }
 
 .formio-component .primary-color p {
-  color: $primary-header-color;
+  color: $brand-blue;
 }
 
 .formio-component .fa {
@@ -200,7 +200,7 @@
 }
 
 .header-lg {
-  color: $primary-header-color;
+  color: $brand-blue;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-large;
@@ -209,7 +209,7 @@
 }
 
 .header-md {
-  color: $primary-header-color;
+  color: $brand-blue;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-medium;
@@ -218,7 +218,7 @@
 }
 
 .header-sm {
-  color: $primary-header-color;
+  color: $brand-blue;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
@@ -228,23 +228,23 @@
 
 .banner-alert p,
 .banner-alert div {
-  background: $background-alert;
-  border: 2px solid $border-color-alert;
+  background: $banner-background-error;
+  border: 2px solid $banner-color-error;
   box-sizing: border-box;
   border-radius: 8px;
 }
 .banner-warning p,
 .banner-warning div {
-  background: $background-warning;
-  border: 2px solid $border-color-warning;
+  background: $banner-background-warning;
+  border: 2px solid $banner-color-warning;
   box-sizing: border-box;
   border-radius: 8px;
 }
 
 .banner-info p,
 .banner-info div {
-  background: $background-info;
-  border: 2px solid $border-color-info;
+  background: $banner-background-info;
+  border: 2px solid $banner-color-info;
   box-sizing: border-box;
   border-radius: 8px;
 }

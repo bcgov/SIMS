@@ -1,7 +1,7 @@
 @import "./global-style-variables.scss";
 
 .color-blue {
-  color: #2965c5;
+  color: $brand-blue;
 }
 .spaced-text {
   letter-spacing: 0.5em !important;
@@ -29,7 +29,7 @@
 .coe-icw-info-border {
   padding: 2%;
   border-style: solid;
-  border-color: #2965c5 !important;
+  border-color: $brand-blue !important;
   border-radius: 10px;
   word-wrap: break-word;
   background-color: #eff5ff !important;
