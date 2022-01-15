@@ -1,7 +1,7 @@
 <template>
   <!-- This component is shared between ministry and student users -->
   <div class="row p-3">
-    <div class="col">
+    <div class="col col-3">
       <span class="category-header-large color-blue">
         All Users({{ usersListAndCount.totalUsers }})
       </span>
