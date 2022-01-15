@@ -672,6 +672,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getMany();
   }
 
+  /**
+   * Checks if a legal signing authority is assigned to an Institution.
+   * @param institutionId
+   * @returns Legal signing authority object.
+   */
   async checkLegalSigningAuthority(
     institutionId: number,
   ): Promise<InstitutionUserAuth> {

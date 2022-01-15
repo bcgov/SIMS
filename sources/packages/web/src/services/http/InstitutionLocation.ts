@@ -73,7 +73,12 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
     return data;
   }
-
+  /**
+   * This client expects custom error message in one or more
+   * scenarios and hence trying to parse and throw the message
+   * if available.
+   * @param createInstitutionUserDto
+   */
   public async createUser(
     createInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
@@ -108,6 +113,12 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * This client expects custom error message in one or more
+   * scenarios and hence trying to parse and throw the message
+   * if available.
+   * @param updateInstitutionUserDto
+   */
   public async updateUser(
     userName: string,
     updateInstitutionUserDto: InstitutionUserDto,
