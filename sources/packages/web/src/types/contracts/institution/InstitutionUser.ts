@@ -142,3 +142,7 @@ export interface InstitutionUserAndCountForDataTable {
   users: InstitutionUserViewModel[];
   totalUsers: number;
 }
+
+export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
+export const LEGAL_SIGNING_AUTHORITY_MSG =
+  "Legal signing authority already exist for this Institution.";

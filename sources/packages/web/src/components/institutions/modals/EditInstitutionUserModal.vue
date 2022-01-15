@@ -114,10 +114,10 @@ import {
   InstitutionUserAuthDetails,
   InstitutionAuth,
   UserAuth,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  LEGAL_SIGNING_AUTHORITY_MSG,
 } from "@/types";
-export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
-export const LEGAL_SIGNING_AUTHORITY_MSG =
-  "Legal signing authority already exist for this Institution.";
+
 export default {
   components: { Dialog, Dropdown, InputSwitch },
   props: {

@@ -117,7 +117,12 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
 import { useToast } from "primevue/usetoast";
-import { InstitutionUserAuthDetails, UserAuth } from "@/types";
+import {
+  InstitutionUserAuthDetails,
+  UserAuth,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  LEGAL_SIGNING_AUTHORITY_MSG,
+} from "@/types";
 import Message from "primevue/message";
 
 export default {
@@ -187,10 +192,14 @@ export default {
             life: 5000,
           });
         } catch (excp) {
+          const errorMessage =
+            excp === LEGAL_SIGNING_AUTHORITY_EXIST
+              ? LEGAL_SIGNING_AUTHORITY_MSG
+              : "An error happened during the update process.";
           toast.add({
             severity: "error",
             summary: "Unexpected error",
-            detail: "An error happened during the create process.",
+            detail: errorMessage,
             life: 5000,
           });
         }
