@@ -7,6 +7,7 @@ export interface RestrictionBaseDTO {
   restrictionId: number;
   restrictionType: RestrictionType;
   restrictionCategory: string;
+  restrictionCode: string;
   description: string;
 }
 

@@ -42,6 +42,10 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
 } from "../../utilities";
+import { InstitutionUserRoles } from "../../auth/user-types.enum";
+export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
+export const LEGAL_SIGNING_AUTHORITY_MSG =
+  "Legal signing authority already exist for this Institution.";
 
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
@@ -666,5 +670,21 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .select(["userRole.type", "userRole.role"])
       .where("userRole.type = 'admin'")
       .getMany();
+  }
+
+  async checkLegalSigningAuthority(
+    institutionId: number,
+  ): Promise<InstitutionUserAuth> {
+    const query = this.institutionUserAuthRepo
+      .createQueryBuilder("userAuth")
+      .select("userAuth.id")
+      .innerJoin("userAuth.institutionUser", "institutionUser")
+      .innerJoin("userAuth.authType", "role")
+      .innerJoin("institutionUser.institution", "institution")
+      .where("institution.id = :institutionId", { institutionId })
+      .andWhere("role.role = :legalSigningAuthority", {
+        legalSigningAuthority: InstitutionUserRoles.legalSigningAuthority,
+      });
+    return query.getOne();
   }
 }

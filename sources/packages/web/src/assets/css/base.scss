@@ -96,3 +96,9 @@ html * {
 .p-paginator .p-dropdown .p-dropdown-label {
   margin-top: 8px;
 }
+
+/** UL element with no styles **/
+ul.no-bullets {
+  list-style-type: none;
+  margin-bottom: 0.5rem;
+}

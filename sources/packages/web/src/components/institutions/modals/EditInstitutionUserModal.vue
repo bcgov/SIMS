@@ -115,7 +115,9 @@ import {
   InstitutionAuth,
   UserAuth,
 } from "@/types";
-
+export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
+export const LEGAL_SIGNING_AUTHORITY_MSG =
+  "Legal signing authority already exist for this Institution.";
 export default {
   components: { Dialog, Dropdown, InputSwitch },
   props: {
@@ -197,7 +199,6 @@ export default {
         userData.value = await InstitutionService.shared.getInstitutionLocationUserDetails(
           props.institutionUserName,
         );
-        console.log(userData.value);
 
         const adminAuth = userData.value.authorizations?.find(
           (role: InstitutionAuth) => role.authType?.type === "admin",
@@ -249,10 +250,14 @@ export default {
             life: 5000,
           });
         } catch (excp) {
+          const errorMessage =
+            excp === LEGAL_SIGNING_AUTHORITY_EXIST
+              ? LEGAL_SIGNING_AUTHORITY_MSG
+              : "An error happened during the update process.";
           toast.add({
             severity: "error",
             summary: "Unexpected error",
-            detail: "An error happened during the update process.",
+            detail: errorMessage,
             life: 5000,
           });
         }

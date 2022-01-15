@@ -122,10 +122,10 @@ export class InstitutionService {
       const locationArray = institutionUser.authorizations
         .map(auth => auth.location?.name || "")
         .filter(loc => loc !== "");
-      const userType = institutionUser.authorizations
-        .map(auth => auth.authType.type)
-        .join(" ");
-      const location = userType.toLowerCase().includes("admin")
+      const userType = institutionUser.authorizations.map(
+        auth => auth.authType.type,
+      );
+      const location = userType.includes("admin")
         ? ["All"]
         : locationArray.length > 0
         ? locationArray

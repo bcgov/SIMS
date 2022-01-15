@@ -72,11 +72,25 @@
         sortable="true"
       ></Column>
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
-      <Column :field="UserFields.UserType" header="User Type"></Column>
+      <Column :field="UserFields.UserType" header="User Type">
+        <template #body="slotProps">
+          <ul
+            class="no-bullets"
+            v-for="userType in slotProps.data.userType"
+            :key="userType"
+          >
+            <li>{{ userType }}</li>
+          </ul></template
+        ></Column
+      >
       <Column :field="UserFields.Role" header="Role"></Column>
       <Column :field="UserFields.Location" header="Locations"
         ><template #body="slotProps">
-          <ul v-for="location in slotProps.data.location" :key="location">
+          <ul
+            class="no-bullets"
+            v-for="location in slotProps.data.location"
+            :key="location"
+          >
             <li>{{ location }}</li>
           </ul></template
         ></Column

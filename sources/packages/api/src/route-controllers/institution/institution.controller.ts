@@ -15,6 +15,8 @@ import {
   InstitutionService,
   UserService,
   InstitutionLocationService,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
   AESTInstitutionDetailDto,
@@ -66,6 +68,7 @@ import {
   InstitutionLocation,
   InstitutionUser,
 } from "../../database/entities";
+import { InstitutionUserRoles } from "../../auth/user-types.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -335,6 +338,25 @@ export class InstitutionController extends BaseController {
       throw new UnprocessableEntityException(
         "The user has no institution associated.",
       );
+    }
+
+    /** A legal signing authority role can be added to only one user per institution */
+    const addLegalSigningAuthorityExist = payload.permissions.some(
+      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
+    );
+
+    if (addLegalSigningAuthorityExist) {
+      const legalSigningAuthority =
+        await this.institutionService.checkLegalSigningAuthority(
+          institution.id,
+        );
+
+      if (legalSigningAuthority) {
+        throw new UnprocessableEntityException(
+          LEGAL_SIGNING_AUTHORITY_EXIST,
+          LEGAL_SIGNING_AUTHORITY_MSG,
+        );
+      }
     }
 
     // remove existing associations and add new associations

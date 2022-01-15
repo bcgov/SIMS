@@ -43,6 +43,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "institutionRestrictions.createdAt",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
+        "restriction.restrictionCode",
         "restriction.description",
       ])
       .innerJoin("institutionRestrictions.restriction", "restriction")
@@ -75,6 +76,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "modifier.lastName",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
+        "restriction.restrictionCode",
         "restriction.description",
         "restrictionNote.description",
         "resolutionNote.description",
