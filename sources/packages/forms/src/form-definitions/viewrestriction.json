@@ -368,7 +368,7 @@
                             "value": ""
                         }
                     ],
-                    "content": "{{data.description}}",
+                    "content": "{{data.restrictionCode + \" - \" + data.description}}",
                     "refreshOnChange": true,
                     "customClass": "mt-n4",
                     "hidden": false,
@@ -435,7 +435,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eql83y"
+                    "id": "ebztkyo"
                 },
                 {
                     "label": "Notes",
@@ -2077,6 +2077,6 @@
     "name": "viewRestriction",
     "path": "viewrestriction",
     "created": "2021-12-27T06:22:11.679Z",
-    "modified": "2022-01-06T00:52:57.724Z",
+    "modified": "2022-01-14T22:43:31.291Z",
     "machineName": "viewRestriction"
 }

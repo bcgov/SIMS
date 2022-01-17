@@ -24,7 +24,7 @@ export interface InstitutionUserViewModel {
   userName: string;
   displayName: string;
   location: string[];
-  userType: string;
+  userType: string[];
   role: string;
   isActive: boolean;
   disableRemove?: boolean;
@@ -38,7 +38,7 @@ export interface InstitutionAuthType {
 }
 export interface InstitutionAuth {
   id?: number;
-  authType?: InstitutionAuthType;
+  authType: InstitutionAuthType;
   location?: InstitutionLocationData;
 }
 
@@ -87,6 +87,7 @@ export interface InstitutionUserWithUserType
 
 export interface InstitutionUserAuthDetails {
   userType?: string;
+  userRole?: string;
   location?: InstitutionUserRoleLocation[];
   userGuid?: string;
   userId?: string;
@@ -141,3 +142,7 @@ export interface InstitutionUserAndCountForDataTable {
   users: InstitutionUserViewModel[];
   totalUsers: number;
 }
+
+export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
+export const LEGAL_SIGNING_AUTHORITY_MSG =
+  "Legal signing authority already exists for this Institution.";

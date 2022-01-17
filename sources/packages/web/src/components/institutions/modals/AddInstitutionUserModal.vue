@@ -39,6 +39,18 @@
               >
               <InputSwitch v-model="isAdmin" />
             </v-col>
+            <v-col v-if="isAdmin">
+              <span class="form-text text-muted mb-2 font-weight-bold"
+                >Select Admin Role</span
+              >
+              <!-- TODO: remove inline styles when moving to Vuetify component. -->
+              <Dropdown
+                v-model="selectedAdminRole"
+                :options="adminRoles"
+                :style="{ width: '20vw' }"
+                optionLabel="name"
+              />
+            </v-col>
           </v-row>
           <span v-if="!isAdmin && selectUser.name">
             <v-divider></v-divider>
@@ -105,8 +117,13 @@ import { UserService } from "@/services/UserService";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
-import { useToast } from "primevue/usetoast";
-import { InstitutionUserAuthDetails, UserAuth } from "@/types";
+import { useToastMessage } from "@/composables";
+import {
+  InstitutionUserAuthDetails,
+  UserAuth,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  LEGAL_SIGNING_AUTHORITY_MSG,
+} from "@/types";
 import Message from "primevue/message";
 
 export default {
@@ -122,10 +139,14 @@ export default {
         return [];
       },
     },
+    adminRoles: {
+      type: Array,
+      required: true,
+    },
   },
   emits: ["updateShowAddInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
-    const toast = useToast();
+    const toast = useToastMessage();
     const isAdmin = ref(false);
     const invalidName = ref(false);
     const invalidUserType = ref(false);
@@ -134,6 +155,7 @@ export default {
     const usersList = ref();
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
+    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
     const getInstitutionLocationList = async () => {
       //Get Institution Locations
       institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
@@ -152,6 +174,7 @@ export default {
       payLoad.value = await InstitutionService.shared.prepareAddUserPayload(
         isAdmin.value,
         selectUser.value,
+        selectedAdminRole.value?.code,
         institutionLocationList.value,
       );
       if (
@@ -163,19 +186,16 @@ export default {
       ) {
         try {
           await InstitutionService.shared.createUser(payLoad.value);
-          toast.add({
-            severity: "success",
-            summary: `${selectUser.value.name} Successfully Added!`,
-            detail: " Successfully!",
-            life: 5000,
-          });
+          toast.success(
+            "User Added",
+            `${selectUser.value.name} Successfully Added!`,
+          );
         } catch (excp) {
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: "An error happened during the create process.",
-            life: 5000,
-          });
+          const errorMessage =
+            excp === LEGAL_SIGNING_AUTHORITY_EXIST
+              ? LEGAL_SIGNING_AUTHORITY_MSG
+              : "An error happened during the update process.";
+          toast.error("Unexpected error", errorMessage);
         }
         closeAddUser();
         context.emit("getAllInstitutionUsers");
@@ -212,6 +232,7 @@ export default {
       invalidName,
       invalidUserType,
       display,
+      selectedAdminRole,
     };
   },
 };

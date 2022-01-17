@@ -12,6 +12,7 @@ import {
   InstitutionUserAndCount,
   AESTInstitutionProgramsSummaryPaginatedDto,
   SortDBOrder,
+  UserAuth,
 } from "../../types";
 import { AxiosResponse } from "axios";
 import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
@@ -243,5 +244,10 @@ export class InstitutionApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
+    const response = await this.getCall("institution/admin-roles");
+    return response.data as UserAuth[];
   }
 }

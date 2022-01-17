@@ -122,10 +122,10 @@ export class InstitutionService {
       const locationArray = institutionUser.authorizations
         .map(auth => auth.location?.name || "")
         .filter(loc => loc !== "");
-      const userType = institutionUser.authorizations
-        .map(auth => auth.authType.type)
-        .join(" ");
-      const location = userType.toLowerCase().includes("admin")
+      const userType = institutionUser.authorizations.map(
+        auth => auth.authType.type,
+      );
+      const location = userType.includes("admin")
         ? ["All"]
         : locationArray.length > 0
         ? locationArray
@@ -220,6 +220,7 @@ export class InstitutionService {
       payload.permissions = [
         {
           userType: data.userType,
+          userRole: data.userRole === "admin" ? undefined : data.userRole,
         },
       ];
     }
@@ -252,11 +253,13 @@ export class InstitutionService {
   public async prepareAddUserPayload(
     isAdmin: boolean,
     selectUser: UserAuth,
+    adminRole: string,
     institutionLocationList: InstitutionLocationsDetails[],
   ) {
     return {
       userId: selectUser.code,
       userType: isAdmin ? "admin" : undefined,
+      userRole: isAdmin ? adminRole : undefined,
       userGuid: selectUser.id,
       location: !isAdmin
         ? (institutionLocationList
@@ -276,11 +279,13 @@ export class InstitutionService {
   public async prepareEditUserPayload(
     institutionUserName: string,
     isAdmin: boolean,
+    adminRole: string,
     institutionLocationList: InstitutionUserWithUserType[],
   ) {
     return {
       userGuid: institutionUserName ? institutionUserName : undefined,
       userType: isAdmin ? "admin" : undefined,
+      userRole: isAdmin ? adminRole : undefined,
       location: !isAdmin
         ? (institutionLocationList
             .map((el: InstitutionUserWithUserType) => {
@@ -306,8 +311,7 @@ export class InstitutionService {
     );
   }
 
-  public async getLocationsOptionsList(
-  ): Promise<OptionItemDto[]> {
+  public async getLocationsOptionsList(): Promise<OptionItemDto[]> {
     return ApiClient.InstitutionLocation.getOptionsList();
   }
 
@@ -443,5 +447,9 @@ export class InstitutionService {
       sortOrder,
       searchName,
     );
+  }
+
+  public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
+    return ApiClient.Institution.getGetAdminRoleOptions();
   }
 }

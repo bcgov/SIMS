@@ -15,6 +15,8 @@ import {
   InstitutionService,
   UserService,
   InstitutionLocationService,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
   AESTInstitutionDetailDto,
@@ -45,6 +47,7 @@ import { InstitutionUserAuthDto } from "./models/institution-user-auth.dto";
 import {
   InstitutionUserTypeAndRoleResponseDto,
   InstitutionUserPermissionDto,
+  UserRoleOptionDTO,
 } from "./models/institution-user-type-role.res.dto";
 import { UserDto } from "../user/models/user.dto";
 import {
@@ -65,6 +68,7 @@ import {
   InstitutionLocation,
   InstitutionUser,
 } from "../../database/entities";
+import { InstitutionUserRoles } from "../../auth/user-types.enum";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -254,6 +258,25 @@ export class InstitutionController extends BaseController {
       );
     }
 
+    /** A legal signing authority role can be added to only one user per institution */
+    const addLegalSigningAuthorityExist = payload.permissions.some(
+      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
+    );
+
+    if (addLegalSigningAuthorityExist) {
+      const legalSigningAuthority =
+        await this.institutionService.checkLegalSigningAuthority(
+          institution.id,
+        );
+
+      if (legalSigningAuthority) {
+        throw new UnprocessableEntityException(
+          LEGAL_SIGNING_AUTHORITY_EXIST,
+          LEGAL_SIGNING_AUTHORITY_MSG,
+        );
+      }
+    }
+
     // Create the user user and the related records.
     const createdInstitutionUser =
       await this.institutionService.createInstitutionUser(
@@ -334,6 +357,25 @@ export class InstitutionController extends BaseController {
       throw new UnprocessableEntityException(
         "The user has no institution associated.",
       );
+    }
+
+    /** A legal signing authority role can be added to only one user per institution */
+    const addLegalSigningAuthorityExist = payload.permissions.some(
+      (role) => role.userRole === InstitutionUserRoles.legalSigningAuthority,
+    );
+
+    if (addLegalSigningAuthorityExist) {
+      const legalSigningAuthority =
+        await this.institutionService.checkLegalSigningAuthority(
+          institution.id,
+        );
+
+      if (legalSigningAuthority) {
+        throw new UnprocessableEntityException(
+          LEGAL_SIGNING_AUTHORITY_EXIST,
+          LEGAL_SIGNING_AUTHORITY_MSG,
+        );
+      }
     }
 
     // remove existing associations and add new associations
@@ -648,5 +690,21 @@ export class InstitutionController extends BaseController {
       ),
       totalUsers: institutionUserAndCount[1],
     };
+  }
+  /**
+   * API to get the lookup values for admin role.
+   **Note: There are are more than one type of admin role. Basic admin has role as NULL rest of them have role name.
+   **This API is exclusively for admin roles and does not include other non-admin roles.
+   * @returns Admin Roles.
+   */
+  @IsInstitutionAdmin()
+  @Get("admin-roles")
+  async getAdminRoles(): Promise<UserRoleOptionDTO[]> {
+    const userRoles = await this.institutionService.getAdminRoles();
+    /** This API is to feed the values to drop-down component. Name and code have same value in this scenario. */
+    return userRoles.map((role) => ({
+      name: role.role || role.type,
+      code: role.role || role.type,
+    }));
   }
 }

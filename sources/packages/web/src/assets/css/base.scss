@@ -1,3 +1,4 @@
+@import "./global-style-variables.scss";
 html * {
   font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "primeicons";
   font-style: normal;
@@ -14,7 +15,7 @@ html * {
   font-weight: 700;
   line-height: 36px;
   letter-spacing: -0.2px;
-  color: #2965c5;
+  color: $brand-blue;
 }
 
 .logo-main-text {
@@ -65,24 +66,25 @@ html * {
   border-style: solid;
   border-radius: 30px;
   position: static;
+  font-weight: 700;
 }
 
 // active badge
 .status-badge-active .v-badge__badge {
   @extend .status_badge;
-  border-color: #16c92e;
+  border-color: $badge-border-success;
 }
 
 // inactive badge
 .status-badge-inactive .v-badge__badge {
   @extend .status_badge;
-  border-color: #333a47;
+  border-color: $badge-border-inactive;
 }
 
 //active restriction badge
 .status-badge-active-restriction .v-badge__badge {
   @extend .status_badge;
-  border-color: #ff7a00;
+  border-color: $badge-border-warning;
 }
 
 //Defining the height of rounded filter button
@@ -93,4 +95,10 @@ html * {
 /** Style to align records per page with arrows in data table. **/
 .p-paginator .p-dropdown .p-dropdown-label {
   margin-top: 8px;
+}
+
+/** UL element with no styles **/
+ul.no-bullets {
+  list-style-type: none;
+  margin-bottom: 0.5rem;
 }

@@ -1,58 +1,57 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <div class="row">
-    <div class="col align-self-start">
+  <div class="row p-3">
+    <div class="col col-3">
       <span class="category-header-large color-blue">
         All Users({{ usersListAndCount.totalUsers }})
       </span>
     </div>
-    <div>
-      <InputText
-        v-model="searchBox"
-        placeholder="Search User"
-        @keyup.enter="searchUserTable()"
-      />
-    </div>
-    <div>
-      <v-btn
-        @click="searchUserTable()"
-        tile
-        class="ml-2 primary-btn-background"
-      >
-        <font-awesome-icon :icon="['fas', 'search']" />
-      </v-btn>
-    </div>
-    <div v-if="clientType === ClientIdType.Institution" class="mx-2">
-      <v-btn
-        class="float-right primary-btn-background"
-        @click="openNewUserModal()"
-      >
-        <font-awesome-icon
-          :icon="['fas', 'external-link-square-alt']"
-          class="mr-2"
+    <div class="col">
+      <div class="row float-right">
+        <InputText
+          v-model="searchBox"
+          placeholder="Search User"
+          @keyup.enter="searchUserTable()"
         />
-        Add New User
-      </v-btn>
+        <v-btn
+          @click="searchUserTable()"
+          tile
+          class="ml-2 primary-btn-background"
+        >
+          <font-awesome-icon :icon="['fas', 'search']" />
+        </v-btn>
 
-      <!-- Add user -->
-      <AddInstitutionUser
-        :userType="userType"
-        :showAddUser="showAddUser"
-        @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-        @getAllInstitutionUsers="getAllInstitutionUsers"
-      />
+        <v-btn
+          v-if="clientType === ClientIdType.Institution"
+          class="ml-2 primary-btn-background"
+          @click="openNewUserModal()"
+        >
+          <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
+          Add New User
+        </v-btn>
 
-      <!-- edit user -->
-      <EditInstitutionUser
-        :userType="userType"
-        :showEditUser="showEditUser"
-        :institutionUserName="institutionUserName"
-        @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-        @getAllInstitutionUsers="getAllInstitutionUsers"
-      />
+        <!-- Add user -->
+        <AddInstitutionUser
+          :userType="userType"
+          :showAddUser="showAddUser"
+          :adminRoles="adminRoles"
+          @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
+          @getAllInstitutionUsers="getAllInstitutionUsers"
+        />
+
+        <!-- edit user -->
+        <EditInstitutionUser
+          :userType="userType"
+          :showEditUser="showEditUser"
+          :institutionUserName="institutionUserName"
+          :adminRoles="adminRoles"
+          @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+          @getAllInstitutionUsers="getAllInstitutionUsers"
+        />
+      </div>
     </div>
   </div>
-  <ContentGroup class="mt-2">
+  <ContentGroup>
     <DataTable
       :value="usersListAndCount.users"
       :lazy="true"
@@ -73,11 +72,25 @@
         sortable="true"
       ></Column>
       <Column :field="UserFields.Email" header="Email" sortable="true"></Column>
-      <Column :field="UserFields.UserType" header="User Type"></Column>
+      <Column :field="UserFields.UserType" header="User Type">
+        <template #body="slotProps">
+          <ul
+            class="no-bullets"
+            v-for="userType in slotProps.data.userType"
+            :key="userType"
+          >
+            <li>{{ userType }}</li>
+          </ul></template
+        ></Column
+      >
       <Column :field="UserFields.Role" header="Role"></Column>
       <Column :field="UserFields.Location" header="Locations"
         ><template #body="slotProps">
-          <ul v-for="location in slotProps.data.location" :key="location">
+          <ul
+            class="no-bullets"
+            v-for="location in slotProps.data.location"
+            :key="location"
+          >
             <li>{{ location }}</li>
           </ul></template
         ></Column
@@ -98,12 +111,11 @@
         v-if="clientType === ClientIdType.Institution"
         ><template #body="slotProps">
           <span v-if="slotProps.data.userName !== parsedToken?.userName">
-            <v-btn plain>
+            <v-btn @click="editInstitutionUser(slotProps.data.userName)" plain>
               <font-awesome-icon
                 :icon="['fas', 'pen']"
                 v-if="slotProps.data.isActive"
                 right
-                @click="editInstitutionUser(slotProps.data.userName)"
                 v-tooltip="'Edit User'"
               >
               </font-awesome-icon
@@ -187,7 +199,7 @@ export default {
       showAddUser.value = true;
     };
     const institutionUserName = ref();
-
+    const adminRoles = ref();
     /**
      * function to load usersListAndCount respective to the client type
      * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
@@ -296,6 +308,8 @@ export default {
               el !== "admin" ? { name: el, code: el } : null,
             )
           : [];
+
+        adminRoles.value = await InstitutionService.shared.getGetAdminRoleOptions();
       }
     });
     return {
@@ -321,6 +335,7 @@ export default {
       usersListAndCount,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
+      adminRoles,
     };
   },
 };

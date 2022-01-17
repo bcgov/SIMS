@@ -1,7 +1,8 @@
-.application-info-border{
+@import "./global-style-variables.scss";
+.application-info-border {
   padding: 2%;
   border-style: solid;
-  border-color: #2965C5 !important;
+  border-color: $brand-blue !important;
   border-radius: 10px;
   word-wrap: break-word;
 }

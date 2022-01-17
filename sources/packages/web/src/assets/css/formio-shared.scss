@@ -1,35 +1,8 @@
-/** SCSS Color variables **/
-$primary-header-color: #2965c5;
-$secondary-header-color: #333a47;
-$secondary-header-color-lt: #8692a4;
-$app-content-color: #333a47;
-$panel-warning-color: #f3b229;
-$panel-error-color: #dc2525;
-$button-font-color: #ffffff;
-
-/** SCSS Font Size variables **/
-$font-header-large: 27px;
-$font-header-medium: 20px;
-$font-header-small: 17px;
-$line-height-header-lg: 34px;
-$line-height-header-md: 27px;
-$line-height-header-sm: 22px;
-$formio-content: 16px;
-$formio-content-lh: 24px;
-$formio-header-margin: 0.5rem;
-$formio-header-wt: 700;
-
-/** SCSS Banner size variables **/
-$background-alert: rgba(217, 37, 48, 0.05);
-$background-warning: rgba(243, 178, 41, 0.1);
-$background-info: rgba(101, 84, 192, 0.1);
-$border-color-alert: #d92530;
-$border-color-warning: #f3b229;
-$border-color-info: #6554c0;
+@import "./global-style-variables.scss";
 
 /** Primary theme color of the application**/
 .primary-color {
-  color: $primary-header-color !important;
+  color: $brand-blue !important;
 }
 
 .secondary-btn-background {
@@ -43,7 +16,7 @@ $border-color-info: #6554c0;
 }
 
 .primary-btn-background {
-  background: $primary-header-color !important;
+  background: $brand-blue !important;
   color: $button-font-color !important;
 }
 
@@ -115,7 +88,7 @@ $border-color-info: #6554c0;
 
 .btn-formio-primary-outlined {
   background: #ffffff;
-  color: #2965c5;
+  color: $brand-blue;
 }
 
 .panel-error .card-body {
@@ -198,7 +171,7 @@ $border-color-info: #6554c0;
 }
 
 .formio-component .primary-color p {
-  color: $primary-header-color;
+  color: $brand-blue;
 }
 
 .formio-component .fa {
@@ -227,7 +200,7 @@ $border-color-info: #6554c0;
 }
 
 .header-lg {
-  color: $primary-header-color;
+  color: $brand-blue;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-large;
@@ -236,7 +209,7 @@ $border-color-info: #6554c0;
 }
 
 .header-md {
-  color: $primary-header-color;
+  color: $brand-blue;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-medium;
@@ -245,7 +218,7 @@ $border-color-info: #6554c0;
 }
 
 .header-sm {
-  color: $primary-header-color;
+  color: $brand-blue;
   font-style: normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
@@ -255,23 +228,23 @@ $border-color-info: #6554c0;
 
 .banner-alert p,
 .banner-alert div {
-  background: $background-alert;
-  border: 2px solid $border-color-alert;
+  background: $banner-background-error;
+  border: 2px solid $banner-color-error;
   box-sizing: border-box;
   border-radius: 8px;
 }
 .banner-warning p,
 .banner-warning div {
-  background: $background-warning;
-  border: 2px solid $border-color-warning;
+  background: $banner-background-warning;
+  border: 2px solid $banner-color-warning;
   box-sizing: border-box;
   border-radius: 8px;
 }
 
 .banner-info p,
 .banner-info div {
-  background: $background-info;
-  border: 2px solid $border-color-info;
+  background: $banner-background-info;
+  border: 2px solid $banner-color-info;
   box-sizing: border-box;
   border-radius: 8px;
 }
@@ -312,12 +285,20 @@ $border-color-info: #6554c0;
   font-size: 12px !important;
 }
 
-.status-active-restriction {
-  border-color: #ff7a00;
+.status-active-restriction .form-status-badge {
+  font-weight: 700;
+  border-color: $badge-border-warning;
+}
+
+.status-active-restriction .fa-circle::before {
   color: #ff7a00;
 }
 
-.status-resolved-restriction {
-  border-color: #16c92e;
+.status-resolved-restriction .form-status-badge {
+  font-weight: 700;
+  border-color: $badge-border-success;
+}
+
+.status-resolved-restriction .fa-circle::before {
   color: #16c92e;
 }

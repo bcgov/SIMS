@@ -1,0 +1,55 @@
+/** Brand Colors - Figma **/
+$brand-blue: #2965c5;
+$brand-grey: #8692a4;
+$brand-black: #333a47;
+$brand-black-light: #999ca3;
+
+/** Banner Colors - Figma **/
+$banner-color-warning: #ff7a00;
+$banner-color-error: #e4222e;
+$banner-color-success: #16c92e;
+$banner-color-info: #6554c0;
+
+$banner-background-warning: #fff9ed;
+$banner-background-error: #fdf4f4;
+$banner-background-success: #eeffef;
+$banner-background-info: #f0eef9;
+
+/** Background and font colors - Figma **/
+$input-border-color: #e8e8e8;
+$color-white: #ffffff;
+$background-read-only: #cfd4db;
+$color-background: #f5f6f7;
+
+/** Application Color variables **/
+$secondary-header-color: #333a47;
+$secondary-header-color-lt: #8692a4;
+$app-content-color: #333a47;
+$panel-warning-color: #f3b229;
+$panel-error-color: #dc2525;
+$button-font-color: #ffffff;
+
+/** SCSS Font Size variables **/
+$font-header-large: 27px;
+$font-header-medium: 20px;
+$font-header-small: 17px;
+$line-height-header-lg: 34px;
+$line-height-header-md: 27px;
+$line-height-header-sm: 22px;
+$formio-content: 16px;
+$formio-content-lh: 24px;
+$formio-header-margin: 0.5rem;
+$formio-header-wt: 700;
+
+/** SCSS Banner size variables **/
+$background-alert: rgba(217, 37, 48, 0.05);
+$background-warning: rgba(243, 178, 41, 0.1);
+$background-info: rgba(101, 84, 192, 0.1);
+$border-color-warning: #f3b229;
+$border-color-info: #6554c0;
+
+/** Status badge color variables **/
+$badge-border-warning: rgb(255, 122, 0, 0.2);
+$badge-border-error: rgb(228, 34, 46, 0.2);
+$badge-border-success: rgb(22, 201, 46, 0.2);
+$badge-border-inactive: rgb(51, 58, 71, 0.2);

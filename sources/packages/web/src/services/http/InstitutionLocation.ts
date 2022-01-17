@@ -73,20 +73,20 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
     return data;
   }
-
+  /**
+   * This client expects custom error message in one or more
+   * scenarios and hence trying to parse and throw the message
+   * if available.
+   * @param createInstitutionUserDto
+   */
   public async createUser(
     createInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "institution/user",
-        createInstitutionUserDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.apiClient
+      .post("institution/user", createInstitutionUserDto, this.addAuthHeader())
+      .catch(error => {
+        this.handleCustomError(error);
+      });
   }
 
   public async getInstitutionLocationUserDetails(
@@ -104,20 +104,25 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * This client expects custom error message in one or more
+   * scenarios and hence trying to parse and throw the message
+   * if available.
+   * @param updateInstitutionUserDto
+   */
   public async updateUser(
     userName: string,
     updateInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
+    await this.apiClient
+      .patch(
         `institution/user/${userName}`,
         updateInstitutionUserDto,
         this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+      )
+      .catch(error => {
+        this.handleCustomError(error);
+      });
   }
 
   public async updateUserStatus(

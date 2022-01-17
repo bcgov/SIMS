@@ -135,6 +135,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.createdAt",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
+        "restriction.restrictionCode",
         "restriction.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
@@ -168,6 +169,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.description",
+        "restriction.restrictionCode",
         "restrictionNote.description",
         "resolutionNote.description",
       ])

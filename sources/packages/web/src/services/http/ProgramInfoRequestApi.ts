@@ -32,8 +32,8 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
       )
       .catch(error => {
         if (error.response) {
-          this.handleRequestError(error.response?.data?.message);
-          throw error.response?.data?.message;
+          this.handleRequestError(error.response.data?.message);
+          throw error.response.data?.message;
         }
       });
   }

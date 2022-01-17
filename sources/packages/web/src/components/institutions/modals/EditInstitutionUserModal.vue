@@ -12,7 +12,7 @@
     <v-sheet color="white" elevation="1">
       <v-container>
         <form>
-          <v-row>
+          <v-row cols="12">
             <v-col>
               <span class="form-text text-muted mb-2"
                 ><strong>User Name</strong></span
@@ -30,6 +30,18 @@
                 </strong>
               </span>
               <InputSwitch v-model="isAdmin" />
+            </v-col>
+            <v-col v-if="isAdmin">
+              <span class="form-text text-muted mb-2"
+                ><strong>Select Admin Role</strong></span
+              >
+              <!-- TODO: remove inline styles when moving to Vuetify component. -->
+              <Dropdown
+                v-model="selectedAdminRole"
+                :options="adminRoles"
+                :style="{ width: '20vw' }"
+                optionLabel="name"
+              />
             </v-col>
           </v-row>
           <span v-if="!isAdmin">
@@ -97,10 +109,14 @@ import { InstitutionService } from "@/services/InstitutionService";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
-import { useToast } from "primevue/usetoast";
+import { useToastMessage } from "@/composables";
 import {
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthDetails,
+  InstitutionAuth,
+  UserAuth,
+  LEGAL_SIGNING_AUTHORITY_EXIST,
+  LEGAL_SIGNING_AUTHORITY_MSG,
 } from "@/types";
 
 export default {
@@ -118,16 +134,23 @@ export default {
       type: String,
       default: "",
     },
+    adminRoles: {
+      type: Array,
+      required: true,
+    },
   },
   emits: ["updateShowEditInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
     const userData = ref({} as InstitutionLocationUserAuthDto);
     const isAdmin = ref(false);
-    const toast = useToast();
+    const toast = useToastMessage();
     const invalidUserType = ref(false);
     const display = ref(true);
     const institutionLocationList = ref();
     const payLoad = ref({} as InstitutionUserAuthDetails);
+    /**Initialized with default value */
+    const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
+
     const closeEditUser = async () => {
       context.emit("updateShowEditInstitutionModal");
       invalidUserType.value = false;
@@ -174,17 +197,29 @@ export default {
     };
     const getInstitutionUserDetails = async () => {
       try {
-        const respUser = await InstitutionService.shared.getInstitutionLocationUserDetails(
+        userData.value = await InstitutionService.shared.getInstitutionLocationUserDetails(
           props.institutionUserName,
         );
-        userData.value = respUser;
+
+        const adminAuth = userData.value.authorizations?.find(
+          (role: InstitutionAuth) => role.authType?.type === "admin",
+        );
+
+        if (adminAuth) {
+          selectedAdminRole.value = {
+            name: adminAuth.authType.role
+              ? adminAuth.authType.role
+              : adminAuth.authType.type,
+            code: adminAuth.authType.role
+              ? adminAuth.authType.role
+              : adminAuth.authType.type,
+          };
+        }
       } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the fetch process.",
-          life: 5000,
-        });
+        toast.error(
+          "Unexpected error",
+          "An error happened during the fetch process.",
+        );
       }
     };
 
@@ -193,6 +228,7 @@ export default {
       payLoad.value = await InstitutionService.shared.prepareEditUserPayload(
         props.institutionUserName,
         isAdmin.value,
+        selectedAdminRole.value?.code,
         institutionLocationList.value,
       );
       if (
@@ -206,19 +242,16 @@ export default {
             props.institutionUserName as string,
             payLoad.value,
           );
-          toast.add({
-            severity: "success",
-            summary: `${userData.value?.user?.firstName} Updated Successfully!`,
-            detail: " Successfully!",
-            life: 5000,
-          });
+          toast.success(
+            "User Updated",
+            `${userData.value?.user?.firstName} Updated Successfully!`,
+          );
         } catch (excp) {
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: "An error happened during the update process.",
-            life: 5000,
-          });
+          const errorMessage =
+            excp === LEGAL_SIGNING_AUTHORITY_EXIST
+              ? LEGAL_SIGNING_AUTHORITY_MSG
+              : "An error happened during the update process.";
+          toast.error("Unexpected error", errorMessage);
         }
         closeEditUser();
         context.emit("getAllInstitutionUsers");
@@ -245,6 +278,7 @@ export default {
       isAdmin,
       submitEditUser,
       userData,
+      selectedAdminRole,
     };
   },
 };

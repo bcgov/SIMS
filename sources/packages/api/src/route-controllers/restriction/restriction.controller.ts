@@ -68,6 +68,7 @@ export class RestrictionController extends BaseController {
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
       restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      restrictionCode: studentRestriction.restriction.restrictionCode,
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
@@ -136,6 +137,7 @@ export class RestrictionController extends BaseController {
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
       restrictionCategory: studentRestriction.restriction.restrictionCategory,
+      restrictionCode: studentRestriction.restriction.restrictionCode,
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
       updatedAt: studentRestriction.updatedAt,
@@ -256,6 +258,7 @@ export class RestrictionController extends BaseController {
       restrictionType: institutionRestriction.restriction.restrictionType,
       restrictionCategory:
         institutionRestriction.restriction.restrictionCategory,
+      restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
       updatedAt: institutionRestriction.updatedAt,
@@ -293,6 +296,7 @@ export class RestrictionController extends BaseController {
       restrictionType: institutionRestriction.restriction.restrictionType,
       restrictionCategory:
         institutionRestriction.restriction.restrictionCategory,
+      restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
       updatedAt: institutionRestriction.updatedAt,

@@ -29,7 +29,11 @@
             header="Category"
             sortable="true"
           ></Column>
-          <Column field="description" header="Reason"></Column>
+          <Column field="description" header="Reason">
+            <template #body="slotProps">{{
+              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
+            }}</template></Column
+          >
           <Column field="createdAt" header="Added"
             ><template #body="slotProps">{{
               dateOnlyLongString(slotProps.data.createdAt)
