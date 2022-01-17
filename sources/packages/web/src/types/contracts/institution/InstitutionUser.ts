@@ -145,4 +145,4 @@ export interface InstitutionUserAndCountForDataTable {
 
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
-  "Legal signing authority already exist for this Institution.";
+  "Legal signing authority already exists for this Institution.";

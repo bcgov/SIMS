@@ -82,20 +82,16 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createUser(
     createInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "institution/user",
-        createInstitutionUserDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      if (error.response) {
-        this.handleRequestError(error.response?.data?.message);
-        throw error.response?.data?.message;
-      }
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.apiClient
+      .post("institution/user", createInstitutionUserDto, this.addAuthHeader())
+      .catch(error => {
+        if (error.response) {
+          this.handleRequestError(error.response.data?.message);
+          throw error.response.data?.message;
+        }
+        this.handleRequestError(error);
+        throw error;
+      });
   }
 
   public async getInstitutionLocationUserDetails(
@@ -123,20 +119,20 @@ export class InstitutionLocationApi extends HttpBaseClient {
     userName: string,
     updateInstitutionUserDto: InstitutionUserDto,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
+    await this.apiClient
+      .patch(
         `institution/user/${userName}`,
         updateInstitutionUserDto,
         this.addAuthHeader(),
-      );
-    } catch (error) {
-      if (error.response) {
-        this.handleRequestError(error.response?.data?.message);
-        throw error.response?.data?.message;
-      }
-      this.handleRequestError(error);
-      throw error;
-    }
+      )
+      .catch(error => {
+        if (error.response) {
+          this.handleRequestError(error.response.data?.message);
+          throw error.response.data?.message;
+        }
+        this.handleRequestError(error);
+        throw error;
+      });
   }
 
   public async updateUserStatus(

@@ -35,6 +35,7 @@
               <span class="form-text text-muted mb-2"
                 ><strong>Select Admin Role</strong></span
               >
+              <!-- TODO: remove inline styles when moving to Vuetify component. -->
               <Dropdown
                 v-model="selectedAdminRole"
                 :options="adminRoles"
@@ -108,7 +109,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
-import { useToast } from "primevue/usetoast";
+import { useToastMessage } from "@/composables";
 import {
   InstitutionLocationUserAuthDto,
   InstitutionUserAuthDetails,
@@ -142,7 +143,7 @@ export default {
   setup(props: any, context: any) {
     const userData = ref({} as InstitutionLocationUserAuthDto);
     const isAdmin = ref(false);
-    const toast = useToast();
+    const toast = useToastMessage();
     const invalidUserType = ref(false);
     const display = ref(true);
     const institutionLocationList = ref();
@@ -215,12 +216,10 @@ export default {
           };
         }
       } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the fetch process.",
-          life: 5000,
-        });
+        toast.error(
+          "Unexpected error",
+          "An error happened during the fetch process.",
+        );
       }
     };
 
@@ -243,23 +242,16 @@ export default {
             props.institutionUserName as string,
             payLoad.value,
           );
-          toast.add({
-            severity: "success",
-            summary: `${userData.value?.user?.firstName} Updated Successfully!`,
-            detail: " Successfully!",
-            life: 5000,
-          });
+          toast.success(
+            "User Updated",
+            `${userData.value?.user?.firstName} Updated Successfully!`,
+          );
         } catch (excp) {
           const errorMessage =
             excp === LEGAL_SIGNING_AUTHORITY_EXIST
               ? LEGAL_SIGNING_AUTHORITY_MSG
               : "An error happened during the update process.";
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: errorMessage,
-            life: 5000,
-          });
+          toast.error("Unexpected error", errorMessage);
         }
         closeEditUser();
         context.emit("getAllInstitutionUsers");

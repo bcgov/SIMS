@@ -40,9 +40,10 @@
               <InputSwitch v-model="isAdmin" />
             </v-col>
             <v-col v-if="isAdmin">
-              <span class="form-text text-muted mb-2"
-                ><strong>Select Admin Role</strong></span
+              <span class="form-text text-muted mb-2 font-weight-bold"
+                >Select Admin Role</span
               >
+              <!-- TODO: remove inline styles when moving to Vuetify component. -->
               <Dropdown
                 v-model="selectedAdminRole"
                 :options="adminRoles"
@@ -116,7 +117,7 @@ import { UserService } from "@/services/UserService";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import InputSwitch from "primevue/inputswitch";
-import { useToast } from "primevue/usetoast";
+import { useToastMessage } from "@/composables";
 import {
   InstitutionUserAuthDetails,
   UserAuth,
@@ -145,7 +146,7 @@ export default {
   },
   emits: ["updateShowAddInstitutionModal", "getAllInstitutionUsers"],
   setup(props: any, context: any) {
-    const toast = useToast();
+    const toast = useToastMessage();
     const isAdmin = ref(false);
     const invalidName = ref(false);
     const invalidUserType = ref(false);
@@ -185,23 +186,16 @@ export default {
       ) {
         try {
           await InstitutionService.shared.createUser(payLoad.value);
-          toast.add({
-            severity: "success",
-            summary: `${selectUser.value.name} Successfully Added!`,
-            detail: " Successfully!",
-            life: 5000,
-          });
+          toast.success(
+            "User Added",
+            `${selectUser.value.name} Successfully Added!`,
+          );
         } catch (excp) {
           const errorMessage =
             excp === LEGAL_SIGNING_AUTHORITY_EXIST
               ? LEGAL_SIGNING_AUTHORITY_MSG
               : "An error happened during the update process.";
-          toast.add({
-            severity: "error",
-            summary: "Unexpected error",
-            detail: errorMessage,
-            life: 5000,
-          });
+          toast.error("Unexpected error", errorMessage);
         }
         closeAddUser();
         context.emit("getAllInstitutionUsers");
