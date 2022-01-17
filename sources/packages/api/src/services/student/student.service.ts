@@ -177,6 +177,20 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
+   * Gets a student's valid sin status
+   * @returns Students SIN validation status.
+   * @param userId information needed to select the user.
+   */
+  async getStudentSinStatus(userId: number): Promise<Student> {
+    return await this.repo
+      .createQueryBuilder("student")
+      .innerJoin("student.user", "user")
+      .where("student.userId = :userIdParam", { userIdParam: userId })
+      .select("student.validSIN")
+      .getOne();
+  }
+
+  /**
    * Update the SIN validation information on a student that
    * is marked with a pending validation.
    * If the SIN validation status is already set, it needs to be

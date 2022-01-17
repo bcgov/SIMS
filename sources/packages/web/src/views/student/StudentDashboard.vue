@@ -4,6 +4,7 @@
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
+    <CheckValidSINBanner />
     <formio formName="studentdashboard"></formio>
   </full-page-container>
 </template>
@@ -16,14 +17,21 @@ import { StudentService } from "@/services/StudentService";
 import formio from "@/components/generic/formio.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 
 export default {
-  components: { formio, FullPageContainer, RestrictionBanner },
+  components: {
+    formio,
+    FullPageContainer,
+    RestrictionBanner,
+    CheckValidSINBanner,
+  },
   setup() {
     const store = useStore();
     const user = computed(() => store.state.student.profile);
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
+
     onMounted(async () => {
       const studentRestriction = await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;

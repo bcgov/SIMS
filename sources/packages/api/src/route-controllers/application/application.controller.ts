@@ -21,6 +21,7 @@ import {
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
+  EducationProgramOfferingService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -39,6 +40,7 @@ import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
+  CheckSinValidation,
   Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -52,7 +54,14 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
+  checkStudyStartDateWithinProgramYear,
+  checkNotValidStudyPeriod,
 } from "../../utilities";
+import {
+  INVALID_STUDY_DATES,
+  OFFERING_START_DATE_ERROR,
+} from "../../constants";
+
 @Controller("application")
 export class ApplicationController extends BaseController {
   constructor(
@@ -61,6 +70,7 @@ export class ApplicationController extends BaseController {
     private readonly workflow: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
+    private readonly offeringService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -93,6 +103,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be changed to submitted.
    * @param userToken token from the authenticated student.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
@@ -104,13 +115,11 @@ export class ApplicationController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request",
       );
     }
-
     const submissionResult = await this.formService.dryRunSubmission(
       programYear.formName,
       payload.data,
@@ -118,6 +127,34 @@ export class ApplicationController extends BaseController {
     if (!submissionResult.valid) {
       throw new BadRequestException(
         "Not able to create an application due to an invalid request.",
+      );
+    }
+    // studyStartDate from payload is set as studyStartDate
+    let studyStartDate = payload.data.studystartDate;
+    if (payload.data.selectedOffering) {
+      const offering = await this.offeringService.getOfferingById(
+        payload.data.selectedOffering,
+      );
+      // if  studyStartDate is not in payload
+      // then selectedOffering will be there in payload,
+      // then study start date taken from offering
+      studyStartDate = offering.studyStartDate;
+    } else {
+      // when selectedOffering is not selected
+      const notValidDates = checkNotValidStudyPeriod(
+        payload.data.studystartDate,
+        payload.data.studyendDate,
+      );
+      if (notValidDates) {
+        throw new UnprocessableEntityException(
+          `${INVALID_STUDY_DATES} ${notValidDates}`,
+        );
+      }
+    }
+
+    if (!checkStudyStartDateWithinProgramYear(studyStartDate, programYear)) {
+      throw new UnprocessableEntityException(
+        `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
       );
     }
 
@@ -159,6 +196,7 @@ export class ApplicationController extends BaseController {
    * @returns the application id of the created draft or an
    * HTTP exception if it is not possible to create it.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
@@ -207,6 +245,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId draft application id.
    * @param userToken token from the authenticated student.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
@@ -297,6 +336,7 @@ export class ApplicationController extends BaseController {
    * Confirm Assessment of a Student.
    * @param applicationId application id to be updated.
    */
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
@@ -401,14 +441,14 @@ export class ApplicationController extends BaseController {
       await this.applicationService.getProgramYearOfApplication(
         student.id,
         applicationId,
-        includeInActivePY
+        includeInActivePY,
       );
 
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
-      active: applicationProgramYear.programYear.active
+      active: applicationProgramYear.programYear.active,
     } as ProgramYearOfApplicationDto;
   }
 

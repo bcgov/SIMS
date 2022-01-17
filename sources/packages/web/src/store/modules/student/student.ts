@@ -1,3 +1,5 @@
+import { SINStatusEnum } from "@/types/contracts/StudentContract";
+
 export class StudentProfile {
   name?: string;
   age?: string;
@@ -10,16 +12,25 @@ export class StudentProfile {
   gender?: string;
   givenName?: string;
   middleName?: string;
+  validSIN?: boolean;
+}
+
+export class SINValidStatus {
+  sinStatus?: SINStatusEnum;
+  severity?: string;
+  message?: string;
 }
 
 export class StudentState {
   profile: StudentProfile = new StudentProfile();
   hasStudentAccount = false;
+  sinValidStatus: SINValidStatus = new SINValidStatus();
 }
 
 const initialState: StudentState = {
   profile: new StudentProfile(),
   hasStudentAccount: false,
+  sinValidStatus: new SINValidStatus(),
 };
 
 export const student = {
@@ -43,9 +54,20 @@ export const student = {
     SET_HAS_STUDENT_ACCOUNT(state: StudentState, hasStudentAccount: boolean) {
       state.hasStudentAccount = hasStudentAccount;
     },
+
+    SET_VALID_SIN(state: StudentState, sinValidStatus: SINValidStatus) {
+      state.sinValidStatus = sinValidStatus;
+    },
   },
 
   actions: {
+    setHasValidSIN(
+      { commit }: { commit: Function },
+      sinValidStatus: SINValidStatus,
+    ) {
+      commit("SET_VALID_SIN", sinValidStatus);
+    },
+
     setStudentProfileData({ commit }: { commit: Function }, token: any) {
       commit("SET_STUDENT_PROFILE_DATA", token.tokenParsed);
     },

@@ -7,7 +7,6 @@ import * as localizedFormat from "dayjs/plugin/localizedFormat";
 import * as timezone from "dayjs/plugin/timezone";
 import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import { EXTENDED_DATE_FORMAT } from "../utilities";
-
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -141,4 +140,21 @@ export function getExtendedDateFormat(date: Date): string {
  */
 export function getDateOnlyFormat(date: Date): string {
   return dayjs(date).format(DATE_ONLY_FORMAT);
+}
+
+/**
+ * Get the extended date format(2021 Mar 22) for the date given
+ * @param date date to be retrieved as Extended date format
+ * @returns extended date format like March, 22 2021
+ */
+export function getDateDifferenceInMonth(
+  firstDate: Date | string,
+  secondDate: Date | string,
+): number {
+  if (firstDate && secondDate) {
+    const date1 = dayjs(firstDate);
+    const date2 = dayjs(secondDate);
+    return date1.diff(date2);
+  }
+  return NaN;
 }

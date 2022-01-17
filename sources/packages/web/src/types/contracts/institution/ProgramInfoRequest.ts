@@ -1,4 +1,4 @@
-import { OfferingDTO } from "@/types";
+import { OfferingDTO, OfferingIntensity } from "@/types";
 
 /**
  * Possible status for a Program Information Request (PIR).
@@ -60,6 +60,9 @@ export interface GetProgramInfoRequestDto
   // for `Deny program information request` checkbox
   denyProgramInformationRequest: boolean;
   isActiveProgramYear: boolean;
+  offeringIntensitySelectedByStudent: OfferingIntensity;
+  programYearStartDate: Date;
+  programYearEndDate: Date;
 }
 
 export interface GetPIRDeniedReasonDto {

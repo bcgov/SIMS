@@ -193,7 +193,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const sequenceNumberSize =
       MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
 
-    let nextApplicationSequence: number = NaN;
+    let nextApplicationSequence = NaN;
     await this.sequenceService.consumeNextSequence(
       sequenceName,
       async (nextSequenceNumber: number) => {
@@ -358,6 +358,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "PIRDeniedReason.reason",
         "PIRDeniedReason.id",
         "programYear.active",
+        "programYear.startDate",
+        "programYear.endDate",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
@@ -419,6 +421,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "pirDeniedReasonId.reason",
         "application.coeDeniedOtherDesc",
         "application.pirDeniedOtherDesc",
+        "programYear.startDate",
+        "programYear.endDate",
       ])
       .leftJoin("application.offering", "offering")
       .leftJoin("application.location", "location")

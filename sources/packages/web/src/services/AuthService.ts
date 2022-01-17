@@ -14,7 +14,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "./StudentService";
-
+import { useFormatters } from "@/composables";
 /**
  * Manages the KeyCloak initialization and authentication methods.
  */
@@ -116,7 +116,11 @@ export class AuthService {
                 name: StudentRoutesConst.STUDENT_PROFILE,
               };
             }
-
+            const studentInfo = await StudentService.shared.getStudentInfo();
+            await store.dispatch(
+              "student/setHasValidSIN",
+              useFormatters().parseSINValidStatus(studentInfo.validSin),
+            );
             break;
           }
           case ClientIdType.Institution: {

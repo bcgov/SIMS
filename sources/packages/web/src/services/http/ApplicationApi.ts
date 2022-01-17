@@ -110,16 +110,20 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<void> {
-    try {
-      return await this.apiClient.patch(
+    // this.apiClient.patch is used to catch the errors
+    // this errors are displayed in client side in toast message
+    await this.apiClient
+      .patch(
         `application/${applicationId}/submit`,
         payload,
         this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+      )
+      .catch(error => {
+        if (error.response) {
+          this.handleRequestError(error.response?.data?.message);
+          throw error.response?.data?.message;
+        }
+      });
   }
 
   public async getProgramYearOfApplication(
