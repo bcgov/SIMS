@@ -40,6 +40,7 @@ import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
+  CheckSinValidation,
   Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -102,6 +103,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be changed to submitted.
    * @param userToken token from the authenticated student.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
@@ -194,6 +196,7 @@ export class ApplicationController extends BaseController {
    * @returns the application id of the created draft or an
    * HTTP exception if it is not possible to create it.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
@@ -242,6 +245,7 @@ export class ApplicationController extends BaseController {
    * @param applicationId draft application id.
    * @param userToken token from the authenticated student.
    */
+  @CheckSinValidation()
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
@@ -332,6 +336,7 @@ export class ApplicationController extends BaseController {
    * Confirm Assessment of a Student.
    * @param applicationId application id to be updated.
    */
+  @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
