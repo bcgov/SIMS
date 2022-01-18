@@ -5,6 +5,7 @@ export enum RecordTypeCodes {
   Header = "100",
   IndividualDataRecord = "200",
   ApplicationDataRecord = "300",
+  PartTimeApplicationDataRecord = "301",
   RestrictionDataRecord = "400",
 }
 
