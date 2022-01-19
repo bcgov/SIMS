@@ -24,7 +24,11 @@ export class SFASPartTimeApplicationsService
   /**
    * Import a record from SFAS. This method will be invoked by SFAS
    * import processing service when the record type is detected as
-   * RecordTypeCodes.ApplicationDataRecord.
+   * RecordTypeCodes.PartTimeApplicationDataRecord.
+   * ! when this scenarios was tested with test data, it was
+   * ! having application id duplication with different
+   * ! individual id, which will not happen in production
+   * ! as confirmed from client.
    */
   async importSFASRecord(
     record: SFASRecordIdentification,

@@ -4,7 +4,7 @@ import { TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
- * Data related to a Student Application on SFAS Part Time.
+ * Data related to a Part Time Student Application on SFAS that came from SAIL
  */
 @Entity({ name: TableNames.SFASPartTimeApplications })
 export class SFASPartTimeApplications extends BaseModel {
@@ -46,7 +46,7 @@ export class SFASPartTimeApplications extends BaseModel {
    */
   @Column({
     name: "csgp_award",
-    nullable: false,
+    nullable: true,
   })
   CSGPAward: number;
   /**
@@ -54,7 +54,7 @@ export class SFASPartTimeApplications extends BaseModel {
    */
   @Column({
     name: "sbsd_award",
-    nullable: false,
+    nullable: true,
   })
   SBSDAward: number;
   /**
@@ -62,6 +62,7 @@ export class SFASPartTimeApplications extends BaseModel {
    */
   @Column({
     name: "extracted_at",
+    type: "timestamptz",
     nullable: false,
   })
   extractedAt: Date;
