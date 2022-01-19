@@ -55,7 +55,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "bsl_award",
-    nullable: false,
+    nullable: true,
   })
   bslAward: number;
   /**
@@ -63,7 +63,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "csl_award",
-    nullable: false,
+    nullable: true,
   })
   cslAward: number;
   /**
@@ -71,7 +71,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "bcag_award",
-    nullable: false,
+    nullable: true,
   })
   bcagAward: number;
   /**
@@ -79,7 +79,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "bgpd_award",
-    nullable: false,
+    nullable: true,
   })
   bgpdAward: number;
   /**
@@ -87,7 +87,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "csfg_award",
-    nullable: false,
+    nullable: true,
   })
   csfgAward: number;
   /**
@@ -95,7 +95,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "csgt_award",
-    nullable: false,
+    nullable: true,
   })
   csgtAward: number;
   /**
@@ -103,7 +103,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "csgd_award",
-    nullable: false,
+    nullable: true,
   })
   csgdAward: number;
   /**
@@ -111,7 +111,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "csgp_award",
-    nullable: false,
+    nullable: true,
   })
   csgpAward: number;
   /**
@@ -119,7 +119,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "sbsd_award",
-    nullable: false,
+    nullable: true,
   })
   sbsdAward: number;
   /**
@@ -137,6 +137,7 @@ export class SFASApplication extends BaseModel {
    */
   @Column({
     name: "extracted_at",
+    type: "timestamptz",
     nullable: false,
   })
   extractedAt: Date;

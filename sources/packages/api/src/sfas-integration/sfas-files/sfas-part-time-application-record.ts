@@ -35,13 +35,17 @@ export class SFASPartTimeApplicationRecord extends SFASRecordIdentification {
   /**
    * CSGP Award Amount (sail_extract_data.sail_csgp_award_amt).
    */
-  get CSGPAward(): number {
-    return +this.line.substring(39, 39 + 10);
+  get CSGPAward(): number | null {
+    return this.line.substring(39, 39 + 10).trim()
+      ? +this.line.substring(39, 39 + 10).trim()
+      : null;
   }
   /**
    * SBSD Award Amount (sail_extract_data.sail_bcsl_sbsd_award_amt ).
    */
-  get SBSDAward(): number {
-    return +this.line.substring(49, 49 + 10);
+  get SBSDAward(): number | null {
+    return this.line.substring(49, 49 + 10).trim()
+      ? +this.line.substring(49, 49 + 10).trim()
+      : null;
   }
 }
