@@ -42,7 +42,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total BC Student Loan (award_disbursement.disbursement_amt).
    */
-  get bslAward(): number {
+  get bslAward(): number | null {
     return this.line.substring(47, 47 + 10).trim()
       ? parseDecimal(this.line.substring(47, 47 + 10))
       : null;
@@ -50,7 +50,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total CSL Student Loan (award_disbursement.disbursement_amt).
    */
-  get cslAward(): number {
+  get cslAward(): number | null {
     return this.line.substring(57, 57 + 10).trim()
       ? parseDecimal(this.line.substring(57, 57 + 10))
       : null;
@@ -58,7 +58,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total BC Access Grant award_disbursement.disbursement_amt.
    */
-  get bcagAward(): number {
+  get bcagAward(): number | null {
     return this.line.substring(67, 67 + 10).trim()
       ? parseDecimal(this.line.substring(67, 67 + 10))
       : null;
@@ -66,7 +66,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total British Columbia Permanent Disability Grant (award_disbursement.disbursement_amt).
    */
-  get bgpdAward(): number {
+  get bgpdAward(): number | null {
     return this.line.substring(77, 77 + 10).trim()
       ? parseDecimal(this.line.substring(77, 77 + 10))
       : null;
@@ -74,7 +74,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total Canada Student Grant for Students in Full Time Studies (award_disbursement.disbursement_amt).
    */
-  get csfgAward(): number {
+  get csfgAward(): number | null {
     return this.line.substring(87, 87 + 10).trim()
       ? parseDecimal(this.line.substring(87, 87 + 10))
       : null;
@@ -82,7 +82,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total Canada Student Top-Up Grant for Adult Learners (award_disbursement.disbursement_amt).
    */
-  get csgtAward(): number {
+  get csgtAward(): number | null {
     return this.line.substring(97, 97 + 10).trim()
       ? parseDecimal(this.line.substring(97, 97 + 10))
       : null;
@@ -90,7 +90,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total Canada Grant – Full-Time with Dependent (award_disbursement.disbursement_amt).
    */
-  get csgdAward(): number {
+  get csgdAward(): number | null {
     return this.line.substring(107, 107 + 10).trim()
       ? parseDecimal(this.line.substring(107, 107 + 10))
       : null;
@@ -98,7 +98,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total Canada Student Grant for Students with Permanent Disabilities (award_disbursement.disbursement_amt).
    */
-  get csgpAward(): number {
+  get csgpAward(): number | null {
     return this.line.substring(117, 117 + 10).trim()
       ? parseDecimal(this.line.substring(117, 117 + 10))
       : null;
@@ -106,7 +106,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   /**
    * Total Supplemental Bursary for Students with Disabilities (award_disbursement.disbursement_amt).
    */
-  get sbsdAward(): number {
+  get sbsdAward(): number | null {
     return this.line.substring(127, 127 + 10).trim()
       ? parseDecimal(this.line.substring(127, 127 + 10))
       : null;
