@@ -13,6 +13,7 @@ import {
   SFASDataImporter,
   SFASIndividualService,
   SFASRestrictionService,
+  SFASPartTimeApplicationsService,
 } from "../services";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "../utilities";
 import * as os from "os";
@@ -25,6 +26,7 @@ export class SFASIntegrationProcessingService {
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasRestrictionService: SFASRestrictionService,
+    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     config: ConfigService,
   ) {
     this.ftpReceiveFolder =
@@ -182,6 +184,9 @@ export class SFASIntegrationProcessingService {
         break;
       case RecordTypeCodes.RestrictionDataRecord:
         dataImporter = this.sfasRestrictionService;
+        break;
+      case RecordTypeCodes.PartTimeApplicationDataRecord:
+        dataImporter = this.sfasPartTimeApplicationsService;
         break;
     }
     return dataImporter;

@@ -37,4 +37,5 @@ export const TableNames = {
   StudentNotes: "student_notes",
   InstitutionNotes: "institution_notes",
   InstitutionRestrictions: "institution_restrictions",
+  SFASPartTimeApplications: "sfas_part_time_applications",
 };
