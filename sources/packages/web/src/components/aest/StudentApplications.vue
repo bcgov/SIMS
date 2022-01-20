@@ -68,7 +68,12 @@
               )
             "
           >
-            <v-btn :disabled="hasRestriction" plain>
+            <v-btn
+              :disabled="
+                hasRestriction || sinValidStatus !== SINStatusEnum.VALID
+              "
+              plain
+            >
               <font-awesome-icon
                 :icon="['fas', 'pen']"
                 class="mr-2"
@@ -80,7 +85,12 @@
                 "
               />
             </v-btn>
-            <v-btn :disabled="hasRestriction" plain>
+            <v-btn
+              :disabled="
+                hasRestriction || sinValidStatus !== SINStatusEnum.VALID
+              "
+              plain
+            >
               <font-awesome-icon
                 :icon="['fas', 'trash']"
                 v-tooltip="'Click To Cancel this Application'"
@@ -126,6 +136,8 @@ import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import { useStore } from "vuex";
+import { SINStatusEnum } from "@/types";
 
 export default {
   components: { Status, ConfirmEditApplication, CancelApplication },
@@ -137,6 +149,12 @@ export default {
     studentId: {
       type: Number,
       required: true,
+    },
+  },
+  computed: {
+    sinValidStatus() {
+      const store = useStore();
+      return store.state.student.sinValidStatus.sinStatus;
     },
   },
   setup(props: any) {
@@ -289,6 +307,7 @@ export default {
       showHideCancelApplication,
       ClientIdType,
       reloadApplication,
+      SINStatusEnum,
     };
   },
 };
