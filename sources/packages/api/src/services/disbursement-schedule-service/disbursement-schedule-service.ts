@@ -93,7 +93,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       const newDisbursement = new DisbursementSchedule();
       newDisbursement.disbursementDate = disbursement.disbursementDate;
       newDisbursement.negotiatedExpiryDate = disbursement.negotiatedExpiryDate;
-      newDisbursement.documentNumber = await this.getNextDocumentNumber();
       newDisbursement.disbursementValues = disbursement.disbursements.map(
         (disbursementValue) => {
           const newValue = new DisbursementValue();
@@ -235,5 +234,21 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     documentNumber: number,
   ): Promise<DisbursementSchedule> {
     return this.repo.findOne({ documentNumber: documentNumber });
+  }
+
+  /**
+   * Update DisbursementSchedule with documentNumber
+   * @param documentNumber document Number
+   * @returns the result of update.
+   */
+  async updateDisbursementScheduleDocumentNumber(
+    applicationId: number,
+  ): Promise<DisbursementSchedule> {
+    const disbursementScheduleToUpdate = await this.repo.findOne({
+      application: { id: applicationId },
+    });
+    disbursementScheduleToUpdate.documentNumber =
+      await this.getNextDocumentNumber();
+    return this.save(disbursementScheduleToUpdate);
   }
 }
