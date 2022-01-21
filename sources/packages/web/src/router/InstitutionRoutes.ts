@@ -121,25 +121,25 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           },
         },
       },
-      {
-        path: AppRoutes.LocationProgramsView,
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        components: {
-          default: LocationProgramView,
-          sidebar: InstitutionHomeSideBar,
-        },
-        props: true,
-        meta: {
-          clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [
-              InstitutionUserTypes.admin,
-              InstitutionUserTypes.locationManager,
-              InstitutionUserTypes.user,
-            ],
-          },
-        },
-      },
+      // {
+      //   path: AppRoutes.LocationProgramsView,
+      //   name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+      //   components: {
+      //     default: LocationProgramView,
+      //     sidebar: InstitutionHomeSideBar,
+      //   },
+      //   props: true,
+      //   meta: {
+      //     clientType: ClientIdType.Institution,
+      //     checkAllowedLocation: {
+      //       userTypes: [
+      //         InstitutionUserTypes.admin,
+      //         InstitutionUserTypes.locationManager,
+      //         InstitutionUserTypes.user,
+      //       ],
+      //     },
+      //   },
+      // },
       {
         path: AppRoutes.ActiveApplicationsSummary,
         name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,

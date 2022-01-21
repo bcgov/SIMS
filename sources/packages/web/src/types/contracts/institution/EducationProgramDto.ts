@@ -22,7 +22,7 @@ export interface EducationProgramBaseDto {
   cipCode: string;
   nocCode: string;
   sabcCode: string;
-  approvalStatus: string;
+  approvalStatus: ApprovalStatus;
   programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
 }
@@ -33,7 +33,7 @@ export interface SummaryEducationProgramDto {
   credentialType: string;
   cipCode: string;
   offeringsCount: number;
-  approvalStatus: string;
+  approvalStatus: ApprovalStatus;
 }
 
 export interface EducationProgramDto extends EducationProgramBaseDto {
@@ -58,6 +58,10 @@ export enum ApprovalStatus {
    * Education Program is pending.
    */
   pending = "pending",
+  /**
+   * Education Program is denied.
+   */
+  denied = "denied",
 }
 
 /**

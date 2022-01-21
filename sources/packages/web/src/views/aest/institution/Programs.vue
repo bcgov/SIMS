@@ -1,34 +1,25 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <p class="category-header-large color-blue">
-        All Programs ({{ institutionProgramsSummary.programsCount }})
-        <v-row class="float-right">
-          <v-col>
-            <InputText
-              name="searchProgramName"
-              v-model="searchProgramName"
-              placeholder="Search Program Name"
-              @keyup.enter="goToSearchProgramName(searchProgramName)"
-            />
-          </v-col>
-          <v-col>
-            <v-btn
-              class="primary-btn-background"
-              @click="goToSearchProgramName(searchProgramName)"
-              >Search</v-btn
-            >
-          </v-col>
-          <v-col>
-            <v-btn
-              class="primary-btn-background"
-              @click="goToSearchProgramName('')"
-              >Clear</v-btn
-            >
-          </v-col>
-        </v-row>
-      </p>
-      <content-group v-if="programsFound">
+      <div class="mb-4">
+        <span class="category-header-large color-blue">
+          All Programs ({{ institutionProgramsSummary.programsCount }})
+        </span>
+        <div class="float-right">
+          <InputText
+            name="searchProgramName"
+            v-model="searchProgramName"
+            placeholder="Search Program Name"
+            @keyup.enter="goToSearchProgramName()"
+          />
+          <v-btn
+            class="ml-2 primary-btn-background"
+            @click="goToSearchProgramName()"
+            ><font-awesome-icon :icon="['fas', 'search']"
+          /></v-btn>
+        </div>
+      </div>
+      <content-group>
         <DataTable
           :value="institutionProgramsSummary.programsSummary"
           :lazy="true"
@@ -40,6 +31,9 @@
           @sort="pageSortEvent($event)"
           :loading="loading"
         >
+          <template #empty>
+            <p class="text-center font-weight-bold">No records found.</p>
+          </template>
           <Column
             field="submittedDate"
             header="Date Submitted"
@@ -74,12 +68,11 @@
           </Column>
           <Column field="programStatus" header="Status"
             ><template #body="slotProps">
-              <Chip
-                :label="slotProps.data.programStatus"
-                class="p-mr-2 p-mb-2 p-text-uppercase"
-                :class="
-                  getProgramStatusColorClass(slotProps.data.programStatus)
-                "/></template
+              <status-badge
+                :status="
+                  getProgramStatusToGeneralStatus(slotProps.data.programStatus)
+                "
+              ></status-badge> </template
           ></Column>
           <Column>
             <template #body="slotProps">
@@ -97,19 +90,20 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
   AESTInstitutionProgramsSummaryPaginatedDto,
-  ApprovalStatus,
   SortDBOrder,
 } from "@/types";
-import { useToastMessage } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import StatusBadge from "@/components/generic/StatusBadge.vue";
+import { useFormatStatuses } from "@/composables";
+
 export default {
-  components: { ContentGroup },
+  components: { ContentGroup, StatusBadge },
   props: {
     institutionId: {
       type: Number,
@@ -117,7 +111,6 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
     const router = useRouter();
     const institutionProgramsSummary = ref(
       {} as AESTInstitutionProgramsSummaryPaginatedDto,
@@ -129,6 +122,8 @@ export default {
     const DEFAULT_SORT_COLUMN = "submittedDate";
     const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
     const loading = ref(false);
+    const { getProgramStatusToGeneralStatus } = useFormatStatuses();
+
     const getProgramsSummaryList = async (
       institutionId: number,
       rowsPerPage: number,
@@ -148,12 +143,6 @@ export default {
           sortOrder,
           programName,
         );
-        if (institutionProgramsSummary.value.programsSummary.length === 0) {
-          toast.warn(
-            "No Programs found",
-            "No Programs found for the Institution/ Search Criteria",
-          );
-        }
       } finally {
         loading.value = false;
       }
@@ -168,24 +157,11 @@ export default {
         searchProgramName.value,
       );
     });
-    const programsFound = computed(() => {
-      return institutionProgramsSummary.value.programsCount > 0;
-    });
     const goToViewProgramDetail = (programId: number) => {
       router.push({
         name: AESTRoutesConst.PROGRAM_DETAILS,
         params: { programId: programId },
       });
-    };
-    const getProgramStatusColorClass = (status: ApprovalStatus) => {
-      switch (status) {
-        case ApprovalStatus.approved:
-          return "bg-info text-white";
-        case ApprovalStatus.pending:
-          return "bg-warning text-white";
-        default:
-          return "";
-      }
     };
     const pageSortEvent = async (event: any) => {
       currentPageSize.value = event?.rows;
@@ -198,26 +174,25 @@ export default {
         searchProgramName.value,
       );
     };
-    const goToSearchProgramName = async (programName: string) => {
+    const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
         currentPageSize.value ? currentPageSize.value : DEFAULT_ROW_SIZE,
         DEFAULT_PAGE,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
-        programName,
+        searchProgramName.value,
       );
     };
     return {
       institutionProgramsSummary,
-      programsFound,
       goToViewProgramDetail,
-      getProgramStatusColorClass,
       DEFAULT_ROW_SIZE,
       pageSortEvent,
       goToSearchProgramName,
       searchProgramName,
       loading,
+      getProgramStatusToGeneralStatus,
     };
   },
 };

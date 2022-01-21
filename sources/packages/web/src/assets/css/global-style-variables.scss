@@ -30,9 +30,11 @@ $panel-error-color: #dc2525;
 $button-font-color: #ffffff;
 
 /** SCSS Font Size variables **/
+$font-header-xlarge: 34px;
 $font-header-large: 27px;
 $font-header-medium: 20px;
 $font-header-small: 17px;
+$line-height-header-xlg: 36px;
 $line-height-header-lg: 34px;
 $line-height-header-md: 27px;
 $line-height-header-sm: 22px;
@@ -50,6 +52,14 @@ $border-color-info: #6554c0;
 
 /** Status badge color variables **/
 $badge-border-warning: rgb(255, 122, 0, 0.2);
-$badge-border-error: rgb(228, 34, 46, 0.2);
+$badge-border-error: rgb(228, 34, 46);
 $badge-border-success: rgb(22, 201, 46, 0.2);
 $badge-border-inactive: rgb(51, 58, 71, 0.2);
+
+/** font weight **/
+$font-weight-bold : bold;
+
+/** font style **/
+$font-style-normal : normal;
+
+

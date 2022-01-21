@@ -16,6 +16,7 @@ status Badge
 <script lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { GeneralStatusForBadge } from "@/types";
+import "@/assets/css/global-style-variables.scss";
 
 export default {
   props: {
@@ -25,37 +26,65 @@ export default {
     },
   },
   setup(props: any) {
+    const hexBrandBlack = "#333A47";
+    const hexBrandWhite = "#FFFFFF";
     const label = ref("");
     const badgeClass = ref("");
-    const textColor = ref("#333A47");
-    const backGroundColor = ref("#FFFFFF");
+    const textColor = ref(hexBrandBlack);
+    const backGroundColor = ref(hexBrandWhite);
     const iconColor = ref("");
-
+    const setGreen = () => {
+      // css class for green status
+      badgeClass.value = "status-badge-active";
+      textColor.value = hexBrandBlack;
+      backGroundColor.value = hexBrandWhite;
+      iconColor.value = "#16C92E";
+    };
+    const setBlack = () => {
+      // css class for black status
+      badgeClass.value = "status-badge-inactive";
+      textColor.value = hexBrandBlack;
+      backGroundColor.value = hexBrandWhite;
+      iconColor.value = hexBrandBlack;
+    };
+    const setOrange = () => {
+      // css class for orange status
+      badgeClass.value = "status-badge-warning";
+      textColor.value = hexBrandBlack;
+      backGroundColor.value = hexBrandWhite;
+      iconColor.value = "#FF7a00";
+    };
+    const setRed = () => {
+      // css class for red status
+      badgeClass.value = "status-badge-denied";
+      textColor.value = hexBrandBlack;
+      backGroundColor.value = hexBrandWhite;
+      iconColor.value = "#E4222E";
+    };
     const setStyles = () => {
       label.value = props.status;
       switch (props.status) {
         case GeneralStatusForBadge.Active:
+          setGreen();
+          break;
+        case GeneralStatusForBadge.Approved:
+          setGreen();
+          break;
         case GeneralStatusForBadge.ResolvedRestriction:
-          // css class for active status
-          badgeClass.value = "status-badge-active";
-          textColor.value = "#333A47";
-          backGroundColor.value = "#FFFFFF";
-          iconColor.value = "#16C92E";
+          setGreen();
           break;
         case GeneralStatusForBadge.InActive:
-          // css class for inactive status
-          badgeClass.value = "status-badge-inactive";
-          textColor.value = "#333A47";
-          backGroundColor.value = "#FFFFFF";
-          iconColor.value = "#333A47";
+          setBlack();
           break;
         case GeneralStatusForBadge.ActiveRestriction:
-          // css class for active restriction status
           label.value = "active";
-          badgeClass.value = "status-badge-active-restriction";
-          textColor.value = "#333A47";
-          backGroundColor.value = "#FFFFFF";
-          iconColor.value = "#FF7a00";
+          setOrange();
+          break;
+        case GeneralStatusForBadge.Pending:
+          setOrange();
+          break;
+        case GeneralStatusForBadge.Denied:
+          setRed();
           break;
       }
     };

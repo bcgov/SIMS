@@ -13,10 +13,10 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
-import formio from "../../../../components/generic/formio.vue";
-import { EducationProgramOfferingService } from "../../../../services/EducationProgramOfferingService";
-import { EducationProgramService } from "../../../../services/EducationProgramService";
-import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
+import formio from "@/components/generic/formio.vue";
+import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
+import { EducationProgramService } from "@/services/EducationProgramService";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { onMounted, ref } from "vue";
 
 export default {
@@ -38,7 +38,7 @@ export default {
   setup(props: any) {
     const toast = useToast();
     const router = useRouter();
-    const initialData = ref({});
+    const initialData = ref();
     onMounted(async () => {
       const programDetails = await EducationProgramService.shared.getProgram(
         props.programId,
@@ -90,6 +90,11 @@ export default {
         }
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+          params: {
+            programId: props.programId,
+            locationId: props.locationId,
+            locationName: initialData.value?.name,
+          },
         });
       } catch (excp) {
         toast.add({

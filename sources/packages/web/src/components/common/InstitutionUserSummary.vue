@@ -1,57 +1,55 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <div class="row p-3">
-    <div class="col col-3">
-      <span class="category-header-large color-blue">
-        All Users({{ usersListAndCount.totalUsers }})
-      </span>
-    </div>
-    <div class="col">
-      <div class="row float-right">
-        <InputText
-          v-model="searchBox"
-          placeholder="Search User"
-          @keyup.enter="searchUserTable()"
-        />
-        <v-btn
-          @click="searchUserTable()"
-          tile
-          class="ml-2 primary-btn-background"
-        >
-          <font-awesome-icon :icon="['fas', 'search']" />
-        </v-btn>
+  <div class="mb-4">
+    <span class="category-header-large color-blue">
+      All Users({{ usersListAndCount.totalUsers }})
+    </span>
+    <div class="float-right">
+      <InputText
+        v-model="searchBox"
+        placeholder="Search User"
+        @keyup.enter="searchUserTable()"
+      />
+      <v-btn
+        @click="searchUserTable()"
+        tile
+        class="ml-2 primary-btn-background"
+      >
+        <font-awesome-icon :icon="['fas', 'search']" />
+      </v-btn>
 
-        <v-btn
-          v-if="clientType === ClientIdType.Institution"
-          class="ml-2 primary-btn-background"
-          @click="openNewUserModal()"
-        >
-          <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
-          Add New User
-        </v-btn>
+      <v-btn
+        v-if="clientType === ClientIdType.Institution"
+        class="ml-2 primary-btn-background"
+        @click="openNewUserModal()"
+      >
+        <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
+        Add New User
+      </v-btn>
 
-        <!-- Add user -->
-        <AddInstitutionUser
-          :userType="userType"
-          :showAddUser="showAddUser"
-          :adminRoles="adminRoles"
-          @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
+      <!-- Add user -->
+      <AddInstitutionUser
+        v-if="clientType === ClientIdType.Institution"
+        :userType="userType"
+        :showAddUser="showAddUser"
+        :adminRoles="adminRoles"
+        @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
+        @getAllInstitutionUsers="getAllInstitutionUsers"
+      />
 
-        <!-- edit user -->
-        <EditInstitutionUser
-          :userType="userType"
-          :showEditUser="showEditUser"
-          :institutionUserName="institutionUserName"
-          :adminRoles="adminRoles"
-          @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
-      </div>
+      <!-- edit user -->
+      <EditInstitutionUser
+        v-if="clientType === ClientIdType.Institution"
+        :userType="userType"
+        :showEditUser="showEditUser"
+        :institutionUserName="institutionUserName"
+        :adminRoles="adminRoles"
+        @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+        @getAllInstitutionUsers="getAllInstitutionUsers"
+      />
     </div>
   </div>
-  <ContentGroup>
+  <content-group>
     <DataTable
       :value="usersListAndCount.users"
       :lazy="true"
@@ -139,7 +137,7 @@
         </template>
       </Column>
     </DataTable>
-  </ContentGroup>
+  </content-group>
 </template>
 
 <script lang="ts">

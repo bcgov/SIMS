@@ -1,19 +1,21 @@
 <template>
   <v-container>
-    <h5 class="text-muted">{{ locationName }}</h5>
-    <v-sheet elevation="1" class="mx-auto">
+    <p class="muted-heading-text">{{ locationName }}</p>
+    <p class="heading-x-large">Programs</p>
+    <v-card class="mt-4">
       <v-container>
-        <v-row>
-          <v-col cols="8">
-            <h2 class="color-blue">Programs</h2>
-          </v-col>
-          <v-col cols="4">
-            <v-btn class="float-right" @click="goToAddNewProgram()">
-              <v-icon size="25" left> mdi-open-in-new </v-icon>
-              Create New Program
-            </v-btn>
-          </v-col>
-        </v-row>
+        <div>
+          <span class="color-blue category-header-large ml-2"
+            >All programs</span
+          >
+          <v-btn
+            class="float-right mb-2 primary-btn-background"
+            @click="goToAddNewProgram()"
+          >
+            <v-icon size="25" left> mdi-open-in-new </v-icon>
+            Create New Program
+          </v-btn>
+        </div>
         <DataTable :autoLayout="true" :value="programs">
           <Column field="cipCode" header="CIP" :sortable="true"></Column>
           <Column field="name" header="Program Name" :sortable="true"></Column>
@@ -31,12 +33,11 @@
           ></Column>
           <Column field="approvalStatus" header="Status" :sortable="true"
             ><template #body="slotProps">
-              <Chip
-                :label="slotProps.data.approvalStatus"
-                class="p-mr-2 p-mb-2 p-text-uppercase"
-                :class="
-                  getProgramStatusColorClass(slotProps.data.approvalStatus)
-                "/></template
+              <status-badge
+                :status="
+                  getProgramStatusToGeneralStatus(slotProps.data.approvalStatus)
+                "
+              ></status-badge></template
           ></Column>
           <Column>
             <template #body="slotProps">
@@ -47,18 +48,21 @@
           </Column>
         </DataTable>
       </v-container>
-    </v-sheet>
+    </v-card>
   </v-container>
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { EducationProgramService } from "../../../../services/EducationProgramService";
-import { InstitutionRoutesConst } from "../../../../constants/routes/RouteConstants";
-import { SummaryEducationProgramDto, ApprovalStatus } from "../../../../types";
+import { EducationProgramService } from "@/services/EducationProgramService";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { SummaryEducationProgramDto } from "@/types";
 import { ref, watch, onMounted } from "vue";
+import StatusBadge from "@/components/generic/StatusBadge.vue";
+import { useFormatStatuses } from "@/composables";
 
 export default {
+  components: { StatusBadge },
   props: {
     locationId: {
       type: Number,
@@ -72,6 +76,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const programs = ref([] as SummaryEducationProgramDto[]);
+    const { getProgramStatusToGeneralStatus } = useFormatStatuses();
 
     const loadSummary = async () => {
       programs.value = await EducationProgramService.shared.getLocationProgramsSummary(
@@ -99,22 +104,11 @@ export default {
         },
       });
     };
-
-    const getProgramStatusColorClass = (status: string) => {
-      switch (status) {
-        case ApprovalStatus.approved:
-          return "bg-info text-white";
-        case ApprovalStatus.pending:
-          return "bg-warning text-white";
-        default:
-          return "";
-      }
-    };
     return {
       programs,
       goToAddNewProgram,
       goToViewProgram,
-      getProgramStatusColorClass,
+      getProgramStatusToGeneralStatus,
     };
   },
 };
