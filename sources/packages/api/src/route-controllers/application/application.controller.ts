@@ -56,11 +56,16 @@ import {
   transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
+  addDays,
+  subtractDays,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
+export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
+export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =
+  "There is an existing application already with overlapping study period or a pending PIR.";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -120,6 +125,7 @@ export class ApplicationController extends BaseController {
         "Program Year is not active. Not able to create an application invalid request",
       );
     }
+
     const submissionResult = await this.formService.dryRunSubmission(
       programYear.formName,
       payload.data,
@@ -131,6 +137,7 @@ export class ApplicationController extends BaseController {
     }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
+    let studyEndDate = payload.data.studyendDate;
     if (payload.data.selectedOffering) {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
@@ -139,6 +146,7 @@ export class ApplicationController extends BaseController {
       // then selectedOffering will be there in payload,
       // then study start date taken from offering
       studyStartDate = offering.studyStartDate;
+      studyEndDate = offering.studyEndDate;
     } else {
       // when selectedOffering is not selected
       const notValidDates = checkNotValidStudyPeriod(
@@ -150,6 +158,19 @@ export class ApplicationController extends BaseController {
           `${INVALID_STUDY_DATES} ${notValidDates}`,
         );
       }
+    }
+
+    const existingOverlapApplication =
+      await this.applicationService.validatePIRAndDateOverlap(
+        userToken.userId,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
+    if (existingOverlapApplication) {
+      throw new UnprocessableEntityException(
+        PIR_OR_DATE_OVERLAP_ERROR,
+        PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
+      );
     }
 
     if (!checkStudyStartDateWithinProgramYear(studyStartDate, programYear)) {

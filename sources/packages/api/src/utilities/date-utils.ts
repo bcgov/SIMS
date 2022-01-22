@@ -158,3 +158,14 @@ export function getDateDifferenceInMonth(
   }
   return NaN;
 }
+
+export const addDays = (date: Date | string, daysToAdd: number): Date => {
+  return dayjs(date).add(daysToAdd, "day").toDate();
+};
+
+export const subtractDays = (
+  date: Date | string,
+  daysToSubtract: number,
+): Date => {
+  return dayjs(date).subtract(daysToSubtract, "day").toDate();
+};

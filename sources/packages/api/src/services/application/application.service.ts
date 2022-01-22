@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
+import { Connection, In, IsNull, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -39,6 +39,8 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   databaseFieldOfApplicationDataTable,
+  addDays,
+  subtractDays,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -1480,6 +1482,41 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.inProgress,
       })
+      .getOne();
+  }
+
+  async validatePIRAndDateOverlap(
+    userId: number,
+    studyStartDate: Date,
+    studyEndDate: Date,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select(["application.id"])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .leftJoin("application.offering", "offering")
+      .where("user.id = :userId", { userId })
+      .andWhere("application.applicationStatus NOT IN (:...status)", {
+        status: [
+          ApplicationStatus.draft,
+          ApplicationStatus.overwritten,
+          ApplicationStatus.cancelled,
+        ],
+      })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("offering.id is NULL")
+            .orWhere(
+              "offering.studyStartDate BETWEEN :studyStartDate AND :studyEndDate",
+              { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            )
+            .orWhere(
+              "offering.studyEndDate BETWEEN :studyStartDate AND :studyEndDate",
+              { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            );
+        }),
+      )
       .getOne();
   }
 }
