@@ -32,7 +32,12 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import { getOfferingNameAndPeriod, getDateOnlyFormat } from "../../utilities";
+import {
+  getOfferingNameAndPeriod,
+  getDateOnlyFormat,
+  formatDate,
+  EXTENDED_DATE_FORMAT,
+} from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ProgramsOfferingSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
 import { SortDBOrder } from "../../types/sortDBOrder";
@@ -89,6 +94,7 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
   ): Promise<EducationProgramOfferingDto[]> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
+    // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
     const programOfferingList =
       await this.programOfferingService.getAllEducationProgramOffering(
         locationId,
@@ -349,5 +355,42 @@ export class EducationProgramOfferingController {
       programsSummary: paginatedProgramOfferingSummary,
       programsCount: paginatedProgramOfferingSummaryResult.programsCount,
     };
+  }
+
+  /**
+   * Offering Summary for ministry users
+   * @param programId program id
+   * @returns Offering Summary
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("education-program/:programId/aest")
+  async getOfferingSummary(
+    @Param("programId") programId: number,
+  ): Promise<EducationProgramOfferingDto[]> {
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
+    // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
+    const programOfferingList =
+      await this.programOfferingService.getOfferingSummary(programId, [
+        OfferingTypes.public,
+      ]);
+    if (!programOfferingList) {
+      throw new UnprocessableEntityException(
+        "Not able to find a Education Program Offering associated with the current Education Program and Location.",
+      );
+    }
+    return programOfferingList.map((offering) => ({
+      id: offering.id,
+      offeringName: offering.name,
+      studyDates:
+        offering.studyStartDate && offering.studyEndDate
+          ? `${formatDate(
+              offering.studyStartDate,
+              EXTENDED_DATE_FORMAT,
+            )} - ${formatDate(offering.studyEndDate, EXTENDED_DATE_FORMAT)}`
+          : "-",
+      offeringDelivered: offering.offeringDelivered,
+      offeringIntensity: offering.offeringIntensity,
+    }));
   }
 }

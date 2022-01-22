@@ -69,4 +69,15 @@ export class EducationProgramService {
   public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions();
   }
+
+  /**
+   * Education Program Details for ministry users
+   * @param programId program id
+   * @returns Education Program Details
+   */
+  public async getEducationProgramForAEST(
+    programId: number,
+  ): Promise<EducationProgramDto> {
+    return ApiClient.EducationProgram.getEducationProgramForAEST(programId);
+  }
 }

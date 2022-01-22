@@ -126,4 +126,17 @@ export class EducationProgramOfferingService {
       includeInActivePY,
     );
   }
+
+  /**
+   * Offering Summary for ministry users
+   * @param programId program id
+   * @returns Offering Summary
+   */
+  public async getOfferingSummaryForAEST(
+    programId: number,
+  ): Promise<EducationProgramOfferingDto[]> {
+    return ApiClient.EducationProgramOffering.getOfferingSummaryForAEST(
+      programId,
+    );
+  }
 }

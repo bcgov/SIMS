@@ -350,4 +350,33 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       programsCount: programsCount.length,
     };
   }
+
+  /**
+   * Education Offering summary of a Program
+   * @param programId
+   * @returns
+   */
+  async getOfferingSummary(
+    programId: number,
+    offeringTypes: OfferingTypes[],
+  ): Promise<EducationProgramOffering[]> {
+    const offeringsQuery = this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.offeringDelivered",
+        "offerings.offeringIntensity",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .where("educationProgram.id = :programId", { programId })
+      .andWhere("offerings.offeringType in (:...offeringTypes)", {
+        offeringTypes,
+      });
+
+    return offeringsQuery.getMany();
+  }
 }

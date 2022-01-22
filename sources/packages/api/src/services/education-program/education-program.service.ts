@@ -9,7 +9,6 @@ import { Connection, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
-  EducationProgramModel,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
@@ -182,8 +181,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getLocationPrograms(
     programId: number,
     institutionId: number,
-  ): Promise<EducationProgramModel> {
-    const educationProgram = await this.repo
+  ): Promise<EducationProgram> {
+    return this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
@@ -200,20 +199,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .getOne();
-
-    const summaryItem = new EducationProgramModel();
-    summaryItem.id = educationProgram.id;
-    summaryItem.name = educationProgram.name;
-    summaryItem.description = educationProgram.description;
-    summaryItem.credentialType = educationProgram.credentialType;
-    summaryItem.cipCode = educationProgram.cipCode;
-    summaryItem.nocCode = educationProgram.nocCode;
-    summaryItem.sabcCode = educationProgram.sabcCode;
-    summaryItem.approvalStatus = educationProgram.approvalStatus;
-    summaryItem.programIntensity = educationProgram.programIntensity;
-    summaryItem.institutionProgramCode =
-      educationProgram.institutionProgramCode;
-    return summaryItem;
   }
 
   /**
@@ -273,5 +258,30 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .orderBy("programs.name")
       .getMany();
+  }
+  /**
+   * Gets program details with program id.
+   * @param programId Program id.
+   * @returns program
+   */
+  async getEducationProgramDetails(
+    programId: number,
+  ): Promise<EducationProgram> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.description",
+        "programs.credentialType",
+        "programs.cipCode",
+        "programs.nocCode",
+        "programs.sabcCode",
+        "programs.approvalStatus",
+        "programs.programIntensity",
+        "programs.institutionProgramCode",
+      ])
+      .where("programs.id = :id", { id: programId })
+      .getOne();
   }
 }

@@ -17,16 +17,3 @@ export class EducationProgramsSummary {
   approvalStatus: string;
   totalOfferings: number;
 }
-
-export class EducationProgramModel {
-  id: number;
-  name: string;
-  description: string;
-  credentialType: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  approvalStatus: string;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode: string;
-}

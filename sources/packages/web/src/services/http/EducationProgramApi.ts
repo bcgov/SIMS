@@ -69,7 +69,7 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<EducationProgramDto> {
     try {
       const response = await this.apiClient.get(
-        `institution/education-program/${programId}/summary`,
+        `institution/education-program/${programId}/details`,
         this.addAuthHeader(),
       );
       return response.data as EducationProgramDto;
@@ -128,6 +128,26 @@ export class EducationProgramApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Education Program Details for ministry users
+   * @param programId program id
+   * @returns Education Program Details
+   */
+  public async getEducationProgramForAEST(
+    programId: number,
+  ): Promise<EducationProgramDto> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/education-program/${programId}/aest`,
+        this.addAuthHeader(),
+      );
+      return response.data as EducationProgramDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

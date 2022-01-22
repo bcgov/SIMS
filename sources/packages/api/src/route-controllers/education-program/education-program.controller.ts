@@ -15,6 +15,7 @@ import {
   AllowAuthorizedParty,
   HasLocationAccess,
   UserToken,
+  Groups,
 } from "../../auth/decorators";
 import { EducationProgramDto } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
@@ -27,6 +28,7 @@ import {
 import { EducationProgram } from "../../database/entities";
 import { OptionItem } from "../../types";
 import { credentialTypeToDisplay } from "../../utilities";
+import { UserGroups } from "../../auth/user-groups.enum";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -125,13 +127,13 @@ export class EducationProgramController {
   }
 
   /**
-   * This retuns only the subset of the EducationProgram to get
+   * This returns only the subset of the EducationProgram to get
    * the complete EducationProgram DTO use the @Get(":id") method
    * @param programId
    * @returns
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
-  @Get(":programId/summary")
+  @Get(":programId/details")
   async get(
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
@@ -278,6 +280,36 @@ export class EducationProgramController {
       hasIntlExchange: program.hasIntlExchange,
       intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
       programDeclaration: program.programDeclaration,
+    };
+  }
+
+  /**
+   * Education Program Details for ministry users
+   * @param programId program id
+   * @returns Education Program Details
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get(":programId/aest")
+  async getEducationProgramDetails(
+    @Param("programId") programId: number,
+  ): Promise<SubsetEducationProgramDto> {
+    const educationProgram =
+      await this.programService.getEducationProgramDetails(programId);
+    return {
+      id: educationProgram.id,
+      name: educationProgram.name,
+      description: educationProgram.description,
+      credentialType: educationProgram.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(
+        educationProgram.credentialType,
+      ),
+      cipCode: educationProgram.cipCode,
+      nocCode: educationProgram.nocCode,
+      sabcCode: educationProgram.sabcCode,
+      approvalStatus: educationProgram.approvalStatus,
+      programIntensity: educationProgram.programIntensity,
+      institutionProgramCode: educationProgram.institutionProgramCode,
     };
   }
 }

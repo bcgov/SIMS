@@ -158,3 +158,15 @@ export function getDateDifferenceInMonth(
   }
   return NaN;
 }
+
+/**
+ * format a date to given format
+ * @param date date
+ * @param dateFormat format
+ * @returns extended date format like March, 22 2021
+ */
+export function formatDate(date: Date | string, dateFormat: string): string {
+  if (date) {
+    return dayjs(date).format(dateFormat);
+  }
+}

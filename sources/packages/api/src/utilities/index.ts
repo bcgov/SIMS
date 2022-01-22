@@ -17,4 +17,4 @@ export * from "./datatable-database-mapping-utils";
 export * from "./note-utils";
 export * from "./datatable-config";
 export * from "./institution-utils";
-export * from "./vaildation-error-utils"
+export * from "./vaildation-error-utils";

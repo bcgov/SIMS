@@ -160,7 +160,7 @@ export default {
     const goToViewProgramDetail = (programId: number) => {
       router.push({
         name: AESTRoutesConst.PROGRAM_DETAILS,
-        params: { programId: programId },
+        params: { programId: programId, institutionId: props.institutionId },
       });
     };
     const pageSortEvent = async (event: any) => {

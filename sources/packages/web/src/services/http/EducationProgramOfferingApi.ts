@@ -5,7 +5,7 @@ import {
   OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
-} from "../../types";
+} from "@/types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
@@ -152,6 +152,26 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       }
       const response = await this.getCall(url);
       return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Offering Summary for ministry users
+   * @param programId program id
+   * @returns Offering Summary
+   */
+  public async getOfferingSummaryForAEST(
+    programId: number,
+  ): Promise<EducationProgramOfferingDto[]> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/education-program/${programId}/aest`,
+        this.addAuthHeader(),
+      );
+      return response.data as EducationProgramOfferingDto[];
     } catch (error) {
       this.handleRequestError(error);
       throw error;

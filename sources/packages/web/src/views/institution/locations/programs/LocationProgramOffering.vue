@@ -1,6 +1,7 @@
 <template>
   <Card class="p-m-4">
     <template #content>
+      {{ initialData }}
       <formio
         formName="educationprogramoffering"
         :data="initialData"
@@ -93,7 +94,7 @@ export default {
           params: {
             programId: props.programId,
             locationId: props.locationId,
-            locationName: initialData.value?.name,
+            locationName: "initialData.value?.name",
           },
         });
       } catch (excp) {
