@@ -183,12 +183,10 @@ export class ApplicationController extends BaseController {
           subtractDays(studyStartDate, 1),
           addDays(studyEndDate, 1),
         );
-      if (existingOverlapApplication) {
-        throwExceptionForPIRDateOverlap();
-      }
+      throwExceptionForPIRDateOverlap(existingOverlapApplication);
 
       const existingSFASFTApplication =
-        this.sfasApplicationService.validateDateOverlap(
+        await this.sfasApplicationService.validateDateOverlap(
           student.sin,
           student.birthDate,
           userToken.lastName,
@@ -196,12 +194,10 @@ export class ApplicationController extends BaseController {
           addDays(studyEndDate, 1),
         );
 
-      if (existingSFASFTApplication) {
-        throwExceptionForPIRDateOverlap();
-      }
+      throwExceptionForPIRDateOverlap(existingSFASFTApplication);
 
       const existingSFASPTApplication =
-        this.sfasPartTimeApplicationsService.validateDateOverlap(
+        await this.sfasPartTimeApplicationsService.validateDateOverlap(
           student.sin,
           student.birthDate,
           userToken.lastName,
@@ -209,9 +205,7 @@ export class ApplicationController extends BaseController {
           addDays(studyEndDate, 1),
         );
 
-      if (existingSFASPTApplication) {
-        throwExceptionForPIRDateOverlap();
-      }
+      throwExceptionForPIRDateOverlap(existingSFASPTApplication);
     }
 
     try {
