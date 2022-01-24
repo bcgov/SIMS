@@ -10,6 +10,8 @@ import {
   KeycloakService,
   TokensService,
   UserService,
+  StudentService,
+  SFASIndividualService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -21,6 +23,7 @@ import {
   ActiveUserGuard,
   GroupsGuard,
   RestrictionsGuard,
+  SINValidationGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 
@@ -39,6 +42,8 @@ const jwtModule = JwtModule.register({
     KeycloakService,
     ConfigService,
     JwtStrategy,
+    StudentService,
+    SFASIndividualService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
@@ -70,6 +75,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: RestrictionsGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: SINValidationGuard,
     },
   ],
   exports: [jwtModule, TokensService, KeycloakService],

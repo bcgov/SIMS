@@ -115,7 +115,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import {
   StudentDetail,
   ApplicationStatus,
@@ -127,6 +127,7 @@ import {
   StudentApplicationFields,
   ProgramYearOfApplicationDto,
   ClientIdType,
+  SINStatusEnum,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentService } from "@/services/StudentService";
@@ -137,7 +138,6 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { useStore } from "vuex";
-import { SINStatusEnum } from "@/types";
 
 export default {
   components: { Status, ConfirmEditApplication, CancelApplication },
@@ -149,12 +149,6 @@ export default {
     studentId: {
       type: Number,
       required: true,
-    },
-  },
-  computed: {
-    sinValidStatus() {
-      const store = useStore();
-      return store.state.student.sinValidStatus.sinStatus;
     },
   },
   setup(props: any) {
@@ -173,6 +167,8 @@ export default {
     const selectedApplicationId = ref(0);
     const toast = useToastMessage();
     const TOAST_ERROR_DISPLAY_TIME = 15000;
+    const sinValidStatus = ref(1);
+    const store = useStore();
 
     /**
      * function to load applicationListAndCount respective to the client type
@@ -213,6 +209,9 @@ export default {
     };
 
     onMounted(async () => {
+      sinValidStatus.value = computed(
+        () => store.state.student.sinValidStatus.sinStatus,
+      ).value;
       if (props.clientType === ClientIdType.Student) {
         const restrictions = await StudentService.shared.getStudentRestriction();
         hasRestriction.value = restrictions.hasRestriction;
@@ -308,6 +307,7 @@ export default {
       ClientIdType,
       reloadApplication,
       SINStatusEnum,
+      sinValidStatus,
     };
   },
 };

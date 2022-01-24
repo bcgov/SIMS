@@ -17,6 +17,7 @@ import { useRouter } from "vue-router";
 import { useToastMessage } from "@/composables";
 import { useStore } from "vuex";
 import { SINStatusEnum } from "@/types";
+import { ref, onMounted, computed } from "vue";
 
 export default {
   props: {
@@ -24,15 +25,18 @@ export default {
       type: Boolean,
     },
   },
-  computed: {
-    sinValidStatus() {
-      const store = useStore();
-      return store.state.student.sinValidStatus.sinStatus;
-    },
-  },
   setup() {
     const router = useRouter();
     const toast = useToastMessage();
+    const sinValidStatus = ref(1);
+    const store = useStore();
+
+    onMounted(async () => {
+      sinValidStatus.value = computed(
+        () => store.state.student.sinValidStatus.sinStatus,
+      ).value;
+    });
+
     const goToStudentApplication = async () => {
       try {
         router.push({
@@ -49,6 +53,7 @@ export default {
       StudentRoutesConst,
       goToStudentApplication,
       SINStatusEnum,
+      sinValidStatus,
     };
   },
 };

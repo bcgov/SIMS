@@ -208,6 +208,11 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
+    //TODO: Document Number should be Updated in the same transaction when COE status changes
+    await this.disbursementScheduleService.updateDisbursementScheduleDocumentNumber(
+      applicationId,
+    );
+
     const updatedCOEStatus =
       await this.applicationService.updateApplicationCOEStatus(
         applicationId,
@@ -221,9 +226,6 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    await this.disbursementScheduleService.updateDisbursementScheduleDocumentNumber(
-      applicationId,
-    );
     // Send a message to allow the workflow to proceed.
     await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
   }
