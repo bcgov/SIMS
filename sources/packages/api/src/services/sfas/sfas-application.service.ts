@@ -69,18 +69,18 @@ export class SFASApplicationService
     return this.repo
       .createQueryBuilder("sfasApplication")
       .select(["sfasApplication.id"])
-      .innerJoin("sfasApplication.individual", "individual")
-      .where("individual.lastName = :lastName", { lastName })
-      .andWhere("individual.sin = :sin", { sin })
-      .andWhere("individual.birthDate = :birthDate", { birthDate })
+      .innerJoin("sfasApplication.individual", "sfasFTstudent")
+      .where("sfasFTstudent.lastName = :lastName", { lastName })
+      .andWhere("sfasFTstudent.sin = :sin", { sin })
+      .andWhere("sfasFTstudent.birthDate = :birthDate", { birthDate })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
-            "sfasApplication.startDate BETWEEN :studyStartDate AND :studyEndDate",
-            { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            "sfasApplication.startDate BETWEEN :startDateFT AND :endDateFT",
+            { startDateFT: studyStartDate, endDateFT: studyEndDate },
           ).orWhere(
-            "sfasApplication.endDate BETWEEN :studyStartDate AND :studyEndDate",
-            { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            "sfasApplication.endDate BETWEEN :startDateFT AND :endDateFT",
+            { startDateFT: studyStartDate, endDateFT: studyEndDate },
           );
         }),
       )

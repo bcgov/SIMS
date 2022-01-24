@@ -65,24 +65,23 @@ export class SFASPartTimeApplicationsService
     return this.repo
       .createQueryBuilder("sfasPTApplication")
       .select(["sfasPTApplication.id"])
-      .innerJoin("sfasPTApplication.individual", "individual")
-      .where("individual.lastName = :lastName", { lastName })
-      .andWhere("individual.sin = :sin", { sin })
-      .andWhere("individual.birthDate = :birthDate", { birthDate })
+      .innerJoin("sfasPTApplication.individual", "sfasPTstudent")
+      .where("sfasPTstudent.lastName = :lastName", { lastName })
+      .andWhere("sfasPTstudent.sin = :sin", { sin })
+      .andWhere("sfasPTstudent.birthDate = :birthDate", { birthDate })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
-            "sfasPTApplication.startDate BETWEEN :studyStartDate AND :studyEndDate",
-            { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            "sfasPTApplication.startDate BETWEEN :startDatePT AND :endDatePT",
+            { startDatePT: studyStartDate, endDatePT: studyEndDate },
           ).orWhere(
-            "sfasPTApplication.endDate BETWEEN :studyStartDate AND :studyEndDate",
-            { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            "sfasPTApplication.endDate BETWEEN :startDatePT AND :endDatePT",
+            { startDatePT: studyStartDate, endDatePT: studyEndDate },
           );
         }),
       )
       .getOne();
   }
-
   @InjectLogger()
   logger: LoggerService;
 }
