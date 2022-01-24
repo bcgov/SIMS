@@ -245,7 +245,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     applicationId: number,
   ): Promise<UpdateResult> {
     const documentNumber = await this.getNextDocumentNumber();
-    return await this.repo
+    return this.repo
       .createQueryBuilder()
       .update(DisbursementSchedule)
       .set({ documentNumber: documentNumber })
