@@ -24,6 +24,7 @@ import {
   EducationProgramOfferingService,
   SFASApplicationService,
   SFASPartTimeApplicationsService,
+  ConfigService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -48,7 +49,7 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationStatus, Application } from "../../database/entities";
-import { ApiProcessError } from "../../types";
+import { ApiProcessError, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
@@ -69,6 +70,7 @@ import {
 
 @Controller("application")
 export class ApplicationController extends BaseController {
+  private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
@@ -78,8 +80,10 @@ export class ApplicationController extends BaseController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
+    private readonly configService: ConfigService,
   ) {
     super();
+    this.config = this.configService.getConfig();
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -172,40 +176,42 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
 
-    const existingOverlapApplication =
-      await this.applicationService.validatePIRAndDateOverlap(
-        userToken.userId,
-        subtractDays(studyStartDate, 1),
-        addDays(studyEndDate, 1),
-      );
-    if (existingOverlapApplication) {
-      throwExceptionForPIRDateOverlap();
-    }
+    if (!this.config.bypassValidationsAtLocal) {
+      const existingOverlapApplication =
+        await this.applicationService.validatePIRAndDateOverlap(
+          userToken.userId,
+          subtractDays(studyStartDate, 1),
+          addDays(studyEndDate, 1),
+        );
+      if (existingOverlapApplication) {
+        throwExceptionForPIRDateOverlap();
+      }
 
-    const existingSFASFTApplication =
-      this.sfasApplicationService.validateDateOverlap(
-        student.sin,
-        student.birthDate,
-        userToken.lastName,
-        subtractDays(studyStartDate, 1),
-        addDays(studyEndDate, 1),
-      );
+      const existingSFASFTApplication =
+        this.sfasApplicationService.validateDateOverlap(
+          student.sin,
+          student.birthDate,
+          userToken.lastName,
+          subtractDays(studyStartDate, 1),
+          addDays(studyEndDate, 1),
+        );
 
-    if (existingSFASFTApplication) {
-      throwExceptionForPIRDateOverlap();
-    }
+      if (existingSFASFTApplication) {
+        throwExceptionForPIRDateOverlap();
+      }
 
-    const existingSFASPTApplication =
-      this.sfasPartTimeApplicationsService.validateDateOverlap(
-        student.sin,
-        student.birthDate,
-        userToken.lastName,
-        subtractDays(studyStartDate, 1),
-        addDays(studyEndDate, 1),
-      );
+      const existingSFASPTApplication =
+        this.sfasPartTimeApplicationsService.validateDateOverlap(
+          student.sin,
+          student.birthDate,
+          userToken.lastName,
+          subtractDays(studyStartDate, 1),
+          addDays(studyEndDate, 1),
+        );
 
-    if (existingSFASPTApplication) {
-      throwExceptionForPIRDateOverlap();
+      if (existingSFASPTApplication) {
+        throwExceptionForPIRDateOverlap();
+      }
     }
 
     try {

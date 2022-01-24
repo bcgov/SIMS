@@ -75,6 +75,8 @@ export class ConfigService {
       SFASIntegrationConfig: {
         ftpReceiveFolder: process.env.SFAS_RECEIVE_FOLDER,
       },
+      bypassValidationsAtLocal:
+        process.env.BYPASS_VALIDATIONS_AT_LOCAL === "true",
     };
   }
 
