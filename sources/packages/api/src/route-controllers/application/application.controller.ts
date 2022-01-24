@@ -70,7 +70,6 @@ import {
 
 @Controller("application")
 export class ApplicationController extends BaseController {
-  private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
@@ -80,10 +79,8 @@ export class ApplicationController extends BaseController {
     private readonly offeringService: EducationProgramOfferingService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
-    private readonly configService: ConfigService,
   ) {
     super();
-    this.config = this.configService.getConfig();
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -176,37 +173,35 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
 
-    if (!this.config.bypassValidationsAtLocal) {
-      const existingOverlapApplication =
-        await this.applicationService.validatePIRAndDateOverlap(
-          userToken.userId,
-          subtractDays(studyStartDate, 1),
-          addDays(studyEndDate, 1),
-        );
-      throwExceptionForPIRDateOverlap(existingOverlapApplication);
+    const existingOverlapApplication =
+      await this.applicationService.validatePIRAndDateOverlap(
+        userToken.userId,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
+    throwExceptionForPIRDateOverlap(existingOverlapApplication);
 
-      const existingSFASFTApplication =
-        await this.sfasApplicationService.validateDateOverlap(
-          student.sin,
-          student.birthDate,
-          userToken.lastName,
-          subtractDays(studyStartDate, 1),
-          addDays(studyEndDate, 1),
-        );
+    const existingSFASFTApplication =
+      await this.sfasApplicationService.validateDateOverlap(
+        student.sin,
+        student.birthDate,
+        userToken.lastName,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
 
-      throwExceptionForPIRDateOverlap(existingSFASFTApplication);
+    throwExceptionForPIRDateOverlap(existingSFASFTApplication);
 
-      const existingSFASPTApplication =
-        await this.sfasPartTimeApplicationsService.validateDateOverlap(
-          student.sin,
-          student.birthDate,
-          userToken.lastName,
-          subtractDays(studyStartDate, 1),
-          addDays(studyEndDate, 1),
-        );
+    const existingSFASPTApplication =
+      await this.sfasPartTimeApplicationsService.validateDateOverlap(
+        student.sin,
+        student.birthDate,
+        userToken.lastName,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
 
-      throwExceptionForPIRDateOverlap(existingSFASPTApplication);
-    }
+    throwExceptionForPIRDateOverlap(existingSFASPTApplication);
 
     try {
       const submittedApplication =
