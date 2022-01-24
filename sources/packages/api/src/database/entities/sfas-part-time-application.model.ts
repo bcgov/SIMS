@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
-import { BaseModel, SFASIndividual } from ".";
-import { TableNames, ColumnNames } from "../constant";
+import { PrimaryColumn, ManyToOne, JoinColumn, Column, Entity } from "typeorm";
+import { SFASIndividual, BaseModel } from ".";
+import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
@@ -23,7 +23,7 @@ export class SFASPartTimeApplications extends BaseModel {
   individualId: number;
 
   /**
-   * SFAS Individual many to one relationship.
+   * SFAS Individual many to one relationship for part-time.
    */
   @ManyToOne(() => SFASIndividual, { eager: false, cascade: false })
   @JoinColumn({
