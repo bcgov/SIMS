@@ -3,7 +3,7 @@ import {
   CustomNamedError,
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
 } from "../../utilities";
-import { Connection, In, Repository } from "typeorm";
+import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
@@ -243,12 +243,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    */
   async updateDisbursementScheduleDocumentNumber(
     applicationId: number,
-  ): Promise<DisbursementSchedule> {
-    const disbursementScheduleToUpdate = await this.repo.findOne({
-      application: { id: applicationId },
-    });
-    disbursementScheduleToUpdate.documentNumber =
-      await this.getNextDocumentNumber();
-    return this.save(disbursementScheduleToUpdate);
+  ): Promise<UpdateResult> {
+    const documentNumber = await this.getNextDocumentNumber();
+    return await this.repo
+      .createQueryBuilder()
+      .update(DisbursementSchedule)
+      .set({ documentNumber: documentNumber })
+      .where("applicationId = :applicationId", { applicationId: applicationId })
+      .execute();
   }
 }
