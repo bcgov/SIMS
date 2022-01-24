@@ -17,7 +17,7 @@
     "@mdi/js": "^5.9.55",
     "@types/vuelidate": "^0.7.13",
     "@vee-validate/rules": "^4.0.4",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "core-js": "^3.8.3",
     "dayjs": "^1.10.7",
     "formiojs": "^4.13.4",
