@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { Connection, Brackets } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { SFASPartTimeApplications } from "../../database/entities";
 import { InjectLogger } from "../../common";
@@ -44,6 +44,43 @@ export class SFASPartTimeApplicationsService
     application.SBSDAward = sfasApplication.SBSDAward;
     application.extractedAt = getUTC(extractedDate);
     await this.repo.save(application, { reload: false, transaction: false });
+  }
+
+  /**
+   * Validates before an application submission to see if there is an overlapping SFAS part-time application existing.
+   * @param sin
+   * @param birthDate
+   * @param lastName
+   * @param studyStartDate
+   * @param studyEndDate
+   * @returns SFAS part-time application.
+   */
+  async validateDateOverlap(
+    sin: string,
+    birthDate: Date,
+    lastName: string,
+    studyStartDate: Date,
+    studyEndDate: Date,
+  ): Promise<SFASPartTimeApplications> {
+    return this.repo
+      .createQueryBuilder("sfasPTApplication")
+      .select(["sfasPTApplication.id"])
+      .innerJoin("sfasPTApplication.individual", "individual")
+      .where("individual.lastName = :lastName", { lastName })
+      .andWhere("individual.sin = :sin", { sin })
+      .andWhere("individual.birthDate = :birthDate", { birthDate })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "sfasPTApplication.startDate BETWEEN :studyStartDate AND :studyEndDate",
+            { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+          ).orWhere(
+            "sfasPTApplication.endDate BETWEEN :studyStartDate AND :studyEndDate",
+            { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+          );
+        }),
+      )
+      .getOne();
   }
 
   @InjectLogger()

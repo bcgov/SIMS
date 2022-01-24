@@ -22,6 +22,8 @@ import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   EducationProgramOfferingService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -58,14 +60,12 @@ import {
   checkNotValidStudyPeriod,
   addDays,
   subtractDays,
+  throwExceptionForPIRDateOverlap,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
-export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
-export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =
-  "There is an existing application already with overlapping study period or a pending PIR.";
 
 @Controller("application")
 export class ApplicationController extends BaseController {
@@ -76,6 +76,8 @@ export class ApplicationController extends BaseController {
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly sfasApplicationService: SFASApplicationService,
+    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
   ) {
     super();
   }
@@ -160,19 +162,6 @@ export class ApplicationController extends BaseController {
       }
     }
 
-    const existingOverlapApplication =
-      await this.applicationService.validatePIRAndDateOverlap(
-        userToken.userId,
-        subtractDays(studyStartDate, 1),
-        addDays(studyEndDate, 1),
-      );
-    if (existingOverlapApplication) {
-      throw new UnprocessableEntityException(
-        PIR_OR_DATE_OVERLAP_ERROR,
-        PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-      );
-    }
-
     if (!checkStudyStartDateWithinProgramYear(studyStartDate, programYear)) {
       throw new UnprocessableEntityException(
         `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
@@ -182,6 +171,43 @@ export class ApplicationController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
+
+    const existingOverlapApplication =
+      await this.applicationService.validatePIRAndDateOverlap(
+        userToken.userId,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
+    if (existingOverlapApplication) {
+      throwExceptionForPIRDateOverlap();
+    }
+
+    const existingSFASFTApplication =
+      this.sfasApplicationService.validateDateOverlap(
+        student.sin,
+        student.birthDate,
+        userToken.lastName,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
+
+    if (existingSFASFTApplication) {
+      throwExceptionForPIRDateOverlap();
+    }
+
+    const existingSFASPTApplication =
+      this.sfasPartTimeApplicationsService.validateDateOverlap(
+        student.sin,
+        student.birthDate,
+        userToken.lastName,
+        subtractDays(studyStartDate, 1),
+        addDays(studyEndDate, 1),
+      );
+
+    if (existingSFASPTApplication) {
+      throwExceptionForPIRDateOverlap();
+    }
+
     try {
       const submittedApplication =
         await this.applicationService.submitApplication(

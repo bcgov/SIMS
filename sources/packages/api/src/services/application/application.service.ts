@@ -39,8 +39,6 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   databaseFieldOfApplicationDataTable,
-  addDays,
-  subtractDays,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";

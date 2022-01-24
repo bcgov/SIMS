@@ -1,6 +1,6 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
-import { BaseModel } from ".";
-import { TableNames } from "../constant";
+import { Column, Entity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
+import { BaseModel, SFASIndividual } from ".";
+import { TableNames, ColumnNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
@@ -21,6 +21,15 @@ export class SFASApplication extends BaseModel {
     nullable: false,
   })
   individualId: number;
+  /**
+   * SFAS Individual many to one relationship.
+   */
+  @ManyToOne(() => SFASIndividual, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "individual_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  individual: SFASIndividual;
   /**
    * Educational program start date (application_assessment.educ_period_start_dte).
    */
