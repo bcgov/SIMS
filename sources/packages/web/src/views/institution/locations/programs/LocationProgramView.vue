@@ -11,7 +11,6 @@
     <ManageProgramAndOfferingSummary
       :programId="programId"
       :locationId="locationId"
-      :locationName="locationName"
       :clientType="ClientIdType.Institution"
     />
   </v-container>
@@ -34,10 +33,6 @@ export default {
       type: Number,
       required: true,
     },
-    locationName: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const router = useRouter();
@@ -45,13 +40,10 @@ export default {
       router.push({
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
         params: {
-          programId: props.programId,
           locationId: props.locationId,
-          locationName: props.locationName,
         },
       });
     };
-
     return {
       goBack,
       ClientIdType,

@@ -39,6 +39,11 @@ export interface SummaryEducationProgramDto {
 export interface EducationProgramDto extends EducationProgramBaseDto {
   id: number;
 }
+export interface EducationProgramData extends EducationProgramDto {
+  credentialTypeToDisplay: string;
+  approvalStatus: ApprovalStatus;
+  institutionId: number;
+}
 
 export interface StudentEducationProgramDto {
   id: number;

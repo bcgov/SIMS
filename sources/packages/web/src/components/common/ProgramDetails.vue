@@ -10,11 +10,10 @@
     <v-btn
       class="float-right"
       outlined
-      @click="goToEditProgram()"
+      @click="programButtonAction()"
       color="#2965C5"
     >
-      <v-icon size="25" left> mdi-open-in-new </v-icon>
-      Edit Program
+      {{ programActionLabel }}
     </v-btn>
   </div>
   <v-row class="secondary-color">
@@ -75,7 +74,10 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  InstitutionRoutesConst,
+  AESTRoutesConst,
+} from "@/constants/routes/RouteConstants";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramDto, ProgramIntensity, ClientIdType } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
@@ -100,6 +102,11 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
+    const programActionLabel = computed(() => {
+      return props.clientType === ClientIdType.Institution
+        ? "Edit"
+        : "View Program";
+    });
 
     const isInstitutionUser = computed(() => {
       return props.clientType === ClientIdType.Institution;
@@ -107,11 +114,26 @@ export default {
     const isAESTUser = computed(() => {
       return props.clientType === ClientIdType.AEST;
     });
-    const goToEditProgram = () => {
+    const programButtonAction = () => {
       if (isInstitutionUser.value) {
         router.push({
           name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-          params: { programId: props.programId, locationId: props.locationId },
+          params: {
+            programId: props.programId,
+            locationId: props.locationId,
+            clientType: ClientIdType.Institution,
+          },
+        });
+      }
+
+      if (isAESTUser.value) {
+        router.push({
+          name: AESTRoutesConst.VIEW_PROGRAM,
+          params: {
+            programId: props.programId,
+            locationId: props.locationId,
+            clientType: ClientIdType.AEST,
+          },
         });
       }
     };
@@ -132,12 +154,13 @@ export default {
     onMounted(getEducationProgramAndOffering);
 
     return {
-      goToEditProgram,
+      programButtonAction,
       educationProgram,
       ProgramIntensity,
       getProgramStatusToGeneralStatus,
       isInstitutionUser,
       isAESTUser,
+      programActionLabel,
     };
   },
 };

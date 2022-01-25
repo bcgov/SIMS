@@ -331,6 +331,7 @@ export class EducationProgramOfferingController {
     const paginatedProgramOfferingSummaryResult =
       await this.programOfferingService.getPaginatedProgramsForInstitution(
         institutionId,
+        [OfferingTypes.public],
         pageSize,
         page,
         sortColumn,

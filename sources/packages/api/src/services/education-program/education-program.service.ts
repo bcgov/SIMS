@@ -3,6 +3,7 @@ import {
   EducationProgram,
   EducationProgramOffering,
   Institution,
+  OfferingTypes,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
@@ -132,11 +133,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * alongside with the total of offerings on a particular location.
    * @param institutionId Id of the institution.
    * @param locationId Id of the location.
+   * @param offeringTypes OfferingTypes array.
    * @returns summary for location
    */
   async getSummaryForLocation(
     institutionId: number,
     locationId: number,
+    offeringTypes: OfferingTypes[],
   ): Promise<EducationProgramsSummary[]> {
     const summaryResult = await this.repo
       .createQueryBuilder("programs")
@@ -153,6 +156,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             .select("COUNT(*)")
             .from(EducationProgramOffering, "offerings")
             .where("offerings.educationProgram.id = programs.id")
+
+            .andWhere("offerings.offeringType in (:...offeringTypes)", {
+              offeringTypes,
+            })
             .andWhere("offerings.institutionLocation.id = :locationId", {
               locationId,
             }),
@@ -280,7 +287,36 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.approvalStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",
+        "programs.regulatoryBody",
+        "programs.deliveredOnSite",
+        "programs.deliveredOnline",
+        "programs.deliveredOnlineAlsoOnsite",
+        "programs.sameOnlineCreditsEarned",
+        "programs.earnAcademicCreditsOtherInstitution",
+        "programs.courseLoadCalculation",
+        "programs.completionYears",
+        "programs.eslEligibility",
+        "programs.hasJointInstitution",
+        "programs.hasJointDesignatedInstitution",
+        "programs.institutionProgramCode",
+        "programs.minHoursWeek",
+        "programs.isAviationProgram",
+        "programs.minHoursWeekAvi",
+        "programs.hasMinimumAge",
+        "programs.minHighSchool",
+        "programs.requirementsByInstitution",
+        "programs.requirementsByBCITA",
+        "programs.hasWILComponent",
+        "programs.isWILApproved",
+        "programs.wilProgramEligibility",
+        "programs.hasTravel",
+        "programs.travelProgramEligibility",
+        "programs.hasIntlExchange",
+        "programs.intlExchangeProgramEligibility",
+        "programs.programDeclaration",
+        "institution.id",
       ])
+      .innerJoin("programs.institution", "institution")
       .where("programs.id = :id", { id: programId })
       .getOne();
   }

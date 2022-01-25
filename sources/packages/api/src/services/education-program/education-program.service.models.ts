@@ -1,12 +1,12 @@
 import { EducationProgramDto } from "../../route-controllers/education-program/models/save-education-program.dto";
-import { ProgramIntensity } from "../../database/entities/program-intensity.type";
+import { ApprovalStatus } from "../../services/education-program/constants";
 /**
  * DTO that is used to persist the eduction programs form data.
  */
 export interface SaveEducationProgram extends EducationProgramDto {
   id?: number;
   institutionId: number;
-  approvalStatus: string;
+  approvalStatus: ApprovalStatus;
 }
 
 export class EducationProgramsSummary {

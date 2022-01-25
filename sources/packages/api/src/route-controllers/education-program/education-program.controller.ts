@@ -17,7 +17,10 @@ import {
   UserToken,
   Groups,
 } from "../../auth/decorators";
-import { EducationProgramDto } from "./models/save-education-program.dto";
+import {
+  EducationProgramDto,
+  EducationProgramData,
+} from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
@@ -25,7 +28,7 @@ import {
   SummaryEducationProgramDto,
   SubsetEducationProgramDto,
 } from "./models/summary-education-program.dto";
-import { EducationProgram } from "../../database/entities";
+import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { OptionItem } from "../../types";
 import { credentialTypeToDisplay } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -44,9 +47,12 @@ export class EducationProgramController {
     @Param("locationId") locationId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SummaryEducationProgramDto[]> {
+    // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
+
     const programs = await this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
+      [OfferingTypes.public],
     );
 
     return programs.map((program) => ({
@@ -283,33 +289,99 @@ export class EducationProgramController {
     };
   }
 
+  // /**
+  //  * Education Program Details for ministry users
+  //  * @param programId program id
+  //  * @returns Education Program Details
+  //  */
+  // @AllowAuthorizedParty(AuthorizedParties.aest)
+  // @Groups(UserGroups.AESTUser)
+  // @Get(":programId/aest")
+  // async getEducationProgramDetails(
+  //   @Param("programId") programId: number,
+  // ): Promise<SubsetEducationProgramDto> {
+  //   const educationProgram =
+  //     await this.programService.getEducationProgramDetails(programId);
+  //   return {
+  //     id: educationProgram.id,
+  //     name: educationProgram.name,
+  //     description: educationProgram.description,
+  //     credentialType: educationProgram.credentialType,
+  //     credentialTypeToDisplay: credentialTypeToDisplay(
+  //       educationProgram.credentialType,
+  //     ),
+  //     cipCode: educationProgram.cipCode,
+  //     nocCode: educationProgram.nocCode,
+  //     sabcCode: educationProgram.sabcCode,
+  //     approvalStatus: educationProgram.approvalStatus,
+  //     programIntensity: educationProgram.programIntensity,
+  //     institutionProgramCode: educationProgram.institutionProgramCode,
+  //   };
+  // }
+
   /**
    * Education Program Details for ministry users
    * @param programId program id
-   * @returns Education Program Details
-   */
+   * @returns programs details.
+   * */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
   @Get(":programId/aest")
-  async getEducationProgramDetails(
+  async getProgramForAEST(
     @Param("programId") programId: number,
-  ): Promise<SubsetEducationProgramDto> {
-    const educationProgram =
-      await this.programService.getEducationProgramDetails(programId);
+  ): Promise<EducationProgramData> {
+    const program = await this.programService.getEducationProgramDetails(
+      programId,
+    );
+
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+
     return {
-      id: educationProgram.id,
-      name: educationProgram.name,
-      description: educationProgram.description,
-      credentialType: educationProgram.credentialType,
-      credentialTypeToDisplay: credentialTypeToDisplay(
-        educationProgram.credentialType,
-      ),
-      cipCode: educationProgram.cipCode,
-      nocCode: educationProgram.nocCode,
-      sabcCode: educationProgram.sabcCode,
-      approvalStatus: educationProgram.approvalStatus,
-      programIntensity: educationProgram.programIntensity,
-      institutionProgramCode: educationProgram.institutionProgramCode,
+      id: program.id,
+      approvalStatus: program.approvalStatus,
+      name: program.name,
+      description: program.description,
+      credentialType: program.credentialType,
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      regulatoryBody: program.regulatoryBody,
+      programDeliveryTypes: {
+        deliveredOnSite: program.deliveredOnSite,
+        deliveredOnline: program.deliveredOnline,
+      },
+      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
+      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
+      earnAcademicCreditsOtherInstitution:
+        program.earnAcademicCreditsOtherInstitution,
+      courseLoadCalculation: program.courseLoadCalculation,
+      completionYears: program.completionYears,
+      eslEligibility: program.eslEligibility,
+      hasJointInstitution: program.hasJointInstitution,
+      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+      programIntensity: program.programIntensity,
+      institutionProgramCode: program.institutionProgramCode,
+      minHoursWeek: program.minHoursWeek,
+      isAviationProgram: program.isAviationProgram,
+      minHoursWeekAvi: program.minHoursWeekAvi,
+      entranceRequirements: {
+        hasMinimumAge: program.hasMinimumAge,
+        minHighSchool: program.minHighSchool,
+        requirementsByInstitution: program.requirementsByInstitution,
+        requirementsByBCITA: program.requirementsByBCITA,
+      },
+      hasWILComponent: program.hasWILComponent,
+      isWILApproved: program.isWILApproved,
+      wilProgramEligibility: program.wilProgramEligibility,
+      hasTravel: program.hasTravel,
+      travelProgramEligibility: program.travelProgramEligibility,
+      hasIntlExchange: program.hasIntlExchange,
+      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
+      programDeclaration: program.programDeclaration,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
+      institutionId: program.institution.id,
     };
   }
 }

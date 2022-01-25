@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <p class="muted-heading-text">{{ locationName }}</p>
+    <p class="muted-heading-text">{{ locationDetails?.locationName }}</p>
     <p class="heading-x-large">Programs</p>
     <v-card class="mt-4">
       <v-container>
@@ -55,8 +55,9 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { EducationProgramService } from "@/services/EducationProgramService";
+import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { SummaryEducationProgramDto } from "@/types";
+import { SummaryEducationProgramDto, ClientIdType } from "@/types";
 import { ref, watch, onMounted } from "vue";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 import { useFormatStatuses } from "@/composables";
@@ -68,15 +69,12 @@ export default {
       type: Number,
       required: true,
     },
-    locationName: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const router = useRouter();
     const programs = ref([] as SummaryEducationProgramDto[]);
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
+    const locationDetails = ref();
 
     const loadSummary = async () => {
       programs.value = await EducationProgramService.shared.getLocationProgramsSummary(
@@ -84,13 +82,21 @@ export default {
       );
     };
 
-    onMounted(loadSummary);
+    onMounted(async () => {
+      await loadSummary();
+      locationDetails.value = await InstitutionService.shared.getInstitutionLocation(
+        props.locationId,
+      );
+    });
     watch(() => props.locationId, loadSummary);
 
     const goToAddNewProgram = () => {
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        params: { locationId: props.locationId },
+        params: {
+          locationId: props.locationId,
+          clientType: ClientIdType.Institution,
+        },
       });
     };
 
@@ -100,7 +106,6 @@ export default {
         params: {
           programId,
           locationId: props.locationId,
-          locationName: props.locationName,
         },
       });
     };
@@ -109,6 +114,7 @@ export default {
       goToAddNewProgram,
       goToViewProgram,
       getProgramStatusToGeneralStatus,
+      locationDetails,
     };
   },
 };

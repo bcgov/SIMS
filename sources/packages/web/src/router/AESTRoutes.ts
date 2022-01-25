@@ -28,6 +28,7 @@ import { AppRoutes, AuthStatus } from "@/types";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
+import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -157,6 +158,18 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         props: true,
         components: {
           default: ProgramDetails,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ViewPrograms,
+        name: AESTRoutesConst.VIEW_PROGRAM,
+        props: true,
+        components: {
+          default: LocationProgramAddEdit,
           sidebar: AESTHomeSideBar,
         },
         meta: {

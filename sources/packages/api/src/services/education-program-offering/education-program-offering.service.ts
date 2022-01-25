@@ -48,6 +48,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * that are associated with the Location and Program
    * @param locationId
    * @param programId
+   * @param offeringTypes OfferingTypes array.
+
    * @returns
    */
   async getAllEducationProgramOffering(
@@ -293,6 +295,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Get programs for a particular institution with pagination.
    * @param institutionId id of the institution.
+   * @param offeringTypes OfferingTypes array.
    * @param pageSize is the number of rows shown in the table
    * @param skip is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
@@ -303,6 +306,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    */
   async getPaginatedProgramsForInstitution(
     institutionId: number,
+    offeringTypes: OfferingTypes[],
     pageSize?: number,
     page?: number,
     sortColumn?: string,
@@ -310,7 +314,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     searchProgramName?: string,
   ): Promise<ProgramsOfferingSummaryPaginated> {
     const sortByColumn = "programs.createdAt"; //Default sort column
-    const paginatedProgramQuery = await this.repo
+    const paginatedProgramQuery = this.repo
       .createQueryBuilder("offerings")
       .select("programs.id", "programId")
       .addSelect("programs.name", "programName")
@@ -320,7 +324,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("COUNT(offerings.id)", "offeringsCount")
       .innerJoin("offerings.educationProgram", "programs")
       .innerJoin("offerings.institutionLocation", "locations")
-      .where("programs.institution.id = :institutionId", { institutionId });
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .andWhere("offerings.offeringType in (:...offeringTypes)", {
+        offeringTypes,
+      });
     if (searchProgramName) {
       paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
         searchProgramName: `%${searchProgramName}%`,
@@ -354,6 +361,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * Education Offering summary of a Program
    * @param programId
+   * @param offeringTypes OfferingTypes array.
+
    * @returns
    */
   async getOfferingSummary(

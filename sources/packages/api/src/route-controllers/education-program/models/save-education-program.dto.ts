@@ -1,4 +1,5 @@
 import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
+import { ApprovalStatus } from "../../../services/education-program/constants";
 
 /**
  * Dto that represents education programs form object.
@@ -34,6 +35,13 @@ export interface EducationProgramDto {
   hasIntlExchange?: string;
   intlExchangeProgramEligibility?: string;
   programDeclaration: boolean;
+}
+
+export interface EducationProgramData extends EducationProgramDto {
+  credentialTypeToDisplay: string;
+  approvalStatus: ApprovalStatus;
+  institutionId: number;
+  id: number;
 }
 
 export interface ProgramDeliveryTypes {

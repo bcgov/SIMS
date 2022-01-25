@@ -3,6 +3,7 @@ import {
   OptionItemDto,
   StudentEducationProgramDto,
   ProgramDto,
+  EducationProgramData
 } from "../types";
 import ApiClient from "./http/ApiClient";
 
@@ -77,7 +78,7 @@ export class EducationProgramService {
    */
   public async getEducationProgramForAEST(
     programId: number,
-  ): Promise<EducationProgramDto> {
+  ): Promise<EducationProgramData> {
     return ApiClient.EducationProgram.getEducationProgramForAEST(programId);
   }
 }

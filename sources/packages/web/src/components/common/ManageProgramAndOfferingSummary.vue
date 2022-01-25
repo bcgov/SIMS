@@ -35,10 +35,6 @@ export default {
       type: String,
       required: true,
     },
-    locationName: {
-      type: String,
-      required: false,
-    },
   },
 };
 </script>
