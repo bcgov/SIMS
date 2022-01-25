@@ -1,36 +1,18 @@
-import { Column, Entity, PrimaryColumn, ManyToOne, JoinColumn } from "typeorm";
-import { BaseModel, SFASIndividual } from ".";
-import { TableNames, ColumnNames } from "../constant";
+import { Column, Entity, PrimaryColumn } from "typeorm";
+import { BaseSFASApplicationModel } from ".";
+import { TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * Data related to a Part Time Student Application on SFAS that came from SAIL
  */
 @Entity({ name: TableNames.SFASPartTimeApplications })
-export class SFASPartTimeApplications extends BaseModel {
+export class SFASPartTimeApplications extends BaseSFASApplicationModel {
   /**
    * The unique key/number used in SFAS to identify this application (Sail_extract_data.sail_application_no).
    */
   @PrimaryColumn()
   id: string;
-  /**
-   * The unique key/number used in SFAS to identify this individual (Sail_extract_data.individual_idx).
-   */
-  @Column({
-    name: "individual_id",
-    nullable: false,
-  })
-  individualId: number;
-
-  /**
-   * SFAS Individual many to one relationship.
-   */
-  @ManyToOne(() => SFASIndividual, { eager: false, cascade: false })
-  @JoinColumn({
-    name: "individual_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  individual: SFASIndividual;
 
   /**
    * Educational program start date (Sail_extract_data.educ_start_dte).
