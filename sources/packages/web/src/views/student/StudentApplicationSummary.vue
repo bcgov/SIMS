@@ -4,6 +4,7 @@
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
+    <CheckValidSINBanner />
     <h1><strong>My Applications</strong></h1>
     <v-row>
       <span class="p-m-4"
@@ -27,12 +28,14 @@ import StartApplication from "@/views/student/financial-aid-application/Applicat
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationStatus, ClientIdType } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
+import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 
 export default {
   components: {
     StartApplication,
     RestrictionBanner,
     StudentApplications,
+    CheckValidSINBanner,
   },
   setup() {
     const hasRestriction = ref(false);

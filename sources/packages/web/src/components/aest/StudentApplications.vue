@@ -68,7 +68,12 @@
               )
             "
           >
-            <v-btn :disabled="hasRestriction" plain>
+            <v-btn
+              :disabled="
+                hasRestriction || sinValidStatus !== SINStatusEnum.VALID
+              "
+              plain
+            >
               <font-awesome-icon
                 :icon="['fas', 'pen']"
                 class="mr-2"
@@ -80,7 +85,12 @@
                 "
               />
             </v-btn>
-            <v-btn :disabled="hasRestriction" plain>
+            <v-btn
+              :disabled="
+                hasRestriction || sinValidStatus !== SINStatusEnum.VALID
+              "
+              plain
+            >
               <font-awesome-icon
                 :icon="['fas', 'trash']"
                 v-tooltip="'Click To Cancel this Application'"
@@ -105,7 +115,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import {
   StudentDetail,
   ApplicationStatus,
@@ -117,6 +127,7 @@ import {
   StudentApplicationFields,
   ProgramYearOfApplicationDto,
   ClientIdType,
+  SINStatusEnum,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentService } from "@/services/StudentService";
@@ -126,6 +137,7 @@ import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import { useStore } from "vuex";
 
 export default {
   components: { Status, ConfirmEditApplication, CancelApplication },
@@ -155,6 +167,12 @@ export default {
     const selectedApplicationId = ref(0);
     const toast = useToastMessage();
     const TOAST_ERROR_DISPLAY_TIME = 15000;
+
+    const store = useStore();
+
+    const sinValidStatus = computed(
+      () => store.state.student.sinValidStatus.sinStatus,
+    ).value;
 
     /**
      * function to load applicationListAndCount respective to the client type
@@ -289,6 +307,8 @@ export default {
       showHideCancelApplication,
       ClientIdType,
       reloadApplication,
+      SINStatusEnum,
+      sinValidStatus,
     };
   },
 };

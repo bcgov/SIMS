@@ -17,6 +17,7 @@ import {
   APPLICATION_NOT_FOUND,
   WorkflowActionsService,
   COEDeniedReasonService,
+  DisbursementScheduleService,
 } from "../../services";
 import {
   Application,
@@ -37,6 +38,7 @@ export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
 @Controller("institution/location")
 export class ConfirmationOfEnrollmentController {
   constructor(
+    private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
@@ -206,6 +208,11 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
+    //TODO: Document Number should be Updated in the same transaction when COE status changes
+    await this.disbursementScheduleService.updateDisbursementScheduleDocumentNumber(
+      applicationId,
+    );
+
     const updatedCOEStatus =
       await this.applicationService.updateApplicationCOEStatus(
         applicationId,
@@ -218,6 +225,7 @@ export class ConfirmationOfEnrollmentController {
         "Confirmation of Enrollment and application status update to completed is failed",
       );
     }
+
     // Send a message to allow the workflow to proceed.
     await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
   }
