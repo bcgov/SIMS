@@ -1487,6 +1487,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     userId: number,
     studyStartDate: Date,
     studyEndDate: Date,
+    currentApplicationId: number,
   ): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")
@@ -1495,6 +1496,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("student.user", "user")
       .leftJoin("application.offering", "offering")
       .where("user.id = :userId", { userId })
+      .andWhere("application.id != :currentApplicationId", {
+        currentApplicationId,
+      })
       .andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
           ApplicationStatus.draft,

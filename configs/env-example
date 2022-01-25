@@ -118,3 +118,6 @@ FILE_UPLOAD_ALLOWED_EXTENSIONS=.pdf,.doc,.docx,.jpg,.png
 
 #SFAS Integration
 SFAS_RECEIVE_FOLDER=
+
+#Bypass study period overlap and pending PIR validation
+BYPASS_VALIDATIONS_AT_LOCAL=

@@ -185,6 +185,7 @@ export class ApplicationController extends BaseController {
           userToken.userId,
           subtractDays(studyStartDate, 1),
           addDays(studyEndDate, 1),
+          applicationId,
         );
       throwExceptionForPIRDateOverlap(existingOverlapApplication);
 
