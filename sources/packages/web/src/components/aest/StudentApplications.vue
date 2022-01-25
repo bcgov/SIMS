@@ -167,8 +167,12 @@ export default {
     const selectedApplicationId = ref(0);
     const toast = useToastMessage();
     const TOAST_ERROR_DISPLAY_TIME = 15000;
-    const sinValidStatus = ref(1);
+
     const store = useStore();
+
+    const sinValidStatus = computed(
+      () => store.state.student.sinValidStatus.sinStatus,
+    ).value;
 
     /**
      * function to load applicationListAndCount respective to the client type
@@ -209,9 +213,6 @@ export default {
     };
 
     onMounted(async () => {
-      sinValidStatus.value = computed(
-        () => store.state.student.sinValidStatus.sinStatus,
-      ).value;
       if (props.clientType === ClientIdType.Student) {
         const restrictions = await StudentService.shared.getStudentRestriction();
         hasRestriction.value = restrictions.hasRestriction;
