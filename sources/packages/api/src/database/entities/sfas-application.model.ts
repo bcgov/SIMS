@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { BaseSFASApplicationModel } from ".";
+import { BaseSFASApplicationModel } from "./base-sfas-application.model";
 import { TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
