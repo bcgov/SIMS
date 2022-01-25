@@ -175,6 +175,9 @@ export class ApplicationController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
+    /** Validation for application overlapping dates or Pending PIR.
+     * This validation can be disabled by setting BYPASS_VALIDATIONS_AT_LOCAL to true in .env file.
+     * */
 
     if (!this.config.bypassValidationsAtLocal) {
       const existingOverlapApplication =
