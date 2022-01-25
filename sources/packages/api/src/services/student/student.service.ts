@@ -185,7 +185,7 @@ export class StudentService extends RecordDataModelService<Student> {
     return await this.repo
       .createQueryBuilder("student")
       .innerJoin("student.user", "user")
-      .where("student.userId = :userIdParam", { userIdParam: userId })
+      .where("student.user_Id = :userIdParam", { userIdParam: userId })
       .select("student.validSIN")
       .getOne();
   }
