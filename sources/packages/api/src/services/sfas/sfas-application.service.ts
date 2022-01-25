@@ -78,10 +78,19 @@ export class SFASApplicationService
           qb.where(
             "sfasApplication.startDate BETWEEN :startDateFT AND :endDateFT",
             { startDateFT: studyStartDate, endDateFT: studyEndDate },
-          ).orWhere(
-            "sfasApplication.endDate BETWEEN :startDateFT AND :endDateFT",
-            { startDateFT: studyStartDate, endDateFT: studyEndDate },
-          );
+          )
+            .orWhere(
+              "sfasApplication.endDate BETWEEN :startDateFT AND :endDateFT",
+              { startDateFT: studyStartDate, endDateFT: studyEndDate },
+            )
+            .orWhere(
+              ":startDateFT BETWEEN sfasApplication.startDate AND sfasApplication.endDate",
+              { startDateFT: studyStartDate },
+            )
+            .orWhere(
+              ":endDateFT BETWEEN sfasApplication.startDate AND sfasApplication.endDate",
+              { endDateFT: studyEndDate },
+            );
         }),
       )
       .getOne();

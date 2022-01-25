@@ -1516,6 +1516,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
             .orWhere(
               "offering.studyEndDate BETWEEN :studyStartDate AND :studyEndDate",
               { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            )
+            .orWhere(
+              " :studyStartDate BETWEEN offering.studyStartDate AND offering.studyEndDate",
+              { studyStartDate: studyStartDate },
+            )
+            .orWhere(
+              " :studyEndDate BETWEEN offering.studyStartDate AND offering.studyEndDate",
+              { studyEndDate: studyEndDate },
             );
         }),
       )
