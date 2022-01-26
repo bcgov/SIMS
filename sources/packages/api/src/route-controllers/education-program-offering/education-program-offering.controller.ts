@@ -348,6 +348,7 @@ export class EducationProgramOfferingController {
             programOfferingSummary.submittedDate,
           ),
           locationName: programOfferingSummary.locationName,
+          locationId: programOfferingSummary.locationId,
           programStatus: programOfferingSummary.programStatus,
           offeringsCount: programOfferingSummary.offeringsCount,
         }),
@@ -393,5 +394,51 @@ export class EducationProgramOfferingController {
       offeringDelivered: offering.offeringDelivered,
       offeringIntensity: offering.offeringIntensity,
     }));
+  }
+
+  /**
+   * Offering Summary for ministry users
+   * @param offeringId offering id
+   * @returns Offering details
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get(":offeringId/aest")
+  async getProgramOfferingForAEST(
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+    );
+    if (!offering) {
+      throw new UnprocessableEntityException(
+        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+      );
+    }
+    return {
+      id: offering.id,
+      offeringName: offering.name,
+      studyStartDate: offering.studyStartDate,
+      studyEndDate: offering.studyEndDate,
+      actualTuitionCosts: offering.actualTuitionCosts,
+      programRelatedCosts: offering.programRelatedCosts,
+      mandatoryFees: offering.mandatoryFees,
+      exceptionalExpenses: offering.exceptionalExpenses,
+      tuitionRemittanceRequestedAmount:
+        offering.tuitionRemittanceRequestedAmount,
+      offeringDelivered: offering.offeringDelivered,
+      lacksStudyDates: offering.lacksStudyDates,
+      lacksStudyBreaks: offering.lacksStudyBreaks,
+      lacksFixedCosts: offering.lacksFixedCosts,
+      tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
+      offeringIntensity: offering.offeringIntensity,
+      yearOfStudy: offering.yearOfStudy,
+      showYearOfStudy: offering.showYearOfStudy,
+      hasOfferingWILComponent: offering.hasOfferingWILComponent,
+      offeringWILType: offering.offeringWILType,
+      studyBreaks: offering.studyBreaks,
+      offeringDeclaration: offering.offeringDeclaration,
+    };
   }
 }

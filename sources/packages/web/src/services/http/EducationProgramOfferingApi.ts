@@ -177,4 +177,24 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  /**
+   * Offering Summary for ministry users
+   * @param offeringId offering id
+   * @returns Offering details
+   */
+  public async getProgramOfferingForAEST(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/offering/${offeringId}/aest`,
+        this.addAuthHeader(),
+      );
+      return response.data as OfferingDTO;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
 }

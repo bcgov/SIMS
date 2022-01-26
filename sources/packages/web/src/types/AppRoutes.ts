@@ -44,7 +44,8 @@ export enum AppRoutes {
   Profile = "profile",
   // program
   Programs = "programs",
-  ViewPrograms = "/program/:programId",
+  ViewProgram = "/program/:programId",
+  ViewOffering = "/program/:programId/offering/:offeringId",
   Locations = "locations",
   Users = "users",
   Designation = "designation",

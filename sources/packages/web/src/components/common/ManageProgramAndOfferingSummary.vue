@@ -29,7 +29,7 @@ export default {
     },
     locationId: {
       type: Number,
-      required: false,
+      required: true,
     },
     clientType: {
       type: String,

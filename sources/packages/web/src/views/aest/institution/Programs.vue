@@ -76,9 +76,15 @@
           ></Column>
           <Column>
             <template #body="slotProps">
+              {{ slotProps.data }}
               <v-btn
                 outlined
-                @click="goToViewProgramDetail(slotProps.data.programId)"
+                @click="
+                  goToViewProgramDetail(
+                    slotProps.data.programId,
+                    slotProps.data.locationId,
+                  )
+                "
                 >View</v-btn
               >
             </template>
@@ -157,10 +163,14 @@ export default {
         searchProgramName.value,
       );
     });
-    const goToViewProgramDetail = (programId: number) => {
+    const goToViewProgramDetail = (programId: number, locationId: number) => {
       router.push({
         name: AESTRoutesConst.PROGRAM_DETAILS,
-        params: { programId: programId, institutionId: props.institutionId },
+        params: {
+          programId: programId,
+          institutionId: props.institutionId,
+          locationId: locationId,
+        },
       });
     };
     const pageSortEvent = async (event: any) => {

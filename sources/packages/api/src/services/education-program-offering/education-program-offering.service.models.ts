@@ -51,6 +51,7 @@ export class ProgramsOfferingSummary {
   programName: string;
   submittedDate: Date;
   locationName: string;
+  locationId: number;
   programStatus: string;
   offeringsCount: number;
   formattedSubmittedDate: string;

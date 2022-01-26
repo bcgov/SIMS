@@ -139,4 +139,17 @@ export class EducationProgramOfferingService {
       programId,
     );
   }
+
+  /**
+   * Offering Summary for ministry users
+   * @param offeringId offering id
+   * @returns Offering details
+   */
+  public async getProgramOfferingForAEST(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingForAEST(
+      offeringId,
+    );
+  }
 }

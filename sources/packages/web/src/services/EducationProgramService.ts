@@ -36,7 +36,7 @@ export class EducationProgramService {
 
   public async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramDto> {
+  ): Promise<EducationProgramData> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 

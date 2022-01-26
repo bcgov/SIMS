@@ -79,7 +79,7 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import { EducationProgramDto, ProgramIntensity, ClientIdType } from "@/types";
+import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 import { useFormatStatuses } from "@/composables";
 
@@ -91,6 +91,7 @@ export default {
       required: true,
     },
     locationId: {
+      // only for institution user
       type: Number,
       required: false,
     },
@@ -102,18 +103,19 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
-    const programActionLabel = computed(() => {
-      return props.clientType === ClientIdType.Institution
-        ? "Edit"
-        : "View Program";
-    });
 
     const isInstitutionUser = computed(() => {
       return props.clientType === ClientIdType.Institution;
     });
+
     const isAESTUser = computed(() => {
       return props.clientType === ClientIdType.AEST;
     });
+
+    const programActionLabel = computed(() => {
+      return isInstitutionUser.value ? "Edit" : "View Program";
+    });
+
     const programButtonAction = () => {
       if (isInstitutionUser.value) {
         router.push({
@@ -138,7 +140,7 @@ export default {
       }
     };
 
-    const educationProgram = ref({} as EducationProgramDto);
+    const educationProgram = ref({} as EducationProgramData);
     const getEducationProgramAndOffering = async () => {
       if (isInstitutionUser.value) {
         educationProgram.value = await EducationProgramService.shared.getEducationProgram(

@@ -67,13 +67,13 @@ export class EducationProgramApi extends HttpBaseClient {
 
   public async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramDto> {
+  ): Promise<EducationProgramData> {
     try {
       const response = await this.apiClient.get(
         `institution/education-program/${programId}/details`,
         this.addAuthHeader(),
       );
-      return response.data as EducationProgramDto;
+      return response.data as EducationProgramData;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

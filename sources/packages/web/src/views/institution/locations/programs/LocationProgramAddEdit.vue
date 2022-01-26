@@ -32,6 +32,7 @@ import { onMounted, ref, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import { useToastMessage } from "@/composables";
 
 export default {
   components: { formio, FullPageContainer },
@@ -50,19 +51,24 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToast();
+    const toast = useToastMessage();
     const router = useRouter();
     const institutionId = ref();
+    const isInstitutionUser = computed(() => {
+      return props.clientType === ClientIdType.Institution;
+    });
+    const isAESTUser = computed(() => {
+      return props.clientType === ClientIdType.AEST;
+    });
     const isReadonly = computed(() => {
-      return ClientIdType.Institution !== props.clientType;
+      return isAESTUser.value;
     });
     // Data-bind
     const initialData = ref({});
 
     const loadFormData = async () => {
-      if (ClientIdType.Institution === props.clientType) {
+      if (isInstitutionUser.value) {
         const institution = await InstitutionService.shared.getDetail();
-        institutionId.value = institution.institution.id;
         if (props.programId) {
           const program = await EducationProgramService.shared.getProgram(
             props.programId,
@@ -77,12 +83,15 @@ export default {
           };
         }
       }
-      if (ClientIdType.AEST === props.clientType) {
+      if (isAESTUser.value) {
         const programDetails = await EducationProgramService.shared.getEducationProgramForAEST(
           props.programId,
         );
         institutionId.value = programDetails.institutionId;
-        initialData.value = programDetails;
+        initialData.value = {
+          ...programDetails,
+          ...{ isBCPrivate: programDetails.regulatoryBody },
+        };
       }
     };
 
@@ -91,7 +100,7 @@ export default {
     });
 
     const goBack = () => {
-      if (!isReadonly.value && props.programId) {
+      if (isInstitutionUser.value && props.programId) {
         // in edit program mode
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
@@ -100,7 +109,7 @@ export default {
             locationId: props.locationId,
           },
         });
-      } else if (!isReadonly.value && !props.programId) {
+      } else if (isInstitutionUser.value && !props.programId) {
         // in create program mode
         router.push({
           name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -108,7 +117,7 @@ export default {
             locationId: props.locationId,
           },
         });
-      } else if (isReadonly.value) {
+      } else if (isAESTUser.value) {
         // in view program mode
         router.push({
           name: AESTRoutesConst.PROGRAM_DETAILS,
@@ -121,38 +130,31 @@ export default {
     };
 
     const submitted = async (data: any) => {
-      try {
-        if (!isReadonly.value) {
+      if (isInstitutionUser.value) {
+        try {
           if (props.programId) {
             await EducationProgramService.shared.updateProgram(
               props.programId,
               data,
             );
+            toast.success(
+              "Updated!",
+              "Education Program updated successfully!",
+            );
           } else {
             await EducationProgramService.shared.createProgram(data);
+            toast.success(
+              "Created!",
+              "Education Program created successfully!",
+            );
           }
-
-          router.push({
-            name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-            params: {
-              programId: props.programId,
-              locationId: props.locationId,
-            },
-          });
-          toast.add({
-            severity: "success",
-            summary: "Created!",
-            detail: "Education Program saved successfully!",
-            life: 5000,
-          });
+          goBack();
+        } catch (excp) {
+          toast.error(
+            "Unexpected error",
+            "An error happened during the saving process.",
+          );
         }
-      } catch (excp) {
-        toast.add({
-          severity: "error",
-          summary: "Unexpected error",
-          detail: "An error happened during the saving process.",
-          life: 5000,
-        });
       }
     };
     return {

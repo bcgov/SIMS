@@ -50,6 +50,7 @@ export interface AESTInstitutionProgramsSummaryDto {
   programStatus: ApprovalStatus;
   offeringsCount: number;
   formattedSubmittedDate: string;
+  locationId: number;
 }
 
 export interface AESTInstitutionProgramsSummaryPaginatedDto {

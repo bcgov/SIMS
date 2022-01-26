@@ -14,6 +14,7 @@
       Add Study Period
     </v-btn>
   </div>
+  {{locationId}}++++++++
   <DataTable :autoLayout="true" :value="offerings">
     <Column field="offeringName" header="Name" :sortable="true"></Column>
     <Column field="studyDates" header="Study Dates" :sortable="true"></Column>
@@ -29,9 +30,12 @@
     ></Column>
     <Column>
       <template #body="slotProps">
-        <v-btn plain @click="goToEditOffering(slotProps.data.id)">
-          <v-icon size="25" left> mdi-open-in-new </v-icon>
-          Edit
+        <v-btn
+          outlined
+          @click="offeringButtonAction(slotProps.data.id)"
+          color="#2965C5"
+        >
+          {{ offeringActionLabel }}
         </v-btn>
       </template>
     </Column>
@@ -41,7 +45,10 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  InstitutionRoutesConst,
+  AESTRoutesConst,
+} from "@/constants/routes/RouteConstants";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingDto, ClientIdType } from "@/types";
 
@@ -53,7 +60,7 @@ export default {
     },
     locationId: {
       type: Number,
-      required: false,
+      required: true,
     },
     clientType: {
       type: String,
@@ -68,16 +75,24 @@ export default {
     const isAESTUser = computed(() => {
       return props.clientType === ClientIdType.AEST;
     });
+    const offeringActionLabel = computed(() => {
+      return isInstitutionUser.value ? "Edit" : "View";
+    });
+
     const goToAddNewOffering = () => {
       if (isInstitutionUser.value) {
         router.push({
           name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
-          params: { locationId: props.locationId, programId: props.programId },
+          params: {
+            locationId: props.locationId,
+            programId: props.programId,
+            clientType: ClientIdType.Institution,
+          },
         });
       }
     };
 
-    const goToEditOffering = (offeringId: number) => {
+    const offeringButtonAction = (offeringId: number) => {
       if (isInstitutionUser.value) {
         router.push({
           name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
@@ -85,6 +100,18 @@ export default {
             offeringId: offeringId,
             programId: props.programId,
             locationId: props.locationId,
+            clientType: ClientIdType.Institution,
+          },
+        });
+      }
+      if (isAESTUser.value) {
+        router.push({
+          name: AESTRoutesConst.VIEW_OFFERING,
+          params: {
+            offeringId: offeringId,
+            programId: props.programId,
+            locationId: props.locationId,
+            clientType: ClientIdType.AEST,
           },
         });
       }
@@ -109,9 +136,10 @@ export default {
     return {
       goToAddNewOffering,
       offerings,
-      goToEditOffering,
+      offeringButtonAction,
       isInstitutionUser,
       isAESTUser,
+      offeringActionLabel,
     };
   },
 };
