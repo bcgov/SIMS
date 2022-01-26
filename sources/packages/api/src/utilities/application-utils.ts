@@ -1,11 +1,6 @@
-import {
-  Application,
-  SFASApplication,
-  SFASPartTimeApplications,
-} from "../database/entities";
+import { Application } from "../database/entities";
 import { COE_DENIED_REASON_OTHER_ID, PIR_DENIED_REASON_OTHER_ID } from ".";
 import { ApplicationSummaryDTO } from "../route-controllers/application/models/application.model";
-import { UnprocessableEntityException } from "@nestjs/common";
 export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
 export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =
   "There is an existing application already with overlapping study period or a pending PIR.";

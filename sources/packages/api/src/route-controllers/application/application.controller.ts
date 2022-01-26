@@ -48,7 +48,11 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApplicationStatus, Application } from "../../database/entities";
+import {
+  ApplicationStatus,
+  Application,
+  Student,
+} from "../../database/entities";
 import { ApiProcessError, IConfig } from "../../types";
 import {
   dateString,
@@ -174,52 +178,14 @@ export class ApplicationController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
-    /** Validation for application overlapping dates or Pending PIR.
-     * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
-     * */
 
-    if (!this.config.bypassApplicationSubmitValidations) {
-      const existingOverlapApplication =
-        this.applicationService.validatePIRAndDateOverlap(
-          userToken.userId,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
-          applicationId,
-        );
-
-      const existingSFASFTApplication =
-        this.sfasApplicationService.validateDateOverlap(
-          student.sin,
-          student.birthDate,
-          userToken.lastName,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
-        );
-
-      const existingSFASPTApplication =
-        this.sfasPartTimeApplicationsService.validateDateOverlap(
-          student.sin,
-          student.birthDate,
-          userToken.lastName,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
-        );
-      const dateOverlapPIRValidation = await Promise.all([
-        existingOverlapApplication,
-        existingSFASFTApplication,
-        existingSFASPTApplication,
-      ]);
-      if (
-        !!dateOverlapPIRValidation[0] ||
-        !!dateOverlapPIRValidation[1] ||
-        !!dateOverlapPIRValidation[2]
-      ) {
-        throw new UnprocessableEntityException(
-          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
-        );
-      }
-    }
-
+    await this.validateOverlappingDatesAndPIR(
+      applicationId,
+      userToken,
+      student,
+      studyStartDate,
+      studyEndDate,
+    );
     try {
       const submittedApplication =
         await this.applicationService.submitApplication(
@@ -575,5 +541,68 @@ export class ApplicationController extends BaseController {
       }),
       totalApplications: applicationsAndCount[1],
     };
+  }
+
+  /**
+   * Validation for application overlapping dates or Pending PIR.
+   * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
+   * @param applicationId
+   * @param userToken
+   * @param student
+   * @param studyStartDate
+   * @param studyEndDate
+   */
+  private async validateOverlappingDatesAndPIR(
+    applicationId: number,
+    userToken: IUserToken,
+    student: Student,
+    studyStartDate: Date,
+    studyEndDate: Date,
+  ): Promise<void> {
+    if (!this.config.bypassApplicationSubmitValidations) {
+      const existingOverlapApplication =
+        this.applicationService.validatePIRAndDateOverlap(
+          userToken.userId,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+          applicationId,
+        );
+
+      const existingSFASFTApplication =
+        this.sfasApplicationService.validateDateOverlap(
+          student.sin,
+          student.birthDate,
+          userToken.lastName,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+        );
+
+      const existingSFASPTApplication =
+        this.sfasPartTimeApplicationsService.validateDateOverlap(
+          student.sin,
+          student.birthDate,
+          userToken.lastName,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+        );
+      const [
+        applicationResponse,
+        sfasFTApplicationResponse,
+        sfasPTApplicationResponse,
+      ] = await Promise.all([
+        existingOverlapApplication,
+        existingSFASFTApplication,
+        existingSFASPTApplication,
+      ]);
+      if (
+        !!applicationResponse ||
+        !!sfasFTApplicationResponse ||
+        !!sfasPTApplicationResponse
+      ) {
+        throw new UnprocessableEntityException(
+          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
+        );
+      }
+    }
   }
 }
