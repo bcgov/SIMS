@@ -20,6 +20,13 @@ export interface IConfig {
    * machine on an environment where the CRA process is not enabled.
    */
   bypassCRAIncomeVerification: boolean;
+  /** This is a flag to bypass the validations which blocks the application flow at local environment due to the environmental constraints
+   *  like absence of camunda engine etc.
+   *  This flag should not be present in any other environment other than local.
+   **Note: Until the data clean is done in Dev environment, it may exist there temporarily.
+   * TODO: Once the dev data cleanup is done, remove this environment variable from deployment config.
+   * */
+  bypassApplicationSubmitValidations: boolean;
 }
 
 export interface IAuthConfig {

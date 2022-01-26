@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, IsNull, Not, UpdateResult } from "typeorm";
+import { Connection, In, IsNull, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -1480,6 +1480,63 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.inProgress,
       })
+      .getOne();
+  }
+
+  /**
+   * Validates to make sure that a student cannot create more than one application with overlapping study period dates.
+   * When an application is pending for PIR approval then study period dates are subjective. In this case another application
+   * is not allowed to be created because on PIR approval the study period dates may overlap with an existing application.
+   * @param userId
+   * @param studyStartDate
+   * @param studyEndDate
+   * @param currentApplicationId
+   * @returns Overlapping or PIR pending Application.
+   */
+  async validatePIRAndDateOverlap(
+    userId: number,
+    studyStartDate: Date,
+    studyEndDate: Date,
+    currentApplicationId: number,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select(["application.id"])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .leftJoin("application.offering", "offering")
+      .where("user.id = :userId", { userId })
+      .andWhere("application.id != :currentApplicationId", {
+        currentApplicationId,
+      })
+      .andWhere("application.applicationStatus NOT IN (:...status)", {
+        status: [
+          ApplicationStatus.draft,
+          ApplicationStatus.overwritten,
+          ApplicationStatus.cancelled,
+        ],
+      })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("offering.id is NULL")
+            .orWhere(
+              "offering.studyStartDate BETWEEN :studyStartDate AND :studyEndDate",
+              { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            )
+            .orWhere(
+              "offering.studyEndDate BETWEEN :studyStartDate AND :studyEndDate",
+              { studyStartDate: studyStartDate, studyEndDate: studyEndDate },
+            )
+            .orWhere(
+              " :studyStartDate BETWEEN offering.studyStartDate AND offering.studyEndDate",
+              { studyStartDate: studyStartDate },
+            )
+            .orWhere(
+              " :studyEndDate BETWEEN offering.studyStartDate AND offering.studyEndDate",
+              { studyEndDate: studyEndDate },
+            );
+        }),
+      )
       .getOne();
   }
 }
