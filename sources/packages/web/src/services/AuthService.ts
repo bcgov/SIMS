@@ -91,6 +91,7 @@ export class AuthService {
       });
 
       if (this.keycloak.authenticated) {
+        console.log(this.keycloak.token);
         this.interval = setInterval(
           this.renewTokenIfExpired,
           RENEW_AUTH_TOKEN_TIMER,
