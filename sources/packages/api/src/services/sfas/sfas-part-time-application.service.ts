@@ -66,7 +66,7 @@ export class SFASPartTimeApplicationsService
       .createQueryBuilder("sfasPTApplication")
       .select(["sfasPTApplication.id"])
       .innerJoin("sfasPTApplication.individual", "sfasPTstudent")
-      .where("sfasPTstudent.lastName = :lastName", { lastName })
+      .where("lower(sfasPTstudent.lastName) = lower(:lastName)", { lastName })
       .andWhere("sfasPTstudent.sin = :sin", { sin })
       .andWhere("sfasPTstudent.birthDate = :birthDate", { birthDate })
       .andWhere(
@@ -80,11 +80,11 @@ export class SFASPartTimeApplicationsService
               { startDatePT: studyStartDate, endDatePT: studyEndDate },
             )
             .orWhere(
-              "startDatePT: BETWEEN sfasPTApplication.startDate AND sfasPTApplication.endDate",
+              ":startDatePT BETWEEN sfasPTApplication.startDate AND sfasPTApplication.endDate",
               { startDatePT: studyStartDate },
             )
             .orWhere(
-              "endDatePT: BETWEEN sfasPTApplication.startDate AND sfasPTApplication.endDate",
+              ":endDatePT BETWEEN sfasPTApplication.startDate AND sfasPTApplication.endDate",
               { endDatePT: studyEndDate },
             );
         }),

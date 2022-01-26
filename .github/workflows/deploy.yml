@@ -74,7 +74,7 @@ jobs:
       ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
       ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
       BYPASS_CRA_INCOME_VERIFICATION: true
-      BYPASS_VALIDATIONS_AT_LOCAL: true
+      BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
     needs:
       - build
     steps:

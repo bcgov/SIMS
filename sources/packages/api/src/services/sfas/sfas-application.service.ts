@@ -70,7 +70,7 @@ export class SFASApplicationService
       .createQueryBuilder("sfasApplication")
       .select(["sfasApplication.id"])
       .innerJoin("sfasApplication.individual", "sfasFTstudent")
-      .where("sfasFTstudent.lastName = :lastName", { lastName })
+      .where("lower(sfasFTstudent.lastName) = lower(:lastName)", { lastName })
       .andWhere("sfasFTstudent.sin = :sin", { sin })
       .andWhere("sfasFTstudent.birthDate = :birthDate", { birthDate })
       .andWhere(

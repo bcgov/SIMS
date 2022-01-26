@@ -1483,6 +1483,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
+  /**
+   * Validates to make sure that a student cannot create more than one application with overlapping study period dates.
+   * When an application is pending for PIR approval then study period dates are subjective. In this case another application
+   * is not allowed to be created because on PIR approval the study period dates may overlap with an existing application.
+   * @param userId
+   * @param studyStartDate
+   * @param studyEndDate
+   * @param currentApplicationId
+   * @returns Overlapping or PIR pending Application.
+   */
   async validatePIRAndDateOverlap(
     userId: number,
     studyStartDate: Date,

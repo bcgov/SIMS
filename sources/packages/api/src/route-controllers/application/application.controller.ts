@@ -59,9 +59,8 @@ import {
   transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
-  addDays,
-  subtractDays,
-  throwExceptionForPIRDateOverlap,
+  PIR_OR_DATE_OVERLAP_ERROR,
+  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
@@ -176,40 +175,49 @@ export class ApplicationController extends BaseController {
       userToken.userId,
     );
     /** Validation for application overlapping dates or Pending PIR.
-     * This validation can be disabled by setting BYPASS_VALIDATIONS_AT_LOCAL to true in .env file.
+     * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
      * */
 
-    if (!this.config.bypassValidationsAtLocal) {
+    if (!this.config.bypassApplicationSubmitValidations) {
       const existingOverlapApplication =
-        await this.applicationService.validatePIRAndDateOverlap(
+        this.applicationService.validatePIRAndDateOverlap(
           userToken.userId,
-          subtractDays(studyStartDate, 1),
-          addDays(studyEndDate, 1),
+          new Date(studyStartDate),
+          new Date(studyEndDate),
           applicationId,
         );
-      throwExceptionForPIRDateOverlap(existingOverlapApplication);
 
       const existingSFASFTApplication =
-        await this.sfasApplicationService.validateDateOverlap(
+        this.sfasApplicationService.validateDateOverlap(
           student.sin,
           student.birthDate,
           userToken.lastName,
-          subtractDays(studyStartDate, 1),
-          addDays(studyEndDate, 1),
+          new Date(studyStartDate),
+          new Date(studyEndDate),
         );
-
-      throwExceptionForPIRDateOverlap(existingSFASFTApplication);
 
       const existingSFASPTApplication =
-        await this.sfasPartTimeApplicationsService.validateDateOverlap(
+        this.sfasPartTimeApplicationsService.validateDateOverlap(
           student.sin,
           student.birthDate,
           userToken.lastName,
-          subtractDays(studyStartDate, 1),
-          addDays(studyEndDate, 1),
+          new Date(studyStartDate),
+          new Date(studyEndDate),
         );
-
-      throwExceptionForPIRDateOverlap(existingSFASPTApplication);
+      const dateOverlapPIRValidation = await Promise.all([
+        existingOverlapApplication,
+        existingSFASFTApplication,
+        existingSFASPTApplication,
+      ]);
+      if (
+        !!dateOverlapPIRValidation[0] ||
+        !!dateOverlapPIRValidation[1] ||
+        !!dateOverlapPIRValidation[2]
+      ) {
+        throw new UnprocessableEntityException(
+          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
+        );
+      }
     }
 
     try {

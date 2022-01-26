@@ -26,7 +26,7 @@ export interface IConfig {
    **Note: Until the data clean is done in Dev environment, it may exist there temporarily.
    * TODO: Once the dev data cleanup is done, remove this environment variable from deployment config.
    * */
-  bypassValidationsAtLocal: boolean;
+  bypassApplicationSubmitValidations: boolean;
 }
 
 export interface IAuthConfig {

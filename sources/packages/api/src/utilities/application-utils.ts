@@ -55,16 +55,3 @@ export const transformToApplicationSummaryDTO = (
     status: application.applicationStatus,
   } as ApplicationSummaryDTO;
 };
-
-/**
- * Throw validation exception on Application date overlap or PIR Pending.
- */
-export const throwExceptionForPIRDateOverlap = (
-  application: Application | SFASApplication | SFASPartTimeApplications,
-) => {
-  if (application) {
-    throw new UnprocessableEntityException(
-      `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
-    );
-  }
-};
