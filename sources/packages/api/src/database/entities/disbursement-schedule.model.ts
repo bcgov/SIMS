@@ -28,7 +28,7 @@ export class DisbursementSchedule extends RecordDataModel {
     name: "document_number",
     nullable: true,
   })
-  documentNumber: number;
+  documentNumber?: number;
   /**
    * Date that the money must be disbursed.
    */
