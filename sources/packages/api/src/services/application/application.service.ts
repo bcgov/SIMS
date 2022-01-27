@@ -520,6 +520,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.name",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "offering.offeringIntensity",
         "msfaaNumber.msfaaNumber",
         "disbursementSchedule.disbursementDate",
         "disbursementValue.valueType",

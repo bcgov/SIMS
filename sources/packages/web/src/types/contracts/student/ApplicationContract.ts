@@ -1,4 +1,5 @@
 import { ProgramInfoStatus, COEStatus, AssessmentStatus } from "@/types";
+import { OfferingIntensity } from "../OfferingContact";
 export interface SaveStudentApplicationDto {
   programYearId: number;
   data: any;
@@ -152,6 +153,7 @@ export interface NoticeOfAssessmentDTO {
   fullName: string;
   programName: string;
   locationName: string;
+  offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
