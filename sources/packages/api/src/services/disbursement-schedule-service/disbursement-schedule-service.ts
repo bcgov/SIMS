@@ -249,7 +249,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .createQueryBuilder()
       .update(DisbursementSchedule)
       .set({ documentNumber: documentNumber })
-      .where("applicationId = :applicationId", { applicationId: applicationId })
+      .where("application.id = :applicationId", { applicationId })
       .execute();
   }
 }
