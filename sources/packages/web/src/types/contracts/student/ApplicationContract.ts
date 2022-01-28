@@ -161,20 +161,25 @@ export interface NoticeOfAssessmentDTO {
 }
 
 /**
- * DTO for FullTime assessment payload.
+ * Interface for BaseAssessment values that are shared between FullTime and PartTime
  */
-export interface FullTimeAssessment {
+export interface BaseAssessment {
   weeks: number;
+  tuitionCost: number;
+  childcareCost: number;
+  transportationCost: number;
+  booksAndSuppliesCost: number;
   totalFederalAward: number;
   totalProvincialAward: number;
+}
+/**
+ * Interface for FullTime assessment payload.
+ */
+export interface FullTimeAssessment extends BaseAssessment {
   federalAssessmentNeed: number;
   provincialAssessmentNeed: number;
-  tuitionCost: number;
-  booksAndSuppliesCost: number;
   exceptionalEducationCost: number;
   livingAllowance: number;
-  transportationCost: number;
-  childcareCost: number;
   alimonyOrChildSupport: number;
   secondResidenceCost: number;
   partnerStudentLoanCost: number;
@@ -189,20 +194,13 @@ export interface FullTimeAssessment {
 }
 
 /**
- * DTO for PartTime assessment payload.
+ * Interface for PartTime assessment payload.
  */
-export interface PartTimeAssessment {
-  weeks: number;
+export interface PartTimeAssessment extends BaseAssessment {
   schoolFees: number;
-  tuitionCost: number;
-  childcareCost: number;
   miscellaneousCost: number;
   totalFamilyIncome: number;
-  totalFederalAward: number;
-  transportationCost: number;
   totalAssessmentNeed: number;
-  booksAndSuppliesCost: number;
-  totalProvincialAward: number;
 }
 
 /**
