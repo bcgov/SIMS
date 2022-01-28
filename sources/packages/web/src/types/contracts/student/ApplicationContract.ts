@@ -161,15 +161,9 @@ export interface NoticeOfAssessmentDTO {
 }
 
 /**
- * DTO for assessment payload.
- * This interface is to provide contract for the assessment payload
- * which is stored to database by workflow.
- * It is possible that more properties can be added to the assessment payload
- * without updating this interface and displayed in NOA form.
- * Whenever there is a source code update, please ensure that properties in this interface are in sync with
- * assessment payload created by camunda workflow.
+ * DTO for FullTime assessment payload.
  */
-export interface Assessment {
+export interface FullTimeAssessment {
   weeks: number;
   totalFederalAward: number;
   totalProvincialAward: number;
@@ -193,6 +187,32 @@ export interface Assessment {
   totalProvincialContribution: number;
   otherAllowableCost: number;
 }
+
+/**
+ * DTO for PartTime assessment payload.
+ */
+export interface PartTimeAssessment {
+  weeks: number;
+  schoolFees: number;
+  tuitionCost: number;
+  childcareCost: number;
+  miscellaneousCost: number;
+  totalFamilyIncome: number;
+  totalFederalAward: number;
+  transportationCost: number;
+  totalAssessmentNeed: number;
+  booksAndSuppliesCost: number;
+  totalProvincialAward: number;
+}
+/**
+ * This is a type which provides the contract for FullTime and PartTime assessment payload
+ * which is stored to database by workflow.
+ * It is possible that more properties can be added to the assessment payload
+ * without updating this interface and displayed in NOA form.
+ * Whenever there is a source code update, please ensure that properties in this interface are in sync with
+ * assessment payload created by camunda workflow.
+ */
+export type Assessment = FullTimeAssessment | PartTimeAssessment;
 
 export interface StudentApplicationAndCount {
   applications: ApplicationSummaryDTO[];
