@@ -6,6 +6,7 @@ import {
   COEStatus,
   Application,
   Assessment,
+  OfferingIntensity,
 } from "../../../database/entities";
 import {
   dateString,
@@ -196,6 +197,7 @@ export interface NOAApplicationDto {
   fullName: string;
   programName: string;
   locationName: string;
+  offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;

@@ -261,27 +261,27 @@ export class Application extends RecordDataModel {
 }
 
 /**
- * Interface for assessment payload.
- *
- * This interface is to provide contract for the assessment payload
- * which is stored to database by workflow.
- * It is possible that more properties can be added to the assessment payload
- * without updating this interface and displayed in NOA form.
- * Whenever there is a source code update, please ensure that properties in this interface are in sync with
- * assessment payload created by camunda workflow.
+ * Interface for BaseAssessment values that are shared between FullTime and PartTime
  */
-export interface Assessment {
+export interface BaseAssessment {
   weeks: number;
+  tuitionCost: number;
+  childcareCost: number;
+  transportationCost: number;
+  booksAndSuppliesCost: number;
   totalFederalAward: number;
   totalProvincialAward: number;
+  totalFamilyIncome: number;
+  totalAssessmentNeed: number;
+}
+/**
+ * Interface for FullTime assessment payload.
+ */
+export interface FullTimeAssessment extends BaseAssessment {
   federalAssessmentNeed: number;
   provincialAssessmentNeed: number;
-  tuitionCost: number;
-  booksAndSuppliesCost: number;
   exceptionalEducationCost: number;
   livingAllowance: number;
-  transportationCost: number;
-  childcareCost: number;
   alimonyOrChildSupport: number;
   secondResidenceCost: number;
   partnerStudentLoanCost: number;
@@ -294,3 +294,19 @@ export interface Assessment {
   totalProvincialContribution: number;
   otherAllowableCost: number;
 }
+
+/**
+ * Interface for PartTime assessment payload.
+ */
+export interface PartTimeAssessment extends BaseAssessment {
+  miscellaneousCost: number;
+}
+/**
+ * This is a type which provides the contract for FullTime and PartTime assessment payload
+ * which is stored to database by workflow.
+ * It is possible that more properties can be added to the assessment payload
+ * without updating this interface and displayed in NOA form.
+ * Whenever there is a source code update, please ensure that properties in this interface are in sync with
+ * assessment payload created by camunda workflow.
+ */
+export type Assessment = FullTimeAssessment | PartTimeAssessment;
