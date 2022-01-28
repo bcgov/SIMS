@@ -204,6 +204,7 @@ export interface PartTimeAssessment {
   booksAndSuppliesCost: number;
   totalProvincialAward: number;
 }
+
 /**
  * This is a type which provides the structure for FullTime and PartTime assessment payload
  * which is stored to database by workflow.
