@@ -1,5 +1,9 @@
-import { ProgramInfoStatus, COEStatus, AssessmentStatus } from "@/types";
-import { OfferingIntensity } from "../OfferingContact";
+import {
+  ProgramInfoStatus,
+  COEStatus,
+  AssessmentStatus,
+  OfferingIntensity,
+} from "@/types";
 export interface SaveStudentApplicationDto {
   programYearId: number;
   data: any;
