@@ -21,13 +21,14 @@ export class DesignationAgreementController {
    * @returns the new designation agreement id created.
    */
   @Post()
-  async getSummary(
+  async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Body() payload: SubmitDesignationAgreementDto,
   ) {
+    console.log(payload);
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
-        payload.institutionId,
+        userToken.authorizations.institutionId,
         payload.submittedData,
         userToken.userId,
         getUTCNow(),

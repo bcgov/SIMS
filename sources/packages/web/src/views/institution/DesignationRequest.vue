@@ -9,7 +9,11 @@
   </v-container>
 
   <full-page-container>
-    <formio formName="designationagreementdetails" :data="initialData"></formio>
+    <formio
+      formName="designationagreementdetails"
+      :data="initialData"
+      @submitted="submitDesignation"
+    ></formio>
   </full-page-container>
 </template>
 
@@ -19,6 +23,7 @@ import formio from "@/components/generic/formio.vue";
 import { ref, onMounted } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import { useFormatters } from "@/composables";
+import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 
 export default {
   components: { formio, FullPageContainer },
@@ -42,7 +47,15 @@ export default {
       console.log(initialData.value.locations);
     });
 
-    return { initialData };
+    const submitDesignation = async (args: any) => {
+      console.log(args);
+      await DesignationAgreementService.shared.submitDesignationAgreement({
+        submittedData: args,
+        requestedLocationsIds: [1, 2, 3],
+      });
+    };
+
+    return { initialData, submitDesignation };
   },
 };
 </script>
