@@ -271,6 +271,8 @@ export interface BaseAssessment {
   booksAndSuppliesCost: number;
   totalFederalAward: number;
   totalProvincialAward: number;
+  totalFamilyIncome: number;
+  totalAssessmentNeed: number;
 }
 /**
  * Interface for FullTime assessment payload.
@@ -297,10 +299,7 @@ export interface FullTimeAssessment extends BaseAssessment {
  * Interface for PartTime assessment payload.
  */
 export interface PartTimeAssessment extends BaseAssessment {
-  schoolFees: number;
   miscellaneousCost: number;
-  totalFamilyIncome: number;
-  totalAssessmentNeed: number;
 }
 /**
  * This is a type which provides the contract for FullTime and PartTime assessment payload
