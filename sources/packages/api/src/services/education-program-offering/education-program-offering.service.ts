@@ -292,100 +292,71 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return this.repo.findOne(offeringId);
   }
 
-  /**
-   * Get programs for a particular institution with pagination.
-   * @param institutionId id of the institution.
-   * @param offeringTypes OfferingTypes array.
-   * @param pageSize is the number of rows shown in the table
-   * @param skip is the number of rows that is skipped/offset from the total list.
-   * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
-   * @param searchProgramName Search the program name in the query
-   * @returns programs, locations and offerings count, programs count under the specified institution.
-   */
-  async getPaginatedProgramsForInstitution(
-    institutionId: number,
-    offeringTypes: OfferingTypes[],
-    pageSize?: number,
-    page?: number,
-    sortColumn?: string,
-    sortOrder?: SortDBOrder,
-    searchProgramName?: string,
-  ): Promise<ProgramsOfferingSummaryPaginated> {
-    const sortByColumn = "programs.createdAt"; //Default sort column
-    const paginatedProgramQuery = this.repo
-      .createQueryBuilder("offerings")
-      .select("programs.id", "programId")
-      .addSelect("programs.name", "programName")
-      .addSelect("programs.createdAt", "submittedDate")
-      .addSelect("locations.name", "locationName")
-      .addSelect("programs.approvalStatus", "programStatus")
-      .addSelect("COUNT(offerings.id)", "offeringsCount")
-      .innerJoin("offerings.educationProgram", "programs")
-      .innerJoin("offerings.institutionLocation", "locations")
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .andWhere("offerings.offeringType in (:...offeringTypes)", {
-        offeringTypes,
-      });
-    if (searchProgramName) {
-      paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
-        searchProgramName: `%${searchProgramName}%`,
-      });
-    }
-    paginatedProgramQuery
-      .groupBy("programs.id")
-      .addGroupBy("programs.name")
-      .addGroupBy("programs.createdAt")
-      .addGroupBy("locations.name")
-      .addGroupBy("programs.approvalStatus");
-    const programsCountQuery = paginatedProgramQuery.getRawMany();
-    if (pageSize) {
-      paginatedProgramQuery.limit(pageSize);
-    }
-    if (page) {
-      paginatedProgramQuery.offset(page * pageSize);
-    } else {
-      paginatedProgramQuery.offset(0);
-    }
-    paginatedProgramQuery.orderBy(sortByColumn, sortOrder);
-    const programsQuery = paginatedProgramQuery.getRawMany();
-    const [paginatedProgramOfferingSummaryResult, programsCount] =
-      await Promise.all([programsQuery, programsCountQuery]);
-    return {
-      programsSummary: paginatedProgramOfferingSummaryResult,
-      programsCount: programsCount.length,
-    };
-  }
-
-  /**
-   * Education Offering summary of a Program
-   * @param programId
-   * @param offeringTypes OfferingTypes array.
-
-   * @returns
-   */
-  async getOfferingSummary(
-    programId: number,
-    offeringTypes: OfferingTypes[],
-  ): Promise<EducationProgramOffering[]> {
-    const offeringsQuery = this.repo
-      .createQueryBuilder("offerings")
-      .select([
-        "offerings.id",
-        "offerings.name",
-        "offerings.studyStartDate",
-        "offerings.studyEndDate",
-        "offerings.offeringDelivered",
-        "offerings.offeringIntensity",
-      ])
-      .innerJoin("offerings.educationProgram", "educationProgram")
-      .innerJoin("offerings.institutionLocation", "institutionLocation")
-      .where("educationProgram.id = :programId", { programId })
-      .andWhere("offerings.offeringType in (:...offeringTypes)", {
-        offeringTypes,
-      });
-
-    return offeringsQuery.getMany();
-  }
+  // /**
+  //  * Get programs for a particular institution with pagination.
+  //  * @param institutionId id of the institution.
+  //  * @param offeringTypes OfferingTypes array.
+  //  * @param pageSize is the number of rows shown in the table
+  //  * @param skip is the number of rows that is skipped/offset from the total list.
+  //  * For example page 2 the skip would be 10 when we select 10 rows per page.
+  //  * @param sortColumn the sorting column.
+  //  * @param sortOrder sorting order default is descending.
+  //  * @param searchProgramName Search the program name in the query
+  //  * @returns programs, locations and offerings count, programs count under the specified institution.
+  //  */
+  // async getPaginatedProgramsForInstitution(
+  //   institutionId: number,
+  //   offeringTypes: OfferingTypes[],
+  //   pageSize?: number,
+  //   page?: number,
+  //   sortColumn?: string,
+  //   sortOrder?: SortDBOrder,
+  //   searchProgramName?: string,
+  // ): Promise<any> {
+  //   const sortByColumn = "programs.createdAt"; //Default sort column
+  //   const paginatedProgramQuery = this.repo
+  //     .createQueryBuilder("offerings")
+  //     .select("programs.id", "programId")
+  //     .addSelect("programs.name", "programName")
+  //     .addSelect("programs.createdAt", "submittedDate")
+  //     .addSelect("locations.id", "locationId")
+  //     .addSelect("locations.name", "locationName")
+  //     .addSelect("programs.approvalStatus", "programStatus")
+  //     .addSelect("COUNT(offerings.id)", "offeringsCount")
+  //     .leftJoin("offerings.educationProgram", "programs")
+  //     .leftJoin("offerings.institutionLocation", "locations")
+  //     .where("programs.institution.id = :institutionId", { institutionId })
+  //     .andWhere("offerings.offeringType in (:...offeringTypes)", {
+  //       offeringTypes,
+  //     });
+  //   if (searchProgramName) {
+  //     paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
+  //       searchProgramName: `%${searchProgramName}%`,
+  //     });
+  //   }
+  //   paginatedProgramQuery
+  //     .groupBy("programs.id")
+  //     .addGroupBy("programs.name")
+  //     .addGroupBy("programs.createdAt")
+  //     .addGroupBy("locations.name")
+  //     .addGroupBy("locations.id")
+  //     .addGroupBy("programs.approvalStatus");
+  //   const programsCountQuery = paginatedProgramQuery.getRawMany();
+  //   if (pageSize) {
+  //     paginatedProgramQuery.limit(pageSize);
+  //   }
+  //   if (page) {
+  //     paginatedProgramQuery.offset(page * pageSize);
+  //   } else {
+  //     paginatedProgramQuery.offset(0);
+  //   }
+  //   paginatedProgramQuery.orderBy(sortByColumn, sortOrder);
+  //   const programsQuery = paginatedProgramQuery.getRawMany();
+  //   const [paginatedProgramOfferingSummaryResult, programsCount] =
+  //     await Promise.all([programsQuery, programsCountQuery]);
+  //   return {
+  //     programsSummary: paginatedProgramOfferingSummaryResult,
+  //     programsCount: programsCount.length,
+  //   };
+  // }
 }

@@ -1,10 +1,10 @@
 import {
-  EducationProgramDto,
+  EducationProgramsSummaryPaginated,
   OptionItemDto,
   StudentEducationProgramDto,
   ProgramDto,
-  EducationProgramData
-} from "../types";
+  EducationProgramData,
+} from "@/types";
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
@@ -30,7 +30,9 @@ export class EducationProgramService {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }
 
-  public async getLocationProgramsSummary(locationId: number): Promise<any> {
+  public async getLocationProgramsSummary(
+    locationId: number,
+  ): Promise<EducationProgramsSummaryPaginated> {
     return ApiClient.EducationProgram.getLocationProgramsSummary(locationId);
   }
 

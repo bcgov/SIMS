@@ -14,7 +14,6 @@
       Add Study Period
     </v-btn>
   </div>
-  {{locationId}}++++++++
   <DataTable :autoLayout="true" :value="offerings">
     <Column field="offeringName" header="Name" :sortable="true"></Column>
     <Column field="studyDates" header="Study Dates" :sortable="true"></Column>
@@ -118,6 +117,7 @@ export default {
     };
 
     const offerings = ref([] as EducationProgramOfferingDto[]);
+
     const getEducationProgramAndOffering = async () => {
       if (isInstitutionUser.value) {
         offerings.value = await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
@@ -126,6 +126,7 @@ export default {
         );
       } else if (isAESTUser.value) {
         offerings.value = await EducationProgramOfferingService.shared.getOfferingSummaryForAEST(
+          props.locationId,
           props.programId,
         );
       }

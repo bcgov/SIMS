@@ -10,6 +10,7 @@
     </div>
     <ManageProgramAndOfferingSummary
       :programId="programId"
+      :locationId="locationId"
       :clientType="ClientIdType.AEST"
     />
   </v-container>

@@ -1,10 +1,9 @@
 import {
-  SummaryEducationProgramDto,
-  EducationProgramDto,
+  EducationProgramsSummaryPaginated,
   OptionItemDto,
   StudentEducationProgramDto,
   EducationProgramData,
-} from "../../types";
+} from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class EducationProgramApi extends HttpBaseClient {
@@ -52,13 +51,13 @@ export class EducationProgramApi extends HttpBaseClient {
 
   public async getLocationProgramsSummary(
     locationId: number,
-  ): Promise<SummaryEducationProgramDto[]> {
+  ): Promise<EducationProgramsSummaryPaginated> {
     try {
       const response = await this.apiClient.get(
         `institution/education-program/location/${locationId}/summary`,
         this.addAuthHeader(),
       );
-      return response.data as SummaryEducationProgramDto[];
+      return response.data as EducationProgramsSummaryPaginated;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

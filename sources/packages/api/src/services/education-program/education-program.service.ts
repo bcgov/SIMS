@@ -9,10 +9,18 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
 import {
   SaveEducationProgram,
+  EducationProgramsSummaryPaginated,
   EducationProgramsSummary,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
+import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { getRawCount, getDateOnlyFormat } from "../../utilities";
+import { SortDBOrder } from "../../types/sortDBOrder";
+import {
+  ProgramsSummaryPaginated,
+  ProgramsSummary,
+} from "../education-program-offering/education-program-offering.service.models";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -134,14 +142,26 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param institutionId Id of the institution.
    * @param locationId Id of the location.
    * @param offeringTypes OfferingTypes array.
+   * @param pageSize is the number of rows shown in the table
+   * @param skip is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortColumn the sorting column.
+   * @param sortOrder sorting order default is descending.
+   * @param searchProgramName Search the program name in the query
    * @returns summary for location
    */
   async getSummaryForLocation(
     institutionId: number,
     locationId: number,
     offeringTypes: OfferingTypes[],
-  ): Promise<EducationProgramsSummary[]> {
-    const summaryResult = await this.repo
+    pageSize?: number,
+    page?: number,
+    sortColumn?: string,
+    sortOrder?: SortDBOrder,
+    searchProgramName?: string,
+  ): Promise<EducationProgramsSummaryPaginated> {
+    const sortByColumn = "programs.approvalStatus";
+    const summaryResult = this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id as id",
@@ -165,10 +185,40 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             }),
         "totalofferings",
       )
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .getRawMany();
+      .where("programs.institution.id = :institutionId", { institutionId });
 
-    return summaryResult.map((summary) => {
+    const queryParams: any[] = [...offeringTypes, locationId, institutionId];
+    if (searchProgramName) {
+      summaryResult.andWhere("programs.name Ilike :searchProgramName", {
+        searchProgramName: `%${searchProgramName}%`,
+      });
+      queryParams.push(`%${searchProgramName}%`);
+    }
+
+    // total raw count
+    const totalCount = await getRawCount(
+      this.repo,
+      summaryResult.getSql(),
+      queryParams,
+    );
+
+    // pagination
+    if (pageSize) {
+      summaryResult.limit(pageSize);
+    }
+    if (page) {
+      summaryResult.offset(page * pageSize);
+    } else {
+      summaryResult.offset(0);
+    }
+
+    // sort
+    summaryResult.orderBy(sortByColumn, sortOrder);
+
+    const programs = await summaryResult.getRawMany();
+    console.log(programs, "+++++++++programAndCount");
+
+    const programSummary = programs.map((summary) => {
       const summaryItem = new EducationProgramsSummary();
       summaryItem.id = summary.id;
       summaryItem.name = summary.name;
@@ -178,6 +228,112 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.totalOfferings = summary.totalofferings;
       return summaryItem;
     });
+    return {
+      programsSummary: programSummary,
+      totalProgram: totalCount[0].count,
+    };
+  }
+  /**
+   * Gets all the programs that are associated with an institution
+   * alongside with the total of offerings on a particular location.
+   * @param institutionId Id of the institution.
+   * @param offeringTypes OfferingTypes array.
+   * @param pageSize is the number of rows shown in the table
+   * @param skip is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortColumn the sorting column.
+   * @param sortOrder sorting order default is descending.
+   * @param searchProgramName Search the program name in the query
+   * @returns summary for location
+   */
+  async getPaginatedProgramsForAEST(
+    institutionId: number,
+    offeringTypes: OfferingTypes[],
+    pageSize?: number,
+    page?: number,
+    sortColumn?: string,
+    sortOrder?: SortDBOrder,
+    searchProgramName?: string,
+  ): Promise<ProgramsSummaryPaginated> {
+    console.log("######################", offeringTypes);
+    console.log(sortColumn, "++sortColumn");
+    const sortByColumn = "programs.createdAt"; //Default sort column
+    const paginatedProgramQuery = this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id as programId",
+        "programs.name as programName",
+        "programs.createdAt as programSubmittedAt",
+        "location.id as locationId",
+        "location.name as locationName",
+        "programs.approvalStatus as approvalStatus",
+      ])
+      .addSelect(
+        (query) =>
+          query
+            .select("COUNT(*)")
+            .from(EducationProgramOffering, "offerings")
+            .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.institutionLocation.id = location.id")
+            .andWhere("offerings.offeringType in (:...offeringTypes)", {
+              offeringTypes,
+            }),
+        "totalOfferings",
+      )
+      .innerJoin("programs.institution", "institution")
+      .innerJoin(
+        InstitutionLocation,
+        "location",
+        "institution.id = location.institution.id",
+      )
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .orderBy("programs.id");
+    const queryParams: any[] = [...offeringTypes, institutionId];
+    if (searchProgramName) {
+      paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
+        searchProgramName: `%${searchProgramName}%`,
+      });
+      queryParams.push(`%${searchProgramName}%`);
+    }
+
+    // total raw count
+    const totalCount = await getRawCount(
+      this.repo,
+      paginatedProgramQuery.getSql(),
+      queryParams,
+    );
+
+    if (pageSize) {
+      paginatedProgramQuery.limit(pageSize);
+    }
+    if (page) {
+      paginatedProgramQuery.offset(page * pageSize);
+    } else {
+      paginatedProgramQuery.offset(0);
+    }
+    paginatedProgramQuery.orderBy(sortByColumn, sortOrder);
+    const programsQuery = await paginatedProgramQuery.getRawMany();
+
+    const programSummary = programsQuery.map((summary) => {
+      const summaryItem = new ProgramsSummary();
+      summaryItem.programId = summary.programid;
+      summaryItem.programName = summary.programname;
+      summaryItem.submittedDate = summary.programsubmittedat;
+      summaryItem.formattedSubmittedDate = summary.credentialtype;
+      summaryItem.locationName = summary.locationName;
+      summaryItem.locationId = summary.locationId;
+      summaryItem.programStatus = summary.approvalstatus;
+      summaryItem.offeringsCount = summary.totalOfferings;
+      summaryItem.formattedSubmittedDate = getDateOnlyFormat(
+        summary.programsubmittedat,
+      );
+      return summaryItem;
+    });
+
+    return {
+      programsSummary: programSummary,
+      programsCount: totalCount[0].count,
+    };
   }
 
   /**

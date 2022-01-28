@@ -107,11 +107,11 @@ export class EducationProgramOfferingService {
 
   /**
    * Gets program offerings for location authorized
-   * for a apticular institution.
+   * for a particular institution.
    * @param locationId location id.
    * @param programId program id.
    * @returns program offerings for location authorized
-   * for a apticular institution.
+   * for a particular institution.
    */
   public async getProgramOfferingsForLocationForInstitution(
     locationId: number,
@@ -129,13 +129,16 @@ export class EducationProgramOfferingService {
 
   /**
    * Offering Summary for ministry users
+   * @param locationId location id
    * @param programId program id
    * @returns Offering Summary
    */
   public async getOfferingSummaryForAEST(
+    locationId: number,
     programId: number,
   ): Promise<EducationProgramOfferingDto[]> {
     return ApiClient.EducationProgramOffering.getOfferingSummaryForAEST(
+      locationId,
       programId,
     );
   }

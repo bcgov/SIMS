@@ -32,15 +32,8 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import {
-  getOfferingNameAndPeriod,
-  getDateOnlyFormat,
-  formatDate,
-  EXTENDED_DATE_FORMAT,
-} from "../../utilities";
+import { getOfferingNameAndPeriod } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ProgramsOfferingSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
-import { SortDBOrder } from "../../types/sortDBOrder";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -307,75 +300,26 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Get programs for a particular institution with pagination.
-   * @param institutionId id of the institution.
-   * @param pageSize is the number of rows shown in the table
-   * @param page is the number of rows that is skipped/offset from the total list.
-   * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
-   * @param searchProgramName Search the program name in the query
-   * @returns ProgramsOfferingSummaryPaginated.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId/programs")
-  async getPaginatedProgramsForInstitution(
-    @Param("institutionId") institutionId: number,
-    @Query("pageSize") pageSize: number,
-    @Query("page") page: number,
-    @Query("sortColumn") sortColumn: string,
-    @Query("sortOrder") sortOrder: SortDBOrder,
-    @Query("searchProgramName") searchProgramName: string,
-  ): Promise<ProgramsOfferingSummaryPaginated> {
-    const paginatedProgramOfferingSummaryResult =
-      await this.programOfferingService.getPaginatedProgramsForInstitution(
-        institutionId,
-        [OfferingTypes.public],
-        pageSize,
-        page,
-        sortColumn,
-        sortOrder,
-        searchProgramName,
-      );
-    const paginatedProgramOfferingSummary =
-      paginatedProgramOfferingSummaryResult.programsSummary.map(
-        (programOfferingSummary) => ({
-          programId: programOfferingSummary.programId,
-          programName: programOfferingSummary.programName,
-          submittedDate: programOfferingSummary.submittedDate,
-          formattedSubmittedDate: getDateOnlyFormat(
-            programOfferingSummary.submittedDate,
-          ),
-          locationName: programOfferingSummary.locationName,
-          locationId: programOfferingSummary.locationId,
-          programStatus: programOfferingSummary.programStatus,
-          offeringsCount: programOfferingSummary.offeringsCount,
-        }),
-      );
-    return {
-      programsSummary: paginatedProgramOfferingSummary,
-      programsCount: paginatedProgramOfferingSummaryResult.programsCount,
-    };
-  }
-
-  /**
    * Offering Summary for ministry users
    * @param programId program id
    * @returns Offering Summary
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("education-program/:programId/aest")
+  @Get("location/:locationId/education-program/:programId/aest")
   async getOfferingSummary(
+    @Param("locationId") locationId: number,
     @Param("programId") programId: number,
   ): Promise<EducationProgramOfferingDto[]> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
     // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
     const programOfferingList =
-      await this.programOfferingService.getOfferingSummary(programId, [
-        OfferingTypes.public,
-      ]);
+      await this.programOfferingService.getAllEducationProgramOffering(
+        locationId,
+        programId,
+        [OfferingTypes.public],
+      );
+
     if (!programOfferingList) {
       throw new UnprocessableEntityException(
         "Not able to find a Education Program Offering associated with the current Education Program and Location.",
@@ -384,13 +328,7 @@ export class EducationProgramOfferingController {
     return programOfferingList.map((offering) => ({
       id: offering.id,
       offeringName: offering.name,
-      studyDates:
-        offering.studyStartDate && offering.studyEndDate
-          ? `${formatDate(
-              offering.studyStartDate,
-              EXTENDED_DATE_FORMAT,
-            )} - ${formatDate(offering.studyEndDate, EXTENDED_DATE_FORMAT)}`
-          : "-",
+      studyDates: offering.studyDates,
       offeringDelivered: offering.offeringDelivered,
       offeringIntensity: offering.offeringIntensity,
     }));

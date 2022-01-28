@@ -21,7 +21,6 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { useToast } from "primevue/usetoast";
 import formio from "@/components/generic/formio.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import {
@@ -124,6 +123,7 @@ export default {
           params: {
             programId: props.programId,
             institutionId: institutionId.value,
+            locationId: props.locationId,
           },
         });
       }

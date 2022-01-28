@@ -17,3 +17,7 @@ export class EducationProgramsSummary {
   approvalStatus: string;
   totalOfferings: number;
 }
+export class EducationProgramsSummaryPaginated {
+  programsSummary: EducationProgramsSummary[];
+  totalProgram: number;
+}

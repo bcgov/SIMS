@@ -1,7 +1,6 @@
-import * as dayjs from "dayjs";
-import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
-import { StudyBreak } from "../../database/entities/education-program-offering.model";
 import { EXTENDED_DATE_FORMAT, formatDate } from "../../utilities";
+import { OfferingIntensity, StudyBreak } from "../../database/entities";
+import { ApprovalStatus } from "../education-program/constants";
 
 export class EducationProgramOfferingModel {
   id: number;
@@ -58,5 +57,21 @@ export class ProgramsOfferingSummary {
 }
 export class ProgramsOfferingSummaryPaginated {
   programsSummary: ProgramsOfferingSummary[];
+  programsCount: number;
+}
+
+export class ProgramsSummary {
+  programId: number;
+  programName: string;
+  submittedDate: Date;
+  formattedSubmittedDate: string;
+  locationName: string;
+  locationId: number;
+  programStatus: string;
+  offeringsCount: number;
+}
+
+export class ProgramsSummaryPaginated {
+  programsSummary: ProgramsSummary[];
   programsCount: number;
 }

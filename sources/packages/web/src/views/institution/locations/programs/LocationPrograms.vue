@@ -57,7 +57,12 @@ import { useRouter } from "vue-router";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { SummaryEducationProgramDto, ClientIdType } from "@/types";
+import {
+  SummaryEducationProgramDto,
+  ClientIdType,
+  EducationProgramsSummaryPaginated,
+  SortDBOrder,
+} from "@/types";
 import { ref, watch, onMounted } from "vue";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
 import { useFormatStatuses } from "@/composables";
@@ -72,14 +77,23 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const programAndCount = ref({} as EducationProgramsSummaryPaginated);
     const programs = ref([] as SummaryEducationProgramDto[]);
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
     const locationDetails = ref();
+    const searchProgramName = ref("");
+    const DEFAULT_PAGE = 0;
+    const DEFAULT_ROW_SIZE = 10;
+    const currentPageSize = ref();
+    const DEFAULT_SORT_COLUMN = "submittedDate";
+    const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
+    const loading = ref(false);
 
     const loadSummary = async () => {
-      programs.value = await EducationProgramService.shared.getLocationProgramsSummary(
+      programAndCount.value = await EducationProgramService.shared.getLocationProgramsSummary(
         props.locationId,
       );
+      programs.value = programAndCount.value.programsSummary;
     };
 
     onMounted(async () => {

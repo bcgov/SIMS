@@ -132,6 +132,7 @@ export default {
           params: {
             programId: props.programId,
             institutionId: institutionId,
+            locationId: props.locationId,
           },
         });
       }

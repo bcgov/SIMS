@@ -36,6 +36,11 @@ export interface SummaryEducationProgramDto {
   approvalStatus: ApprovalStatus;
 }
 
+export interface EducationProgramsSummaryPaginated {
+  programsSummary: SummaryEducationProgramDto[];
+  totalProgram: number;
+}
+
 export interface EducationProgramDto extends EducationProgramBaseDto {
   id: number;
 }

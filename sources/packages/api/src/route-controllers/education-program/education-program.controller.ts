@@ -23,15 +23,17 @@ import {
 } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
-import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import {
-  SummaryEducationProgramDto,
-  SubsetEducationProgramDto,
-} from "./models/summary-education-program.dto";
+  SaveEducationProgram,
+  EducationProgramsSummaryPaginated,
+} from "../../services/education-program/education-program.service.models";
+import { SubsetEducationProgramDto } from "./models/summary-education-program.dto";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { OptionItem } from "../../types";
-import { credentialTypeToDisplay } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
+import { credentialTypeToDisplay } from "../../utilities";
+import { ProgramsSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
+import { SortDBOrder } from "../../types/sortDBOrder";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -40,30 +42,40 @@ export class EducationProgramController {
     private readonly formService: FormService,
   ) {}
 
+  /**
+   * Get programs for a particular institution with pagination.
+   * @param locationId id of the location.
+   * @param pageSize is the number of rows shown in the table
+   * @param page is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortColumn the sorting column.
+   * @param sortOrder sorting order default is descending.
+   * @param searchProgramName Search the program name in the query
+   * @returns SummaryEducationProgramDto.
+   */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
   async getSummary(
     @Param("locationId") locationId: number,
+    @Query("pageSize") pageSize: number,
+    @Query("page") page: number,
+    @Query("sortColumn") sortColumn: string,
+    @Query("sortOrder") sortOrder: SortDBOrder,
+    @Query("searchProgramName") searchProgramName: string,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<SummaryEducationProgramDto[]> {
+  ): Promise<EducationProgramsSummaryPaginated> {
     // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
-
-    const programs = await this.programService.getSummaryForLocation(
+    return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
       [OfferingTypes.public],
+      pageSize,
+      page,
+      sortColumn,
+      sortOrder,
+      searchProgramName,
     );
-
-    return programs.map((program) => ({
-      id: program.id,
-      name: program.name,
-      credentialType: program.credentialType,
-      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
-      cipCode: program.cipCode,
-      totalOfferings: program.totalOfferings,
-      approvalStatus: program.approvalStatus,
-    }));
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -383,5 +395,38 @@ export class EducationProgramController {
       credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
       institutionId: program.institution.id,
     };
+  }
+
+  /**
+   * Get all programs of an institution with pagination.
+   * @param institutionId id of the institution.
+   * @param pageSize is the number of rows shown in the table
+   * @param page is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortColumn the sorting column.
+   * @param sortOrder sorting order default is descending.
+   * @param searchProgramName Search the program name in the query
+   * @returns ProgramsSummaryPaginated.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get("institution/:institutionId")
+  async getPaginatedProgramsForAEST(
+    @Param("institutionId") institutionId: number,
+    @Query("pageSize") pageSize: number,
+    @Query("page") page: number,
+    @Query("sortColumn") sortColumn: string,
+    @Query("sortOrder") sortOrder: SortDBOrder,
+    @Query("searchProgramName") searchProgramName: string,
+  ): Promise<ProgramsSummaryPaginated> {
+    return this.programService.getPaginatedProgramsForAEST(
+      institutionId,
+      [OfferingTypes.public],
+      pageSize,
+      page,
+      sortColumn,
+      sortOrder,
+      searchProgramName,
+    );
   }
 }

@@ -76,7 +76,6 @@
           ></Column>
           <Column>
             <template #body="slotProps">
-              {{ slotProps.data }}
               <v-btn
                 outlined
                 @click="

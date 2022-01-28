@@ -160,15 +160,17 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
 
   /**
    * Offering Summary for ministry users
+   * @param locationId location id
    * @param programId program id
    * @returns Offering Summary
    */
   public async getOfferingSummaryForAEST(
+    locationId: number,
     programId: number,
   ): Promise<EducationProgramOfferingDto[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/offering/education-program/${programId}/aest`,
+        `institution/offering/location/${locationId}/education-program/${programId}/aest`,
         this.addAuthHeader(),
       );
       return response.data as EducationProgramOfferingDto[];

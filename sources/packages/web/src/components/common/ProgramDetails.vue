@@ -91,9 +91,8 @@ export default {
       required: true,
     },
     locationId: {
-      // only for institution user
       type: Number,
-      required: false,
+      required: true,
     },
     clientType: {
       type: String,
