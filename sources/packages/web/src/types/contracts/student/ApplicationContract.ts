@@ -205,7 +205,7 @@ export interface PartTimeAssessment {
   totalProvincialAward: number;
 }
 /**
- * This is a type which provides the contract for FullTime and PartTime assessment payload
+ * This is a type which provides the structure for FullTime and PartTime assessment payload
  * which is stored to database by workflow.
  * It is possible that more properties can be added to the assessment payload
  * without updating this interface and displayed in NOA form.
