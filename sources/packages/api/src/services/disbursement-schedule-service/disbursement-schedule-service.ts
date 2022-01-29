@@ -15,6 +15,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
   ApplicationStatus,
+  AssessmentStatus,
   DisbursementSchedule,
   DisbursementValue,
   OfferingIntensity,
@@ -251,5 +252,37 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .set({ documentNumber: documentNumber })
       .where("application.id = :applicationId", { applicationId })
       .execute();
+  }
+
+  /**
+   * Get the list of disbursement schedules for a given location as COE.
+   * @param locationId
+   * @returns List of COE for given location.
+   */
+  async getCOEByLocation(locationId: number): Promise<DisbursementSchedule[]> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.isCOEApproved",
+        "application.applicationNumber",
+        "application.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("location.id = :locationId", { locationId })
+      .andWhere("application.assessmentStatus = :requiredStatus", {
+        requiredStatus: AssessmentStatus.required,
+      })
+      .getMany();
   }
 }

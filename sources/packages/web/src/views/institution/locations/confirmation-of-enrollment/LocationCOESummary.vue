@@ -25,12 +25,17 @@
             </template></Column
           >
           <Column field="applicationNumber" header="Application #"></Column>
+          <Column field="disbursementDate" header="Disbursement Date">
+            <template #body="slotProps">
+              <span>
+                {{ dateString(slotProps.data.disbursementDate) }}
+              </span>
+            </template></Column
+          >
           <Column field="coeStatus" header="Status">
             <template #body="slotProps">
-              <Chip
-                :label="slotProps.data.coeStatus"
-                class="p-mr-2 p-mb-2 text-uppercase"
-                :class="getCOEStatusColorClass(slotProps.data.coeStatus)"
+              <COEStatusBadge
+                :status="getCOEStatus(slotProps.data.coeStatus)"
               />
             </template>
           </Column>
@@ -58,9 +63,10 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import { COESummaryDTO, COEStatus } from "@/types";
 import { useFormatters } from "@/composables";
+import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
 
 export default {
-  components: {},
+  components: { COEStatusBadge },
   props: {
     locationId: {
       type: Number,
@@ -101,24 +107,18 @@ export default {
       await updateSummaryList(props.locationId);
     });
 
-    const getCOEStatusColorClass = (status: string) => {
-      switch (status) {
-        case COEStatus.completed:
-          return "bg-success text-white";
-        case COEStatus.required:
-          return "bg-warning text-white";
-        case COEStatus.declined:
-          return "bg-danger text-white";
-        default:
-          return "";
+    const getCOEStatus = (status: boolean) => {
+      if (status === null) {
+        return COEStatus.required;
       }
+      return status ? COEStatus.completed : COEStatus.declined;
     };
 
     return {
       applications,
       dateString,
       goToViewApplication,
-      getCOEStatusColorClass,
+      getCOEStatus,
     };
   },
 };

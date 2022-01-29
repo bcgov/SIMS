@@ -1,5 +1,5 @@
 <!--
-status Badge
+COE Status Badge
 -->
 <template>
   <v-badge :color="backGroundColor" :text-color="textColor" :class="badgeClass">
@@ -15,12 +15,13 @@ status Badge
 </template>
 <script lang="ts">
 import { ref, onMounted, watch } from "vue";
-import { GeneralStatusForBadge } from "@/types";
+import { COEStatus } from "@/types";
 import {
   COLOR_BLACK,
   COLOR_WHITE,
   COLOR_BANNER_SUCCESS,
   COLOR_BANNER_WARNING,
+  COLOR_BANNER_ERROR,
 } from "@/constants";
 
 export default {
@@ -40,24 +41,19 @@ export default {
     const setStyles = () => {
       label.value = props.status;
       switch (props.status) {
-        case GeneralStatusForBadge.Active:
-        case GeneralStatusForBadge.ResolvedRestriction:
-          // css class for active status
+        case COEStatus.completed:
           badgeClass.value = "status-badge-success";
           textColor.value = COLOR_BLACK;
           backGroundColor.value = COLOR_WHITE;
           iconColor.value = COLOR_BANNER_SUCCESS;
           break;
-        case GeneralStatusForBadge.InActive:
-          // css class for inactive status
-          badgeClass.value = "status-badge-inactive";
+        case COEStatus.declined:
+          badgeClass.value = "status-badge-error";
           textColor.value = COLOR_BLACK;
           backGroundColor.value = COLOR_WHITE;
-          iconColor.value = "#333A47";
+          iconColor.value = COLOR_BANNER_ERROR;
           break;
-        case GeneralStatusForBadge.ActiveRestriction:
-          // css class for active restriction status
-          label.value = "active";
+        case COEStatus.required:
           badgeClass.value = "status-badge-warning";
           textColor.value = COLOR_BLACK;
           backGroundColor.value = COLOR_WHITE;
@@ -81,7 +77,7 @@ export default {
       textColor,
       backGroundColor,
       iconColor,
-      GeneralStatusForBadge,
+      COEStatus,
       label,
     };
   },

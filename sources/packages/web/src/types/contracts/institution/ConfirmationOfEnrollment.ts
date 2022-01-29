@@ -7,6 +7,8 @@ export interface COESummaryDTO {
   applicationId: number;
   coeStatus: string;
   fullName: string;
+  disbursementScheduleId: number;
+  disbursementDate: Date;
 }
 
 export interface ApplicationDetailsForCOEDTO {

@@ -163,8 +163,10 @@ export interface COESummaryDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
-  coeStatus: string;
+  coeStatus: boolean;
   fullName: string;
+  disbursementScheduleId: number;
+  disbursementDate: Date;
 }
 
 export interface ProgramYearOfApplicationDto {

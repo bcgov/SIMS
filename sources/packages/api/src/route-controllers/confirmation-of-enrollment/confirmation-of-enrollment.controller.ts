@@ -23,6 +23,7 @@ import {
   Application,
   COEStatus,
   ApplicationStatus,
+  DisbursementSchedule,
 } from "../../database/entities";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
@@ -55,17 +56,19 @@ export class ConfirmationOfEnrollmentController {
   async getCOESummary(
     @Param("locationId") locationId: number,
   ): Promise<COESummaryDTO[]> {
-    const applications = await this.applicationService.getCOEApplications(
-      locationId,
-    );
-    return applications.map((eachApplication: Application) => {
+    const disbursementSchedules =
+      await this.disbursementScheduleService.getCOEByLocation(locationId);
+    return disbursementSchedules.map((disbursement: DisbursementSchedule) => {
       return {
-        applicationNumber: eachApplication.applicationNumber,
-        applicationId: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
-        coeStatus: eachApplication.coeStatus,
-        fullName: getUserFullName(eachApplication.student.user),
+        applicationNumber: disbursement.application.applicationNumber,
+        applicationId: disbursement.application.id,
+        studyStartPeriod:
+          disbursement.application.offering?.studyStartDate ?? "",
+        studyEndPeriod: disbursement.application.offering?.studyEndDate ?? "",
+        coeStatus: disbursement.isCOEApproved,
+        fullName: getUserFullName(disbursement.application.student.user),
+        disbursementScheduleId: disbursement.id,
+        disbursementDate: disbursement.disbursementDate,
       };
     }) as COESummaryDTO[];
   }
