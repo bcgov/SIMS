@@ -302,6 +302,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         { coeThresholdDate },
       );
     }
+    coeQuery.orderBy("disbursementSchedule.isCOEApproved");
     return coeQuery.getMany();
   }
 }

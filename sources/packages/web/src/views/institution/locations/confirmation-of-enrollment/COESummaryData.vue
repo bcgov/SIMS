@@ -37,7 +37,7 @@
         >
         <Column field="coeStatus" header="Status">
           <template #body="slotProps">
-            <COEStatusBadge :status="getCOEStatus(slotProps.data.coeStatus)" />
+            <COEStatusBadge :status="slotProps.data.coeStatus" />
           </template>
         </Column>
         <Column field="applicationId" header="">
@@ -115,18 +115,10 @@ export default {
       await updateSummaryList(props.locationId);
     });
 
-    const getCOEStatus = (status: boolean) => {
-      if (status === null) {
-        return COEStatus.required;
-      }
-      return status ? COEStatus.completed : COEStatus.declined;
-    };
-
     return {
       applications,
       dateString,
       goToViewApplication,
-      getCOEStatus,
     };
   },
 };

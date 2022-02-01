@@ -163,7 +163,7 @@ export interface COESummaryDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
-  coeStatus: boolean;
+  coeStatus: COEStatus;
   fullName: string;
   disbursementScheduleId: number;
   disbursementDate: Date;

@@ -20,7 +20,6 @@ import {
   DisbursementScheduleService,
 } from "../../services";
 import {
-  Application,
   COEStatus,
   ApplicationStatus,
   DisbursementSchedule,
@@ -74,7 +73,7 @@ export class ConfirmationOfEnrollmentController {
         studyStartPeriod:
           disbursement.application.offering?.studyStartDate ?? "",
         studyEndPeriod: disbursement.application.offering?.studyEndDate ?? "",
-        coeStatus: disbursement.isCOEApproved,
+        coeStatus: this.getCOEStatus(disbursement.isCOEApproved),
         fullName: getUserFullName(disbursement.application.student.user),
         disbursementScheduleId: disbursement.id,
         disbursementDate: disbursement.disbursementDate,
@@ -293,5 +292,16 @@ export class ConfirmationOfEnrollmentController {
       value: eachCOEDeniedReason.id,
       label: eachCOEDeniedReason.reason,
     }));
+  }
+  /**
+   * Transform the DB column data to COEStatus.
+   * @param isCOEApproved
+   * @returns COE Status Enum.
+   */
+  private getCOEStatus(isCOEApproved: boolean): COEStatus {
+    if (isCOEApproved === null) {
+      return COEStatus.required;
+    }
+    return isCOEApproved ? COEStatus.completed : COEStatus.declined;
   }
 }
