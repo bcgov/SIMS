@@ -22,6 +22,9 @@ import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   EducationProgramOfferingService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
+  ConfigService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -45,8 +48,12 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApplicationStatus, Application } from "../../database/entities";
-import { ApiProcessError } from "../../types";
+import {
+  ApplicationStatus,
+  Application,
+  Student,
+} from "../../database/entities";
+import { ApiProcessError, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
@@ -56,6 +63,8 @@ import {
   transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
+  PIR_OR_DATE_OVERLAP_ERROR,
+  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
@@ -64,6 +73,7 @@ import {
 
 @Controller("application")
 export class ApplicationController extends BaseController {
+  private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
@@ -71,8 +81,12 @@ export class ApplicationController extends BaseController {
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly sfasApplicationService: SFASApplicationService,
+    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
+    private readonly configService: ConfigService,
   ) {
     super();
+    this.config = this.configService.getConfig();
   }
 
   @AllowAuthorizedParty(AuthorizedParties.student)
@@ -120,6 +134,7 @@ export class ApplicationController extends BaseController {
         "Program Year is not active. Not able to create an application invalid request",
       );
     }
+
     const submissionResult = await this.formService.dryRunSubmission(
       programYear.formName,
       payload.data,
@@ -131,6 +146,7 @@ export class ApplicationController extends BaseController {
     }
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
+    let studyEndDate = payload.data.studyendDate;
     if (payload.data.selectedOffering) {
       const offering = await this.offeringService.getOfferingById(
         payload.data.selectedOffering,
@@ -139,6 +155,7 @@ export class ApplicationController extends BaseController {
       // then selectedOffering will be there in payload,
       // then study start date taken from offering
       studyStartDate = offering.studyStartDate;
+      studyEndDate = offering.studyEndDate;
     } else {
       // when selectedOffering is not selected
       const notValidDates = checkNotValidStudyPeriod(
@@ -160,6 +177,14 @@ export class ApplicationController extends BaseController {
 
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
+    );
+
+    await this.validateOverlappingDatesAndPIR(
+      applicationId,
+      userToken,
+      student,
+      studyStartDate,
+      studyEndDate,
     );
     try {
       const submittedApplication =
@@ -325,6 +350,7 @@ export class ApplicationController extends BaseController {
       fullName: getUserFullName(application.student.user),
       programName: application.offering.educationProgram.name,
       locationName: application.location.name,
+      offeringIntensity: application.offering.offeringIntensity,
       offeringStudyStartDate: dateString(application.offering.studyStartDate),
       offeringStudyEndDate: dateString(application.offering.studyEndDate),
       msfaaNumber: application.msfaaNumber.msfaaNumber,
@@ -516,5 +542,68 @@ export class ApplicationController extends BaseController {
       }),
       totalApplications: applicationsAndCount[1],
     };
+  }
+
+  /**
+   * Validation for application overlapping dates or Pending PIR.
+   * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
+   * @param applicationId
+   * @param userToken
+   * @param student
+   * @param studyStartDate
+   * @param studyEndDate
+   */
+  private async validateOverlappingDatesAndPIR(
+    applicationId: number,
+    userToken: IUserToken,
+    student: Student,
+    studyStartDate: Date,
+    studyEndDate: Date,
+  ): Promise<void> {
+    if (!this.config.bypassApplicationSubmitValidations) {
+      const existingOverlapApplication =
+        this.applicationService.validatePIRAndDateOverlap(
+          userToken.userId,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+          applicationId,
+        );
+
+      const existingSFASFTApplication =
+        this.sfasApplicationService.validateDateOverlap(
+          student.sin,
+          student.birthDate,
+          userToken.lastName,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+        );
+
+      const existingSFASPTApplication =
+        this.sfasPartTimeApplicationsService.validateDateOverlap(
+          student.sin,
+          student.birthDate,
+          userToken.lastName,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+        );
+      const [
+        applicationResponse,
+        sfasFTApplicationResponse,
+        sfasPTApplicationResponse,
+      ] = await Promise.all([
+        existingOverlapApplication,
+        existingSFASFTApplication,
+        existingSFASPTApplication,
+      ]);
+      if (
+        !!applicationResponse ||
+        !!sfasFTApplicationResponse ||
+        !!sfasPTApplicationResponse
+      ) {
+        throw new UnprocessableEntityException(
+          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
+        );
+      }
+    }
   }
 }

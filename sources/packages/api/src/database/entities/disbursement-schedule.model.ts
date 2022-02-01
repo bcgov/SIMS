@@ -26,9 +26,9 @@ export class DisbursementSchedule extends RecordDataModel {
    */
   @Column({
     name: "document_number",
-    nullable: false,
+    nullable: true,
   })
-  documentNumber: number;
+  documentNumber?: number;
   /**
    * Date that the money must be disbursed.
    */

@@ -3,7 +3,7 @@
     <v-btn
       color="primary"
       class="p-button-raised float-right"
-      :disabled="hasRestriction"
+      :disabled="hasRestriction || sinValidStatus !== SINStatusEnum.VALID"
       @click="goToStudentApplication()"
     >
       <v-icon size="25">mdi-text-box-plus</v-icon>
@@ -15,6 +15,9 @@
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useToastMessage } from "@/composables";
+import { useStore } from "vuex";
+import { SINStatusEnum } from "@/types";
+import { computed } from "vue";
 
 export default {
   props: {
@@ -25,6 +28,12 @@ export default {
   setup() {
     const router = useRouter();
     const toast = useToastMessage();
+    const store = useStore();
+
+    const sinValidStatus = computed(
+      () => store.state.student.sinValidStatus.sinStatus,
+    ).value;
+
     const goToStudentApplication = async () => {
       try {
         router.push({
@@ -40,6 +49,8 @@ export default {
     return {
       StudentRoutesConst,
       goToStudentApplication,
+      SINStatusEnum,
+      sinValidStatus,
     };
   },
 };

@@ -1,6 +1,9 @@
 import { Application } from "../database/entities";
 import { COE_DENIED_REASON_OTHER_ID, PIR_DENIED_REASON_OTHER_ID } from ".";
 import { ApplicationSummaryDTO } from "../route-controllers/application/models/application.model";
+export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
+export const PIR_OR_DATE_OVERLAP_ERROR_MESSAGE =
+  "There is an existing application already with overlapping study period or a pending PIR.";
 /**
  * Gets PIR denied reason
  * @param applicationDetails application Object.
