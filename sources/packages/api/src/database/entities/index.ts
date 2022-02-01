@@ -43,3 +43,4 @@ export * from "./note.model";
 export * from "./note.type";
 export * from "./institution-restriction.model";
 export * from "./sfas-part-time-application.model";
+export * from "./program-intensity.type";

@@ -104,7 +104,7 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
     @Query("searchName") searchName: string,
     @Query("sortField") sortField: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
+    @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<PaginatedOffering> {
@@ -113,12 +113,14 @@ export class EducationProgramOfferingController {
     return this.programOfferingService.getAllEducationProgramOffering(
       locationId,
       programId,
-      sortField,
-      searchName,
+      {
+        searchName: searchName,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        page: page,
+        pageLimit: pageLimit,
+      },
       [OfferingTypes.public],
-      pageLimit,
-      page,
-      sortOrder,
     );
   }
 
@@ -309,7 +311,7 @@ export class EducationProgramOfferingController {
     @Param("programId") programId: number,
     @Query("searchName") searchName: string,
     @Query("sortField") sortField: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
+    @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<PaginatedOffering> {
@@ -318,12 +320,14 @@ export class EducationProgramOfferingController {
     return this.programOfferingService.getAllEducationProgramOffering(
       locationId,
       programId,
-      sortField,
-      searchName,
+      {
+        searchName: searchName,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        page: page,
+        pageLimit: pageLimit,
+      },
       [OfferingTypes.public],
-      pageLimit,
-      page,
-      sortOrder,
     );
   }
 

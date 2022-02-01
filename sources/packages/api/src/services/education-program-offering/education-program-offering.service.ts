@@ -19,8 +19,7 @@ import { ProgramYear } from "../../database/entities/program-year.model";
 import {
   FieldSortOrder,
   databaseFieldOfOfferingDataTable,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
+  PaginationOptions,
 } from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -54,23 +53,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id
    * @param programId program id
    * @param offeringTypes offering type
-   * @param page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @param sortColumn field to be sorted
-   * @param sortOrder order to be sorted
-   * @param searchName , offering name keyword to be searched
-   * @param offeringTypes OfferingTypes array.
+   * @param PaginationOptions pagination options
    * @returns offering summary and total offering count
    */
   async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-    sortColumn: string,
-    searchName: string,
+    PaginationOptions: PaginationOptions,
     offeringTypes?: OfferingTypes[],
-    pageLimit = DEFAULT_PAGE_LIMIT,
-    page = DEFAULT_PAGE_NUMBER,
-    sortOrder = FieldSortOrder.ASC,
   ): Promise<PaginatedOffering> {
     const DEFAULT_SORT_FIELD = "name";
     const offeringsQuery = this.repo
@@ -93,16 +83,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       });
     }
     // search offering name
-    if (searchName) {
+    if (PaginationOptions?.searchName) {
       offeringsQuery.andWhere("offerings.name Ilike :searchName", {
-        searchName: `%${searchName}%`,
+        searchName: `%${PaginationOptions.searchName}%`,
       });
     }
     // sorting
-    if (sortColumn) {
+    if (PaginationOptions?.sortField && PaginationOptions?.sortOrder) {
       offeringsQuery.orderBy(
-        databaseFieldOfOfferingDataTable(sortColumn),
-        sortOrder,
+        databaseFieldOfOfferingDataTable(PaginationOptions.sortField),
+        PaginationOptions.sortOrder,
       );
     } else {
       // default sort and order
@@ -112,7 +102,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
     }
     // pagination
-    offeringsQuery.take(pageLimit).skip(page * pageLimit);
+    offeringsQuery
+      .take(PaginationOptions.pageLimit)
+      .skip(PaginationOptions.page * PaginationOptions.pageLimit);
 
     // result
     const queryResult = await offeringsQuery.getManyAndCount();
