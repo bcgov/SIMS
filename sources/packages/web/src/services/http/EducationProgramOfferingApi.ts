@@ -232,7 +232,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Offering Summary for ministry users
+   * Offering details for ministry users
    * @param offeringId offering id
    * @returns Offering details
    */

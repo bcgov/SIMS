@@ -86,7 +86,7 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Offering Summary for institution for a location
+   * Offering Summary for an institution location
    * @param programId program id
    * @param pageLimit is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.
@@ -94,7 +94,7 @@ export class EducationProgramOfferingController {
    * @param sortField the sorting column.
    * @param sortOrder sorting order.
    * @param searchName search by offering name
-   * @returns Offering Summary
+   * @returns paginated offering summary
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
@@ -301,7 +301,7 @@ export class EducationProgramOfferingController {
    * @param sortField the sorting column.
    * @param sortOrder sorting order.
    * @param searchName search by offering name
-   * @returns Offering Summary
+   * @returns paginated offering summary
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
@@ -332,7 +332,7 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Offering Summary for ministry users
+   * Offering details for ministry users
    * @param offeringId offering id
    * @returns Offering details
    */

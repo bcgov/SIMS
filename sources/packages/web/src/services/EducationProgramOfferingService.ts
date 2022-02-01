@@ -188,7 +188,7 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Offering Summary for ministry users
+   * Offering details for ministry users
    * @param offeringId offering id
    * @returns Offering details
    */

@@ -23,8 +23,8 @@ export async function configureIdleTransactionSessionTimeout(
  * This helper to to get the total count of the Raw for the pagination.
  * For example, if there is a scenario to use typeorm `getRawMany`, typeorm
  * doesn't have a utility to get the count of the raw entities (getManyAndCount
- * will return count without innerJoins), Fpr those cases we can use this helper
- * function to get the actual count of the raw data
+ * will return count without innerJoins), For those cases we can use this helper
+ * function to get the actual total count of the raw data
  * @param sqlQuery the sql query (result of typeorm .getSql()).
  * if we want the total count, then pass the sql query without the
  * pagination logic (i.e, without .skip(), .take(), .limit() or .offset())
