@@ -149,14 +149,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param institutionId Id of the institution.
    * @param locationId Id of the location.
    * @param offeringTypes OfferingTypes array.
-   * @param PaginationOptions pagination options
+   * @param paginationOptions pagination options
    * @returns summary for location
    */
   async getSummaryForLocation(
     institutionId: number,
     locationId: number,
     offeringTypes: OfferingTypes[],
-    PaginationOptions: PaginationOptions,
+    paginationOptions: PaginationOptions,
   ): Promise<EducationProgramsSummaryPaginated> {
     const DEFAULT_SORT_FIELD = "approvalStatus";
     const summaryResult = this.repo
@@ -187,11 +187,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     const queryParams: any[] = [...offeringTypes, locationId, institutionId];
     // program name search
-    if (PaginationOptions.searchName) {
+    if (paginationOptions.searchName) {
       summaryResult.andWhere("programs.name Ilike :searchProgramName", {
-        searchProgramName: `%${PaginationOptions.searchName}%`,
+        searchProgramName: `%${paginationOptions.searchName}%`,
       });
-      queryParams.push(`%${PaginationOptions.searchName}%`);
+      queryParams.push(`%${paginationOptions.searchName}%`);
     }
 
     // total raw count
@@ -203,14 +203,14 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     // pagination
     summaryResult
-      .take(PaginationOptions.pageLimit)
-      .skip(PaginationOptions.page * PaginationOptions.pageLimit);
+      .take(paginationOptions.pageLimit)
+      .skip(paginationOptions.page * paginationOptions.pageLimit);
 
     // sort
-    if (PaginationOptions.sortField && PaginationOptions.sortOrder) {
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
       summaryResult.orderBy(
-        databaseFieldOfInstitutionProgramDataTable(PaginationOptions.sortField),
-        PaginationOptions.sortOrder,
+        databaseFieldOfInstitutionProgramDataTable(paginationOptions.sortField),
+        paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
@@ -245,13 +245,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * alongside with the total of offerings on a particular location.
    * @param institutionId Id of the institution.
    * @param offeringTypes OfferingTypes array.
-   * @param PaginationOptions pagination options
+   * @param paginationOptions pagination options
    * @returns summary for location
    */
   async getPaginatedProgramsForAEST(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    PaginationOptions: PaginationOptions,
+    paginationOptions: PaginationOptions,
   ): Promise<ProgramsSummaryPaginated> {
     // default data table sort field
     const sortByColumn = "programs.createdAt"; //Default sort column
@@ -286,11 +286,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.institution.id = :institutionId", { institutionId })
       .orderBy("programs.id");
     const queryParams: any[] = [...offeringTypes, institutionId];
-    if (PaginationOptions?.searchName) {
+    if (paginationOptions?.searchName) {
       paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
-        searchProgramName: `%${PaginationOptions.searchName}%`,
+        searchProgramName: `%${paginationOptions.searchName}%`,
       });
-      queryParams.push(`%${PaginationOptions.searchName}%`);
+      queryParams.push(`%${paginationOptions.searchName}%`);
     }
 
     // total raw count
@@ -300,21 +300,21 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams,
     );
 
-    if (PaginationOptions?.pageLimit) {
-      paginatedProgramQuery.limit(PaginationOptions.pageLimit);
+    if (paginationOptions?.pageLimit) {
+      paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
-    if (PaginationOptions.page) {
+    if (paginationOptions.page) {
       paginatedProgramQuery.offset(
-        PaginationOptions.page * PaginationOptions.pageLimit,
+        paginationOptions.page * paginationOptions.pageLimit,
       );
     } else {
       paginatedProgramQuery.offset(0);
     }
     // sort
-    if (PaginationOptions.sortField && PaginationOptions.sortOrder) {
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
-        databaseFieldOfAESTProgramDataTable(PaginationOptions.sortField),
-        PaginationOptions.sortOrder,
+        databaseFieldOfAESTProgramDataTable(paginationOptions.sortField),
+        paginationOptions.sortOrder,
       );
     } else {
       // default sort and order

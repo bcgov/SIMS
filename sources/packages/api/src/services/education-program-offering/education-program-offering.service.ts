@@ -53,13 +53,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param locationId location id
    * @param programId program id
    * @param offeringTypes offering type
-   * @param PaginationOptions pagination options
+   * @param paginationOptions pagination options
    * @returns offering summary and total offering count
    */
   async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-    PaginationOptions: PaginationOptions,
+    paginationOptions: PaginationOptions,
     offeringTypes?: OfferingTypes[],
   ): Promise<PaginatedOffering> {
     const DEFAULT_SORT_FIELD = "name";
@@ -83,16 +83,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       });
     }
     // search offering name
-    if (PaginationOptions?.searchName) {
+    if (paginationOptions?.searchName) {
       offeringsQuery.andWhere("offerings.name Ilike :searchName", {
-        searchName: `%${PaginationOptions.searchName}%`,
+        searchName: `%${paginationOptions.searchName}%`,
       });
     }
     // sorting
-    if (PaginationOptions?.sortField && PaginationOptions?.sortOrder) {
+    if (paginationOptions?.sortField && paginationOptions?.sortOrder) {
       offeringsQuery.orderBy(
-        databaseFieldOfOfferingDataTable(PaginationOptions.sortField),
-        PaginationOptions.sortOrder,
+        databaseFieldOfOfferingDataTable(paginationOptions.sortField),
+        paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
@@ -103,8 +103,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
     // pagination
     offeringsQuery
-      .take(PaginationOptions.pageLimit)
-      .skip(PaginationOptions.page * PaginationOptions.pageLimit);
+      .take(paginationOptions.pageLimit)
+      .skip(paginationOptions.page * paginationOptions.pageLimit);
 
     // result
     const queryResult = await offeringsQuery.getManyAndCount();
