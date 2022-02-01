@@ -19,7 +19,6 @@ import {
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
 import { Note } from ".";
-import { InstitutionLocation } from "./institution-location.model";
 
 @Entity({ name: TableNames.Institution })
 export class Institution extends RecordDataModel {

@@ -15,7 +15,6 @@ import {
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { databaseFieldOfAESTProgramDataTable } from "../../utilities";
 import {
   ProgramsSummaryPaginated,
   ProgramsSummary,
@@ -26,6 +25,7 @@ import {
   getRawCount,
   getDateOnlyFormat,
   databaseFieldOfInstitutionProgramDataTable,
+  databaseFieldOfAESTProgramDataTable,
 } from "../../utilities";
 
 @Injectable()

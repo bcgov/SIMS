@@ -104,16 +104,7 @@ export default {
 
     const goBack = async () => {
       if (isInstitutionUser.value && props.offeringId) {
-        // in edit program mode
-        router.push({
-          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-          params: {
-            programId: props.programId,
-            locationId: props.locationId,
-          },
-        });
-      } else if (isInstitutionUser.value && !props.offeringId) {
-        // in create program mode
+        // when edit program and create program
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
           params: {
@@ -126,7 +117,7 @@ export default {
           props.programId,
         );
         const institutionId = programDetails.institutionId;
-        // in view program mode
+        //view program mode
         router.push({
           name: AESTRoutesConst.PROGRAM_DETAILS,
           params: {

@@ -21,6 +21,7 @@ import {
   SaveEducationProgramOfferingDto,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
+  transformToProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -140,30 +141,7 @@ export class EducationProgramOfferingController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return {
-      id: offering.id,
-      offeringName: offering.name,
-      studyStartDate: offering.studyStartDate,
-      studyEndDate: offering.studyEndDate,
-      actualTuitionCosts: offering.actualTuitionCosts,
-      programRelatedCosts: offering.programRelatedCosts,
-      mandatoryFees: offering.mandatoryFees,
-      exceptionalExpenses: offering.exceptionalExpenses,
-      tuitionRemittanceRequestedAmount:
-        offering.tuitionRemittanceRequestedAmount,
-      offeringDelivered: offering.offeringDelivered,
-      lacksStudyDates: offering.lacksStudyDates,
-      lacksStudyBreaks: offering.lacksStudyBreaks,
-      lacksFixedCosts: offering.lacksFixedCosts,
-      tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
-      offeringIntensity: offering.offeringIntensity,
-      yearOfStudy: offering.yearOfStudy,
-      showYearOfStudy: offering.showYearOfStudy,
-      hasOfferingWILComponent: offering.hasOfferingWILComponent,
-      offeringWILType: offering.offeringWILType,
-      studyBreaks: offering.studyBreaks,
-      offeringDeclaration: offering.offeringDeclaration,
-    };
+    return transformToProgramOfferingDto(offering);
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -369,29 +347,6 @@ export class EducationProgramOfferingController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return {
-      id: offering.id,
-      offeringName: offering.name,
-      studyStartDate: offering.studyStartDate,
-      studyEndDate: offering.studyEndDate,
-      actualTuitionCosts: offering.actualTuitionCosts,
-      programRelatedCosts: offering.programRelatedCosts,
-      mandatoryFees: offering.mandatoryFees,
-      exceptionalExpenses: offering.exceptionalExpenses,
-      tuitionRemittanceRequestedAmount:
-        offering.tuitionRemittanceRequestedAmount,
-      offeringDelivered: offering.offeringDelivered,
-      lacksStudyDates: offering.lacksStudyDates,
-      lacksStudyBreaks: offering.lacksStudyBreaks,
-      lacksFixedCosts: offering.lacksFixedCosts,
-      tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
-      offeringIntensity: offering.offeringIntensity,
-      yearOfStudy: offering.yearOfStudy,
-      showYearOfStudy: offering.showYearOfStudy,
-      hasOfferingWILComponent: offering.hasOfferingWILComponent,
-      offeringWILType: offering.offeringWILType,
-      studyBreaks: offering.studyBreaks,
-      offeringDeclaration: offering.offeringDeclaration,
-    };
+    return transformToProgramOfferingDto(offering);
   }
 }
