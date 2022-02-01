@@ -1,6 +1,10 @@
 import { ActionTree } from "vuex";
 import { InstitutionService } from "@/services/InstitutionService";
-import { InstitutionLocationState, RootState } from "@/types";
+import {
+  InstitutionLocationState,
+  InstitutionStateForStore,
+  RootState,
+} from "@/types";
 
 export const actions: ActionTree<InstitutionLocationState, RootState> = {
   async initialize(context, authHeader?: any): Promise<boolean> {
@@ -9,10 +13,23 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     since during the first initializing token are not ready yet
     */
     await Promise.all([
+      context.dispatch("getInstitutionDetails", authHeader),
       context.dispatch("getUserInstitutionDetails", authHeader),
       context.dispatch("getUserInstitutionLocationDetails", authHeader),
     ]);
     return true;
+  },
+
+  async getInstitutionDetails(context, authHeader?: any): Promise<void> {
+    /*
+    authHeader are only needed for initial stores, 
+    since during the first initializing token are not ready yet
+    */
+    const response = await InstitutionService.shared.getDetail(authHeader);
+    context.commit("setInstitutionDetails", {
+      operatingName: response.institution.operatingName,
+      institutionType: response.institution.institutionTypeName,
+    } as InstitutionStateForStore);
   },
 
   async getUserInstitutionDetails(context, authHeader?: any): Promise<void> {

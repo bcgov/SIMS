@@ -8,7 +8,7 @@
       tile
       class="ml-2 primary-btn-background"
     >
-      <font-awesome-icon :icon="['fas', 'search']" />
+      <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
       Request designation
     </v-btn>
     <p>

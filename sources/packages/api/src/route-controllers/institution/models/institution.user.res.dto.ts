@@ -45,6 +45,7 @@ export interface InstitutionUserAndAuthDetailsDto {
     isAdmin: boolean;
     firstName: string;
     lastName: string;
+    userFullName: string;
     isActive: boolean;
     email: string;
   };
@@ -54,7 +55,6 @@ export interface InstitutionUsersListWithTotalCount {
   users: InstitutionUser[];
   totalUsers: number;
 }
-
 
 export interface InstitutionUserAndCount {
   users: InstitutionUserRespDto[];
