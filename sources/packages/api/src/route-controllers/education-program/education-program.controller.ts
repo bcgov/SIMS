@@ -69,17 +69,6 @@ export class EducationProgramController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<EducationProgramsSummaryPaginated> {
-    console.log(
-      userToken.authorizations.institutionId,
-      locationId,
-      [OfferingTypes.public],
-      pageLimit,
-      page,
-      sortField,
-      sortOrder,
-      searchProgramName,
-      "+++++++++++++##############",
-    );
     // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
     return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
@@ -315,36 +304,6 @@ export class EducationProgramController {
       programDeclaration: program.programDeclaration,
     };
   }
-
-  // /**
-  //  * Education Program Details for ministry users
-  //  * @param programId program id
-  //  * @returns Education Program Details
-  //  */
-  // @AllowAuthorizedParty(AuthorizedParties.aest)
-  // @Groups(UserGroups.AESTUser)
-  // @Get(":programId/aest")
-  // async getEducationProgramDetails(
-  //   @Param("programId") programId: number,
-  // ): Promise<SubsetEducationProgramDto> {
-  //   const educationProgram =
-  //     await this.programService.getEducationProgramDetails(programId);
-  //   return {
-  //     id: educationProgram.id,
-  //     name: educationProgram.name,
-  //     description: educationProgram.description,
-  //     credentialType: educationProgram.credentialType,
-  //     credentialTypeToDisplay: credentialTypeToDisplay(
-  //       educationProgram.credentialType,
-  //     ),
-  //     cipCode: educationProgram.cipCode,
-  //     nocCode: educationProgram.nocCode,
-  //     sabcCode: educationProgram.sabcCode,
-  //     approvalStatus: educationProgram.approvalStatus,
-  //     programIntensity: educationProgram.programIntensity,
-  //     institutionProgramCode: educationProgram.institutionProgramCode,
-  //   };
-  // }
 
   /**
    * Education Program Details for ministry users
