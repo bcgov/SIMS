@@ -1904,7 +1904,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "Date 1: The ealiest date you will receive funding",
+                    "content": "Date 1: The earliest date you will receive funding",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -1971,7 +1971,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eaqxzbp"
+                    "id": "e7r8mlo"
                   }
                 ]
               },
@@ -2072,7 +2072,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "Date 2 (If applicable): The ealiest date you will receive funding",
+                    "content": "Date 2 (If applicable): The earliest date you will receive funding",
                     "refreshOnChange": false,
                     "customClass": "",
                     "hidden": false,
@@ -2139,7 +2139,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "esabl7"
+                    "id": "eeliyod"
                   }
                 ]
               },
@@ -2555,7 +2555,7 @@
               "value": ""
             }
           ],
-          "content": "<p style=\\\"margin-left:0cm;\\\">Your application was subject to the federal and provincial financial need assessment calculations, based on Canada Student Loan Program and StudentAid BC’s respective policies</p><ul><li>Total family income on the previous year's returns: <b>${{ data.assessment?.totalFamilyIncome }}</b></li><li>This Includes the income of your spouse, parents, stepparents, sponsors, or legal guardians</li><li>Scholarships and bursaries reported</li><li>Voluntary or targeted contributions reported, and</li><li>Assets reported by parents, stepparents, sponsors, or legal guardians (dependent students only)</li></ul>",
+          "content": "<p>Your application was subject to the federal and provincial financial need assessment calculations, based on Canada Student Loan Program and StudentAid BC’s respective policies</p><ul><li>Total family income on the previous year's returns: <b>${{ data.assessment?.totalFamilyIncome }}</b></li><li>This Includes the income of your spouse, parents, stepparents, sponsors, or legal guardians</li><li>Scholarships and bursaries reported</li><li>Voluntary or targeted contributions reported, and</li><li>Assets reported by parents, stepparents, sponsors, or legal guardians (dependent students only)</li></ul>",
           "refreshOnChange": true,
           "customClass": "align-bullets",
           "hidden": false,
@@ -2622,7 +2622,7 @@
           "showCharCount": false,
           "showWordCount": false,
           "allowMultipleMasks": false,
-          "id": "ez3w0w6"
+          "id": "ezk5fq"
         }
       ],
       "placeholder": "",
@@ -7296,33 +7296,54 @@
                 "components": [
                   {
                     "label": "Total Academic Expenses",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "<b>Total Academic Expenses</b>",
+                    "content": "Total Academic Expenses",
                     "refreshOnChange": false,
+                    "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "totalAcademicExpenses",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "hideOnChildrenHidden": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -7337,7 +7358,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -7347,26 +7367,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e5r0w8"
+                    "id": "e1bv2mc"
                   }
                 ]
               },
@@ -7382,7 +7388,7 @@
                         "value": ""
                       }
                     ],
-                    "content": "${{((typeof data.assessment?.tuitionCost === 'number' ? data.assessment?.tuitionCost : 0) \n        + (typeof data.assessment?.booksAndSuppliesCost === 'number' ? data.assessment?.booksAndSuppliesCost : 0)\n        + (typeof data.assessment?.transportationCost === 'number' ? data.assessment?.transportationCost : 0)\n        + (typeof data.assessment?.miscellaneousCost === 'number' ? data.assessment?.miscellaneousCost : 0)).toFixed(2)}}",
+                    "content": "${{(typeof data.assessment?.totalAcademicExpenses === 'number' ? data.assessment?.totalAcademicExpenses : 0).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "",
                     "hidden": false,
@@ -7449,7 +7455,7 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eutgkm8"
+                    "id": "eu0saor"
                   }
                 ]
               }
@@ -7459,32 +7465,53 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "<b>Childcare Costs</b>",
+                    "content": "Childcare Costs",
                     "refreshOnChange": false,
+                    "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html114",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
                     "placeholder": "",
                     "prefix": "",
-                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -7499,7 +7526,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -7509,26 +7535,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "e9i2tpu"
+                    "id": "es69g5r"
                   }
                 ]
               },
@@ -7615,16 +7627,39 @@
                 "components": [
                   {
                     "label": "Total assessed costs",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "<b>Total assessed costs</b> = Total Academic Expenses + Childcare Costs",
+                    "content": "Total assessed costs = Total Academic Expenses + Childcare Costs",
                     "refreshOnChange": false,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "totalAssessedCosts2",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -7637,11 +7672,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -7656,7 +7689,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -7666,26 +7698,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "ezfh7e"
+                    "id": "eo60mzi"
                   }
                 ]
               },
@@ -7693,16 +7711,39 @@
                 "components": [
                   {
                     "label": "HTML",
+                    "tag": "p",
+                    "className": "",
                     "attrs": [
                       {
                         "attr": "",
                         "value": ""
                       }
                     ],
-                    "content": "{{typeof data.assessment?.totalAssessmentNeed === 'number' ? '$' + (data.assessment.totalAssessmentNeed).toFixed(2) : '-'}}",
+                    "content": "${{(typeof data.assessment?.totalAssessmentNeed === 'number' ? data.assessment?.totalAssessmentNeed : 0).toFixed(2)}}",
                     "refreshOnChange": true,
                     "customClass": "header-md secondary-color",
+                    "hidden": false,
+                    "modalEdit": false,
                     "key": "html120",
+                    "tags": [],
+                    "properties": {},
+                    "conditional": {
+                      "show": null,
+                      "when": null,
+                      "eq": "",
+                      "json": ""
+                    },
+                    "customConditional": "",
+                    "logic": [],
+                    "attributes": {},
+                    "overlay": {
+                      "style": "",
+                      "page": "",
+                      "left": "",
+                      "top": "",
+                      "width": "",
+                      "height": ""
+                    },
                     "type": "htmlelement",
                     "input": false,
                     "tableView": false,
@@ -7714,11 +7755,9 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
-                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -7733,7 +7772,6 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
-                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                       "required": false,
@@ -7743,26 +7781,12 @@
                       "multiple": false,
                       "unique": false
                     },
-                    "conditional": {
-                      "show": null,
-                      "when": null,
-                      "eq": ""
-                    },
-                    "overlay": {
-                      "style": "",
-                      "left": "",
-                      "top": "",
-                      "width": "",
-                      "height": ""
-                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
-                    "properties": {},
                     "allowMultipleMasks": false,
-                    "tag": "p",
-                    "id": "ebgtbdb"
+                    "id": "e510x3"
                   }
                 ]
               }
@@ -13849,6 +13873,6 @@
   "name": "noticeofassessment",
   "path": "noticeofassessment",
   "created": "2021-07-14T17:56:22.162Z",
-  "modified": "2022-02-01T17:16:29.762Z",
+  "modified": "2022-02-01T22:36:54.214Z",
   "machineName": "noticeOfAssessment"
 }
