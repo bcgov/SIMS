@@ -1,72 +1,50 @@
 <template>
   <v-container>
-    <p class="text-muted font-weight-bold h3">{{ locationName }}</p>
-    <p class="font-weight-bold h2">Confirmation Of Enrollment</p>
-    <v-sheet elevation="1" class="mx-auto mt-2">
-      <v-container>
-        <DataTable
-          :autoLayout="true"
-          :value="applications"
-          class="p-m-4"
-          :paginator="true"
-          :rows="10"
-        >
-          <Column field="fullName" header="Name">
-            <template #body="slotProps">
-              <span>{{ slotProps.data.fullName }}</span>
-            </template>
-          </Column>
-          <Column field="studyStartPeriod" header="Study Period">
-            <template #body="slotProps">
-              <span>
-                {{ dateString(slotProps.data.studyStartPeriod) }} -
-                {{ dateString(slotProps.data.studyEndPeriod) }}
-              </span>
-            </template></Column
-          >
-          <Column field="applicationNumber" header="Application #"></Column>
-          <Column field="disbursementDate" header="Disbursement Date">
-            <template #body="slotProps">
-              <span>
-                {{ dateString(slotProps.data.disbursementDate) }}
-              </span>
-            </template></Column
-          >
-          <Column field="coeStatus" header="Status">
-            <template #body="slotProps">
-              <COEStatusBadge
-                :status="getCOEStatus(slotProps.data.coeStatus)"
-              />
-            </template>
-          </Column>
-          <Column field="applicationId" header="">
-            <template #body="slotProps">
-              <v-btn
-                plain
-                color="primary"
-                outlined
-                @click="goToViewApplication(slotProps.data.applicationId)"
-                >view</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
-      </v-container>
-    </v-sheet>
+    <p class="text-muted category-header-medium">
+      {{ locationName }}
+    </p>
+    <p class="category-header-large">
+      Confirmation Of Enrollment
+    </p>
+
+    <TabView lazy>
+      <TabPanel>
+        <template #header>
+          <span>Confirm enrollment </span>
+          <font-awesome-icon
+            :icon="['fas', 'folder-open']"
+            class="ml-2"
+          ></font-awesome-icon>
+        </template>
+        <COESummaryData
+          :locationId="locationId"
+          :upcomingCOE="false"
+          header="Available to confirm enrollment"
+        />
+      </TabPanel>
+      <TabPanel>
+        <template #header>
+          <span>Upcoming enrollment</span>
+          <font-awesome-icon
+            :icon="['fas', 'user']"
+            class="ml-2"
+          ></font-awesome-icon>
+        </template>
+        <COESummaryData
+          :locationId="locationId"
+          :upcomingCOE="true"
+          header="Upcoming enrollment"
+        />
+      </TabPanel>
+    </TabView>
   </v-container>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import { COESummaryDTO, COEStatus } from "@/types";
-import { useFormatters } from "@/composables";
-import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
+import COESummaryData from "@/views/institution/locations/confirmation-of-enrollment/COESummaryData.vue";
 
 export default {
-  components: { COEStatusBadge },
+  components: { COESummaryData },
   props: {
     locationId: {
       type: Number,
@@ -77,49 +55,8 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
-    const router = useRouter();
-    const { dateString } = useFormatters();
-    const applications = ref([] as COESummaryDTO[]);
-
-    const goToViewApplication = (applicationId: number) => {
-      router.push({
-        name: InstitutionRoutesConst.COE_EDIT,
-        params: { locationId: props.locationId, applicationId },
-      });
-    };
-
-    const updateSummaryList = async (locationId: number) => {
-      applications.value = await ConfirmationOfEnrollmentService.shared.getCOESummary(
-        locationId,
-      );
-    };
-
-    watch(
-      () => props.locationId,
-      async currValue => {
-        //update the list
-        await updateSummaryList(currValue);
-      },
-    );
-
-    onMounted(async () => {
-      await updateSummaryList(props.locationId);
-    });
-
-    const getCOEStatus = (status: boolean) => {
-      if (status === null) {
-        return COEStatus.required;
-      }
-      return status ? COEStatus.completed : COEStatus.declined;
-    };
-
-    return {
-      applications,
-      dateString,
-      goToViewApplication,
-      getCOEStatus,
-    };
+  setup() {
+    return {};
   },
 };
 </script>

@@ -1168,7 +1168,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsForCOE(
     locationId: number,
     applicationId: number,
-    requiredCOEApplication = false,
   ): Promise<Application> {
     const query = this.repo
       .createQueryBuilder("application")
@@ -1182,18 +1181,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       })
+      .andWhere("application.assessmentStatus = :requiredStatus", {
+        requiredStatus: AssessmentStatus.required,
+      })
       .andWhere("application.id = :applicationId", {
         applicationId,
       });
-    if (!requiredCOEApplication) {
-      query.andWhere("application.coeStatus != :nonCOEStatus", {
-        nonCOEStatus: COEStatus.notRequired,
-      });
-    } else {
-      query.andWhere("application.coeStatus = :COEStatus", {
-        COEStatus: COEStatus.required,
-      });
-    }
+
     return query.getOne();
   }
 

@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   CustomNamedError,
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
+  addDays,
 } from "../../utilities";
 import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
@@ -259,8 +260,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * @param locationId
    * @returns List of COE for given location.
    */
-  async getCOEByLocation(locationId: number): Promise<DisbursementSchedule[]> {
-    return this.repo
+  async getCOEByLocation(
+    locationId: number,
+    upcomingCOE?: boolean,
+  ): Promise<DisbursementSchedule[]> {
+    const coeThresholdDate = addDays(new Date(), 21);
+    const coeQuery = this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
         "disbursementSchedule.id",
@@ -280,9 +285,23 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.overwritten,
+      })
       .andWhere("application.assessmentStatus = :requiredStatus", {
         requiredStatus: AssessmentStatus.required,
-      })
-      .getMany();
+      });
+    if (upcomingCOE) {
+      coeQuery.andWhere(
+        "disbursementSchedule.disbursementDate > :coeThresholdDate",
+        { coeThresholdDate },
+      );
+    } else {
+      coeQuery.andWhere(
+        "disbursementSchedule.disbursementDate <= :coeThresholdDate",
+        { coeThresholdDate },
+      );
+    }
+    return coeQuery.getMany();
   }
 }

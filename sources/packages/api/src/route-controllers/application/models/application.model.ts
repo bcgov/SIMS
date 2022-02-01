@@ -271,3 +271,11 @@ export const transformToApplicationDetailDto = (
     programYearEndDate: applicationDetail.programYear.endDate,
   };
 };
+
+/**
+ * Enum for COE enrollment period.
+ */
+export enum EnrollmentPeriod {
+  Current = "current",
+  Upcoming = "upcoming",
+}

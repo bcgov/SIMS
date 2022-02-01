@@ -14,8 +14,14 @@ export class ConfirmationOfEnrollmentService {
     return this.instance || (this.instance = new this());
   }
 
-  public async getCOESummary(locationId: number): Promise<COESummaryDTO[]> {
-    return ApiClient.ConfirmationOfEnrollment.getCOESummary(locationId);
+  public async getCOESummary(
+    locationId: number,
+    upcomingCOE?: boolean,
+  ): Promise<COESummaryDTO[]> {
+    return ApiClient.ConfirmationOfEnrollment.getCOESummary(
+      locationId,
+      upcomingCOE,
+    );
   }
 
   public async getApplicationForCOE(

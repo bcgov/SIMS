@@ -25,7 +25,10 @@ import {
   ApplicationStatus,
   DisbursementSchedule,
 } from "../../database/entities";
-import { COESummaryDTO } from "../application/models/application.model";
+import {
+  COESummaryDTO,
+  EnrollmentPeriod,
+} from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import { dateString, COE_WINDOW, getCOEDeniedReason } from "../../utilities";
 import {
@@ -52,12 +55,18 @@ export class ConfirmationOfEnrollmentController {
    * @returns student application list of an institution location
    */
   @HasLocationAccess("locationId")
-  @Get(":locationId/confirmation-of-enrollment")
+  @Get(
+    ":locationId/confirmation-of-enrollment/enrollmentPeriod/:enrollmentPeriod",
+  )
   async getCOESummary(
     @Param("locationId") locationId: number,
+    @Param("enrollmentPeriod") enrollmentPeriod: string,
   ): Promise<COESummaryDTO[]> {
     const disbursementSchedules =
-      await this.disbursementScheduleService.getCOEByLocation(locationId);
+      await this.disbursementScheduleService.getCOEByLocation(
+        locationId,
+        enrollmentPeriod === EnrollmentPeriod.Upcoming,
+      );
     return disbursementSchedules.map((disbursement: DisbursementSchedule) => {
       return {
         applicationNumber: disbursement.application.applicationNumber,
@@ -194,7 +203,6 @@ export class ConfirmationOfEnrollmentController {
       await this.applicationService.getApplicationDetailsForCOE(
         locationId,
         applicationId,
-        true,
       );
     if (!application) {
       throw new NotFoundException("Application Not Found");
