@@ -61,7 +61,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
-import { COESummaryDTO, COEStatus } from "@/types";
+import { COESummaryDTO } from "@/types";
 import { useFormatters } from "@/composables";
 import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
