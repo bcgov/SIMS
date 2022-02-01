@@ -31,9 +31,13 @@ import { SubsetEducationProgramDto } from "./models/summary-education-program.dt
 import { EducationProgram, OfferingTypes } from "../../database/entities";
 import { OptionItem } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { credentialTypeToDisplay } from "../../utilities";
+import {
+  credentialTypeToDisplay,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+} from "../../utilities";
 import { ProgramsSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
-import { SortDBOrder } from "../../types/sortDBOrder";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -48,31 +52,42 @@ export class EducationProgramController {
    * @param pageSize is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
+   * @param sortField the sorting column.
+   * @param sortOrder sorting order.
    * @param searchProgramName Search the program name in the query
-   * @returns SummaryEducationProgramDto.
+   * @returns EducationProgramsSummaryPaginated.
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/summary")
   async getSummary(
     @Param("locationId") locationId: number,
-    @Query("pageSize") pageSize: number,
-    @Query("page") page: number,
-    @Query("sortColumn") sortColumn: string,
-    @Query("sortOrder") sortOrder: SortDBOrder,
     @Query("searchProgramName") searchProgramName: string,
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
     @UserToken() userToken: IInstitutionUserToken,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<EducationProgramsSummaryPaginated> {
+    console.log(
+      userToken.authorizations.institutionId,
+      locationId,
+      [OfferingTypes.public],
+      pageLimit,
+      page,
+      sortField,
+      sortOrder,
+      searchProgramName,
+      "+++++++++++++##############",
+    );
     // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
     return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
       [OfferingTypes.public],
-      pageSize,
+      pageLimit,
       page,
-      sortColumn,
+      sortField,
       sortOrder,
       searchProgramName,
     );
@@ -404,7 +419,7 @@ export class EducationProgramController {
    * @param page is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
+   * @param sortOrder sorting order.
    * @param searchProgramName Search the program name in the query
    * @returns ProgramsSummaryPaginated.
    */
@@ -416,7 +431,7 @@ export class EducationProgramController {
     @Query("pageSize") pageSize: number,
     @Query("page") page: number,
     @Query("sortColumn") sortColumn: string,
-    @Query("sortOrder") sortOrder: SortDBOrder,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
     @Query("searchProgramName") searchProgramName: string,
   ): Promise<ProgramsSummaryPaginated> {
     return this.programService.getPaginatedProgramsForAEST(

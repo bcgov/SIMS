@@ -1,10 +1,14 @@
 import ApiClient from "./http/ApiClient";
 import {
-  EducationProgramOfferingDto,
+  PaginatedOffering,
   OptionItemDto,
   OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  DataTableSortOrder,
+  OfferingSummaryFields,
 } from "../types";
 
 export class EducationProgramOfferingService {
@@ -34,13 +38,36 @@ export class EducationProgramOfferingService {
     );
   }
 
+  /**
+   * To get the offering summary
+   * @param locationId, location id
+   * @param programId, program id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns offering summary.
+   */
   public async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchName?: string,
+    sortField?: OfferingSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedOffering> {
     return ApiClient.EducationProgramOffering.getAllEducationProgramOffering(
       locationId,
       programId,
+      page,
+      pageCount,
+      searchName,
+      sortField,
+      sortOrder,
     );
   }
 
@@ -128,18 +155,35 @@ export class EducationProgramOfferingService {
   }
 
   /**
-   * Offering Summary for ministry users
-   * @param locationId location id
-   * @param programId program id
-   * @returns Offering Summary
+   * To get the offering summary for ministry
+   * @param locationId, location id
+   * @param programId, program id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns offering summary.
    */
   public async getOfferingSummaryForAEST(
     locationId: number,
     programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchName?: string,
+    sortField?: OfferingSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedOffering> {
     return ApiClient.EducationProgramOffering.getOfferingSummaryForAEST(
       locationId,
       programId,
+      page,
+      pageCount,
+      searchName,
+      sortField,
+      sortOrder,
     );
   }
 

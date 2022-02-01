@@ -23,15 +23,71 @@ export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
  * with relation
  * respective to application dataTable field name
  * that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * column name
  * @param fieldName
  * @returns fieldName
  */
 export const databaseFieldOfApplicationDataTable = (
   fieldName: string,
 ): string => {
-  // TODO: Update the application field name
   const databaseFieldOfApplicationDataTableMap = {
     applicationNumber: "application.applicationNumber",
   };
   return databaseFieldOfApplicationDataTableMap[fieldName] ?? null;
+};
+
+/**
+ * Util to get the list of database fields
+ * with respective to institution program dataTable
+ * field names that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * @param fieldName
+ * @returns fieldName
+ */
+export const databaseFieldOfInstitutionProgramDataTable = (
+  fieldName: string,
+): string => {
+  const databaseFieldOfInstitutionProgramDataTableMap = {
+    approvalStatus: "programs.approvalStatus",
+    name: "programs.name",
+    credentialType: "programs.credentialType",
+  };
+  return databaseFieldOfInstitutionProgramDataTableMap[fieldName] ?? null;
+};
+
+/**
+ * Util to get the list of database field
+ * with respective to program offering dataTable
+ * field names that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * @param fieldName
+ * @returns fieldName
+ */
+export const databaseFieldOfOfferingDataTable = (fieldName: string): string => {
+  const databaseFieldOfOfferingDataTableMap = {
+    name: "offerings.name",
+  };
+  return databaseFieldOfOfferingDataTableMap[fieldName] ?? null;
+};
+
+/**
+ * Util to get the list of database field
+ * with respective to AEST program summary dataTable
+ * field names that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * @param fieldName
+ * @returns fieldName
+ */
+export const databaseFieldOfAESTProgramDataTable = (
+  fieldName: string,
+): string => {
+  const databaseFieldOfProgramDataTableMap = {
+    submittedDate: "programs.createdAt",
+  };
+  return databaseFieldOfProgramDataTableMap[fieldName] ?? null;
 };

@@ -1,31 +1,64 @@
 <template>
   <div>
     <span class="category-header-medium">Study period offerings</span>
-    <v-btn
-      v-if="isInstitutionUser"
-      class="float-right"
-      @click="goToAddNewOffering()"
-      outlined
-      color="#2965C5"
-    >
-      <v-icon size="25" left>
-        mdi-open-in-new
-      </v-icon>
-      Add Study Period
-    </v-btn>
+
+    <div class="float-right">
+      <InputText
+        name="searchProgramName"
+        v-model="searchBox"
+        placeholder="Search Offering Name"
+        @keyup.enter="searchOfferingTable()"
+      />
+      <v-btn class="ml-2 primary-btn-background" @click="searchOfferingTable()"
+        ><font-awesome-icon :icon="['fas', 'search']"
+      /></v-btn>
+      <v-btn
+        v-if="isInstitutionUser"
+        class="ml-2"
+        @click="goToAddNewOffering()"
+        outlined
+        color="#2965C5"
+      >
+        <v-icon size="25" left>
+          mdi-open-in-new
+        </v-icon>
+        Add Study Period
+      </v-btn>
+    </div>
   </div>
-  <DataTable :autoLayout="true" :value="offerings">
-    <Column field="offeringName" header="Name" :sortable="true"></Column>
-    <Column field="studyDates" header="Study Dates" :sortable="true"></Column>
-    <Column field="offeringIntensity" header="Type" :sortable="true"
+  <DataTable
+    :value="offeringsAndCount.offeringSummary"
+    :lazy="true"
+    :paginator="true"
+    :rows="DEFAULT_PAGE_LIMIT"
+    :rowsPerPageOptions="PAGINATION_LIST"
+    :totalRecords="offeringsAndCount.totalOfferings"
+    @page="paginationAndSortEvent($event)"
+    @sort="paginationAndSortEvent($event)"
+    :loading="loading"
+  >
+    <template #empty>
+      <p class="text-center font-weight-bold">No records found.</p>
+    </template>
+    <Column
+      :field="OfferingSummaryFields.OfferingName"
+      header="Name"
+      :sortable="true"
+    ></Column>
+    <Column :field="OfferingSummaryFields.StudyDates" header="Study Dates">
+      <template #body="slotProps">
+        {{ formatDate(slotProps.data.studyStartDate, DATE_FORMAT) }} -
+        {{ formatDate(slotProps.data.studyEndDate, DATE_FORMAT) }}
+      </template></Column
+    >
+    <Column :field="OfferingSummaryFields.OfferingIntensity" header="Type"
       ><template #body="slotProps">
         <span>{{ slotProps.data.offeringIntensity }} </span>
       </template>
     </Column>
     <Column
-      field="offeringDelivered"
+      :field="OfferingSummaryFields.OfferingDelivered"
       header="Study Delivery"
-      :sortable="true"
     ></Column>
     <Column>
       <template #body="slotProps">
@@ -49,7 +82,16 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramOfferingDto, ClientIdType } from "@/types";
+import {
+  PaginatedOffering,
+  ClientIdType,
+  OfferingSummaryFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  DataTableSortOrder,
+  PAGINATION_LIST,
+} from "@/types";
+import { useFormatters } from "@/composables";
 
 export default {
   props: {
@@ -68,6 +110,13 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const loading = ref(false);
+    const searchBox = ref("");
+    const currentPage = ref();
+    const currentPageLimit = ref();
+    const { formatDate } = useFormatters();
+    const DATE_FORMAT = "MMMM, D YYYY";
+
     const isInstitutionUser = computed(() => {
       return props.clientType === ClientIdType.Institution;
     });
@@ -116,31 +165,84 @@ export default {
       }
     };
 
-    const offerings = ref([] as EducationProgramOfferingDto[]);
+    const offeringsAndCount = ref({} as PaginatedOffering);
 
-    const getEducationProgramAndOffering = async () => {
+    /**
+     * function to load offeringsAndCount respective to the client type
+     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
+     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
+     * @param sortField sort field, if nothing passed then UserFields.DisplayName
+     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC
+     */
+    const getEducationProgramAndOffering = async (
+      page = DEFAULT_PAGE_NUMBER,
+      pageCount = DEFAULT_PAGE_LIMIT,
+      sortField = OfferingSummaryFields.OfferingName,
+      sortOrder = DataTableSortOrder.ASC,
+    ) => {
+      loading.value = true;
       if (isInstitutionUser.value) {
-        offerings.value = await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
+        offeringsAndCount.value = await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
           props.locationId,
           props.programId,
+          page,
+          pageCount,
+          searchBox.value,
+          sortField,
+          sortOrder,
         );
       } else if (isAESTUser.value) {
-        offerings.value = await EducationProgramOfferingService.shared.getOfferingSummaryForAEST(
+        offeringsAndCount.value = await EducationProgramOfferingService.shared.getOfferingSummaryForAEST(
           props.locationId,
           props.programId,
+          page,
+          pageCount,
+          searchBox.value,
+          sortField,
+          sortOrder,
         );
       }
+      loading.value = false;
     };
 
     onMounted(getEducationProgramAndOffering);
 
+    // pagination sort event callback
+    const paginationAndSortEvent = async (event: any) => {
+      currentPage.value = event?.page;
+      currentPageLimit.value = event?.rows;
+      await getEducationProgramAndOffering(
+        event.page,
+        event.rows,
+        event.sortField,
+        event.sortOrder,
+      );
+    };
+
+    // search offering table
+    const searchOfferingTable = async () => {
+      await getEducationProgramAndOffering(
+        currentPage.value ?? DEFAULT_PAGE_NUMBER,
+        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+      );
+    };
+
     return {
       goToAddNewOffering,
-      offerings,
+      offeringsAndCount,
       offeringButtonAction,
       isInstitutionUser,
       isAESTUser,
       offeringActionLabel,
+      paginationAndSortEvent,
+      loading,
+      searchOfferingTable,
+      searchBox,
+      OfferingSummaryFields,
+      DEFAULT_PAGE_LIMIT,
+      PAGINATION_LIST,
+      formatDate,
+      DATE_FORMAT,
     };
   },
 };

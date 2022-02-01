@@ -16,6 +16,7 @@ export class EducationProgramsSummary {
   credentialType: string;
   approvalStatus: string;
   totalOfferings: number;
+  credentialTypeToDisplay: string;
 }
 export class EducationProgramsSummaryPaginated {
   programsSummary: EducationProgramsSummary[];

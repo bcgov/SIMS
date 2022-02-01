@@ -118,6 +118,19 @@ export function useFormatters() {
     };
   };
 
+  /**
+   * format a date to given format
+   * @param date date
+   * @param dateFormat format
+   * @returns extended date format like March, 22 2021
+   */
+  const formatDate = (date: Date | string, dateFormat: string): string => {
+    if (date) {
+      return dayjs(date).format(dateFormat);
+    }
+    return "";
+  };
+
   return {
     dateString,
     dateOnlyLongString,
@@ -125,5 +138,6 @@ export function useFormatters() {
     getFormattedAddress,
     timeOnlyInHoursAndMinutes,
     parseSINValidStatus,
+    formatDate
   };
 }

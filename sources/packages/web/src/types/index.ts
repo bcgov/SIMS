@@ -18,7 +18,6 @@ export * from "@/types/StoreState";
 export * from "@/types/contracts/InstituteContract";
 export * from "@/types/contracts/InstitutionRouteMeta";
 export * from "@/types/contracts/OptionItemDto";
-export * from "@/types/contracts/SortDBOrder";
 export * from "@/types/contracts/FileUploadContracts";
 export * from "@/types/contracts/institution/ProgramInfoRequest";
 export * from "@/types/contracts/student/ApplicationContract";

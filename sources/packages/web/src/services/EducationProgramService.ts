@@ -4,6 +4,10 @@ import {
   StudentEducationProgramDto,
   ProgramDto,
   EducationProgramData,
+  DataTableSortOrder,
+  InstitutionProgramSummaryFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
 
@@ -30,10 +34,35 @@ export class EducationProgramService {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }
 
+  /**
+   * Method to call the API to fetch all institution
+   * location program.
+   * @param locationId location id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName,program name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns program summary for an institution location.
+   */
   public async getLocationProgramsSummary(
     locationId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchProgramName?: string,
+    sortField?: InstitutionProgramSummaryFields,
+    sortOrder?: DataTableSortOrder,
   ): Promise<EducationProgramsSummaryPaginated> {
-    return ApiClient.EducationProgram.getLocationProgramsSummary(locationId);
+    return ApiClient.EducationProgram.getLocationProgramsSummary(
+      locationId,
+      page,
+      pageCount,
+      searchProgramName,
+      sortField,
+      sortOrder,
+    );
   }
 
   public async getEducationProgram(

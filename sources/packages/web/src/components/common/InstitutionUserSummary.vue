@@ -189,7 +189,6 @@ export default {
     const userRoleType = ref();
     const userType = ref();
     const loading = ref(false);
-    const defaultSortOrder = -1;
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
@@ -198,6 +197,7 @@ export default {
     };
     const institutionUserName = ref();
     const adminRoles = ref();
+    
     /**
      * function to load usersListAndCount respective to the client type
      * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
@@ -211,6 +211,7 @@ export default {
       sortField = UserFields.DisplayName,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
+      loading.value = true;
       switch (props.clientType) {
         case ClientIdType.Institution:
           usersListAndCount.value = await InstitutionService.shared.institutionSummary(
@@ -232,6 +233,7 @@ export default {
           );
           break;
       }
+      loading.value = false;
     };
 
     const updateShowAddInstitutionModal = () => {
@@ -274,7 +276,6 @@ export default {
 
     // pagination sort event callback
     const paginationAndSortEvent = async (event: any) => {
-      loading.value = true;
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
       await getAllInstitutionUsers(
@@ -283,7 +284,6 @@ export default {
         event.sortField,
         event.sortOrder,
       );
-      loading.value = false;
     };
 
     // search user table
@@ -326,7 +326,6 @@ export default {
       GeneralStatusForBadge,
       paginationAndSortEvent,
       loading,
-      defaultSortOrder,
       searchUserTable,
       searchBox,
       UserFields,

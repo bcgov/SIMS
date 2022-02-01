@@ -3,6 +3,11 @@ import {
   OptionItemDto,
   StudentEducationProgramDto,
   EducationProgramData,
+  DataTableSortOrder,
+  InstitutionProgramSummaryFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  FieldSortOrder,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -49,14 +54,40 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Prepare the API to fetch all institution
+   * location program.
+   * @param locationId location id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName,program name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns program summary for an institution location.
+   */
   public async getLocationProgramsSummary(
     locationId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchProgramName?: string,
+    sortField?: InstitutionProgramSummaryFields,
+    sortOrder?: DataTableSortOrder,
   ): Promise<EducationProgramsSummaryPaginated> {
     try {
-      const response = await this.apiClient.get(
-        `institution/education-program/location/${locationId}/summary`,
-        this.addAuthHeader(),
-      );
+      let URL = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
+      if (searchProgramName) {
+        URL = `${URL}&searchProgramName=${searchProgramName}`;
+      }
+      if (sortField && sortOrder) {
+        const sortDBOrder =
+          sortOrder === DataTableSortOrder.DESC
+            ? FieldSortOrder.DESC
+            : FieldSortOrder.ASC;
+        URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+      }
+      const response = await this.apiClient.get(URL, this.addAuthHeader());
       return response.data as EducationProgramsSummaryPaginated;
     } catch (error) {
       this.handleRequestError(error);

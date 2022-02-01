@@ -1,10 +1,15 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  EducationProgramOfferingDto,
+  PaginatedOffering,
   OptionItemDto,
   OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  OfferingSummaryFields,
+  DataTableSortOrder,
+  FieldSortOrder,
 } from "@/types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
@@ -33,16 +38,42 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * To get the offering summary
+   * @param locationId, location id
+   * @param programId, program id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns offering summary.
+   */
   public async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchName?: string,
+    sortField?: OfferingSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedOffering> {
     try {
-      const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}`,
-        this.addAuthHeader(),
-      );
-      return response.data as EducationProgramOfferingDto[];
+      let URL = `institution/offering/location/${locationId}/education-program/${programId}?page=${page}&pageLimit=${pageCount}`;
+      if (searchName) {
+        URL = `${URL}&searchName=${searchName}`;
+      }
+      if (sortField && sortOrder) {
+        const sortDBOrder =
+          sortOrder === DataTableSortOrder.DESC
+            ? FieldSortOrder.DESC
+            : FieldSortOrder.ASC;
+        URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+      }
+      const response = await this.apiClient.get(URL, this.addAuthHeader());
+      return response.data as PaginatedOffering;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -159,21 +190,41 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Offering Summary for ministry users
-   * @param locationId location id
-   * @param programId program id
-   * @returns Offering Summary
+   * To get the offering summary for ministry users
+   * @param locationId, location id
+   * @param programId, program id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchName, user's name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns offering summary.
    */
   public async getOfferingSummaryForAEST(
     locationId: number,
     programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchName?: string,
+    sortField?: OfferingSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedOffering> {
     try {
-      const response = await this.apiClient.get(
-        `institution/offering/location/${locationId}/education-program/${programId}/aest`,
-        this.addAuthHeader(),
-      );
-      return response.data as EducationProgramOfferingDto[];
+      let URL = `institution/offering/location/${locationId}/education-program/${programId}/aest?page=${page}&pageLimit=${pageCount}`;
+      if (searchName) {
+        URL = `${URL}&searchName=${searchName}`;
+      }
+      if (sortField && sortOrder) {
+        const sortDBOrder =
+          sortOrder === DataTableSortOrder.DESC
+            ? FieldSortOrder.DESC
+            : FieldSortOrder.ASC;
+        URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+      }
+      const response = await this.apiClient.get(URL, this.addAuthHeader());
+      return response.data as PaginatedOffering;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

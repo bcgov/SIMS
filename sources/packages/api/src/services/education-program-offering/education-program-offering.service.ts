@@ -12,11 +12,16 @@ import { SaveEducationProgramOfferingDto } from "../../route-controllers/educati
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
-  ProgramsOfferingSummaryPaginated,
+  PaginatedOffering,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
-import { SortDBOrder } from "../../types/sortDBOrder";
+import {
+  FieldSortOrder,
+  databaseFieldOfOfferingDataTable,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+} from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(@Inject("Connection") connection: Connection) {
@@ -46,18 +51,29 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * This is to fetch all the Education Offering
    * that are associated with the Location and Program
-   * @param locationId
-   * @param programId
+   * @param locationId location id
+   * @param programId program id
+   * @param offeringTypes offering type
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param sortColumn field to be sorted
+   * @param sortOrder order to be sorted
+   * @param searchName , offering name keyword to be searched
    * @param offeringTypes OfferingTypes array.
-
-   * @returns
+   * @returns offering summary and total offering count
    */
   async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
+    sortColumn: string,
+    searchName: string,
     offeringTypes?: OfferingTypes[],
-  ): Promise<EducationProgramOfferingModel[]> {
-    let offeringsQuery = this.repo
+    pageLimit = DEFAULT_PAGE_LIMIT,
+    page = DEFAULT_PAGE_NUMBER,
+    sortOrder = FieldSortOrder.ASC,
+  ): Promise<PaginatedOffering> {
+    const DEFAULT_SORT_FIELD = "name";
+    const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
       .select([
         "offerings.id",
@@ -72,17 +88,36 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .where("educationProgram.id = :programId", { programId })
       .andWhere("institutionLocation.id = :locationId", { locationId });
     if (offeringTypes) {
-      offeringsQuery = offeringsQuery.andWhere(
-        "offerings.offeringType in (:...offeringTypes)",
-        {
-          offeringTypes,
-        },
+      offeringsQuery.andWhere("offerings.offeringType in (:...offeringTypes)", {
+        offeringTypes,
+      });
+    }
+    // search offering name
+    if (searchName) {
+      offeringsQuery.andWhere("offerings.name Ilike :searchName", {
+        searchName: `%${searchName}%`,
+      });
+    }
+    // sorting
+    if (sortColumn) {
+      offeringsQuery.orderBy(
+        databaseFieldOfOfferingDataTable(sortColumn),
+        sortOrder,
+      );
+    } else {
+      // default sort and order
+      offeringsQuery.orderBy(
+        databaseFieldOfOfferingDataTable(DEFAULT_SORT_FIELD),
+        FieldSortOrder.ASC,
       );
     }
+    // pagination
+    offeringsQuery.take(pageLimit).skip(page * pageLimit);
 
-    const queryResult = await offeringsQuery.getMany();
+    // result
+    const queryResult = await offeringsQuery.getManyAndCount();
 
-    return queryResult.map((educationProgramOffering) => {
+    const offerings = queryResult[0].map((educationProgramOffering) => {
       const item = new EducationProgramOfferingModel();
       item.id = educationProgramOffering.id;
       item.name = educationProgramOffering.name;
@@ -92,6 +127,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       item.offeringIntensity = educationProgramOffering.offeringIntensity;
       return item;
     });
+    return { offeringSummary: offerings, totalOfferings: queryResult[1] };
   }
 
   /**

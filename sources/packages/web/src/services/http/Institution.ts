@@ -11,11 +11,12 @@ import {
   BasicInstitutionInfo,
   InstitutionUserAndCount,
   AESTInstitutionProgramsSummaryPaginatedDto,
-  SortDBOrder,
+  DataTableSortOrder,
   UserAuth,
-} from "../../types";
+  FieldSortOrder,
+  InstitutionUserTypeAndRoleResponseDto,
+} from "@/types";
 import { AxiosResponse } from "axios";
-import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -213,10 +214,13 @@ export class InstitutionApi extends HttpBaseClient {
     pageSize: number,
     page: number,
     sortColumn: string,
-    sortOrder: SortDBOrder,
+    sortOrder: DataTableSortOrder,
     searchName: string,
   ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
-    const sortByOrder = sortOrder === SortDBOrder.ASC ? "ASC" : "DESC"; //Default sort order
+    const sortByOrder =
+      sortOrder === DataTableSortOrder.ASC
+        ? FieldSortOrder.ASC
+        : FieldSortOrder.DESC; //Default sort order
     try {
       let queryString = "";
       if (searchName) {

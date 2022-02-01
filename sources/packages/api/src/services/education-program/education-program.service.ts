@@ -15,12 +15,18 @@ import {
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { getRawCount, getDateOnlyFormat } from "../../utilities";
-import { SortDBOrder } from "../../types/sortDBOrder";
+import { databaseFieldOfAESTProgramDataTable } from "../../utilities";
 import {
   ProgramsSummaryPaginated,
   ProgramsSummary,
 } from "../education-program-offering/education-program-offering.service.models";
+import {
+  credentialTypeToDisplay,
+  FieldSortOrder,
+  getRawCount,
+  getDateOnlyFormat,
+  databaseFieldOfInstitutionProgramDataTable,
+} from "../../utilities";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -157,10 +163,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     pageSize?: number,
     page?: number,
     sortColumn?: string,
-    sortOrder?: SortDBOrder,
+    sortOrder?: FieldSortOrder,
     searchProgramName?: string,
   ): Promise<EducationProgramsSummaryPaginated> {
-    const sortByColumn = "programs.approvalStatus";
+    const DEFAULT_SORT_FIELD = "approvalStatus";
     const summaryResult = this.repo
       .createQueryBuilder("programs")
       .select([
@@ -188,6 +194,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.institution.id = :institutionId", { institutionId });
 
     const queryParams: any[] = [...offeringTypes, locationId, institutionId];
+    // program name search
     if (searchProgramName) {
       summaryResult.andWhere("programs.name Ilike :searchProgramName", {
         searchProgramName: `%${searchProgramName}%`,
@@ -203,20 +210,23 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     );
 
     // pagination
-    if (pageSize) {
-      summaryResult.limit(pageSize);
-    }
-    if (page) {
-      summaryResult.offset(page * pageSize);
-    } else {
-      summaryResult.offset(0);
-    }
+    summaryResult.take(pageSize).skip(page * pageSize);
 
     // sort
-    summaryResult.orderBy(sortByColumn, sortOrder);
+    if (sortColumn) {
+      summaryResult.orderBy(
+        databaseFieldOfInstitutionProgramDataTable(sortColumn),
+        sortOrder,
+      );
+    } else {
+      // default sort and order
+      summaryResult.orderBy(
+        databaseFieldOfInstitutionProgramDataTable(DEFAULT_SORT_FIELD),
+        FieldSortOrder.ASC,
+      );
+    }
 
     const programs = await summaryResult.getRawMany();
-    console.log(programs, "+++++++++programAndCount");
 
     const programSummary = programs.map((summary) => {
       const summaryItem = new EducationProgramsSummary();
@@ -224,6 +234,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.name = summary.name;
       summaryItem.cipCode = summary.cipcode;
       summaryItem.credentialType = summary.credentialtype;
+      summaryItem.credentialTypeToDisplay = credentialTypeToDisplay(
+        summary.credentialtype,
+      );
       summaryItem.approvalStatus = summary.approvalstatus;
       summaryItem.totalOfferings = summary.totalofferings;
       return summaryItem;
@@ -242,7 +255,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param skip is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
+   * @param sortOrder sorting order.
    * @param searchProgramName Search the program name in the query
    * @returns summary for location
    */
@@ -252,11 +265,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     pageSize?: number,
     page?: number,
     sortColumn?: string,
-    sortOrder?: SortDBOrder,
+    sortOrder?: FieldSortOrder,
     searchProgramName?: string,
   ): Promise<ProgramsSummaryPaginated> {
-    console.log("######################", offeringTypes);
-    console.log(sortColumn, "++sortColumn");
+    // default data table sort field
     const sortByColumn = "programs.createdAt"; //Default sort column
     const paginatedProgramQuery = this.repo
       .createQueryBuilder("programs")
@@ -311,7 +323,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       paginatedProgramQuery.offset(0);
     }
-    paginatedProgramQuery.orderBy(sortByColumn, sortOrder);
+    // sort
+    if (sortColumn && sortOrder) {
+      paginatedProgramQuery.orderBy(
+        databaseFieldOfAESTProgramDataTable(sortColumn),
+        sortOrder,
+      );
+    } else {
+      // default sort and order
+      paginatedProgramQuery.orderBy(sortByColumn, FieldSortOrder.ASC);
+    }
+
     const programsQuery = await paginatedProgramQuery.getRawMany();
 
     const programSummary = programsQuery.map((summary) => {
@@ -320,8 +342,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.programName = summary.programname;
       summaryItem.submittedDate = summary.programsubmittedat;
       summaryItem.formattedSubmittedDate = summary.credentialtype;
-      summaryItem.locationName = summary.locationName;
-      summaryItem.locationId = summary.locationId;
+      summaryItem.locationName = summary.locationname;
+      summaryItem.locationId = summary.locationid;
       summaryItem.programStatus = summary.approvalstatus;
       summaryItem.offeringsCount = summary.totalOfferings;
       summaryItem.formattedSubmittedDate = getDateOnlyFormat(

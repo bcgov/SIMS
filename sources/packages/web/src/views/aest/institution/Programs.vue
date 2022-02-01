@@ -35,7 +35,7 @@
             <p class="text-center font-weight-bold">No records found.</p>
           </template>
           <Column
-            field="submittedDate"
+            :field="AESTProgramFields.SubmittedDate"
             header="Date Submitted"
             :sortable="true"
           >
@@ -45,28 +45,31 @@
               </div>
             </template>
           </Column>
-          <Column field="programName" header="Program Name">
+          <Column :field="AESTProgramFields.ProgramName" header="Program Name">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.programName }}
               </div>
             </template>
           </Column>
-          <Column field="locationName" header="Location">
+          <Column :field="AESTProgramFields.LocationName" header="Location">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.locationName }}
               </div>
             </template>
           </Column>
-          <Column field="offeringsCount" header="Study periods">
+          <Column
+            :field="AESTProgramFields.OfferingsCount"
+            header="Study periods"
+          >
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.offeringsCount }}
               </div>
             </template>
           </Column>
-          <Column field="programStatus" header="Status"
+          <Column :field="AESTProgramFields.ProgramStatus" header="Status"
             ><template #body="slotProps">
               <status-badge
                 :status="
@@ -101,7 +104,8 @@ import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
   AESTInstitutionProgramsSummaryPaginatedDto,
-  SortDBOrder,
+  DataTableSortOrder,
+  AESTProgramFields,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
@@ -124,8 +128,8 @@ export default {
     const DEFAULT_PAGE = 0;
     const DEFAULT_ROW_SIZE = 10;
     const currentPageSize = ref();
-    const DEFAULT_SORT_COLUMN = "submittedDate";
-    const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
+    const DEFAULT_SORT_COLUMN = AESTProgramFields.SubmittedDate;
+    const DEFAULT_SORT_ORDER = DataTableSortOrder.DESC;
     const loading = ref(false);
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
 
@@ -134,7 +138,7 @@ export default {
       rowsPerPage: number,
       page: number,
       sortColumn: string,
-      sortOrder: SortDBOrder,
+      sortOrder: DataTableSortOrder,
       programName: string,
     ) => {
       try {
@@ -202,6 +206,7 @@ export default {
       searchProgramName,
       loading,
       getProgramStatusToGeneralStatus,
+      AESTProgramFields,
     };
   },
 };

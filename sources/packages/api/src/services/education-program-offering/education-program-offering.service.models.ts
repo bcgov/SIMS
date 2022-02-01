@@ -1,4 +1,3 @@
-import { EXTENDED_DATE_FORMAT, formatDate } from "../../utilities";
 import { OfferingIntensity, StudyBreak } from "../../database/entities";
 import { ApprovalStatus } from "../education-program/constants";
 
@@ -9,18 +8,11 @@ export class EducationProgramOfferingModel {
   studyEndDate: Date;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
-  get studyDates(): string {
-    if (this.studyStartDate === null) {
-      return "-";
-    } else {
-      return `${formatDate(
-        this.studyStartDate,
-        EXTENDED_DATE_FORMAT,
-      )} - ${formatDate(this.studyEndDate, EXTENDED_DATE_FORMAT)}`;
-    }
-  }
 }
-
+export class PaginatedOffering {
+  offeringSummary: EducationProgramOfferingModel[];
+  totalOfferings: number;
+}
 export interface ProgramOfferingModel {
   id: number;
   name: string;
@@ -51,7 +43,7 @@ export class ProgramsOfferingSummary {
   submittedDate: Date;
   locationName: string;
   locationId: number;
-  programStatus: string;
+  programStatus: ApprovalStatus;
   offeringsCount: number;
   formattedSubmittedDate: string;
 }
@@ -67,7 +59,7 @@ export class ProgramsSummary {
   formattedSubmittedDate: string;
   locationName: string;
   locationId: number;
-  programStatus: string;
+  programStatus: ApprovalStatus;
   offeringsCount: number;
 }
 

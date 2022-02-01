@@ -8,16 +8,40 @@
           <span class="color-blue category-header-large ml-2"
             >All programs</span
           >
-          <v-btn
-            class="float-right mb-2 primary-btn-background"
-            @click="goToAddNewProgram()"
-          >
-            <v-icon size="25" left> mdi-open-in-new </v-icon>
-            Create New Program
-          </v-btn>
+          <div class="float-right">
+            <InputText
+              v-model="searchBox"
+              placeholder="Search Program"
+              @keyup.enter="searchProgramTable()"
+            />
+            <v-btn
+              @click="searchProgramTable()"
+              tile
+              class="mx-2 primary-btn-background"
+            >
+              <font-awesome-icon :icon="['fas', 'search']" />
+            </v-btn>
+            <v-btn
+              class="float-right mb-2 primary-btn-background"
+              @click="goToAddNewProgram()"
+            >
+              <v-icon size="25" left> mdi-open-in-new </v-icon>
+              Create New Program
+            </v-btn>
+          </div>
         </div>
-        <DataTable :autoLayout="true" :value="programs">
-          <Column field="cipCode" header="CIP" :sortable="true"></Column>
+        <DataTable
+          :value="programAndCount.programsSummary"
+          :lazy="true"
+          :paginator="true"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="programAndCount.totalProgram"
+          @page="paginationAndSortEvent($event)"
+          @sort="paginationAndSortEvent($event)"
+          :loading="loading"
+        >
+          <Column field="cipCode" header="CIP"></Column>
           <Column field="name" header="Program Name" :sortable="true"></Column>
           <Column field="credentialType" header="Credential" :sortable="true">
             <template #body="slotProps">
@@ -26,11 +50,7 @@
               </div>
             </template></Column
           >
-          <Column
-            field="totalOfferings"
-            header="Offerings"
-            :sortable="true"
-          ></Column>
+          <Column field="totalOfferings" header="Offerings"></Column>
           <Column field="approvalStatus" header="Status" :sortable="true"
             ><template #body="slotProps">
               <status-badge
@@ -58,10 +78,13 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  SummaryEducationProgramDto,
   ClientIdType,
   EducationProgramsSummaryPaginated,
-  SortDBOrder,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  PAGINATION_LIST,
+  InstitutionProgramSummaryFields,
+  DataTableSortOrder,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
@@ -78,32 +101,74 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const programAndCount = ref({} as EducationProgramsSummaryPaginated);
-    const programs = ref([] as SummaryEducationProgramDto[]);
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
     const locationDetails = ref();
-    const searchProgramName = ref("");
-    const DEFAULT_PAGE = 0;
-    const DEFAULT_ROW_SIZE = 10;
-    const currentPageSize = ref();
-    const DEFAULT_SORT_COLUMN = "submittedDate";
-    const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
     const loading = ref(false);
+    const searchBox = ref("");
+    const currentPage = ref();
+    const currentPageLimit = ref();
 
-    const loadSummary = async () => {
+    /**
+     * function to load program list and count for institution
+     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
+     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
+     * @param sortField sort field, if nothing passed then InstitutionProgramSummaryFields.ApprovalStatus
+     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.ASC
+     */
+    const loadSummary = async (
+      page = DEFAULT_PAGE_NUMBER,
+      pageCount = DEFAULT_PAGE_LIMIT,
+      sortField = InstitutionProgramSummaryFields.ApprovalStatus,
+      sortOrder = DataTableSortOrder.ASC,
+    ) => {
+      loading.value = true;
       programAndCount.value = await EducationProgramService.shared.getLocationProgramsSummary(
         props.locationId,
+        page,
+        pageCount,
+        searchBox.value,
+        sortField,
+        sortOrder,
       );
-      programs.value = programAndCount.value.programsSummary;
+      loading.value = false;
     };
 
-    onMounted(async () => {
-      await loadSummary();
+    // pagination sort event callback
+    const paginationAndSortEvent = async (event: any) => {
+      currentPage.value = event?.page;
+      currentPageLimit.value = event?.rows;
+      await loadSummary(
+        event.page,
+        event.rows,
+        event.sortField,
+        event.sortOrder,
+      );
+    };
+    const loadProgramDetails = async () => {
       locationDetails.value = await InstitutionService.shared.getInstitutionLocation(
         props.locationId,
       );
+    };
+    // search program table
+    const searchProgramTable = async () => {
+      await loadSummary(
+        currentPage.value ?? DEFAULT_PAGE_NUMBER,
+        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+      );
+    };
+    onMounted(async () => {
+      await loadSummary();
+      await loadProgramDetails();
     });
-    watch(() => props.locationId, loadSummary);
 
+    watch(
+      () => props.locationId,
+      async () => {
+        // load program summary
+        await loadSummary();
+        await loadProgramDetails();
+      },
+    );
     const goToAddNewProgram = () => {
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
@@ -124,11 +189,18 @@ export default {
       });
     };
     return {
-      programs,
+      programAndCount,
       goToAddNewProgram,
       goToViewProgram,
       getProgramStatusToGeneralStatus,
       locationDetails,
+      DEFAULT_PAGE_LIMIT,
+      DEFAULT_PAGE_NUMBER,
+      PAGINATION_LIST,
+      paginationAndSortEvent,
+      searchProgramTable,
+      loading,
+      searchBox,
     };
   },
 };

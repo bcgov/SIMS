@@ -5,8 +5,15 @@ import { OfferingIntensity } from "@/types/contracts/OfferingContact";
  */
 export interface EducationProgramOfferingDto {
   id: number;
-  offeringName: string;
+  name: string;
+  studyStartDate: Date;
+  studyEndDate: Date;
   studyDates: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
+}
+
+export interface PaginatedOffering {
+  offeringSummary: EducationProgramOfferingDto[];
+  totalOfferings: number;
 }

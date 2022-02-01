@@ -34,6 +34,7 @@ export interface SummaryEducationProgramDto {
   cipCode: string;
   offeringsCount: number;
   approvalStatus: ApprovalStatus;
+  credentialTypeToDisplay: string;
 }
 
 export interface EducationProgramsSummaryPaginated {

@@ -19,7 +19,6 @@ import {
 } from "../../auth/decorators";
 import {
   SaveEducationProgramOfferingDto,
-  EducationProgramOfferingDto,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
 } from "./models/education-program-offering.dto";
@@ -32,8 +31,14 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import { getOfferingNameAndPeriod } from "../../utilities";
+import {
+  getOfferingNameAndPeriod,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+} from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
+import { PaginatedOffering } from "../../services/education-program-offering/education-program-offering.service.models";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -79,33 +84,41 @@ export class EducationProgramOfferingController {
     return createdProgramOffering.id;
   }
 
+  /**
+   * Offering Summary for institution for a location
+   * @param programId program id
+   * @param pageLimit is the number of rows shown in the table
+   * @param page is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortField the sorting column.
+   * @param sortOrder sorting order.
+   * @param searchName search by offering name
+   * @returns Offering Summary
+   */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/education-program/:programId")
   async getAllEducationProgramOffering(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    @Query("searchName") searchName: string,
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+  ): Promise<PaginatedOffering> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
     // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
-    const programOfferingList =
-      await this.programOfferingService.getAllEducationProgramOffering(
-        locationId,
-        programId,
-        [OfferingTypes.public],
-      );
-    if (!programOfferingList) {
-      throw new UnprocessableEntityException(
-        "Not able to find a Education Program Offering associated with the current Education Program and Location.",
-      );
-    }
-    return programOfferingList.map((offering) => ({
-      id: offering.id,
-      offeringName: offering.name,
-      studyDates: offering.studyDates,
-      offeringDelivered: offering.offeringDelivered,
-      offeringIntensity: offering.offeringIntensity,
-    }));
+    return this.programOfferingService.getAllEducationProgramOffering(
+      locationId,
+      programId,
+      sortField,
+      searchName,
+      [OfferingTypes.public],
+      pageLimit,
+      page,
+      sortOrder,
+    );
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -302,6 +315,12 @@ export class EducationProgramOfferingController {
   /**
    * Offering Summary for ministry users
    * @param programId program id
+   * @param pageLimit is the number of rows shown in the table
+   * @param page is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortField the sorting column.
+   * @param sortOrder sorting order.
+   * @param searchName search by offering name
    * @returns Offering Summary
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -310,28 +329,24 @@ export class EducationProgramOfferingController {
   async getOfferingSummary(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    @Query("searchName") searchName: string,
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder: FieldSortOrder,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+  ): Promise<PaginatedOffering> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
     // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
-    const programOfferingList =
-      await this.programOfferingService.getAllEducationProgramOffering(
-        locationId,
-        programId,
-        [OfferingTypes.public],
-      );
-
-    if (!programOfferingList) {
-      throw new UnprocessableEntityException(
-        "Not able to find a Education Program Offering associated with the current Education Program and Location.",
-      );
-    }
-    return programOfferingList.map((offering) => ({
-      id: offering.id,
-      offeringName: offering.name,
-      studyDates: offering.studyDates,
-      offeringDelivered: offering.offeringDelivered,
-      offeringIntensity: offering.offeringIntensity,
-    }));
+    return this.programOfferingService.getAllEducationProgramOffering(
+      locationId,
+      programId,
+      sortField,
+      searchName,
+      [OfferingTypes.public],
+      pageLimit,
+      page,
+      sortOrder,
+    );
   }
 
   /**
