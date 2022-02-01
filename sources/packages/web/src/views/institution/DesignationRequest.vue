@@ -119,12 +119,20 @@ export default {
         (location: DesignationLocationsListItem) => location.locationId,
       );
       try {
-        await DesignationAgreementService.shared.submitDesignationAgreement({
-          submittedData: args.dynamicData,
-          requestedLocationsIds: checkedLocationIds,
-        });
+        const createdId = await DesignationAgreementService.shared.submitDesignationAgreement(
+          {
+            submittedData: args.dynamicData,
+            requestedLocationsIds: checkedLocationIds,
+          },
+        );
         toastMessage.success("Submitted", "Designation agreement submitted.");
         await router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
+
+        console.log(
+          await DesignationAgreementService.shared.getDesignationAgreement(
+            createdId,
+          ),
+        );
       } catch (error) {
         toastMessage.success(
           "Unexpected error",

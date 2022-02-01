@@ -66,4 +66,30 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
 
     return await this.repo.save(newDesignation);
   }
+
+  async getDesignationById(
+    designationId: number,
+    institutionId: number,
+  ): Promise<DesignationAgreement> {
+    return (
+      this.repo
+        .createQueryBuilder("designation")
+        .select([
+          "designation.id",
+          "designation.designationStatus",
+          "designation.submittedData",
+          "designationLocation",
+          "location.id",
+          "location.data",
+        ])
+        .innerJoin(
+          "designation.designationAgreementLocations",
+          "designationLocation",
+        )
+        .innerJoin("designationLocation.location", "location")
+        .where("designation.id = :designationId", { designationId })
+        //.andWhere("location.institution.id = :institutionId", { institutionId })
+        .getOne()
+    );
+  }
 }

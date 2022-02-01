@@ -1,5 +1,8 @@
 import ApiClient from "@/services/http/ApiClient";
-import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
+import {
+  GetDesignationAgreementDto,
+  SubmitDesignationAgreementDto,
+} from "@/types/contracts/DesignationAgreementContract";
 
 /**
  * Client service layer for Designation agreements.
@@ -14,9 +17,17 @@ export class DesignationAgreementService {
 
   public async submitDesignationAgreement(
     designationAgreement: SubmitDesignationAgreementDto,
-  ): Promise<void> {
-    await ApiClient.DesignationAgreement.submitDesignationAgreement(
+  ): Promise<number> {
+    return await ApiClient.DesignationAgreement.submitDesignationAgreement(
       designationAgreement,
+    );
+  }
+
+  public async getDesignationAgreement(
+    designationId: number,
+  ): Promise<GetDesignationAgreementDto> {
+    return await ApiClient.DesignationAgreement.getDesignationAgreement(
+      designationId,
     );
   }
 }
