@@ -257,6 +257,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get the list of disbursement schedules for a given location as COE.
+   ** COE values are retrieved only when an application reaches enrollment status.
+   ** When the first COE is approved, application moves to complete status as per workflow but second COE is still
+   ** waiting to be approved by institution.
    * @param locationId
    * @returns List of COE for given location.
    */
@@ -285,8 +288,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       });
     if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
       coeQuery.andWhere(

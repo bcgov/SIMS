@@ -33,11 +33,7 @@ export default {
     const showInfo = ref(false);
     const prepareContent = () => {
       showInfo.value = false;
-      if (
-        [COEStatus.submitted, COEStatus.completed].includes(
-          props.data.applicationCOEStatus,
-        )
-      ) {
+      if ([COEStatus.completed].includes(props.data.applicationCOEStatus)) {
         showInfo.value = true;
         content.value = `This applicant has been confirmed as enrolled at your institution.
             Funding will be disbursed on the study start date shown below. If the

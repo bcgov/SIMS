@@ -1,4 +1,4 @@
--- Drop coe_approved
+-- Drop coe_status
 ALTER TABLE
     sims.disbursement_schedules DROP COLUMN IF EXISTS coe_status;
 
