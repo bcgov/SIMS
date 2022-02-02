@@ -160,8 +160,8 @@ export interface ApplicationStatusToBeUpdatedDto {
 }
 export interface COESummaryDTO {
   applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartPeriod: Date;
+  studyEndPeriod: Date;
   applicationId: number;
   coeStatus: COEStatus;
   fullName: string;
@@ -271,11 +271,3 @@ export const transformToApplicationDetailDto = (
     programYearEndDate: applicationDetail.programYear.endDate,
   };
 };
-
-/**
- * Enum for COE enrollment period.
- */
-export enum EnrollmentPeriod {
-  Current = "current",
-  Upcoming = "upcoming",
-}

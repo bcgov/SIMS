@@ -11,3 +11,11 @@ export interface Disbursement {
   negotiatedExpiryDate: Date;
   disbursements: DisbursementValue[];
 }
+
+/**
+ * Enum for COE enrollment period.
+ */
+export enum EnrollmentPeriod {
+  Current = "current",
+  Upcoming = "upcoming",
+}

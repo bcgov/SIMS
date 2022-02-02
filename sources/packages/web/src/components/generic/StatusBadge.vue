@@ -53,7 +53,7 @@ export default {
           badgeClass.value = "status-badge-inactive";
           textColor.value = COLOR_BLACK;
           backGroundColor.value = COLOR_WHITE;
-          iconColor.value = "#333A47";
+          iconColor.value = COLOR_BLACK;
           break;
         case GeneralStatusForBadge.ActiveRestriction:
           // css class for active restriction status

@@ -10,11 +10,8 @@
     <TabView lazy>
       <TabPanel>
         <template #header>
-          <span>Confirm enrollment </span>
-          <font-awesome-icon
-            :icon="['fas', 'folder-open']"
-            class="ml-2"
-          ></font-awesome-icon>
+          <font-awesome-icon :icon="['fas', 'folder-open']"></font-awesome-icon>
+          <span class="ml-2">Confirm enrollment </span>
         </template>
         <COESummaryData
           :locationId="locationId"
@@ -24,11 +21,8 @@
       </TabPanel>
       <TabPanel>
         <template #header>
-          <span>Upcoming enrollment</span>
-          <font-awesome-icon
-            :icon="['fas', 'user']"
-            class="ml-2"
-          ></font-awesome-icon>
+          <font-awesome-icon :icon="['fas', 'user']"></font-awesome-icon>
+          <span class="ml-2">Upcoming enrollment</span>
         </template>
         <COESummaryData
           :locationId="locationId"
@@ -54,9 +48,6 @@ export default {
       type: String,
       required: true,
     },
-  },
-  setup() {
-    return {};
   },
 };
 </script>

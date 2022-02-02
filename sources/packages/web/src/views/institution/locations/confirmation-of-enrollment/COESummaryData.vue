@@ -88,8 +88,6 @@ export default {
     const applications = ref([] as COESummaryDTO[]);
 
     const goToViewApplication = (applicationId: number) => {
-      console.log(props.locationId);
-      console.log(applicationId);
       router.push({
         name: InstitutionRoutesConst.COE_EDIT,
         params: { locationId: props.locationId, applicationId },

@@ -9,7 +9,7 @@ COE Status Badge
         class="mr-1"
         :color="iconColor"
       />
-      <span class="text-uppercase">{{ label }}</span>
+      <span class="text-uppercase">{{ status }}</span>
     </template>
   </v-badge>
 </template>
@@ -32,14 +32,12 @@ export default {
     },
   },
   setup(props: any) {
-    const label = ref("");
     const badgeClass = ref("");
     const textColor = ref(COLOR_BLACK);
     const backGroundColor = ref(COLOR_WHITE);
     const iconColor = ref("");
 
     const setStyles = () => {
-      label.value = props.status;
       switch (props.status) {
         case COEStatus.completed:
           badgeClass.value = "status-badge-success";
@@ -77,8 +75,6 @@ export default {
       textColor,
       backGroundColor,
       iconColor,
-      COEStatus,
-      label,
     };
   },
 };

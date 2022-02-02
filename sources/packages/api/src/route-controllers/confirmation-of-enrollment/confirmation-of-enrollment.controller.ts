@@ -24,10 +24,7 @@ import {
   ApplicationStatus,
   DisbursementSchedule,
 } from "../../database/entities";
-import {
-  COESummaryDTO,
-  EnrollmentPeriod,
-} from "../application/models/application.model";
+import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import { dateString, COE_WINDOW, getCOEDeniedReason } from "../../utilities";
 import {
@@ -35,6 +32,7 @@ import {
   DenyConfirmationOfEnrollmentDto,
   COEDeniedReasonDto,
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -59,21 +57,26 @@ export class ConfirmationOfEnrollmentController {
   )
   async getCOESummary(
     @Param("locationId") locationId: number,
-    @Param("enrollmentPeriod") enrollmentPeriod: string,
+    @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
   ): Promise<COESummaryDTO[]> {
+    if (
+      enrollmentPeriod !== EnrollmentPeriod.Current &&
+      enrollmentPeriod !== EnrollmentPeriod.Upcoming
+    ) {
+      throw new NotFoundException("Invalid enrollment period value.");
+    }
     const disbursementSchedules =
       await this.disbursementScheduleService.getCOEByLocation(
         locationId,
-        enrollmentPeriod === EnrollmentPeriod.Upcoming,
+        enrollmentPeriod,
       );
     return disbursementSchedules.map((disbursement: DisbursementSchedule) => {
       return {
         applicationNumber: disbursement.application.applicationNumber,
         applicationId: disbursement.application.id,
-        studyStartPeriod:
-          disbursement.application.offering?.studyStartDate ?? "",
-        studyEndPeriod: disbursement.application.offering?.studyEndDate ?? "",
-        coeStatus: this.getCOEStatus(disbursement.isCOEApproved),
+        studyStartPeriod: disbursement.application.offering.studyStartDate,
+        studyEndPeriod: disbursement.application.offering.studyEndDate,
+        coeStatus: disbursement.coeStatus,
         fullName: getUserFullName(disbursement.application.student.user),
         disbursementScheduleId: disbursement.id,
         disbursementDate: disbursement.disbursementDate,
@@ -292,16 +295,5 @@ export class ConfirmationOfEnrollmentController {
       value: eachCOEDeniedReason.id,
       label: eachCOEDeniedReason.reason,
     }));
-  }
-  /**
-   * Transform the DB column data to COEStatus.
-   * @param isCOEApproved
-   * @returns COE Status Enum.
-   */
-  private getCOEStatus(isCOEApproved: boolean): COEStatus {
-    if (isCOEApproved === null) {
-      return COEStatus.required;
-    }
-    return isCOEApproved ? COEStatus.completed : COEStatus.declined;
   }
 }

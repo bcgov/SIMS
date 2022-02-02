@@ -3,6 +3,7 @@ import {
   CustomNamedError,
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   addDays,
+  COE_WINDOW,
 } from "../../utilities";
 import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
@@ -16,12 +17,11 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
   ApplicationStatus,
-  AssessmentStatus,
   DisbursementSchedule,
   DisbursementValue,
   OfferingIntensity,
 } from "../../database/entities";
-import { Disbursement } from "./disbursement-schedule.models";
+import { Disbursement, EnrollmentPeriod } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
@@ -262,15 +262,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    */
   async getCOEByLocation(
     locationId: number,
-    upcomingCOE?: boolean,
+    enrollmentPeriod: EnrollmentPeriod,
   ): Promise<DisbursementSchedule[]> {
-    const coeThresholdDate = addDays(new Date(), 21);
+    const coeThresholdDate = addDays(new Date(), COE_WINDOW);
     const coeQuery = this.repo
       .createQueryBuilder("disbursementSchedule")
       .select([
         "disbursementSchedule.id",
         "disbursementSchedule.disbursementDate",
-        "disbursementSchedule.isCOEApproved",
+        "disbursementSchedule.coeStatus",
         "application.applicationNumber",
         "application.id",
         "offering.studyStartDate",
@@ -287,11 +287,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .andWhere("application.assessmentStatus = :requiredStatus", {
-        requiredStatus: AssessmentStatus.required,
       });
-    if (upcomingCOE) {
+    if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
       coeQuery.andWhere(
         "disbursementSchedule.disbursementDate > :coeThresholdDate",
         { coeThresholdDate },
@@ -302,7 +299,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         { coeThresholdDate },
       );
     }
-    coeQuery.orderBy("disbursementSchedule.isCOEApproved");
+    coeQuery.orderBy("disbursementSchedule.coeStatus");
     return coeQuery.getMany();
   }
 }

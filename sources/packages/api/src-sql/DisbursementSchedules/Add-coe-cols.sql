@@ -1,10 +1,10 @@
--- Add coe_approved to disbursement_schedules table.
+-- Add coe_status to disbursement_schedules table.
 ALTER TABLE
     sims.disbursement_schedules
 ADD
-    COLUMN IF NOT EXISTS coe_approved BOOLEAN;
+    COLUMN IF NOT EXISTS coe_status sims.coe_status NOT NULL DEFAULT 'Required';
 
-COMMENT ON COLUMN sims.disbursement_schedules.coe_approved IS 'Column which indicates if a COE is approved or not for a disbursement.';
+COMMENT ON COLUMN sims.disbursement_schedules.coe_status IS 'Column which indicates the COE Status of a disbursement.';
 
 -- Add coe_updated_by to disbursement_schedules table.
 ALTER TABLE
