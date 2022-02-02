@@ -77,8 +77,8 @@ export default {
       type: String,
       required: true,
     },
-    upcomingCOE: {
-      type: Boolean,
+    enrollmentPeriod: {
+      type: String,
       required: true,
     },
   },
@@ -97,7 +97,7 @@ export default {
     const updateSummaryList = async (locationId: number) => {
       applications.value = await ConfirmationOfEnrollmentService.shared.getCOESummary(
         locationId,
-        props.upcomingCOE,
+        props.enrollmentPeriod,
       );
     };
 

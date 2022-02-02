@@ -75,3 +75,11 @@ export interface StudyBreakCOE {
   breakStartDate: string;
   breakEndDate: string;
 }
+
+/**
+ * Enum for COE enrollment period.
+ */
+export enum EnrollmentPeriod {
+  Current = "current",
+  Upcoming = "upcoming",
+}

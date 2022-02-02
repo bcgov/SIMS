@@ -15,7 +15,7 @@
         </template>
         <COESummaryData
           :locationId="locationId"
-          :upcomingCOE="false"
+          :enrollmentPeriod="EnrollmentPeriod.Current"
           header="Available to confirm enrollment"
         />
       </TabPanel>
@@ -26,7 +26,7 @@
         </template>
         <COESummaryData
           :locationId="locationId"
-          :upcomingCOE="true"
+          :enrollmentPeriod="EnrollmentPeriod.Upcoming"
           header="Upcoming enrollment"
         />
       </TabPanel>
@@ -36,6 +36,7 @@
 
 <script lang="ts">
 import COESummaryData from "@/views/institution/locations/confirmation-of-enrollment/COESummaryData.vue";
+import { EnrollmentPeriod } from "@/types";
 
 export default {
   components: { COESummaryData },
@@ -48,6 +49,9 @@ export default {
       type: String,
       required: true,
     },
+  },
+  setup() {
+    return { EnrollmentPeriod };
   },
 };
 </script>
