@@ -158,3 +158,12 @@ export function getDateDifferenceInMonth(
   }
   return NaN;
 }
+/**
+ *
+ * @param date Add days to a given date.
+ * @param daysToAdd
+ * @returns Date.
+ */
+export const addDays = (date: Date | string, daysToAdd: number): Date => {
+  return dayjs(date).add(daysToAdd, "day").toDate();
+};

@@ -30,6 +30,8 @@ import InputNumber from "primevue/inputnumber";
 import ProgressSpinner from "primevue/progressspinner";
 import Chip from "primevue/chip";
 import TabMenu from "primevue/tabmenu";
+import TabView from "primevue/tabview";
+import TabPanel from "primevue/tabpanel";
 import { AppConfigService } from "./services/AppConfigService";
 import configValidationRules from "./validators/ValidatorConfigUI";
 import Timeline from "primevue/timeline";
@@ -46,6 +48,8 @@ import {
   faPen,
   faCog,
   faTrash,
+  faUser,
+  faFolderOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -59,6 +63,8 @@ library.add(
   faPen,
   faCog,
   faTrash,
+  faUser,
+  faFolderOpen,
 );
 
 // Configure the UI validations rules globally available.
@@ -88,6 +94,8 @@ AppConfigService.shared.init().then(() => {
     .component("ProgressSpinner", ProgressSpinner)
     .component("Chip", Chip)
     .component("TabMenu", TabMenu)
+    .component("TabView", TabView)
+    .component("TabPanel", TabPanel)
     .component("font-awesome-icon", FontAwesomeIcon)
     .component("Timeline", Timeline)
     .directive("tooltip", Tooltip)

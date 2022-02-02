@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Application } from ".";
+import { Application, User, COEStatus } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
@@ -82,4 +82,33 @@ export class DisbursementSchedule extends RecordDataModel {
     },
   )
   disbursementValues?: DisbursementValue[];
+
+  /**
+   * COE approval status of disbursement.
+   */
+  @Column({
+    name: "coe_status",
+    type: "enum",
+  })
+  coeStatus: COEStatus;
+
+  /**
+   * User who approved/rejected COE.
+   */
+  @ManyToOne(() => User, { eager: false })
+  @JoinColumn({
+    name: "coe_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  coeUpdatedBy?: User;
+
+  /**
+   * Date on which COE is approved/rejected.
+   */
+  @Column({
+    name: "coe_updated_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  coeUpdatedAt?: Date;
 }
