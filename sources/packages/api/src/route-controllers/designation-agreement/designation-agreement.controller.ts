@@ -88,7 +88,7 @@ export class DesignationAgreementController {
   ): Promise<GetDesignationAgreementDto> {
     const designation =
       await this.designationAgreementService.getDesignationById(
-        48,
+        designationId,
         userToken.authorizations.institutionId,
       );
     if (!designation) {
@@ -107,7 +107,6 @@ export class DesignationAgreementController {
         requested: agreementLocation.requested,
         approved: agreementLocation.approved,
       }));
-
     return result;
   }
 }
