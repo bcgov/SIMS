@@ -100,16 +100,15 @@ export class DisbursementSchedule extends RecordDataModel {
     name: "coe_updated_by",
     referencedColumnName: ColumnNames.ID,
   })
-  coeUpdatedBy: User;
+  coeUpdatedBy?: User;
 
   /**
    * Date on which COE is approved/rejected.
    */
   @Column({
     name: "coe_updated_at",
-    type: "date",
-    transformer: dateOnlyTransformer,
+    type: "timestamptz",
     nullable: true,
   })
-  coeUpdatedAt: Date;
+  coeUpdatedAt?: Date;
 }

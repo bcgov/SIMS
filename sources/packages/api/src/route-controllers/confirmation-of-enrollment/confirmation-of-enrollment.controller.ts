@@ -59,10 +59,7 @@ export class ConfirmationOfEnrollmentController {
     @Param("locationId") locationId: number,
     @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
   ): Promise<COESummaryDTO[]> {
-    if (
-      enrollmentPeriod !== EnrollmentPeriod.Current &&
-      enrollmentPeriod !== EnrollmentPeriod.Upcoming
-    ) {
+    if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
       throw new NotFoundException("Invalid enrollment period value.");
     }
     const disbursementSchedules =
