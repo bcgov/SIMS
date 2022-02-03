@@ -350,6 +350,7 @@ export class ApplicationController extends BaseController {
       fullName: getUserFullName(application.student.user),
       programName: application.offering.educationProgram.name,
       locationName: application.location.name,
+      offeringIntensity: application.offering.offeringIntensity,
       offeringStudyStartDate: dateString(application.offering.studyStartDate),
       offeringStudyEndDate: dateString(application.offering.studyEndDate),
       msfaaNumber: application.msfaaNumber.msfaaNumber,
