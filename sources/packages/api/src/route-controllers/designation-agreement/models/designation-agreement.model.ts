@@ -1,12 +1,21 @@
-import { ArrayMinSize, IsArray, IsDefined } from "class-validator";
 import { DesignationAgreementStatus } from "../../../database/entities";
 
-export class SubmitDesignationAgreementDto {
-  @IsDefined()
-  submittedData: any;
-  @IsArray()
-  @ArrayMinSize(1)
-  requestedLocationsIds: number[];
+/**
+ * This DTO contains dynamic data that must
+ * be validated by the form.io dryrun validation.
+ */
+export interface SubmitDesignationAgreementDto {
+  dynamicData: any;
+  locations: SubmittedLocationsDto[];
+}
+
+/**
+ * This DTO contains dynamic data that must
+ * be validated by the form.io dryrun validation.
+ */
+export interface SubmittedLocationsDto {
+  locationId: number;
+  requestForDesignation: boolean;
 }
 
 export interface GetDesignationAgreementDto {

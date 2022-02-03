@@ -7,21 +7,17 @@
       </div>
     </v-row>
   </v-container>
-
   <full-page-container>
-    <formio
-      formName="designationagreementdetails"
-      :data="initialData"
-      @submitted="submitDesignation"
-      @loaded="formLoaded"
-    ></formio>
+    <designation-agreement-form
+      :model="designationModel"
+      @submitDesignation="submitDesignation"
+    ></designation-agreement-form>
   </full-page-container>
 </template>
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import formio from "@/components/generic/formio.vue";
-import { ref, onMounted } from "vue";
+import { onMounted, reactive } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   useFormatters,
@@ -29,110 +25,71 @@ import {
   useInstitutionState,
   useToastMessage,
 } from "@/composables";
-import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { useRouter } from "vue-router";
+import DesignationAgreementForm from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
+import {
+  DesignationModel,
+  DesignationFormViewModes,
+  DesignationLocationsListItem,
+} from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
+import { DesignationAgreementService } from "@/services/DesignationAgreementService";
+import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
-interface DesignationLocationsListItem {
-  locationId: number;
-  locationName: string;
-  locationAddress: string;
-  requestForDesignation: boolean;
-}
-
-interface DesignationModel {
-  institutionName: string;
-  institutionType: string;
-  locations: DesignationLocationsListItem[];
-  dynamicData: {
-    legalAuthorityName: string;
-    legalAuthorityEmailAddress: string;
-  };
-}
-
 export default {
-  components: { formio, FullPageContainer },
+  components: { FullPageContainer, DesignationAgreementForm },
   setup() {
     const router = useRouter();
     const toastMessage = useToastMessage();
     const formatter = useFormatters();
     const { institutionState } = useInstitutionState();
     const {
-      isLegalSigningAuthority,
       userFullName,
       userEmail,
+      isLegalSigningAuthority,
     } = useInstitutionAuth();
-    const initialData = ref({} as DesignationModel);
 
-    const loadInitialDesignationModel = async () => {
-      const model = {} as DesignationModel;
-      if (isLegalSigningAuthority.value) {
-        model.dynamicData = {
-          legalAuthorityName: userFullName.value,
-          legalAuthorityEmailAddress: userEmail.value,
-        };
-      }
-      model.institutionName = institutionState.value.operatingName;
-      model.institutionType = institutionState.value.institutionType;
-      const locations = await InstitutionService.shared.getAllInstitutionLocations();
-      model.locations = locations.map(location => ({
-        locationId: location.id,
-        locationName: location.name,
-        locationAddress: formatter.getFormattedAddress({
-          ...location.data.address,
-          provinceState: location.data.address.province,
-        }),
-        requestForDesignation: false,
-      }));
-
-      initialData.value = model;
-    };
+    const designationModel = reactive({} as DesignationModel);
+    designationModel.institutionName = institutionState.value.operatingName;
+    designationModel.institutionType = institutionState.value.institutionType;
+    designationModel.isBCPrivate = institutionState.value.isBCPrivate;
+    designationModel.viewMode = DesignationFormViewModes.viewOnly;
+    if (isLegalSigningAuthority) {
+      // Only populates the signing officer data
+      // if the current user is has the proper role.
+      designationModel.dynamicData = {
+        legalAuthorityName: userFullName.value,
+        legalAuthorityEmailAddress: userEmail.value,
+      };
+    }
 
     onMounted(async () => {
-      loadInitialDesignationModel();
+      const locations = await InstitutionService.shared.getAllInstitutionLocations();
+      designationModel.locations = locations.map(
+        location =>
+          ({
+            locationId: location.id,
+            locationName: location.name,
+            locationAddress: formatter.getFormattedAddress({
+              ...location.data.address,
+              provinceState: location.data.address.province,
+            }),
+            requestForDesignation: false,
+          } as DesignationLocationsListItem),
+      );
     });
 
-    const MANAGE_LOCATIONS_LINK = "goToManageLocations";
-    const MANAGE_USERS_LINK = "goToManageUsers";
-
-    const formLoaded = async () => {
-      const goToManageLocations = document.getElementById(
-        MANAGE_LOCATIONS_LINK,
-      );
-      goToManageLocations!.onclick = _ => {
-        router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
-      };
-      const goToManageUsers = document.getElementById(MANAGE_USERS_LINK);
-      goToManageUsers!.onclick = _ => {
-        router.push({ name: InstitutionRoutesConst.MANAGE_USERS });
-      };
-    };
-
-    const submitDesignation = async (args: any) => {
-      // Filter the locations that are checked.
-      const checkedLocations = initialData.value.locations.filter(
-        (location: DesignationLocationsListItem) =>
-          location.requestForDesignation,
-      );
-      // Get the ids of the checked locations.
-      const checkedLocationIds = checkedLocations.map(
-        (location: DesignationLocationsListItem) => location.locationId,
-      );
+    const submitDesignation = async (model: DesignationModel) => {
       try {
-        const createdId = await DesignationAgreementService.shared.submitDesignationAgreement(
-          {
-            submittedData: args.dynamicData,
-            requestedLocationsIds: checkedLocationIds,
-          },
-        );
+        await DesignationAgreementService.shared.submitDesignationAgreement({
+          dynamicData: model.dynamicData,
+          locations: model.locations.map(location => ({
+            locationId: location.locationId,
+            requestForDesignation: location.requestForDesignation,
+          })),
+        } as SubmitDesignationAgreementDto);
         toastMessage.success("Submitted", "Designation agreement submitted.");
         await router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
-
-        console.log(
-          await DesignationAgreementService.shared.getDesignationAgreement(
-            createdId,
-          ),
-        );
       } catch (error) {
         toastMessage.success(
           "Unexpected error",
@@ -141,7 +98,10 @@ export default {
       }
     };
 
-    return { initialData, formLoaded, submitDesignation };
+    return {
+      designationModel,
+      submitDesignation,
+    };
   },
 };
 </script>

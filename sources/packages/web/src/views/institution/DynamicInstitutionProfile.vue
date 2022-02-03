@@ -89,7 +89,7 @@ export default {
           });
         }
       }
-
+      await store.dispatch("institution/getInstitutionDetails");
       if (redirectHome) {
         router.push({
           name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,

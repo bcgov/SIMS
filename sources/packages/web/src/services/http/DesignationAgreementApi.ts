@@ -10,9 +10,9 @@ import {
 export class DesignationAgreementApi extends HttpBaseClient {
   async submitDesignationAgreement(
     designationAgreement: SubmitDesignationAgreementDto,
-  ): Promise<number> {
+  ): Promise<void> {
     try {
-      return await this.apiClient.post(
+      await this.apiClient.post(
         "institution/designation-agreement",
         designationAgreement,
         this.addAuthHeader(),

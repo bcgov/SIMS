@@ -115,6 +115,7 @@ export interface AuthorizationsForStore {
 export interface InstitutionStateForStore {
   operatingName: string;
   institutionType: string;
+  isBCPrivate: boolean;
 }
 
 export interface LocationStateForStore {

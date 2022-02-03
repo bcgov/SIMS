@@ -17,8 +17,8 @@ export class DesignationAgreementService {
 
   public async submitDesignationAgreement(
     designationAgreement: SubmitDesignationAgreementDto,
-  ): Promise<number> {
-    return await ApiClient.DesignationAgreement.submitDesignationAgreement(
+  ): Promise<void> {
+    await ApiClient.DesignationAgreement.submitDesignationAgreement(
       designationAgreement,
     );
   }

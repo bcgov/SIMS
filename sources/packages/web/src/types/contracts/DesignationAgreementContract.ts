@@ -1,6 +1,11 @@
 export interface SubmitDesignationAgreementDto {
-  submittedData: any;
-  requestedLocationsIds: number[];
+  dynamicData: any;
+  locations: SubmittedLocationsDto[];
+}
+
+export interface SubmittedLocationsDto {
+  locationId: number;
+  requestForDesignation: boolean;
 }
 
 export interface GetDesignationAgreementDto {

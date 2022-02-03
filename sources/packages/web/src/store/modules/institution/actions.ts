@@ -29,6 +29,7 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     context.commit("setInstitutionDetails", {
       operatingName: response.institution.operatingName,
       institutionType: response.institution.institutionTypeName,
+      isBCPrivate: response.isBCPrivate,
     } as InstitutionStateForStore);
   },
 

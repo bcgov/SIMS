@@ -51,31 +51,29 @@ export class DesignationAgreementController {
     );
     if (!isLegalSigningAuthority) {
       throw new ForbiddenException(
-        "User does not have rights to create a designation agreement.",
+        "User does not have the rights to create a designation agreement.",
       );
     }
     // Validate the dynamic data submission.
-    // const submissionResult = await this.formService.dryRunSubmission(
-    //   FormNames.DesignationAgreementDetails,
-    //   { dynamicData: payload.submittedData },
-    // );
-    // if (!submissionResult.valid) {
-    //   throw new BadRequestException(
-    //     "Not able to create a designation agreement due to an invalid request.",
-    //   );
-    // }
-
-    console.log(getUTCNow());
-    console.log(new Date());
-
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.DesignationAgreementDetails,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create a designation agreement due to an invalid request.",
+      );
+    }
     // Creates the designation agreement.
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
         userToken.authorizations.institutionId,
-        payload.submittedData,
+        payload.dynamicData,
         userToken.userId,
         getUTCNow(),
-        payload.requestedLocationsIds,
+        payload.locations
+          .filter((location) => location.requestForDesignation)
+          .map((location) => location.locationId),
       );
     return createdDesignation.id;
   }
