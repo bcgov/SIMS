@@ -31,3 +31,4 @@ export * from "@/types/contracts/GeneralStatusForBadge";
 export * from "@/types/contracts/DataTableContract";
 export * from "@/types/contracts/NoteContract";
 export * from "@/types/contracts/RestrictionContract";
+export * from "@/types/contracts/PaginationDto";

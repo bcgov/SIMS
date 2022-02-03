@@ -88,6 +88,7 @@ export class EducationProgramOfferingController {
 
   /**
    * Offering Summary for an institution location
+   * @param locationId location id
    * @param programId program id
    * @param pageLimit is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.
@@ -299,6 +300,7 @@ export class EducationProgramOfferingController {
 
   /**
    * Offering Summary for ministry users
+   * @param locationId location id
    * @param programId program id
    * @param pageLimit is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.

@@ -4,6 +4,7 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -162,6 +163,10 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Related institution.
    */
+
+  @RelationId((program: EducationProgram) => program.institution)
+  institutionId: number;
+
   @OneToOne((_) => Institution, { eager: false, cascade: true })
   @JoinColumn({
     name: "institution_id",

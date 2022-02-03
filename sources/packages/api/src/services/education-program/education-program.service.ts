@@ -182,7 +182,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     // this queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
-    // paginationOptions.searchCriteria or institutionId
+    // paginationOptions.searchCriteria or institutionId.
+    // queryParams should follow the order/index
     const queryParams: any[] = [...offeringTypes, locationId, institutionId];
     // program name search
     if (paginationOptions?.searchCriteria) {
@@ -285,6 +286,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // this queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
     // paginationOptions.searchCriteria or institutionId
+    // queryParams should follow the order/index
     const queryParams: any[] = [...offeringTypes, institutionId];
 
     if (paginationOptions?.searchCriteria) {
