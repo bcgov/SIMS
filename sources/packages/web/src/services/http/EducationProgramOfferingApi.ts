@@ -62,18 +62,18 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     try {
-      let URL = `institution/offering/location/${locationId}/education-program/${programId}?page=${page}&pageLimit=${pageCount}`;
+      let url = `institution/offering/location/${locationId}/education-program/${programId}?page=${page}&pageLimit=${pageCount}`;
       if (searchName) {
-        URL = `${URL}&searchName=${searchName}`;
+        url = `${url}&searchName=${searchName}`;
       }
       if (sortField && sortOrder) {
         const sortDBOrder =
           sortOrder === DataTableSortOrder.DESC
             ? FieldSortOrder.DESC
             : FieldSortOrder.ASC;
-        URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+        url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
       }
-      const response = await this.apiClient.get(URL, this.addAuthHeader());
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);
@@ -213,18 +213,18 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     try {
-      let URL = `institution/offering/location/${locationId}/education-program/${programId}/aest?page=${page}&pageLimit=${pageCount}`;
+      let url = `institution/offering/location/${locationId}/education-program/${programId}/aest?page=${page}&pageLimit=${pageCount}`;
       if (searchName) {
-        URL = `${URL}&searchName=${searchName}`;
+        url = `${url}&searchName=${searchName}`;
       }
       if (sortField && sortOrder) {
         const sortDBOrder =
           sortOrder === DataTableSortOrder.DESC
             ? FieldSortOrder.DESC
             : FieldSortOrder.ASC;
-        URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+        url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
       }
-      const response = await this.apiClient.get(URL, this.addAuthHeader());
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

@@ -84,7 +84,6 @@ export const AESTRoutesConst = {
   LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),
   VIEW_PROGRAM: Symbol(),
   VIEW_OFFERING: Symbol(),
-
 };
 
 /**

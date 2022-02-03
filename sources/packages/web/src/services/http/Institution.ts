@@ -238,7 +238,7 @@ export class InstitutionApi extends HttpBaseClient {
       }
       queryString += `page=${page}&`;
       const response = await this.apiClient.get(
-        `institution/education-program/institution/${institutionId}?${queryString.slice(
+        `institution/education-program/institution/${institutionId}/aest?${queryString.slice(
           0,
           -1,
         )}`,

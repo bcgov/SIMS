@@ -170,16 +170,14 @@ export default {
       );
     };
     onMounted(async () => {
-      await loadSummary();
-      await loadProgramDetails();
+      await Promise.all([loadSummary(), loadProgramDetails()]);
     });
 
     watch(
       () => props.locationId,
       async () => {
-        // load program summary
-        await loadSummary();
-        await loadProgramDetails();
+        // load program summary and institution details
+        await Promise.all([loadSummary(), loadProgramDetails()]);
       },
     );
     const goToAddNewProgram = () => {

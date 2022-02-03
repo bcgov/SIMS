@@ -83,13 +83,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       });
     }
     // search offering name
-    if (paginationOptions?.searchCriteria) {
+    if (paginationOptions.searchCriteria) {
       offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
     }
     // sorting
-    if (paginationOptions?.sortField && paginationOptions?.sortOrder) {
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
       offeringsQuery.orderBy(
         sortOfferingsSummary(paginationOptions.sortField),
         paginationOptions.sortOrder,

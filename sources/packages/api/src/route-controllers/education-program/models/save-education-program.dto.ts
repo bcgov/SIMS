@@ -37,7 +37,7 @@ export interface EducationProgramDto {
   programDeclaration: boolean;
 }
 
-export interface EducationProgramData extends EducationProgramDto {
+export interface EducationProgramDataDto extends EducationProgramDto {
   credentialTypeToDisplay: string;
   approvalStatus: ApprovalStatus;
   institutionId: number;
@@ -62,7 +62,7 @@ export interface EntranceRequirements {
  */
 export const transformToEducationProgramData = (
   program: EducationProgram,
-): EducationProgramData => {
+): EducationProgramDataDto => {
   return {
     id: program.id,
     approvalStatus: program.approvalStatus,

@@ -185,7 +185,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // queryParams should follow the order/index
     const queryParams: any[] = [...offeringTypes, locationId, institutionId];
     // program name search
-    if (paginationOptions?.searchCriteria) {
+    if (paginationOptions.searchCriteria) {
       summaryResult.andWhere("programs.name Ilike :searchCriteria", {
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
@@ -288,7 +288,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // queryParams should follow the order/index
     const queryParams: any[] = [...offeringTypes, institutionId];
 
-    if (paginationOptions?.searchCriteria) {
+    if (paginationOptions.searchCriteria) {
       paginatedProgramQuery.andWhere("programs.name Ilike :searchCriteria", {
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
@@ -298,7 +298,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // for getting total raw count before pagination
     const sqlQuery = paginatedProgramQuery.getSql();
 
-    if (paginationOptions?.pageLimit) {
+    if (paginationOptions.pageLimit) {
       paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
     if (paginationOptions.page) {

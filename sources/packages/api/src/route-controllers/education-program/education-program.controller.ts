@@ -19,7 +19,7 @@ import {
 } from "../../auth/decorators";
 import {
   EducationProgramDto,
-  EducationProgramData,
+  EducationProgramDataDto,
   transformToEducationProgramData,
   ProgramsSummary,
 } from "./models/save-education-program.dto";
@@ -51,7 +51,7 @@ export class EducationProgramController {
   /**
    * Get programs for a particular institution with pagination.
    * @param locationId id of the location.
-   * @param pageSize is the number of rows shown in the table
+   * @param pageLimit is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortField the sorting column.
@@ -323,7 +323,7 @@ export class EducationProgramController {
   @Get(":programId/aest")
   async getProgramForAEST(
     @Param("programId") programId: number,
-  ): Promise<EducationProgramData> {
+  ): Promise<EducationProgramDataDto> {
     const program = await this.programService.getEducationProgramDetails(
       programId,
     );
@@ -348,7 +348,7 @@ export class EducationProgramController {
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId")
+  @Get("institution/:institutionId/aest")
   async getPaginatedProgramsForAEST(
     @Param("institutionId") institutionId: number,
     @Query("pageSize") pageSize: number,

@@ -77,18 +77,18 @@ export class EducationProgramApi extends HttpBaseClient {
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     try {
-      let URL = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
+      let url = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
       if (searchProgramName) {
-        URL = `${URL}&searchProgramName=${searchProgramName}`;
+        url = `${url}&searchProgramName=${searchProgramName}`;
       }
       if (sortField && sortOrder) {
         const sortDBOrder =
           sortOrder === DataTableSortOrder.DESC
             ? FieldSortOrder.DESC
             : FieldSortOrder.ASC;
-        URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+        url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
       }
-      const response = await this.apiClient.get(URL, this.addAuthHeader());
+      const response = await this.getCall(url);
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

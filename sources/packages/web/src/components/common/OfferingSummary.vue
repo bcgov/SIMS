@@ -47,8 +47,8 @@
     ></Column>
     <Column :field="OfferingSummaryFields.StudyDates" header="Study Dates">
       <template #body="slotProps">
-        {{ formatDate(slotProps.data.studyStartDate, DATE_FORMAT) }} -
-        {{ formatDate(slotProps.data.studyEndDate, DATE_FORMAT) }}
+        {{ dateOnlyLongString(slotProps.data.studyStartDate) }} -
+        {{ dateOnlyLongString(slotProps.data.studyEndDate) }}
       </template></Column
     >
     <Column :field="OfferingSummaryFields.OfferingIntensity" header="Type"
@@ -115,8 +115,7 @@ export default {
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
-    const { formatDate } = useFormatters();
-    const DATE_FORMAT = "MMMM, D YYYY";
+    const { dateOnlyLongString } = useFormatters();
 
     const isInstitutionUser = computed(() => {
       return props.clientType === ClientIdType.Institution;
@@ -244,8 +243,7 @@ export default {
       OfferingSummaryFields,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      formatDate,
-      DATE_FORMAT,
+      dateOnlyLongString,
     };
   },
 };
