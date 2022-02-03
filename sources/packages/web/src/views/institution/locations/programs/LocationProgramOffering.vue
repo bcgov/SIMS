@@ -103,7 +103,6 @@ export default {
     });
 
     const goBack = async () => {
-      console.log(isInstitutionUser.value, props.offeringId);
       if (isInstitutionUser.value) {
         // when edit program and create program
         router.push({

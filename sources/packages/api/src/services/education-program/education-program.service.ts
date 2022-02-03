@@ -307,7 +307,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       paginatedProgramQuery.limit(0);
     }
-
     // sort
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
