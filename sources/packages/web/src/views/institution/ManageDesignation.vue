@@ -1,10 +1,18 @@
 <template>
-  <v-container>
-    <h5 class="text-muted">Manage Desgination</h5>
-    <h2>Desgination In Progress</h2>
-  </v-container>
+  <div class="p-m-4">
+    <HeaderNavigator
+      :title="'Manage Desgination'"
+      :subTitle="'Desgination In Progress'"
+    />
+    <v-container> </v-container>
+  </div>
 </template>
 
 <script lang="ts">
-export default {};
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+export default {
+  components: {
+    HeaderNavigator,
+  },
+};
 </script>

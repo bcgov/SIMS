@@ -4,17 +4,22 @@
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
-    <h5 class="text-muted">
-      <a @click="goBack()">
-        <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
-      >
-    </h5>
-    <h1><strong>Financial Aid Application</strong></h1>
-    <v-btn color="primary" class="float-right ml-2" @click="toggle"
-      >Application Options
-      <v-icon size="25"> mdi-arrow-down-bold-circle</v-icon></v-btn
-    >
-    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+    <HeaderNavigator :subTitle="'Financial aid application'">
+      <template #navigationLink>
+        <div class="form-header-title">
+          <a @click="goBack()">
+            <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
+          >
+        </div>
+      </template>
+      <template #menuButton>
+        <v-btn color="primary" class="float-right ml-2" @click="toggle"
+          ><v-icon size="25"> mdi-arrow-down-bold-circle</v-icon>Application
+          Options
+        </v-btn>
+        <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+      </template>
+    </HeaderNavigator>
     <v-btn
       v-if="showViewAssessment"
       color="primary"
@@ -81,7 +86,7 @@ import {
 import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used
@@ -100,6 +105,7 @@ export default {
     ApplicationDetails,
     ConfirmEditApplication,
     RestrictionBanner,
+    HeaderNavigator,
   },
   props: {
     id: {

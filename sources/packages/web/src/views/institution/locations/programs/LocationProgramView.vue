@@ -1,130 +1,140 @@
 <template>
-  <v-container>
-    <h5 class="text-muted">
-      <a @click="goBack()">
-        <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
-      >
-    </h5>
-    <h3>Program Detail</h3>
-    <v-sheet elevation="1" class="mx-auto">
-      <v-container>
-        <v-row>
-          <v-col cols="8">
-            <span class="category-header-large color-blue">
-              {{ educationProgram.name }}
-            </span>
-            <Chip
-              :label="educationProgram.approvalStatus"
-              class="ml-2 bg-success text-white p-text-uppercase"
-              >{{ educationProgram.approvalStatus }}</Chip
-            >
-          </v-col>
-          <v-col cols="4">
-            <v-btn class="float-right" outlined @click="goToEditProgram()">
-              <v-icon size="25" left> mdi-open-in-new </v-icon>
-              Edit Program
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row class="secondary-color">
-          <v-col cols="5">
-            <span class="category-header-medium-small">Description</span>
-            <br />
-            <p>{{ educationProgram.name }}</p>
-          </v-col>
-          <v-col cols="4"
-            ><span class="font-weight-bold">Offering</span> <br />
-            <p>
-              <span
-                v-if="
-                  educationProgram.programIntensity ===
-                    ProgramIntensity.fullTimePartTime ||
-                    educationProgram.programIntensity ===
-                      ProgramIntensity.fullTime
-                "
-                >Full Time</span
-              >
-              <br /><span
-                v-if="
-                  educationProgram.programIntensity ===
-                    ProgramIntensity.fullTimePartTime
-                "
-                >Part Time
+  <div class="p-m-4">
+    <HeaderNavigator :subTitle="'Program Detail'">
+      <template #navigationLink>
+        <div class="form-header-title">
+          <a @click="goBack()">
+            <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
+          >
+        </div>
+      </template></HeaderNavigator
+    >
+
+    <v-container>
+      <v-sheet elevation="1" class="mx-auto">
+        <v-container>
+          <v-row>
+            <v-col cols="8">
+              <span class="category-header-large color-blue">
+                {{ educationProgram.name }}
               </span>
-            </p>
-          </v-col>
-          <v-col cols="2"
-            ><span class="font-weight-bold">Credential Type</span>
-            <br />
-            <p>{{ educationProgram.credentialTypeToDisplay }}</p>
-          </v-col>
-        </v-row>
-        <v-row class="secondary-color">
-          <v-col cols="5">
-            <span class="font-weight-bold"
-              >Classification of Instructional Programs (CIP)</span
-            >
-            <br />
-            <p>{{ educationProgram.cipCode }}</p>
-          </v-col>
-          <v-col cols="4"
-            ><span class="font-weight-bold"
-              >National Occupational Classification (NOC)</span
-            >
-            <br />
-            <p>{{ educationProgram.nocCode }}</p>
-          </v-col>
-          <v-col cols="3"
-            ><span class="font-weight-bold">Institution Program Code</span>
-            <br />
-            <p>{{ educationProgram.institutionProgramCode }}</p>
-          </v-col>
-        </v-row>
-        <v-divider></v-divider>
-        <v-row>
-          <v-col cols="8">
-            <span class="category-header-medium color-blue"
-              >Study period offerings</span
-            >
-          </v-col>
-          <v-col cols="4">
-            <v-btn class="float-right" @click="goToAddNewOffering()">
-              <v-icon size="25" left>
-                mdi-open-in-new
-              </v-icon>
-              Add Another Offering
-            </v-btn>
-          </v-col>
-        </v-row>
-        <DataTable :autoLayout="true" :value="offerings">
-          <Column field="offeringName" header="Name" :sortable="true"></Column>
-          <Column
-            field="studyDates"
-            header="Study Dates"
-            :sortable="true"
-          ></Column>
-          <Column field="offeringIntensity" header="Type" :sortable="true"
-            ><template #body="slotProps">
-              <span>{{ slotProps.data.offeringIntensity }} </span>
-            </template>
-          </Column>
-          <Column
-            field="offeringDelivered"
-            header="Study Delivery"
-            :sortable="true"
-          ></Column>
-          <Column>
-            <template #body="slotProps">
-              <v-btn plain @click="goToEditOffering(slotProps.data.id)">
+              <Chip
+                :label="educationProgram.approvalStatus"
+                class="ml-2 bg-success text-white p-text-uppercase"
+                >{{ educationProgram.approvalStatus }}</Chip
+              >
+            </v-col>
+            <v-col cols="4">
+              <v-btn class="float-right" outlined @click="goToEditProgram()">
                 <v-icon size="25" left> mdi-open-in-new </v-icon>
-                Edit
+                Edit Program
               </v-btn>
-            </template>
-          </Column>
-        </DataTable>
-      </v-container>
-    </v-sheet>
-  </v-container>
+            </v-col>
+          </v-row>
+          <v-row class="secondary-color">
+            <v-col cols="5">
+              <span class="category-header-medium-small">Description</span>
+              <br />
+              <p>{{ educationProgram.name }}</p>
+            </v-col>
+            <v-col cols="4"
+              ><span class="font-weight-bold">Offering</span> <br />
+              <p>
+                <span
+                  v-if="
+                    educationProgram.programIntensity ===
+                      ProgramIntensity.fullTimePartTime ||
+                      educationProgram.programIntensity ===
+                        ProgramIntensity.fullTime
+                  "
+                  >Full Time</span
+                >
+                <br /><span
+                  v-if="
+                    educationProgram.programIntensity ===
+                      ProgramIntensity.fullTimePartTime
+                  "
+                  >Part Time
+                </span>
+              </p>
+            </v-col>
+            <v-col cols="2"
+              ><span class="font-weight-bold">Credential Type</span>
+              <br />
+              <p>{{ educationProgram.credentialTypeToDisplay }}</p>
+            </v-col>
+          </v-row>
+          <v-row class="secondary-color">
+            <v-col cols="5">
+              <span class="font-weight-bold"
+                >Classification of Instructional Programs (CIP)</span
+              >
+              <br />
+              <p>{{ educationProgram.cipCode }}</p>
+            </v-col>
+            <v-col cols="4"
+              ><span class="font-weight-bold"
+                >National Occupational Classification (NOC)</span
+              >
+              <br />
+              <p>{{ educationProgram.nocCode }}</p>
+            </v-col>
+            <v-col cols="3"
+              ><span class="font-weight-bold">Institution Program Code</span>
+              <br />
+              <p>{{ educationProgram.institutionProgramCode }}</p>
+            </v-col>
+          </v-row>
+          <v-divider></v-divider>
+          <v-row>
+            <v-col cols="8">
+              <span class="category-header-medium color-blue"
+                >Study period offerings</span
+              >
+            </v-col>
+            <v-col cols="4">
+              <v-btn class="float-right" @click="goToAddNewOffering()">
+                <v-icon size="25" left>
+                  mdi-open-in-new
+                </v-icon>
+                Add Another Offering
+              </v-btn>
+            </v-col>
+          </v-row>
+          <DataTable :autoLayout="true" :value="offerings">
+            <Column
+              field="offeringName"
+              header="Name"
+              :sortable="true"
+            ></Column>
+            <Column
+              field="studyDates"
+              header="Study Dates"
+              :sortable="true"
+            ></Column>
+            <Column field="offeringIntensity" header="Type" :sortable="true"
+              ><template #body="slotProps">
+                <span>{{ slotProps.data.offeringIntensity }} </span>
+              </template>
+            </Column>
+            <Column
+              field="offeringDelivered"
+              header="Study Delivery"
+              :sortable="true"
+            ></Column>
+            <Column>
+              <template #body="slotProps">
+                <v-btn plain @click="goToEditOffering(slotProps.data.id)">
+                  <v-icon size="25" left> mdi-open-in-new </v-icon>
+                  Edit
+                </v-btn>
+              </template>
+            </Column>
+          </DataTable>
+        </v-container>
+      </v-sheet>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -138,8 +148,12 @@ import {
   EducationProgramDto,
   ProgramIntensity,
 } from "../../../../types";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
+  components: {
+    HeaderNavigator,
+  },
   props: {
     programId: {
       type: Number,

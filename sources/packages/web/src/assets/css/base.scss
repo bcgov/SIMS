@@ -102,3 +102,17 @@ ul.no-bullets {
   list-style-type: none;
   margin-bottom: 0.5rem;
 }
+
+.form-header-title {
+  font-weight: $formio-header-wt;
+  font-size: $font-header-medium;
+  color: $brand-black-light;
+  line-height: $line-height-header-md;
+}
+
+.form-header-sub-title {  
+  font-weight: $formio-header-wt;
+  color: $brand-black;
+  line-height: $line-height-header-lg;
+  font-size: $font-header-large;
+}
