@@ -8,11 +8,10 @@ import {
   DEFAULT_PAGE_LIMIT,
   OfferingSummaryFields,
   DataTableSortOrder,
-  FieldSortOrder,
   PaginatedResults,
   EducationProgramOfferingDto,
 } from "@/types";
-
+import { addSortOptions } from "@/helpers";
 export class EducationProgramOfferingApi extends HttpBaseClient {
   /**
    * Creates program offering and returns the id of the created resource.
@@ -66,13 +65,8 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       if (searchName) {
         url = `${url}&searchName=${searchName}`;
       }
-      if (sortField && sortOrder) {
-        const sortDBOrder =
-          sortOrder === DataTableSortOrder.DESC
-            ? FieldSortOrder.DESC
-            : FieldSortOrder.ASC;
-        url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-      }
+      url = addSortOptions(url, sortField, sortOrder);
+
       const response = await this.getCall(url);
       return response.data;
     } catch (error) {
@@ -217,13 +211,8 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
       if (searchName) {
         url = `${url}&searchName=${searchName}`;
       }
-      if (sortField && sortOrder) {
-        const sortDBOrder =
-          sortOrder === DataTableSortOrder.DESC
-            ? FieldSortOrder.DESC
-            : FieldSortOrder.ASC;
-        url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-      }
+
+      url = addSortOptions(url, sortField, sortOrder);
       const response = await this.getCall(url);
       return response.data;
     } catch (error) {

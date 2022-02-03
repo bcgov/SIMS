@@ -7,10 +7,10 @@ import {
   ProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
   PaginatedResults,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { addSortOptions } from "@/helpers";
 
 export class EducationProgramApi extends HttpBaseClient {
   public async getProgram(programId: number): Promise<any> {
@@ -81,13 +81,7 @@ export class EducationProgramApi extends HttpBaseClient {
       if (searchProgramName) {
         url = `${url}&searchProgramName=${searchProgramName}`;
       }
-      if (sortField && sortOrder) {
-        const sortDBOrder =
-          sortOrder === DataTableSortOrder.DESC
-            ? FieldSortOrder.DESC
-            : FieldSortOrder.ASC;
-        url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-      }
+      url = addSortOptions(url, sortField, sortOrder);
       const response = await this.getCall(url);
       return response.data;
     } catch (error) {

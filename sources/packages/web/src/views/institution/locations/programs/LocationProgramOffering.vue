@@ -103,7 +103,8 @@ export default {
     });
 
     const goBack = async () => {
-      if (isInstitutionUser.value && props.offeringId) {
+      console.log(isInstitutionUser.value, props.offeringId);
+      if (isInstitutionUser.value) {
         // when edit program and create program
         router.push({
           name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
