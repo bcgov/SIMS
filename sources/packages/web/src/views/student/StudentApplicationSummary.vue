@@ -5,7 +5,7 @@
       :restrictionMessage="restrictionMessage"
     />
     <CheckValidSINBanner />
-    <h1><strong>My Applications</strong></h1>
+    <HeaderNavigator :subTitle="'My Applications'" />
     <v-row>
       <span class="p-m-4"
         >A list of your applications for funding, grants, and busaries.</span
@@ -29,6 +29,7 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationStatus, ClientIdType } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
   components: {
@@ -36,6 +37,7 @@ export default {
     RestrictionBanner,
     StudentApplications,
     CheckValidSINBanner,
+    HeaderNavigator,
   },
   setup() {
     const hasRestriction = ref(false);
