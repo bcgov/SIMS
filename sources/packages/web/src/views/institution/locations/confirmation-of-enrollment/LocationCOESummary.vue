@@ -5,13 +5,6 @@
       :subTitle="'Confirmation Of Enrollment'"
     />
     <v-container>
-      <p class="text-muted category-header-medium">
-        {{ locationName }}
-      </p>
-      <p class="category-header-large">
-        Confirmation Of Enrollment
-      </p>
-
       <TabView lazy>
         <TabPanel>
           <template #header>
