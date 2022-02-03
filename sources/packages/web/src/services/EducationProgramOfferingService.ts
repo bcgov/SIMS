@@ -1,6 +1,5 @@
 import ApiClient from "./http/ApiClient";
 import {
-  PaginatedOffering,
   OptionItemDto,
   OfferingIntensity,
   OfferingDTO,
@@ -9,6 +8,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   DataTableSortOrder,
   OfferingSummaryFields,
+  EducationProgramOfferingDto,
+  PaginatedResults,
 } from "../types";
 
 export class EducationProgramOfferingService {
@@ -59,7 +60,7 @@ export class EducationProgramOfferingService {
     searchName?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     return ApiClient.EducationProgramOffering.getAllEducationProgramOffering(
       locationId,
       programId,
@@ -175,7 +176,7 @@ export class EducationProgramOfferingService {
     searchName?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     return ApiClient.EducationProgramOffering.getOfferingSummaryForAEST(
       locationId,
       programId,

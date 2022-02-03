@@ -27,12 +27,12 @@
     </div>
   </div>
   <DataTable
-    :value="offeringsAndCount.offeringSummary"
+    :value="offeringsAndCount.results"
     :lazy="true"
     :paginator="true"
     :rows="DEFAULT_PAGE_LIMIT"
     :rowsPerPageOptions="PAGINATION_LIST"
-    :totalRecords="offeringsAndCount.totalOfferings"
+    :totalRecords="offeringsAndCount.count"
     @page="paginationAndSortEvent($event)"
     @sort="paginationAndSortEvent($event)"
     :loading="loading"
@@ -83,13 +83,14 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import {
-  PaginatedOffering,
   ClientIdType,
   OfferingSummaryFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   DataTableSortOrder,
   PAGINATION_LIST,
+  PaginatedResults,
+  EducationProgramOfferingDto,
 } from "@/types";
 import { useFormatters } from "@/composables";
 
@@ -165,7 +166,9 @@ export default {
       }
     };
 
-    const offeringsAndCount = ref({} as PaginatedOffering);
+    const offeringsAndCount = ref(
+      {} as PaginatedResults<EducationProgramOfferingDto>,
+    );
 
     /**
      * function to load offeringsAndCount respective to the client type

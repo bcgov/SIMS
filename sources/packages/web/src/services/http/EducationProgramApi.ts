@@ -1,5 +1,5 @@
 import {
-  EducationProgramsSummaryPaginated,
+  SummaryEducationProgramDto,
   OptionItemDto,
   StudentEducationProgramDto,
   EducationProgramData,
@@ -8,6 +8,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   FieldSortOrder,
+  PaginatedResults,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -74,7 +75,7 @@ export class EducationProgramApi extends HttpBaseClient {
     searchProgramName?: string,
     sortField?: InstitutionProgramSummaryFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<EducationProgramsSummaryPaginated> {
+  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     try {
       let URL = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
       if (searchProgramName) {
@@ -88,7 +89,7 @@ export class EducationProgramApi extends HttpBaseClient {
         URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
       }
       const response = await this.apiClient.get(URL, this.addAuthHeader());
-      return response.data as EducationProgramsSummaryPaginated;
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

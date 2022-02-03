@@ -3,6 +3,7 @@ import {
   SearchInstitutionResp,
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
+  AESTInstitutionProgramsSummaryDto,
 } from "../types/contracts/InstituteContract";
 import {
   InstitutionDto,
@@ -29,7 +30,7 @@ import {
   InstitutionUserAndCount,
   InstitutionUserAndCountForDataTable,
   FieldSortOrder,
-  AESTInstitutionProgramsSummaryPaginatedDto,
+  PaginatedResults,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -426,7 +427,7 @@ export class InstitutionService {
   /**
    * Get the Institution programs summary for the ministry institution detail page
    * @param institutionId
-   * @returns AESTInstitutionProgramsSummaryPaginatedDto
+   * @returns PaginatedResults<AESTInstitutionProgramsSummaryDto>
    */
   async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
@@ -435,7 +436,7 @@ export class InstitutionService {
     sortColumn: string,
     sortOrder: DataTableSortOrder,
     searchName: string,
-  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+  ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
     return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
       institutionId,
       pageSize,

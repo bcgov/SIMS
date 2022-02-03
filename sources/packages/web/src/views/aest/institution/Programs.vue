@@ -21,12 +21,12 @@
       </div>
       <content-group>
         <DataTable
-          :value="institutionProgramsSummary.programsSummary"
+          :value="institutionProgramsSummary.results"
           :lazy="true"
           :paginator="true"
-          :rows="DEFAULT_ROW_SIZE"
-          :rowsPerPageOptions="[10, 20, 50]"
-          :totalRecords="institutionProgramsSummary.programsCount"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="institutionProgramsSummary.count"
           @page="pageSortEvent($event)"
           @sort="pageSortEvent($event)"
           :loading="loading"
@@ -103,9 +103,13 @@ import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
-  AESTInstitutionProgramsSummaryPaginatedDto,
   DataTableSortOrder,
   AESTProgramFields,
+  DEFAULT_PAGE_NUMBER,
+  PAGINATION_LIST,
+  DEFAULT_PAGE_LIMIT,
+  PaginatedResults,
+  AESTInstitutionProgramsSummaryDto,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
@@ -122,11 +126,9 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const institutionProgramsSummary = ref(
-      {} as AESTInstitutionProgramsSummaryPaginatedDto,
+      {} as PaginatedResults<AESTInstitutionProgramsSummaryDto>,
     );
     const searchProgramName = ref("");
-    const DEFAULT_PAGE = 0;
-    const DEFAULT_ROW_SIZE = 10;
     const currentPageSize = ref();
     const DEFAULT_SORT_COLUMN = AESTProgramFields.SubmittedDate;
     const DEFAULT_SORT_ORDER = DataTableSortOrder.DESC;
@@ -159,8 +161,8 @@ export default {
     onMounted(async () => {
       await getProgramsSummaryList(
         props.institutionId,
-        DEFAULT_ROW_SIZE,
-        DEFAULT_PAGE,
+        DEFAULT_PAGE_LIMIT,
+        DEFAULT_PAGE_NUMBER,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
         searchProgramName.value,
@@ -190,8 +192,8 @@ export default {
     const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
-        currentPageSize.value ? currentPageSize.value : DEFAULT_ROW_SIZE,
-        DEFAULT_PAGE,
+        currentPageSize.value ? currentPageSize.value : DEFAULT_PAGE_LIMIT,
+        DEFAULT_PAGE_NUMBER,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
         searchProgramName.value,
@@ -200,13 +202,14 @@ export default {
     return {
       institutionProgramsSummary,
       goToViewProgramDetail,
-      DEFAULT_ROW_SIZE,
+      DEFAULT_PAGE_LIMIT,
       pageSortEvent,
       goToSearchProgramName,
       searchProgramName,
       loading,
       getProgramStatusToGeneralStatus,
       AESTProgramFields,
+      PAGINATION_LIST,
     };
   },
 };

@@ -21,12 +21,13 @@ import {
   EducationProgramDto,
   EducationProgramData,
   transformToEducationProgramData,
+  ProgramsSummary,
 } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
-  EducationProgramsSummaryPaginated,
+  EducationProgramsSummary,
 } from "../../services/education-program/education-program.service.models";
 import { SubsetEducationProgramDto } from "./models/summary-education-program.dto";
 import { EducationProgram, OfferingTypes } from "../../database/entities";
@@ -37,8 +38,8 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
+  PaginatedResults,
 } from "../../utilities";
-import { ProgramsSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -56,7 +57,7 @@ export class EducationProgramController {
    * @param sortField the sorting column.
    * @param sortOrder sorting order.
    * @param searchProgramName Search the program name in the query
-   * @returns EducationProgramsSummaryPaginated.
+   * @returns PaginatedResults<EducationProgramsSummary>.
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
@@ -69,14 +70,18 @@ export class EducationProgramController {
     @UserToken() userToken: IInstitutionUserToken,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<EducationProgramsSummaryPaginated> {
-    // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    // [OfferingTypes.applicationSpecific] offerings are
+    // created during PIR, if required, and they are supposed
+    // to be viewed only associated to the application that they
+    // were associated to during the PIR, hence they should not
+    // be displayed alongside with the public offerings.
     return this.programService.getSummaryForLocation(
       userToken.authorizations.institutionId,
       locationId,
       [OfferingTypes.public],
       {
-        searchName: searchProgramName,
+        searchCriteria: searchProgramName,
         sortField: sortField,
         sortOrder: sortOrder,
         page: page,
@@ -322,7 +327,6 @@ export class EducationProgramController {
     const program = await this.programService.getEducationProgramDetails(
       programId,
     );
-
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
@@ -352,12 +356,12 @@ export class EducationProgramController {
     @Query("sortColumn") sortColumn: string,
     @Query("sortOrder") sortOrder: FieldSortOrder,
     @Query("searchProgramName") searchProgramName: string,
-  ): Promise<ProgramsSummaryPaginated> {
+  ): Promise<PaginatedResults<ProgramsSummary>> {
     return this.programService.getPaginatedProgramsForAEST(
       institutionId,
       [OfferingTypes.public],
       {
-        searchName: searchProgramName,
+        searchCriteria: searchProgramName,
         sortField: sortColumn,
         sortOrder: sortOrder,
         page: page,

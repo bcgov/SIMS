@@ -1,5 +1,5 @@
 import {
-  EducationProgramsSummaryPaginated,
+  SummaryEducationProgramDto,
   OptionItemDto,
   StudentEducationProgramDto,
   ProgramDto,
@@ -8,7 +8,9 @@ import {
   InstitutionProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
+  PaginatedResults,
 } from "@/types";
+
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
@@ -54,7 +56,7 @@ export class EducationProgramService {
     searchProgramName?: string,
     sortField?: InstitutionProgramSummaryFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<EducationProgramsSummaryPaginated> {
+  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     return ApiClient.EducationProgram.getLocationProgramsSummary(
       locationId,
       page,

@@ -12,8 +12,3 @@ export interface EducationProgramOfferingDto {
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
 }
-
-export interface PaginatedOffering {
-  offeringSummary: EducationProgramOfferingDto[];
-  totalOfferings: number;
-}

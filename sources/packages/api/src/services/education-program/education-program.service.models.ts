@@ -18,7 +18,3 @@ export class EducationProgramsSummary {
   totalOfferings: number;
   credentialTypeToDisplay: string;
 }
-export class EducationProgramsSummaryPaginated {
-  programsSummary: EducationProgramsSummary[];
-  totalProgram: number;
-}

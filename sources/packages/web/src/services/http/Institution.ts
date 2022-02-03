@@ -10,11 +10,12 @@ import {
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   InstitutionUserAndCount,
-  AESTInstitutionProgramsSummaryPaginatedDto,
   DataTableSortOrder,
   UserAuth,
   FieldSortOrder,
   InstitutionUserTypeAndRoleResponseDto,
+  AESTInstitutionProgramsSummaryDto,
+  PaginatedResults,
 } from "@/types";
 import { AxiosResponse } from "axios";
 
@@ -216,7 +217,7 @@ export class InstitutionApi extends HttpBaseClient {
     sortColumn: string,
     sortOrder: DataTableSortOrder,
     searchName: string,
-  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+  ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
     const sortByOrder =
       sortOrder === DataTableSortOrder.ASC
         ? FieldSortOrder.ASC

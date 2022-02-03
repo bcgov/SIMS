@@ -52,8 +52,3 @@ export interface AESTInstitutionProgramsSummaryDto {
   formattedSubmittedDate: string;
   locationId: number;
 }
-
-export interface AESTInstitutionProgramsSummaryPaginatedDto {
-  programsSummary: AESTInstitutionProgramsSummaryDto[];
-  programsCount: number;
-}

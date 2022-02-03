@@ -37,11 +37,6 @@ export interface SummaryEducationProgramDto {
   credentialTypeToDisplay: string;
 }
 
-export interface EducationProgramsSummaryPaginated {
-  programsSummary: SummaryEducationProgramDto[];
-  totalProgram: number;
-}
-
 export interface EducationProgramDto extends EducationProgramBaseDto {
   id: number;
 }

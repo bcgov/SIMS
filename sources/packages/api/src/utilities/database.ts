@@ -1,4 +1,4 @@
-import { QueryRunner, Repository } from "typeorm";
+import { ObjectLiteral, QueryRunner, Repository } from "typeorm";
 
 /**
  * Configures a session timeout specific for transactions that are idles
@@ -20,21 +20,25 @@ export async function configureIdleTransactionSessionTimeout(
 }
 
 /**
- * This helper to to get the total count of the Raw for the pagination.
- * For example, if there is a scenario to use typeorm `getRawMany`, typeorm
+ * This helper to get the total count of the Raw for the pagination.
+ * For example, if there is a scenario to use typeORM `getRawMany`, typeORM
  * doesn't have a utility to get the count of the raw entities (getManyAndCount
  * will return count without innerJoins), For those cases we can use this helper
  * function to get the actual total count of the raw data
- * @param sqlQuery the sql query (result of typeorm .getSql()).
+ * @param sqlQuery the sql query (result of typeORM .getSql()).
  * if we want the total count, then pass the sql query without the
  * pagination logic (i.e, without .skip(), .take(), .limit() or .offset())
  * @param parameter pass the parameter of the sql query.
  * @return the total count
  */
 export async function getRawCount(
-  repo: Repository<any>,
+  repo: Repository<ObjectLiteral>,
   sqlQuery: string,
   parameter: any[],
-): Promise<[{ count: number }]> {
-  return repo.query(`SELECT COUNT(*) FROM (${sqlQuery}) AS count`, parameter);
+): Promise<number> {
+  const result = await repo.query(
+    `SELECT COUNT(*) FROM (${sqlQuery}) AS count`,
+    parameter,
+  );
+  return result[0].count;
 }

@@ -13,7 +13,7 @@ export const DEFAULT_PAGE_NUMBER = 0;
 
 // pagination option
 export class PaginationOptions {
-  searchName?: string;
+  searchCriteria?: string;
   sortField?: string;
   sortOrder?: FieldSortOrder;
   page: number;

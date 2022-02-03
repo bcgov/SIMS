@@ -220,7 +220,7 @@ export class ProgramInfoRequestController {
         const offering = await this.offeringService.getOfferingById(
           payload.selectedOffering,
         );
-        // if  studyStartDate is not in payload
+        // if studyStartDate is not in payload
         // then selectedOffering will be there in payload,
         // then study start date taken from offering
         studyStartDate = offering.studyStartDate;

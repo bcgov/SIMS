@@ -19,3 +19,4 @@ export * from "./datatable-config";
 export * from "./institution-utils";
 export * from "./vaildation-error-utils";
 export * from "./database";
+export * from "./pagination-utils";

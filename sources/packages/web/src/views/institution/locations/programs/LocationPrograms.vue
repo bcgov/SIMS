@@ -31,12 +31,12 @@
           </div>
         </div>
         <DataTable
-          :value="programAndCount.programsSummary"
+          :value="programAndCount.results"
           :lazy="true"
           :paginator="true"
           :rows="DEFAULT_PAGE_LIMIT"
           :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="programAndCount.totalProgram"
+          :totalRecords="programAndCount.count"
           @page="paginationAndSortEvent($event)"
           @sort="paginationAndSortEvent($event)"
           :loading="loading"
@@ -79,12 +79,13 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   ClientIdType,
-  EducationProgramsSummaryPaginated,
+  PaginatedResults,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
   InstitutionProgramSummaryFields,
   DataTableSortOrder,
+  SummaryEducationProgramDto,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
 import StatusBadge from "@/components/generic/StatusBadge.vue";
@@ -100,7 +101,9 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const programAndCount = ref({} as EducationProgramsSummaryPaginated);
+    const programAndCount = ref(
+      {} as PaginatedResults<SummaryEducationProgramDto>,
+    );
     const { getProgramStatusToGeneralStatus } = useFormatStatuses();
     const locationDetails = ref();
     const loading = ref(false);

@@ -1,6 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  PaginatedOffering,
   OptionItemDto,
   OfferingIntensity,
   OfferingDTO,
@@ -10,6 +9,8 @@ import {
   OfferingSummaryFields,
   DataTableSortOrder,
   FieldSortOrder,
+  PaginatedResults,
+  EducationProgramOfferingDto,
 } from "@/types";
 
 export class EducationProgramOfferingApi extends HttpBaseClient {
@@ -59,7 +60,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     searchName?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     try {
       let URL = `institution/offering/location/${locationId}/education-program/${programId}?page=${page}&pageLimit=${pageCount}`;
       if (searchName) {
@@ -73,7 +74,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
       }
       const response = await this.apiClient.get(URL, this.addAuthHeader());
-      return response.data as PaginatedOffering;
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -210,7 +211,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     searchName?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     try {
       let URL = `institution/offering/location/${locationId}/education-program/${programId}/aest?page=${page}&pageLimit=${pageCount}`;
       if (searchName) {
@@ -224,7 +225,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
         URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
       }
       const response = await this.apiClient.get(URL, this.addAuthHeader());
-      return response.data as PaginatedOffering;
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

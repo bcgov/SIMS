@@ -12,7 +12,6 @@ import { SaveEducationProgramOfferingDto } from "../../route-controllers/educati
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
-  PaginatedOffering,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
@@ -20,6 +19,7 @@ import {
   FieldSortOrder,
   databaseFieldOfOfferingDataTable,
   PaginationOptions,
+  PaginatedResults,
 } from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -61,7 +61,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programId: number,
     paginationOptions: PaginationOptions,
     offeringTypes?: OfferingTypes[],
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
     const DEFAULT_SORT_FIELD = "name";
     const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
@@ -83,9 +83,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       });
     }
     // search offering name
-    if (paginationOptions?.searchName) {
-      offeringsQuery.andWhere("offerings.name Ilike :searchName", {
-        searchName: `%${paginationOptions.searchName}%`,
+    if (paginationOptions?.searchCriteria) {
+      offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
     }
     // sorting
@@ -103,13 +103,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
     // pagination
     offeringsQuery
-      .take(paginationOptions.pageLimit)
-      .skip(paginationOptions.page * paginationOptions.pageLimit);
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
 
     // result
-    const queryResult = await offeringsQuery.getManyAndCount();
+    const [records, count] = await offeringsQuery.getManyAndCount();
 
-    const offerings = queryResult[0].map((educationProgramOffering) => {
+    const offerings = records.map((educationProgramOffering) => {
       const item = new EducationProgramOfferingModel();
       item.id = educationProgramOffering.id;
       item.name = educationProgramOffering.name;
@@ -119,7 +119,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       item.offeringIntensity = educationProgramOffering.offeringIntensity;
       return item;
     });
-    return { offeringSummary: offerings, totalOfferings: queryResult[1] };
+    return { results: offerings, count: count };
   }
 
   /**

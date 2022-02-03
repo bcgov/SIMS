@@ -37,9 +37,10 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
+  PaginatedResults,
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { PaginatedOffering } from "../../services/education-program-offering/education-program-offering.service.models";
+import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -107,14 +108,18 @@ export class EducationProgramOfferingController {
     @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
-    // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
+    // [OfferingTypes.applicationSpecific] offerings are
+    // created during PIR, if required, and they are supposed
+    // to be viewed only associated to the application that they
+    // were associated to during the PIR, hence they should not
+    // be displayed alongside with the public offerings.
     return this.programOfferingService.getAllEducationProgramOffering(
       locationId,
       programId,
       {
-        searchName: searchName,
+        searchCriteria: searchName,
         sortField: sortField,
         sortOrder: sortOrder,
         page: page,
@@ -314,14 +319,18 @@ export class EducationProgramOfferingController {
     @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<PaginatedOffering> {
+  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
-    // [OfferingTypes.applicationSpecific] offerings are created during PIR, if required
+    // [OfferingTypes.applicationSpecific] offerings are
+    // created during PIR, if required, and they are supposed
+    // to be viewed only associated to the application that they
+    // were associated to during the PIR, hence they should not
+    // be displayed alongside with the public offerings.
     return this.programOfferingService.getAllEducationProgramOffering(
       locationId,
       programId,
       {
-        searchName: searchName,
+        searchCriteria: searchName,
         sortField: sortField,
         sortOrder: sortOrder,
         page: page,
@@ -347,8 +356,8 @@ export class EducationProgramOfferingController {
       offeringId,
     );
     if (!offering) {
-      throw new UnprocessableEntityException(
-        "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
+      throw new NotFoundException(
+        "offering not found because the id does not exist.",
       );
     }
     return transformToProgramOfferingDto(offering);
