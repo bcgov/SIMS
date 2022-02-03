@@ -19,21 +19,7 @@
           :popup="true"
         /> </template
     ></HeaderNavigator>
-    <!-- <v-btn
-      color="primary"
-      class="float-right ml-2"
-      @click="toggle"
-      v-if="COEStatus.required === initialData.applicationCOEStatus"
-    >
-      <v-icon size="25" class="pr-2"> mdi-arrow-left</v-icon>Application
-      Actions</v-btn
-    >
-    <Menu
-      class="mt-n15 coe-menu-option"
-      ref="menu"
-      :model="items"
-      :popup="true"
-    /> -->
+
     <v-container>
       <Information :data="initialData" />
       <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
