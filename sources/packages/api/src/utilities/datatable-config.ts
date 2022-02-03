@@ -12,7 +12,7 @@ export const DEFAULT_PAGE_LIMIT = 10;
 export const DEFAULT_PAGE_NUMBER = 0;
 
 // pagination option
-export class PaginationOptions {
+export interface PaginationOptions {
   searchCriteria?: string;
   sortField?: string;
   sortOrder?: FieldSortOrder;

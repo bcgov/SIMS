@@ -6,7 +6,7 @@
  * @param fieldName
  * @returns fieldName
  */
-export const sortUsersSummary = (fieldName: string): [] => {
+export const sortUsersColumnMap = (fieldName: string): [] => {
   const userSortOptions = {
     displayName: ["user.firstName", "user.lastName"],
     email: ["user.email"],
@@ -29,7 +29,7 @@ export const sortUsersSummary = (fieldName: string): [] => {
  * @param fieldName
  * @returns fieldName
  */
-export const sortApplicationsSummary = (fieldName: string): string => {
+export const sortApplicationsColumnMap = (fieldName: string): string => {
   const applicationSortOptions = {
     applicationNumber: "application.applicationNumber",
   };
@@ -44,7 +44,7 @@ export const sortApplicationsSummary = (fieldName: string): string => {
  * @param fieldName
  * @returns fieldName
  */
-export const sortOfferingsSummary = (fieldName: string): string => {
+export const sortOfferingsColumnMap = (fieldName: string): string => {
   const offeringSortOptions = {
     name: "offerings.name",
   };
@@ -60,7 +60,7 @@ export const sortOfferingsSummary = (fieldName: string): string => {
  * @param fieldName
  * @returns fieldName
  */
-export const sortProgramsSummary = (fieldName: string): string => {
+export const sortProgramsColumnMap = (fieldName: string): string => {
   const programSortOptions = {
     submittedDate: "programs.createdAt",
     approvalStatus: "programs.approvalStatus",

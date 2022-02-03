@@ -20,7 +20,7 @@ import {
   FieldSortOrder,
   getRawCount,
   getDateOnlyFormat,
-  sortProgramsSummary,
+  sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
 } from "../../utilities";
@@ -168,7 +168,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             .select("COUNT(*)")
             .from(EducationProgramOffering, "offerings")
             .where("offerings.educationProgram.id = programs.id")
-
             .andWhere("offerings.offeringType in (:...offeringTypes)", {
               offeringTypes,
             })
@@ -203,13 +202,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // sort
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       summaryResult.orderBy(
-        sortProgramsSummary(paginationOptions.sortField),
+        sortProgramsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
       summaryResult.orderBy(
-        sortProgramsSummary(DEFAULT_SORT_FIELD),
+        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
         FieldSortOrder.ASC,
       );
     }
@@ -312,13 +311,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // sort
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
-        sortProgramsSummary(paginationOptions.sortField),
+        sortProgramsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
       paginatedProgramQuery.orderBy(
-        sortProgramsSummary(DEFAULT_SORT_FIELD),
+        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
         FieldSortOrder.DESC,
       );
     }
