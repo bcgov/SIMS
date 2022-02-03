@@ -3,10 +3,10 @@
     <span class="category-header-large color-blue">
       {{ educationProgram.name }}
     </span>
-    <status-badge
+    <program-status-chip
       class="ml-2"
-      :status="getProgramStatusToGeneralStatus(educationProgram.approvalStatus)"
-    ></status-badge>
+      :status="educationProgram.approvalStatus"
+    ></program-status-chip>
     <v-btn
       class="float-right"
       outlined
@@ -80,11 +80,10 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
-import { useFormatStatuses } from "@/composables";
+import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 
 export default {
-  components: { StatusBadge },
+  components: { ProgramStatusChip },
   props: {
     programId: {
       type: Number,
@@ -101,7 +100,6 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const { getProgramStatusToGeneralStatus } = useFormatStatuses();
 
     const isInstitutionUser = computed(() => {
       return props.clientType === ClientIdType.Institution;
@@ -158,7 +156,6 @@ export default {
       programButtonAction,
       educationProgram,
       ProgramIntensity,
-      getProgramStatusToGeneralStatus,
       isInstitutionUser,
       isAESTUser,
       programActionLabel,

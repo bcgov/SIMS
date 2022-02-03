@@ -29,10 +29,10 @@ export interface EducationProgramBaseDto {
 
 export interface SummaryEducationProgramDto {
   id: number;
-  name: string;
+  programName: string;
   credentialType: string;
   cipCode: string;
-  offeringsCount: number;
+  totalOfferings: number;
   approvalStatus: ApprovalStatus;
   credentialTypeToDisplay: string;
 }

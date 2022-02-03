@@ -3,9 +3,6 @@ export enum GeneralStatusForBadge {
   InActive = "inactive",
   ActiveRestriction = "active restriction",
   ResolvedRestriction = "resolved",
-  Approved = "approved",
-  Pending = "pending",
-  Denied = "denied",
 }
 
 export enum DesignationAndRestrictionStatus {

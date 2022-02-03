@@ -6,8 +6,8 @@
  * @param fieldName
  * @returns fieldName
  */
-export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
-  const databaseFieldOfUserDataTableMap = {
+export const sortUsersSummary = (fieldName: string): [] => {
+  const userSortOptions = {
     displayName: ["user.firstName", "user.lastName"],
     email: ["user.email"],
     userType: ["authType.type"],
@@ -15,7 +15,7 @@ export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
     location: ["location.name"],
     isActive: ["user.isActive"],
   };
-  return databaseFieldOfUserDataTableMap[fieldName] ?? [];
+  return userSortOptions[fieldName] ?? [];
 };
 
 /**
@@ -29,35 +29,12 @@ export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
  * @param fieldName
  * @returns fieldName
  */
-export const databaseFieldOfApplicationDataTable = (
-  fieldName: string,
-): string => {
-  const databaseFieldOfApplicationDataTableMap = {
+export const sortApplicationsSummary = (fieldName: string): string => {
+  const applicationSortOptions = {
     applicationNumber: "application.applicationNumber",
   };
-  return databaseFieldOfApplicationDataTableMap[fieldName] ?? null;
+  return applicationSortOptions[fieldName] ?? null;
 };
-
-/**
- * Util to get the list of database fields
- * with respective to institution program dataTable
- * field names that need to be sorted.
- * When a new sort need to be implemented,
- * Add dataTable field name as its respective database
- * @param fieldName
- * @returns fieldName
- */
-export const databaseFieldOfInstitutionProgramDataTable = (
-  fieldName: string,
-): string => {
-  const databaseFieldOfInstitutionProgramDataTableMap = {
-    approvalStatus: "programs.approvalStatus",
-    name: "programs.name",
-    credentialType: "programs.credentialType",
-  };
-  return databaseFieldOfInstitutionProgramDataTableMap[fieldName] ?? null;
-};
-
 /**
  * Util to get the list of database field
  * with respective to program offering dataTable
@@ -67,27 +44,28 @@ export const databaseFieldOfInstitutionProgramDataTable = (
  * @param fieldName
  * @returns fieldName
  */
-export const databaseFieldOfOfferingDataTable = (fieldName: string): string => {
-  const databaseFieldOfOfferingDataTableMap = {
+export const sortOfferingsSummary = (fieldName: string): string => {
+  const offeringSortOptions = {
     name: "offerings.name",
   };
-  return databaseFieldOfOfferingDataTableMap[fieldName] ?? null;
+  return offeringSortOptions[fieldName] ?? null;
 };
 
 /**
  * Util to get the list of database field
- * with respective to AEST program summary dataTable
+ * with respective to program summary dataTable
  * field names that need to be sorted.
  * When a new sort need to be implemented,
  * Add dataTable field name as its respective database
  * @param fieldName
  * @returns fieldName
  */
-export const databaseFieldOfAESTProgramDataTable = (
-  fieldName: string,
-): string => {
-  const databaseFieldOfProgramDataTableMap = {
+export const sortProgramsSummary = (fieldName: string): string => {
+  const programSortOptions = {
     submittedDate: "programs.createdAt",
+    approvalStatus: "programs.approvalStatus",
+    programName: "programs.name",
+    credentialType: "programs.credentialType",
   };
-  return databaseFieldOfProgramDataTableMap[fieldName] ?? null;
+  return programSortOptions[fieldName] ?? null;
 };

@@ -3,7 +3,7 @@
     <div class="mx-5 py-4">
       <div class="mb-4">
         <span class="category-header-large color-blue">
-          All Programs ({{ institutionProgramsSummary.programsCount }})
+          All Programs ({{ institutionProgramsSummary.count }})
         </span>
         <div class="float-right">
           <InputText
@@ -35,7 +35,7 @@
             <p class="text-center font-weight-bold">No records found.</p>
           </template>
           <Column
-            :field="AESTProgramFields.SubmittedDate"
+            :field="ProgramSummaryFields.SubmittedDate"
             header="Date Submitted"
             :sortable="true"
           >
@@ -45,14 +45,17 @@
               </div>
             </template>
           </Column>
-          <Column :field="AESTProgramFields.ProgramName" header="Program Name">
+          <Column
+            :field="ProgramSummaryFields.ProgramName"
+            header="Program Name"
+          >
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.programName }}
               </div>
             </template>
           </Column>
-          <Column :field="AESTProgramFields.LocationName" header="Location">
+          <Column :field="ProgramSummaryFields.LocationName" header="Location">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.locationName }}
@@ -60,22 +63,15 @@
             </template>
           </Column>
           <Column
-            :field="AESTProgramFields.OfferingsCount"
+            :field="ProgramSummaryFields.TotalOfferings"
             header="Study periods"
           >
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.offeringsCount }}
-              </div>
-            </template>
           </Column>
-          <Column :field="AESTProgramFields.ProgramStatus" header="Status"
+          <Column :field="ProgramSummaryFields.ApprovalStatus" header="Status"
             ><template #body="slotProps">
-              <status-badge
-                :status="
-                  getProgramStatusToGeneralStatus(slotProps.data.programStatus)
-                "
-              ></status-badge> </template
+              <program-status-chip
+                :status="slotProps.data.programStatus"
+              ></program-status-chip> </template
           ></Column>
           <Column>
             <template #body="slotProps">
@@ -104,7 +100,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
   DataTableSortOrder,
-  AESTProgramFields,
+  ProgramSummaryFields,
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
   DEFAULT_PAGE_LIMIT,
@@ -112,11 +108,10 @@ import {
   AESTInstitutionProgramsSummaryDto,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
-import { useFormatStatuses } from "@/composables";
+import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 
 export default {
-  components: { ContentGroup, StatusBadge },
+  components: { ContentGroup, ProgramStatusChip },
   props: {
     institutionId: {
       type: Number,
@@ -130,10 +125,9 @@ export default {
     );
     const searchProgramName = ref("");
     const currentPageSize = ref();
-    const DEFAULT_SORT_COLUMN = AESTProgramFields.SubmittedDate;
+    const DEFAULT_SORT_COLUMN = ProgramSummaryFields.SubmittedDate;
     const DEFAULT_SORT_ORDER = DataTableSortOrder.DESC;
     const loading = ref(false);
-    const { getProgramStatusToGeneralStatus } = useFormatStatuses();
 
     const getProgramsSummaryList = async (
       institutionId: number,
@@ -179,6 +173,7 @@ export default {
       });
     };
     const pageSortEvent = async (event: any) => {
+      console.log(event);
       currentPageSize.value = event?.rows;
       await getProgramsSummaryList(
         props.institutionId,
@@ -207,8 +202,7 @@ export default {
       goToSearchProgramName,
       searchProgramName,
       loading,
-      getProgramStatusToGeneralStatus,
-      AESTProgramFields,
+      ProgramSummaryFields,
       PAGINATION_LIST,
     };
   },

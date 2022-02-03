@@ -20,8 +20,7 @@ import {
   FieldSortOrder,
   getRawCount,
   getDateOnlyFormat,
-  databaseFieldOfInstitutionProgramDataTable,
-  databaseFieldOfAESTProgramDataTable,
+  sortProgramsSummary,
   PaginationOptions,
   PaginatedResults,
 } from "../../utilities";
@@ -204,13 +203,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // sort
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       summaryResult.orderBy(
-        databaseFieldOfInstitutionProgramDataTable(paginationOptions.sortField),
+        sortProgramsSummary(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
       summaryResult.orderBy(
-        databaseFieldOfInstitutionProgramDataTable(DEFAULT_SORT_FIELD),
+        sortProgramsSummary(DEFAULT_SORT_FIELD),
         FieldSortOrder.ASC,
       );
     }
@@ -224,7 +223,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     const programSummary = programs.map((summary) => {
       const summaryItem = new EducationProgramsSummary();
       summaryItem.id = summary.id;
-      summaryItem.name = summary.programName;
+      summaryItem.programName = summary.programName;
       summaryItem.cipCode = summary.cipCode;
       summaryItem.credentialType = summary.credentialType;
       summaryItem.credentialTypeToDisplay = credentialTypeToDisplay(
@@ -253,7 +252,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<ProgramsSummary>> {
     // default data table sort field
-    const sortByColumn = "programs.createdAt"; //Default sort column
+    const DEFAULT_SORT_FIELD = "submittedDate";
     const paginatedProgramQuery = this.repo
       .createQueryBuilder("programs")
       .select("programs.id", "programId")
@@ -300,25 +299,28 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     const sqlQuery = paginatedProgramQuery.getSql();
 
     if (paginationOptions?.pageLimit) {
-      paginatedProgramQuery.take(paginationOptions.pageLimit);
+      paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
     if (paginationOptions.page) {
-      paginatedProgramQuery.skip(
+      paginatedProgramQuery.offset(
         paginationOptions.page * paginationOptions.pageLimit,
       );
     } else {
-      paginatedProgramQuery.take(0);
+      paginatedProgramQuery.limit(0);
     }
 
     // sort
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       paginatedProgramQuery.orderBy(
-        databaseFieldOfAESTProgramDataTable(paginationOptions.sortField),
+        sortProgramsSummary(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
-      paginatedProgramQuery.orderBy(sortByColumn, FieldSortOrder.ASC);
+      paginatedProgramQuery.orderBy(
+        sortProgramsSummary(DEFAULT_SORT_FIELD),
+        FieldSortOrder.DESC,
+      );
     }
 
     // total count and summary
@@ -332,12 +334,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       summaryItem.programId = summary.programId;
       summaryItem.programName = summary.programName;
       summaryItem.submittedDate = summary.programSubmittedAt;
-      // todo: annnnnnnnnnnnnnnnnnnnnnn - test the below code, looks buggy
-      summaryItem.formattedSubmittedDate = summary.credentialtype;
       summaryItem.locationName = summary.locationName;
       summaryItem.locationId = summary.locationId;
       summaryItem.programStatus = summary.approvalStatus;
-      summaryItem.offeringsCount = summary.totalOfferings;
+      summaryItem.totalOfferings = summary.totalOfferings;
       summaryItem.formattedSubmittedDate = getDateOnlyFormat(
         summary.programSubmittedAt,
       );

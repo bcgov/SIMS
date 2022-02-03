@@ -55,7 +55,7 @@ export class Student extends RecordDataModel {
   })
   validSIN?: boolean;
 
-  @OneToOne((type) => User, { eager: true, cascade: true })
+  @OneToOne(() => User, { eager: true, cascade: true })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,

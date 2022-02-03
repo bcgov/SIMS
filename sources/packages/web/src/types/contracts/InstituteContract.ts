@@ -48,7 +48,7 @@ export interface AESTInstitutionProgramsSummaryDto {
   submittedDate: Date;
   locationName: string;
   programStatus: ApprovalStatus;
-  offeringsCount: number;
+  totalOfferings: number;
   formattedSubmittedDate: string;
   locationId: number;
 }

@@ -69,8 +69,8 @@ html * {
   font-weight: 700;
 }
 
-// active badge
-.status-badge-active .v-badge__badge {
+// success badge
+.status-badge-success .v-badge__badge {
   @extend .status_badge;
   border-color: $badge-border-success;
 }
@@ -81,14 +81,14 @@ html * {
   border-color: $badge-border-inactive;
 }
 
-//active restriction badge
+//warning badge
 .status-badge-warning .v-badge__badge {
   @extend .status_badge;
   border-color: $badge-border-warning;
 }
 
-//active restriction badge
-.status-badge-denied .v-badge__badge {
+//error badge
+.status-badge-error .v-badge__badge {
   @extend .status_badge;
   border-color: $badge-border-error;
 }
@@ -139,3 +139,6 @@ ul.no-bullets {
 .horizontal-divider {
   border: 1px solid #E8E8E8;
 } 
+.p-tabview-panels {
+  margin-top: 16px;
+}

@@ -11,7 +11,7 @@ export interface SaveEducationProgram extends EducationProgramDto {
 
 export class EducationProgramsSummary {
   id: number;
-  name: string;
+  programName: string;
   cipCode: string;
   credentialType: string;
   approvalStatus: string;

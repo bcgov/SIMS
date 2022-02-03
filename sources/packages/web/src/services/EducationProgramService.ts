@@ -5,7 +5,7 @@ import {
   ProgramDto,
   EducationProgramData,
   DataTableSortOrder,
-  InstitutionProgramSummaryFields,
+  ProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   PaginatedResults,
@@ -54,7 +54,7 @@ export class EducationProgramService {
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
     searchProgramName?: string,
-    sortField?: InstitutionProgramSummaryFields,
+    sortField?: ProgramSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     return ApiClient.EducationProgram.getLocationProgramsSummary(

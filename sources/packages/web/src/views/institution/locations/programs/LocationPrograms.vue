@@ -41,23 +41,35 @@
           @sort="paginationAndSortEvent($event)"
           :loading="loading"
         >
-          <Column field="cipCode" header="CIP"></Column>
-          <Column field="name" header="Program Name" :sortable="true"></Column>
-          <Column field="credentialType" header="Credential" :sortable="true">
+          <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
+          <Column
+            :field="ProgramSummaryFields.ProgramName"
+            header="Program Name"
+            :sortable="true"
+          ></Column>
+          <Column
+            :field="ProgramSummaryFields.CredentialType"
+            header="Credential"
+            :sortable="true"
+          >
             <template #body="slotProps">
               <div>
                 {{ slotProps.data.credentialTypeToDisplay }}
               </div>
             </template></Column
           >
-          <Column field="totalOfferings" header="Offerings"></Column>
-          <Column field="approvalStatus" header="Status" :sortable="true"
+          <Column
+            :field="ProgramSummaryFields.TotalOfferings"
+            header="Offerings"
+          ></Column>
+          <Column
+            :field="ProgramSummaryFields.ApprovalStatus"
+            header="Status"
+            :sortable="true"
             ><template #body="slotProps">
-              <status-badge
-                :status="
-                  getProgramStatusToGeneralStatus(slotProps.data.approvalStatus)
-                "
-              ></status-badge></template
+              <program-status-chip
+                :status="slotProps.data.approvalStatus"
+              ></program-status-chip></template
           ></Column>
           <Column>
             <template #body="slotProps">
@@ -83,16 +95,15 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   PAGINATION_LIST,
-  InstitutionProgramSummaryFields,
+  ProgramSummaryFields,
   DataTableSortOrder,
   SummaryEducationProgramDto,
 } from "@/types";
 import { ref, watch, onMounted } from "vue";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
-import { useFormatStatuses } from "@/composables";
+import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 
 export default {
-  components: { StatusBadge },
+  components: { ProgramStatusChip },
   props: {
     locationId: {
       type: Number,
@@ -104,7 +115,6 @@ export default {
     const programAndCount = ref(
       {} as PaginatedResults<SummaryEducationProgramDto>,
     );
-    const { getProgramStatusToGeneralStatus } = useFormatStatuses();
     const locationDetails = ref();
     const loading = ref(false);
     const searchBox = ref("");
@@ -121,7 +131,7 @@ export default {
     const loadSummary = async (
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = InstitutionProgramSummaryFields.ApprovalStatus,
+      sortField = ProgramSummaryFields.ApprovalStatus,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       loading.value = true;
@@ -195,7 +205,6 @@ export default {
       programAndCount,
       goToAddNewProgram,
       goToViewProgram,
-      getProgramStatusToGeneralStatus,
       locationDetails,
       DEFAULT_PAGE_LIMIT,
       DEFAULT_PAGE_NUMBER,
@@ -204,6 +213,7 @@ export default {
       searchProgramTable,
       loading,
       searchBox,
+      ProgramSummaryFields,
     };
   },
 };

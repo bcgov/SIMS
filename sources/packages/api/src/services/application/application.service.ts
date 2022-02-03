@@ -38,7 +38,7 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
-  databaseFieldOfApplicationDataTable,
+  sortApplicationsSummary,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -578,12 +578,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (
       sortField &&
       sortField !== "status" &&
-      databaseFieldOfApplicationDataTable(sortField)
+      sortApplicationsSummary(sortField)
     ) {
-      applicationQuery.orderBy(
-        databaseFieldOfApplicationDataTable(sortField),
-        sortOrder,
-      );
+      applicationQuery.orderBy(sortApplicationsSummary(sortField), sortOrder);
     } else {
       applicationQuery.orderBy(
         `CASE application.applicationStatus
@@ -974,46 +971,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * get applications of an institution location
-   * with COE status required and completed.
-   * @param locationId location id .
-   * @returns student Application list.
-   */
-  async getCOEApplications(locationId: number): Promise<Application[]> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.applicationNumber",
-        "application.id",
-        "application.coeStatus",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student",
-      ])
-      .innerJoin("application.offering", "offering")
-      .innerJoin("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.coeStatus is not null")
-      .andWhere("application.coeStatus != :nonCOEStatus", {
-        nonCOEStatus: COEStatus.notRequired,
-      })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .orderBy(
-        `CASE application.coeStatus
-          WHEN '${COEStatus.required}' THEN 1
-          WHEN '${COEStatus.completed}' THEN 2
-          WHEN '${COEStatus.declined}' THEN 3
-          ELSE 4
-        END`,
-      )
-      .addOrderBy("application.applicationNumber")
-      .getMany();
-  }
-
-  /**
    * Gets program year details for a student application
    * @param studentId student id.
    * @param applicationId application id.
@@ -1209,7 +1166,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationDetailsForCOE(
     locationId: number,
     applicationId: number,
-    requiredCOEApplication = false,
   ): Promise<Application> {
     const query = this.repo
       .createQueryBuilder("application")
@@ -1223,18 +1179,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       })
+      .andWhere("application.assessmentStatus = :requiredStatus", {
+        requiredStatus: AssessmentStatus.required,
+      })
       .andWhere("application.id = :applicationId", {
         applicationId,
       });
-    if (!requiredCOEApplication) {
-      query.andWhere("application.coeStatus != :nonCOEStatus", {
-        nonCOEStatus: COEStatus.notRequired,
-      });
-    } else {
-      query.andWhere("application.coeStatus = :COEStatus", {
-        COEStatus: COEStatus.required,
-      });
-    }
+
     return query.getOne();
   }
 

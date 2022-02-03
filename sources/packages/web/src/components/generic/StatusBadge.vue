@@ -16,7 +16,12 @@ status Badge
 <script lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { GeneralStatusForBadge } from "@/types";
-import "@/assets/css/global-style-variables.scss";
+import {
+  COLOR_BLACK,
+  COLOR_WHITE,
+  COLOR_BANNER_SUCCESS,
+  COLOR_BANNER_WARNING,
+} from "@/constants";
 
 export default {
   props: {
@@ -26,40 +31,31 @@ export default {
     },
   },
   setup(props: any) {
-    const hexBrandBlack = "#333A47";
-    const hexBrandWhite = "#FFFFFF";
     const label = ref("");
     const badgeClass = ref("");
-    const textColor = ref(hexBrandBlack);
-    const backGroundColor = ref(hexBrandWhite);
+    const textColor = ref(COLOR_BLACK);
+    const backGroundColor = ref(COLOR_WHITE);
     const iconColor = ref("");
     const setGreen = () => {
       // css class for green status
-      badgeClass.value = "status-badge-active";
-      textColor.value = hexBrandBlack;
-      backGroundColor.value = hexBrandWhite;
-      iconColor.value = "#16C92E";
+      badgeClass.value = "status-badge-success";
+      textColor.value = COLOR_BLACK;
+      backGroundColor.value = COLOR_WHITE;
+      iconColor.value = COLOR_BANNER_SUCCESS;
     };
     const setBlack = () => {
       // css class for black status
       badgeClass.value = "status-badge-inactive";
-      textColor.value = hexBrandBlack;
-      backGroundColor.value = hexBrandWhite;
-      iconColor.value = hexBrandBlack;
+      textColor.value = COLOR_BLACK;
+      backGroundColor.value = COLOR_WHITE;
+      iconColor.value = COLOR_BLACK;
     };
     const setOrange = () => {
       // css class for orange status
       badgeClass.value = "status-badge-warning";
-      textColor.value = hexBrandBlack;
-      backGroundColor.value = hexBrandWhite;
-      iconColor.value = "#FF7a00";
-    };
-    const setRed = () => {
-      // css class for red status
-      badgeClass.value = "status-badge-denied";
-      textColor.value = hexBrandBlack;
-      backGroundColor.value = hexBrandWhite;
-      iconColor.value = "#E4222E";
+      textColor.value = COLOR_BLACK;
+      backGroundColor.value = COLOR_WHITE;
+      iconColor.value = COLOR_BANNER_WARNING;
     };
     const setStyles = () => {
       label.value = props.status;
@@ -67,24 +63,16 @@ export default {
         case GeneralStatusForBadge.Active:
           setGreen();
           break;
-        case GeneralStatusForBadge.Approved:
-          setGreen();
-          break;
         case GeneralStatusForBadge.ResolvedRestriction:
           setGreen();
           break;
         case GeneralStatusForBadge.InActive:
+          // css class for inactive status
           setBlack();
           break;
         case GeneralStatusForBadge.ActiveRestriction:
           label.value = "active";
           setOrange();
-          break;
-        case GeneralStatusForBadge.Pending:
-          setOrange();
-          break;
-        case GeneralStatusForBadge.Denied:
-          setRed();
           break;
       }
     };

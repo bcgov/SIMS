@@ -17,7 +17,7 @@ import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import {
   FieldSortOrder,
-  databaseFieldOfOfferingDataTable,
+  sortOfferingsSummary,
   PaginationOptions,
   PaginatedResults,
 } from "../../utilities";
@@ -91,13 +91,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     // sorting
     if (paginationOptions?.sortField && paginationOptions?.sortOrder) {
       offeringsQuery.orderBy(
-        databaseFieldOfOfferingDataTable(paginationOptions.sortField),
+        sortOfferingsSummary(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
       // default sort and order
       offeringsQuery.orderBy(
-        databaseFieldOfOfferingDataTable(DEFAULT_SORT_FIELD),
+        sortOfferingsSummary(DEFAULT_SORT_FIELD),
         FieldSortOrder.ASC,
       );
     }

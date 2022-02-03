@@ -43,18 +43,6 @@ export const DEFAULT_PAGE_NUMBER = 0;
 export const PAGINATION_LIST = [10, 20, 50];
 
 /**
- * Enum for Program DataTable
- */
-export enum InstitutionProgramSummaryFields {
-  CipCode = "cipCode",
-  Name = "name",
-  CredentialType = "credentialType",
-  TotalOfferings = "totalOfferings",
-  ApprovalStatus = "approvalStatus",
-  IsActive = "isActive",
-}
-
-/**
  * Enum for Program offering DataTable
  */
 export enum OfferingSummaryFields {
@@ -67,12 +55,15 @@ export enum OfferingSummaryFields {
 }
 
 /**
- * Enum for AEST Program Table
+ * Enum for Program summary DataTable Fields
  */
-export enum AESTProgramFields {
+export enum ProgramSummaryFields {
   SubmittedDate = "submittedDate",
   ProgramName = "programName",
   LocationName = "locationName",
-  OfferingsCount = "offeringsCount",
-  ProgramStatus = "programStatus",
+  CipCode = "cipCode",
+  CredentialType = "credentialType",
+  TotalOfferings = "totalOfferings",
+  ApprovalStatus = "approvalStatus",
+  IsActive = "isActive",
 }

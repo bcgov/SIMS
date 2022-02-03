@@ -118,5 +118,5 @@ export class ProgramsSummary {
   locationName: string;
   locationId: number;
   programStatus: ApprovalStatus;
-  offeringsCount: number;
+  totalOfferings: number;
 }

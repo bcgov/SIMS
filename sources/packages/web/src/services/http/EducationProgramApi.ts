@@ -4,7 +4,7 @@ import {
   StudentEducationProgramDto,
   EducationProgramData,
   DataTableSortOrder,
-  InstitutionProgramSummaryFields,
+  ProgramSummaryFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   FieldSortOrder,
@@ -73,7 +73,7 @@ export class EducationProgramApi extends HttpBaseClient {
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
     searchProgramName?: string,
-    sortField?: InstitutionProgramSummaryFields,
+    sortField?: ProgramSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     try {

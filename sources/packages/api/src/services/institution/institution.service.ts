@@ -37,7 +37,7 @@ import {
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 import {
-  databaseFieldOfUserDataTable,
+  sortUsersSummary,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
@@ -419,7 +419,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       );
     }
     // sorting
-    databaseFieldOfUserDataTable(
+    sortUsersSummary(
       sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
     ).forEach((sortElement, index) => {
       if (index === 0) {
