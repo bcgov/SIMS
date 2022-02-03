@@ -204,6 +204,7 @@ export interface FullTimeAssessment extends BaseAssessment {
  */
 export interface PartTimeAssessment extends BaseAssessment {
   miscellaneousCost: number;
+  totalAcademicExpenses: number;
 }
 /**
  * This is a type which provides the contract for FullTime and PartTime assessment payload

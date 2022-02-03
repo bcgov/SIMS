@@ -20,9 +20,9 @@ import {
   DisbursementScheduleService,
 } from "../../services";
 import {
-  Application,
   COEStatus,
   ApplicationStatus,
+  DisbursementSchedule,
 } from "../../database/entities";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
@@ -32,6 +32,7 @@ import {
   DenyConfirmationOfEnrollmentDto,
   COEDeniedReasonDto,
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
+import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -51,21 +52,31 @@ export class ConfirmationOfEnrollmentController {
    * @returns student application list of an institution location
    */
   @HasLocationAccess("locationId")
-  @Get(":locationId/confirmation-of-enrollment")
+  @Get(
+    ":locationId/confirmation-of-enrollment/enrollmentPeriod/:enrollmentPeriod",
+  )
   async getCOESummary(
     @Param("locationId") locationId: number,
+    @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
   ): Promise<COESummaryDTO[]> {
-    const applications = await this.applicationService.getCOEApplications(
-      locationId,
-    );
-    return applications.map((eachApplication: Application) => {
+    if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
+      throw new NotFoundException("Invalid enrollment period value.");
+    }
+    const disbursementSchedules =
+      await this.disbursementScheduleService.getCOEByLocation(
+        locationId,
+        enrollmentPeriod,
+      );
+    return disbursementSchedules.map((disbursement: DisbursementSchedule) => {
       return {
-        applicationNumber: eachApplication.applicationNumber,
-        applicationId: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
-        coeStatus: eachApplication.coeStatus,
-        fullName: getUserFullName(eachApplication.student.user),
+        applicationNumber: disbursement.application.applicationNumber,
+        applicationId: disbursement.application.id,
+        studyStartPeriod: disbursement.application.offering.studyStartDate,
+        studyEndPeriod: disbursement.application.offering.studyEndDate,
+        coeStatus: disbursement.coeStatus,
+        fullName: getUserFullName(disbursement.application.student.user),
+        disbursementScheduleId: disbursement.id,
+        disbursementDate: disbursement.disbursementDate,
       };
     }) as COESummaryDTO[];
   }
@@ -191,7 +202,6 @@ export class ConfirmationOfEnrollmentController {
       await this.applicationService.getApplicationDetailsForCOE(
         locationId,
         applicationId,
-        true,
       );
     if (!application) {
       throw new NotFoundException("Application Not Found");
