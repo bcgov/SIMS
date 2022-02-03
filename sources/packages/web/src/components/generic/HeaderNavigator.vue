@@ -2,15 +2,18 @@
   <slot name="title">
     <div class="form-header-title">{{ title }}</div>
   </slot>
-  <slot name="navigationLink"></slot>
-  <slot name="subTitle">
-    <div class="form-header-sub-title">
-      <strong>{{ subTitle }}</strong>
-    </div>
-  </slot>
-  <slot name="secondaryButton"></slot>
-  <slot name="primaryButton"></slot>
-  <slot name="menuButton"></slot>
+  <v-row>
+    <v-col>
+      <slot name="subTitle">
+        <div class="form-header-sub-title">
+          {{ subTitle }}
+        </div>
+      </slot>
+    </v-col>
+    <v-col>
+      <slot name="buttons"> </slot>
+    </v-col>
+  </v-row>
 </template>
 <script lang="ts">
 export default {

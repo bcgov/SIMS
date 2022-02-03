@@ -5,14 +5,14 @@
       :restrictionMessage="restrictionMessage"
     />
     <HeaderNavigator :subTitle="'Financial aid application'">
-      <template #navigationLink>
+      <template #title>
         <div class="form-header-title">
           <a @click="goBack()">
             <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
           >
         </div>
       </template>
-      <template #menuButton>
+      <template #buttons>
         <v-btn color="primary" class="float-right ml-2" @click="toggle"
           ><v-icon size="25"> mdi-arrow-down-bold-circle</v-icon>Application
           Options

@@ -1,7 +1,7 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator :subTitle="'Program Detail'">
-      <template #navigationLink>
+      <template #title>
         <div class="form-header-title">
           <a @click="goBack()">
             <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a

@@ -113,11 +113,11 @@ ul.no-bullets {
   margin-top: 16px;
 }
 
-.form-header-title {
-  font-weight: $formio-header-wt;
-  font-size: $font-header-medium;
+.form-header-title {  
+  font-size: $font-header-small;
   color: $brand-black-light;
   line-height: $line-height-header-md;
+  font-weight: $formio-header-wt;
 }
 
 .form-header-sub-title {  
