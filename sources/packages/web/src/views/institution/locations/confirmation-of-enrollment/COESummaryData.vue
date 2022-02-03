@@ -31,7 +31,7 @@
         <Column field="disbursementDate" header="Disbursement Date">
           <template #body="slotProps">
             <span>
-              {{ dateString(slotProps.data.disbursementDate) }}
+              {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
             </span>
           </template></Column
         >
@@ -84,7 +84,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const { dateString } = useFormatters();
+    const { dateString, dateOnlyLongString } = useFormatters();
     const applications = ref([] as COESummaryDTO[]);
 
     const goToViewApplication = (applicationId: number) => {
@@ -116,6 +116,7 @@ export default {
     return {
       applications,
       dateString,
+      dateOnlyLongString,
       goToViewApplication,
     };
   },

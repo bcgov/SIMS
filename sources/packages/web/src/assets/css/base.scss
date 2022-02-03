@@ -112,3 +112,10 @@ ul.no-bullets {
 .p-tabview-panels {
   margin-top: 16px;
 }
+
+.p-tabview-nav,
+.p-tabview-nav-link,
+.p-tabmenu-nav,
+.p-menuitem-link {
+  background: transparent !important;
+}
