@@ -30,7 +30,7 @@ EXPOSE 8080
 RUN test ! -d /app && mkdir /app || :
 # Add spring boot application
 RUN mkdir -p /app
-COPY --from=MAVEN_TOOL_CHAIN /bpm/target/camunda-bpm-identity-keycloak-examples-sso-kubernetes*.jar ./app
+COPY --from=MAVEN_TOOL_CHAIN /bpm/target/forms-flow-bpm.jar ./app
 RUN chmod a+rwx -R /app
 WORKDIR /app
 VOLUME /bpm

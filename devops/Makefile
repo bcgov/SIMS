@@ -141,11 +141,11 @@ define FORMIO_SOURCE_REPO_URL
 endef
 
 define FORMIO_SOURCE_REPO_BRANCH
-"RC4.0.0"
+"v4.0.4-alpha"
 endef
 
 define SOURCE_REPOSITORY_REF
-"main"
+"#813CICD"
 endef
 
 define SOURCE_CONTEXT_DIR
