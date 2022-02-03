@@ -46,7 +46,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * DEFAULT_PAGE_NUMBER is taken
    * @param pageLimit, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
+   * @param searchCriteria, keyword to be searched
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
    * @returns offering summary.
@@ -56,14 +56,14 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
+    searchCriteria?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     try {
       let url = `institution/offering/location/${locationId}/education-program/${programId}?page=${page}&pageLimit=${pageCount}`;
-      if (searchName) {
-        url = `${url}&searchName=${searchName}`;
+      if (searchCriteria) {
+        url = `${url}&searchCriteria=${searchCriteria}`;
       }
       url = addSortOptions(url, sortField, sortOrder);
 
@@ -192,7 +192,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
    * DEFAULT_PAGE_NUMBER is taken
    * @param pageLimit, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
+   * @param searchCriteria,keyword to be searched
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
    * @returns offering summary.
@@ -202,14 +202,14 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     programId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
+    searchCriteria?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     try {
       let url = `institution/offering/location/${locationId}/education-program/${programId}/aest?page=${page}&pageLimit=${pageCount}`;
-      if (searchName) {
-        url = `${url}&searchName=${searchName}`;
+      if (searchCriteria) {
+        url = `${url}&searchCriteria=${searchCriteria}`;
       }
 
       url = addSortOptions(url, sortField, sortOrder);

@@ -216,7 +216,7 @@ export class InstitutionApi extends HttpBaseClient {
     page: number,
     sortColumn: string,
     sortOrder: DataTableSortOrder,
-    searchName: string,
+    searchCriteria: string,
   ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
     const sortByOrder =
       sortOrder === DataTableSortOrder.ASC
@@ -224,8 +224,8 @@ export class InstitutionApi extends HttpBaseClient {
         : FieldSortOrder.DESC; //Default sort order
     try {
       let queryString = "";
-      if (searchName) {
-        queryString += `searchProgramName=${searchName}&`;
+      if (searchCriteria) {
+        queryString += `searchCriteria=${searchCriteria}&`;
       }
       if (sortColumn) {
         queryString += `sortColumn=${sortColumn}&`;

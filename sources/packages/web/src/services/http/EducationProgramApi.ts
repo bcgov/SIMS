@@ -63,7 +63,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * DEFAULT_PAGE_NUMBER is taken
    * @param pageLimit, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName,program name keyword to be searched
+   * @param searchCriteria, program name keyword to be searched
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
    * @returns program summary for an institution location.
@@ -72,14 +72,14 @@ export class EducationProgramApi extends HttpBaseClient {
     locationId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
-    searchProgramName?: string,
+    searchCriteria?: string,
     sortField?: ProgramSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     try {
       let url = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
-      if (searchProgramName) {
-        url = `${url}&searchProgramName=${searchProgramName}`;
+      if (searchCriteria) {
+        url = `${url}&searchCriteria=${searchCriteria}`;
       }
       url = addSortOptions(url, sortField, sortOrder);
       const response = await this.getCall(url);

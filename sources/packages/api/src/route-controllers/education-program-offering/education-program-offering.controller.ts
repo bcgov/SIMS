@@ -95,7 +95,7 @@ export class EducationProgramOfferingController {
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortField the sorting column.
    * @param sortOrder sorting order.
-   * @param searchName search by offering name
+   * @param searchCriteria search by offering name
    * @returns paginated offering summary
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -104,7 +104,7 @@ export class EducationProgramOfferingController {
   async getAllEducationProgramOffering(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
-    @Query("searchName") searchName: string,
+    @Query("searchCriteria") searchCriteria: string,
     @Query("sortField") sortField: string,
     @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
@@ -120,7 +120,7 @@ export class EducationProgramOfferingController {
       locationId,
       programId,
       {
-        searchCriteria: searchName,
+        searchCriteria: searchCriteria,
         sortField: sortField,
         sortOrder: sortOrder,
         page: page,
@@ -307,7 +307,7 @@ export class EducationProgramOfferingController {
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortField the sorting column.
    * @param sortOrder sorting order.
-   * @param searchName search by offering name
+   * @param searchCriteria search by offering name
    * @returns paginated offering summary
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -316,7 +316,7 @@ export class EducationProgramOfferingController {
   async getOfferingSummary(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
-    @Query("searchName") searchName: string,
+    @Query("searchCriteria") searchCriteria: string,
     @Query("sortField") sortField: string,
     @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
     @Query("page") page = DEFAULT_PAGE_NUMBER,
@@ -332,7 +332,7 @@ export class EducationProgramOfferingController {
       locationId,
       programId,
       {
-        searchCriteria: searchName,
+        searchCriteria: searchCriteria,
         sortField: sortField,
         sortOrder: sortOrder,
         page: page,

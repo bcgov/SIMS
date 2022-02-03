@@ -56,7 +56,7 @@ export class EducationProgramController {
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortField the sorting column.
    * @param sortOrder sorting order.
-   * @param searchProgramName Search the program name in the query
+   * @param searchCriteria Search the program name in the query
    * @returns PaginatedResults<EducationProgramsSummary>.
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -64,7 +64,7 @@ export class EducationProgramController {
   @Get("location/:locationId/summary")
   async getSummary(
     @Param("locationId") locationId: number,
-    @Query("searchProgramName") searchProgramName: string,
+    @Query("searchCriteria") searchCriteria: string,
     @Query("sortField") sortField: string,
     @Query("sortOrder") sortOrder: FieldSortOrder,
     @UserToken() userToken: IInstitutionUserToken,
@@ -81,7 +81,7 @@ export class EducationProgramController {
       locationId,
       [OfferingTypes.public],
       {
-        searchCriteria: searchProgramName,
+        searchCriteria: searchCriteria,
         sortField: sortField,
         sortOrder: sortOrder,
         page: page,
@@ -343,7 +343,7 @@ export class EducationProgramController {
    * For example page 2 the skip would be 10 when we select 10 rows per page.
    * @param sortColumn the sorting column.
    * @param sortOrder sorting order.
-   * @param searchProgramName Search the program name in the query
+   * @param searchCriteria Search the program name in the query
    * @returns ProgramsSummaryPaginated.
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -355,13 +355,13 @@ export class EducationProgramController {
     @Query("page") page: number,
     @Query("sortColumn") sortColumn: string,
     @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Query("searchProgramName") searchProgramName: string,
+    @Query("searchCriteria") searchCriteria: string,
   ): Promise<PaginatedResults<ProgramsSummary>> {
     return this.programService.getPaginatedProgramsForAEST(
       institutionId,
       [OfferingTypes.public],
       {
-        searchCriteria: searchProgramName,
+        searchCriteria: searchCriteria,
         sortField: sortColumn,
         sortOrder: sortOrder,
         page: page,

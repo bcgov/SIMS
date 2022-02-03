@@ -47,7 +47,7 @@ export class EducationProgramOfferingService {
    * DEFAULT_PAGE_NUMBER is taken
    * @param pageLimit, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
+   * @param searchCriteria, keyword to be searched
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
    * @returns offering summary.
@@ -57,7 +57,7 @@ export class EducationProgramOfferingService {
     programId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
+    searchCriteria?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
@@ -66,7 +66,7 @@ export class EducationProgramOfferingService {
       programId,
       page,
       pageCount,
-      searchName,
+      searchCriteria,
       sortField,
       sortOrder,
     );
@@ -163,7 +163,7 @@ export class EducationProgramOfferingService {
    * DEFAULT_PAGE_NUMBER is taken
    * @param pageLimit, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
-   * @param searchName, user's name keyword to be searched
+   * @param searchCriteria, keyword to be searched
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
    * @returns offering summary.
@@ -173,7 +173,7 @@ export class EducationProgramOfferingService {
     programId: number,
     page = DEFAULT_PAGE_NUMBER,
     pageCount = DEFAULT_PAGE_LIMIT,
-    searchName?: string,
+    searchCriteria?: string,
     sortField?: OfferingSummaryFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
@@ -182,7 +182,7 @@ export class EducationProgramOfferingService {
       programId,
       page,
       pageCount,
-      searchName,
+      searchCriteria,
       sortField,
       sortOrder,
     );

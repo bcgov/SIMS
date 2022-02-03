@@ -435,7 +435,7 @@ export class InstitutionService {
     page: number,
     sortColumn: string,
     sortOrder: DataTableSortOrder,
-    searchName: string,
+    searchCriteria: string,
   ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
     return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
       institutionId,
@@ -443,7 +443,7 @@ export class InstitutionService {
       page,
       sortColumn,
       sortOrder,
-      searchName,
+      searchCriteria,
     );
   }
 
