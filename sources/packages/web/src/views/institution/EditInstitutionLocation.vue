@@ -14,11 +14,11 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
-import formio from "../../components/generic/formio.vue";
+import formio from "@/components/generic/formio.vue";
 import { onMounted, ref } from "vue";
-import { InstitutionLocation } from "../../types";
-import { InstitutionService } from "../../services/InstitutionService";
-import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
+import { InstitutionLocation } from "@/types";
+import { InstitutionService } from "@/services/InstitutionService";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: { formio },

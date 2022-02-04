@@ -1,5 +1,5 @@
 <template>
-  <h5 class="text-muted">
+  <h5 class="muted-heading-text">
     <a @click="goBack()">
       <v-icon left> mdi-arrow-left </v-icon> Back to Student Details</a
     >

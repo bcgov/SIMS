@@ -6,27 +6,27 @@
 }
 
 .content-header {
-  color: #333a47;
+  color: $brand-black;
   font-weight: 700;
   font-size: 17px;
   line-height: 22px;
-  font-style: normal;
+  font-style: $font-style-normal;
 }
 
 .content-body {
-  color: #333a47;
+  color: $brand-black;
   font-weight: 400;
   font-size: 16px;
   line-height: 22px;
-  font-style: normal;
+  font-style: $font-style-normal;
 }
 
 .content-footer {
-  color: #333a47;
+  color: $brand-black;
   font-weight: 400;
   font-size: 14px;
   line-height: 21px;
-  font-style: normal;
+  font-style: $font-style-normal;
 }
 div.p-timeline-event-opposite {
   max-width: 0 !important;
@@ -36,7 +36,7 @@ div.p-timeline-event-opposite {
   font-weight: 700;
   font-size: 17px;
   line-height: 22px;
-  font-style: normal;
+  font-style: $font-style-normal;
 }
 
 .p-timeline .p-timeline-event-connector {

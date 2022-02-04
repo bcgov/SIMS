@@ -19,9 +19,9 @@ import {
 } from "../../auth/decorators";
 import {
   SaveEducationProgramOfferingDto,
-  EducationProgramOfferingDto,
   ProgramOfferingDto,
   ProgramOfferingDetailsDto,
+  transformToProgramOfferingDto,
 } from "./models/education-program-offering.dto";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -32,10 +32,15 @@ import {
 import { OptionItem } from "../../types";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { OfferingTypes, OfferingIntensity } from "../../database/entities";
-import { getOfferingNameAndPeriod, getDateOnlyFormat } from "../../utilities";
+import {
+  getOfferingNameAndPeriod,
+  FieldSortOrder,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  PaginatedResults,
+} from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ProgramsOfferingSummaryPaginated } from "../../services/education-program-offering/education-program-offering.service.models";
-import { SortDBOrder } from "../../types/sortDBOrder";
+import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
 
 @Controller("institution/offering")
 export class EducationProgramOfferingController {
@@ -81,32 +86,48 @@ export class EducationProgramOfferingController {
     return createdProgramOffering.id;
   }
 
+  /**
+   * Offering Summary for an institution location
+   * @param locationId location id
+   * @param programId program id
+   * @param pageLimit is the number of rows shown in the table
+   * @param page is the number of rows that is skipped/offset from the total list.
+   * For example page 2 the skip would be 10 when we select 10 rows per page.
+   * @param sortField the sorting column.
+   * @param sortOrder sorting order.
+   * @param searchCriteria search by offering name
+   * @returns paginated offering summary
+   */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get("location/:locationId/education-program/:programId")
   async getAllEducationProgramOffering(
     @Param("locationId") locationId: number,
     @Param("programId") programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    @Query("searchCriteria") searchCriteria: string,
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
     //To retrieve Education program offering corresponding to ProgramId and LocationId
-    const programOfferingList =
-      await this.programOfferingService.getAllEducationProgramOffering(
-        locationId,
-        programId,
-        [OfferingTypes.public],
-      );
-    if (!programOfferingList) {
-      throw new UnprocessableEntityException(
-        "Not able to find a Education Program Offering associated with the current Education Program and Location.",
-      );
-    }
-    return programOfferingList.map((offering) => ({
-      id: offering.id,
-      offeringName: offering.name,
-      studyDates: offering.studyDates,
-      offeringDelivered: offering.offeringDelivered,
-      offeringIntensity: offering.offeringIntensity,
-    }));
+    // [OfferingTypes.applicationSpecific] offerings are
+    // created during PIR, if required, and they are supposed
+    // to be viewed only associated to the application that they
+    // were associated to during the PIR, hence they should not
+    // be displayed alongside with the public offerings.
+    return this.programOfferingService.getAllEducationProgramOffering(
+      locationId,
+      programId,
+      {
+        searchCriteria: searchCriteria,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        page: page,
+        pageLimit: pageLimit,
+      },
+      [OfferingTypes.public],
+    );
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -128,30 +149,7 @@ export class EducationProgramOfferingController {
         "Not able to find a Education Program Offering associated with the current Education Program, Location and offering.",
       );
     }
-    return {
-      id: offering.id,
-      offeringName: offering.name,
-      studyStartDate: offering.studyStartDate,
-      studyEndDate: offering.studyEndDate,
-      actualTuitionCosts: offering.actualTuitionCosts,
-      programRelatedCosts: offering.programRelatedCosts,
-      mandatoryFees: offering.mandatoryFees,
-      exceptionalExpenses: offering.exceptionalExpenses,
-      tuitionRemittanceRequestedAmount:
-        offering.tuitionRemittanceRequestedAmount,
-      offeringDelivered: offering.offeringDelivered,
-      lacksStudyDates: offering.lacksStudyDates,
-      lacksStudyBreaks: offering.lacksStudyBreaks,
-      lacksFixedCosts: offering.lacksFixedCosts,
-      tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
-      offeringIntensity: offering.offeringIntensity,
-      yearOfStudy: offering.yearOfStudy,
-      showYearOfStudy: offering.showYearOfStudy,
-      hasOfferingWILComponent: offering.hasOfferingWILComponent,
-      offeringWILType: offering.offeringWILType,
-      studyBreaks: offering.studyBreaks,
-      offeringDeclaration: offering.offeringDeclaration,
-    };
+    return transformToProgramOfferingDto(offering);
   }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -301,53 +299,69 @@ export class EducationProgramOfferingController {
   }
 
   /**
-   * Get programs for a particular institution with pagination.
-   * @param institutionId id of the institution.
-   * @param pageSize is the number of rows shown in the table
+   * Offering Summary for ministry users
+   * @param locationId location id
+   * @param programId program id
+   * @param pageLimit is the number of rows shown in the table
    * @param page is the number of rows that is skipped/offset from the total list.
    * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
-   * @param searchProgramName Search the program name in the query
-   * @returns ProgramsOfferingSummaryPaginated.
+   * @param sortField the sorting column.
+   * @param sortOrder sorting order.
+   * @param searchCriteria search by offering name
+   * @returns paginated offering summary
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
-  @Get("institution/:institutionId/programs")
-  async getPaginatedProgramsForInstitution(
-    @Param("institutionId") institutionId: number,
-    @Query("pageSize") pageSize: number,
-    @Query("page") page: number,
-    @Query("sortColumn") sortColumn: string,
-    @Query("sortOrder") sortOrder: SortDBOrder,
-    @Query("searchProgramName") searchProgramName: string,
-  ): Promise<ProgramsOfferingSummaryPaginated> {
-    const paginatedProgramOfferingSummaryResult =
-      await this.programOfferingService.getPaginatedProgramsForInstitution(
-        institutionId,
-        pageSize,
-        page,
-        sortColumn,
-        sortOrder,
-        searchProgramName,
+  @Get("location/:locationId/education-program/:programId/aest")
+  async getOfferingSummary(
+    @Param("locationId") locationId: number,
+    @Param("programId") programId: number,
+    @Query("searchCriteria") searchCriteria: string,
+    @Query("sortField") sortField: string,
+    @Query("sortOrder") sortOrder = FieldSortOrder.ASC,
+    @Query("page") page = DEFAULT_PAGE_NUMBER,
+    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
+  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
+    // [OfferingTypes.applicationSpecific] offerings are
+    // created during PIR, if required, and they are supposed
+    // to be viewed only associated to the application that they
+    // were associated to during the PIR, hence they should not
+    // be displayed alongside with the public offerings.
+    return this.programOfferingService.getAllEducationProgramOffering(
+      locationId,
+      programId,
+      {
+        searchCriteria: searchCriteria,
+        sortField: sortField,
+        sortOrder: sortOrder,
+        page: page,
+        pageLimit: pageLimit,
+      },
+      [OfferingTypes.public],
+    );
+  }
+
+  /**
+   * Offering details for ministry users
+   * @param offeringId offering id
+   * @returns Offering details
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Get(":offeringId/aest")
+  async getProgramOfferingForAEST(
+    @Param("offeringId") offeringId: number,
+  ): Promise<ProgramOfferingDto> {
+    //To retrieve Education program offering corresponding to ProgramId and LocationId
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+    );
+    if (!offering) {
+      throw new NotFoundException(
+        "offering not found because the id does not exist.",
       );
-    const paginatedProgramOfferingSummary =
-      paginatedProgramOfferingSummaryResult.programsSummary.map(
-        (programOfferingSummary) => ({
-          programId: programOfferingSummary.programId,
-          programName: programOfferingSummary.programName,
-          submittedDate: programOfferingSummary.submittedDate,
-          formattedSubmittedDate: getDateOnlyFormat(
-            programOfferingSummary.submittedDate,
-          ),
-          locationName: programOfferingSummary.locationName,
-          programStatus: programOfferingSummary.programStatus,
-          offeringsCount: programOfferingSummary.offeringsCount,
-        }),
-      );
-    return {
-      programsSummary: paginatedProgramOfferingSummary,
-      programsCount: paginatedProgramOfferingSummaryResult.programsCount,
-    };
+    }
+    return transformToProgramOfferingDto(offering);
   }
 }

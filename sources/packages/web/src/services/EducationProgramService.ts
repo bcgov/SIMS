@@ -1,9 +1,16 @@
 import {
-  EducationProgramDto,
+  SummaryEducationProgramDto,
   OptionItemDto,
   StudentEducationProgramDto,
   ProgramDto,
-} from "../types";
+  EducationProgramData,
+  DataTableSortOrder,
+  ProgramSummaryFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  PaginatedResults,
+} from "@/types";
+
 import ApiClient from "./http/ApiClient";
 
 export class EducationProgramService {
@@ -29,13 +36,40 @@ export class EducationProgramService {
     await ApiClient.EducationProgram.updateProgram(programId, data);
   }
 
-  public async getLocationProgramsSummary(locationId: number): Promise<any> {
-    return ApiClient.EducationProgram.getLocationProgramsSummary(locationId);
+  /**
+   * Method to call the API to fetch all institution
+   * location program.
+   * @param locationId location id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchCriteria,program name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns program summary for an institution location.
+   */
+  public async getLocationProgramsSummary(
+    locationId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchCriteria?: string,
+    sortField?: ProgramSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
+    return ApiClient.EducationProgram.getLocationProgramsSummary(
+      locationId,
+      page,
+      pageCount,
+      searchCriteria,
+      sortField,
+      sortOrder,
+    );
   }
 
   public async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramDto> {
+  ): Promise<EducationProgramData> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
   }
 
@@ -68,5 +102,16 @@ export class EducationProgramService {
    */
   public async getProgramsListForInstitutions(): Promise<OptionItemDto[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions();
+  }
+
+  /**
+   * Education Program Details for ministry users
+   * @param programId program id
+   * @returns Education Program Details
+   */
+  public async getEducationProgramForAEST(
+    programId: number,
+  ): Promise<EducationProgramData> {
+    return ApiClient.EducationProgram.getEducationProgramForAEST(programId);
   }
 }

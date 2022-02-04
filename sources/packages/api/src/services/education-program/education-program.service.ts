@@ -3,16 +3,27 @@ import {
   EducationProgram,
   EducationProgramOffering,
   Institution,
+  OfferingTypes,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
-  EducationProgramModel,
 } from "./education-program.service.models";
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
+import { InstitutionLocation } from "../../database/entities/institution-location.model";
+import { ProgramsSummary } from "../../route-controllers/education-program/models/save-education-program.dto";
+import {
+  credentialTypeToDisplay,
+  FieldSortOrder,
+  getRawCount,
+  getDateOnlyFormat,
+  sortProgramsColumnMap,
+  PaginationOptions,
+  PaginatedResults,
+} from "../../utilities";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -133,45 +144,208 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * alongside with the total of offerings on a particular location.
    * @param institutionId Id of the institution.
    * @param locationId Id of the location.
+   * @param offeringTypes OfferingTypes array.
+   * @param paginationOptions pagination options
    * @returns summary for location
    */
   async getSummaryForLocation(
     institutionId: number,
     locationId: number,
-  ): Promise<EducationProgramsSummary[]> {
-    const summaryResult = await this.repo
+    offeringTypes: OfferingTypes[],
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+    const DEFAULT_SORT_FIELD = "approvalStatus";
+    const summaryResult = this.repo
       .createQueryBuilder("programs")
-      .select([
-        "programs.id as id",
-        "programs.name as name",
-        "programs.cipCode as cipCode",
-        "programs.credentialType as credentialType",
-        "programs.approvalStatus as approvalStatus",
-      ])
+      .select("programs.id", "id")
+      .addSelect("programs.name", "programName")
+      .addSelect("programs.cipCode", "cipCode")
+      .addSelect("programs.credentialType", "credentialType")
+      .addSelect("programs.approvalStatus", "approvalStatus")
       .addSelect(
         (query) =>
           query
             .select("COUNT(*)")
             .from(EducationProgramOffering, "offerings")
             .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.offeringType in (:...offeringTypes)", {
+              offeringTypes,
+            })
             .andWhere("offerings.institutionLocation.id = :locationId", {
               locationId,
             }),
-        "totalofferings",
+        "totalOfferings",
       )
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .getRawMany();
+      .where("programs.institution.id = :institutionId", { institutionId });
 
-    return summaryResult.map((summary) => {
+    // this queryParams is for getRawCount, which is different from the
+    // query parameter assigned to paginatedProgramQuery like
+    // paginationOptions.searchCriteria or institutionId.
+    // queryParams should follow the order/index
+    const queryParams: any[] = [...offeringTypes, locationId, institutionId];
+    // program name search
+    if (paginationOptions.searchCriteria) {
+      summaryResult.andWhere("programs.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+      queryParams.push(`%${paginationOptions.searchCriteria}%`);
+    }
+
+    // for getting total raw count before pagination
+    const sqlQuery = summaryResult.getSql();
+
+    // pagination
+    summaryResult
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+
+    // sort
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
+      summaryResult.orderBy(
+        sortProgramsColumnMap(paginationOptions.sortField),
+        paginationOptions.sortOrder,
+      );
+    } else {
+      // default sort and order
+      summaryResult.orderBy(
+        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
+        FieldSortOrder.ASC,
+      );
+    }
+
+    // total count and summary
+    const [totalCount, programs] = await Promise.all([
+      getRawCount(this.repo, sqlQuery, queryParams),
+      summaryResult.getRawMany(),
+    ]);
+
+    const programSummary = programs.map((summary) => {
       const summaryItem = new EducationProgramsSummary();
       summaryItem.id = summary.id;
-      summaryItem.name = summary.name;
-      summaryItem.cipCode = summary.cipcode;
-      summaryItem.credentialType = summary.credentialtype;
-      summaryItem.approvalStatus = summary.approvalstatus;
-      summaryItem.totalOfferings = summary.totalofferings;
+      summaryItem.programName = summary.programName;
+      summaryItem.cipCode = summary.cipCode;
+      summaryItem.credentialType = summary.credentialType;
+      summaryItem.credentialTypeToDisplay = credentialTypeToDisplay(
+        summary.credentialType,
+      );
+      summaryItem.approvalStatus = summary.approvalStatus;
+      summaryItem.totalOfferings = summary.totalOfferings;
       return summaryItem;
     });
+    return {
+      results: programSummary,
+      count: totalCount,
+    };
+  }
+  /**
+   * Gets all the programs that are associated with an institution
+   * alongside with the total of offerings on a particular location.
+   * @param institutionId Id of the institution.
+   * @param offeringTypes OfferingTypes array.
+   * @param paginationOptions pagination options
+   * @returns summary for location
+   */
+  async getPaginatedProgramsForAEST(
+    institutionId: number,
+    offeringTypes: OfferingTypes[],
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<ProgramsSummary>> {
+    // default data table sort field
+    const DEFAULT_SORT_FIELD = "submittedDate";
+    const paginatedProgramQuery = this.repo
+      .createQueryBuilder("programs")
+      .select("programs.id", "programId")
+      .addSelect("programs.name", "programName")
+      .addSelect("programs.createdAt", "programSubmittedAt")
+      .addSelect("location.id", "locationId")
+      .addSelect("location.name", "locationName")
+      .addSelect("programs.approvalStatus", "approvalStatus")
+      .addSelect(
+        (query) =>
+          query
+            .select("COUNT(*)")
+            .from(EducationProgramOffering, "offerings")
+            .where("offerings.educationProgram.id = programs.id")
+            .andWhere("offerings.institutionLocation.id = location.id")
+            .andWhere("offerings.offeringType in (:...offeringTypes)", {
+              offeringTypes,
+            }),
+        "totalOfferings",
+      )
+      .innerJoin("programs.institution", "institution")
+      .innerJoin(
+        InstitutionLocation,
+        "location",
+        "institution.id = location.institution.id",
+      )
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .orderBy("programs.id");
+
+    // this queryParams is for getRawCount, which is different from the
+    // query parameter assigned to paginatedProgramQuery like
+    // paginationOptions.searchCriteria or institutionId
+    // queryParams should follow the order/index
+    const queryParams: any[] = [...offeringTypes, institutionId];
+
+    if (paginationOptions.searchCriteria) {
+      paginatedProgramQuery.andWhere("programs.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+      queryParams.push(`%${paginationOptions.searchCriteria}%`);
+    }
+
+    // for getting total raw count before pagination
+    const sqlQuery = paginatedProgramQuery.getSql();
+
+    if (paginationOptions.pageLimit) {
+      paginatedProgramQuery.limit(paginationOptions.pageLimit);
+    }
+    if (paginationOptions.page) {
+      paginatedProgramQuery.offset(
+        paginationOptions.page * paginationOptions.pageLimit,
+      );
+    } else {
+      paginatedProgramQuery.limit(0);
+    }
+    // sort
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
+      paginatedProgramQuery.orderBy(
+        sortProgramsColumnMap(paginationOptions.sortField),
+        paginationOptions.sortOrder,
+      );
+    } else {
+      // default sort and order
+      paginatedProgramQuery.orderBy(
+        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
+        FieldSortOrder.DESC,
+      );
+    }
+
+    // total count and summary
+    const [totalCount, programsQuery] = await Promise.all([
+      getRawCount(this.repo, sqlQuery, queryParams),
+      paginatedProgramQuery.getRawMany(),
+    ]);
+
+    const programSummary = programsQuery.map((summary) => {
+      const summaryItem = new ProgramsSummary();
+      summaryItem.programId = summary.programId;
+      summaryItem.programName = summary.programName;
+      summaryItem.submittedDate = summary.programSubmittedAt;
+      summaryItem.locationName = summary.locationName;
+      summaryItem.locationId = summary.locationId;
+      summaryItem.programStatus = summary.approvalStatus;
+      summaryItem.totalOfferings = summary.totalOfferings;
+      summaryItem.formattedSubmittedDate = getDateOnlyFormat(
+        summary.programSubmittedAt,
+      );
+      return summaryItem;
+    });
+
+    return {
+      results: programSummary,
+      count: totalCount,
+    };
   }
 
   /**
@@ -182,8 +356,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getLocationPrograms(
     programId: number,
     institutionId: number,
-  ): Promise<EducationProgramModel> {
-    const educationProgram = await this.repo
+  ): Promise<EducationProgram> {
+    return this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
@@ -200,20 +374,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .getOne();
-
-    const summaryItem = new EducationProgramModel();
-    summaryItem.id = educationProgram.id;
-    summaryItem.name = educationProgram.name;
-    summaryItem.description = educationProgram.description;
-    summaryItem.credentialType = educationProgram.credentialType;
-    summaryItem.cipCode = educationProgram.cipCode;
-    summaryItem.nocCode = educationProgram.nocCode;
-    summaryItem.sabcCode = educationProgram.sabcCode;
-    summaryItem.approvalStatus = educationProgram.approvalStatus;
-    summaryItem.programIntensity = educationProgram.programIntensity;
-    summaryItem.institutionProgramCode =
-      educationProgram.institutionProgramCode;
-    return summaryItem;
   }
 
   /**
@@ -273,5 +433,59 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .andWhere("programs.institution.id = :institutionId", { institutionId })
       .orderBy("programs.name")
       .getMany();
+  }
+  /**
+   * Gets program details with program id.
+   * @param programId Program id.
+   * @returns program
+   */
+  async getEducationProgramDetails(
+    programId: number,
+  ): Promise<EducationProgram> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.description",
+        "programs.credentialType",
+        "programs.cipCode",
+        "programs.nocCode",
+        "programs.sabcCode",
+        "programs.approvalStatus",
+        "programs.programIntensity",
+        "programs.institutionProgramCode",
+        "programs.regulatoryBody",
+        "programs.deliveredOnSite",
+        "programs.deliveredOnline",
+        "programs.deliveredOnlineAlsoOnsite",
+        "programs.sameOnlineCreditsEarned",
+        "programs.earnAcademicCreditsOtherInstitution",
+        "programs.courseLoadCalculation",
+        "programs.completionYears",
+        "programs.eslEligibility",
+        "programs.hasJointInstitution",
+        "programs.hasJointDesignatedInstitution",
+        "programs.institutionProgramCode",
+        "programs.minHoursWeek",
+        "programs.isAviationProgram",
+        "programs.minHoursWeekAvi",
+        "programs.hasMinimumAge",
+        "programs.minHighSchool",
+        "programs.requirementsByInstitution",
+        "programs.requirementsByBCITA",
+        "programs.hasWILComponent",
+        "programs.isWILApproved",
+        "programs.wilProgramEligibility",
+        "programs.hasTravel",
+        "programs.travelProgramEligibility",
+        "programs.hasIntlExchange",
+        "programs.intlExchangeProgramEligibility",
+        "programs.programDeclaration",
+        "institution.id",
+      ])
+      .innerJoin("programs.institution", "institution")
+      .where("programs.id = :id", { id: programId })
+      .getOne();
   }
 }

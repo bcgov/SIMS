@@ -42,7 +42,10 @@ export enum AppRoutes {
   SearchInstitutions = "search-institutions",
   InstitutionDetail = "institution-detail/:institutionId",
   Profile = "profile",
+  // program
   Programs = "programs",
+  ViewProgram = "/program/:programId",
+  ViewOffering = "/program/:programId/offering/:offeringId",
   Locations = "locations",
   Users = "users",
   Designation = "designation",
