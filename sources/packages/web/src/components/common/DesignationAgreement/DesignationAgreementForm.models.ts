@@ -20,6 +20,10 @@ export interface DesignationLocationsListItem {
   requestForDesignation: boolean;
 }
 
+/**
+ * Main model to populate all information needed
+ * for the designation agreement.
+ */
 export interface DesignationModel {
   institutionName: string;
   institutionType: string;
