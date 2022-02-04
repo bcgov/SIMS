@@ -739,27 +739,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Updates Confirmation of Enrollment(COE) and application status.
-   * @param applicationId application id to be updated.
-   * @param coeStatus status of the Confirmation of Enrollment.
-   * @param applicationStatus status of the application
-   * Confirmation of Enrollment and application status need to happen.
-   * @returns Status update result.
+   * @param applicationId
+   * @returns Update status of the Query.
    */
   async updateApplicationCOEStatus(
     applicationId: number,
-    coeStatus: COEStatus,
-    applicationStatus: ApplicationStatus,
   ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        coeStatus,
-        applicationStatus,
-      },
-    );
+    return this.repo
+      .createQueryBuilder()
+      .update(Application)
+      .set({ applicationStatus: ApplicationStatus.completed })
+      .where("id = :applicationId", { applicationId })
+      .execute();
   }
 
   /**

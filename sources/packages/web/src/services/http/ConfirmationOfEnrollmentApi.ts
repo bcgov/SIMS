@@ -25,12 +25,12 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   }
 
   public async getApplicationForCOE(
-    applicationId: number,
+    disbursementScheduleId: number,
     locationId: number,
   ): Promise<ApplicationDetailsForCOEDTO> {
     try {
       const response = await this.apiClient.get(
-        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}`,
+        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}`,
         this.addAuthHeader(),
       );
       return response.data;
@@ -42,11 +42,11 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
 
   public async confirmCOE(
     locationId: number,
-    applicationId: number,
+    disbursementScheduleId: number,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
-        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/confirm`,
+        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
         {},
         this.addAuthHeader(),
       );

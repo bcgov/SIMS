@@ -29,7 +29,7 @@
     </v-container>
     <ConfirmCOE
       :showModal="showModal"
-      :applicationId="initialData.applicationId"
+      :disbursementScheduleId="disbursementScheduleId"
       :locationId="initialData.applicationLocationId"
       @showHideConfirmCOE="showHideConfirmCOE"
       @reloadData="loadInitialData"
@@ -80,7 +80,7 @@ export default {
     Information,
   },
   props: {
-    applicationId: {
+    disbursementScheduleId: {
       type: Number,
       required: true,
     },
@@ -110,7 +110,7 @@ export default {
 
     const loadInitialData = async () => {
       initialData.value = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
-        props.applicationId,
+        props.disbursementScheduleId,
         props.locationId,
       );
     };
@@ -120,7 +120,7 @@ export default {
         try {
           await ConfirmationOfEnrollmentService.shared.rollbackCOE(
             props.locationId,
-            props.applicationId,
+            props.disbursementScheduleId,
           );
           toast.success(
             "Edit Program Information",
@@ -143,7 +143,7 @@ export default {
       try {
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
           props.locationId,
-          props.applicationId,
+          props.disbursementScheduleId,
           submissionData,
         );
         toast.success("COE is Denied", "Application Status Has Been Updated.");

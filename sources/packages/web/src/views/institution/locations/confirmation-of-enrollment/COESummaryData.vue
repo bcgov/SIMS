@@ -46,7 +46,9 @@
               plain
               color="primary"
               outlined
-              @click="goToViewApplication(slotProps.data.applicationId)"
+              @click="
+                goToViewApplication(slotProps.data.disbursementScheduleId)
+              "
               >view</v-btn
             >
           </template>
@@ -87,10 +89,13 @@ export default {
     const { dateString, dateOnlyLongString } = useFormatters();
     const applications = ref([] as COESummaryDTO[]);
 
-    const goToViewApplication = (applicationId: number) => {
+    const goToViewApplication = (disbursementScheduleId: number) => {
       router.push({
         name: InstitutionRoutesConst.COE_EDIT,
-        params: { locationId: props.locationId, applicationId },
+        params: {
+          locationId: props.locationId,
+          disbursementScheduleId: disbursementScheduleId,
+        },
       });
     };
 

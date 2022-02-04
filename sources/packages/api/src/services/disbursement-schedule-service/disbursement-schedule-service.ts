@@ -17,6 +17,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
   ApplicationStatus,
+  COEStatus,
   DisbursementSchedule,
   DisbursementValue,
   OfferingIntensity,
@@ -240,18 +241,24 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Update DisbursementSchedule with documentNumber
-   * @param documentNumber document Number
+   * @param disbursementScheduleId document Number
    * @returns the result of update.
    */
-  async updateDisbursementScheduleDocumentNumber(
-    applicationId: number,
+  async updateDisbursementScheduleOnCOEApproval(
+    disbursementScheduleId: number,
+    userId: number,
   ): Promise<UpdateResult> {
     const documentNumber = await this.getNextDocumentNumber();
     return this.repo
       .createQueryBuilder()
       .update(DisbursementSchedule)
-      .set({ documentNumber: documentNumber })
-      .where("application.id = :applicationId", { applicationId })
+      .set({
+        documentNumber: documentNumber,
+        coeStatus: COEStatus.completed,
+        coeUpdatedBy: { id: userId },
+        coeUpdatedAt: new Date(),
+      })
+      .where("id = :disbursementScheduleId", { disbursementScheduleId })
       .execute();
   }
 
@@ -304,5 +311,69 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
     coeQuery.orderBy("disbursementSchedule.coeStatus");
     return coeQuery.getMany();
+  }
+
+  /**
+   * Returns Disbursement and application details for COE Application details.
+   * @param disbursementScheduleId
+   * @returns Disbursement and Application details.
+   */
+  async getDisbursementAndApplicationDetails(
+    locationId: number,
+    disbursementScheduleId: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.application",
+      ])
+      .innerJoinAndSelect("disbursementSchedule.application", "application")
+      .innerJoinAndSelect("application.location", "location")
+      .innerJoinAndSelect("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .innerJoinAndSelect("application.offering", "offering")
+      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
+      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
+      .where("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      })
+      .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
+        disbursementScheduleId,
+      })
+      .getOne();
+  }
+
+  /**
+   * Summary of disbursement and application for Approval/Denial of COE.
+   * @param locationId
+   * @param disbursementScheduleId
+   * @returns Disbursement and Application Summary.
+   */
+  async getDisbursementAndApplicationSummary(
+    locationId: number,
+    disbursementScheduleId: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "application.id",
+        "application.applicationStatus",
+        "application.assessmentWorkflowId",
+      ])
+      .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("application.location", "location")
+      .where("location.id = :locationId", { locationId })
+      .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
+        disbursementScheduleId,
+      })
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      })
+      .getOne();
   }
 }

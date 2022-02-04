@@ -43,7 +43,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    applicationId: {
+    disbursementScheduleId: {
       type: Number,
       required: true,
     },
@@ -63,7 +63,7 @@ export default {
       try {
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
           props.locationId,
-          props.applicationId,
+          props.disbursementScheduleId,
         );
         toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
       } catch (error) {
