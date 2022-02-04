@@ -78,6 +78,13 @@ export class DesignationAgreementController {
     return createdDesignation.id;
   }
 
+  /**
+   * Retrieve the designation agreement information and
+   * the associated locations approvals.
+   * @param userToken user information.
+   * @param designationId designation id.
+   * @returns  designation agreement information.
+   */
   @IsInstitutionAdmin()
   @Get(":designationId")
   async getDesignationAgreement(
@@ -93,18 +100,19 @@ export class DesignationAgreementController {
       throw new NotFoundException("Designation agreement not found.");
     }
 
-    const result = {} as GetDesignationAgreementDto;
-    result.designationId = designation.id;
-    result.designationStatus = designation.designationStatus;
-    result.submittedData = designation.submittedData;
-    result.locationsDesignations =
-      designation.designationAgreementLocations.map((agreementLocation) => ({
-        locationId: agreementLocation.institutionLocation.id,
-        locationName: agreementLocation.institutionLocation.name,
-        locationData: agreementLocation.institutionLocation.data,
-        requested: agreementLocation.requested,
-        approved: agreementLocation.approved,
-      }));
-    return result;
+    return {
+      designationId: designation.id,
+      designationStatus: designation.designationStatus,
+      submittedData: designation.submittedData,
+      locationsDesignations: designation.designationAgreementLocations.map(
+        (agreementLocation) => ({
+          locationId: agreementLocation.institutionLocation.id,
+          locationName: agreementLocation.institutionLocation.name,
+          locationData: agreementLocation.institutionLocation.data,
+          requested: agreementLocation.requested,
+          approved: agreementLocation.approved,
+        }),
+      ),
+    } as GetDesignationAgreementDto;
   }
 }

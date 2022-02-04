@@ -1,8 +1,5 @@
 <template>
-  <h5 class="text-muted">Manage designation</h5>
-  <h2>View designations</h2>
   <full-page-container>
-    <p>Designation agreements</p>
     <v-btn
       @click="goToRequestDesignation()"
       tile
@@ -11,10 +8,6 @@
       <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
       Request designation
     </v-btn>
-    <p>
-      Ensure you have an active designation to administer student financial
-      assistance.
-    </p>
   </full-page-container>
 </template>
 
@@ -27,13 +20,9 @@ export default {
   components: { FullPageContainer },
   setup() {
     const router = useRouter();
-
     const goToRequestDesignation = () => {
       return router.push({
         name: InstitutionRoutesConst.DESIGNATION_REQUEST,
-        params: {
-          id: 123,
-        },
       });
     };
 

@@ -12,8 +12,8 @@ import ActiveApplicationEdit from "../views/institution/locations/active-applica
 import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
-import ManageDesignation from "../views/institution/ManageDesignation.vue";
-import DesignationRequest from "../views/institution/DesignationRequest.vue";
+import ManageDesignation from "../views/institution/designations/ManageDesignation.vue";
+import DesignationRequest from "../views/institution/designations/DesignationRequest.vue";
 import InstitutionUserDetails from "../views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,

@@ -73,13 +73,15 @@ export default {
         MANAGE_LOCATIONS_LINK,
       );
       if (goToManageLocations) {
-        goToManageLocations.onclick = () => {
+        goToManageLocations.onclick = (e: any) => {
+          e.preventDefault();
           router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
         };
       }
       const goToManageUsers = document.getElementById(MANAGE_USERS_LINK);
       if (goToManageUsers) {
-        goToManageUsers.onclick = () => {
+        goToManageUsers.onclick = (e: any) => {
+          e.preventDefault();
           router.push({ name: InstitutionRoutesConst.MANAGE_USERS });
         };
       }

@@ -67,6 +67,13 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
     return await this.repo.save(newDesignation);
   }
 
+  /**
+   * Retrieve the designation agreement information and
+   * the associated locations approvals.
+   * @param designationId designation id.
+   * @param institutionId institution id.
+   * @returns designation agreement information.
+   */
   async getDesignationById(
     designationId: number,
     institutionId: number,

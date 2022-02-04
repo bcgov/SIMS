@@ -53,7 +53,7 @@ export default {
     designationModel.institutionName = institutionState.value.operatingName;
     designationModel.institutionType = institutionState.value.institutionType;
     designationModel.isBCPrivate = institutionState.value.isBCPrivate;
-    designationModel.viewMode = DesignationFormViewModes.viewOnly;
+    designationModel.viewMode = DesignationFormViewModes.submission;
     if (isLegalSigningAuthority) {
       // Only populates the signing officer data
       // if the current user is has the proper role.
