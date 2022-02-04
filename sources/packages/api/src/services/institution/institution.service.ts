@@ -24,7 +24,6 @@ import {
 import {
   CreateInstitutionDto,
   InstitutionDto,
-  InstitutionDetailDto,
 } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
@@ -339,24 +338,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       user.lastName = account.user.surname;
       await this.userService.save(user);
     }
-  }
-
-  async institutionDetail(userInfo: UserInfo): Promise<InstitutionDetailDto> {
-    const account = await this.bceidService.getAccountDetails(
-      userInfo.idp_user_name,
-    );
-    const institutionEntity = await this.getInstituteByUserName(
-      userInfo.userName,
-    );
-    const user = await this.userService.getActiveUser(userInfo.userName);
-    const institution = InstitutionDto.fromEntity(institutionEntity);
-    institution.userEmail = user?.email;
-    institution.userFirstName = user?.firstName;
-    institution.userLastName = user?.lastName;
-    return {
-      institution,
-      account,
-    };
   }
 
   /**

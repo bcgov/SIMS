@@ -1,0 +1,34 @@
+import { DesignationAgreementStatus } from "../../../database/entities";
+
+/**
+ * This DTO contains dynamic data that must
+ * be validated by the form.io dryrun validation.
+ */
+export interface SubmitDesignationAgreementDto {
+  dynamicData: any;
+  locations: SubmittedLocationsDto[];
+}
+
+/**
+ * This DTO contains dynamic data that must
+ * be validated by the form.io dryrun validation.
+ */
+export interface SubmittedLocationsDto {
+  locationId: number;
+  requestForDesignation: boolean;
+}
+
+export interface GetDesignationAgreementDto {
+  designationId: number;
+  designationStatus: DesignationAgreementStatus;
+  locationsDesignations: LocationsDesignationsDto[];
+  submittedData: any;
+}
+
+export interface LocationsDesignationsDto {
+  locationId: number;
+  locationName: string;
+  locationData: any;
+  requested: boolean;
+  approved?: boolean;
+}

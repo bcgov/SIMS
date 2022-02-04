@@ -6,6 +6,7 @@ import {
   UserStateForStore,
   LocationStateForStore,
   AuthorizationsForStore,
+  InstitutionStateForStore,
 } from "@/types";
 
 import { actions } from "./actions";
@@ -14,6 +15,7 @@ import { mutations } from "./mutations";
 
 export const state: InstitutionLocationState = {
   userState: {} as UserStateForStore,
+  institutionState: {} as InstitutionStateForStore,
   locationState: [] as LocationStateForStore[],
   authorizationsState: {} as AuthorizationsForStore,
 };
