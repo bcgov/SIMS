@@ -22,21 +22,62 @@ export interface EducationProgramBaseDto {
   cipCode: string;
   nocCode: string;
   sabcCode: string;
-  approvalStatus: string;
+  approvalStatus: ApprovalStatus;
   programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
 }
 
 export interface SummaryEducationProgramDto {
   id: number;
-  name: string;
+  programName: string;
   credentialType: string;
   cipCode: string;
-  offeringsCount: number;
-  approvalStatus: string;
+  totalOfferings: number;
+  approvalStatus: ApprovalStatus;
+  credentialTypeToDisplay: string;
 }
 
 export interface EducationProgramDto extends EducationProgramBaseDto {
+  id: number;
+}
+
+export interface EducationProgramDetails {
+  name: string;
+  description?: string;
+  credentialType: string;
+  cipCode: string;
+  nocCode: string;
+  sabcCode: string;
+  regulatoryBody: string;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  deliveredOnlineAlsoOnsite?: string;
+  sameOnlineCreditsEarned?: string;
+  earnAcademicCreditsOtherInstitution?: string;
+  courseLoadCalculation: string;
+  completionYears: string;
+  eslEligibility: string;
+  hasJointInstitution: string;
+  hasJointDesignatedInstitution: string;
+  programIntensity: ProgramIntensity;
+  institutionProgramCode?: string;
+  minHoursWeek?: string;
+  isAviationProgram?: string;
+  minHoursWeekAvi?: string;
+  entranceRequirements: EntranceRequirements;
+  hasWILComponent: string;
+  isWILApproved?: string;
+  wilProgramEligibility?: string;
+  hasTravel: string;
+  travelProgramEligibility?: string;
+  hasIntlExchange?: string;
+  intlExchangeProgramEligibility?: string;
+  programDeclaration: boolean;
+}
+
+export interface EducationProgramData extends EducationProgramDetails {
+  credentialTypeToDisplay: string;
+  approvalStatus: ApprovalStatus;
+  institutionId: number;
   id: number;
 }
 
@@ -58,6 +99,10 @@ export enum ApprovalStatus {
    * Education Program is pending.
    */
   pending = "pending",
+  /**
+   * Education Program is denied.
+   */
+  denied = "denied",
 }
 
 /**

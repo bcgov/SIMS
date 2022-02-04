@@ -236,7 +236,7 @@ export class InstitutionLocationsController extends BaseController {
     @Param("locationId") locationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<InstitutionLocationTypeDto> {
-    //To retrive institution id
+    //To retrieve institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {

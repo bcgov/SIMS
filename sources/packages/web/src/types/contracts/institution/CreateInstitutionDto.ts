@@ -1,6 +1,6 @@
 import { BCeIDDetailsDto } from "../UserContract";
 /**
- * DTO for institution creation
+ * DTO for institution creation/retrieval.
  */
 export interface InstitutionDto {
   userEmail: string;
@@ -28,6 +28,7 @@ export interface InstitutionDto {
   country: string;
   postalCode: string;
   institutionType: number;
+  institutionTypeName?: string;
 }
 
 export interface UpdateInstitutionDto extends Partial<InstitutionDto> {

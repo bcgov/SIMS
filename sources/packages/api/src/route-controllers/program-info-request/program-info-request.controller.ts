@@ -213,27 +213,29 @@ export class ProgramInfoRequestController {
       if (!application) {
         throw new BadRequestException("Application not found.");
       }
+      // studyStartDate from payload is set as studyStartDate
+      let studyStartDate = payload.studyStartDate;
+      let selectedOfferingIntensity = payload.offeringIntensity;
+      if (payload.selectedOffering) {
+        const offering = await this.offeringService.getOfferingById(
+          payload.selectedOffering,
+        );
+        // if studyStartDate is not in payload
+        // then selectedOffering will be there in payload,
+        // then study start date taken from offering
+        studyStartDate = offering.studyStartDate;
+        selectedOfferingIntensity = offering.offeringIntensity;
+      }
       if (
         !checkOfferingIntensityMismatch(
           application.data.howWillYouBeAttendingTheProgram,
-          payload.offeringIntensity,
+          selectedOfferingIntensity,
         )
       ) {
         throw new CustomNamedError(
           "Offering Intensity does not match the students intensity",
           OFFERING_INTENSITY_MISMATCH,
         );
-      }
-      // studyStartDate from payload is set as studyStartDate
-      let studyStartDate = payload.studyStartDate;
-      if (payload.selectedOffering) {
-        const offering = await this.offeringService.getOfferingById(
-          payload.selectedOffering,
-        );
-        // if  studyStartDate is not in payload
-        // then selectedOffering will be there in payload,
-        // then study start date taken from offering
-        studyStartDate = offering.studyStartDate;
       }
       if (
         !checkStudyStartDateWithinProgramYear(

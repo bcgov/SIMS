@@ -1,14 +1,16 @@
 <template>
-  <p class="text-muted category-header-medium">
-    Institution Details
-  </p>
-  <p class="category-header-large">
-    {{ institutionBasicDetail.operatingName }}
-    <designation-and-restriction-status-badge
-      class="mb-4 ml-4"
-      status="designated"
-    />
-  </p>
+  <div class="mb-2">
+    <div class="muted-heading-text">
+      Institution Details
+    </div>
+    <span class="heading-x-large mb-2">
+      {{ institutionBasicDetail.operatingName }}
+      <designation-and-restriction-status-badge
+        class="mb-4 ml-4"
+        status="designated"
+      />
+    </span>
+  </div>
   <!-- TODO:replace prime tabMenu with vuetify3-->
   <TabMenu :model="items" />
   <router-view />

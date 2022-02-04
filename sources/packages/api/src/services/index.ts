@@ -40,3 +40,4 @@ export * from "./disbursement-schedule-service/disbursement-schedule-service";
 export * from "./disbursement-schedule-errors/disbursement-schedule-errors.service";
 export * from "./restriction/institution-restriction.service";
 export * from "./sfas/sfas-part-time-application.service";
+export * from "./designation-agreement/designation-agreement.service";

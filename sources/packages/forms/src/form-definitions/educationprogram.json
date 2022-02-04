@@ -3220,7 +3220,7 @@
           "value": ""
         }
       ],
-      "content": "If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href=\"StudentAidBC.ca.\">StudentAidBC.ca.</a>",
+      "content": "If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href=\"https://studentaidbc.ca/\">StudentAidBC.ca.</a>",
       "refreshOnChange": false,
       "customClass": "mt-n2",
       "hidden": false,
@@ -3287,7 +3287,7 @@
       "showCharCount": false,
       "showWordCount": false,
       "allowMultipleMasks": false,
-      "id": "eixeu2h"
+      "id": "ea288xg"
     },
     {
       "title": "Panel",
@@ -5706,5 +5706,5 @@
   "path": "educationprogram",
   "machineName": "educationProgram",
   "created": "2021-08-05T18:32:10.610Z",
-  "modified": "2021-11-23T21:04:11.468Z"
+  "modified": "2022-02-01T20:48:58.401Z"
 }

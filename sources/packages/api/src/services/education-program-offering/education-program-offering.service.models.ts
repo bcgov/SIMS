@@ -1,7 +1,4 @@
-import * as dayjs from "dayjs";
-import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
-import { StudyBreak } from "../../database/entities/education-program-offering.model";
-import { EXTENDED_DATE_FORMAT } from "../../utilities";
+import { OfferingIntensity, StudyBreak } from "../../database/entities";
 
 export class EducationProgramOfferingModel {
   id: number;
@@ -10,15 +7,6 @@ export class EducationProgramOfferingModel {
   studyEndDate: Date;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
-  get studyDates(): string {
-    if (this.studyStartDate === null) {
-      return "No program dates";
-    } else {
-      return `${dayjs(this.studyStartDate).format(
-        EXTENDED_DATE_FORMAT,
-      )} - ${dayjs(this.studyEndDate).format(EXTENDED_DATE_FORMAT)}`;
-    }
-  }
 }
 
 export interface ProgramOfferingModel {
@@ -43,18 +31,4 @@ export interface ProgramOfferingModel {
   offeringWILType?: string;
   studyBreaks?: StudyBreak[];
   offeringDeclaration: boolean;
-}
-
-export class ProgramsOfferingSummary {
-  programId: number;
-  programName: string;
-  submittedDate: Date;
-  locationName: string;
-  programStatus: string;
-  offeringsCount: number;
-  formattedSubmittedDate: string;
-}
-export class ProgramsOfferingSummaryPaginated {
-  programsSummary: ProgramsOfferingSummary[];
-  programsCount: number;
 }

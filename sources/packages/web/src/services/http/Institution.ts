@@ -10,12 +10,14 @@ import {
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   InstitutionUserAndCount,
-  AESTInstitutionProgramsSummaryPaginatedDto,
-  SortDBOrder,
+  DataTableSortOrder,
   UserAuth,
-} from "../../types";
+  FieldSortOrder,
+  InstitutionUserTypeAndRoleResponseDto,
+  AESTInstitutionProgramsSummaryDto,
+  PaginatedResults,
+} from "@/types";
 import { AxiosResponse } from "axios";
-import { InstitutionUserTypeAndRoleResponseDto } from "../../types/contracts/institution/InstitutionUserTypeAndRoleResponseDto";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -42,10 +44,11 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getDetail(): Promise<InstitutionDetailDto> {
+  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
     try {
       const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall(
         "institution",
+        authHeader,
       );
       return resp.data;
     } catch (error) {
@@ -213,14 +216,17 @@ export class InstitutionApi extends HttpBaseClient {
     pageSize: number,
     page: number,
     sortColumn: string,
-    sortOrder: SortDBOrder,
-    searchName: string,
-  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
-    const sortByOrder = sortOrder === SortDBOrder.ASC ? "ASC" : "DESC"; //Default sort order
+    sortOrder: DataTableSortOrder,
+    searchCriteria: string,
+  ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
+    const sortByOrder =
+      sortOrder === DataTableSortOrder.ASC
+        ? FieldSortOrder.ASC
+        : FieldSortOrder.DESC; //Default sort order
     try {
       let queryString = "";
-      if (searchName) {
-        queryString += `searchProgramName=${searchName}&`;
+      if (searchCriteria) {
+        queryString += `searchCriteria=${searchCriteria}&`;
       }
       if (sortColumn) {
         queryString += `sortColumn=${sortColumn}&`;
@@ -233,7 +239,7 @@ export class InstitutionApi extends HttpBaseClient {
       }
       queryString += `page=${page}&`;
       const response = await this.apiClient.get(
-        `institution/offering/institution/${institutionId}/programs?${queryString.slice(
+        `institution/education-program/institution/${institutionId}/aest?${queryString.slice(
           0,
           -1,
         )}`,

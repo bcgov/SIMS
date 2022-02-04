@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS sims.designation_agreement_locations;

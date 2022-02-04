@@ -38,7 +38,7 @@ import {
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
-  databaseFieldOfApplicationDataTable,
+  sortApplicationsColumnMap,
 } from "../../utilities";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
@@ -578,12 +578,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (
       sortField &&
       sortField !== "status" &&
-      databaseFieldOfApplicationDataTable(sortField)
+      sortApplicationsColumnMap(sortField)
     ) {
-      applicationQuery.orderBy(
-        databaseFieldOfApplicationDataTable(sortField),
-        sortOrder,
-      );
+      applicationQuery.orderBy(sortApplicationsColumnMap(sortField), sortOrder);
     } else {
       applicationQuery.orderBy(
         `CASE application.applicationStatus

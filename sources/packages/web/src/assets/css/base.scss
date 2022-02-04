@@ -1,7 +1,7 @@
 @import "./global-style-variables.scss";
 html * {
   font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif, "primeicons";
-  font-style: normal;
+  font-style: $font-style-normal;
   line-height: 20px;
   letter-spacing: 0px;
 }
@@ -11,7 +11,7 @@ html * {
 }
 
 .bold-text {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: 700;
   line-height: 36px;
   letter-spacing: -0.2px;
@@ -22,7 +22,7 @@ html * {
   color: #002c71;
   font-size: 24px;
   line-height: 25px;
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: normal;
   user-select: none;
 }
@@ -109,6 +109,36 @@ ul.no-bullets {
   margin-bottom: 0.5rem;
 }
 
+/** muted heading **/
+.muted-heading-text {
+  font-style: $font-style-normal;
+  font-weight: $font-weight-bold;
+  font-size: $font-header-medium;
+  line-height:$line-height-header-md;
+  /* Black */
+  color: $brand-black;
+  opacity: 0.5;
+  margin: 0px;
+}
+
+
+/** large heading **/
+.heading-x-large {
+  font-style: $font-style-normal;
+  font-weight: $font-weight-bold;
+  font-size: $font-header-xlarge;
+  line-height: $line-height-header-xlg;
+  /* identical to box height, or 106% */
+  letter-spacing: -0.2px;
+  /* Black */
+  color: $brand-black;
+  margin: 1px;
+}
+
+// horizontal divider width
+.horizontal-divider {
+  border: 1px solid #E8E8E8;
+} 
 .p-tabview-panels {
   margin-top: 16px;
 }

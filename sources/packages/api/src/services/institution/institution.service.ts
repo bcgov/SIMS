@@ -24,7 +24,6 @@ import {
 import {
   CreateInstitutionDto,
   InstitutionDto,
-  InstitutionDetailDto,
 } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
@@ -37,7 +36,7 @@ import {
 import { AccountDetails } from "../bceid/account-details.model";
 import { InstitutionUserAuthDto } from "../../route-controllers/institution/models/institution-user-auth.dto";
 import {
-  databaseFieldOfUserDataTable,
+  sortUsersColumnMap,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
@@ -341,24 +340,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     }
   }
 
-  async institutionDetail(userInfo: UserInfo): Promise<InstitutionDetailDto> {
-    const account = await this.bceidService.getAccountDetails(
-      userInfo.idp_user_name,
-    );
-    const institutionEntity = await this.getInstituteByUserName(
-      userInfo.userName,
-    );
-    const user = await this.userService.getActiveUser(userInfo.userName);
-    const institution = InstitutionDto.fromEntity(institutionEntity);
-    institution.userEmail = user?.email;
-    institution.userFirstName = user?.firstName;
-    institution.userLastName = user?.lastName;
-    return {
-      institution,
-      account,
-    };
-  }
-
   /**
    * service method to get all institution users with the
    * given institutionId.
@@ -419,7 +400,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       );
     }
     // sorting
-    databaseFieldOfUserDataTable(
+    sortUsersColumnMap(
       sortField ?? DEFAULT_SORT_FIELD_FOR_USER_DATA_TABLE,
     ).forEach((sortElement, index) => {
       if (index === 0) {

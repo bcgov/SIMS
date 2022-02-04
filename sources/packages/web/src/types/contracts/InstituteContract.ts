@@ -48,11 +48,7 @@ export interface AESTInstitutionProgramsSummaryDto {
   submittedDate: Date;
   locationName: string;
   programStatus: ApprovalStatus;
-  offeringsCount: number;
+  totalOfferings: number;
   formattedSubmittedDate: string;
-}
-
-export interface AESTInstitutionProgramsSummaryPaginatedDto {
-  programsSummary: AESTInstitutionProgramsSummaryDto[];
-  programsCount: number;
+  locationId: number;
 }

@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import InstitutionUserSummary from "@/components/aest/InstitutionUserSummary.vue";
+import InstitutionUserSummary from "@/components/common/InstitutionUserSummary.vue";
 import { ClientIdType } from "@/types";
 
 export default {
