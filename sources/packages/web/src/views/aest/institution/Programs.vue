@@ -173,7 +173,6 @@ export default {
       });
     };
     const pageSortEvent = async (event: any) => {
-      console.log(event);
       currentPageSize.value = event?.rows;
       await getProgramsSummaryList(
         props.institutionId,
