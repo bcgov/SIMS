@@ -141,7 +141,7 @@ define FORMIO_SOURCE_REPO_URL
 endef
 
 define FORMIO_SOURCE_REPO_BRANCH
-"v4.0.4-alpha"
+"master"
 endef
 
 define SOURCE_REPOSITORY_REF
