@@ -73,8 +73,6 @@ export class FormService {
   ): Promise<DryRunSubmissionResult> {
     try {
       const authHeader = await this.createAuthHeader();
-      console.log({ data });
-
       const submissionResponse = await axios.post(
         `${this.config.formsUrl}/${formName}/submission?dryrun=1`,
         { data },

@@ -13,6 +13,7 @@ import formio from "@/components/generic/formio.vue";
 import { SetupContext, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { RouteHelper } from "@/helpers";
 
 /**
  * Used do define conditions to change the form.io, for instance,
@@ -65,26 +66,18 @@ export default {
   },
   setup(props: any, context: SetupContext) {
     const router = useRouter();
+    // Regular hyperlinks ids presents inside the form.io definition that
+    // needs execute a redirect in the vue application.
     const MANAGE_LOCATIONS_LINK = "goToManageLocations";
     const MANAGE_USERS_LINK = "goToManageUsers";
 
     const formLoaded = async () => {
-      const goToManageLocations = document.getElementById(
-        MANAGE_LOCATIONS_LINK,
+      RouteHelper.AssociateHyperlinkClick(MANAGE_LOCATIONS_LINK, () =>
+        router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS }),
       );
-      if (goToManageLocations) {
-        goToManageLocations.onclick = (e: any) => {
-          e.preventDefault();
-          router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS });
-        };
-      }
-      const goToManageUsers = document.getElementById(MANAGE_USERS_LINK);
-      if (goToManageUsers) {
-        goToManageUsers.onclick = (e: any) => {
-          e.preventDefault();
-          router.push({ name: InstitutionRoutesConst.MANAGE_USERS });
-        };
-      }
+      RouteHelper.AssociateHyperlinkClick(MANAGE_USERS_LINK, () =>
+        router.push({ name: InstitutionRoutesConst.MANAGE_USERS }),
+      );
     };
 
     const submitDesignation = async (model: DesignationModel) => {

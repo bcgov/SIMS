@@ -42,16 +42,13 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
     requestedLocationsIds: number[],
   ): Promise<DesignationAgreement> {
     const submittedByUser = { id: submittedByUserId } as User;
-
     const newDesignation = new DesignationAgreement();
     newDesignation.institution = { id: institutionId } as Institution;
     newDesignation.submittedData = submittedData;
     newDesignation.designationStatus = DesignationAgreementStatus.Pending;
     newDesignation.submittedBy = submittedByUser;
     newDesignation.submittedDate = submittedDate;
-
     newDesignation.creator = submittedByUser;
-
     newDesignation.designationAgreementLocations = requestedLocationsIds.map(
       (institutionId: number) => {
         const newLocation = new DesignationAgreementLocation();
@@ -63,7 +60,6 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         return newLocation;
       },
     );
-
     return await this.repo.save(newDesignation);
   }
 
