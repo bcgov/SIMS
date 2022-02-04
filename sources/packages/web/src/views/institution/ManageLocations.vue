@@ -1,8 +1,8 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator
-      :title="'Manage Institution Locations'"
-      :subTitle="'Location Summary'"
+      title="Manage Institution Locations"
+      subTitle="Location Summary"
     />
     <v-container>
       <v-card class="mt-6 py-4 px-4">

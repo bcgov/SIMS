@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator :title="locationName" :subTitle="'Programs'" />
+    <HeaderNavigator :title="locationName" subTitle="Programs" />
     <v-container>
       <v-sheet elevation="1" class="mx-auto">
         <v-container>

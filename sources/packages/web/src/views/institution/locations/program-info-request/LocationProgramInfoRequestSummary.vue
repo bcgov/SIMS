@@ -2,7 +2,7 @@
   <div class="p-m-4">
     <HeaderNavigator
       :title="locationName"
-      :subTitle="'Program Information Requests'"
+      subTitle="Program Information Requests"
     />
 
     <v-container>

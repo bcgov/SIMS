@@ -1,14 +1,15 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator :subTitle="'Program Detail'">
-      <template #title>
-        <div class="form-header-title">
-          <a @click="goBack()">
-            <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
-          >
-        </div>
-      </template></HeaderNavigator
+    <HeaderNavigator
+      title="Back to Programs"
+      :routeName="InstitutionRoutesConst.LOCATION_PROGRAMS"
+      :routeParams="{
+        locationId: locationId,
+        locationName: locationName,
+      }"
+      subTitle="Program Detail"
     >
+    </HeaderNavigator>
 
     <v-container>
       <v-sheet elevation="1" class="mx-auto">
@@ -233,6 +234,7 @@ export default {
       offerings,
       goToEditOffering,
       ProgramIntensity,
+      InstitutionRoutesConst,
     };
   },
 };

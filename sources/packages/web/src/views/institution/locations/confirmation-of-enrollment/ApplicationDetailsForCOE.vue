@@ -1,24 +1,17 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator :subTitle="'View Financial Aid Application'">
-      <template #navigationLink>
-        <div class="form-header-title">
-          <a @click="goBack()">
-            <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
-          >
-        </div> </template
-      ><template #menuButton>
-        <v-btn color="primary" class="float-right ml-2" @click="toggle"
-          ><v-icon size="25"> mdi-arrow-down-bold-circle</v-icon>Application
+    <HeaderNavigator
+      title="Back to Programs"
+      :routeName="InstitutionRoutesConst.COE_SUMMARY"
+      subTitle="View Financial Aid Application"
+      ><template #buttons>
+        <v-btn color="primary" @click="toggle"
+          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
           Actions
         </v-btn>
-        <Menu
-          class="mt-n15"
-          ref="menu"
-          :model="items"
-          :popup="true"
-        /> </template
-    ></HeaderNavigator>
+        <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
+      </template>
+    </HeaderNavigator>
 
     <v-container>
       <Information :data="initialData" />
@@ -98,12 +91,6 @@ export default {
     const denyCOEModal = ref({} as ModalDialog<void>);
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
-    };
-
-    const goBack = () => {
-      router.push({
-        name: InstitutionRoutesConst.COE_SUMMARY,
-      });
     };
 
     const loadInitialData = async () => {
@@ -214,7 +201,6 @@ export default {
     };
     return {
       toggle,
-      goBack,
       initialData,
       menu,
       items,
@@ -225,6 +211,7 @@ export default {
       editCOEModal,
       denyCOEModal,
       submitCOEDeny,
+      InstitutionRoutesConst,
     };
   },
 };

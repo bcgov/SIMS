@@ -2,7 +2,7 @@
   <div class="p-m-4">
     <HeaderNavigator
       :title="locationName"
-      :subTitle="'Confirmation Of Enrollment'"
+      subTitle="Confirmation Of Enrollment"
     />
     <v-container>
       <TabView lazy>

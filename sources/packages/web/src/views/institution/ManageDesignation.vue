@@ -1,8 +1,8 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator
-      :title="'Manage Desgination'"
-      :subTitle="'Desgination In Progress'"
+      title="Manage Desgination"
+      subTitle="Desgination In Progress"
     />
     <v-container> </v-container>
   </div>

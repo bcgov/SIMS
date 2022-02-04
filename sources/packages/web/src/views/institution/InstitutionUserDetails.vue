@@ -1,6 +1,6 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator :title="'Manage Users'" :subTitle="'User Summary'" />
+    <HeaderNavigator title="Manage Users" subTitle="User Summary" />
     <v-container>
       <v-card class="mt-6 py-4 px-4">
         <InstitutionUserSummary :clientType="ClientIdType.Institution" />

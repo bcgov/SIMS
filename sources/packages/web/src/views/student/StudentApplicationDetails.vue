@@ -4,20 +4,13 @@
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
-    <HeaderNavigator :subTitle="'Financial aid application'">
-      <template #title>
-        <div class="form-header-title">
-          <a @click="goBack()">
-            <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
-          >
-        </div>
-      </template>
-      <template #buttons>
-        <v-btn
-          color="primary"
-          class="float-right ml-2 form-header-button"
-          @click="toggle"
-          ><v-icon size="25"> mdi-arrow-down-bold-circle</v-icon>Application
+    <HeaderNavigator
+      title="Back to Applications"
+      :routeName="StudentRoutesConst.STUDENT_APPLICATION_SUMMARY"
+      subTitle="Financial aid application"
+      ><template #buttons>
+        <v-btn color="primary" @click="toggle"
+          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
           Options
         </v-btn>
         <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
@@ -140,11 +133,7 @@ export default {
         ApplicationStatus.completed,
       ].includes(applicationDetails.value?.applicationStatus),
     );
-    const goBack = () => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-      });
-    };
+
     const getProgramYear = async (includeInActivePY?: boolean) => {
       programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
         props.id,
@@ -262,7 +251,6 @@ export default {
       StudentRoutesConst,
       showHideCancelApplication,
       showModal,
-      goBack,
       applicationDetails,
       getApplicationDetails,
       dateString,
