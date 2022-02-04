@@ -43,6 +43,7 @@ export * from "./note.model";
 export * from "./note.type";
 export * from "./institution-restriction.model";
 export * from "./sfas-part-time-application.model";
+export * from "./program-intensity.type";
 export * from "./base-sfas-application.model";
 export * from "./designation-agreement.model";
 export * from "./designation-agreement-status.type";

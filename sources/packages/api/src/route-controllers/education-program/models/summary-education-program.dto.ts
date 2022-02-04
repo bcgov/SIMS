@@ -1,15 +1,5 @@
 import { ProgramIntensity } from "../../../database/entities/program-intensity.type";
 
-export class SummaryEducationProgramDto {
-  id: number;
-  name: string;
-  credentialType: string;
-  credentialTypeToDisplay: string;
-  cipCode: string;
-  totalOfferings: number;
-  approvalStatus: string;
-}
-
 export interface SubsetEducationProgramDto {
   id: number;
   name: string;

@@ -12,11 +12,15 @@ import { SaveEducationProgramOfferingDto } from "../../route-controllers/educati
 import {
   EducationProgramOfferingModel,
   ProgramOfferingModel,
-  ProgramsOfferingSummaryPaginated,
 } from "./education-program-offering.service.models";
 import { ApprovalStatus } from "../education-program/constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
-import { SortDBOrder } from "../../types/sortDBOrder";
+import {
+  FieldSortOrder,
+  sortOfferingsColumnMap,
+  PaginationOptions,
+  PaginatedResults,
+} from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
   constructor(@Inject("Connection") connection: Connection) {
@@ -46,16 +50,20 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   /**
    * This is to fetch all the Education Offering
    * that are associated with the Location and Program
-   * @param locationId
-   * @param programId
-   * @returns
+   * @param locationId location id
+   * @param programId program id
+   * @param offeringTypes offering type
+   * @param paginationOptions pagination options
+   * @returns offering summary and total offering count
    */
   async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
+    paginationOptions: PaginationOptions,
     offeringTypes?: OfferingTypes[],
-  ): Promise<EducationProgramOfferingModel[]> {
-    let offeringsQuery = this.repo
+  ): Promise<PaginatedResults<EducationProgramOfferingModel>> {
+    const DEFAULT_SORT_FIELD = "name";
+    const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
       .select([
         "offerings.id",
@@ -70,17 +78,38 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .where("educationProgram.id = :programId", { programId })
       .andWhere("institutionLocation.id = :locationId", { locationId });
     if (offeringTypes) {
-      offeringsQuery = offeringsQuery.andWhere(
-        "offerings.offeringType in (:...offeringTypes)",
-        {
-          offeringTypes,
-        },
+      offeringsQuery.andWhere("offerings.offeringType in (:...offeringTypes)", {
+        offeringTypes,
+      });
+    }
+    // search offering name
+    if (paginationOptions.searchCriteria) {
+      offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+    }
+    // sorting
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
+      offeringsQuery.orderBy(
+        sortOfferingsColumnMap(paginationOptions.sortField),
+        paginationOptions.sortOrder,
+      );
+    } else {
+      // default sort and order
+      offeringsQuery.orderBy(
+        sortOfferingsColumnMap(DEFAULT_SORT_FIELD),
+        FieldSortOrder.ASC,
       );
     }
+    // pagination
+    offeringsQuery
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
 
-    const queryResult = await offeringsQuery.getMany();
+    // result
+    const [records, count] = await offeringsQuery.getManyAndCount();
 
-    return queryResult.map((educationProgramOffering) => {
+    const offerings = records.map((educationProgramOffering) => {
       const item = new EducationProgramOfferingModel();
       item.id = educationProgramOffering.id;
       item.name = educationProgramOffering.name;
@@ -90,6 +119,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       item.offeringIntensity = educationProgramOffering.offeringIntensity;
       return item;
     });
+    return { results: offerings, count: count };
   }
 
   /**
@@ -288,66 +318,5 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    */
   async getOfferingById(offeringId: number): Promise<EducationProgramOffering> {
     return this.repo.findOne(offeringId);
-  }
-
-  /**
-   * Get programs for a particular institution with pagination.
-   * @param institutionId id of the institution.
-   * @param pageSize is the number of rows shown in the table
-   * @param skip is the number of rows that is skipped/offset from the total list.
-   * For example page 2 the skip would be 10 when we select 10 rows per page.
-   * @param sortColumn the sorting column.
-   * @param sortOrder sorting order default is descending.
-   * @param searchProgramName Search the program name in the query
-   * @returns programs, locations and offerings count, programs count under the specified institution.
-   */
-  async getPaginatedProgramsForInstitution(
-    institutionId: number,
-    pageSize?: number,
-    page?: number,
-    sortColumn?: string,
-    sortOrder?: SortDBOrder,
-    searchProgramName?: string,
-  ): Promise<ProgramsOfferingSummaryPaginated> {
-    const sortByColumn = "programs.createdAt"; //Default sort column
-    const paginatedProgramQuery = await this.repo
-      .createQueryBuilder("offerings")
-      .select("programs.id", "programId")
-      .addSelect("programs.name", "programName")
-      .addSelect("programs.createdAt", "submittedDate")
-      .addSelect("locations.name", "locationName")
-      .addSelect("programs.approvalStatus", "programStatus")
-      .addSelect("COUNT(offerings.id)", "offeringsCount")
-      .innerJoin("offerings.educationProgram", "programs")
-      .innerJoin("offerings.institutionLocation", "locations")
-      .where("programs.institution.id = :institutionId", { institutionId });
-    if (searchProgramName) {
-      paginatedProgramQuery.andWhere("programs.name Ilike :searchProgramName", {
-        searchProgramName: `%${searchProgramName}%`,
-      });
-    }
-    paginatedProgramQuery
-      .groupBy("programs.id")
-      .addGroupBy("programs.name")
-      .addGroupBy("programs.createdAt")
-      .addGroupBy("locations.name")
-      .addGroupBy("programs.approvalStatus");
-    const programsCountQuery = paginatedProgramQuery.getRawMany();
-    if (pageSize) {
-      paginatedProgramQuery.limit(pageSize);
-    }
-    if (page) {
-      paginatedProgramQuery.offset(page * pageSize);
-    } else {
-      paginatedProgramQuery.offset(0);
-    }
-    paginatedProgramQuery.orderBy(sortByColumn, sortOrder);
-    const programsQuery = paginatedProgramQuery.getRawMany();
-    const [paginatedProgramOfferingSummaryResult, programsCount] =
-      await Promise.all([programsQuery, programsCountQuery]);
-    return {
-      programsSummary: paginatedProgramOfferingSummaryResult,
-      programsCount: programsCount.length,
-    };
   }
 }

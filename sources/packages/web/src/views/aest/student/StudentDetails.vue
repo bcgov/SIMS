@@ -1,18 +1,20 @@
 <template>
-  <p class="text-muted category-header-medium">
-    Student Details
-  </p>
-  <p class="category-header-large">
-    {{ studentDetails.firstName }} {{ studentDetails.lastName }}
-    <designation-and-restriction-status-badge
-      class="mb-4 ml-4"
-      :status="
-        studentDetails.hasRestriction
-          ? DesignationAndRestrictionStatus.restriction
-          : DesignationAndRestrictionStatus.noRestriction
-      "
-    />
-  </p>
+  <div class="mb-2">
+    <div class="muted-heading-text">
+      Student Details
+    </div>
+    <span class="heading-x-large mb-2">
+      {{ studentDetails.firstName }} {{ studentDetails.lastName }}
+      <designation-and-restriction-status-badge
+        class="mb-4 ml-4"
+        :status="
+          studentDetails.hasRestriction
+            ? DesignationAndRestrictionStatus.restriction
+            : DesignationAndRestrictionStatus.noRestriction
+        "
+      />
+    </span>
+  </div>
   <!-- TODO:replace prime tabMenu with vuetify3-->
   <TabMenu :model="items" />
   <router-view />

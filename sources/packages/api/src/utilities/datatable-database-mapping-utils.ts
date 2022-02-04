@@ -6,8 +6,8 @@
  * @param fieldName
  * @returns fieldName
  */
-export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
-  const databaseFieldOfUserDataTableMap = {
+export const sortUsersColumnMap = (fieldName: string): [] => {
+  const userSortOptions = {
     displayName: ["user.firstName", "user.lastName"],
     email: ["user.email"],
     userType: ["authType.type"],
@@ -15,7 +15,7 @@ export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
     location: ["location.name"],
     isActive: ["user.isActive"],
   };
-  return databaseFieldOfUserDataTableMap[fieldName] ?? [];
+  return userSortOptions[fieldName] ?? [];
 };
 
 /**
@@ -23,15 +23,49 @@ export const databaseFieldOfUserDataTable = (fieldName: string): [] => {
  * with relation
  * respective to application dataTable field name
  * that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * column name
  * @param fieldName
  * @returns fieldName
  */
-export const databaseFieldOfApplicationDataTable = (
-  fieldName: string,
-): string => {
-  // TODO: Update the application field name
-  const databaseFieldOfApplicationDataTableMap = {
+export const sortApplicationsColumnMap = (fieldName: string): string => {
+  const applicationSortOptions = {
     applicationNumber: "application.applicationNumber",
   };
-  return databaseFieldOfApplicationDataTableMap[fieldName] ?? null;
+  return applicationSortOptions[fieldName] ?? null;
+};
+/**
+ * Util to get the list of database field
+ * with respective to program offering dataTable
+ * field names that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * @param fieldName
+ * @returns fieldName
+ */
+export const sortOfferingsColumnMap = (fieldName: string): string => {
+  const offeringSortOptions = {
+    name: "offerings.name",
+  };
+  return offeringSortOptions[fieldName] ?? null;
+};
+
+/**
+ * Util to get the list of database field
+ * with respective to program summary dataTable
+ * field names that need to be sorted.
+ * When a new sort need to be implemented,
+ * Add dataTable field name as its respective database
+ * @param fieldName
+ * @returns fieldName
+ */
+export const sortProgramsColumnMap = (fieldName: string): string => {
+  const programSortOptions = {
+    submittedDate: "programs.createdAt",
+    approvalStatus: "programs.approvalStatus",
+    programName: "programs.name",
+    credentialType: "programs.credentialType",
+  };
+  return programSortOptions[fieldName] ?? null;
 };

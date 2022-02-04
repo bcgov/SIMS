@@ -36,7 +36,7 @@
 /**Typography styles for small header**/
 .category-header-small {
   height: 18px;
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: 12px;
   line-height: 18px;
@@ -46,7 +46,7 @@
 
 /**Typography styles for medium small header**/
 .category-header-medium-small {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
   line-height: $line-height-header-sm;
@@ -54,7 +54,7 @@
 
 /**Typography styles for medium header**/
 .category-header-medium {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-medium;
   line-height: $line-height-header-md;
@@ -62,21 +62,21 @@
 
 /**Typography styles for large header**/
 .category-header-large {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-large;
   line-height: $line-height-header-lg;
 }
 
 .label-medium {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 18px;
 }
 
 .label-small {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: 700;
   font-size: 12px;
   line-height: 18px;
@@ -116,21 +116,21 @@
  removed from all the forms  **/
 
 .formio-component-content h2 strong {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-large;
   line-height: $line-height-header-lg;
 }
 
 .formio-component-content h3 strong {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-medium;
   line-height: $line-height-header-md;
 }
 
 .formio-component-content h4 strong {
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
   line-height: $line-height-header-sm;
@@ -201,7 +201,7 @@
 
 .header-lg {
   color: $brand-blue;
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-large;
   line-height: $line-height-header-lg;
@@ -210,7 +210,7 @@
 
 .header-md {
   color: $brand-blue;
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-medium;
   line-height: $line-height-header-md;
@@ -219,7 +219,7 @@
 
 .header-sm {
   color: $brand-blue;
-  font-style: normal;
+  font-style: $font-style-normal;
   font-weight: $formio-header-wt;
   font-size: $font-header-small;
   line-height: $line-height-header-sm;

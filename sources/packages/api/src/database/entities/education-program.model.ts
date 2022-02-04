@@ -4,11 +4,13 @@ import {
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { Institution } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
+import { ApprovalStatus } from "../../services/education-program/constants";
 
 /**
  * The main resource table to store education programs related information.
@@ -157,10 +159,14 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "approval_status",
   })
-  approvalStatus: string;
+  approvalStatus: ApprovalStatus;
   /**
    * Related institution.
    */
+
+  @RelationId((program: EducationProgram) => program.institution)
+  institutionId: number;
+
   @OneToOne((_) => Institution, { eager: false, cascade: true })
   @JoinColumn({
     name: "institution_id",

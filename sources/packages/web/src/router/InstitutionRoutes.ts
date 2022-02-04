@@ -1,34 +1,34 @@
 import { RouteRecordRaw } from "vue-router";
-import InstitutionDashboard from "../views/institution/InstitutionDashboard.vue";
-import InstitutionProfile from "../views/institution/DynamicInstitutionProfile.vue";
-import InstitutionUserProfile from "../views/institution/InstitutionUserProfile.vue";
-import AppInstitution from "../views/institution/AppInstitution.vue";
-import ManageLocation from "../views/institution/ManageLocations.vue";
-import LocationPrograms from "../views/institution/locations/programs/LocationPrograms.vue";
-import LocationUsers from "../views/institution/LocationUsers.vue";
-import LocationProgramInfoRequestSummary from "../views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
-import ActiveApplicationsSummary from "../views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
-import ActiveApplicationEdit from "../views/institution/locations/active-applications/ActiveApplicationReportAChange.vue";
-import LocationCOESummary from "../views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
-import AddInstitutionLocation from "../views/institution/AddInstitutionLocation.vue";
-import EditInstitutionLocation from "../views/institution/EditInstitutionLocation.vue";
+import InstitutionDashboard from "@/views/institution/InstitutionDashboard.vue";
+import InstitutionProfile from "@/views/institution/DynamicInstitutionProfile.vue";
+import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.vue";
+import AppInstitution from "@/views/institution/AppInstitution.vue";
+import ManageLocation from "@/views/institution/ManageLocations.vue";
+import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
+import LocationUsers from "@/views/institution/LocationUsers.vue";
+import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
+import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
+import ActiveApplicationEdit from "@/views/institution/locations/active-applications/ActiveApplicationReportAChange.vue";
+import LocationCOESummary from "@/views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
+import AddInstitutionLocation from "@/views/institution/AddInstitutionLocation.vue";
+import EditInstitutionLocation from "@/views/institution/EditInstitutionLocation.vue";
 import ManageDesignation from "../views/institution/designations/ManageDesignation.vue";
 import DesignationRequest from "../views/institution/designations/DesignationRequest.vue";
-import InstitutionUserDetails from "../views/institution/InstitutionUserDetails.vue";
+import InstitutionUserDetails from "@/views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
   SharedRouteConst,
-} from "../constants/routes/RouteConstants";
-import Login from "../views/institution/Login.vue";
-import { ClientIdType } from "../types/contracts/ConfigContract";
-import { AuthStatus, AppRoutes } from "../types";
-import ManageInstitutionSideBar from "../components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
-import InstitutionHomeSideBar from "../components/layouts/Institution/sidebar/HomeSideBar.vue";
-import LocationProgramAddEdit from "../views/institution/locations/programs/LocationProgramAddEdit.vue";
-import LocationCOERequest from "../views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
-import LocationProgramView from "../views/institution/locations/programs/LocationProgramView.vue";
-import LocationProgramOffering from "../views/institution/locations/programs/LocationProgramOffering.vue";
-import LocationEditProgramInfoRequest from "../views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
+} from "@/constants/routes/RouteConstants";
+import Login from "@/views/institution/Login.vue";
+import { ClientIdType } from "@/types/contracts/ConfigContract";
+import { AuthStatus, AppRoutes } from "@/types";
+import ManageInstitutionSideBar from "@/components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
+import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/HomeSideBar.vue";
+import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
+import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
+import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
+import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
+import LocationEditProgramInfoRequest from "@/views/institution/locations/program-info-request/LocationEditProgramInfoRequest.vue";
 import { InstitutionUserTypes } from "@/types/contracts/InstitutionRouteMeta";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
@@ -108,25 +108,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
         components: {
           default: LocationPrograms,
-          sidebar: InstitutionHomeSideBar,
-        },
-        props: true,
-        meta: {
-          clientType: ClientIdType.Institution,
-          checkAllowedLocation: {
-            userTypes: [
-              InstitutionUserTypes.admin,
-              InstitutionUserTypes.locationManager,
-              InstitutionUserTypes.user,
-            ],
-          },
-        },
-      },
-      {
-        path: AppRoutes.LocationProgramsView,
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-        components: {
-          default: LocationProgramView,
           sidebar: InstitutionHomeSideBar,
         },
         props: true,
