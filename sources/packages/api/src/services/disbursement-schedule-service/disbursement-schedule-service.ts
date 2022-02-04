@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import {
   CustomNamedError,
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
+  addDays,
+  COE_WINDOW,
 } from "../../utilities";
 import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
@@ -19,7 +21,7 @@ import {
   DisbursementValue,
   OfferingIntensity,
 } from "../../database/entities";
-import { Disbursement } from "./disbursement-schedule.models";
+import { Disbursement, EnrollmentPeriod } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
@@ -251,5 +253,56 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .set({ documentNumber: documentNumber })
       .where("application.id = :applicationId", { applicationId })
       .execute();
+  }
+
+  /**
+   * Get the list of disbursement schedules for a given location as COE.
+   ** COE values are retrieved only when an application reaches enrollment status.
+   ** When the first COE is approved, application moves to complete status as per workflow but second COE is still
+   ** waiting to be approved by institution.
+   * @param locationId
+   * @returns List of COE for given location.
+   */
+  async getCOEByLocation(
+    locationId: number,
+    enrollmentPeriod: EnrollmentPeriod,
+  ): Promise<DisbursementSchedule[]> {
+    const coeThresholdDate = addDays(new Date(), COE_WINDOW);
+    const coeQuery = this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.coeStatus",
+        "application.applicationNumber",
+        "application.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      });
+    if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
+      coeQuery.andWhere(
+        "disbursementSchedule.disbursementDate > :coeThresholdDate",
+        { coeThresholdDate },
+      );
+    } else {
+      coeQuery.andWhere(
+        "disbursementSchedule.disbursementDate <= :coeThresholdDate",
+        { coeThresholdDate },
+      );
+    }
+    coeQuery.orderBy("disbursementSchedule.coeStatus");
+    return coeQuery.getMany();
   }
 }

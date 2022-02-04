@@ -3,14 +3,18 @@ import {
   ApplicationDetailsForCOEDTO,
   COEDeniedReasonDto,
   DenyConfirmationOfEnrollment,
+  EnrollmentPeriod,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
-  public async getCOESummary(locationId: number): Promise<COESummaryDTO[]> {
+  public async getCOESummary(
+    locationId: number,
+    enrollmentPeriod: EnrollmentPeriod,
+  ): Promise<COESummaryDTO[]> {
     try {
       const response = await this.apiClient.get(
-        `institution/location/${locationId}/confirmation-of-enrollment`,
+        `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`,
         this.addAuthHeader(),
       );
       return response.data;

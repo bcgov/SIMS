@@ -7,10 +7,6 @@ export enum COEStatus {
    */
   required = "Required",
   /**
-   * Confiramtion of Enrollment is not required, not used in our current workflow but having it as an placeholder
-   */
-  notRequired = "Not Required",
-  /**
    * Confirmation of Enrollment is Completed
    */
   completed = "Completed",
@@ -18,8 +14,4 @@ export enum COEStatus {
    * Confirmation of Enrollment is Declined,  not used in our current workflow but having it as an placeholder
    */
   declined = "Declined",
-  /**
-   * Confirmation of Enrollment is Submitted, when institution clicks confirm COE, first the application will move to Submitted status
-   */
-  submitted = "Submitted",
 }

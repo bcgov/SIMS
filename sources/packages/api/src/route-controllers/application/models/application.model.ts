@@ -6,6 +6,7 @@ import {
   COEStatus,
   Application,
   Assessment,
+  OfferingIntensity,
 } from "../../../database/entities";
 import {
   dateString,
@@ -160,11 +161,13 @@ export interface ApplicationStatusToBeUpdatedDto {
 }
 export interface COESummaryDTO {
   applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  studyStartPeriod: Date;
+  studyEndPeriod: Date;
   applicationId: number;
-  coeStatus: string;
+  coeStatus: COEStatus;
   fullName: string;
+  disbursementScheduleId: number;
+  disbursementDate: Date;
 }
 
 export interface ProgramYearOfApplicationDto {
@@ -196,6 +199,7 @@ export interface NOAApplicationDto {
   fullName: string;
   programName: string;
   locationName: string;
+  offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   msfaaNumber: string;
