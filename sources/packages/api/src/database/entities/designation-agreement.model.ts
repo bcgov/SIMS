@@ -18,7 +18,9 @@ import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
- *
+ * Designation agreement created by the institution for the Ministry assessment.
+ * The Ministry will check the data provide and approve of deny the request,
+ * providing also start/end dates and removing/adding locations.
  */
 @Entity({ name: TableNames.DesignationAgreements })
 export class DesignationAgreement extends RecordDataModel {

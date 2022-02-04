@@ -297,7 +297,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           userTypes: [InstitutionUserTypes.admin],
         },
       },
-
       {
         path: AppRoutes.DesignationRequest,
         name: InstitutionRoutesConst.DESIGNATION_REQUEST,
@@ -310,7 +309,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           userTypes: [InstitutionUserTypes.admin],
         },
       },
-
       {
         path: AppRoutes.InstitutionProfileEdit,
         name: InstitutionRoutesConst.INSTITUTION_PROFILE_EDIT,

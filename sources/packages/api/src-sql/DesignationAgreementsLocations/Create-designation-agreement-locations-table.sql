@@ -7,8 +7,12 @@ CREATE TABLE IF NOT EXISTS sims.designation_agreement_locations (
   -- Audit columns
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE SET NULL,
-  modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE SET NULL
+  creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
+  SET
+    NULL,
+    modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
+  SET
+    NULL
 );
 
 -- ## Comments
@@ -22,12 +26,12 @@ COMMENT ON COLUMN sims.designation_agreement_locations.location_id IS 'Location 
 
 COMMENT ON COLUMN sims.designation_agreement_locations.requested IS 'Indicates if the institution included the location in the designation agreement.';
 
-COMMENT ON COLUMN sims.designation_agreement_locations.approved IS 'Indicates if the Ministry approved th location to be part of the designation agreement.';
+COMMENT ON COLUMN sims.designation_agreement_locations.approved IS 'Indicates if the Ministry approved the location to be part of the designation agreement.';
 
-COMMENT ON COLUMN sims.designation_agreement_locations.created_at IS 'Record creation timestamp';
+COMMENT ON COLUMN sims.designation_agreement_locations.created_at IS 'Record creation timestamp.';
 
-COMMENT ON COLUMN sims.designation_agreement_locations.updated_at IS 'Record update timestamp';
+COMMENT ON COLUMN sims.designation_agreement_locations.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.designation_agreement_locations.creator IS 'Creator of the record. Null specified the record is created by system';
+COMMENT ON COLUMN sims.designation_agreement_locations.creator IS 'Creator of the record. Null specified the record is created by system.';
 
-COMMENT ON COLUMN sims.designation_agreement_locations.modifier IS 'Modifier of the record. Null specified the record is modified by system';
+COMMENT ON COLUMN sims.designation_agreement_locations.modifier IS 'Modifier of the record. Null specified the record is modified by system.';

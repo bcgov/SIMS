@@ -12,8 +12,8 @@ import {
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
- * and then need to be reviewed by the Ministry for approval or denial. After the Ministry approves
- * the a designation it could also edit dates and locations as needed.
+ * and then need to be reviewed by the Ministry for approval or denial. While the Ministry is
+ * approving the designation it can also edit dates and locations as needed.
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {

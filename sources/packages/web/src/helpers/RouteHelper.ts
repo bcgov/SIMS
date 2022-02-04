@@ -122,7 +122,7 @@ export class RouteHelper {
   }
 
   /**
-   * Associates a plain html hyperlink, like the one that can be declared in
+   * Associates a plain html hyperlink, like the ones that can be declared in
    * form.io definitions, and allow the association with a method call, for
    * instance to redirect the user to a Vue route.
    * @param htmlElementId html hyperlink id.
