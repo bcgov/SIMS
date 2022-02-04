@@ -13,7 +13,10 @@
         </div>
       </template>
       <template #buttons>
-        <v-btn color="primary" class="float-right ml-2" @click="toggle"
+        <v-btn
+          color="primary"
+          class="float-right ml-2 form-header-button"
+          @click="toggle"
           ><v-icon size="25"> mdi-arrow-down-bold-circle</v-icon>Application
           Options
         </v-btn>
