@@ -91,7 +91,7 @@ export class DesignationAgreementController {
     @Param("designationId") designationId: number,
   ): Promise<GetDesignationAgreementDto> {
     const designation =
-      await this.designationAgreementService.getDesignationById(
+      await this.designationAgreementService.getInstitutionDesignationById(
         designationId,
         userToken.authorizations.institutionId,
       );

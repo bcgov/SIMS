@@ -12,10 +12,9 @@ export class DesignationAgreementApi extends HttpBaseClient {
     designationAgreement: SubmitDesignationAgreementDto,
   ): Promise<void> {
     try {
-      await this.apiClient.post(
+      await this.postCall(
         "institution/designation-agreement",
         designationAgreement,
-        this.addAuthHeader(),
       );
     } catch (error) {
       this.handleRequestError(error);

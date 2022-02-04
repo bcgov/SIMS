@@ -42,6 +42,9 @@ export class DesignationAgreement extends RecordDataModel {
   institution: Institution;
   /**
    * Dynamic data that represents the designation agreement requested by the Institution to be approved by the Ministry.
+   * The data is going to be the result of an area in the form.io that is not required to have any constraints and could
+   * be freely changed by the Ministry. The data under this particular section is also not supposed to be used anywhere
+   * in the API, only to populate the same form again for visualization.
    */
   @Column({
     name: "submitted_data",
@@ -102,7 +105,7 @@ export class DesignationAgreement extends RecordDataModel {
   /**
    * Ministry user that approved or declined the designation agreement.
    */
-  @ManyToOne(() => User, { eager: false, cascade: false })
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: true })
   @JoinColumn({
     name: "assessed_by",
     referencedColumnName: ColumnNames.ID,

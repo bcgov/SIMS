@@ -70,7 +70,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * @param institutionId institution id.
    * @returns designation agreement information.
    */
-  async getDesignationById(
+  async getInstitutionDesignationById(
     designationId: number,
     institutionId: number,
   ): Promise<DesignationAgreement> {
