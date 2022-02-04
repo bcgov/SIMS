@@ -36,7 +36,6 @@ export class DesignationAgreementController {
    * Initiates a new designation agreement request. This action
    * is meant to me initiated by the institution signing officer
    * for further assessment of the Ministry.
-   * @param institutionId institution id requesting the designation.
    * @returns the new designation agreement id created.
    */
   @IsInstitutionAdmin()

@@ -89,7 +89,7 @@ export default {
           })),
         } as SubmitDesignationAgreementDto);
         toastMessage.success("Submitted", "Designation agreement submitted.");
-        await router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
+        router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
         toastMessage.success(
           "Unexpected error",
