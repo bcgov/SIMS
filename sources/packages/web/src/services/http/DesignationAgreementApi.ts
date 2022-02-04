@@ -11,15 +11,10 @@ export class DesignationAgreementApi extends HttpBaseClient {
   async submitDesignationAgreement(
     designationAgreement: SubmitDesignationAgreementDto,
   ): Promise<void> {
-    try {
-      await this.postCall(
-        "institution/designation-agreement",
-        designationAgreement,
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    await this.postCall(
+      "institution/designation-agreement",
+      designationAgreement,
+    );
   }
 
   async getDesignationAgreement(
