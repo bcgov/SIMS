@@ -19,7 +19,7 @@ import { RecordDataModel } from "./record.model";
 
 /**
  * Designation agreement created by the institution for the Ministry assessment.
- * The Ministry will check the data provide and approve of deny the request,
+ * The Ministry will check the data provided and approve or deny the request,
  * providing also start/end dates and removing/adding locations.
  */
 @Entity({ name: TableNames.DesignationAgreements })
