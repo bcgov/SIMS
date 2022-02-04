@@ -21,8 +21,8 @@ import {
   GetDesignationAgreementDto,
   SubmitDesignationAgreementDto,
 } from "./models/designation-agreement.model";
-import { InstitutionUserRoles } from "src/auth/user-types.enum";
-import { FormNames } from "src/services/form/constants";
+import { InstitutionUserRoles } from "../../auth/user-types.enum";
+import { FormNames } from "../../services/form/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/designation-agreement")

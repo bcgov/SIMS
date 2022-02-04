@@ -26,7 +26,7 @@ export class DesignationAgreementService {
   public async getDesignationAgreement(
     designationId: number,
   ): Promise<GetDesignationAgreementDto> {
-    return await ApiClient.DesignationAgreement.getDesignationAgreement(
+    return ApiClient.DesignationAgreement.getDesignationAgreement(
       designationId,
     );
   }

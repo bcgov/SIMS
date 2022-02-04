@@ -31,7 +31,7 @@ import {
   DesignationModel,
   DesignationFormViewModes,
   DesignationLocationsListItem,
-} from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
+} from "@/components/common/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";

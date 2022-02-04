@@ -50,17 +50,17 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
     newDesignation.submittedDate = submittedDate;
     newDesignation.creator = submittedByUser;
     newDesignation.designationAgreementLocations = requestedLocationsIds.map(
-      (institutionId: number) => {
+      (locationId: number) => {
         const newLocation = new DesignationAgreementLocation();
         newLocation.institutionLocation = {
-          id: institutionId,
+          id: locationId,
         } as InstitutionLocation;
         newLocation.requested = true;
         newLocation.creator = submittedByUser;
         return newLocation;
       },
     );
-    return await this.repo.save(newDesignation);
+    return this.repo.save(newDesignation);
   }
 
   /**
