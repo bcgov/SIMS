@@ -1,59 +1,60 @@
 <template>
   <div class="p-m-4">
-    <HeaderNavigator :title="locationName" subTitle="Programs" />
+    <HeaderNavigator
+      :title="locationDetails?.locationName"
+      subTitle="Programs"
+    />
     <v-container>
-    <p class="muted-heading-text">{{ locationDetails?.locationName }}</p>
-    <p class="heading-x-large">Programs</p>
-    <v-card class="mt-4">
+      <v-card class="mt-4">
         <v-container>
-        <div>
-          <span class="color-blue category-header-large ml-2"
-            >All programs</span
-          >
-          <div class="float-right">
-            <InputText
-              v-model="searchBox"
-              placeholder="Search Program"
-              @keyup.enter="searchProgramTable()"
-            />
-            <v-btn
-              @click="searchProgramTable()"
-              tile
-              class="mx-2 primary-btn-background"
+          <div>
+            <span class="color-blue category-header-large ml-2"
+              >All programs</span
             >
-              <font-awesome-icon :icon="['fas', 'search']" />
-            </v-btn>
-            <v-btn
-              class="float-right mb-2 primary-btn-background"
-              @click="goToAddNewProgram()"
-            >
+            <div class="float-right">
+              <InputText
+                v-model="searchBox"
+                placeholder="Search Program"
+                @keyup.enter="searchProgramTable()"
+              />
+              <v-btn
+                @click="searchProgramTable()"
+                tile
+                class="mx-2 primary-btn-background"
+              >
+                <font-awesome-icon :icon="['fas', 'search']" />
+              </v-btn>
+              <v-btn
+                class="float-right mb-2 primary-btn-background"
+                @click="goToAddNewProgram()"
+              >
                 <v-icon size="25" left> mdi-open-in-new </v-icon>
                 Create New Program
               </v-btn>
+            </div>
           </div>
-        </div>
-        <DataTable
-          :value="programAndCount.results"
-          :lazy="true"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="programAndCount.count"
-          @page="paginationAndSortEvent($event)"
-          @sort="paginationAndSortEvent($event)"
-          :loading="loading"
-        >
-          <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
-          <Column
-            :field="ProgramSummaryFields.ProgramName"
-            header="Program Name"
-            :sortable="true"
-          ></Column>
-          <Column
-            :field="ProgramSummaryFields.CredentialType"
-            header="Credential"
-            :sortable="true"
+          <DataTable
+            :value="programAndCount.results"
+            :lazy="true"
+            :paginator="true"
+            :rows="DEFAULT_PAGE_LIMIT"
+            :rowsPerPageOptions="PAGINATION_LIST"
+            :totalRecords="programAndCount.count"
+            @page="paginationAndSortEvent($event)"
+            @sort="paginationAndSortEvent($event)"
+            :loading="loading"
           >
+            <Column :field="ProgramSummaryFields.CipCode" header="CIP"></Column>
+            <Column
+              :field="ProgramSummaryFields.ProgramName"
+              header="Program Name"
+              :sortable="true"
+            ></Column>
+            <Column
+              :field="ProgramSummaryFields.CredentialType"
+              header="Credential"
+              :sortable="true"
+            >
               <template #body="slotProps">
                 <div>
                   {{ slotProps.data.credentialTypeToDisplay }}
@@ -61,17 +62,17 @@
               </template></Column
             >
             <Column
-            :field="ProgramSummaryFields.TotalOfferings"
+              :field="ProgramSummaryFields.TotalOfferings"
               header="Offerings"
             ></Column>
-          <Column
-            :field="ProgramSummaryFields.ApprovalStatus"
-            header="Status"
-            :sortable="true"
+            <Column
+              :field="ProgramSummaryFields.ApprovalStatus"
+              header="Status"
+              :sortable="true"
               ><template #body="slotProps">
-              <program-status-chip
-                :status="slotProps.data.approvalStatus"
-              ></program-status-chip></template
+                <program-status-chip
+                  :status="slotProps.data.approvalStatus"
+                ></program-status-chip></template
             ></Column>
             <Column>
               <template #body="slotProps">
@@ -82,12 +83,13 @@
             </Column>
           </DataTable>
         </v-container>
-    </v-card>
+      </v-card>
     </v-container>
   </div>
 </template>
 
 <script lang="ts">
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { useRouter } from "vue-router";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -106,9 +108,7 @@ import { ref, watch, onMounted } from "vue";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 
 export default {
-  components: { ProgramStatusChip },
-    HeaderNavigator,
-  },
+  components: { HeaderNavigator, ProgramStatusChip },
   props: {
     locationId: {
       type: Number,
