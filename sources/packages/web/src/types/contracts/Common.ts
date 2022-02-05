@@ -7,7 +7,7 @@ export interface MenuModel {
 
 export interface Address {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   postalCode: string;
   provinceState: string;

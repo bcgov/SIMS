@@ -1,7 +1,7 @@
 import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
-
+import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
 export interface ProgramOfferingBaseDTO {
   offeringName: string;
   studyStartDate: Date;
@@ -52,3 +52,36 @@ export interface ProgramOfferingDto extends ProgramOfferingBaseDTO {
 export interface ProgramOfferingDetailsDto {
   studyStartDate?: Date;
 }
+
+/**
+ * Transformation util for Program Offering.
+ * @param offering
+ * @returns ProgramOfferingDto
+ */
+export const transformToProgramOfferingDto = (
+  offering: ProgramOfferingModel,
+): ProgramOfferingDto => {
+  return {
+    id: offering.id,
+    offeringName: offering.name,
+    studyStartDate: offering.studyStartDate,
+    studyEndDate: offering.studyEndDate,
+    actualTuitionCosts: offering.actualTuitionCosts,
+    programRelatedCosts: offering.programRelatedCosts,
+    mandatoryFees: offering.mandatoryFees,
+    exceptionalExpenses: offering.exceptionalExpenses,
+    tuitionRemittanceRequestedAmount: offering.tuitionRemittanceRequestedAmount,
+    offeringDelivered: offering.offeringDelivered,
+    lacksStudyDates: offering.lacksStudyDates,
+    lacksStudyBreaks: offering.lacksStudyBreaks,
+    lacksFixedCosts: offering.lacksFixedCosts,
+    tuitionRemittanceRequested: offering.tuitionRemittanceRequested,
+    offeringIntensity: offering.offeringIntensity,
+    yearOfStudy: offering.yearOfStudy,
+    showYearOfStudy: offering.showYearOfStudy,
+    hasOfferingWILComponent: offering.hasOfferingWILComponent,
+    offeringWILType: offering.offeringWILType,
+    studyBreaks: offering.studyBreaks,
+    offeringDeclaration: offering.offeringDeclaration,
+  };
+};

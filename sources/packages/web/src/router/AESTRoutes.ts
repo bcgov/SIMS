@@ -28,6 +28,8 @@ import { AppRoutes, AuthStatus } from "@/types";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
+import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
+import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -157,6 +159,30 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         props: true,
         components: {
           default: ProgramDetails,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ViewProgram,
+        name: AESTRoutesConst.VIEW_PROGRAM,
+        props: true,
+        components: {
+          default: LocationProgramAddEdit,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.ViewOffering,
+        name: AESTRoutesConst.VIEW_OFFERING,
+        props: true,
+        components: {
+          default: LocationProgramOffering,
           sidebar: AESTHomeSideBar,
         },
         meta: {

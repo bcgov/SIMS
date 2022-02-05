@@ -10,3 +10,12 @@ export enum FieldSortOrder {
  */
 export const DEFAULT_PAGE_LIMIT = 10;
 export const DEFAULT_PAGE_NUMBER = 0;
+
+// pagination option
+export interface PaginationOptions {
+  searchCriteria?: string;
+  sortField?: string;
+  sortOrder?: FieldSortOrder;
+  page: number;
+  pageLimit: number;
+}

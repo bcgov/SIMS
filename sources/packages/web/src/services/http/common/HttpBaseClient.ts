@@ -26,9 +26,12 @@ export default abstract class HttpBaseClient {
     console.log(e);
   }
 
-  protected async getCall(url: string): Promise<any> {
+  protected async getCall(url: string, authHeader?: any): Promise<any> {
     try {
-      const response = await this.apiClient.get(url, this.addAuthHeader());
+      const response = await this.apiClient.get(
+        url,
+        authHeader ?? this.addAuthHeader(),
+      );
       return response;
     } catch (error) {
       this.handleRequestError(error);

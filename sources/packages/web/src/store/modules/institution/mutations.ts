@@ -5,9 +5,17 @@ import {
   AuthorizationsForStore,
   LocationStateForStore,
   UserStateForStore,
+  InstitutionStateForStore,
 } from "@/types";
 
 export const mutations: MutationTree<InstitutionLocationState> = {
+  setInstitutionDetails(
+    state: InstitutionLocationState,
+    institutionState: InstitutionStateForStore,
+  ) {
+    state.institutionState = institutionState;
+  },
+
   setMyDetailsState(
     state: InstitutionLocationState,
     userState: UserStateForStore,

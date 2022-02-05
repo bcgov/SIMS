@@ -111,6 +111,13 @@ export interface AuthorizationsForStore {
   institutionId: number;
   authorizations: InstitutionUserAuthRolesAndLocation[];
 }
+
+export interface InstitutionStateForStore {
+  operatingName: string;
+  institutionType: string;
+  isBCPrivate: boolean;
+}
+
 export interface LocationStateForStore {
   id: number;
   name: string;
@@ -128,6 +135,7 @@ export interface InstitutionUserAndAuthDetailsForStore {
     email: string;
     firstName: string;
     lastName: string;
+    userFullName: string;
     isActive: boolean;
     isAdmin: boolean;
   };
@@ -141,6 +149,11 @@ export interface InstitutionUserAndCount {
 export interface InstitutionUserAndCountForDataTable {
   users: InstitutionUserViewModel[];
   totalUsers: number;
+}
+
+export enum InstitutionUserRoles {
+  legalSigningAuthority = "legal-signing-authority",
+  primaryContact = "primary-contact",
 }
 
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";

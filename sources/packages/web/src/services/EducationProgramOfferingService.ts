@@ -1,10 +1,15 @@
 import ApiClient from "./http/ApiClient";
 import {
-  EducationProgramOfferingDto,
   OptionItemDto,
   OfferingIntensity,
   OfferingDTO,
   ProgramOfferingDetailsDto,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  DataTableSortOrder,
+  OfferingSummaryFields,
+  EducationProgramOfferingDto,
+  PaginatedResults,
 } from "../types";
 
 export class EducationProgramOfferingService {
@@ -34,13 +39,36 @@ export class EducationProgramOfferingService {
     );
   }
 
+  /**
+   * To get the offering summary
+   * @param locationId, location id
+   * @param programId, program id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchCriteria, keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns offering summary.
+   */
   public async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-  ): Promise<EducationProgramOfferingDto[]> {
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchCriteria?: string,
+    sortField?: OfferingSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
     return ApiClient.EducationProgramOffering.getAllEducationProgramOffering(
       locationId,
       programId,
+      page,
+      pageCount,
+      searchCriteria,
+      sortField,
+      sortOrder,
     );
   }
 
@@ -107,11 +135,11 @@ export class EducationProgramOfferingService {
 
   /**
    * Gets program offerings for location authorized
-   * for a apticular institution.
+   * for a particular institution.
    * @param locationId location id.
    * @param programId program id.
    * @returns program offerings for location authorized
-   * for a apticular institution.
+   * for a particular institution.
    */
   public async getProgramOfferingsForLocationForInstitution(
     locationId: number,
@@ -124,6 +152,52 @@ export class EducationProgramOfferingService {
       programId,
       programYearId,
       includeInActivePY,
+    );
+  }
+
+  /**
+   * To get the offering summary for ministry
+   * @param locationId, location id
+   * @param programId, program id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchCriteria, keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns offering summary.
+   */
+  public async getOfferingSummaryForAEST(
+    locationId: number,
+    programId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchCriteria?: string,
+    sortField?: OfferingSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedResults<EducationProgramOfferingDto>> {
+    return ApiClient.EducationProgramOffering.getOfferingSummaryForAEST(
+      locationId,
+      programId,
+      page,
+      pageCount,
+      searchCriteria,
+      sortField,
+      sortOrder,
+    );
+  }
+
+  /**
+   * Offering details for ministry users
+   * @param offeringId offering id
+   * @returns Offering details
+   */
+  public async getProgramOfferingForAEST(
+    offeringId: number,
+  ): Promise<OfferingDTO> {
+    return ApiClient.EducationProgramOffering.getProgramOfferingForAEST(
+      offeringId,
     );
   }
 }

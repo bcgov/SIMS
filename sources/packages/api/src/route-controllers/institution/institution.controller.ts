@@ -35,6 +35,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToInstitutionUserRespDto,
+  getUserFullName,
 } from "../../utilities";
 import {
   InstitutionLocationUserAuthDto,
@@ -107,58 +108,75 @@ export class InstitutionController extends BaseController {
   }
 
   @Get()
-  async institutionDetail(
+  async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionDetailDto> {
-    const institutionDetail = await this.institutionService.institutionDetail(
-      token,
+    // BCeID account information.
+    const accountRequest = this.accountService.getAccountDetails(
+      token.idp_user_name,
     );
+    // Institution account.
+    const institutionDetailRequest =
+      this.institutionService.getInstituteByUserName(token.userName);
+    // User account in SIMS.
+    const userRequest = this.userService.getActiveUser(token.userName);
+    // Execute all request in parallel.
+    const [account, institutionDetail, user] = await Promise.all([
+      accountRequest,
+      institutionDetailRequest,
+      userRequest,
+    ]);
+
     const isBCPrivate =
-      INSTITUTION_TYPE_BC_PRIVATE ===
-      institutionDetail.institution.institutionType;
+      INSTITUTION_TYPE_BC_PRIVATE === institutionDetail.institutionType.id;
     return {
       institution: {
-        userFirstName: institutionDetail.institution.userFirstName,
-        userLastName: institutionDetail.institution.userLastName,
-        userEmail: institutionDetail.institution.userEmail,
-        legalOperatingName: institutionDetail.institution.legalOperatingName,
-        operatingName: institutionDetail.institution.operatingName,
-        primaryPhone: institutionDetail.institution.primaryPhone,
-        primaryEmail: institutionDetail.institution.primaryEmail,
-        website: institutionDetail.institution.website,
-        regulatingBody: institutionDetail.institution.regulatingBody,
-        establishedDate: institutionDetail.institution.establishedDate,
-        primaryContactEmail: institutionDetail.institution.primaryContactEmail,
+        userFirstName: user.firstName,
+        userLastName: user.lastName,
+        userEmail: user.email,
+        legalOperatingName: institutionDetail.legalOperatingName,
+        operatingName: institutionDetail.operatingName,
+        primaryPhone: institutionDetail.primaryPhone,
+        primaryEmail: institutionDetail.primaryEmail,
+        website: institutionDetail.website,
+        regulatingBody: institutionDetail.regulatingBody,
+        establishedDate: institutionDetail.establishedDate,
+        primaryContactEmail:
+          institutionDetail.institutionPrimaryContact.primaryContactEmail,
         primaryContactFirstName:
-          institutionDetail.institution.primaryContactFirstName,
+          institutionDetail.institutionPrimaryContact.primaryContactFirstName,
         primaryContactLastName:
-          institutionDetail.institution.primaryContactLastName,
-        primaryContactPhone: institutionDetail.institution.primaryContactPhone,
-        legalAuthorityEmail: institutionDetail.institution.legalAuthorityEmail,
+          institutionDetail.institutionPrimaryContact.primaryContactLastName,
+        primaryContactPhone:
+          institutionDetail.institutionPrimaryContact.primaryContactPhone,
+        legalAuthorityEmail:
+          institutionDetail.legalAuthorityContact.legalAuthorityEmail,
         legalAuthorityFirstName:
-          institutionDetail.institution.legalAuthorityFirstName,
+          institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
         legalAuthorityLastName:
-          institutionDetail.institution.legalAuthorityLastName,
-        legalAuthorityPhone: institutionDetail.institution.legalAuthorityPhone,
-        addressLine1: institutionDetail.institution.addressLine1,
-        addressLine2: institutionDetail.institution.addressLine2,
-        city: institutionDetail.institution.city,
-        country: institutionDetail.institution.country,
-        provinceState: institutionDetail.institution.provinceState,
-        postalCode: institutionDetail.institution.postalCode,
-        institutionType: institutionDetail.institution.institutionType,
+          institutionDetail.legalAuthorityContact.legalAuthorityLastName,
+        legalAuthorityPhone:
+          institutionDetail.legalAuthorityContact.legalAuthorityPhone,
+        addressLine1: institutionDetail.institutionAddress.addressLine1,
+        addressLine2: institutionDetail.institutionAddress.addressLine2,
+        city: institutionDetail.institutionAddress.city,
+        country: institutionDetail.institutionAddress.country,
+        provinceState: institutionDetail.institutionAddress.provinceState,
+        postalCode: institutionDetail.institutionAddress.postalCode,
+        institutionType: institutionDetail.institutionType.id,
+        institutionTypeName: institutionDetail.institutionType.name,
       },
       account: {
         user: {
-          guid: institutionDetail.account.user.guid,
-          displayName: institutionDetail.account.user.displayName,
-          firstname: institutionDetail.account.user.firstname,
-          surname: institutionDetail.account.user.surname,
-          email: institutionDetail.account.user.email,
+          guid: account.user.guid,
+          displayName: account.user.displayName,
+          firstname: account.user.firstname,
+          surname: account.user.surname,
+          email: account.user.email,
         },
         institution: {
-          guid: institutionDetail.account.institution.guid,
-          legalName: institutionDetail.account.institution.legalName,
+          guid: account.institution.guid,
+          legalName: account.institution.legalName,
         },
       },
       isBCPrivate: isBCPrivate,
@@ -419,6 +437,7 @@ export class InstitutionController extends BaseController {
         firstName: userDetails?.firstName,
         lastName: userDetails?.lastName,
         isActive: userDetails?.isActive,
+        userFullName: getUserFullName(userDetails),
         isAdmin: token.authorizations.isAdmin(),
         email: userDetails?.email,
       },

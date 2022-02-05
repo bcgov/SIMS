@@ -46,12 +46,16 @@ export default {
 
     onMounted(async () => {
       let cachedFormDefinition: string | null = null;
-      try {
-        // Try to load the definition from the session storage.
-        cachedFormDefinition = sessionStorage.getItem(props.formName);
-      } catch {
-        // No action needed. In case of failure it will load the form from the server
-        // in the same way as it is the first time load.
+      // Avoid caching during development to allow that the changes
+      // on form.io definitions have effect immediately.
+      if (process.env.NODE_ENV !== "development") {
+        try {
+          // Try to load the definition from the session storage.
+          cachedFormDefinition = sessionStorage.getItem(props.formName);
+        } catch {
+          // No action needed. In case of failure it will load the form from the server
+          // in the same way as it is the first time load.
+        }
       }
 
       let formDefinition: any;

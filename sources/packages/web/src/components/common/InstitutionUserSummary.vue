@@ -1,57 +1,55 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <div class="row p-3">
-    <div class="col col-3">
-      <span class="category-header-large color-blue">
-        All Users({{ usersListAndCount.totalUsers }})
-      </span>
-    </div>
-    <div class="col">
-      <div class="row float-right">
-        <InputText
-          v-model="searchBox"
-          placeholder="Search User"
-          @keyup.enter="searchUserTable()"
-        />
-        <v-btn
-          @click="searchUserTable()"
-          tile
-          class="ml-2 primary-btn-background"
-        >
-          <font-awesome-icon :icon="['fas', 'search']" />
-        </v-btn>
+  <div class="mb-4">
+    <span class="category-header-large color-blue">
+      All Users({{ usersListAndCount.totalUsers }})
+    </span>
+    <div class="float-right">
+      <InputText
+        v-model="searchBox"
+        placeholder="Search User"
+        @keyup.enter="searchUserTable()"
+      />
+      <v-btn
+        @click="searchUserTable()"
+        tile
+        class="ml-2 primary-btn-background"
+      >
+        <font-awesome-icon :icon="['fas', 'search']" />
+      </v-btn>
 
-        <v-btn
-          v-if="clientType === ClientIdType.Institution"
-          class="ml-2 primary-btn-background"
-          @click="openNewUserModal()"
-        >
-          <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
-          Add New User
-        </v-btn>
+      <v-btn
+        v-if="clientType === ClientIdType.Institution"
+        class="ml-2 primary-btn-background"
+        @click="openNewUserModal()"
+      >
+        <font-awesome-icon :icon="['fas', 'external-link-square-alt']" />
+        Add New User
+      </v-btn>
 
-        <!-- Add user -->
-        <AddInstitutionUser
-          :userType="userType"
-          :showAddUser="showAddUser"
-          :adminRoles="adminRoles"
-          @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
+      <!-- Add user -->
+      <AddInstitutionUser
+        v-if="clientType === ClientIdType.Institution"
+        :userType="userType"
+        :showAddUser="showAddUser"
+        :adminRoles="adminRoles"
+        @updateShowAddInstitutionModal="updateShowAddInstitutionModal"
+        @getAllInstitutionUsers="getAllInstitutionUsers"
+      />
 
-        <!-- edit user -->
-        <EditInstitutionUser
-          :userType="userType"
-          :showEditUser="showEditUser"
-          :institutionUserName="institutionUserName"
-          :adminRoles="adminRoles"
-          @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
-          @getAllInstitutionUsers="getAllInstitutionUsers"
-        />
-      </div>
+      <!-- edit user -->
+      <EditInstitutionUser
+        v-if="clientType === ClientIdType.Institution"
+        :userType="userType"
+        :showEditUser="showEditUser"
+        :institutionUserName="institutionUserName"
+        :adminRoles="adminRoles"
+        @updateShowEditInstitutionModal="updateShowEditInstitutionModal"
+        @getAllInstitutionUsers="getAllInstitutionUsers"
+      />
     </div>
   </div>
-  <ContentGroup>
+  <content-group>
     <DataTable
       :value="usersListAndCount.users"
       :lazy="true"
@@ -139,7 +137,7 @@
         </template>
       </Column>
     </DataTable>
-  </ContentGroup>
+  </content-group>
 </template>
 
 <script lang="ts">
@@ -191,7 +189,6 @@ export default {
     const userRoleType = ref();
     const userType = ref();
     const loading = ref(false);
-    const defaultSortOrder = -1;
     const searchBox = ref("");
     const currentPage = ref();
     const currentPageLimit = ref();
@@ -200,6 +197,7 @@ export default {
     };
     const institutionUserName = ref();
     const adminRoles = ref();
+    
     /**
      * function to load usersListAndCount respective to the client type
      * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
@@ -213,6 +211,7 @@ export default {
       sortField = UserFields.DisplayName,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
+      loading.value = true;
       switch (props.clientType) {
         case ClientIdType.Institution:
           usersListAndCount.value = await InstitutionService.shared.institutionSummary(
@@ -234,6 +233,7 @@ export default {
           );
           break;
       }
+      loading.value = false;
     };
 
     const updateShowAddInstitutionModal = () => {
@@ -276,7 +276,6 @@ export default {
 
     // pagination sort event callback
     const paginationAndSortEvent = async (event: any) => {
-      loading.value = true;
       currentPage.value = event?.page;
       currentPageLimit.value = event?.rows;
       await getAllInstitutionUsers(
@@ -285,7 +284,6 @@ export default {
         event.sortField,
         event.sortOrder,
       );
-      loading.value = false;
     };
 
     // search user table
@@ -328,7 +326,6 @@ export default {
       GeneralStatusForBadge,
       paginationAndSortEvent,
       loading,
-      defaultSortOrder,
       searchUserTable,
       searchBox,
       UserFields,

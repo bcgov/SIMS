@@ -1,10 +1,16 @@
 import {
   SummaryEducationProgramDto,
-  EducationProgramDto,
   OptionItemDto,
   StudentEducationProgramDto,
-} from "../../types";
+  EducationProgramData,
+  DataTableSortOrder,
+  ProgramSummaryFields,
+  DEFAULT_PAGE_LIMIT,
+  DEFAULT_PAGE_NUMBER,
+  PaginatedResults,
+} from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { addSortOptions } from "@/helpers";
 
 export class EducationProgramApi extends HttpBaseClient {
   public async getProgram(programId: number): Promise<any> {
@@ -49,15 +55,35 @@ export class EducationProgramApi extends HttpBaseClient {
     }
   }
 
+  /**
+   * Prepare the API to fetch all institution
+   * location program.
+   * @param locationId location id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param searchCriteria, program name keyword to be searched
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns program summary for an institution location.
+   */
   public async getLocationProgramsSummary(
     locationId: number,
-  ): Promise<SummaryEducationProgramDto[]> {
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    searchCriteria?: string,
+    sortField?: ProgramSummaryFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<PaginatedResults<SummaryEducationProgramDto>> {
     try {
-      const response = await this.apiClient.get(
-        `institution/education-program/location/${locationId}/summary`,
-        this.addAuthHeader(),
-      );
-      return response.data as SummaryEducationProgramDto[];
+      let url = `institution/education-program/location/${locationId}/summary?page=${page}&pageLimit=${pageCount}`;
+      if (searchCriteria) {
+        url = `${url}&searchCriteria=${searchCriteria}`;
+      }
+      url = addSortOptions(url, sortField, sortOrder);
+      const response = await this.getCall(url);
+      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -66,13 +92,13 @@ export class EducationProgramApi extends HttpBaseClient {
 
   public async getEducationProgram(
     programId: number,
-  ): Promise<EducationProgramDto> {
+  ): Promise<EducationProgramData> {
     try {
       const response = await this.apiClient.get(
-        `institution/education-program/${programId}/summary`,
+        `institution/education-program/${programId}/details`,
         this.addAuthHeader(),
       );
-      return response.data as EducationProgramDto;
+      return response.data as EducationProgramData;
     } catch (error) {
       this.handleRequestError(error);
       throw error;
@@ -128,6 +154,26 @@ export class EducationProgramApi extends HttpBaseClient {
         this.addAuthHeader(),
       );
       return response.data;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Education Program Details for ministry users
+   * @param programId program id
+   * @returns Education Program Details
+   */
+  public async getEducationProgramForAEST(
+    programId: number,
+  ): Promise<EducationProgramData> {
+    try {
+      const response = await this.apiClient.get(
+        `institution/education-program/${programId}/aest`,
+        this.addAuthHeader(),
+      );
+      return response.data as EducationProgramData;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

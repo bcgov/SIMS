@@ -3,6 +3,7 @@ import {
   SearchInstitutionResp,
   AESTInstitutionDetailDto,
   BasicInstitutionInfo,
+  AESTInstitutionProgramsSummaryDto,
 } from "../types/contracts/InstituteContract";
 import {
   InstitutionDto,
@@ -29,8 +30,7 @@ import {
   InstitutionUserAndCount,
   InstitutionUserAndCountForDataTable,
   FieldSortOrder,
-  AESTInstitutionProgramsSummaryPaginatedDto,
-  SortDBOrder,
+  PaginatedResults,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -77,8 +77,8 @@ export class InstitutionService {
     await ApiClient.Institution.updateInstitution(data);
   }
 
-  public async getDetail(): Promise<InstitutionDetailDto> {
-    return ApiClient.Institution.getDetail();
+  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
+    return ApiClient.Institution.getDetail(authHeader);
   }
 
   public async sync() {
@@ -150,9 +150,7 @@ export class InstitutionService {
   }
 
   /**
-   * Controller method to get all institution users with the
-   * given institutionId for institution admin.
-   * @param institutionId institution id
+   * To get the institution user summary
    * @param page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
    * @param pageLimit, limit of the page if nothing is
@@ -160,7 +158,7 @@ export class InstitutionService {
    * @param searchName, user's name keyword to be searched
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
-   * @returns All the institution users for the given institution.
+   * @returns All the institution users.
    */
   public async institutionSummary(
     page = DEFAULT_PAGE_NUMBER,
@@ -429,23 +427,23 @@ export class InstitutionService {
   /**
    * Get the Institution programs summary for the ministry institution detail page
    * @param institutionId
-   * @returns AESTInstitutionProgramsSummaryPaginatedDto
+   * @returns PaginatedResults<AESTInstitutionProgramsSummaryDto>
    */
   async getPaginatedAESTInstitutionProgramsSummary(
     institutionId: number,
     pageSize: number,
     page: number,
     sortColumn: string,
-    sortOrder: SortDBOrder,
-    searchName: string,
-  ): Promise<AESTInstitutionProgramsSummaryPaginatedDto> {
+    sortOrder: DataTableSortOrder,
+    searchCriteria: string,
+  ): Promise<PaginatedResults<AESTInstitutionProgramsSummaryDto>> {
     return ApiClient.Institution.getPaginatedAESTInstitutionProgramsSummary(
       institutionId,
       pageSize,
       page,
       sortColumn,
       sortOrder,
-      searchName,
+      searchCriteria,
     );
   }
 

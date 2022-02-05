@@ -1,47 +1,41 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <p class="category-header-large color-blue">
-        All Programs ({{ institutionProgramsSummary.programsCount }})
-        <v-row class="float-right">
-          <v-col>
-            <InputText
-              name="searchProgramName"
-              v-model="searchProgramName"
-              placeholder="Search Program Name"
-              @keyup.enter="goToSearchProgramName(searchProgramName)"
-            />
-          </v-col>
-          <v-col>
-            <v-btn
-              class="primary-btn-background"
-              @click="goToSearchProgramName(searchProgramName)"
-              >Search</v-btn
-            >
-          </v-col>
-          <v-col>
-            <v-btn
-              class="primary-btn-background"
-              @click="goToSearchProgramName('')"
-              >Clear</v-btn
-            >
-          </v-col>
-        </v-row>
-      </p>
-      <content-group v-if="programsFound">
+      <div class="mb-4">
+        <span class="category-header-large color-blue">
+          All Programs ({{ institutionProgramsSummary.count }})
+        </span>
+        <div class="float-right">
+          <InputText
+            name="searchProgramName"
+            v-model="searchProgramName"
+            placeholder="Search Program Name"
+            @keyup.enter="goToSearchProgramName()"
+          />
+          <v-btn
+            class="ml-2 primary-btn-background"
+            @click="goToSearchProgramName()"
+            ><font-awesome-icon :icon="['fas', 'search']"
+          /></v-btn>
+        </div>
+      </div>
+      <content-group>
         <DataTable
-          :value="institutionProgramsSummary.programsSummary"
+          :value="institutionProgramsSummary.results"
           :lazy="true"
           :paginator="true"
-          :rows="DEFAULT_ROW_SIZE"
-          :rowsPerPageOptions="[10, 20, 50]"
-          :totalRecords="institutionProgramsSummary.programsCount"
+          :rows="DEFAULT_PAGE_LIMIT"
+          :rowsPerPageOptions="PAGINATION_LIST"
+          :totalRecords="institutionProgramsSummary.count"
           @page="pageSortEvent($event)"
           @sort="pageSortEvent($event)"
           :loading="loading"
         >
+          <template #empty>
+            <p class="text-center font-weight-bold">No records found.</p>
+          </template>
           <Column
-            field="submittedDate"
+            :field="ProgramSummaryFields.SubmittedDate"
             header="Date Submitted"
             :sortable="true"
           >
@@ -51,41 +45,44 @@
               </div>
             </template>
           </Column>
-          <Column field="programName" header="Program Name">
+          <Column
+            :field="ProgramSummaryFields.ProgramName"
+            header="Program Name"
+          >
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.programName }}
               </div>
             </template>
           </Column>
-          <Column field="locationName" header="Location">
+          <Column :field="ProgramSummaryFields.LocationName" header="Location">
             <template #body="slotProps">
               <div class="p-text-capitalize">
                 {{ slotProps.data.locationName }}
               </div>
             </template>
           </Column>
-          <Column field="offeringsCount" header="Study periods">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.offeringsCount }}
-              </div>
-            </template>
+          <Column
+            :field="ProgramSummaryFields.TotalOfferings"
+            header="Study periods"
+          >
           </Column>
-          <Column field="programStatus" header="Status"
+          <Column :field="ProgramSummaryFields.ApprovalStatus" header="Status"
             ><template #body="slotProps">
-              <Chip
-                :label="slotProps.data.programStatus"
-                class="p-mr-2 p-mb-2 p-text-uppercase"
-                :class="
-                  getProgramStatusColorClass(slotProps.data.programStatus)
-                "/></template
+              <program-status-chip
+                :status="slotProps.data.programStatus"
+              ></program-status-chip> </template
           ></Column>
           <Column>
             <template #body="slotProps">
               <v-btn
                 outlined
-                @click="goToViewProgramDetail(slotProps.data.programId)"
+                @click="
+                  goToViewProgramDetail(
+                    slotProps.data.programId,
+                    slotProps.data.locationId,
+                  )
+                "
                 >View</v-btn
               >
             </template>
@@ -97,19 +94,24 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import {
-  AESTInstitutionProgramsSummaryPaginatedDto,
-  ApprovalStatus,
-  SortDBOrder,
+  DataTableSortOrder,
+  ProgramSummaryFields,
+  DEFAULT_PAGE_NUMBER,
+  PAGINATION_LIST,
+  DEFAULT_PAGE_LIMIT,
+  PaginatedResults,
+  AESTInstitutionProgramsSummaryDto,
 } from "@/types";
-import { useToastMessage } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
+
 export default {
-  components: { ContentGroup },
+  components: { ContentGroup, ProgramStatusChip },
   props: {
     institutionId: {
       type: Number,
@@ -117,24 +119,22 @@ export default {
     },
   },
   setup(props: any) {
-    const toast = useToastMessage();
     const router = useRouter();
     const institutionProgramsSummary = ref(
-      {} as AESTInstitutionProgramsSummaryPaginatedDto,
+      {} as PaginatedResults<AESTInstitutionProgramsSummaryDto>,
     );
     const searchProgramName = ref("");
-    const DEFAULT_PAGE = 0;
-    const DEFAULT_ROW_SIZE = 10;
     const currentPageSize = ref();
-    const DEFAULT_SORT_COLUMN = "submittedDate";
-    const DEFAULT_SORT_ORDER = SortDBOrder.DESC;
+    const DEFAULT_SORT_COLUMN = ProgramSummaryFields.SubmittedDate;
+    const DEFAULT_SORT_ORDER = DataTableSortOrder.DESC;
     const loading = ref(false);
+
     const getProgramsSummaryList = async (
       institutionId: number,
       rowsPerPage: number,
       page: number,
       sortColumn: string,
-      sortOrder: SortDBOrder,
+      sortOrder: DataTableSortOrder,
       programName: string,
     ) => {
       try {
@@ -148,12 +148,6 @@ export default {
           sortOrder,
           programName,
         );
-        if (institutionProgramsSummary.value.programsSummary.length === 0) {
-          toast.warn(
-            "No Programs found",
-            "No Programs found for the Institution/ Search Criteria",
-          );
-        }
       } finally {
         loading.value = false;
       }
@@ -161,31 +155,22 @@ export default {
     onMounted(async () => {
       await getProgramsSummaryList(
         props.institutionId,
-        DEFAULT_ROW_SIZE,
-        DEFAULT_PAGE,
+        DEFAULT_PAGE_LIMIT,
+        DEFAULT_PAGE_NUMBER,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
         searchProgramName.value,
       );
     });
-    const programsFound = computed(() => {
-      return institutionProgramsSummary.value.programsCount > 0;
-    });
-    const goToViewProgramDetail = (programId: number) => {
+    const goToViewProgramDetail = (programId: number, locationId: number) => {
       router.push({
         name: AESTRoutesConst.PROGRAM_DETAILS,
-        params: { programId: programId },
+        params: {
+          programId: programId,
+          institutionId: props.institutionId,
+          locationId: locationId,
+        },
       });
-    };
-    const getProgramStatusColorClass = (status: ApprovalStatus) => {
-      switch (status) {
-        case ApprovalStatus.approved:
-          return "bg-info text-white";
-        case ApprovalStatus.pending:
-          return "bg-warning text-white";
-        default:
-          return "";
-      }
     };
     const pageSortEvent = async (event: any) => {
       currentPageSize.value = event?.rows;
@@ -198,26 +183,26 @@ export default {
         searchProgramName.value,
       );
     };
-    const goToSearchProgramName = async (programName: string) => {
+    const goToSearchProgramName = async () => {
       await getProgramsSummaryList(
         props.institutionId,
-        currentPageSize.value ? currentPageSize.value : DEFAULT_ROW_SIZE,
-        DEFAULT_PAGE,
+        currentPageSize.value ? currentPageSize.value : DEFAULT_PAGE_LIMIT,
+        DEFAULT_PAGE_NUMBER,
         DEFAULT_SORT_COLUMN,
         DEFAULT_SORT_ORDER,
-        programName,
+        searchProgramName.value,
       );
     };
     return {
       institutionProgramsSummary,
-      programsFound,
       goToViewProgramDetail,
-      getProgramStatusColorClass,
-      DEFAULT_ROW_SIZE,
+      DEFAULT_PAGE_LIMIT,
       pageSortEvent,
       goToSearchProgramName,
       searchProgramName,
       loading,
+      ProgramSummaryFields,
+      PAGINATION_LIST,
     };
   },
 };
