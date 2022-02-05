@@ -194,7 +194,7 @@ export class ConfirmationOfEnrollmentController {
       applicationNumber: disbursementSchedule.application.applicationNumber,
       applicationLocationName: disbursementSchedule.application.location.name,
       applicationStatus: disbursementSchedule.application.applicationStatus,
-      applicationCOEStatus: disbursementSchedule.application.coeStatus,
+      applicationCOEStatus: disbursementSchedule.coeStatus,
       applicationId: disbursementSchedule.application.id,
       applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
         disbursementSchedule.disbursementDate,
@@ -227,7 +227,6 @@ export class ConfirmationOfEnrollmentController {
     @Param("disbursementScheduleId") disbursementScheduleId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    console.log(userToken);
     // Get the disbursement and application summary for COE.
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
@@ -250,22 +249,12 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    //TODO: Document Number should be Updated in the same transaction when COE status changes
-    await this.disbursementScheduleService.updateDisbursementScheduleOnCOEApproval(
+    this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
       disbursementScheduleId,
       userToken.userId,
+      disbursementSchedule.application.id,
+      disbursementSchedule.application.applicationStatus,
     );
-
-    const updatedCOEStatus =
-      await this.applicationService.updateApplicationCOEStatus(
-        disbursementSchedule.application.id,
-      );
-
-    if (updatedCOEStatus.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Confirmation of Enrollment and application status update to completed is failed",
-      );
-    }
 
     // Send a message to allow the workflow to proceed.
     await this.workflow.sendConfirmCOEMessage(

@@ -35,7 +35,7 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   private readonly applicationRepo: Repository<Application>;
   constructor(
-    connection: Connection,
+    private readonly connection: Connection,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
@@ -241,25 +241,41 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Update DisbursementSchedule with documentNumber
+   * The update to Application and Disbursement schedule happens in single transaction.
    * @param disbursementScheduleId document Number
    * @returns the result of update.
    */
-  async updateDisbursementScheduleOnCOEApproval(
+  async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
     userId: number,
-  ): Promise<UpdateResult> {
+    applicationId: number,
+    applicationStatus: ApplicationStatus,
+  ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
-    return this.repo
-      .createQueryBuilder()
-      .update(DisbursementSchedule)
-      .set({
-        documentNumber: documentNumber,
-        coeStatus: COEStatus.completed,
-        coeUpdatedBy: { id: userId },
-        coeUpdatedAt: new Date(),
-      })
-      .where("id = :disbursementScheduleId", { disbursementScheduleId })
-      .execute();
+    this.connection.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(DisbursementSchedule)
+        .createQueryBuilder()
+        .update(DisbursementSchedule)
+        .set({
+          documentNumber: documentNumber,
+          coeStatus: COEStatus.completed,
+          coeUpdatedBy: { id: userId },
+          coeUpdatedAt: new Date(),
+        })
+        .where("id = :disbursementScheduleId", { disbursementScheduleId })
+        .execute();
+
+      if (applicationStatus === ApplicationStatus.enrollment) {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .createQueryBuilder()
+          .update(Application)
+          .set({ applicationStatus: ApplicationStatus.completed })
+          .where("id = :applicationId", { applicationId })
+          .execute();
+      }
+    });
   }
 
   /**
@@ -327,6 +343,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .select([
         "disbursementSchedule.id",
         "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.coeStatus",
         "disbursementSchedule.application",
       ])
       .innerJoinAndSelect("disbursementSchedule.application", "application")
