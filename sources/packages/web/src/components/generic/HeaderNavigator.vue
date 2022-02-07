@@ -45,16 +45,10 @@ export default {
     const router = useRouter();
 
     const goBack = () => {
-      if (props?.routeLocation?.routeParams) {
-        router.push({
-          name: props?.routeLocation?.routeName,
-          params: props?.routeLocation?.routeParams,
-        });
-      } else {
-        router.push({
-          name: props?.routeLocation?.routeName,
-        });
-      }
+      router.push({
+        name: props?.routeLocation?.routeName,
+        params: props?.routeLocation?.routeParams,
+      });
     };
     return { goBack };
   },
