@@ -50,6 +50,7 @@ import {
   faTrash,
   faUser,
   faFolderOpen,
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
@@ -65,6 +66,7 @@ library.add(
   faTrash,
   faUser,
   faFolderOpen,
+  faArrowLeft,
 );
 
 // Configure the UI validations rules globally available.

@@ -2,7 +2,8 @@
   <slot name="title">
     <div v-if="routeLocation" class="header-title">
       <a @click="goBack()">
-        <v-icon left> mdi-arrow-left </v-icon> {{ title }}</a
+        <font-awesome-icon :icon="['fas', 'arrow-left']" class="mr-2" />
+        {{ title }}</a
       >
     </div>
     <div v-else class="header-title">
