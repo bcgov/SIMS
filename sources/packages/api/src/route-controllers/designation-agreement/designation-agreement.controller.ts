@@ -19,13 +19,14 @@ import { DesignationAgreementService, FormService } from "../../services";
 import { getUTCNow } from "../../utilities";
 import {
   GetDesignationAgreementDto,
+  GetDesignationAgreementsDto,
   SubmitDesignationAgreementDto,
 } from "./models/designation-agreement.model";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/designation-agreement")
+@Controller("institution/designation-agreements")
 export class DesignationAgreementController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
@@ -113,5 +114,30 @@ export class DesignationAgreementController {
         }),
       ),
     } as GetDesignationAgreementDto;
+  }
+
+  @IsInstitutionAdmin()
+  @Get()
+  async getDesignationAgreements(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<GetDesignationAgreementsDto[]> {
+    const designations =
+      await this.designationAgreementService.getInstitutionDesignationsById(
+        userToken.authorizations.institutionId,
+      );
+    const r = designations.map(
+      (designation) =>
+        ({
+          designationId: designation.id,
+          designationStatus: designation.designationStatus,
+          submittedDate: designation.submittedDate,
+          startDate: designation.startDate,
+          endDate: designation.endDate,
+        } as GetDesignationAgreementsDto),
+    );
+
+    console.log(r);
+
+    return r;
   }
 }

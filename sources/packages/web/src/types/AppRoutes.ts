@@ -33,6 +33,7 @@ export enum AppRoutes {
   LocationProgramInfoRequestEdit = "program-info-request/location/:locationId/application/:applicationId",
   ManageInstitutionDesignation = "manage-designation",
   DesignationRequest = "manage-designation/request",
+  DesignationView = "manage-designation/view/:designationAgreementId",
   InstitutionManageUsers = "manage-users",
   // AEST
   AESTRoot = "/aest",

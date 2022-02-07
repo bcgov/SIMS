@@ -14,6 +14,7 @@ import AddInstitutionLocation from "@/views/institution/AddInstitutionLocation.v
 import EditInstitutionLocation from "@/views/institution/EditInstitutionLocation.vue";
 import ManageDesignation from "../views/institution/designations/ManageDesignation.vue";
 import DesignationRequest from "../views/institution/designations/DesignationRequest.vue";
+import DesignationView from "../views/institution/designations/DesignationView.vue";
 import InstitutionUserDetails from "@/views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
@@ -289,6 +290,19 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.Institution,
           userTypes: [InstitutionUserTypes.admin],
         },
+      },
+      {
+        path: AppRoutes.DesignationView,
+        name: InstitutionRoutesConst.DESIGNATION_VIEW,
+        components: {
+          default: DesignationView,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          userTypes: [InstitutionUserTypes.admin],
+        },
+        props: true,
       },
       {
         path: AppRoutes.InstitutionProfileEdit,

@@ -32,3 +32,11 @@ export interface LocationsDesignationsDto {
   requested: boolean;
   approved?: boolean;
 }
+
+export interface GetDesignationAgreementsDto {
+  designationId: number;
+  designationStatus: DesignationAgreementStatus;
+  submittedDate: Date;
+  startDate?: Date;
+  endDate?: Date;
+}

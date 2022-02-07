@@ -96,4 +96,24 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .andWhere("location.institution.id = :institutionId", { institutionId })
       .getOne();
   }
+
+  async getInstitutionDesignationsById(
+    institutionId: number,
+  ): Promise<DesignationAgreement[]> {
+    return this.repo
+      .createQueryBuilder("designation")
+      .select([
+        "designation.id",
+        "designation.designationStatus",
+        "designation.submittedDate",
+        "designation.startDate",
+        "designation.endDate",
+      ])
+      .innerJoin(
+        "designation.designationAgreementLocations",
+        "designationLocation",
+      )
+      .where("designation.institution.id = :institutionId", { institutionId })
+      .getMany();
+  }
 }

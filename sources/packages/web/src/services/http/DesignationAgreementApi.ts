@@ -2,6 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   SubmitDesignationAgreementDto,
   GetDesignationAgreementDto,
+  GetDesignationAgreementsDto,
 } from "@/types/contracts/DesignationAgreementContract";
 
 /**
@@ -12,7 +13,7 @@ export class DesignationAgreementApi extends HttpBaseClient {
     designationAgreement: SubmitDesignationAgreementDto,
   ): Promise<void> {
     await this.postCall(
-      "institution/designation-agreement",
+      "institution/designation-agreements",
       designationAgreement,
     );
   }
@@ -20,13 +21,14 @@ export class DesignationAgreementApi extends HttpBaseClient {
   async getDesignationAgreement(
     designationId: number,
   ): Promise<GetDesignationAgreementDto> {
-    try {
-      return await this.getCall(
-        `institution/designation-agreement/${designationId}`,
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<GetDesignationAgreementDto>(
+      `institution/designation-agreements/${designationId}`,
+    );
+  }
+
+  async getDesignationsAgreements(): Promise<GetDesignationAgreementsDto[]> {
+    return this.getCallTyped<GetDesignationAgreementsDto[]>(
+      `institution/designation-agreements`,
+    );
   }
 }

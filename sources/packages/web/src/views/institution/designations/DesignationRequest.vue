@@ -33,8 +33,12 @@ import {
   DesignationLocationsListItem,
 } from "@/components/common/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
-import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
+import {
+  SubmitDesignationAgreementDto,
+  DesignationAgreementStatus,
+} from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { FormioStatusShipClasses } from "@/components/generic/formio.models";
 
 export default {
   components: { FullPageContainer, DesignationAgreementForm },
@@ -53,6 +57,8 @@ export default {
     designationModel.institutionName = institutionState.value.operatingName;
     designationModel.institutionType = institutionState.value.institutionType;
     designationModel.isBCPrivate = institutionState.value.isBCPrivate;
+    designationModel.designationStatus = DesignationAgreementStatus.Approved;
+    designationModel.designationStatusClass = FormioStatusShipClasses.Success;
     designationModel.viewMode = DesignationFormViewModes.submission;
     if (isLegalSigningAuthority) {
       // Only populates the signing officer data

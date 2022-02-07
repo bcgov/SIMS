@@ -1,4 +1,5 @@
 @import "./global-style-variables.scss";
+@import "./base.scss";
 
 /** Primary theme color of the application**/
 .primary-color {
@@ -305,4 +306,67 @@
 
 .form-check-input {
   position: inherit;
+}
+
+.formio-status-chip {
+  @extend .bold-text;
+  font-size: 10px;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 3px 10px;
+  position: absolute;
+  height: 25px;
+  left: 15px;
+  top: 25px;
+  color: $brand-black;
+  border: 1px solid;
+  box-sizing: border-box;
+  border-radius: 100px;
+}
+
+.formio-status-chip-icon {
+  /* Ellipse 24 */
+  position: static;
+  width: 10px;
+  height: 10px;
+  left: 10px;
+  top: 5px;
+  border-radius: 5px;
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin: 0px 6px 0px 0px;
+}
+
+.success-status-chip {
+  @extend .formio-status-chip;
+  border-color: $banner-color-success;
+}
+
+.success-status-chip div {
+  @extend .formio-status-chip-icon;
+  background: $banner-color-success;
+}
+
+.warning-status-chip {
+  @extend .formio-status-chip;
+  border-color: $banner-color-warning;
+}
+
+.warning-status-chip div {
+  @extend .formio-status-chip-icon;
+  background: $banner-color-warning;
+}
+
+.error-status-chip {
+  @extend .formio-status-chip;
+  border-color: $banner-color-error;
+}
+
+.error-status-chip div {
+  @extend .formio-status-chip-icon;
+  background: $banner-color-error;
 }
