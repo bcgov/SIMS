@@ -2,9 +2,9 @@
   <div class="p-m-4">
     <HeaderNavigator
       title="Back all programs"
-      :routeName="InstitutionRoutesConst.LOCATION_PROGRAMS"
-      :routeParams="{
-        locationId: locationId,
+      :routeLocation="{
+        routeName: InstitutionRoutesConst.LOCATION_PROGRAMS,
+        routeParams: { locationId: locationId },
       }"
       subTitle="View program"
     >

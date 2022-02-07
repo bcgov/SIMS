@@ -6,7 +6,9 @@
     />
     <HeaderNavigator
       title="Back to Applications"
-      :routeName="StudentRoutesConst.STUDENT_APPLICATION_SUMMARY"
+      :routeLocation="{
+        routeName: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+      }"
       subTitle="Financial aid application"
       ><template #buttons>
         <v-btn color="primary" @click="toggle"

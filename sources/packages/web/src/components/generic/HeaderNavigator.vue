@@ -1,10 +1,12 @@
 <template>
   <slot name="title">
-    <div v-if="!routeName" class="form-header-title">{{ title }}</div>
-    <div v-if="routeName" class="form-header-title">
-      <a @click="goBack(routeName, routeParams)">
+    <div v-if="routeLocation" class="header-title">
+      <a @click="goBack()">
         <v-icon left> mdi-arrow-left </v-icon> {{ title }}</a
       >
+    </div>
+    <div v-else class="header-title">
+      {{ title }}
     </div>
   </slot>
   <v-row>
@@ -33,26 +35,23 @@ export default {
     subTitle: {
       type: String,
     },
-    routeName: {
-      type: Symbol,
-    },
-    routeParams: {
+    routeLocation: {
       type: Object,
     },
   },
 
-  setup() {
+  setup(props: any) {
     const router = useRouter();
 
-    const goBack = (routeName: symbol, routeParams: any) => {
-      if (routeParams) {
+    const goBack = () => {
+      if (props?.routeLocation?.routeParams) {
         router.push({
-          name: routeName,
-          params: routeParams,
+          name: props?.routeLocation?.routeName,
+          params: props?.routeLocation?.routeParams,
         });
       } else {
         router.push({
-          name: routeName,
+          name: props?.routeLocation?.routeName,
         });
       }
     };
