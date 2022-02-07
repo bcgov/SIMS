@@ -455,7 +455,7 @@ deploy-forms-flow-api:
 deploy-forms-flow-web:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	@echo "+\n++ Deploying forms-flow-api with tag: $(BUILD_TAG)\n+"
+	@echo "+\n++ Deploying forms-flow-web with tag: $(BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f $(FORM_AI_WEB_DEPLOY_TEMPLATE_PATH) --param-file=$(WEB_PARAM_PATH) -p NAME=$(FORMIO_WEB_NAME) -p FFAWEB_URL=$(FORM_AI_WEB_URL) -p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) -p IMAGE_STREAM_TAG="$(BUILD_TAG)" | oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMIO_WEB_NAME))
 
