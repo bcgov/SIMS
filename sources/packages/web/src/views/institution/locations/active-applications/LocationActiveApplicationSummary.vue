@@ -1,7 +1,6 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator :title="locationName" subTitle="Active Applications" />
-
     <v-container>
       <v-sheet elevation="1" class="mx-auto mt-2">
         <v-container>

@@ -10,13 +10,13 @@
   <v-row>
     <v-col>
       <slot name="subTitle">
-        <div class="form-header-sub-title">
+        <div class="header-sub-title">
           {{ subTitle }}
         </div>
       </slot>
     </v-col>
     <v-col>
-      <div class="float-right ml-2 form-header-button">
+      <div class="float-right ml-2 header-button">
         <slot name="buttons"> </slot>
       </div>
     </v-col>
@@ -30,7 +30,6 @@ export default {
     title: {
       type: String,
     },
-
     subTitle: {
       type: String,
     },

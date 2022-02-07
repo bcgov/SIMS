@@ -5,7 +5,7 @@
       :restrictionMessage="restrictionMessage"
     />
     <CheckValidSINBanner />
-    <HeaderNavigator :subTitle="'My Applications'" />
+    <HeaderNavigator subTitle="My Applications" />
     <v-row>
       <span class="p-m-4"
         >A list of your applications for funding, grants, and busaries.</span

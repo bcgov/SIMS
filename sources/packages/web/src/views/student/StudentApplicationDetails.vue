@@ -13,9 +13,9 @@
           ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
           Options
         </v-btn>
-        <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
       </template>
     </HeaderNavigator>
+    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <v-btn
       v-if="showViewAssessment"
       color="primary"
