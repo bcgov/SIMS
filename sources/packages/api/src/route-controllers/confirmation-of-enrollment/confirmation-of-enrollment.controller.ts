@@ -34,6 +34,7 @@ import {
   COE_WINDOW,
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
+  getExtendedDateFormat,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
@@ -214,6 +215,9 @@ export class ConfirmationOfEnrollmentController {
         }),
       ),
       applicationPIRStatus: disbursementSchedule.application.pirStatus,
+      disbursementDate: getExtendedDateFormat(
+        disbursementSchedule.disbursementDate,
+      ),
     };
   }
 
