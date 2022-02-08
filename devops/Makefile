@@ -145,7 +145,7 @@ define FORMSFLOW_SOURCE_REPO_BRANCH
 endef
 
 define SOURCE_REPOSITORY_REF
-"master"
+"main"
 endef
 
 define SOURCE_CONTEXT_DIR
