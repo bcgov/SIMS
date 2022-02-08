@@ -26,7 +26,6 @@ import {
   UpdateProgramInfoDto,
   UpdateProgramInfoStatusDto,
   UpdateAssessmentStatusDto,
-  UpdateCOEStatusDto,
   UpdateApplicationStatusDto,
   UpdateApplicationStatusWorkflowIdDto,
   SupportingUserDto,

@@ -6,7 +6,6 @@ import {
   Patch,
   NotFoundException,
   UnprocessableEntityException,
-  InternalServerErrorException,
   Body,
 } from "@nestjs/common";
 import {
@@ -25,7 +24,6 @@ import {
   DisbursementScheduleService,
 } from "../../services";
 import {
-  COEStatus,
   ApplicationStatus,
   DisbursementSchedule,
 } from "../../database/entities";

@@ -8,11 +8,7 @@ import {
   Assessment,
   OfferingIntensity,
 } from "../../../database/entities";
-import {
-  dateString,
-  getPIRDeniedReason,
-  getCOEDeniedReason,
-} from "../../../utilities";
+import { dateString, getPIRDeniedReason } from "../../../utilities";
 export class SaveApplicationDto {
   /**
    * Application dynamic data.

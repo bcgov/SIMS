@@ -1121,55 +1121,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Deny the Confirmation Of Enrollment(COE) for an Application.
-   * Updates only applications that have the COE status as required.
-   * @param applicationId application id to be updated.
-   * @param locationId location id of the application.
-   * @param coeDeniedReasonId COE Denied reason id for a student application.
-   * @param otherReasonDesc when other is selected as a COE denied reason, text for the reason
-   * is populated.
-   * @returns updated application.
-   */
-  async setDeniedReasonForCOE(
-    applicationId: number,
-    locationId: number,
-    coeDeniedReasonId: number,
-    otherReasonDesc?: string,
-  ): Promise<Application> {
-    const application = await this.repo.findOne({
-      id: applicationId,
-      location: { id: locationId },
-      //!TODO coeStatus: COEStatus.required,
-      applicationStatus: Not(
-        In([
-          ApplicationStatus.completed,
-          ApplicationStatus.overwritten,
-          ApplicationStatus.cancelled,
-        ]),
-      ),
-    });
-    if (!application) {
-      throw new CustomNamedError(
-        "Not able to find an application that requires a COE to be completed.",
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
-    application.coeDeniedReason = {
-      id: coeDeniedReasonId,
-    } as COEDeniedReason;
-    if (COE_DENIED_REASON_OTHER_ID === coeDeniedReasonId && !otherReasonDesc) {
-      throw new CustomNamedError(
-        "Other is selected as COE reason, specify the reason for the COE denial.",
-        COE_DENIED_REASON_NOT_FOUND_ERROR,
-      );
-    }
-    application.coeDeniedOtherDesc = otherReasonDesc;
-    //!TODO application.coeStatus = COEStatus.declined;
-    return this.repo.save(application);
-  }
-
-  /**
    * Associates an MSFAA number to the application checking
    * whatever is needed to create a new MSFAA or use an
    * existing one instead.
