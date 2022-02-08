@@ -304,6 +304,44 @@
   color: #16c92e;
 }
 
+/* form.io status chip */
+.formio-status-chip {
+  border-width: 1px;
+  padding-left: 15px;
+  padding-right: 10px;
+  position: absolute;
+  border-radius: 30px;
+  border-style: solid;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px !important;
+}
+
+.formio-status-chip.fa-circle::before {
+  margin-right: 6px !important;
+}
+
+/* Success status */
+.formio-status-chip.success {
+  border-color: $badge-border-success !important;
+  color: $banner-color-success !important;
+}
+/* Warning status */
+.formio-status-chip.warning {
+  border-color: $badge-border-warning !important;
+  color: $banner-color-warning !important;
+}
+/* Error status */
+.formio-status-chip.error {
+  border-color: $badge-border-error !important;
+  color: $banner-color-error !important;
+}
+/* Inactive status */
+.formio-status-chip.inactive {
+  border-color: $badge-border-inactive !important;
+  color: $brand-black !important;
+}
+
 .form-check-input {
   position: inherit;
 }

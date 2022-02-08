@@ -17,7 +17,11 @@
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, reactive } from "vue";
-import { useFormatters, useInstitutionState } from "@/composables";
+import {
+  useFormatters,
+  useInstitutionState,
+  useDesignationAgreement,
+} from "@/composables";
 import DesignationAgreementForm from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
@@ -36,6 +40,7 @@ export default {
   setup(props: any) {
     const { institutionState } = useInstitutionState();
     const formatter = useFormatters();
+    const { mapDesignationChipStatus } = useDesignationAgreement();
 
     const designationModel = reactive({} as DesignationModel);
     designationModel.institutionName = institutionState.value.operatingName;
@@ -48,6 +53,10 @@ export default {
         props.designationAgreementId,
       );
 
+      designationModel.designationStatus = designation.designationStatus;
+      designationModel.designationStatusClass = mapDesignationChipStatus(
+        designation.designationStatus,
+      );
       designationModel.dynamicData = designation.submittedData;
       designationModel.locations = designation.locationsDesignations.map(
         location => ({

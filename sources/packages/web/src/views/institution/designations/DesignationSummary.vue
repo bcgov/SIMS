@@ -55,7 +55,7 @@
           </Column>
           <Column header="Status"
             ><template #body="slotProps">
-              <StatusBadge
+              <status-chip-designation
                 :status="slotProps.data.designationStatus"
               /> </template
           ></Column>
@@ -77,7 +77,6 @@
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import StatusBadge from "@/components/generic/StatusBadge.vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -92,14 +91,15 @@ import { useFormatters, useInstitutionAuth } from "@/composables";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import EmptyTableTemplate from "@/components/generic/EmptyTableTemplate.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
+import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 
 export default {
   components: {
     FullPageContainer,
-    StatusBadge,
     ContentGroup,
     EmptyTableTemplate,
     BodyHeader,
+    StatusChipDesignation,
   },
   setup() {
     const router = useRouter();
