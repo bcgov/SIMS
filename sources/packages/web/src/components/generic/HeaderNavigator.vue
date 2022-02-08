@@ -45,7 +45,7 @@ export default {
     const router = useRouter();
 
     const goBack = () => {
-      router.push(props?.routeLocation);
+      router.push(props.routeLocation);
     };
     return { goBack };
   },
