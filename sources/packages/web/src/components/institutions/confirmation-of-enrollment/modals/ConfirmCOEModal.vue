@@ -33,6 +33,7 @@
 import Dialog from "primevue/dialog";
 import { useToastMessage } from "@/composables";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
+export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
 
 export default {
   components: {
@@ -67,10 +68,11 @@ export default {
         );
         toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened while confirming the COE.",
-        );
+        let errorMessage = "An error happened while confirming the COE.";
+        if (error.includes(FIRST_COE_NOT_COMPLETE)) {
+          errorMessage = error.replace(FIRST_COE_NOT_COMPLETE, "").trim();
+        }
+        toast.error("Unexpected error", errorMessage);
       }
       updateShowConfirmCOEModal();
       context.emit("reloadData");
