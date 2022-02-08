@@ -16,7 +16,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { DesignationAgreementService, FormService } from "../../services";
-import { getUTCNow } from "../../utilities";
+import { getDateOnlyString, getUTCNow } from "../../utilities";
 import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
@@ -125,19 +125,15 @@ export class DesignationAgreementController {
       await this.designationAgreementService.getInstitutionDesignationsById(
         userToken.authorizations.institutionId,
       );
-    const r = designations.map(
+    return designations.map(
       (designation) =>
         ({
           designationId: designation.id,
           designationStatus: designation.designationStatus,
           submittedDate: designation.submittedDate,
-          startDate: designation.startDate,
-          endDate: designation.endDate,
+          startDate: getDateOnlyString(designation.startDate),
+          endDate: getDateOnlyString(designation.endDate),
         } as GetDesignationAgreementsDto),
     );
-
-    console.log(r);
-
-    return r;
   }
 }

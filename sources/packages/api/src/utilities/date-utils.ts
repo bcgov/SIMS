@@ -116,6 +116,18 @@ export function getDateOnlyFromFormat(
 }
 
 /**
+ * Get the date only part of a date and time date object.
+ * @param date date/time to have the date extracted.
+ * @returns date only string in ISO format YYYY-MM-DD.
+ */
+export function getDateOnlyString(date?: Date): string | null {
+  if (!date) {
+    return null;
+  }
+  return dayjs(date).format(DATE_ONLY_ISO_FORMAT);
+}
+
+/**
  * Get the day of the year (1-366), considering the leap year.
  * @param day day to retrieve the number.
  * @returns day of the year (1-366), considering the leap year.

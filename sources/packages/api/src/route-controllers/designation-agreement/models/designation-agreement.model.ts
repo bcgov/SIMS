@@ -37,6 +37,6 @@ export interface GetDesignationAgreementsDto {
   designationId: number;
   designationStatus: DesignationAgreementStatus;
   submittedDate: Date;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
 }
