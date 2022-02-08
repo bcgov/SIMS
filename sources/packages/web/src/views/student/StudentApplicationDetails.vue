@@ -7,7 +7,7 @@
     <HeaderNavigator
       title="Back to Applications"
       :routeLocation="{
-        routeName: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
       }"
       subTitle="Financial aid application"
       ><template #buttons>

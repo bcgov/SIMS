@@ -3,8 +3,8 @@
     <HeaderNavigator
       title="Back all programs"
       :routeLocation="{
-        routeName: InstitutionRoutesConst.LOCATION_PROGRAMS,
-        routeParams: { locationId: locationId },
+        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+        params: { locationId: locationId },
       }"
       subTitle="View program"
     >
