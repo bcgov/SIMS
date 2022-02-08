@@ -33,11 +33,11 @@ export default {
     const showInfo = ref(false);
     const prepareContent = () => {
       showInfo.value = false;
-      if ([COEStatus.completed].includes(props.data.applicationCOEStatus)) {
+      if (COEStatus.completed === props.data.applicationCOEStatus) {
         showInfo.value = true;
         content.value = `This applicant has been confirmed as enrolled at your institution.
             Funding will be disbursed on the study start date shown below. If the
-            applicant will be recieving after the study start date listed below
+            applicant will be receiving after the study start date listed below
             funds will be disbursed 48 hours after enrollment as been confirmed.`;
         containerClass.value = "coe-info-border";
         infoHeader.value = `This application has been confirmed`;

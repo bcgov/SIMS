@@ -87,12 +87,12 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
 
   public async denyConfirmationOfEnrollment(
     locationId: number,
-    applicationId: number,
+    disbursementScheduleId: number,
     denyCOEPayload: DenyConfirmationOfEnrollment,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
-        `institution/location/${locationId}/confirmation-of-enrollment/application/${applicationId}/deny`,
+        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/deny`,
         denyCOEPayload,
         this.addAuthHeader(),
       );

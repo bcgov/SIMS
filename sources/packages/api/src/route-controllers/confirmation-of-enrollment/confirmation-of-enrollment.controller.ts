@@ -31,7 +31,12 @@ import {
 } from "../../database/entities";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
-import { dateString, COE_WINDOW, getCOEDeniedReason } from "../../utilities";
+import {
+  dateString,
+  COE_WINDOW,
+  getCOEDeniedReason,
+  COE_DENIED_REASON_OTHER_ID,
+} from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollmentDto,
@@ -200,9 +205,7 @@ export class ConfirmationOfEnrollmentController {
         disbursementSchedule.disbursementDate,
       ),
       applicationLocationId: disbursementSchedule.application.location.id,
-      applicationDeniedReason: getCOEDeniedReason(
-        disbursementSchedule.application,
-      ),
+      applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
       studyBreaks: disbursementSchedule.application.offering.studyBreaks?.map(
         (studyBreak) => ({
           breakStartDate: dateString(studyBreak.breakStartDate),
@@ -272,32 +275,47 @@ export class ConfirmationOfEnrollmentController {
    */
   @HasLocationAccess("locationId")
   @Patch(
-    ":locationId/confirmation-of-enrollment/application/:applicationId/deny",
+    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/deny",
   )
   async denyConfirmationOfEnrollment(
     @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("disbursementScheduleId") disbursementScheduleId: number,
     @Body() payload: DenyConfirmationOfEnrollmentDto,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    try {
-      const application = await this.applicationService.setDeniedReasonForCOE(
-        applicationId,
-        locationId,
-        payload.coeDenyReasonId,
-        payload.otherReasonDesc,
+    if (
+      payload.coeDenyReasonId === COE_DENIED_REASON_OTHER_ID &&
+      !payload.otherReasonDesc
+    ) {
+      throw new UnprocessableEntityException(
+        "Other is selected as COE reason, specify the reason for the COE denial.",
       );
-      if (application.assessmentWorkflowId) {
-        await this.workflow.deleteApplicationAssessment(
-          application.assessmentWorkflowId,
-        );
-      }
-    } catch (error) {
-      if (error.name === COE_REQUEST_NOT_FOUND_ERROR) {
-        throw new UnprocessableEntityException(error.message);
-      }
+    }
+    const disbursementSchedule =
+      await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
+        locationId,
+        disbursementScheduleId,
+      );
 
-      throw new InternalServerErrorException(
-        "Error while denying a Confirmation Of Enrollment (COE).",
+    if (!disbursementSchedule) {
+      throw new NotFoundException(
+        "Unable to find a COE which could be completed.",
+      );
+    }
+    await this.disbursementScheduleService.updateCOEToDeny(
+      disbursementSchedule.application.id,
+      userToken.userId,
+      payload.coeDenyReasonId,
+      payload.otherReasonDesc,
+    );
+
+    if (
+      disbursementSchedule.application.applicationStatus ===
+        ApplicationStatus.enrollment &&
+      disbursementSchedule.application.assessmentWorkflowId
+    ) {
+      await this.workflow.deleteApplicationAssessment(
+        disbursementSchedule.application.assessmentWorkflowId,
       );
     }
   }

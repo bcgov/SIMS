@@ -4,6 +4,7 @@ import {
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   addDays,
   COE_WINDOW,
+  COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
 import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
@@ -352,7 +353,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoinAndSelect("student.user", "user")
       .innerJoinAndSelect("application.offering", "offering")
       .innerJoinAndSelect("offering.educationProgram", "educationProgram")
-      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
+      .leftJoinAndSelect(
+        "disbursementSchedule.coeDeniedReason",
+        "coeDeniedReason",
+      )
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
@@ -392,5 +396,35 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
       .getOne();
+  }
+
+  /**
+   * Deny COE for an application.
+   ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
+   * @param disbursementScheduleIds
+   * @param userId User who denies the COE.
+   */
+  async updateCOEToDeny(
+    applicationId: number,
+    userId: number,
+    coeDeniedReasonId: number,
+    otherReasonDesc: string,
+  ): Promise<void> {
+    this.repo
+      .createQueryBuilder()
+      .update(DisbursementSchedule)
+      .set({
+        coeStatus: COEStatus.declined,
+        coeUpdatedBy: { id: userId },
+        coeUpdatedAt: new Date(),
+        coeDeniedReason: { id: coeDeniedReasonId },
+        coeDeniedOtherDesc:
+          coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID
+            ? otherReasonDesc
+            : null,
+      })
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("coeStatus = :required", { required: COEStatus.required })
+      .execute();
   }
 }

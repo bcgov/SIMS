@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Application, User, COEStatus } from ".";
+import { Application, User, COEStatus, COEDeniedReason } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
@@ -111,4 +111,27 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: true,
   })
   coeUpdatedAt?: Date;
+
+  /**
+   * COE denied reason for denied COEs.
+   */
+  @ManyToOne(() => COEDeniedReason, {
+    eager: false,
+    cascade: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "coe_denied_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  coeDeniedReason?: COEDeniedReason;
+
+  /**
+   * If the COE denied reason is other, the description of other reason.
+   */
+  @Column({
+    name: "coe_denied_other_desc",
+    nullable: true,
+  })
+  coeDeniedOtherDesc?: string;
 }

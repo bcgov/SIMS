@@ -266,7 +266,6 @@ export const transformToApplicationDetailDto = (
     applicationFormName: applicationDetail.programYear.formName,
     applicationProgramYearID: applicationDetail.programYear.id,
     applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
-    applicationCOEDeniedReason: getCOEDeniedReason(applicationDetail),
     programYearStartDate: applicationDetail.programYear.startDate,
     programYearEndDate: applicationDetail.programYear.endDate,
   };

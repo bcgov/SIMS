@@ -1,4 +1,4 @@
-import { Application } from "../database/entities";
+import { Application, DisbursementSchedule } from "../database/entities";
 import { COE_DENIED_REASON_OTHER_ID, PIR_DENIED_REASON_OTHER_ID } from ".";
 import { ApplicationSummaryDTO } from "../route-controllers/application/models/application.model";
 export const PIR_OR_DATE_OVERLAP_ERROR = "PIR_OR_DATE_OVERLAP_ERROR";
@@ -20,10 +20,12 @@ export function getPIRDeniedReason(application: Application): string {
  * @param applicationDetails application Object.
  * @returns COE denied reason.
  */
-export function getCOEDeniedReason(application: Application): string {
-  return application.coeDeniedReason?.id === COE_DENIED_REASON_OTHER_ID
-    ? application.coeDeniedOtherDesc
-    : application.coeDeniedReason?.reason;
+export function getCOEDeniedReason(
+  disbursementSchedule: DisbursementSchedule,
+): string {
+  return disbursementSchedule.coeDeniedReason?.id === COE_DENIED_REASON_OTHER_ID
+    ? disbursementSchedule.coeDeniedOtherDesc
+    : disbursementSchedule.coeDeniedReason?.reason;
 }
 
 /**
