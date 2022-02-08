@@ -82,8 +82,9 @@
   </ContentGroup>
 </template>
 <script lang="ts">
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
@@ -99,10 +100,6 @@ export default {
     TitleValue,
   },
   props: {
-    clientType: {
-      type: String,
-      required: true,
-    },
     institutionId: {
       type: Number,
       required: false,
@@ -110,6 +107,9 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const store = useStore();
+    const clientType = computed(() => store.state.common.clientType);
+
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
     };
@@ -123,7 +123,7 @@ export default {
     };
     const institutionLocationList = ref([] as InstitutionLocationsDetails[]);
     const getInstitutionLocationList = async () => {
-      switch (props.clientType) {
+      switch (clientType.value) {
         case ClientIdType.Institution:
           institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
           break;
@@ -164,6 +164,7 @@ export default {
       ClientIdType,
       addressList1,
       primaryContactList,
+      clientType,
     };
   },
 };

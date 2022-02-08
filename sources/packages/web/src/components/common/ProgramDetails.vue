@@ -72,6 +72,7 @@
 </template>
 
 <script lang="ts">
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
 import {
@@ -94,20 +95,18 @@ export default {
       type: Number,
       required: true,
     },
-    clientType: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const router = useRouter();
+    const store = useStore();
+    const clientType = computed(() => store.state.common.clientType);
 
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
 
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
 
     const programActionLabel = computed(() => {
@@ -121,7 +120,6 @@ export default {
           params: {
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.Institution,
           },
         });
       }
@@ -132,7 +130,6 @@ export default {
           params: {
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.AEST,
           },
         });
       }

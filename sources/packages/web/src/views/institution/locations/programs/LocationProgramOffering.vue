@@ -20,6 +20,7 @@
 </template>
 
 <script lang="ts">
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import formio from "@/components/generic/formio.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -48,20 +49,19 @@ export default {
       type: Number,
       required: true,
     },
-    clientType: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
     const initialData = ref();
+    const store = useStore();
+    const clientType = computed(() => store.state.common.clientType);
+
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
     const isReadonly = computed(() => {
       return isAESTUser.value;

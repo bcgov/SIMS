@@ -141,7 +141,8 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ref, onMounted, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
@@ -171,10 +172,6 @@ export default {
     InputSwitch,
   },
   props: {
-    clientType: {
-      type: String,
-      required: true,
-    },
     institutionId: {
       type: Number,
       required: false,
@@ -197,7 +194,9 @@ export default {
     };
     const institutionUserName = ref();
     const adminRoles = ref();
-    
+
+    const store = useStore();
+    const clientType = computed(() => store.state.common.clientType);
     /**
      * function to load usersListAndCount respective to the client type
      * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
@@ -212,7 +211,7 @@ export default {
       sortOrder = DataTableSortOrder.ASC,
     ) => {
       loading.value = true;
-      switch (props.clientType) {
+      switch (clientType.value) {
         case ClientIdType.Institution:
           usersListAndCount.value = await InstitutionService.shared.institutionSummary(
             page,
@@ -298,7 +297,7 @@ export default {
       // Call Service
       await getAllInstitutionUsers();
 
-      if (props.clientType === ClientIdType.Institution) {
+      if (clientType.value === ClientIdType.Institution) {
         // Get User type and Role
         userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
         userType.value = userRoleType.value?.userTypes
@@ -333,6 +332,7 @@ export default {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       adminRoles,
+      clientType,
     };
   },
 };

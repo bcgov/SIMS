@@ -1,17 +1,9 @@
 <template>
   <v-card>
     <v-container>
-      <ProgramDetails
-        :programId="programId"
-        :locationId="locationId"
-        :clientType="clientType"
-      />
+      <ProgramDetails :programId="programId" :locationId="locationId" />
       <hr class="horizontal-divider" />
-      <OfferingSummary
-        :programId="programId"
-        :locationId="locationId"
-        :clientType="clientType"
-      />
+      <OfferingSummary :programId="programId" :locationId="locationId" />
     </v-container>
   </v-card>
 </template>
@@ -29,10 +21,6 @@ export default {
     },
     locationId: {
       type: Number,
-      required: true,
-    },
-    clientType: {
-      type: String,
       required: true,
     },
   },

@@ -4,6 +4,7 @@
       <v-icon left> mdi-arrow-left </v-icon> Program detail</a
     >
   </p>
+
   <span class="heading-x-large">
     <span v-if="isReadonly">View Program</span>
     <span v-if="programId && !isReadonly">Edit Program</span>
@@ -20,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import formio from "@/components/generic/formio.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -44,20 +46,19 @@ export default {
       type: Number,
       required: false,
     },
-    clientType: {
-      type: Number,
-      required: true,
-    },
   },
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
     const institutionId = ref();
+    const store = useStore();
+    const clientType = computed(() => store.state.common.clientType);
+
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
     const isReadonly = computed(() => {
       return isAESTUser.value;

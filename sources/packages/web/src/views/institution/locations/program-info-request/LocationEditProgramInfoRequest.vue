@@ -141,7 +141,6 @@ export default {
           name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
           params: {
             locationId: props.locationId,
-            clientType: ClientIdType.Institution,
           },
         });
       }

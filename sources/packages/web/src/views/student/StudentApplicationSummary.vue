@@ -16,7 +16,7 @@
         /></span>
       </v-col>
       <v-col cols="12">
-        <StudentApplications :clientType="ClientIdType.Student" />
+        <StudentApplications />
       </v-col>
     </v-row>
   </div>
@@ -26,7 +26,7 @@ import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import { ApplicationStatus, ClientIdType } from "@/types";
+import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 
@@ -52,7 +52,6 @@ export default {
       ApplicationStatus,
       hasRestriction,
       restrictionMessage,
-      ClientIdType,
     };
   },
 };

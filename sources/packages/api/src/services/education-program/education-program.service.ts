@@ -4,6 +4,7 @@ import {
   EducationProgramOffering,
   Institution,
   OfferingTypes,
+  User,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
@@ -83,10 +84,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Insert/update an education program at institution level
    * that will be available for all locations.
    * @param educationProgram Information used to save the program.
+   * @param createProgram a flag, which create or edit program
    * @returns Education program created/updated.
    */
   async saveEducationProgram(
     educationProgram: SaveEducationProgram,
+    createProgram?: boolean,
   ): Promise<EducationProgram> {
     const program = new EducationProgram();
     program.id = educationProgram.id;
@@ -135,7 +138,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.intlExchangeProgramEligibility =
       educationProgram.intlExchangeProgramEligibility;
     program.programDeclaration = educationProgram.programDeclaration;
-
+    program.statusUpdatedBy = { id: educationProgram.userId } as User;
+    if (createProgram) {
+      program.submittedBy = { id: educationProgram.userId } as User;
+    }
     return this.repo.save(program);
   }
 

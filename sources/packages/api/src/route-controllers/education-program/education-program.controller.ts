@@ -96,7 +96,12 @@ export class EducationProgramController {
     @Body() payload: EducationProgramDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
-    const newProgram = await this.saveProgram(userToken, payload);
+    const newProgram = await this.saveProgram(
+      userToken,
+      payload,
+      undefined,
+      true,
+    );
     return newProgram.id;
   }
 
@@ -118,7 +123,7 @@ export class EducationProgramController {
       throw new NotFoundException("Not able to find the requested program.");
     }
 
-    await this.saveProgram(userToken, payload, id);
+    await this.saveProgram(userToken, payload, id, false);
   }
 
   /**
@@ -132,6 +137,7 @@ export class EducationProgramController {
     userToken: IInstitutionUserToken,
     payload: EducationProgramDto,
     programId?: number,
+    createProgram?: boolean,
   ): Promise<EducationProgram> {
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.Educationprogram,
@@ -146,14 +152,18 @@ export class EducationProgramController {
 
     // The payload returned from form.io contains the approvalStatus as
     // a calculated server value. If the approvalStatus value is sent
-    // from the client form it will be overrided by the server calculated one.
+    // from the client form it will be overridden by the server calculated one.
     const saveProgramPaylod: SaveEducationProgram = {
       ...submissionResult.data.data,
       programDeliveryTypes: submissionResult.data.data.programDeliveryTypes,
       institutionId: userToken.authorizations.institutionId,
       id: programId,
+      userId: userToken.userId,
     };
-    return this.programService.saveEducationProgram(saveProgramPaylod);
+    return this.programService.saveEducationProgram(
+      saveProgramPaylod,
+      createProgram,
+    );
   }
 
   /**

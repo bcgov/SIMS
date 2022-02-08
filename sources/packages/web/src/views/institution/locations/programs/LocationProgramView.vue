@@ -11,7 +11,6 @@
     <ManageProgramAndOfferingSummary
       :programId="programId"
       :locationId="locationId"
-      :clientType="ClientIdType.Institution"
     />
   </v-container>
 </template>
@@ -20,7 +19,6 @@
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
-import { ClientIdType } from "@/types";
 
 export default {
   components: { ManageProgramAndOfferingSummary },
@@ -46,7 +44,6 @@ export default {
     };
     return {
       goBack,
-      ClientIdType,
     };
   },
 };

@@ -1,7 +1,6 @@
 <template>
   <div>
     <span class="category-header-medium">Study period offerings</span>
-
     <div class="float-right">
       <InputText
         name="searchProgramName"
@@ -75,6 +74,7 @@
 </template>
 
 <script lang="ts">
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
 import {
@@ -104,10 +104,6 @@ export default {
       type: Number,
       required: true,
     },
-    clientType: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const router = useRouter();
@@ -116,12 +112,14 @@ export default {
     const currentPage = ref();
     const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
+    const store = useStore();
+    const clientType = computed(() => store.state.common.clientType);
 
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
       return isInstitutionUser.value ? "Edit" : "View";
@@ -148,7 +146,6 @@ export default {
             offeringId: offeringId,
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.Institution,
           },
         });
       }
@@ -159,7 +156,6 @@ export default {
             offeringId: offeringId,
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.AEST,
           },
         });
       }

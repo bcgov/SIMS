@@ -2,15 +2,17 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Institution } from ".";
+import { Institution, Note, User } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
 import { ApprovalStatus } from "../../services/education-program/constants";
+import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * The main resource table to store education programs related information.
@@ -303,4 +305,74 @@ export class EducationProgram extends RecordDataModel {
     name: "program_declaration",
   })
   programDeclaration: boolean;
+
+  /**
+   * Education program submitted date.
+   */
+  @Column({
+    name: "submitted_on",
+    type: "timestamptz",
+    nullable: false,
+  })
+  submittedOn: Date;
+
+  /**
+   * Education program status updated on.
+   */
+  @Column({
+    name: "status_updated_on",
+    type: "timestamptz",
+    nullable: true,
+  })
+  statusUpdatedOn: Date;
+
+  /**
+   * Effective End date of the approved Education program.
+   */
+  @Column({
+    name: "effective_end_date",
+    type: "date",
+    transformer: dateOnlyTransformer,
+    nullable: true,
+  })
+  effectiveEndDate: Date;
+
+  /**
+   * Education program note.
+   */
+  @RelationId((program: EducationProgram) => program.programNote)
+  programNoteId: number;
+
+  @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
+  @JoinColumn({
+    name: "program_note",
+    referencedColumnName: ColumnNames.ID,
+  })
+  programNote: Note;
+
+  /**
+   * Education program status updated by.
+   */
+  @RelationId((program: EducationProgram) => program.statusUpdatedBy)
+  statusUpdatedById: number;
+
+  @ManyToOne((type) => User, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "status_updated_by",
+    referencedColumnName: "id",
+  })
+  statusUpdatedBy: User;
+
+  /**
+   * Education program submitted by.
+   */
+  @RelationId((program: EducationProgram) => program.submittedBy)
+  submittedById: number;
+
+  @ManyToOne((type) => User, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "submitted_by",
+    referencedColumnName: "id",
+  })
+  submittedBy: User;
 }
