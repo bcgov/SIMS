@@ -18,7 +18,6 @@ import {
   EducationProgram,
   PIRDeniedReason,
   MSFAANumber,
-  COEDeniedReason,
   OfferingIntensity,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
@@ -33,7 +32,6 @@ import {
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
-  COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
