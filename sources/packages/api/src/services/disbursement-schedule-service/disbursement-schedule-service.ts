@@ -346,6 +346,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementSchedule.disbursementDate",
         "disbursementSchedule.coeStatus",
         "disbursementSchedule.application",
+        "disbursementSchedule.coeDeniedOtherDesc",
       ])
       .innerJoinAndSelect("disbursementSchedule.application", "application")
       .innerJoinAndSelect("application.location", "location")
