@@ -4,16 +4,19 @@
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
-    <h5 class="text-muted">
-      <a @click="goBack()">
-        <v-icon left> mdi-arrow-left </v-icon> Back to Applications</a
-      >
-    </h5>
-    <h1><strong>Financial Aid Application</strong></h1>
-    <v-btn color="primary" class="float-right ml-2" @click="toggle"
-      >Application Options
-      <v-icon size="25"> mdi-arrow-down-bold-circle</v-icon></v-btn
-    >
+    <HeaderNavigator
+      title="Back to Applications"
+      :routeLocation="{
+        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+      }"
+      subTitle="Financial aid application"
+      ><template #buttons>
+        <v-btn color="primary" @click="toggle"
+          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
+          Options
+        </v-btn>
+      </template>
+    </HeaderNavigator>
     <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <v-btn
       v-if="showViewAssessment"
@@ -81,7 +84,7 @@ import {
 import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used
@@ -100,6 +103,7 @@ export default {
     ApplicationDetails,
     ConfirmEditApplication,
     RestrictionBanner,
+    HeaderNavigator,
   },
   props: {
     id: {
@@ -131,11 +135,7 @@ export default {
         ApplicationStatus.completed,
       ].includes(applicationDetails.value?.applicationStatus),
     );
-    const goBack = () => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-      });
-    };
+
     const getProgramYear = async (includeInActivePY?: boolean) => {
       programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
         props.id,
@@ -253,7 +253,6 @@ export default {
       StudentRoutesConst,
       showHideCancelApplication,
       showModal,
-      goBack,
       applicationDetails,
       getApplicationDetails,
       dateString,

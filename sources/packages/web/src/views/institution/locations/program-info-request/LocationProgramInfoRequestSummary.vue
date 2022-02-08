@@ -1,54 +1,59 @@
 <template>
-  <v-container>
-    <p class="muted-heading-text">{{ locationName }}</p>
-    <p class="heading-x-large">Program Information Requests</p>
-    <v-sheet elevation="1" class="mx-auto mt-2">
-      <v-container>
-        <DataTable
-          :autoLayout="true"
-          :value="applications"
-          class="p-m-4"
-          :paginator="true"
-          :rows="10"
-        >
-          <Column field="fullName" header="Name">
-            <template #body="slotProps">
-              <span>{{ slotProps.data.fullName }}</span>
-            </template>
-          </Column>
-          <Column field="studyStartPeriod" header="Study Period">
-            <template #body="slotProps">
-              <span>
-                {{ dateString(slotProps.data.studyStartPeriod) }} -
-                {{ dateString(slotProps.data.studyEndPeriod) }}
-              </span>
-            </template></Column
+  <div class="p-m-4">
+    <HeaderNavigator
+      :title="locationName"
+      subTitle="Program Information Requests"
+    />
+
+    <v-container>
+      <v-sheet elevation="1" class="mx-auto mt-2">
+        <v-container>
+          <DataTable
+            :autoLayout="true"
+            :value="applications"
+            class="p-m-4"
+            :paginator="true"
+            :rows="10"
           >
-          <Column field="applicationNumber" header="Application #"></Column>
-          <Column field="pirStatus" header="Status">
-            <template #body="slotProps">
-              <Chip
-                :label="slotProps.data.pirStatus"
-                class="p-mr-2 p-mb-2 text-uppercase"
-                :class="getPirStatusColorClass(slotProps.data.pirStatus)"
-              />
-            </template>
-          </Column>
-          <Column field="applicationId" header="">
-            <template #body="slotProps">
-              <v-btn
-                plain
-                color="primary"
-                outlined
-                @click="goToViewApplication(slotProps.data.applicationId)"
-                >view</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
-      </v-container>
-    </v-sheet>
-  </v-container>
+            <Column field="fullName" header="Name">
+              <template #body="slotProps">
+                <span>{{ slotProps.data.fullName }}</span>
+              </template>
+            </Column>
+            <Column field="studyStartPeriod" header="Study Period">
+              <template #body="slotProps">
+                <span>
+                  {{ dateString(slotProps.data.studyStartPeriod) }} -
+                  {{ dateString(slotProps.data.studyEndPeriod) }}
+                </span>
+              </template></Column
+            >
+            <Column field="applicationNumber" header="Application #"></Column>
+            <Column field="pirStatus" header="Status">
+              <template #body="slotProps">
+                <Chip
+                  :label="slotProps.data.pirStatus"
+                  class="p-mr-2 p-mb-2 text-uppercase"
+                  :class="getPirStatusColorClass(slotProps.data.pirStatus)"
+                />
+              </template>
+            </Column>
+            <Column field="applicationId" header="">
+              <template #body="slotProps">
+                <v-btn
+                  plain
+                  color="primary"
+                  outlined
+                  @click="goToViewApplication(slotProps.data.applicationId)"
+                  >view</v-btn
+                >
+              </template>
+            </Column>
+          </DataTable>
+        </v-container>
+      </v-sheet>
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -58,9 +63,10 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
 import { useFormatters } from "@/composables";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: {},
+  components: { HeaderNavigator },
   props: {
     locationId: {
       type: Number,

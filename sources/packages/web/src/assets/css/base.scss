@@ -152,3 +152,21 @@ ul.no-bullets {
 .p-menuitem-link {
   background: transparent !important;
 }
+
+.header-title {
+  font-size: $font-header-medium;
+  color: $brand-black-light;
+  line-height: $line-height-header-md;
+  font-weight: $formio-header-wt;
+}
+
+.header-sub-title {
+  font-weight: $formio-header-wt;
+  color: $brand-black;
+  line-height: $line-height-header-xlg;
+  font-size: $font-header-xlarge;
+}
+
+.header-button {
+  bottom: 12px;
+}

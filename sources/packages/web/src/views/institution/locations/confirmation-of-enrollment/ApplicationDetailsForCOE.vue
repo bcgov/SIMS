@@ -1,28 +1,17 @@
 <template>
   <div class="p-m-4">
-    <h5 class="text-muted">
-      <a @click="goBack()">
-        <v-icon left> mdi-arrow-left </v-icon> Back to Programs</a
-      >
-    </h5>
-    <p class="font-weight-bold h2 color-blue">
-      View Financial Aid Application
-    </p>
-    <v-btn
-      color="primary"
-      class="float-right ml-2"
-      @click="toggle"
-      v-if="COEStatus.required === initialData.applicationCOEStatus"
-    >
-      <v-icon size="25" class="pr-2"> mdi-format-list-bulleted</v-icon
-      >Application Actions</v-btn
-    >
-    <Menu
-      class="mt-n15 coe-menu-option"
-      ref="menu"
-      :model="items"
-      :popup="true"
-    />
+    <HeaderNavigator
+      title="Back to Programs"
+      :routeName="InstitutionRoutesConst.COE_SUMMARY"
+      subTitle="View Financial Aid Application"
+      ><template #buttons>
+        <v-btn color="primary" @click="toggle"
+          ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
+          Actions
+        </v-btn>
+      </template>
+    </HeaderNavigator>
+    <Menu class="mt-n15" ref="menu" :model="items" :popup="true" />
     <v-container>
       <Information :data="initialData" />
       <formio formName="confirmsstudentenrollment" :data="initialData"></formio>
@@ -56,7 +45,7 @@ import ConfirmCOEEditModal from "@/components/institutions/confirmation-of-enrol
 import ConfirmCOEDenyModal from "@/components/institutions/confirmation-of-enrollment/modals/ConfirmCOEDenyModal.vue";
 import { useToastMessage, ModalDialog } from "@/composables";
 import Information from "@/components/institutions/confirmation-of-enrollment/information.vue";
-
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used
@@ -78,6 +67,7 @@ export default {
     ConfirmCOEEditModal,
     ConfirmCOEDenyModal,
     Information,
+    HeaderNavigator,
   },
   props: {
     disbursementScheduleId: {
@@ -100,12 +90,6 @@ export default {
     const denyCOEModal = ref({} as ModalDialog<void>);
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
-    };
-
-    const goBack = () => {
-      router.push({
-        name: InstitutionRoutesConst.COE_SUMMARY,
-      });
     };
 
     const loadInitialData = async () => {
@@ -216,7 +200,6 @@ export default {
     };
     return {
       toggle,
-      goBack,
       initialData,
       menu,
       items,
@@ -227,6 +210,7 @@ export default {
       editCOEModal,
       denyCOEModal,
       submitCOEDeny,
+      InstitutionRoutesConst,
     };
   },
 };
