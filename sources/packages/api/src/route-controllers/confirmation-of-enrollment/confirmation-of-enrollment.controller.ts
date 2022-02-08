@@ -44,6 +44,9 @@ import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/d
 export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
 export const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
+export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
+export const FIRST_COE_NOT_COMPLETE_MESSAGE =
+  "First disbursement ot complete. Please complete the first disbursement.";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -247,6 +250,17 @@ export class ConfirmationOfEnrollmentController {
     ) {
       throw new UnprocessableEntityException(
         `Confirmation of Enrollment window is greater than ${COE_WINDOW} days`,
+      );
+    }
+
+    const firstOutstandingDisbursement =
+      await this.disbursementScheduleService.getFirstOutstandingCOE(
+        disbursementSchedule.application.id,
+      );
+
+    if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
+      throw new UnprocessableEntityException(
+        `${FIRST_COE_NOT_COMPLETE} ${FIRST_COE_NOT_COMPLETE_MESSAGE}`,
       );
     }
 

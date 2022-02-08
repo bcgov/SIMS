@@ -428,4 +428,28 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .andWhere("coeStatus = :required", { required: COEStatus.required })
       .execute();
   }
+
+  /**
+   * Returns the oldest/first COE which is waiting for confirmation.
+   ** This information is required to validate if the user is approving the first COE before second.
+   * @param applicationId
+   * @returns Disbursement
+   */
+  async getFirstOutstandingCOE(
+    applicationId: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select(["disbursementSchedule.id"])
+      .innerJoin("disbursementSchedule.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      })
+      .andWhere("disbursementSchedule.coeStatus = :required", {
+        required: COEStatus.required,
+      })
+      .orderBy("disbursementSchedule.disbursementDate")
+      .getOne();
+  }
 }
