@@ -343,24 +343,50 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
     return this.repo
-      .createQueryBuilder("disbursementSchedule")
+      .createQueryBuilder("coe")
       .select([
-        "disbursementSchedule.id",
-        "disbursementSchedule.disbursementDate",
-        "disbursementSchedule.application",
+        "coe.id",
+        "coe.disbursementDate",
+        "coe.coeStatus",
+        "coe.coeDeniedOtherDesc",
+        "coeApplication.applicationNumber",
+        "coeApplication.applicationStatus",
+        "coeApplication.id",
+        "coeApplication.pirStatus",
+        "coeLocation.name",
+        "coeLocation.id",
+        "applicationStudent.id",
+        "studentUser.firstName",
+        "studentUser.lastName",
+        "coeOffering.offeringIntensity",
+        "coeOffering.studyStartDate",
+        "coeOffering.studyEndDate",
+        "coeOffering.lacksStudyBreaks",
+        "coeOffering.actualTuitionCosts",
+        "coeOffering.programRelatedCosts",
+        "coeOffering.mandatoryFees",
+        "coeOffering.exceptionalExpenses",
+        "coeOffering.tuitionRemittanceRequested",
+        "coeOffering.tuitionRemittanceRequestedAmount",
+        "coeOffering.offeringDelivered",
+        "coeOffering.studyBreaks",
+        "coeProgram.name",
+        "coeProgram.description",
+        "deniedReason.id",
+        "deniedReason.reason",
       ])
-      .innerJoinAndSelect("disbursementSchedule.application", "application")
-      .innerJoinAndSelect("application.location", "location")
-      .innerJoinAndSelect("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .innerJoinAndSelect("application.offering", "offering")
-      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
-      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
-      .where("location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus IN (:...status)", {
+      .innerJoin("coe.application", "coeApplication")
+      .innerJoin("coeApplication.location", "coeLocation")
+      .innerJoin("coeApplication.student", "applicationStudent")
+      .innerJoin("applicationStudent.user", "studentUser")
+      .innerJoin("coeApplication.offering", "coeOffering")
+      .innerJoin("coeOffering.educationProgram", "coeProgram")
+      .leftJoin("coe.coeDeniedReason", "deniedReason")
+      .where("coeLocation.id = :locationId", { locationId })
+      .andWhere("coeApplication.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
-      .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
+      .andWhere("coe.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
       .getOne();
@@ -431,32 +457,49 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Returns the oldest/first COE which is waiting for confirmation.
-   ** This information is required to validate if the user is approving the first COE before second.
+   * Return the first COE details of an application.
+   **If @param onlyPendingCOE is true, then it returns first pending/outstanding COE
+   **for an application.
    * @param applicationId
+   * @param onlyPendingCOE
    * @returns Disbursement
    */
-  async getFirstOutstandingCOE(
+  async getFirstCOEOfApplication(
     applicationId: number,
+    onlyPendingCOE?: boolean,
   ): Promise<DisbursementSchedule> {
-    return this.repo
+    const firstCOEQuery = this.repo
       .createQueryBuilder("outstandingCOE")
-      .select(["outstandingCOE.id"])
+      .select([
+        "outstandingCOE.id",
+        "outstandingCOE.coeStatus",
+        "outstandingCOE.coeDeniedOtherDesc",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+      ])
       .innerJoin("outstandingCOE.application", "application")
+      .leftJoin("outstandingCOE.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
-      })
-      .andWhere("outstandingCOE.coeStatus = :required", {
+      });
+    if (onlyPendingCOE) {
+      firstCOEQuery.andWhere("outstandingCOE.coeStatus = :required", {
         required: COEStatus.required,
-      })
-      .orderBy("outstandingCOE.disbursementDate")
-      .limit(1)
-      .getOne();
+      });
+    }
+    firstCOEQuery.orderBy("outstandingCOE.disbursementDate").limit(1);
+    return firstCOEQuery.getOne();
   }
 
   /**
    * Returns a modified COE(Approved or Denied) for given application.
+   ** The object returned here is used to validate if an application is eligible or not
+   ** for a COE Override.
+   ** For an application it checks if the application is not in Enrollment status OR
+   ** one of the COEs are either approved or denied.
+   ** If any of these condition is true, it means COE data is returned and Application is
+   ** NOT eligible for COE override.
    * @param applicationId
    * @returns Disbursement Schedule
    */

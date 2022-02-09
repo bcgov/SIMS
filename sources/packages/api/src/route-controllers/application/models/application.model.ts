@@ -7,8 +7,13 @@ import {
   Application,
   Assessment,
   OfferingIntensity,
+  DisbursementSchedule,
 } from "../../../database/entities";
-import { dateString, getPIRDeniedReason } from "../../../utilities";
+import {
+  dateString,
+  getPIRDeniedReason,
+  getCOEDeniedReason,
+} from "../../../utilities";
 export class SaveApplicationDto {
   /**
    * Application dynamic data.
@@ -51,6 +56,7 @@ export interface GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationEndDate: string;
   applicationInstitutionName: string;
   applicationPIRStatus: ProgramInfoStatus;
+  applicationCOEStatus: COEStatus;
   applicationAssessmentStatus: AssessmentStatus;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
@@ -244,6 +250,7 @@ export const transformToApplicationDto = (
  */
 export const transformToApplicationDetailDto = (
   applicationDetail: Application,
+  disbursement: DisbursementSchedule,
 ): GetApplicationDataDto => {
   return {
     data: applicationDetail.data,
@@ -264,5 +271,7 @@ export const transformToApplicationDetailDto = (
     applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
     programYearStartDate: applicationDetail.programYear.startDate,
     programYearEndDate: applicationDetail.programYear.endDate,
+    applicationCOEStatus: disbursement.coeStatus,
+    applicationCOEDeniedReason: getCOEDeniedReason(disbursement),
   };
 };

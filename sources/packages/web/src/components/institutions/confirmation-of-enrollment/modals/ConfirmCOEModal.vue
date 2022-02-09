@@ -68,11 +68,13 @@ export default {
         );
         toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
       } catch (error) {
+        let errorLabel = "Unexpected error";
         let errorMessage = "An error happened while confirming the COE.";
-        if (error.includes(FIRST_COE_NOT_COMPLETE)) {
-          errorMessage = error.replace(FIRST_COE_NOT_COMPLETE, "").trim();
+        if (error.response.data?.errorType === FIRST_COE_NOT_COMPLETE) {
+          errorMessage = error.response.data.message;
+          errorLabel = error.response.data.errorType;
         }
-        toast.error("Unexpected error", errorMessage);
+        toast.error(errorLabel, errorMessage);
       }
       updateShowConfirmCOEModal();
       context.emit("reloadData");

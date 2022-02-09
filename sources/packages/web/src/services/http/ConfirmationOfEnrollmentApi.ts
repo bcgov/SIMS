@@ -44,18 +44,10 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     locationId: number,
     disbursementScheduleId: number,
   ): Promise<void> {
-    await this.apiClient
-      .patch(
-        `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
-        {},
-        this.addAuthHeader(),
-      )
-      .catch(error => {
-        if (error.response) {
-          this.handleRequestError(error.response.data?.message);
-          throw error.response.data?.message;
-        }
-      });
+    await this.patchCall(
+      `institution/location/${locationId}/confirmation-of-enrollment/disbursement/${disbursementScheduleId}/confirm`,
+      {},
+    );
   }
 
   public async rollbackCOE(

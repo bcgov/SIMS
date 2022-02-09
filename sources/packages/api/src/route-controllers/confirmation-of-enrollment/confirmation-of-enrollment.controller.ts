@@ -43,12 +43,13 @@ import {
   COEDeniedReasonDto,
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
-export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
-export const COE_NOT_FOUND_MESSAGE =
+import { ApiProcessError } from "../../types";
+
+const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
-export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
-export const FIRST_COE_NOT_COMPLETE_MESSAGE =
-  "First disbursement not complete. Please complete the first disbursement.";
+const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
+const FIRST_COE_NOT_COMPLETE_MESSAGE =
+  "First disbursement(COE) not complete. Please complete the first disbursement.";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -270,13 +271,17 @@ export class ConfirmationOfEnrollmentController {
     }
 
     const firstOutstandingDisbursement =
-      await this.disbursementScheduleService.getFirstOutstandingCOE(
+      await this.disbursementScheduleService.getFirstCOEOfApplication(
         disbursementSchedule.application.id,
+        true,
       );
 
     if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
       throw new UnprocessableEntityException(
-        `${FIRST_COE_NOT_COMPLETE} ${FIRST_COE_NOT_COMPLETE_MESSAGE}`,
+        new ApiProcessError(
+          FIRST_COE_NOT_COMPLETE_MESSAGE,
+          FIRST_COE_NOT_COMPLETE,
+        ),
       );
     }
 
