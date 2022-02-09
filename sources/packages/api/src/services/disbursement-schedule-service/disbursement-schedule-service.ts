@@ -359,18 +359,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "student.id",
         "user.firstName",
         "user.lastName",
-        "offering.offeringIntensity",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.lacksStudyBreaks",
-        "offering.actualTuitionCosts",
-        "offering.programRelatedCosts",
-        "offering.mandatoryFees",
-        "offering.exceptionalExpenses",
-        "offering.tuitionRemittanceRequested",
-        "offering.tuitionRemittanceRequestedAmount",
-        "offering.offeringDelivered",
-        "offering.studyBreaks",
+        "applicationOffering.offeringIntensity",
+        "applicationOffering.studyStartDate",
+        "applicationOffering.studyEndDate",
+        "applicationOffering.lacksStudyBreaks",
+        "applicationOffering.actualTuitionCosts",
+        "applicationOffering.programRelatedCosts",
+        "applicationOffering.mandatoryFees",
+        "applicationOffering.exceptionalExpenses",
+        "applicationOffering.tuitionRemittanceRequested",
+        "applicationOffering.tuitionRemittanceRequestedAmount",
+        "applicationOffering.offeringDelivered",
+        "applicationOffering.studyBreaks",
         "educationProgram.name",
         "educationProgram.description",
       ])
@@ -378,8 +378,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("application.location", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("application.offering", "offering")
-      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("application.offering", "applicationOffering")
+      .innerJoin("applicationOffering.educationProgram", "educationProgram")
       .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
