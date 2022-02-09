@@ -1,20 +1,22 @@
 <template>
-  <ProgramDetailHeader :educationProgram="educationProgram" />
-  <v-card>
-    <v-container>
-      <ProgramDetails
-        :programId="programId"
-        :locationId="locationId"
-        :educationProgram="educationProgram"
-      />
-      <hr class="horizontal-divider" />
-      <OfferingSummary :programId="programId" :locationId="locationId" />
-    </v-container>
-  </v-card>
+  <div>
+    <ProgramDetailHeader :educationProgram="educationProgram" />
+    <v-card>
+      <v-container>
+        <ProgramDetails
+          :programId="programId"
+          :locationId="locationId"
+          :educationProgram="educationProgram"
+        />
+        <hr class="horizontal-divider" />
+        <OfferingSummary :programId="programId" :locationId="locationId" />
+      </v-container>
+    </v-card>
+  </div>
 </template>
 
 <script lang="ts">
-import ProgramDetails from "@/components/common/ProgramDetail.vue";
+import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import ProgramDetailHeader from "@/components/common/ProgramDetailHeader.vue";
 
