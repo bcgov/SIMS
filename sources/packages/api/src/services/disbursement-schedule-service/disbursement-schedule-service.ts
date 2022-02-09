@@ -348,12 +348,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "coe.id",
         "coe.disbursementDate",
         "coe.coeStatus",
-        "coe.application",
         "coe.coeDeniedOtherDesc",
-        "application.applicationNumber",
-        "application.applicationStatus",
-        "application.id",
-        "application.pirStatus",
+        "coeApplication.applicationNumber",
+        "coeApplication.applicationStatus",
+        "coeApplication.id",
+        "coeApplication.pirStatus",
         "location.name",
         "location.id",
         "student.id",
@@ -374,15 +373,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "educationProgram.name",
         "educationProgram.description",
       ])
-      .innerJoin("coe.application", "application")
-      .innerJoin("application.location", "location")
-      .innerJoin("application.student", "student")
+      .innerJoin("coe.application", "coeApplication")
+      .innerJoin("coeApplication.location", "location")
+      .innerJoin("coeApplication.student", "student")
       .innerJoin("student.user", "studentUser")
-      .innerJoin("application.offering", "applicationOffering")
+      .innerJoin("coeApplication.offering", "applicationOffering")
       .innerJoin("applicationOffering.educationProgram", "educationProgram")
       .leftJoin("coe.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus IN (:...status)", {
+      .andWhere("coeApplication.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
       .andWhere("coe.id = :disbursementScheduleId", {
