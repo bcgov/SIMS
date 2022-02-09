@@ -343,48 +343,24 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
     return this.repo
-      .createQueryBuilder("coe")
+      .createQueryBuilder("disbursementSchedule")
       .select([
-        "coe.id",
-        "coe.disbursementDate",
-        "coe.coeStatus",
-        "coe.coeDeniedOtherDesc",
-        "coeApplication.applicationNumber",
-        "coeApplication.applicationStatus",
-        "coeApplication.id",
-        "coeApplication.pirStatus",
-        "location.name",
-        "location.id",
-        "student.id",
-        "studentUser.firstName",
-        "studentUser.lastName",
-        "applicationOffering.offeringIntensity",
-        "applicationOffering.studyStartDate",
-        "applicationOffering.studyEndDate",
-        "applicationOffering.lacksStudyBreaks",
-        "applicationOffering.actualTuitionCosts",
-        "applicationOffering.programRelatedCosts",
-        "applicationOffering.mandatoryFees",
-        "applicationOffering.exceptionalExpenses",
-        "applicationOffering.tuitionRemittanceRequested",
-        "applicationOffering.tuitionRemittanceRequestedAmount",
-        "applicationOffering.offeringDelivered",
-        "applicationOffering.studyBreaks",
-        "educationProgram.name",
-        "educationProgram.description",
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.application",
       ])
-      .innerJoin("coe.application", "coeApplication")
-      .innerJoin("coeApplication.location", "location")
-      .innerJoin("coeApplication.student", "student")
-      .innerJoin("student.user", "studentUser")
-      .innerJoin("coeApplication.offering", "applicationOffering")
-      .innerJoin("applicationOffering.educationProgram", "educationProgram")
-      .leftJoin("coe.coeDeniedReason", "coeDeniedReason")
+      .innerJoinAndSelect("disbursementSchedule.application", "application")
+      .innerJoinAndSelect("application.location", "location")
+      .innerJoinAndSelect("application.student", "student")
+      .innerJoinAndSelect("student.user", "user")
+      .innerJoinAndSelect("application.offering", "offering")
+      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
+      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })
-      .andWhere("coeApplication.applicationStatus IN (:...status)", {
+      .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
-      .andWhere("coe.id = :disbursementScheduleId", {
+      .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
       .getOne();
