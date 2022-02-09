@@ -77,8 +77,8 @@ export class InstitutionService {
     await ApiClient.Institution.updateInstitution(data);
   }
 
-  public async getDetail(): Promise<InstitutionDetailDto> {
-    return ApiClient.Institution.getDetail();
+  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
+    return ApiClient.Institution.getDetail(authHeader);
   }
 
   public async sync() {

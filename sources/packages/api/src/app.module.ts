@@ -32,6 +32,7 @@ import {
   DisbursementScheduleErrorsService,
   RestrictionService,
   InstitutionRestrictionService,
+  DesignationAgreementService,
 } from "./services";
 import {
   UserController,
@@ -57,6 +58,7 @@ import {
   FedRestrictionsIntegrationController,
   NotesController,
   RestrictionController,
+  DesignationAgreementController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -102,6 +104,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     FedRestrictionsIntegrationController,
     NotesController,
     RestrictionController,
+    DesignationAgreementController,
   ],
   providers: [
     AppService,
@@ -134,6 +137,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     DisbursementScheduleErrorsService,
     RestrictionService,
     InstitutionRestrictionService,
+    DesignationAgreementService,
   ],
 })
 export class AppModule {}

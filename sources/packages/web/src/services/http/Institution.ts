@@ -44,10 +44,11 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getDetail(): Promise<InstitutionDetailDto> {
+  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
     try {
       const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall(
         "institution",
+        authHeader,
       );
       return resp.data;
     } catch (error) {

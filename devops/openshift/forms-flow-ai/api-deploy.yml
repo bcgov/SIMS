@@ -40,11 +40,6 @@ objects:
                     secretKeyRef:
                       key: FORMSFLOW_API_CORS_ORIGINS
                       name: ${FORMIO_SECRET}
-                - name: MONGODB_URI
-                  valueFrom:
-                    secretKeyRef:
-                      key: MONGODB_URI
-                      name: ${FORMIO_SECRET}
                 - name: BPM_API_BASE
                   valueFrom:
                     secretKeyRef:
@@ -104,6 +99,16 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: JWT_OIDC_WELL_KNOWN_CONFIG
+                      name: ${FORMIO_SECRET}
+                - name: KEYCLOAK_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: keycloak_url
+                      name: ${FORMIO_SECRET}
+                - name: KEYCLOAK_URL_REALM
+                  valueFrom:
+                    secretKeyRef:
+                      key: keycloak_realm
                       name: ${FORMIO_SECRET}
                 - name: WEB_API_BASE_URL
                   valueFrom:

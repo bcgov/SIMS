@@ -12,7 +12,8 @@ import ActiveApplicationEdit from "@/views/institution/locations/active-applicat
 import LocationCOESummary from "@/views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "@/views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "@/views/institution/EditInstitutionLocation.vue";
-import ManageDesignation from "@/views/institution/ManageDesignation.vue";
+import ManageDesignation from "../views/institution/designations/ManageDesignation.vue";
+import DesignationRequest from "../views/institution/designations/DesignationRequest.vue";
 import InstitutionUserDetails from "@/views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
@@ -270,6 +271,18 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.MANAGE_DESIGNATION,
         components: {
           default: ManageDesignation,
+          sidebar: ManageInstitutionSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          userTypes: [InstitutionUserTypes.admin],
+        },
+      },
+      {
+        path: AppRoutes.DesignationRequest,
+        name: InstitutionRoutesConst.DESIGNATION_REQUEST,
+        components: {
+          default: DesignationRequest,
           sidebar: ManageInstitutionSideBar,
         },
         meta: {

@@ -120,4 +120,21 @@ export class RouteHelper {
     // User is authenticated properly, allow the user to continue.
     return AuthStatus.Continue;
   }
+
+  /**
+   * Associates a plain html hyperlink, like the ones that can be declared in
+   * form.io definitions, and allow the association with a method call, for
+   * instance to redirect the user to a Vue route.
+   * @param htmlElementId html hyperlink id.
+   * @param click method to be invoked.
+   */
+  static AssociateHyperlinkClick(htmlElementId: string, click: () => void) {
+    const htmlHyperlink = document.getElementById(htmlElementId);
+    if (htmlHyperlink) {
+      htmlHyperlink.onclick = (event: MouseEvent) => {
+        event.preventDefault();
+        click();
+      };
+    }
+  }
 }

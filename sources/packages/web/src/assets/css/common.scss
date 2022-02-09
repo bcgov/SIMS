@@ -1,0 +1,19 @@
+@import "./global-style-variables.scss";
+/** common style component */
+
+.label-bold {
+  color: $brand-black;
+  font-size: $font-size-content;
+  line-height: $line-height-header-sm;
+  font-weight: $font-weight-bold;
+}
+
+// horizontal divider width
+.horizontal-divider {
+  border: 1px solid #e8e8e8;
+}
+
+.vertical-divider {
+  border: 1px solid #8692a4;
+  height: $line-height-header-sm;
+}

@@ -38,4 +38,6 @@ export const TableNames = {
   InstitutionNotes: "institution_notes",
   InstitutionRestrictions: "institution_restrictions",
   SFASPartTimeApplications: "sfas_part_time_applications",
+  DesignationAgreements: "designation_agreements",
+  DesignationAgreementLocations: "designation_agreement_locations",
 };
