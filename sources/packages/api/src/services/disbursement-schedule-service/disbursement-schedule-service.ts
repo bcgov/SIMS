@@ -343,13 +343,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
     return this.repo
-      .createQueryBuilder("disbursement")
+      .createQueryBuilder("coe")
       .select([
-        "disbursement.id",
-        "disbursement.disbursementDate",
-        "disbursement.coeStatus",
-        "disbursement.application",
-        "disbursement.coeDeniedOtherDesc",
+        "coe.id",
+        "coe.disbursementDate",
+        "coe.coeStatus",
+        "coe.application",
+        "coe.coeDeniedOtherDesc",
         "application.applicationNumber",
         "application.applicationStatus",
         "application.id",
@@ -374,18 +374,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "educationProgram.name",
         "educationProgram.description",
       ])
-      .innerJoin("disbursement.application", "application")
+      .innerJoin("coe.application", "application")
       .innerJoin("application.location", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "studentUser")
       .innerJoin("application.offering", "applicationOffering")
       .innerJoin("applicationOffering.educationProgram", "educationProgram")
-      .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
+      .leftJoin("coe.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
-      .andWhere("disbursement.id = :disbursementScheduleId", {
+      .andWhere("coe.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
       .getOne();
