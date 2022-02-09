@@ -6,7 +6,7 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
-import { Connection, In, Repository, UpdateResult, Brackets } from "typeorm";
+import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
