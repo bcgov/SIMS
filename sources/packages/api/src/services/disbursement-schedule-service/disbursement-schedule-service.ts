@@ -465,17 +465,17 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     applicationId: number,
   ): Promise<DisbursementSchedule> {
     return this.repo
-      .createQueryBuilder("disbursementSchedule")
-      .select(["disbursementSchedule.id"])
-      .innerJoin("disbursementSchedule.application", "application")
+      .createQueryBuilder("outstandingCOE")
+      .select(["outstandingCOE.id"])
+      .innerJoin("outstandingCOE.application", "application")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
-      .andWhere("disbursementSchedule.coeStatus = :required", {
+      .andWhere("outstandingCOE.coeStatus = :required", {
         required: COEStatus.required,
       })
-      .orderBy("disbursementSchedule.disbursementDate")
+      .orderBy("outstandingCOE.disbursementDate")
       .limit(1)
       .getOne();
   }
@@ -487,13 +487,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    */
   async getModifiedCOE(applicationId: number): Promise<DisbursementSchedule> {
     return this.repo
-      .createQueryBuilder("disbursementSchedule")
-      .select(["disbursementSchedule.id"])
-      .innerJoin("disbursementSchedule.application", "application")
+      .createQueryBuilder("modifiedCOE")
+      .select(["modifiedCOE.id"])
+      .innerJoin("modifiedCOE.application", "application")
       .where("application.id = :applicationId", { applicationId })
       .andWhere(
         new Brackets((qb) => {
-          qb.where("disbursementSchedule.coeStatus IN (:...status)", {
+          qb.where("modifiedCOE.coeStatus IN (:...status)", {
             status: [COEStatus.completed, COEStatus.declined],
           }).orWhere("application.applicationStatus != :enrollment", {
             enrollment: ApplicationStatus.enrollment,
