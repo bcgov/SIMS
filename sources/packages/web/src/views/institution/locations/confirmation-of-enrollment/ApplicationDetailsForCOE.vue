@@ -2,7 +2,7 @@
   <div class="p-m-4">
     <HeaderNavigator
       title="Back to Programs"
-      :routeName="InstitutionRoutesConst.COE_SUMMARY"
+      :routeLocation="{ name: InstitutionRoutesConst.COE_SUMMARY }"
       subTitle="View Financial Aid Application"
       ><template #buttons>
         <v-btn color="primary" @click="toggle"

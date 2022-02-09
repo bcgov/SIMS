@@ -973,13 +973,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    if (appToOverride.applicationStatus !== ApplicationStatus.enrollment) {
-      throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
     // Change status of the current application being overwritten.
     appToOverride.applicationStatus = ApplicationStatus.overwritten;
     appToOverride.applicationStatusUpdatedOn = getUTCNow();

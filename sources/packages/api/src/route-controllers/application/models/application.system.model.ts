@@ -14,7 +14,6 @@ import { DisbursementValueType } from "../../../database/entities/disbursement-v
 import {
   ProgramInfoStatus,
   AssessmentStatus,
-  COEStatus,
   ApplicationStatus,
   SupportingUserType,
   OfferingIntensity,

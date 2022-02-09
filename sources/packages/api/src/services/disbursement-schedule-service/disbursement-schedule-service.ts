@@ -6,7 +6,7 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
-import { Connection, In, Repository, UpdateResult } from "typeorm";
+import { Connection, In, Repository, UpdateResult, Brackets } from "typeorm";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
@@ -350,17 +350,37 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementSchedule.coeStatus",
         "disbursementSchedule.application",
         "disbursementSchedule.coeDeniedOtherDesc",
+        "application.applicationNumber",
+        "application.applicationStatus",
+        "application.id",
+        "application.pirStatus",
+        "location.name",
+        "location.id",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.lacksStudyBreaks",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+        "offering.tuitionRemittanceRequested",
+        "offering.tuitionRemittanceRequestedAmount",
+        "offering.offeringDelivered",
+        "offering.studyBreaks",
+        "educationProgram.name",
+        "educationProgram.description",
       ])
-      .innerJoinAndSelect("disbursementSchedule.application", "application")
-      .innerJoinAndSelect("application.location", "location")
-      .innerJoinAndSelect("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .innerJoinAndSelect("application.offering", "offering")
-      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
-      .leftJoinAndSelect(
-        "disbursementSchedule.coeDeniedReason",
-        "coeDeniedReason",
-      )
+      .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("application.location", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .leftJoin("disbursementSchedule.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
@@ -395,6 +415,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .where("location.id = :locationId", { locationId })
       .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
+      })
+      .andWhere("disbursementSchedule.coeStatus = :required", {
+        required: COEStatus.required,
       })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
@@ -453,6 +476,30 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         required: COEStatus.required,
       })
       .orderBy("disbursementSchedule.disbursementDate")
+      .limit(1)
+      .getOne();
+  }
+
+  /**
+   * Returns a modified COE(Approved or Denied) for given application.
+   * @param applicationId
+   * @returns Disbursement Schedule
+   */
+  async getModifiedCOE(applicationId: number): Promise<DisbursementSchedule> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select(["disbursementSchedule.id"])
+      .innerJoin("disbursementSchedule.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("disbursementSchedule.coeStatus IN (:...status)", {
+            status: [COEStatus.completed, COEStatus.declined],
+          }).orWhere("application.applicationStatus != :enrollment", {
+            enrollment: ApplicationStatus.enrollment,
+          });
+        }),
+      )
       .limit(1)
       .getOne();
   }

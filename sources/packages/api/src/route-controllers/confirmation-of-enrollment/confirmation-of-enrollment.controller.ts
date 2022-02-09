@@ -26,6 +26,7 @@ import {
 import {
   ApplicationStatus,
   DisbursementSchedule,
+  COEStatus,
 } from "../../database/entities";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
@@ -112,6 +113,13 @@ export class ConfirmationOfEnrollmentController {
     @Param("applicationId") applicationId: number,
   ): Promise<number> {
     try {
+      const approvedOrDeniedCOE =
+        await this.disbursementScheduleService.getModifiedCOE(applicationId);
+      if (approvedOrDeniedCOE) {
+        throw new UnprocessableEntityException(
+          `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
+        );
+      }
       const result = await this.applicationService.overrideApplicationForCOE(
         locationId,
         applicationId,
