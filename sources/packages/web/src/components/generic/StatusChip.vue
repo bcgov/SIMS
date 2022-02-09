@@ -12,7 +12,7 @@
 </template>
 <script lang="ts">
 import { computed } from "vue";
-import { StatusShipTypes } from "@/components/generic/StatusChip.models";
+import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import {
   COLOR_BLACK,
   COLOR_WHITE,
@@ -35,11 +35,11 @@ export default {
   setup(props: any) {
     const iconColor = computed(() => {
       switch (props.status) {
-        case StatusShipTypes.Success:
+        case StatusChipTypes.Success:
           return COLOR_BANNER_SUCCESS;
-        case StatusShipTypes.Warning:
+        case StatusChipTypes.Warning:
           return COLOR_BANNER_WARNING;
-        case StatusShipTypes.Error:
+        case StatusChipTypes.Error:
           return COLOR_BANNER_ERROR;
         default:
           return COLOR_BANNER_ERROR;
@@ -48,11 +48,11 @@ export default {
 
     const badgeClass = computed(() => {
       switch (props.status) {
-        case StatusShipTypes.Success:
+        case StatusChipTypes.Success:
           return "status-badge-success";
-        case StatusShipTypes.Warning:
+        case StatusChipTypes.Warning:
           return "status-badge-warning";
-        case StatusShipTypes.Error:
+        case StatusChipTypes.Error:
           return "status-badge-error";
         default:
           return "status-badge-inactive";

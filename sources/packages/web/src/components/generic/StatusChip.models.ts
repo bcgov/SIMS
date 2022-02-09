@@ -1,4 +1,4 @@
-export enum StatusShipTypes {
+export enum StatusChipTypes {
   Success = "success",
   Warning = "warning",
   Error = "error",
