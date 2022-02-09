@@ -129,7 +129,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
 
   /**
    * Verify when the institution already have a pending designation
-   * agreement. Institution are not supposed to have more then one
+   * agreement. Institutions are not supposed to have more than one
    * pending designation at the same time.
    * @param institutionId institution to be verified.
    * @returns true, if there is already a pending designation agreement.

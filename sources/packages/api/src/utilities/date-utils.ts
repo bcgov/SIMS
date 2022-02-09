@@ -116,7 +116,7 @@ export function getDateOnlyFromFormat(
 }
 
 /**
- * Get the date only part of a date and time date object.
+ * Get the date only part of a date/time object.
  * @param date date/time to have the date extracted.
  * @returns date only string in ISO format YYYY-MM-DD.
  */

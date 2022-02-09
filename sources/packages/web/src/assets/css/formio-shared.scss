@@ -318,35 +318,35 @@
   color: $brand-black;
 }
 .formio-status-chip.fa-circle::before {
-  margin-right: 6px !important;
+  margin-right: 6px;
 }
 /* Success status */
 .formio-status-chip.success {
-  border-color: $badge-border-success !important;
+  border-color: $badge-border-success;
 }
 .formio-status-chip.success.fa-circle::before {
   color: $banner-color-success;
 }
 /* Warning status */
 .formio-status-chip.warning {
-  border-color: $badge-border-warning !important;
+  border-color: $badge-border-warning;
 }
 .formio-status-chip.warning.fa-circle::before {
-  color: $banner-color-warning !important;
+  color: $banner-color-warning;
 }
 /* Error status */
 .formio-status-chip.error {
-  border-color: $badge-border-error !important;
+  border-color: $badge-border-error;
 }
 .formio-status-chip.error.fa-circle::before {
-  color: $banner-color-error !important;
+  color: $banner-color-error;
 }
 /* Inactive status */
 .formio-status-chip.inactive {
-  border-color: $badge-border-inactive !important;
+  border-color: $badge-border-inactive;
 }
 .formio-status-chip.inactive.fa-circle::before {
-  color: $brand-black !important;
+  color: $brand-black;
 }
 
 .form-check-input {
