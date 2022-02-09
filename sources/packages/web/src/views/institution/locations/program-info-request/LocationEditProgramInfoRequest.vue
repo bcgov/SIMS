@@ -32,7 +32,6 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   GetProgramInfoRequestDto,
-  ClientIdType,
 } from "@/types";
 import {
   OFFERING_START_DATE_ERROR,

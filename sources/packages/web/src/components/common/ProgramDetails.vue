@@ -74,12 +74,11 @@
 <script lang="ts">
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { onMounted, ref, computed } from "vue";
+import { computed } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 import { COLOR_BLUE } from "@/constants";
@@ -94,6 +93,11 @@ export default {
     locationId: {
       type: Number,
       required: true,
+    },
+    educationProgram: {
+      type: Object,
+      required: true,
+      default: {} as EducationProgramData,
     },
   },
   setup(props: any) {
@@ -135,24 +139,8 @@ export default {
       }
     };
 
-    const educationProgram = ref({} as EducationProgramData);
-    const getEducationProgramAndOffering = async () => {
-      if (isInstitutionUser.value) {
-        educationProgram.value = await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-      } else if (isAESTUser.value) {
-        educationProgram.value = await EducationProgramService.shared.getEducationProgramForAEST(
-          props.programId,
-        );
-      }
-    };
-
-    onMounted(getEducationProgramAndOffering);
-
     return {
       programButtonAction,
-      educationProgram,
       ProgramIntensity,
       isInstitutionUser,
       isAESTUser,

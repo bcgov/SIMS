@@ -11,6 +11,7 @@
     <ManageProgramAndOfferingSummary
       :programId="programId"
       :locationId="locationId"
+      :educationProgram="educationProgram"
     />
   </v-container>
 </template>
@@ -19,6 +20,9 @@
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
+import { ref, onMounted } from "vue";
+import { EducationProgramData } from "@/types";
+import { EducationProgramService } from "@/services/EducationProgramService";
 
 export default {
   components: { ManageProgramAndOfferingSummary },
@@ -34,6 +38,13 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const educationProgram = ref({} as EducationProgramData);
+
+    const getEducationProgramAndOffering = async () => {
+      educationProgram.value = await EducationProgramService.shared.getEducationProgram(
+        props.programId,
+      );
+    };
     const goBack = () => {
       router.push({
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
@@ -42,8 +53,11 @@ export default {
         },
       });
     };
+
+    onMounted(getEducationProgramAndOffering);
     return {
       goBack,
+      educationProgram,
     };
   },
 };

@@ -90,7 +90,6 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  ClientIdType,
   PaginatedResults,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
