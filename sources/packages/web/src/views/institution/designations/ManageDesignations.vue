@@ -11,7 +11,7 @@
         assistance."
         :recordsCount="designations.length"
       >
-        <template #buttons>
+        <template #actions>
           <v-btn
             v-if="isLegalSigningAuthority"
             class="ml-2 primary-btn-background"

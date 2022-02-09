@@ -4,7 +4,7 @@
       {{ fullTitleMessage }}
     </span>
     <div class="float-right">
-      <slot name="buttons"></slot>
+      <slot name="actions"></slot>
     </div>
     <div>
       {{ subTitle }}
