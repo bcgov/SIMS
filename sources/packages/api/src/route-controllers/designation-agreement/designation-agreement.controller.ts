@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -64,6 +65,17 @@ export class DesignationAgreementController {
         "Not able to create a designation agreement due to an invalid request.",
       );
     }
+
+    if (
+      await this.designationAgreementService.hasPendingDesignation(
+        userToken.authorizations.institutionId,
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        "Institution already has a pending designation agreement.",
+      );
+    }
+
     // Creates the designation agreement.
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(

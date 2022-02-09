@@ -97,7 +97,7 @@ export default {
         toastMessage.success("Submitted", "Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
-        toastMessage.success(
+        toastMessage.error(
           "Unexpected error",
           "And unexpected error happened during the designation agreement submission.",
         );

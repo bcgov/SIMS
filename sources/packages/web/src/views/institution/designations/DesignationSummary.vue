@@ -17,99 +17,54 @@
         >
       </template>
     </body-header>
-    <content-group>
-      <empty-table-template
-        :isEmpty="!designations.length"
-        emptyMessage="You don’t have any agreements yet"
-      >
-        <template #image>
-          <v-img
-            height="200"
-            alt="You don’t have any agreements yet"
-            src="@/assets/images/designation_summary.svg"
-          />
-        </template>
-        <DataTable
-          :value="designations"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="designations.length"
-        >
-          <Column header="Submitted on"
-            ><template #body="slotProps">
-              <span>{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</span>
-            </template>
-          </Column>
-          <Column header="Start date"
-            ><template #body="slotProps">
-              <span>{{ dateOnlyLongString(slotProps.data.startDate) }}</span>
-            </template>
-          </Column>
-          <Column header="Expiry date"
-            ><template #body="slotProps">
-              <span>{{ dateOnlyLongString(slotProps.data.endDate) }}</span>
-            </template>
-          </Column>
-          <Column header="Status"
-            ><template #body="slotProps">
-              <status-chip-designation
-                :status="slotProps.data.designationStatus"
-              /> </template
-          ></Column>
-          <Column>
-            <template #body="slotProps">
-              <v-btn
-                outlined
-                @click="goToViewDesignation(slotProps.data.designationId)"
-              >
-                View
-              </v-btn>
-            </template>
-          </Column>
-        </DataTable>
-      </empty-table-template>
-    </content-group>
+    <designation-agreement-summary
+      :designations="designations"
+      @viewDesignation="goToViewDesignation"
+    />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import {
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  PAGINATION_LIST,
-} from "@/types";
 import { onMounted, ref } from "vue";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
-import { GetDesignationAgreementsDto } from "@/types/contracts/DesignationAgreementContract";
-import { useFormatters, useInstitutionAuth } from "@/composables";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
-import EmptyTableTemplate from "@/components/generic/EmptyTableTemplate.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
-import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
+import {
+  GetDesignationAgreementsDto,
+  DesignationAgreementStatus,
+} from "@/types/contracts/DesignationAgreementContract";
+import { useInstitutionAuth, useToastMessage } from "@/composables";
+import DesignationAgreementSummary from "@/components/common/DesignationAgreement/DesignationAgreementSummary.vue";
 
 export default {
   components: {
     FullPageContainer,
-    ContentGroup,
-    EmptyTableTemplate,
+    DesignationAgreementSummary,
     BodyHeader,
-    StatusChipDesignation,
   },
   setup() {
     const router = useRouter();
+    const toast = useToastMessage();
     const { isLegalSigningAuthority } = useInstitutionAuth();
-    const { dateOnlyLongString } = useFormatters();
+    const designations = ref([] as GetDesignationAgreementsDto[]);
 
     const goToRequestDesignation = () => {
-      return router.push({
-        name: InstitutionRoutesConst.DESIGNATION_REQUEST,
-      });
+      const hasPendingDesignation = designations.value.some(
+        designation =>
+          designation.designationStatus === DesignationAgreementStatus.Pending,
+      );
+      if (!hasPendingDesignation) {
+        router.push({
+          name: InstitutionRoutesConst.DESIGNATION_REQUEST,
+        });
+      } else {
+        toast.warn(
+          "Pending Designation",
+          "There is already a pending designation agreement.",
+        );
+      }
     };
 
     const goToViewDesignation = (id: number) => {
@@ -118,8 +73,6 @@ export default {
         params: { designationAgreementId: id },
       });
     };
-
-    const designations = ref([] as GetDesignationAgreementsDto[]);
 
     onMounted(async () => {
       designations.value = await DesignationAgreementService.shared.getDesignationsAgreements();
@@ -130,10 +83,6 @@ export default {
       goToRequestDesignation,
       goToViewDesignation,
       isLegalSigningAuthority,
-      dateOnlyLongString,
-      DEFAULT_PAGE_LIMIT,
-      DEFAULT_PAGE_NUMBER,
-      PAGINATION_LIST,
     };
   },
 };

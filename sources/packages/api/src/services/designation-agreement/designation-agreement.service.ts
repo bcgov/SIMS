@@ -97,6 +97,11 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .getOne();
   }
 
+  /**
+   * Get the summary of all designation agreements for the institution.
+   * @param institutionId institution to retrieve the designations.
+   * @returns designations under the institution.
+   */
   async getInstitutionDesignationsById(
     institutionId: number,
   ): Promise<DesignationAgreement[]> {
@@ -109,11 +114,31 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         "designation.startDate",
         "designation.endDate",
       ])
-      .innerJoin(
-        "designation.designationAgreementLocations",
-        "designationLocation",
-      )
       .where("designation.institution.id = :institutionId", { institutionId })
+      .orderBy(
+        `CASE designation.designationStatus
+            WHEN '${DesignationAgreementStatus.Pending}' THEN 1
+            WHEN '${DesignationAgreementStatus.Approved}' THEN 2
+            WHEN '${DesignationAgreementStatus.Declined}' THEN 3
+            ELSE 4
+          END`,
+      )
+      .addOrderBy("designation.submittedDate")
       .getMany();
+  }
+
+  /**
+   * Verify when the institution already have a pending designation
+   * agreement. Institution are not supposed to have more then one
+   * pending designation at the same time.
+   * @param institutionId institution to be verified.
+   * @returns true, if there is already a pending designation agreement.
+   */
+  async hasPendingDesignation(institutionId: number): Promise<boolean> {
+    const pendingDesignationsCount = await this.repo.count({
+      institution: { id: institutionId },
+      designationStatus: DesignationAgreementStatus.Pending,
+    });
+    return pendingDesignationsCount > 0;
   }
 }
