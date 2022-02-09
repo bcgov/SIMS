@@ -47,7 +47,7 @@ export const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
 export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
 export const FIRST_COE_NOT_COMPLETE_MESSAGE =
-  "First disbursement ot complete. Please complete the first disbursement.";
+  "First disbursement not complete. Please complete the first disbursement.";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -143,7 +143,7 @@ export class ConfirmationOfEnrollmentController {
   /**
    * Get the application details for Confirmation Of Enrollment(COE)
    * @param locationId location id
-   * @param applicationId application id
+   * @param disbursementScheduleId disbursement schedule id of COE
    * @returns application details for COE
    */
   @HasLocationAccess("locationId")
@@ -222,9 +222,13 @@ export class ConfirmationOfEnrollmentController {
   }
 
   /**
-   * Confirm Enrollment
+   * Approve confirmation of enrollment(COE).
+   ** An application can have upto two COEs based on the disbursement.
+   ** Hence COE Approval happens twice for application with more than once disbursement.
+   ** Irrespective of number of COEs to be approved, Application status is set to complete
+   ** on first COE approval.
    * @param locationId location id of the application
-   * @param applicationId application id to be confirm COE.
+   * @param disbursementScheduleId disbursement schedule id of COE
    */
   @HasLocationAccess("locationId")
   @Patch(
@@ -268,24 +272,32 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
+    await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
       disbursementScheduleId,
       userToken.userId,
       disbursementSchedule.application.id,
       disbursementSchedule.application.applicationStatus,
     );
 
-    // Send a message to allow the workflow to proceed.
-    await this.workflow.sendConfirmCOEMessage(
-      disbursementSchedule.application.assessmentWorkflowId,
-    );
+    /** Send COE confirmation message only for first COE.
+     ** Note: If first COE is completed, then application status is moved to Completed.
+     ** In that case, COE confirmation message will not be sent for second COE.
+     */
+    if (
+      disbursementSchedule.application.applicationStatus ===
+      ApplicationStatus.enrollment
+    ) {
+      await this.workflow.sendConfirmCOEMessage(
+        disbursementSchedule.application.assessmentWorkflowId,
+      );
+    }
   }
 
   /**
-   * Deny the Confirmation Of Enrollment(COE), defining the
-   * COE status as Declined in the student application table.
+   * Deny the Confirmation Of Enrollment(COE).
+   ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
    * @param locationId location that is completing the COE.
-   * @param applicationId application id to be updated.
+   * @param disbursementScheduleId disbursement schedule id of COE.
    * @param payload contains the denied reason of the
    * student application.
    */

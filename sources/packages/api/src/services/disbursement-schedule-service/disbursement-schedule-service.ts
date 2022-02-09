@@ -6,7 +6,7 @@ import {
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
-import { Connection, In, Repository } from "typeorm";
+import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
@@ -241,10 +241,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Update DisbursementSchedule with documentNumber
+   * On COE Approval, update disbursement schedule with document number and
+   * COE related columns. Update the Application status to completed, if it is first COE.
    * The update to Application and Disbursement schedule happens in single transaction.
-   * @param disbursementScheduleId document Number
-   * @returns the result of update.
+   * @param disbursementScheduleId
+   * @param userId
+   * @param applicationId
+   * @param applicationStatus
    */
   async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
@@ -253,7 +256,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     applicationStatus: ApplicationStatus,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
-    this.connection.transaction(async (transactionalEntityManager) => {
+    return this.connection.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(DisbursementSchedule)
         .createQueryBuilder()
@@ -331,7 +334,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Returns Disbursement and application details for COE Application details.
+   * Returns Disbursement and application details for COE detail view.
    * @param disbursementScheduleId
    * @returns Disbursement and Application details.
    */
@@ -410,8 +413,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     userId: number,
     coeDeniedReasonId: number,
     otherReasonDesc: string,
-  ): Promise<void> {
-    this.repo
+  ): Promise<UpdateResult> {
+    return this.repo
       .createQueryBuilder()
       .update(DisbursementSchedule)
       .set({
@@ -450,6 +453,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         required: COEStatus.required,
       })
       .orderBy("disbursementSchedule.disbursementDate")
+      .limit(1)
       .getOne();
   }
 }

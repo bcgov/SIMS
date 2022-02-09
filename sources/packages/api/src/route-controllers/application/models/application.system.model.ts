@@ -48,11 +48,6 @@ export class UpdateAssessmentStatusDto {
   status: AssessmentStatus;
 }
 
-export class UpdateCOEStatusDto {
-  @IsEnum(COEStatus)
-  status: COEStatus;
-}
-
 export class UpdateApplicationStatusDto {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
