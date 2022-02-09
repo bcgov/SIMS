@@ -114,9 +114,20 @@ export class ConfirmationOfEnrollmentController {
     @Param("applicationId") applicationId: number,
   ): Promise<number> {
     try {
-      const approvedOrDeniedCOE =
-        await this.disbursementScheduleService.getModifiedCOE(applicationId);
-      if (approvedOrDeniedCOE) {
+      /** Validation to check if the application is in Enrollment status and first coe is in Required status.
+       * Otherwise the application is not eligible for COE override  */
+      const firstCOEofApplication =
+        await this.disbursementScheduleService.getFirstCOEOfApplication(
+          applicationId,
+        );
+      if (
+        !firstCOEofApplication ||
+        !(
+          firstCOEofApplication.application.applicationStatus ===
+            ApplicationStatus.enrollment &&
+          firstCOEofApplication.coeStatus === COEStatus.required
+        )
+      ) {
         throw new UnprocessableEntityException(
           `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
         );
@@ -232,7 +243,7 @@ export class ConfirmationOfEnrollmentController {
 
   /**
    * Approve confirmation of enrollment(COE).
-   ** An application can have upto two COEs based on the disbursement.
+   ** An application can have up to two COEs based on the disbursement.
    ** Hence COE Approval happens twice for application with more than once disbursement.
    ** Irrespective of number of COEs to be approved, Application status is set to complete
    ** on first COE approval.

@@ -336,6 +336,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   /**
    * Returns Disbursement and application details for COE detail view.
    * @param disbursementScheduleId
+   * @param locationId
    * @returns Disbursement and Application details.
    */
   async getDisbursementAndApplicationDetails(
@@ -431,6 +432,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
    * @param disbursementScheduleIds
    * @param userId User who denies the COE.
+   * @param coeDeniedReasonId Denied reason id of a denied COE.
+   * @param otherReasonDesc If the denied reason is other, respective description.
    */
   async updateCOEToDeny(
     applicationId: number,
@@ -476,6 +479,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "outstandingCOE.coeDeniedOtherDesc",
         "coeDeniedReason.id",
         "coeDeniedReason.reason",
+        "application.id",
+        "application.applicationStatus",
       ])
       .innerJoin("outstandingCOE.application", "application")
       .leftJoin("outstandingCOE.coeDeniedReason", "coeDeniedReason")
@@ -490,35 +495,5 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
     firstCOEQuery.orderBy("outstandingCOE.disbursementDate").limit(1);
     return firstCOEQuery.getOne();
-  }
-
-  /**
-   * Returns a modified COE(Approved or Denied) for given application.
-   ** The object returned here is used to validate if an application is eligible or not
-   ** for a COE Override.
-   ** For an application it checks if the application is not in Enrollment status OR
-   ** one of the COEs are either approved or denied.
-   ** If any of these condition is true, it means COE data is returned and Application is
-   ** NOT eligible for COE override.
-   * @param applicationId
-   * @returns Disbursement Schedule
-   */
-  async getModifiedCOE(applicationId: number): Promise<DisbursementSchedule> {
-    return this.repo
-      .createQueryBuilder("modifiedCOE")
-      .select(["modifiedCOE.id"])
-      .innerJoin("modifiedCOE.application", "application")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where("modifiedCOE.coeStatus IN (:...status)", {
-            status: [COEStatus.completed, COEStatus.declined],
-          }).orWhere("application.applicationStatus != :enrollment", {
-            enrollment: ApplicationStatus.enrollment,
-          });
-        }),
-      )
-      .limit(1)
-      .getOne();
   }
 }

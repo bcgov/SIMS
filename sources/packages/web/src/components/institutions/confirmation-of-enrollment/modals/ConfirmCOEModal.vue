@@ -23,7 +23,7 @@
         @click="updateShowConfirmCOEModal()"
         >Cancel</v-btn
       >
-      <v-btn color="success" class="text-white" @click="confirmEntrollment()"
+      <v-btn color="success" class="text-white" @click="confirmEnrollment()"
         >Continue to Confirmation</v-btn
       >
     </template>
@@ -60,7 +60,7 @@ export default {
     const updateShowConfirmCOEModal = () => {
       context.emit("showHideConfirmCOE");
     };
-    const confirmEntrollment = async () => {
+    const confirmEnrollment = async () => {
       try {
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
           props.locationId,
@@ -82,7 +82,7 @@ export default {
 
     return {
       updateShowConfirmCOEModal,
-      confirmEntrollment,
+      confirmEnrollment,
     };
   },
 };
