@@ -1,27 +1,34 @@
 <template>
-  <full-page-container>
-    <body-header
-      title="Designation agreements"
-      subTitle="Ensure you have an active designation to administer student financial
-        assistance."
-      :recordsCount="designations.length"
-    >
-      <template #buttons>
-        <v-btn
-          v-if="isLegalSigningAuthority"
-          class="ml-2 primary-btn-background"
-          @click="goToRequestDesignation()"
-          ><font-awesome-icon
-            :icon="['fas', 'external-link-square-alt']"
-          />Request designation</v-btn
-        >
-      </template>
-    </body-header>
-    <designation-agreement-summary
-      :designations="designations"
-      @viewDesignation="goToViewDesignation"
+  <div class="p-m-4">
+    <header-navigator
+      title="Manage institutions"
+      subTitle="Manage designations"
     />
-  </full-page-container>
+    <full-page-container class="mt-4">
+      <body-header
+        title="Designation agreements"
+        subTitle="Ensure you have an active designation to administer student financial
+        assistance."
+        :recordsCount="designations.length"
+      >
+        <template #buttons>
+          <v-btn
+            v-if="isLegalSigningAuthority"
+            class="ml-2 primary-btn-background"
+            @click="goToRequestDesignation()"
+            ><font-awesome-icon
+              :icon="['fas', 'concierge-bell']"
+              class="mr-2"
+            />Request designation</v-btn
+          >
+        </template>
+      </body-header>
+      <designation-agreement-summary
+        :designations="designations"
+        @viewDesignation="goToViewDesignation"
+      />
+    </full-page-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,12 +44,14 @@ import {
 } from "@/types/contracts/DesignationAgreementContract";
 import { useInstitutionAuth, useToastMessage } from "@/composables";
 import DesignationAgreementSummary from "@/components/common/DesignationAgreement/DesignationAgreementSummary.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
   components: {
     FullPageContainer,
     DesignationAgreementSummary,
     BodyHeader,
+    HeaderNavigator,
   },
   setup() {
     const router = useRouter();

@@ -1,17 +1,18 @@
 <template>
-  <v-container class="ff-form-container">
-    <v-row justify="center">
-      <div class="pb-4 w-100 full-page-container-size">
-        <h5 class="text-muted">Back to manage designation</h5>
-        <h2 class="category-header-large">View designation</h2>
-      </div>
-    </v-row>
-  </v-container>
-  <full-page-container>
-    <designation-agreement-form
-      :model="designationModel"
-    ></designation-agreement-form>
-  </full-page-container>
+  <div class="p-m-4">
+    <header-navigator
+      title="Manage designations"
+      subTitle="View designations"
+      :routeLocation="{
+        name: InstitutionRoutesConst.MANAGE_DESIGNATION,
+      }"
+    />
+    <full-page-container class="mt-4">
+      <designation-agreement-form
+        :model="designationModel"
+      ></designation-agreement-form>
+    </full-page-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -28,9 +29,11 @@ import {
   DesignationFormViewModes,
 } from "@/components/common/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
-  components: { FullPageContainer, DesignationAgreementForm },
+  components: { FullPageContainer, DesignationAgreementForm, HeaderNavigator },
   props: {
     designationAgreementId: {
       type: Number,
@@ -72,7 +75,7 @@ export default {
       );
     });
 
-    return { designationModel };
+    return { designationModel, InstitutionRoutesConst };
   },
 };
 </script>
