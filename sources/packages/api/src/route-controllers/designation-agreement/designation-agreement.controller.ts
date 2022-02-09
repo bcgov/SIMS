@@ -27,7 +27,7 @@ import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/designation-agreements")
+@Controller("institution/designation-agreement")
 export class DesignationAgreementController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
@@ -128,6 +128,13 @@ export class DesignationAgreementController {
     } as GetDesignationAgreementDto;
   }
 
+  /**
+   * Get the list of all the designations that belongs to
+   * the institution user currently authenticated.
+   * @param userToken user authentication token.
+   * @returns the list of all the designations that
+   * belongs to one the institution.
+   */
   @IsInstitutionAdmin()
   @Get()
   async getDesignationAgreements(

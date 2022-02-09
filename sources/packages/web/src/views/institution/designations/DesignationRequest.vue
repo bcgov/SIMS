@@ -26,19 +26,15 @@ import {
   useToastMessage,
 } from "@/composables";
 import { useRouter } from "vue-router";
-import DesignationAgreementForm from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
+import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
   DesignationFormViewModes,
   DesignationLocationsListItem,
-} from "@/components/common/DesignationAgreement/DesignationAgreementForm.models";
+} from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
-import {
-  SubmitDesignationAgreementDto,
-  DesignationAgreementStatus,
-} from "@/types/contracts/DesignationAgreementContract";
+import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormioStatusShipClasses } from "@/components/generic/formio.models";
 
 export default {
   components: { FullPageContainer, DesignationAgreementForm },
@@ -87,10 +83,12 @@ export default {
       try {
         await DesignationAgreementService.shared.submitDesignationAgreement({
           dynamicData: model.dynamicData,
-          locations: model.locations.map(location => ({
-            locationId: location.locationId,
-            requestForDesignation: location.requestForDesignation,
-          })),
+          locations: model.locations.map(
+            (location: DesignationLocationsListItem) => ({
+              locationId: location.locationId,
+              requestForDesignation: location.requestForDesignation,
+            }),
+          ),
         } as SubmitDesignationAgreementDto);
         toastMessage.success("Submitted", "Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });

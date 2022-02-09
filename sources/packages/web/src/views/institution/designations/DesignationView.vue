@@ -23,11 +23,11 @@ import {
   useInstitutionState,
   useDesignationAgreement,
 } from "@/composables";
-import DesignationAgreementForm from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
+import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
   DesignationFormViewModes,
-} from "@/components/common/DesignationAgreement/DesignationAgreementForm.models";
+} from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";

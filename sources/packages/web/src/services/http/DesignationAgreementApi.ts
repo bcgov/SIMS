@@ -13,7 +13,7 @@ export class DesignationAgreementApi extends HttpBaseClient {
     designationAgreement: SubmitDesignationAgreementDto,
   ): Promise<void> {
     await this.postCall(
-      "institution/designation-agreements",
+      "institution/designation-agreement",
       designationAgreement,
     );
   }
@@ -22,13 +22,13 @@ export class DesignationAgreementApi extends HttpBaseClient {
     designationId: number,
   ): Promise<GetDesignationAgreementDto> {
     return this.getCallTyped<GetDesignationAgreementDto>(
-      `institution/designation-agreements/${designationId}`,
+      `institution/designation-agreement/${designationId}`,
     );
   }
 
   async getDesignationsAgreements(): Promise<GetDesignationAgreementsDto[]> {
     return this.getCallTyped<GetDesignationAgreementsDto[]>(
-      `institution/designation-agreements`,
+      `institution/designation-agreement`,
     );
   }
 }

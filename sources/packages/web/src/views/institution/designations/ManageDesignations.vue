@@ -43,7 +43,7 @@ import {
   DesignationAgreementStatus,
 } from "@/types/contracts/DesignationAgreementContract";
 import { useInstitutionAuth, useToastMessage } from "@/composables";
-import DesignationAgreementSummary from "@/components/common/DesignationAgreement/DesignationAgreementSummary.vue";
+import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
