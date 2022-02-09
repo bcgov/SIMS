@@ -51,6 +51,18 @@ objects:
                     secretKeyRef:
                       key: formio_root_password
                       name: ${FORMIO_SECRET}
+                - name: FORMIO_DOMAIN
+                  value: ${FFA_FORMS_URL}
+                - name: FORMIO_JWT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: formio_jwt_secret
+                      name: ${FORMIO_SECRET}
+                - name: FORMIO_JWT_EXPIRE
+                  valueFrom:
+                    secretKeyRef:
+                      key: formio_jwt_expire
+                      name: ${FORMIO_SECRET}
               image: ${IMAGE_REGISTRY}/${TOOLS_NAMESPACE}/${NAME}:${IMAGE_STREAM_TAG}
               name: ${NAME}
               ports:

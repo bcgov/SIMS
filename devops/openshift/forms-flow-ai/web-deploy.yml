@@ -47,6 +47,7 @@ objects:
             "REACT_APP_WEBSOCKET_ENCRYPT_KEY": "${REACT_APP_WEBSOCKET_ENCRYPT_KEY}",
             "REACT_APP_KEYCLOAK_URL_REALM": "${REALM}",
             "REACT_APP_KEYCLOAK_URL": "${REACT_APP_KEYCLOAK_URL}",
+            "REACT_APP_FORMIO_JWT_SECRET":"${REACT_APP_FORMIO_JWT_SECRET}",
             "REACT_APP_APPLICATION_NAME": "${REACT_APP_APPLICATION_NAME}"
           }
 
@@ -271,4 +272,8 @@ parameters:
   - name: REACT_APP_APPLICATION_NAME
     displayName: REACT_APP_APPLICATION_NAME
     description: the name displayed in the application home page
+    required: true
+  - name: REACT_APP_FORMIO_JWT_SECRET
+    displayName: REACT_APP_FORMIO_JWT_SECRET
+    description: the app jwt secret key to connect with forms
     required: true

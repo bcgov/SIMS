@@ -208,6 +208,10 @@ objects:
                   value: ${WEBSOCKET_MESSAGE_TYPE}
                 - name: WEBSOCKET_SECURITY_ORIGIN
                   value: ${WEBSOCKET_SECURITY_ORIGIN}
+                - name: DATA_BUFFER_SIZE
+                  value: ${DATA_BUFFER_SIZE}
+                - name: IDENTITY_PROVIDER_MAX_RESULT_SIZE
+                  value: ${IDENTITY_PROVIDER_MAX_RESULT_SIZE}
               imagePullPolicy: Always
               livenessProbe:
                 failureThreshold: 3
@@ -364,6 +368,12 @@ parameters:
   - name: WEBSOCKET_ENCRYPT_KEY
     description: WEBSOCKET_ENCRYPT_KEY
     value: "123455"
+  - name: DATA_BUFFER_SIZE
+    description: DATA_BUFFER_SIZE
+    value: "2"
+  - name: IDENTITY_PROVIDER_MAX_RESULT_SIZE
+    description: IDENTITY_PROVIDER_MAX_RESULT_SIZE
+    value: "250"
   - name: WEBSOCKET_MESSAGE_TYPE
     description: WEBSOCKET_MESSAGE_TYPE
     value: "TASK_EVENT"
