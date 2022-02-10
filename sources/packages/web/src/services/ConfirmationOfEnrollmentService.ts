@@ -26,22 +26,22 @@ export class ConfirmationOfEnrollmentService {
   }
 
   public async getApplicationForCOE(
-    applicationId: number,
+    disbursementScheduleId: number,
     locationId: number,
   ): Promise<ApplicationDetailsForCOEDTO> {
     return ApiClient.ConfirmationOfEnrollment.getApplicationForCOE(
-      applicationId,
+      disbursementScheduleId,
       locationId,
     );
   }
 
   public async confirmCOE(
     locationId: number,
-    applicationId: number,
+    disbursementScheduleId: number,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.confirmCOE(
       locationId,
-      applicationId,
+      disbursementScheduleId,
     );
   }
 
@@ -61,12 +61,12 @@ export class ConfirmationOfEnrollmentService {
 
   public async denyConfirmationOfEnrollment(
     locationId: number,
-    applicationId: number,
+    disbursementScheduleId: number,
     denyCOEPayload: DenyConfirmationOfEnrollment,
   ): Promise<void> {
     await ApiClient.ConfirmationOfEnrollment.denyConfirmationOfEnrollment(
       locationId,
-      applicationId,
+      disbursementScheduleId,
       denyCOEPayload,
     );
   }

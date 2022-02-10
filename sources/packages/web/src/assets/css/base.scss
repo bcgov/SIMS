@@ -138,8 +138,19 @@ ul.no-bullets {
 .horizontal-divider {
   border: 1px solid #e8e8e8;
 }
+
+/** TODO: this style must be removed when moving to Vuetify3 **/
 .p-tabview-panels {
   margin-top: 16px;
+}
+
+/** TODO: this style must be removed when moving to Vuetify3 **/
+/**CSS to make primevue tab display like figma **/
+.p-tabview-nav,
+.p-tabview-nav-link,
+.p-tabmenu-nav,
+.p-menuitem-link {
+  background: transparent !important;
 }
 
 .header-title {
