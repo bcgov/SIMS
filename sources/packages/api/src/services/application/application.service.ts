@@ -404,7 +404,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationStatus",
         "application.pirStatus",
         "application.assessmentStatus",
-        "application.coeStatus",
         "application.applicationStatusUpdatedOn",
         "application.applicationNumber",
         "offering.offeringIntensity",
@@ -413,11 +412,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.name",
         "programYear.formName",
         "programYear.id",
-        "coeDeniedReason.id",
-        "coeDeniedReason.reason",
         "pirDeniedReasonId.id",
         "pirDeniedReasonId.reason",
-        "application.coeDeniedOtherDesc",
         "application.pirDeniedOtherDesc",
         "programYear.startDate",
         "programYear.endDate",
@@ -430,7 +426,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
-      .leftJoin("application.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })

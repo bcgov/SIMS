@@ -271,7 +271,9 @@ export const transformToApplicationDetailDto = (
     applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
     programYearStartDate: applicationDetail.programYear.startDate,
     programYearEndDate: applicationDetail.programYear.endDate,
-    applicationCOEStatus: disbursement.coeStatus,
-    applicationCOEDeniedReason: getCOEDeniedReason(disbursement),
+    applicationCOEStatus: disbursement?.coeStatus,
+    applicationCOEDeniedReason: disbursement
+      ? getCOEDeniedReason(disbursement)
+      : undefined,
   };
 };
