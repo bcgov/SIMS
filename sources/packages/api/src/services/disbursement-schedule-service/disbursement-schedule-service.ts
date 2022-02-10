@@ -4,6 +4,7 @@ import {
   DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS,
   addDays,
   COE_WINDOW,
+  COE_DENIED_REASON_OTHER_ID,
 } from "../../utilities";
 import { Connection, In, Repository, UpdateResult } from "typeorm";
 import {
@@ -17,6 +18,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
   ApplicationStatus,
+  COEStatus,
   DisbursementSchedule,
   DisbursementValue,
   OfferingIntensity,
@@ -34,7 +36,7 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   private readonly applicationRepo: Repository<Application>;
   constructor(
-    connection: Connection,
+    private readonly connection: Connection,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
@@ -239,20 +241,45 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
 
   /**
-   * Update DisbursementSchedule with documentNumber
-   * @param documentNumber document Number
-   * @returns the result of update.
+   * On COE Approval, update disbursement schedule with document number and
+   * COE related columns. Update the Application status to completed, if it is first COE.
+   * The update to Application and Disbursement schedule happens in single transaction.
+   * @param disbursementScheduleId
+   * @param userId
+   * @param applicationId
+   * @param applicationStatus
    */
-  async updateDisbursementScheduleDocumentNumber(
+  async updateDisbursementAndApplicationCOEApproval(
+    disbursementScheduleId: number,
+    userId: number,
     applicationId: number,
-  ): Promise<UpdateResult> {
+    applicationStatus: ApplicationStatus,
+  ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber();
-    return this.repo
-      .createQueryBuilder()
-      .update(DisbursementSchedule)
-      .set({ documentNumber: documentNumber })
-      .where("application.id = :applicationId", { applicationId })
-      .execute();
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(DisbursementSchedule)
+        .createQueryBuilder()
+        .update(DisbursementSchedule)
+        .set({
+          documentNumber: documentNumber,
+          coeStatus: COEStatus.completed,
+          coeUpdatedBy: { id: userId },
+          coeUpdatedAt: new Date(),
+        })
+        .where("id = :disbursementScheduleId", { disbursementScheduleId })
+        .execute();
+
+      if (applicationStatus === ApplicationStatus.enrollment) {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .createQueryBuilder()
+          .update(Application)
+          .set({ applicationStatus: ApplicationStatus.completed })
+          .where("id = :applicationId", { applicationId })
+          .execute();
+      }
+    });
   }
 
   /**
@@ -304,5 +331,169 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
     coeQuery.orderBy("disbursementSchedule.coeStatus");
     return coeQuery.getMany();
+  }
+
+  /**
+   * Returns Disbursement and application details for COE detail view.
+   * @param disbursementScheduleId
+   * @param locationId
+   * @returns Disbursement and Application details.
+   */
+  async getDisbursementAndApplicationDetails(
+    locationId: number,
+    disbursementScheduleId: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo
+      .createQueryBuilder("coe")
+      .select([
+        "coe.id",
+        "coe.disbursementDate",
+        "coe.coeStatus",
+        "coe.coeDeniedOtherDesc",
+        "coeApplication.applicationNumber",
+        "coeApplication.applicationStatus",
+        "coeApplication.id",
+        "coeApplication.pirStatus",
+        "coeLocation.name",
+        "coeLocation.id",
+        "applicationStudent.id",
+        "studentUser.firstName",
+        "studentUser.lastName",
+        "coeOffering.offeringIntensity",
+        "coeOffering.studyStartDate",
+        "coeOffering.studyEndDate",
+        "coeOffering.lacksStudyBreaks",
+        "coeOffering.actualTuitionCosts",
+        "coeOffering.programRelatedCosts",
+        "coeOffering.mandatoryFees",
+        "coeOffering.exceptionalExpenses",
+        "coeOffering.tuitionRemittanceRequested",
+        "coeOffering.tuitionRemittanceRequestedAmount",
+        "coeOffering.offeringDelivered",
+        "coeOffering.studyBreaks",
+        "coeProgram.name",
+        "coeProgram.description",
+        "deniedReason.id",
+        "deniedReason.reason",
+      ])
+      .innerJoin("coe.application", "coeApplication")
+      .innerJoin("coeApplication.location", "coeLocation")
+      .innerJoin("coeApplication.student", "applicationStudent")
+      .innerJoin("applicationStudent.user", "studentUser")
+      .innerJoin("coeApplication.offering", "coeOffering")
+      .innerJoin("coeOffering.educationProgram", "coeProgram")
+      .leftJoin("coe.coeDeniedReason", "deniedReason")
+      .where("coeLocation.id = :locationId", { locationId })
+      .andWhere("coeApplication.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      })
+      .andWhere("coe.id = :disbursementScheduleId", {
+        disbursementScheduleId,
+      })
+      .getOne();
+  }
+
+  /**
+   * Summary of disbursement and application for Approval/Denial of COE.
+   * @param locationId
+   * @param disbursementScheduleId
+   * @returns Disbursement and Application Summary.
+   */
+  async getDisbursementAndApplicationSummary(
+    locationId: number,
+    disbursementScheduleId: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "application.id",
+        "application.applicationStatus",
+        "application.assessmentWorkflowId",
+      ])
+      .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("application.location", "location")
+      .where("location.id = :locationId", { locationId })
+      .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
+        disbursementScheduleId,
+      })
+      .andWhere("disbursementSchedule.coeStatus = :required", {
+        required: COEStatus.required,
+      })
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      })
+      .getOne();
+  }
+
+  /**
+   * Deny COE for an application.
+   ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
+   * @param disbursementScheduleIds
+   * @param userId User who denies the COE.
+   * @param coeDeniedReasonId Denied reason id of a denied COE.
+   * @param otherReasonDesc If the denied reason is other, respective description.
+   */
+  async updateCOEToDeny(
+    applicationId: number,
+    userId: number,
+    coeDeniedReasonId: number,
+    otherReasonDesc: string,
+  ): Promise<UpdateResult> {
+    return this.repo
+      .createQueryBuilder()
+      .update(DisbursementSchedule)
+      .set({
+        coeStatus: COEStatus.declined,
+        coeUpdatedBy: { id: userId },
+        coeUpdatedAt: new Date(),
+        coeDeniedReason: { id: coeDeniedReasonId },
+        coeDeniedOtherDesc:
+          coeDeniedReasonId === COE_DENIED_REASON_OTHER_ID
+            ? otherReasonDesc
+            : null,
+      })
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("coeStatus = :required", { required: COEStatus.required })
+      .execute();
+  }
+
+  /**
+   * Return the first COE details of an application.
+   **If @param onlyPendingCOE is true, then it returns first pending/outstanding COE
+   **for an application.
+   * @param applicationId
+   * @param onlyPendingCOE
+   * @returns Disbursement
+   */
+  async getFirstCOEOfApplication(
+    applicationId: number,
+    onlyPendingCOE?: boolean,
+  ): Promise<DisbursementSchedule> {
+    const firstCOEQuery = this.repo
+      .createQueryBuilder("outstandingCOE")
+      .select([
+        "outstandingCOE.id",
+        "outstandingCOE.coeStatus",
+        "outstandingCOE.coeDeniedOtherDesc",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+        "application.id",
+        "application.applicationStatus",
+      ])
+      .innerJoin("outstandingCOE.application", "application")
+      .leftJoin("outstandingCOE.coeDeniedReason", "coeDeniedReason")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
+      });
+    if (onlyPendingCOE) {
+      firstCOEQuery.andWhere("outstandingCOE.coeStatus = :required", {
+        required: COEStatus.required,
+      });
+    }
+    firstCOEQuery.orderBy("outstandingCOE.disbursementDate").limit(1);
+    return firstCOEQuery.getOne();
   }
 }

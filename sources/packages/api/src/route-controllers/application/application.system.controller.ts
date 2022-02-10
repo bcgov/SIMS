@@ -26,7 +26,6 @@ import {
   UpdateProgramInfoDto,
   UpdateProgramInfoStatusDto,
   UpdateAssessmentStatusDto,
-  UpdateCOEStatusDto,
   UpdateApplicationStatusDto,
   UpdateApplicationStatusWorkflowIdDto,
   SupportingUserDto,
@@ -239,30 +238,6 @@ export class ApplicationSystemController {
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
         "Not able to update the assessment status with provided data.",
-      );
-    }
-  }
-
-  /**
-   * Updates Confirmation of Enrollment(COE) status.
-   * @param applicationId application id to be updated.
-   * @param payload status of the program information request.
-   */
-  @Patch(":id/coe/status")
-  async updateCOEStatus(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateCOEStatusDto,
-  ): Promise<void> {
-    const updateResult = await this.applicationService.updateCOEStatus(
-      applicationId,
-      payload.status,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the Confirmation of Enrollment status with provided data.",
       );
     }
   }

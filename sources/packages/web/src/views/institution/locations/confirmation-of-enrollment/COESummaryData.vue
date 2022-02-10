@@ -31,7 +31,7 @@
         <Column field="disbursementDate" header="Disbursement Date">
           <template #body="slotProps">
             <span>
-              {{ dateString(slotProps.data.disbursementDate) }}
+              {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
             </span>
           </template></Column
         >
@@ -46,7 +46,9 @@
               plain
               color="primary"
               outlined
-              @click="goToViewApplication(slotProps.data.applicationId)"
+              @click="
+                goToViewApplication(slotProps.data.disbursementScheduleId)
+              "
               >view</v-btn
             >
           </template>
@@ -84,13 +86,16 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const { dateString } = useFormatters();
+    const { dateString, dateOnlyLongString } = useFormatters();
     const applications = ref([] as COESummaryDTO[]);
 
-    const goToViewApplication = (applicationId: number) => {
+    const goToViewApplication = (disbursementScheduleId: number) => {
       router.push({
         name: InstitutionRoutesConst.COE_EDIT,
-        params: { locationId: props.locationId, applicationId },
+        params: {
+          locationId: props.locationId,
+          disbursementScheduleId: disbursementScheduleId,
+        },
       });
     };
 
@@ -116,6 +121,7 @@ export default {
     return {
       applications,
       dateString,
+      dateOnlyLongString,
       goToViewApplication,
     };
   },

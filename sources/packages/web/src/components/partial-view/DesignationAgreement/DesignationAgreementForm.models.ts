@@ -1,3 +1,5 @@
+import { DesignationAgreementStatus } from "@/types/contracts/DesignationAgreementContract";
+
 /**
  * Used do define conditions to change the form.io, for instance,
  * some components visibility.
@@ -18,6 +20,7 @@ export interface DesignationLocationsListItem {
   locationName: string;
   locationAddress: string;
   requestForDesignation: boolean;
+  approvedForDesignation?: boolean;
 }
 
 /**
@@ -40,4 +43,6 @@ export interface DesignationModel {
   // Non BC Privates will have less information
   // displayed on the form.
   isBCPrivate: boolean;
+  designationStatus: DesignationAgreementStatus;
+  designationStatusClass: string;
 }

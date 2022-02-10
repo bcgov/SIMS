@@ -27,6 +27,7 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     */
     const response = await InstitutionService.shared.getDetail(authHeader);
     context.commit("setInstitutionDetails", {
+      legalOperatingName: response.institution.legalOperatingName,
       operatingName: response.institution.operatingName,
       institutionType: response.institution.institutionTypeName,
       isBCPrivate: response.isBCPrivate,

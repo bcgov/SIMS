@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -16,9 +17,10 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { DesignationAgreementService, FormService } from "../../services";
-import { getUTCNow } from "../../utilities";
+import { getISODateOnlyString, getUTCNow } from "../../utilities";
 import {
   GetDesignationAgreementDto,
+  GetDesignationAgreementsDto,
   SubmitDesignationAgreementDto,
 } from "./models/designation-agreement.model";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
@@ -63,6 +65,17 @@ export class DesignationAgreementController {
         "Not able to create a designation agreement due to an invalid request.",
       );
     }
+
+    const hasPendingDesignation =
+      await this.designationAgreementService.hasPendingDesignation(
+        userToken.authorizations.institutionId,
+      );
+    if (hasPendingDesignation) {
+      throw new UnprocessableEntityException(
+        "Institution already has a pending designation agreement.",
+      );
+    }
+
     // Creates the designation agreement.
     const createdDesignation =
       await this.designationAgreementService.submitDesignationAgreement(
@@ -113,5 +126,33 @@ export class DesignationAgreementController {
         }),
       ),
     } as GetDesignationAgreementDto;
+  }
+
+  /**
+   * Get the list of all the designations that belongs to
+   * the institution user currently authenticated.
+   * @param userToken user authentication token.
+   * @returns the list of all the designations that
+   * belongs to one the institution.
+   */
+  @IsInstitutionAdmin()
+  @Get()
+  async getDesignationAgreements(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<GetDesignationAgreementsDto[]> {
+    const designations =
+      await this.designationAgreementService.getInstitutionDesignationsById(
+        userToken.authorizations.institutionId,
+      );
+    return designations.map(
+      (designation) =>
+        ({
+          designationId: designation.id,
+          designationStatus: designation.designationStatus,
+          submittedDate: designation.submittedDate,
+          startDate: getISODateOnlyString(designation.startDate),
+          endDate: getISODateOnlyString(designation.endDate),
+        } as GetDesignationAgreementsDto),
+    );
   }
 }

@@ -19,3 +19,10 @@ export interface PaginationOptions {
   page: number;
   pageLimit: number;
 }
+
+export enum SortPriority {
+  Priority1 = 1,
+  Priority2 = 2,
+  Priority3 = 3,
+  Priority4 = 4,
+}

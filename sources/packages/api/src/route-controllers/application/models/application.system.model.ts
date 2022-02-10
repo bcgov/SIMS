@@ -14,7 +14,6 @@ import { DisbursementValueType } from "../../../database/entities/disbursement-v
 import {
   ProgramInfoStatus,
   AssessmentStatus,
-  COEStatus,
   ApplicationStatus,
   SupportingUserType,
   OfferingIntensity,
@@ -46,11 +45,6 @@ export class UpdateProgramInfoStatusDto {
 export class UpdateAssessmentStatusDto {
   @IsEnum(AssessmentStatus)
   status: AssessmentStatus;
-}
-
-export class UpdateCOEStatusDto {
-  @IsEnum(COEStatus)
-  status: COEStatus;
 }
 
 export class UpdateApplicationStatusDto {

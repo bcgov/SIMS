@@ -28,6 +28,7 @@ export interface ApplicationDetailsForCOEDTO {
   applicationDeniedReason?: string;
   studyBreaks?: StudyBreak[];
   applicationPIRStatus: ProgramInfoStatus;
+  disbursementDate: string;
 }
 
 export interface COEDeniedReasonDto {

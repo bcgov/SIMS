@@ -23,6 +23,14 @@ export interface LocationsDesignationsDto {
   approved?: boolean;
 }
 
+export interface GetDesignationAgreementsDto {
+  designationId: number;
+  designationStatus: DesignationAgreementStatus;
+  submittedDate: Date;
+  startDate?: Date;
+  endDate?: Date;
+}
+
 /**
  * Possible status for a designation agreement.
  */

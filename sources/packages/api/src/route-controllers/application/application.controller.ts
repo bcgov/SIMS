@@ -25,6 +25,7 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
   ConfigService,
+  DisbursementScheduleService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -84,6 +85,7 @@ export class ApplicationController extends BaseController {
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly configService: ConfigService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     super();
     this.config = this.configService.getConfig();
@@ -104,7 +106,11 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    return transformToApplicationDetailDto(application);
+    const firstCOE =
+      await this.disbursementScheduleService.getFirstCOEOfApplication(
+        applicationId,
+      );
+    return transformToApplicationDetailDto(application, firstCOE);
   }
   /**
    * Submit an existing student application changing the status

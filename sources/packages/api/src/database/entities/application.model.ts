@@ -14,7 +14,6 @@ import {
   InstitutionLocation,
   MSFAANumber,
   PIRDeniedReason,
-  COEDeniedReason,
   RelationshipStatus,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
@@ -22,7 +21,6 @@ import { ApplicationStudentFile } from "./application-student-file.model";
 import { ProgramInfoStatus } from "./program-info-status.type";
 import { ApplicationStatus } from "./application-status.type";
 import { AssessmentStatus } from "./assessment-status.type";
-import { COEStatus } from "./coe-status.type";
 import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
@@ -161,12 +159,6 @@ export class Application extends RecordDataModel {
   assessmentStatus: AssessmentStatus;
 
   @Column({
-    name: "coe_status",
-    type: "enum",
-  })
-  coeStatus: COEStatus;
-
-  @Column({
     name: "application_status_updated_on",
     nullable: false,
   })
@@ -220,24 +212,6 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   msfaaNumber?: MSFAANumber;
-
-  @RelationId((application: Application) => application.coeDeniedReason)
-  coeDeniedId?: number;
-
-  @ManyToOne(() => COEDeniedReason, {
-    eager: false,
-    cascade: false,
-  })
-  @JoinColumn({
-    name: "coe_denied_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  coeDeniedReason?: COEDeniedReason;
-
-  @Column({
-    name: "coe_denied_other_desc",
-  })
-  coeDeniedOtherDesc?: string;
 
   /**
    * Disbursement ids related to this application.
