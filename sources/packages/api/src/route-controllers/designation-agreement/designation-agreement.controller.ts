@@ -66,11 +66,11 @@ export class DesignationAgreementController {
       );
     }
 
-    if (
+    const hasPendingDesignation =
       await this.designationAgreementService.hasPendingDesignation(
         userToken.authorizations.institutionId,
-      )
-    ) {
+      );
+    if (hasPendingDesignation) {
       throw new UnprocessableEntityException(
         "Institution already has a pending designation agreement.",
       );
