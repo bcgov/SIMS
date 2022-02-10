@@ -113,6 +113,7 @@ export interface AuthorizationsForStore {
 }
 
 export interface InstitutionStateForStore {
+  legalOperatingName: string;
   operatingName: string;
   institutionType: string;
   isBCPrivate: boolean;

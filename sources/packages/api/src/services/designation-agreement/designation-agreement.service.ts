@@ -9,6 +9,7 @@ import {
   InstitutionLocation,
   User,
 } from "../../database/entities";
+import { SortPriority } from "../../utilities";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -95,5 +96,55 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .where("designation.id = :designationId", { designationId })
       .andWhere("location.institution.id = :institutionId", { institutionId })
       .getOne();
+  }
+
+  /**
+   * Get the summary of all designation agreements for the institution.
+   * @param institutionId institution to retrieve the designations.
+   * @returns designations under the institution.
+   */
+  async getInstitutionDesignationsById(
+    institutionId: number,
+  ): Promise<DesignationAgreement[]> {
+    return this.repo
+      .createQueryBuilder("designation")
+      .select([
+        "designation.id",
+        "designation.designationStatus",
+        "designation.submittedDate",
+        "designation.startDate",
+        "designation.endDate",
+      ])
+      .where("designation.institution.id = :institutionId", { institutionId })
+      .orderBy(
+        `CASE designation.designationStatus
+            WHEN '${DesignationAgreementStatus.Pending}' THEN ${SortPriority.Priority1}
+            WHEN '${DesignationAgreementStatus.Approved}' THEN ${SortPriority.Priority2}
+            WHEN '${DesignationAgreementStatus.Declined}' THEN ${SortPriority.Priority3}
+            ELSE ${SortPriority.Priority4}
+          END`,
+      )
+      .addOrderBy("designation.submittedDate", "DESC")
+      .getMany();
+  }
+
+  /**
+   * Verify when the institution already have a pending designation
+   * agreement. Institutions are not supposed to have more than one
+   * pending designation at the same time.
+   * @param institutionId institution to be verified.
+   * @returns true, if there is already a pending designation agreement.
+   */
+  async hasPendingDesignation(institutionId: number): Promise<boolean> {
+    const found = await this.repo
+      .createQueryBuilder("designation")
+      .select("1")
+      .where("designation.institution.id = :institutionId", { institutionId })
+      .andWhere("designation.designationStatus = :designationStatus", {
+        designationStatus: DesignationAgreementStatus.Pending,
+      })
+      .limit(1)
+      .getRawOne();
+    return !!found;
   }
 }
