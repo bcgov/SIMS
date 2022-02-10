@@ -114,13 +114,12 @@ ul.no-bullets {
   font-style: $font-style-normal;
   font-weight: $font-weight-bold;
   font-size: $font-header-medium;
-  line-height:$line-height-header-md;
+  line-height: $line-height-header-md;
   /* Black */
   color: $brand-black;
   opacity: 0.5;
   margin: 0px;
 }
-
 
 /** large heading **/
 .heading-x-large {
@@ -137,20 +136,31 @@ ul.no-bullets {
 
 // horizontal divider width
 .horizontal-divider {
-  border: 1px solid #E8E8E8;
-} 
+  border: 1px solid #e8e8e8;
+}
+
+/** TODO: this style must be removed when moving to Vuetify3 **/
 .p-tabview-panels {
   margin-top: 16px;
 }
 
-.header-title {  
+/** TODO: this style must be removed when moving to Vuetify3 **/
+/**CSS to make primevue tab display like figma **/
+.p-tabview-nav,
+.p-tabview-nav-link,
+.p-tabmenu-nav,
+.p-menuitem-link {
+  background: transparent !important;
+}
+
+.header-title {
   font-size: $font-header-medium;
   color: $brand-black-light;
   line-height: $line-height-header-md;
   font-weight: $formio-header-wt;
 }
 
-.header-sub-title {  
+.header-sub-title {
   font-weight: $formio-header-wt;
   color: $brand-black;
   line-height: $line-height-header-xlg;

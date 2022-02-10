@@ -29,7 +29,7 @@ export enum AppRoutes {
   ActiveApplicationEdit = "active-applications/location/:locationId/application/:applicationId",
   LocationProgramInfoRequestSummary = "program-info-request/location/:locationId/summary",
   LocationCOESummary = "confirmation-of-enrollment/location/:locationId/summary",
-  LocationCOEDetails = "confirmation-of-enrollment/location/:locationId/application/:applicationId",
+  LocationCOEDetails = "confirmation-of-enrollment/location/:locationId/disbursement/:disbursementScheduleId",
   LocationProgramInfoRequestEdit = "program-info-request/location/:locationId/application/:applicationId",
   ManageInstitutionDesignation = "manage-designation",
   DesignationRequest = "manage-designation/request",
