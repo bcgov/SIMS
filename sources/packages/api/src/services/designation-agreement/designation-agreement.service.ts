@@ -136,10 +136,15 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * @returns true, if there is already a pending designation agreement.
    */
   async hasPendingDesignation(institutionId: number): Promise<boolean> {
-    const pendingDesignationsCount = await this.repo.count({
-      institution: { id: institutionId },
-      designationStatus: DesignationAgreementStatus.Pending,
-    });
-    return pendingDesignationsCount > 0;
+    const found = await this.repo
+      .createQueryBuilder("designation")
+      .select("1")
+      .where("designation.institution.id = :institutionId", { institutionId })
+      .andWhere("designation.designationStatus = :designationStatus", {
+        designationStatus: DesignationAgreementStatus.Pending,
+      })
+      .limit(1)
+      .getRawOne();
+    return !!found;
   }
 }
