@@ -1,16 +1,9 @@
 <template>
   <content-group>
-    <empty-table-template
-      :isEmpty="!designations.length"
-      emptyMessage="You don’t have any agreements yet"
+    <toggle-content
+      :toggled="!designations.length"
+      message="You don’t have any agreements yet"
     >
-      <template #image>
-        <v-img
-          height="200"
-          alt="You don’t have any agreements yet"
-          src="@/assets/images/designation_summary.svg"
-        />
-      </template>
       <DataTable
         :value="designations"
         :paginator="true"
@@ -50,7 +43,14 @@
           </template>
         </Column>
       </DataTable>
-    </empty-table-template>
+      <template #image>
+        <v-img
+          height="200"
+          alt="You don’t have any agreements yet"
+          src="@/assets/images/designation_summary.svg"
+        />
+      </template>
+    </toggle-content>
   </content-group>
 </template>
 
@@ -62,7 +62,7 @@ import {
 } from "@/types";
 import { useFormatters, useInstitutionAuth } from "@/composables";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
-import EmptyTableTemplate from "@/components/generic/EmptyTableTemplate.vue";
+import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import { SetupContext } from "vue";
 
@@ -70,7 +70,7 @@ export default {
   emits: ["viewDesignation"],
   components: {
     ContentGroup,
-    EmptyTableTemplate,
+    ToggleContent,
     StatusChipDesignation,
   },
   props: {

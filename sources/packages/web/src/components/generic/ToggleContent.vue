@@ -1,11 +1,11 @@
 <template>
-  <div v-if="isEmpty">
+  <div v-if="toggled">
     <v-row justify="center" class="mt-4">
-      <slot name="image"> </slot>
+      <slot name="image"></slot>
     </v-row>
     <v-row justify="center m-4">
       <slot name="message">
-        {{ emptyMessage }}
+        {{ message }}
       </slot>
     </v-row>
   </div>
@@ -15,11 +15,11 @@
 <script lang="ts">
 export default {
   props: {
-    isEmpty: {
+    toggled: {
       type: Boolean,
       required: true,
     },
-    emptyMessage: {
+    message: {
       type: Boolean,
       required: true,
     },
