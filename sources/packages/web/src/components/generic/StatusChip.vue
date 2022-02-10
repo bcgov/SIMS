@@ -42,7 +42,7 @@ export default {
         case StatusChipTypes.Error:
           return COLOR_BANNER_ERROR;
         default:
-          return COLOR_BANNER_ERROR;
+          return COLOR_BLACK;
       }
     });
 

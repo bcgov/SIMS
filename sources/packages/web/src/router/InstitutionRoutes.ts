@@ -12,9 +12,9 @@ import ActiveApplicationEdit from "@/views/institution/locations/active-applicat
 import LocationCOESummary from "@/views/institution/locations/confirmation-of-enrollment/LocationCOESummary.vue";
 import AddInstitutionLocation from "@/views/institution/AddInstitutionLocation.vue";
 import EditInstitutionLocation from "@/views/institution/EditInstitutionLocation.vue";
-import ManageDesignations from "../views/institution/designations/ManageDesignations.vue";
-import DesignationRequest from "../views/institution/designations/DesignationRequest.vue";
-import DesignationView from "../views/institution/designations/DesignationView.vue";
+import ManageDesignations from "@/views/institution/designations/ManageDesignations.vue";
+import DesignationRequest from "@/views/institution/designations/DesignationRequest.vue";
+import DesignationView from "@/views/institution/designations/DesignationView.vue";
 import InstitutionUserDetails from "@/views/institution/InstitutionUserDetails.vue";
 import {
   InstitutionRoutesConst,
