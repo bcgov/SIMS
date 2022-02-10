@@ -9,6 +9,7 @@ import {
   InstitutionLocation,
   User,
 } from "../../database/entities";
+import { SortPriority } from "../../utilities";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -117,13 +118,13 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .where("designation.institution.id = :institutionId", { institutionId })
       .orderBy(
         `CASE designation.designationStatus
-            WHEN '${DesignationAgreementStatus.Pending}' THEN 1
-            WHEN '${DesignationAgreementStatus.Approved}' THEN 2
-            WHEN '${DesignationAgreementStatus.Declined}' THEN 3
-            ELSE 4
+            WHEN '${DesignationAgreementStatus.Pending}' THEN ${SortPriority.Priority1}
+            WHEN '${DesignationAgreementStatus.Approved}' THEN ${SortPriority.Priority2}
+            WHEN '${DesignationAgreementStatus.Declined}' THEN ${SortPriority.Priority3}
+            ELSE ${SortPriority.Priority4}
           END`,
       )
-      .addOrderBy("designation.submittedDate")
+      .addOrderBy("designation.submittedDate", "DESC")
       .getMany();
   }
 
