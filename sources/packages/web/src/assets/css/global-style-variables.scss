@@ -41,7 +41,6 @@ $line-height-header-sm: 22px;
 $formio-content: 16px;
 $formio-content-lh: 24px;
 $formio-header-margin: 0.5rem;
-$formio-header-wt: 700;
 
 /** SCSS Banner size variables **/
 $background-alert: rgba(217, 37, 48, 0.05);
@@ -57,9 +56,8 @@ $badge-border-success: rgb(22, 201, 46, 0.2);
 $badge-border-inactive: rgb(51, 58, 71, 0.2);
 
 /** font weight **/
-$font-weight-bold : bold;
+$font-weight-bold: bold;
 
 /** font style **/
-$font-style-normal : normal;
-
-
+$font-style-normal: normal;
+$strong-font-weight: 700;
