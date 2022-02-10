@@ -17,7 +17,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { DesignationAgreementService, FormService } from "../../services";
-import { getDateOnlyString, getUTCNow } from "../../utilities";
+import { getISODateOnlyString, getUTCNow } from "../../utilities";
 import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
@@ -150,8 +150,8 @@ export class DesignationAgreementController {
           designationId: designation.id,
           designationStatus: designation.designationStatus,
           submittedDate: designation.submittedDate,
-          startDate: getDateOnlyString(designation.startDate),
-          endDate: getDateOnlyString(designation.endDate),
+          startDate: getISODateOnlyString(designation.startDate),
+          endDate: getISODateOnlyString(designation.endDate),
         } as GetDesignationAgreementsDto),
     );
   }

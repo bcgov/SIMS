@@ -120,7 +120,7 @@ export function getDateOnlyFromFormat(
  * @param date date/time to have the date extracted.
  * @returns date only string in ISO format YYYY-MM-DD.
  */
-export function getDateOnlyString(date?: Date): string | null {
+export function getISODateOnlyString(date?: Date): string | null {
   if (!date) {
     return null;
   }
