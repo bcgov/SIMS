@@ -40,6 +40,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
 } from "../../utilities";
+import { ApprovalStatus } from "src/services/education-program/constants";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -182,7 +183,7 @@ export class EducationProgramController {
       programId,
       userToken.authorizations.institutionId,
     );
-    return {
+    const programDetails: SubsetEducationProgramDto = {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
@@ -196,7 +197,29 @@ export class EducationProgramController {
       approvalStatus: educationProgram.approvalStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
+      institutionId: educationProgram.institution.id,
+      institutionName: educationProgram.institution.legalOperatingName,
+      submittedOn: educationProgram.submittedOn,
+      submittedByFirstName: educationProgram.submittedBy?.firstName,
+      submittedLastName: educationProgram.submittedBy?.lastName,
+      effectiveEndDate: educationProgram.effectiveEndDate,
     };
+
+    if (educationProgram.approvalStatus === ApprovalStatus.denied) {
+      programDetails.deniedOn = educationProgram.statusUpdatedOn;
+      programDetails.deniedByFirstName =
+        educationProgram.statusUpdatedBy?.firstName;
+      programDetails.deniedByLastName =
+        educationProgram.statusUpdatedBy?.lastName;
+    }
+    if (educationProgram.approvalStatus === ApprovalStatus.approved) {
+      programDetails.approvedOn = educationProgram.statusUpdatedOn;
+      programDetails.approvedByFirstName =
+        educationProgram.statusUpdatedBy?.firstName;
+      programDetails.approvedByLastName =
+        educationProgram.statusUpdatedBy?.lastName;
+    }
+    return programDetails;
   }
 
   /**

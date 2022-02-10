@@ -8,6 +8,13 @@
   font-weight: $font-weight-bold;
 }
 
+.label-value-normal {
+  color: $brand-black;
+  font-size: $font-size-content;
+  line-height: $line-height-header-sm;
+  font-weight: $font-style-normal;
+}
+
 // horizontal divider width
 .horizontal-divider {
   border: 1px solid #e8e8e8;

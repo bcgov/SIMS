@@ -42,6 +42,17 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   approvalStatus: ApprovalStatus;
   institutionId: number;
   id: number;
+  institutionName: string;
+  submittedOn: Date;
+  submittedByFirstName: string;
+  submittedLastName: string;
+  deniedOn?: Date;
+  deniedByFirstName?: string;
+  deniedBySecondName?: string;
+  approvedOn?: Date;
+  approvedByFirstName?: string;
+  approvedByLastName?: string;
+  effectiveEndDate: Date;
 }
 
 export interface ProgramDeliveryTypes {
@@ -63,7 +74,7 @@ export interface EntranceRequirements {
 export const transformToEducationProgramData = (
   program: EducationProgram,
 ): EducationProgramDataDto => {
-  return {
+  const programDetails: EducationProgramDataDto = {
     id: program.id,
     approvalStatus: program.approvalStatus,
     name: program.name,
@@ -107,7 +118,24 @@ export const transformToEducationProgramData = (
     programDeclaration: program.programDeclaration,
     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
     institutionId: program.institution.id,
+    institutionName: program.institution.legalOperatingName,
+    submittedOn: program.submittedOn,
+    submittedByFirstName: program.submittedBy?.firstName,
+    submittedLastName: program.submittedBy?.lastName,
+    effectiveEndDate: program.effectiveEndDate,
   };
+  if (program.approvalStatus === ApprovalStatus.denied) {
+    programDetails.deniedOn = program.statusUpdatedOn;
+    programDetails.deniedByFirstName = program.statusUpdatedBy?.firstName;
+    programDetails.deniedBySecondName = program.statusUpdatedBy?.lastName;
+  }
+  if (program.approvalStatus === ApprovalStatus.approved) {
+    programDetails.approvedOn = program.statusUpdatedOn;
+    programDetails.approvedByFirstName = program.statusUpdatedBy?.firstName;
+    programDetails.approvedByLastName = program.statusUpdatedBy?.lastName;
+  }
+
+  return programDetails;
 };
 
 export class ProgramsSummary {

@@ -10,7 +10,7 @@ COMMENT ON COLUMN sims.education_programs.submitted_on IS 'Education program sub
 ALTER TABLE
   sims.education_programs
 ADD
-  COLUMN IF NOT EXISTS status_updated_on TIMESTAMP WITH TIME ZONE NULL DEFAULT now();
+  COLUMN IF NOT EXISTS status_updated_on TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now();
 
 COMMENT ON COLUMN sims.education_programs.status_updated_on IS 'Education program status updated on';
 

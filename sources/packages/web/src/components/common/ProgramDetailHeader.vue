@@ -1,53 +1,99 @@
 <template>
   <div class="ml-4 mb-2">
     <div class="row">
-      <div>
-        <span class="label-bold">Institution name:</span
-        ><span> Camosun College</span>
-      </div>
+      <header-title-value
+        title="Institution name"
+        :value="educationProgram.institutionName"
+      />
       <div class="mx-2 vertical-divider"></div>
-      <div>
-        <span class="label-bold">Submitted:</span><span> Nov 14 2021</span>
-      </div>
+      <header-title-value
+        title="Submitted"
+        :value="
+          educationProgram.submittedOn
+            ? dateOnlyLongString(educationProgram.submittedOn)
+            : '-'
+        "
+      />
     </div>
-    <div class="row mt-1">
-      <div>
-        <span class="label-bold">Approved by:</span
-        ><span> Ralph Edwards, AEST:EX</span>
-      </div>
+    <div
+      class="row mt-1"
+      v-if="ApprovalStatus.approved === educationProgram.approvalStatus"
+    >
+      <header-title-value title="Approved by" :value="approvedBy" />
       <div class="mx-2 vertical-divider"></div>
-      <div>
-        <span class="label-bold">Approved:</span><span> Oct 14 2021</span>
-      </div>
+      <header-title-value
+        title="Approved"
+        :value="
+          educationProgram.approvedOn
+            ? dateOnlyLongString(educationProgram.approvedOn)
+            : '-'
+        "
+      />
       <div class="mx-2 vertical-divider"></div>
-      <div>
-        <span class="label-bold">Effective end date:</span
-        ><span> Oct 03 2021</span>
-      </div>
+      <header-title-value
+        title="Effective end date"
+        :value="
+          educationProgram.effectiveEndDate
+            ? dateOnlyLongString(educationProgram.effectiveEndDate)
+            : '-'
+        "
+      />
     </div>
-    <div class="row mt-1">
-      <div>
-        <span class="label-bold">Denied by:</span
-        ><span> Ralph Edwards, AEST:EXX</span>
-      </div>
+    <div
+      class="row mt-1"
+      v-if="ApprovalStatus.denied === educationProgram.approvalStatus"
+    >
+      <header-title-value title="Denied by" :value="deniedBy" />
       <div class="mx-2 vertical-divider"></div>
-      <div>
-        <span class="label-bold">Denied:</span><span> Oct 14 2021</span>
-      </div>
+      <header-title-value
+        title="Denied"
+        :value="
+          educationProgram.deniedOn
+            ? dateOnlyLongString(educationProgram.deniedOn)
+            : '-'
+        "
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { EducationProgramData } from "@/types";
+import { EducationProgramData, ApprovalStatus } from "@/types";
+import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
+import { useFormatters } from "@/composables";
+import { computed } from "vue";
 
 export default {
+  components: { HeaderTitleValue },
   props: {
     educationProgram: {
       type: Object,
       required: true,
       default: {} as EducationProgramData,
     },
+  },
+  setup(props: any) {
+    const { dateOnlyLongString } = useFormatters();
+    const getFullName = (firstName: string, lastName: string) => {
+      if (firstName && lastName) {
+        return `${lastName}, ${firstName}`;
+      } else {
+        return "-";
+      }
+    };
+    const approvedBy = computed(() =>
+      getFullName(
+        props.educationProgram.approvedByFirstName,
+        props.educationProgram.approvedByLastName,
+      ),
+    );
+    const deniedBy = computed(() =>
+      getFullName(
+        props.educationProgram.deniedByFirstName,
+        props.educationProgram.deniedByLastName,
+      ),
+    );
+    return { dateOnlyLongString, approvedBy, deniedBy, ApprovalStatus };
   },
 };
 </script>

@@ -79,6 +79,17 @@ export interface EducationProgramData extends EducationProgramDetails {
   approvalStatus: ApprovalStatus;
   institutionId: number;
   id: number;
+  institutionName: string;
+  submittedOn: Date;
+  submittedByFirstName: string;
+  submittedLastName: string;
+  deniedOn?: Date;
+  deniedByFirstName?: string;
+  deniedByLastName?: string;
+  approvedOn?: Date;
+  approvedByFirstName?: string;
+  approvedByLastName?: string;
+  effectiveEndDate: Date;
 }
 
 export interface StudentEducationProgramDto {

@@ -322,7 +322,7 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "status_updated_on",
     type: "timestamptz",
-    nullable: true,
+    nullable: false,
   })
   statusUpdatedOn: Date;
 

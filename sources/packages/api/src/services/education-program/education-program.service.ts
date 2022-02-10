@@ -376,9 +376,22 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.approvalStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",
+        "programs.institution",
+        "institution.id",
+        "institution.legalOperatingName",
+        "programs.submittedOn",
+        "submittedBy.firstName",
+        "submittedBy.lastName",
+        "statusUpdatedBy.firstName",
+        "statusUpdatedBy.lastName",
+        "programs.statusUpdatedOn",
+        "programs.effectiveEndDate",
       ])
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
+      .innerJoin("programs.institution", "institution")
+      .leftJoin("programs.submittedBy", "submittedBy")
+      .leftJoin("programs.statusUpdatedBy", "statusUpdatedBy")
       .getOne();
   }
 
@@ -489,7 +502,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.intlExchangeProgramEligibility",
         "programs.programDeclaration",
         "institution.id",
+        "institution.legalOperatingName",
+        "programs.submittedOn",
+        "submittedBy.firstName",
+        "submittedBy.lastName",
+        "statusUpdatedBy.firstName",
+        "statusUpdatedBy.lastName",
+        "programs.statusUpdatedOn",
+        "programs.effectiveEndDate",
       ])
+      .leftJoin("programs.submittedBy", "submittedBy")
+      .leftJoin("programs.statusUpdatedBy", "statusUpdatedBy")
       .innerJoin("programs.institution", "institution")
       .where("programs.id = :id", { id: programId })
       .getOne();
