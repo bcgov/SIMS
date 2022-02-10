@@ -114,4 +114,20 @@ export class EducationProgramService {
   ): Promise<EducationProgramData> {
     return ApiClient.EducationProgram.getEducationProgramForAEST(programId);
   }
+
+  /**
+   * Ministry user approve's a pending program.
+   * @param programId program id.
+   */
+  public async approveProgram(programId: number): Promise<OptionItemDto[]> {
+    return ApiClient.EducationProgram.approveProgram(programId);
+  }
+
+  /**
+   * Ministry user decline's a pending program.
+   * @param programId program id.
+   */
+  public async declineProgram(programId: number): Promise<OptionItemDto[]> {
+    return ApiClient.EducationProgram.declineProgram(programId);
+  }
 }

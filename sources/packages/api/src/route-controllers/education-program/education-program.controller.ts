@@ -40,7 +40,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
 } from "../../utilities";
-import { ApprovalStatus } from "src/services/education-program/constants";
+import { ApprovalStatus } from "../../services/education-program/constants";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
