@@ -332,7 +332,6 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "effective_end_date",
     type: "date",
-    transformer: dateOnlyTransformer,
     nullable: true,
   })
   effectiveEndDate: Date;

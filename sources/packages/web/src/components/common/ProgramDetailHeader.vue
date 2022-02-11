@@ -51,7 +51,7 @@
         title="Effective end date"
         :value="
           educationProgram.effectiveEndDate
-            ? originalDateOnlyLongString(educationProgram.effectiveEndDate)
+            ? dateOnlyLongString(educationProgram.effectiveEndDate)
             : '-'
         "
       />
@@ -97,7 +97,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const { originalDateOnlyLongString } = useFormatters();
+    const { originalDateOnlyLongString, dateOnlyLongString } = useFormatters();
     const getFullName = (firstName: string, lastName: string) => {
       if (firstName && lastName) {
         return `${lastName}, ${firstName}`;
@@ -128,6 +128,7 @@ export default {
       deniedBy,
       ApprovalStatus,
       goToInstitution,
+      dateOnlyLongString,
     };
   },
 };
