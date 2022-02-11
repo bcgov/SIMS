@@ -32,7 +32,7 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     if (paginationOptions.searchCriteria) {
       URL = `${URL}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
-    return await this.getCallTyped<COESummaryAndCount>(URL);
+    return this.getCallTyped<COESummaryAndCount>(URL);
   }
 
   public async getApplicationForCOE(

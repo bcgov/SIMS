@@ -83,11 +83,11 @@ export class ConfirmationOfEnrollmentController {
   async getCOESummary(
     @Param("locationId") locationId: number,
     @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
+    @Query(PaginationParams.SortField) sortField: string,
     @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
     @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
-    @Query(PaginationParams.SortField) sortField: string,
     @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
-    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
   ): Promise<COESummaryAndCount> {
     if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
       throw new NotFoundException("Invalid enrollment period value.");

@@ -81,14 +81,12 @@ import {
   COESummaryAndCount,
   COESummaryFields,
   DataTableSortOrder,
-} from "@/types";
-import { useFormatters } from "@/composables";
-import { COLOR_BLUE } from "@/constants";
-import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
 } from "@/types";
+import { useFormatters } from "@/composables";
+import { COLOR_BLUE } from "@/constants";
 import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
