@@ -30,6 +30,7 @@ import {
   PaginationOptions,
   PaginatedResults,
   CustomNamedError,
+  SortPriority,
 } from "../../utilities";
 const PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND";
 @Injectable()
@@ -221,10 +222,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // default sort and order
       summaryResult.orderBy(
         `CASE programs.approvalStatus
-                WHEN '${ApprovalStatus.pending}' THEN 1
-                WHEN '${ApprovalStatus.approved}' THEN 2
-                WHEN '${ApprovalStatus.denied}' THEN 3
-                ELSE 4
+                WHEN '${ApprovalStatus.pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ApprovalStatus.approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ApprovalStatus.denied}' THEN ${SortPriority.Priority3}
+                ELSE ${SortPriority.Priority4}
               END`,
       );
     }
@@ -332,10 +333,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // default sort and order
       paginatedProgramQuery.orderBy(
         `CASE programs.approvalStatus
-                WHEN '${ApprovalStatus.pending}' THEN 1
-                WHEN '${ApprovalStatus.approved}' THEN 2
-                WHEN '${ApprovalStatus.denied}' THEN 3
-                ELSE 4
+                WHEN '${ApprovalStatus.pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ApprovalStatus.approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ApprovalStatus.denied}' THEN ${SortPriority.Priority3}
+                ELSE ${SortPriority.Priority4}
               END`,
       );
     }
