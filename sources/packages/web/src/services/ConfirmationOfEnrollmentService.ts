@@ -1,9 +1,10 @@
 import {
-  COESummaryDTO,
+  COESummaryAndCount,
   ApplicationDetailsForCOEDTO,
   COEDeniedReasonDto,
   DenyConfirmationOfEnrollment,
   EnrollmentPeriod,
+  PaginationOptions,
 } from "@/types";
 import ApiClient from "./http/ApiClient";
 
@@ -18,10 +19,12 @@ export class ConfirmationOfEnrollmentService {
   public async getCOESummary(
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
-  ): Promise<COESummaryDTO[]> {
+    paginationOptions: PaginationOptions,
+  ): Promise<COESummaryAndCount> {
     return ApiClient.ConfirmationOfEnrollment.getCOESummary(
       locationId,
       enrollmentPeriod,
+      paginationOptions,
     );
   }
 

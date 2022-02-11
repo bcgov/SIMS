@@ -5,8 +5,17 @@ import {
   addDays,
   COE_WINDOW,
   COE_DENIED_REASON_OTHER_ID,
+  PaginationOptions,
+  FieldSortOrder,
 } from "../../utilities";
-import { Connection, In, Repository, UpdateResult } from "typeorm";
+import {
+  Connection,
+  In,
+  Repository,
+  UpdateResult,
+  Brackets,
+  OrderByCondition,
+} from "typeorm";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
@@ -288,12 +297,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    ** When the first COE is approved, application moves to complete status as per workflow but second COE is still
    ** waiting to be approved by institution.
    * @param locationId
+   * @param enrollmentPeriod
+   * @param paginationOptions
    * @returns List of COE for given location.
    */
   async getCOEByLocation(
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
-  ): Promise<DisbursementSchedule[]> {
+    paginationOptions: PaginationOptions,
+  ): Promise<[DisbursementSchedule[], number]> {
     const coeThresholdDate = addDays(new Date(), COE_WINDOW);
     const coeQuery = this.repo
       .createQueryBuilder("disbursementSchedule")
@@ -329,8 +341,32 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         { coeThresholdDate },
       );
     }
-    coeQuery.orderBy("disbursementSchedule.coeStatus");
-    return coeQuery.getMany();
+    if (paginationOptions.searchCriteria) {
+      coeQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("user.firstName Ilike :searchCriteria", {
+            searchCriteria: `%${paginationOptions.searchCriteria}%`,
+          })
+            .orWhere("user.lastName Ilike :searchCriteria", {
+              searchCriteria: `%${paginationOptions.searchCriteria}%`,
+            })
+            .orWhere("application.applicationNumber Ilike :searchCriteria", {
+              searchCriteria: `%${paginationOptions.searchCriteria}%`,
+            });
+        }),
+      );
+    }
+    coeQuery
+      .orderBy(
+        this.transformToEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder,
+        ),
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+    console.log(coeQuery.getSql());
+    return coeQuery.getManyAndCount();
   }
 
   /**
@@ -495,5 +531,33 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     }
     firstCOEQuery.orderBy("outstandingCOE.disbursementDate").limit(1);
     return firstCOEQuery.getOne();
+  }
+
+  /**
+   **Transformation to convert the data table column name to database column name
+   **Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
+   * @param sortField
+   * @param sortOrder
+   * @returns OrderByCondition
+   */
+  private transformToEntitySortField(
+    sortField: string,
+    sortOrder: FieldSortOrder,
+  ): OrderByCondition {
+    const orderByCondition = {};
+    if (sortField === "fullName") {
+      orderByCondition["user.firstName"] = sortOrder;
+      orderByCondition["user.lastName"] = sortOrder;
+      return orderByCondition;
+    }
+
+    const coeSortOptions = {
+      applicationNumber: "application.applicationNumber",
+      disbursementDate: "disbursementSchedule.disbursementDate",
+    };
+    const dbColumnName =
+      coeSortOptions[sortField] || "disbursementSchedule.coeStatus";
+    orderByCondition[dbColumnName] = sortOrder;
+    return orderByCondition;
   }
 }

@@ -6,7 +6,7 @@
     <div class="float-right">
       <slot name="actions"></slot>
     </div>
-    <div>
+    <div class="mt-1">
       {{ subTitle }}
     </div>
   </div>

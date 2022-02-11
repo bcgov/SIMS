@@ -7,6 +7,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
   Body,
+  Query,
 } from "@nestjs/common";
 import {
   HasLocationAccess,
@@ -28,7 +29,10 @@ import {
   DisbursementSchedule,
   COEStatus,
 } from "../../database/entities";
-import { COESummaryDTO } from "../application/models/application.model";
+import {
+  COESummaryAndCount,
+  COESummaryDTO,
+} from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   dateString,
@@ -36,6 +40,11 @@ import {
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
   getExtendedDateFormat,
+  PaginationParams,
+  PaginationOptions,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  FieldSortOrder,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
@@ -74,27 +83,45 @@ export class ConfirmationOfEnrollmentController {
   async getCOESummary(
     @Param("locationId") locationId: number,
     @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
-  ): Promise<COESummaryDTO[]> {
+    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
+    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
+    @Query(PaginationParams.SortField) sortField: string,
+    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
+  ): Promise<COESummaryAndCount> {
     if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
       throw new NotFoundException("Invalid enrollment period value.");
     }
-    const disbursementSchedules =
+    const paginationOptions = {
+      page: page,
+      pageLimit: pageLimit,
+      sortField: sortField,
+      sortOrder: sortOrder,
+      searchCriteria: searchCriteria,
+    } as PaginationOptions;
+    const disbursementsAndCount =
       await this.disbursementScheduleService.getCOEByLocation(
         locationId,
         enrollmentPeriod,
+        paginationOptions,
       );
-    return disbursementSchedules.map((disbursement: DisbursementSchedule) => {
-      return {
-        applicationNumber: disbursement.application.applicationNumber,
-        applicationId: disbursement.application.id,
-        studyStartPeriod: disbursement.application.offering.studyStartDate,
-        studyEndPeriod: disbursement.application.offering.studyEndDate,
-        coeStatus: disbursement.coeStatus,
-        fullName: getUserFullName(disbursement.application.student.user),
-        disbursementScheduleId: disbursement.id,
-        disbursementDate: disbursement.disbursementDate,
-      };
-    }) as COESummaryDTO[];
+    return {
+      coeSummary: disbursementsAndCount[0].map(
+        (disbursement: DisbursementSchedule) => {
+          return {
+            applicationNumber: disbursement.application.applicationNumber,
+            applicationId: disbursement.application.id,
+            studyStartPeriod: disbursement.application.offering.studyStartDate,
+            studyEndPeriod: disbursement.application.offering.studyEndDate,
+            coeStatus: disbursement.coeStatus,
+            fullName: getUserFullName(disbursement.application.student.user),
+            disbursementScheduleId: disbursement.id,
+            disbursementDate: disbursement.disbursementDate,
+          };
+        },
+      ) as COESummaryDTO[],
+      totalRecords: disbursementsAndCount[1],
+    };
   }
 
   /**

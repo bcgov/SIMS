@@ -67,3 +67,31 @@ export enum ProgramSummaryFields {
   ApprovalStatus = "approvalStatus",
   IsActive = "isActive",
 }
+
+/**
+ * Enum for COE data table columns.
+ */
+export enum COESummaryFields {
+  FullName = "fullName",
+  ApplicationNumber = "applicationNumber",
+  DisbursementDate = "disbursementDate",
+  COEStatus = "coeStatus",
+}
+
+/**Pagination Query param constants **/
+export enum PaginationParams {
+  SortField = "sortField",
+  SortOrder = "sortOrder",
+  Page = "page",
+  PageLimit = "pageLimit",
+  SearchCriteria = "searchCriteria",
+}
+
+/** Pagination Options DTO */
+export interface PaginationOptions {
+  searchCriteria?: string;
+  sortField?: string;
+  sortOrder?: DataTableSortOrder;
+  page: number;
+  pageLimit: number;
+}

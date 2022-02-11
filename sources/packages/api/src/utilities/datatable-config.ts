@@ -26,3 +26,12 @@ export enum SortPriority {
   Priority3 = 3,
   Priority4 = 4,
 }
+
+/**Pagination Query param constants **/
+export enum PaginationParams {
+  SortField = "sortField",
+  SortOrder = "sortOrder",
+  Page = "page",
+  PageLimit = "pageLimit",
+  SearchCriteria = "searchCriteria",
+}
