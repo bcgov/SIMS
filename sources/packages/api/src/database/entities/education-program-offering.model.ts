@@ -35,6 +35,7 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "study_start_date",
+    type: "date",
     nullable: true,
   })
   studyStartDate: Date;
@@ -43,6 +44,7 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "study_end_date",
+    type: "date",
     nullable: true,
   })
   studyEndDate: Date;
