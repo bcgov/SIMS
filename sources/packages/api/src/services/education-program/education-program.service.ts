@@ -24,7 +24,6 @@ import {
 } from "../../route-controllers/education-program/models/save-education-program.dto";
 import {
   credentialTypeToDisplay,
-  FieldSortOrder,
   getRawCount,
   getDateOnlyFormat,
   sortProgramsColumnMap,

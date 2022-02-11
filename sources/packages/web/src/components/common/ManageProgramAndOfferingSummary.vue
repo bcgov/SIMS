@@ -1,6 +1,9 @@
 <template>
   <div>
-    <ProgramDetailHeader :educationProgram="educationProgram" />
+    <ProgramDetailHeader
+      :educationProgram="educationProgram"
+      :institutionId="institutionId"
+    />
     <v-card>
       <v-container>
         <ProgramDetails
@@ -37,6 +40,10 @@ export default {
       type: Object,
       required: true,
       default: {} as EducationProgramData,
+    },
+    institutionId: {
+      type: Number,
+      required: false,
     },
   },
 };

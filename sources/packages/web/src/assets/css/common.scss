@@ -2,17 +2,33 @@
 /** common style component */
 
 .label-bold {
-  color: $brand-black;
   font-size: $font-size-content;
   line-height: $line-height-header-sm;
   font-weight: $font-weight-bold;
 }
 
-.label-value-normal {
+// normal label bold
+.label-bold-normal {
+  @extend .label-bold;
   color: $brand-black;
+}
+
+// normal label primary
+.label-bold-primary {
+  @extend .label-bold;
+  color: $brand-blue !important;
+}
+
+.label-value {
   font-size: $font-size-content;
   line-height: $line-height-header-sm;
   font-weight: $font-style-normal;
+}
+
+// normal value bold
+.label-value-normal {
+  @extend .label-value;
+  color: $brand-black;
 }
 
 // horizontal divider width

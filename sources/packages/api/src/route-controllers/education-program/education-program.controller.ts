@@ -10,7 +10,7 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { IInstitutionUserToken } from "../../auth/userToken.interface";
+import { IInstitutionUserToken , IUserToken} from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -48,7 +48,6 @@ import {
   PaginatedResults,
 } from "../../utilities";
 import { ApprovalStatus } from "../../services/education-program/constants";
-import { IUserToken } from "../../auth/userToken.interface";
 
 @Controller("institution/education-program")
 export class EducationProgramController {

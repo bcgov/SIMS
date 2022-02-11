@@ -1,10 +1,18 @@
 <template>
   <div class="ml-4 mb-2">
     <div class="row">
-      <header-title-value
-        title="Institution name"
-        :value="educationProgram.institutionName"
-      />
+      <header-title-value title="Institution name"
+        ><template #value
+          ><a
+            v-if="institutionId"
+            @click="goToInstitution()"
+            class="label-bold-primary"
+          >
+            {{ educationProgram.institutionName }}
+          </a>
+          <span v-else>{{ educationProgram.institutionName }}</span>
+        </template></header-title-value
+      >
       <div class="mx-2 vertical-divider"></div>
       <header-title-value
         title="Submitted"
@@ -71,6 +79,8 @@ import { EducationProgramData, ApprovalStatus } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: { HeaderTitleValue },
@@ -80,8 +90,13 @@ export default {
       required: true,
       default: {} as EducationProgramData,
     },
+    institutionId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props: any) {
+    const router = useRouter();
     const { originalDateOnlyLongString } = useFormatters();
     const getFullName = (firstName: string, lastName: string) => {
       if (firstName && lastName) {
@@ -100,7 +115,20 @@ export default {
         props.educationProgram.deniedByLastName,
       ),
     );
-    return { originalDateOnlyLongString, approvedBy, deniedBy, ApprovalStatus };
+    const goToInstitution = () => {
+      if (props.institutionId)
+        router.push({
+          name: AESTRoutesConst.INSTITUTION_PROFILE,
+          params: { institutionId: props.institutionId },
+        });
+    };
+    return {
+      originalDateOnlyLongString,
+      approvedBy,
+      deniedBy,
+      ApprovalStatus,
+      goToInstitution,
+    };
   },
 };
 </script>

@@ -156,8 +156,6 @@ export default {
         DEFAULT_PAGE_LIMIT,
         DEFAULT_PAGE_NUMBER,
         searchProgramName.value,
-        undefined,
-        undefined,
       );
     });
     const goToViewProgramDetail = (programId: number, locationId: number) => {
@@ -187,8 +185,6 @@ export default {
         currentPageSize.value ? currentPageSize.value : DEFAULT_PAGE_LIMIT,
         DEFAULT_PAGE_NUMBER,
         searchProgramName.value,
-        undefined,
-        undefined,
       );
     };
     return {

@@ -27,6 +27,7 @@
       :programId="programId"
       :locationId="locationId"
       :educationProgram="educationProgram"
+      :institutionId="institutionId"
     />
     <!-- approve program modal -->
     <ApproveProgramModal
@@ -99,12 +100,12 @@ export default {
       await approveProgramModal.value.showModal();
     };
 
-    const submitApproveProgram = async (approveProgram: ApproveProgram) => {
+    const submitApproveProgram = async (approveProgramData: ApproveProgram) => {
       try {
         await EducationProgramService.shared.approveProgram(
           props.programId,
           props.institutionId,
-          approveProgram,
+          approveProgramData,
         );
         toast.success(
           "Program Approved",
@@ -123,12 +124,12 @@ export default {
       await declineProgramModal.value.showModal();
     };
 
-    const submitDeclineProgram = async (declineProgram: DeclineProgram) => {
+    const submitDeclineProgram = async (declineProgramData: DeclineProgram) => {
       try {
         await EducationProgramService.shared.declineProgram(
           props.programId,
           props.institutionId,
-          declineProgram,
+          declineProgramData,
         );
         toast.success(
           "Program Decline",
