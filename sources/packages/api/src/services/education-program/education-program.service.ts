@@ -3,6 +3,8 @@ import {
   EducationProgram,
   EducationProgramOffering,
   Institution,
+  Note,
+  NoteType,
   OfferingTypes,
   User,
 } from "../../database/entities";
@@ -15,7 +17,11 @@ import {
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { ProgramsSummary } from "../../route-controllers/education-program/models/save-education-program.dto";
+import {
+  ApproveProgram,
+  DeclineProgram,
+  ProgramsSummary,
+} from "../../route-controllers/education-program/models/save-education-program.dto";
 import {
   credentialTypeToDisplay,
   FieldSortOrder,
@@ -24,8 +30,9 @@ import {
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
+  CustomNamedError,
 } from "../../utilities";
-
+const PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -160,7 +167,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     offeringTypes: OfferingTypes[],
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    const DEFAULT_SORT_FIELD = "approvalStatus";
     const summaryResult = this.repo
       .createQueryBuilder("programs")
       .select("programs.id", "id")
@@ -182,7 +188,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             }),
         "totalOfferings",
       )
-      .where("programs.institution.id = :institutionId", { institutionId });
+      .where("programs.institution.id = :institutionId", { institutionId })
+      .orderBy("programs.id");
 
     // this queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
@@ -214,8 +221,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       summaryResult.orderBy(
-        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.ASC,
+        `CASE programs.approvalStatus
+                WHEN '${ApprovalStatus.pending}' THEN 1
+                WHEN '${ApprovalStatus.approved}' THEN 2
+                WHEN '${ApprovalStatus.denied}' THEN 3
+                ELSE 4
+              END`,
       );
     }
 
@@ -257,7 +268,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<ProgramsSummary>> {
     // default data table sort field
-    const DEFAULT_SORT_FIELD = "submittedDate";
     const paginatedProgramQuery = this.repo
       .createQueryBuilder("programs")
       .select("programs.id", "programId")
@@ -322,8 +332,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       paginatedProgramQuery.orderBy(
-        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.DESC,
+        `CASE programs.approvalStatus
+                WHEN '${ApprovalStatus.pending}' THEN 1
+                WHEN '${ApprovalStatus.approved}' THEN 2
+                WHEN '${ApprovalStatus.denied}' THEN 3
+                ELSE 4
+              END`,
       );
     }
 
@@ -516,5 +530,91 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .innerJoin("programs.institution", "institution")
       .where("programs.id = :id", { id: programId })
       .getOne();
+  }
+
+  /**
+   * Approve a pending program.
+   * @param programId program id.
+   * @param userId user id.
+   * @param payload ApproveProgram
+   * @param returns EducationProgram
+   */
+  async approveEducationProgram(
+    programId: number,
+    userId: number,
+    payload: ApproveProgram,
+  ): Promise<EducationProgram> {
+    const program = await this.repo.findOne(
+      {
+        id: programId,
+        approvalStatus: ApprovalStatus.pending,
+      },
+      {
+        relations: ["programNote", "statusUpdatedBy"],
+      },
+    );
+
+    if (!program) {
+      throw new CustomNamedError(
+        "Program with pending status not found.",
+        PROGRAM_NOT_FOUND,
+      );
+    }
+
+    program.approvalStatus = ApprovalStatus.approved;
+    program.statusUpdatedOn = new Date();
+    program.effectiveEndDate = new Date(payload.effectiveEndDate);
+    program.statusUpdatedBy = { id: userId } as User;
+    program.programNote = {
+      description: payload.approvedNote,
+      noteType: NoteType.Program,
+      creator: {
+        id: userId,
+      } as User,
+    } as Note;
+
+    return this.repo.save(program);
+  }
+
+  /**
+   * Approve a pending program.
+   * @param programId program id.
+   * @param userId user id.
+   * @param payload DeclineProgram
+   * @param returns EducationProgram
+   */
+  async declineEducationProgram(
+    programId: number,
+    userId: number,
+    payload: DeclineProgram,
+  ): Promise<EducationProgram> {
+    const program = await this.repo.findOne(
+      {
+        id: programId,
+        approvalStatus: ApprovalStatus.pending,
+      },
+      {
+        relations: ["programNote", "statusUpdatedBy"],
+      },
+    );
+
+    if (!program) {
+      throw new CustomNamedError(
+        "Program with pending status not found.",
+        PROGRAM_NOT_FOUND,
+      );
+    }
+
+    program.approvalStatus = ApprovalStatus.denied;
+    program.statusUpdatedOn = new Date();
+    program.statusUpdatedBy = { id: userId } as User;
+    program.programNote = {
+      description: payload.declinedNote,
+      noteType: NoteType.Program,
+      creator: {
+        id: userId,
+      } as User,
+    } as Note;
+    return this.repo.save(program);
   }
 }

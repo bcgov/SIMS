@@ -7,7 +7,7 @@
     <template v-slot:content>
       <formio
         formName="declineEducationProgram"
-        @submitted="declineProgram"
+        @submitted="submitForm"
         @loaded="formLoaded"
       ></formio>
     </template>
@@ -28,25 +28,24 @@ import { useModalDialog } from "@/composables";
 import formio from "@/components/generic/formio.vue";
 import { COLOR_BLUE } from "@/constants";
 import { ref } from "vue";
+import { DeclineProgram } from "@/types";
 
 export default {
   components: {
     ModalDialogBase,
     formio,
   },
-  setup() {
-    const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
+  emits: ["submitData"],
+  setup(props: any, context: any) {
+    const { showDialog, showModal } = useModalDialog<void>();
     const declineProgramform = ref();
 
-    const submitForm = async () => {
+    const declineProgram = async () => {
       return declineProgramform.value.submit();
     };
-    const declineProgram = async () => {
-      const formSubmitted = await submitForm();
-      if (formSubmitted) {
-        showDialog.value = false;
-        resolvePromise(true);
-      }
+    const submitForm = async (formData: DeclineProgram) => {
+      showDialog.value = false;
+      context.emit("submitData", formData);
     };
 
     const formLoaded = async (form: any) => {
@@ -55,7 +54,6 @@ export default {
 
     const dialogClosed = () => {
       showDialog.value = false;
-      resolvePromise(false);
     };
 
     return {
@@ -65,6 +63,7 @@ export default {
       dialogClosed,
       COLOR_BLUE,
       formLoaded,
+      submitForm,
     };
   },
 };

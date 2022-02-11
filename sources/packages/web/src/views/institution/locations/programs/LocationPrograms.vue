@@ -135,8 +135,8 @@ export default {
     const loadSummary = async (
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = ProgramSummaryFields.ApprovalStatus,
-      sortOrder = DataTableSortOrder.ASC,
+      sortField?: ProgramSummaryFields,
+      sortOrder?: DataTableSortOrder,
     ) => {
       loading.value = true;
       programAndCount.value = await EducationProgramService.shared.getLocationProgramsSummary(

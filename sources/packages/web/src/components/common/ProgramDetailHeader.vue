@@ -10,7 +10,7 @@
         title="Submitted"
         :value="
           educationProgram.submittedOn
-            ? dateOnlyLongString(educationProgram.submittedOn)
+            ? originalDateOnlyLongString(educationProgram.submittedOn)
             : '-'
         "
       />
@@ -19,22 +19,31 @@
       class="row mt-1"
       v-if="ApprovalStatus.approved === educationProgram.approvalStatus"
     >
-      <header-title-value title="Approved by" :value="approvedBy" />
-      <div class="mx-2 vertical-divider"></div>
+      <header-title-value
+        title="Approved by"
+        :value="approvedBy ?? '-'"
+        v-if="approvedBy"
+      />
+      <div class="mx-2 vertical-divider" v-if="approvedBy"></div>
       <header-title-value
         title="Approved"
+        v-if="educationProgram.approvedOn"
         :value="
           educationProgram.approvedOn
-            ? dateOnlyLongString(educationProgram.approvedOn)
+            ? originalDateOnlyLongString(educationProgram.approvedOn)
             : '-'
         "
       />
-      <div class="mx-2 vertical-divider"></div>
+      <div
+        class="mx-2 vertical-divider"
+        v-if="educationProgram.effectiveEndDate"
+      ></div>
       <header-title-value
+        v-if="educationProgram.effectiveEndDate"
         title="Effective end date"
         :value="
           educationProgram.effectiveEndDate
-            ? dateOnlyLongString(educationProgram.effectiveEndDate)
+            ? originalDateOnlyLongString(educationProgram.effectiveEndDate)
             : '-'
         "
       />
@@ -49,7 +58,7 @@
         title="Denied"
         :value="
           educationProgram.deniedOn
-            ? dateOnlyLongString(educationProgram.deniedOn)
+            ? originalDateOnlyLongString(educationProgram.deniedOn)
             : '-'
         "
       />
@@ -73,12 +82,10 @@ export default {
     },
   },
   setup(props: any) {
-    const { dateOnlyLongString } = useFormatters();
+    const { originalDateOnlyLongString } = useFormatters();
     const getFullName = (firstName: string, lastName: string) => {
       if (firstName && lastName) {
         return `${lastName}, ${firstName}`;
-      } else {
-        return "-";
       }
     };
     const approvedBy = computed(() =>
@@ -93,7 +100,7 @@ export default {
         props.educationProgram.deniedByLastName,
       ),
     );
-    return { dateOnlyLongString, approvedBy, deniedBy, ApprovalStatus };
+    return { originalDateOnlyLongString, approvedBy, deniedBy, ApprovalStatus };
   },
 };
 </script>

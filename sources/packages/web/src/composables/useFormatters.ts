@@ -5,6 +5,8 @@ import {
 import { SINValidStatus } from "@/store/modules/student/student";
 import { Address, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -118,6 +120,20 @@ export function useFormatters() {
     };
   };
 
+  /**
+   * Convert a string or date (Z  OR 00:00 or 0 offset or date only)
+   * to a string format like "Aug 05 2021".
+   * @param date string or date to be converted.
+   * @returns string representation (e.g. Aug 05 2021).
+   */
+  const originalDateOnlyLongString = (date: string | Date): string => {
+    if (date) {
+      return dayjs(date)
+        .utc()
+        .format("MMM D, YYYY");
+    }
+    return "";
+  };
   return {
     dateString,
     dateOnlyLongString,
@@ -125,5 +141,6 @@ export function useFormatters() {
     getFormattedAddress,
     timeOnlyInHoursAndMinutes,
     parseSINValidStatus,
+    originalDateOnlyLongString,
   };
 }

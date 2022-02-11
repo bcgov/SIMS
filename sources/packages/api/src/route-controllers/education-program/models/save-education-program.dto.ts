@@ -48,7 +48,7 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   submittedLastName: string;
   deniedOn?: Date;
   deniedByFirstName?: string;
-  deniedBySecondName?: string;
+  deniedByLastName?: string;
   approvedOn?: Date;
   approvedByFirstName?: string;
   approvedByLastName?: string;
@@ -127,7 +127,7 @@ export const transformToEducationProgramData = (
   if (program.approvalStatus === ApprovalStatus.denied) {
     programDetails.deniedOn = program.statusUpdatedOn;
     programDetails.deniedByFirstName = program.statusUpdatedBy?.firstName;
-    programDetails.deniedBySecondName = program.statusUpdatedBy?.lastName;
+    programDetails.deniedByLastName = program.statusUpdatedBy?.lastName;
   }
   if (program.approvalStatus === ApprovalStatus.approved) {
     programDetails.approvedOn = program.statusUpdatedOn;
@@ -147,4 +147,13 @@ export class ProgramsSummary {
   locationId: number;
   programStatus: ApprovalStatus;
   totalOfferings: number;
+}
+
+export interface ApproveProgram {
+  effectiveEndDate: string;
+  approvedNote: string;
+}
+
+export interface DeclineProgram {
+  declinedNote: string;
 }

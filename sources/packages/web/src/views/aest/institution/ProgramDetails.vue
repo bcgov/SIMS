@@ -29,9 +29,15 @@
       :educationProgram="educationProgram"
     />
     <!-- approve program modal -->
-    <ApproveProgramModal ref="approveProgramModal" />
+    <ApproveProgramModal
+      ref="approveProgramModal"
+      @submitData="submitApproveProgram"
+    />
     <!-- decline program modal -->
-    <DeclineProgramModal ref="declineProgramModal" />
+    <DeclineProgramModal
+      ref="declineProgramModal"
+      @submitData="submitDeclineProgram"
+    />
   </v-container>
 </template>
 
@@ -39,7 +45,12 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted, computed } from "vue";
-import { EducationProgramData, ApprovalStatus } from "@/types";
+import {
+  EducationProgramData,
+  ApprovalStatus,
+  ApproveProgram,
+  DeclineProgram,
+} from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { COLOR_BLUE } from "@/constants";
@@ -70,8 +81,8 @@ export default {
   },
   setup(props: any) {
     const educationProgram = ref({} as EducationProgramData);
-    const approveProgramModal = ref({} as ModalDialog<boolean>);
-    const declineProgramModal = ref({} as ModalDialog<boolean>);
+    const approveProgramModal = ref({} as ModalDialog<void>);
+    const declineProgramModal = ref({} as ModalDialog<void>);
     const toast = useToastMessage();
 
     const getEducationProgramAndOffering = async () => {
@@ -83,39 +94,52 @@ export default {
     const isPendingProgram = computed(
       () => educationProgram.value.approvalStatus === ApprovalStatus.pending,
     );
+
     const approveProgram = async () => {
-      if (await approveProgramModal.value.showModal()) {
-        console.log("approve");
-        try {
-          await EducationProgramService.shared.approveProgram(props.programId);
-          toast.success(
-            "Program Approved",
-            `${educationProgram.value.name} approved !`,
-          );
-        } catch {
-          toast.error(
-            "Unexpected error",
-            "An error happened while approving the program.",
-          );
-        }
+      await approveProgramModal.value.showModal();
+    };
+
+    const submitApproveProgram = async (approveProgram: ApproveProgram) => {
+      try {
+        await EducationProgramService.shared.approveProgram(
+          props.programId,
+          props.institutionId,
+          approveProgram,
+        );
+        toast.success(
+          "Program Approved",
+          `${educationProgram.value.name} approved !`,
+        );
+        await getEducationProgramAndOffering();
+      } catch {
+        toast.error(
+          "Unexpected error",
+          "An error happened while approving the program.",
+        );
       }
     };
 
     const declineProgram = async () => {
-      if (await declineProgramModal.value.showModal()) {
-        console.log("decline");
-        try {
-          await EducationProgramService.shared.declineProgram(props.programId);
-          toast.success(
-            "Program Decline",
-            `${educationProgram.value.name} Decline !`,
-          );
-        } catch {
-          toast.error(
-            "Unexpected error",
-            "An error happened while declining the program.",
-          );
-        }
+      await declineProgramModal.value.showModal();
+    };
+
+    const submitDeclineProgram = async (declineProgram: DeclineProgram) => {
+      try {
+        await EducationProgramService.shared.declineProgram(
+          props.programId,
+          props.institutionId,
+          declineProgram,
+        );
+        toast.success(
+          "Program Decline",
+          `${educationProgram.value.name} Decline !`,
+        );
+        await getEducationProgramAndOffering();
+      } catch {
+        toast.error(
+          "Unexpected error",
+          "An error happened while declining the program.",
+        );
       }
     };
 
@@ -130,6 +154,8 @@ export default {
       approveProgram,
       declineProgramModal,
       declineProgram,
+      submitApproveProgram,
+      submitDeclineProgram,
     };
   },
 };

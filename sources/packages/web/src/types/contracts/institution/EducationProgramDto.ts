@@ -158,3 +158,12 @@ export interface EntranceRequirements {
   requirementsByInstitution: boolean;
   requirementsByBCITA: boolean;
 }
+
+export interface ApproveProgram {
+  effectiveEndDate: string;
+  approvedNote: string;
+}
+
+export interface DeclineProgram {
+  declinedNote: string;
+}

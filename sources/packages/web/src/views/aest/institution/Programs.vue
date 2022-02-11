@@ -125,17 +125,15 @@ export default {
     );
     const searchProgramName = ref("");
     const currentPageSize = ref();
-    const DEFAULT_SORT_COLUMN = ProgramSummaryFields.SubmittedDate;
-    const DEFAULT_SORT_ORDER = DataTableSortOrder.DESC;
     const loading = ref(false);
 
     const getProgramsSummaryList = async (
       institutionId: number,
       rowsPerPage: number,
       page: number,
-      sortColumn: string,
-      sortOrder: DataTableSortOrder,
       programName: string,
+      sortColumn?: ProgramSummaryFields,
+      sortOrder?: DataTableSortOrder,
     ) => {
       try {
         loading.value = true;
@@ -144,9 +142,9 @@ export default {
           institutionId,
           rowsPerPage,
           page,
+          programName,
           sortColumn,
           sortOrder,
-          programName,
         );
       } finally {
         loading.value = false;
@@ -157,9 +155,9 @@ export default {
         props.institutionId,
         DEFAULT_PAGE_LIMIT,
         DEFAULT_PAGE_NUMBER,
-        DEFAULT_SORT_COLUMN,
-        DEFAULT_SORT_ORDER,
         searchProgramName.value,
+        undefined,
+        undefined,
       );
     });
     const goToViewProgramDetail = (programId: number, locationId: number) => {
@@ -178,9 +176,9 @@ export default {
         props.institutionId,
         event.rows,
         event.page,
+        searchProgramName.value,
         event.sortField,
         event.sortOrder,
-        searchProgramName.value,
       );
     };
     const goToSearchProgramName = async () => {
@@ -188,9 +186,9 @@ export default {
         props.institutionId,
         currentPageSize.value ? currentPageSize.value : DEFAULT_PAGE_LIMIT,
         DEFAULT_PAGE_NUMBER,
-        DEFAULT_SORT_COLUMN,
-        DEFAULT_SORT_ORDER,
         searchProgramName.value,
+        undefined,
+        undefined,
       );
     };
     return {

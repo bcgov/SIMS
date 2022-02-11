@@ -9,6 +9,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   PaginatedResults,
+  ApproveProgram,
+  DeclineProgram,
 } from "@/types";
 
 import ApiClient from "./http/ApiClient";
@@ -118,16 +120,36 @@ export class EducationProgramService {
   /**
    * Ministry user approve's a pending program.
    * @param programId program id.
+   * @param institutionId institution id.
+   * @param payload ApproveProgram.
    */
-  public async approveProgram(programId: number): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgram.approveProgram(programId);
+  public async approveProgram(
+    programId: number,
+    institutionId: number,
+    payload: ApproveProgram,
+  ): Promise<void> {
+    return ApiClient.EducationProgram.approveProgram(
+      programId,
+      institutionId,
+      payload,
+    );
   }
 
   /**
    * Ministry user decline's a pending program.
    * @param programId program id.
+   * @param institutionId institution id.
+   * @param payload DeclineProgram.
    */
-  public async declineProgram(programId: number): Promise<OptionItemDto[]> {
-    return ApiClient.EducationProgram.declineProgram(programId);
+  public async declineProgram(
+    programId: number,
+    institutionId: number,
+    payload: DeclineProgram,
+  ): Promise<void> {
+    await ApiClient.EducationProgram.declineProgram(
+      programId,
+      institutionId,
+      payload,
+    );
   }
 }

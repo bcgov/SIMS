@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -22,8 +23,14 @@ import {
   EducationProgramDataDto,
   transformToEducationProgramData,
   ProgramsSummary,
+  DeclineProgram,
+  ApproveProgram,
 } from "./models/save-education-program.dto";
-import { EducationProgramService, FormService } from "../../services";
+import {
+  EducationProgramService,
+  FormService,
+  InstitutionService,
+} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
@@ -41,12 +48,14 @@ import {
   PaginatedResults,
 } from "../../utilities";
 import { ApprovalStatus } from "../../services/education-program/constants";
+import { IUserToken } from "../../auth/userToken.interface";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
+    private readonly institutionService: InstitutionService,
   ) {}
 
   /**
@@ -401,5 +410,65 @@ export class EducationProgramController {
         pageLimit: pageSize,
       },
     );
+  }
+
+  /**
+   * Ministry user approve's a pending program.
+   * @param programId program id.
+   * @param institutionId institution id.
+   * @UserToken userToken
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Patch(":programId/institution/:institutionId/approve/aest")
+  async approveProgram(
+    @UserToken() userToken: IUserToken,
+    @Param("programId") programId: number,
+    @Param("institutionId") institutionId: number,
+    @Body() payload: ApproveProgram,
+  ): Promise<void> {
+    const updatedProgram = await this.programService.approveEducationProgram(
+      programId,
+      userToken.userId,
+      payload,
+    );
+    /**mapping the note added for approved program to institution notes**/
+    if (updatedProgram.programNote) {
+      await this.institutionService.saveInstitutionNote(
+        institutionId,
+        updatedProgram.programNote,
+      );
+    }
+  }
+
+  /**
+   * Ministry user decline's a pending program.
+   * @param programId program id.
+   * @param institutionId institution id.
+   * @UserToken userToken
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Patch(":programId/institution/:institutionId/decline/aest")
+  async declineProgram(
+    @UserToken() userToken: IUserToken,
+    @Param("programId") programId: number,
+    @Param("institutionId") institutionId: number,
+    @Body() payload: DeclineProgram,
+  ): Promise<void> {
+    const updatedProgram = await this.programService.declineEducationProgram(
+      programId,
+      userToken.userId,
+      payload,
+    );
+    /**mapping the note added for approved program to institution notes**/
+    if (updatedProgram.programNote) {
+      await this.institutionService.saveInstitutionNote(
+        institutionId,
+        updatedProgram.programNote,
+      );
+    }
   }
 }
