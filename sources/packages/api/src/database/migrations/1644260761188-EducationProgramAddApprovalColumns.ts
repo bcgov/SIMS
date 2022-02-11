@@ -3,7 +3,7 @@ import { getSQLFileData } from "../../utilities";
 
 const DIR = "EducationPrograms";
 
-export class educationProgramAddApprovalColumns1644260761188
+export class EducationProgramAddApprovalColumns1644260761188
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
