@@ -26,7 +26,7 @@
 }
 
 .secondary-color-light {
-  color: $secondary-header-color-lt;
+  color: $secondary-header-color-lt !important;
 }
 
 .ff-form-container .btn-primary {
@@ -42,6 +42,14 @@
   line-height: 18px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+.category-header-small-no-transform {
+  font-style: $font-style-normal;
+  font-weight: $formio-category-header-wt;
+  font-size: $formio-content;
+  line-height: $line-height-header-sm;
+  letter-spacing: 0.5px;
 }
 
 /**Typography styles for medium small header**/
@@ -306,3 +314,14 @@
 .form-check-input {
   position: inherit;
 }
+
+.need-help-image {
+  position: relative;
+  bottom: 70px;
+}
+
+.welcome-image {
+  position: relative;
+  bottom: 60px;
+}
+
