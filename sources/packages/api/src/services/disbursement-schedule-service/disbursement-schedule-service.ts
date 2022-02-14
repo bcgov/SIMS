@@ -7,6 +7,7 @@ import {
   COE_DENIED_REASON_OTHER_ID,
   PaginationOptions,
   FieldSortOrder,
+  PaginatedResults,
 } from "../../utilities";
 import {
   Connection,
@@ -305,7 +306,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
-  ): Promise<[DisbursementSchedule[], number]> {
+  ): Promise<PaginatedResults<DisbursementSchedule>> {
     const coeThresholdDate = addDays(new Date(), COE_WINDOW);
     const coeQuery = this.repo
       .createQueryBuilder("disbursementSchedule")
@@ -344,15 +345,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     if (paginationOptions.searchCriteria) {
       coeQuery.andWhere(
         new Brackets((qb) => {
-          qb.where("user.firstName Ilike :searchCriteria", {
+          qb.where(
+            "CONCAT(user.firstName,  ' ', user.lastName ) Ilike :searchCriteria",
+            {
+              searchCriteria: `%${paginationOptions.searchCriteria.trim()}%`,
+            },
+          ).orWhere("application.applicationNumber Ilike :searchCriteria", {
             searchCriteria: `%${paginationOptions.searchCriteria}%`,
-          })
-            .orWhere("user.lastName Ilike :searchCriteria", {
-              searchCriteria: `%${paginationOptions.searchCriteria}%`,
-            })
-            .orWhere("application.applicationNumber Ilike :searchCriteria", {
-              searchCriteria: `%${paginationOptions.searchCriteria}%`,
-            });
+          });
         }),
       );
     }
@@ -365,8 +365,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       )
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
-    console.log(coeQuery.getSql());
-    return coeQuery.getManyAndCount();
+    const [result, count] = await coeQuery.getManyAndCount();
+    return {
+      results: result,
+      count: count,
+    };
   }
 
   /**

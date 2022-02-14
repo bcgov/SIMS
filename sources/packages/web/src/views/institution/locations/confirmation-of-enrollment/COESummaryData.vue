@@ -2,7 +2,7 @@
   <body-header
     :title="header"
     :subTitle="subTitle"
-    :recordsCount="disbursements.coeSummary?.length"
+    :recordsCount="disbursements.results?.length"
     class="m-1"
   >
     <template #actions>
@@ -19,13 +19,13 @@
   </body-header>
   <content-group>
     <DataTable
-      :value="disbursements.coeSummary"
+      :value="disbursements.results"
       :lazy="true"
       class="p-m-4"
       :paginator="true"
       :rows="pageLimit"
       :rowsPerPageOptions="rowsPerPageOptions"
-      :totalRecords="disbursements.totalRecords"
+      :totalRecords="disbursements.count"
       @page="pageEvent"
       @sort="sortEvent"
     >
@@ -78,8 +78,8 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
-  COESummaryAndCount,
-  COESummaryFields,
+  PaginatedResults,
+  COESummaryDTO,
   DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
@@ -90,6 +90,7 @@ import { COLOR_BLUE } from "@/constants";
 import COEStatusBadge from "@/components/generic/COEStatusBadge.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
+const DEFAULT_SORT_FIELD = "coeStatus";
 
 export default {
   components: { COEStatusBadge, ContentGroup, BodyHeader },
@@ -114,14 +115,14 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateString, dateOnlyLongString } = useFormatters();
-    const disbursements = ref({} as COESummaryAndCount);
+    const disbursements = ref({} as PaginatedResults<COESummaryDTO>);
     const page = ref(DEFAULT_PAGE_NUMBER);
     const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(COESummaryFields.COEStatus);
+    const sortField = ref(DEFAULT_SORT_FIELD);
     const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
     const rowsPerPageOptions = computed(() =>
-      disbursements.value.coeSummary?.length > 10 ? PAGINATION_LIST : undefined,
+      disbursements.value.results?.length > 10 ? PAGINATION_LIST : undefined,
     );
 
     const goToViewApplication = (disbursementScheduleId: number) => {

@@ -1,5 +1,6 @@
 import {
-  COESummaryAndCount,
+  PaginatedResults,
+  COESummaryDTO,
   ApplicationDetailsForCOEDTO,
   COEDeniedReasonDto,
   DenyConfirmationOfEnrollment,
@@ -20,7 +21,7 @@ export class ConfirmationOfEnrollmentService {
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
-  ): Promise<COESummaryAndCount> {
+  ): Promise<PaginatedResults<COESummaryDTO>> {
     return ApiClient.ConfirmationOfEnrollment.getCOESummary(
       locationId,
       enrollmentPeriod,

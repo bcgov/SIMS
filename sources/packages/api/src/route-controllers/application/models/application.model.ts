@@ -277,9 +277,3 @@ export const transformToApplicationDetailDto = (
       : undefined,
   };
 };
-
-/** DTO for paginated COE Summary */
-export interface COESummaryAndCount {
-  coeSummary: COESummaryDTO[];
-  totalRecords: number;
-}

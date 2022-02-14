@@ -1,38 +1,39 @@
 import {
-  COESummaryAndCount,
+  PaginatedResults,
+  COESummaryDTO,
   ApplicationDetailsForCOEDTO,
   COEDeniedReasonDto,
   DenyConfirmationOfEnrollment,
   EnrollmentPeriod,
   PaginationOptions,
-  FieldSortOrder,
-  DataTableSortOrder,
   PaginationParams,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { addSortOptions } from "@/helpers";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async getCOESummary(
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
-  ): Promise<COESummaryAndCount> {
-    const apiSortOrder =
-      paginationOptions.sortOrder === DataTableSortOrder.DESC
-        ? FieldSortOrder.DESC
-        : FieldSortOrder.ASC;
-    let URL = `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`;
-    /**Adding Sort params. There is always a default sortField and sortOrder. */
-    URL = `${URL}?${PaginationParams.SortField}=${paginationOptions.sortField}&${PaginationParams.SortOrder}=${apiSortOrder}`;
+  ): Promise<PaginatedResults<COESummaryDTO>> {
+    let url = `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`;
 
-    /** Adding pagination params. There is always a default page and pageLimit. */
-    URL = `${URL}&${PaginationParams.Page}=${paginationOptions.page}&${PaginationParams.PageLimit}=${paginationOptions.pageLimit}`;
+    /** Adding pagination params. There is always a default page and pageLimit for paginated APIs. */
+    url = `${url}?${PaginationParams.Page}=${paginationOptions.page}&${PaginationParams.PageLimit}=${paginationOptions.pageLimit}`;
+
+    /**Adding Sort params. There is always a default sortField and sortOrder for COE. */
+    url = addSortOptions(
+      url,
+      paginationOptions.sortField,
+      paginationOptions.sortOrder,
+    );
 
     /** Search criteria is populated only when search box has search text in it. */
     if (paginationOptions.searchCriteria) {
-      URL = `${URL}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
+      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
-    return this.getCallTyped<COESummaryAndCount>(URL);
+    return this.getCallTyped<PaginatedResults<COESummaryDTO>>(url);
   }
 
   public async getApplicationForCOE(

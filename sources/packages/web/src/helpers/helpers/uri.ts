@@ -1,4 +1,4 @@
-import { DataTableSortOrder, FieldSortOrder } from "@/types";
+import { DataTableSortOrder, FieldSortOrder, PaginationParams } from "@/types";
 
 /**
  * helper to append pagination sort and order to the url
@@ -17,7 +17,7 @@ export function addSortOptions(
       sortOrder === DataTableSortOrder.DESC
         ? FieldSortOrder.DESC
         : FieldSortOrder.ASC;
-    url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    url = `${url}&${PaginationParams.SortField}=${sortField}&${PaginationParams.SortOrder}=${sortDBOrder}`;
   }
   return url;
 }

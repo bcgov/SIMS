@@ -68,16 +68,6 @@ export enum ProgramSummaryFields {
   IsActive = "isActive",
 }
 
-/**
- * Enum for COE data table columns.
- */
-export enum COESummaryFields {
-  FullName = "fullName",
-  ApplicationNumber = "applicationNumber",
-  DisbursementDate = "disbursementDate",
-  COEStatus = "coeStatus",
-}
-
 /**Pagination Query param constants **/
 export enum PaginationParams {
   SortField = "sortField",

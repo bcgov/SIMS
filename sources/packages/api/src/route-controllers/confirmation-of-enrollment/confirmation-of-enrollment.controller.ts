@@ -29,10 +29,7 @@ import {
   DisbursementSchedule,
   COEStatus,
 } from "../../database/entities";
-import {
-  COESummaryAndCount,
-  COESummaryDTO,
-} from "../application/models/application.model";
+import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   dateString,
@@ -45,6 +42,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   FieldSortOrder,
+  PaginatedResults,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
@@ -71,10 +69,16 @@ export class ConfirmationOfEnrollmentController {
   ) {}
 
   /**
-   * Get all application of a location in an institution
-   * with Confirmation Of Enrollment(COE) status completed and required
-   * @param locationId location that is completing the COE.
-   * @returns student application list of an institution location
+   * Get all Confirmation Of Enrollment(COE) of a location in an institution
+   * This API is paginated with COE Status as default sort.
+   * @param locationId
+   * @param enrollmentPeriod
+   * @param searchCriteria Search text to search COE.
+   * @param sortField Field to sort COE.
+   * @param page Current page of paginated result.
+   * @param pageLimit Records per page in a paginated result.
+   * @param sortOrder sort order of COE.
+   * @returns COE Paginated Result.
    */
   @HasLocationAccess("locationId")
   @Get(
@@ -88,7 +92,7 @@ export class ConfirmationOfEnrollmentController {
     @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
     @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
     @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
-  ): Promise<COESummaryAndCount> {
+  ): Promise<PaginatedResults<COESummaryDTO>> {
     if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
       throw new NotFoundException("Invalid enrollment period value.");
     }
@@ -99,14 +103,14 @@ export class ConfirmationOfEnrollmentController {
       sortOrder: sortOrder,
       searchCriteria: searchCriteria,
     } as PaginationOptions;
-    const disbursementsAndCount =
+    const disbursementPaginatedResult =
       await this.disbursementScheduleService.getCOEByLocation(
         locationId,
         enrollmentPeriod,
         paginationOptions,
       );
     return {
-      coeSummary: disbursementsAndCount[0].map(
+      results: disbursementPaginatedResult.results.map(
         (disbursement: DisbursementSchedule) => {
           return {
             applicationNumber: disbursement.application.applicationNumber,
@@ -120,7 +124,7 @@ export class ConfirmationOfEnrollmentController {
           };
         },
       ) as COESummaryDTO[],
-      totalRecords: disbursementsAndCount[1],
+      count: disbursementPaginatedResult.count,
     };
   }
 

@@ -84,9 +84,3 @@ export enum EnrollmentPeriod {
   Current = "current",
   Upcoming = "upcoming",
 }
-
-/** DTO for paginated COE Summary */
-export interface COESummaryAndCount {
-  coeSummary: COESummaryDTO[];
-  totalRecords: number;
-}
