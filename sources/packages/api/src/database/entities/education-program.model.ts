@@ -333,45 +333,46 @@ export class EducationProgram extends RecordDataModel {
     name: "effective_end_date",
     type: "date",
     nullable: true,
+    transformer: dateOnlyTransformer,
   })
-  effectiveEndDate: Date;
+  effectiveEndDate?: Date;
 
   /**
    * Education program note.
    */
   @RelationId((program: EducationProgram) => program.programNote)
-  programNoteId: number;
+  programNoteId?: number;
 
   @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
   @JoinColumn({
     name: "program_note",
     referencedColumnName: ColumnNames.ID,
   })
-  programNote: Note;
+  programNote?: Note;
 
   /**
    * Education program status updated by.
    */
   @RelationId((program: EducationProgram) => program.statusUpdatedBy)
-  statusUpdatedById: number;
+  statusUpdatedById?: number;
 
   @ManyToOne((type) => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "status_updated_by",
     referencedColumnName: "id",
   })
-  statusUpdatedBy: User;
+  statusUpdatedBy?: User;
 
   /**
    * Education program submitted by.
    */
   @RelationId((program: EducationProgram) => program.submittedBy)
-  submittedById: number;
+  submittedById?: number;
 
   @ManyToOne((type) => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "submitted_by",
     referencedColumnName: "id",
   })
-  submittedBy: User;
+  submittedBy?: User;
 }

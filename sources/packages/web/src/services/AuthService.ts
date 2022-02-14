@@ -96,7 +96,6 @@ export class AuthService {
           RENEW_AUTH_TOKEN_TIMER,
         );
 
-        await store.dispatch("common/initialize", clientType);
         switch (clientType) {
           case ClientIdType.Student: {
             await store.dispatch(

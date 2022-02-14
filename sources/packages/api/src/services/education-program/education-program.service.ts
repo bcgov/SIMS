@@ -36,7 +36,7 @@ const PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(@Inject("Connection") private readonly connection: Connection) {
     super(connection.getRepository(EducationProgram));
     this.offeringsRepo = connection.getRepository(EducationProgramOffering);
   }
@@ -96,7 +96,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    */
   async saveEducationProgram(
     educationProgram: SaveEducationProgram,
-    createProgram?: boolean,
   ): Promise<EducationProgram> {
     const program = new EducationProgram();
     program.id = educationProgram.id;
@@ -146,7 +145,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       educationProgram.intlExchangeProgramEligibility;
     program.programDeclaration = educationProgram.programDeclaration;
     program.statusUpdatedBy = { id: educationProgram.userId } as User;
-    if (createProgram) {
+    if (educationProgram.id) {
       program.submittedBy = { id: educationProgram.userId } as User;
     }
     return this.repo.save(program);
@@ -188,8 +187,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             }),
         "totalOfferings",
       )
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .orderBy("programs.id");
+      .where("programs.institution.id = :institutionId", { institutionId });
 
     // this queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
@@ -294,8 +292,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "location",
         "institution.id = location.institution.id",
       )
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .orderBy("programs.id");
+      .where("programs.institution.id = :institutionId", { institutionId });
 
     // this queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
@@ -534,87 +531,104 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
   /**
    * Approve a pending program.
+   * this is a db transaction performing
+   * 3 functions, creating note, update the
+   * program and adding institution notes
+   * @param institutionId institution id.
    * @param programId program id.
    * @param userId user id.
    * @param payload ApproveProgram
    * @param returns EducationProgram
    */
   async approveEducationProgram(
+    institutionId: number,
     programId: number,
     userId: number,
     payload: ApproveProgram,
-  ): Promise<EducationProgram> {
-    const program = await this.repo.findOne(
-      {
-        id: programId,
-        approvalStatus: ApprovalStatus.pending,
-      },
-      {
-        relations: ["programNote", "statusUpdatedBy"],
-      },
-    );
-
-    if (!program) {
-      throw new CustomNamedError(
-        "Program with pending status not found.",
-        PROGRAM_NOT_FOUND,
-      );
-    }
-
-    program.approvalStatus = ApprovalStatus.approved;
-    program.statusUpdatedOn = new Date();
-    program.effectiveEndDate = new Date(payload.effectiveEndDate);
-    program.statusUpdatedBy = { id: userId } as User;
-    program.programNote = {
-      description: payload.approvedNote,
-      noteType: NoteType.Program,
-      creator: {
+  ): Promise<void> {
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      // create Note
+      const notes = new Note();
+      notes.description = payload.approvedNote;
+      notes.noteType = NoteType.Program;
+      notes.creator = {
         id: userId,
-      } as User,
-    } as Note;
+      } as User;
+      const noteObj = await transactionalEntityManager
+        .getRepository(Note)
+        .save(notes);
 
-    return this.repo.save(program);
+      // update program
+      const program = new EducationProgram();
+      program.id = programId;
+      program.approvalStatus = ApprovalStatus.approved;
+      program.statusUpdatedOn = new Date();
+      program.effectiveEndDate = new Date(payload.effectiveEndDate);
+      program.statusUpdatedBy = { id: userId } as User;
+      program.programNote = noteObj;
+      // await this.repo.save(program);
+
+      await transactionalEntityManager
+        .getRepository(EducationProgram)
+        .save(program);
+
+      // update institution note
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of(institutionId)
+        .add(noteObj);
+    });
   }
 
   /**
    * Approve a pending program.
+   * this is a db transaction performing
+   * 3 functions, creating note, update the
+   * program and adding institution notes
+   * @param institutionId institution id.
    * @param programId program id.
    * @param userId user id.
    * @param payload DeclineProgram
    * @param returns EducationProgram
    */
   async declineEducationProgram(
+    institutionId: number,
     programId: number,
     userId: number,
     payload: DeclineProgram,
-  ): Promise<EducationProgram> {
-    const program = await this.repo.findOne(
-      {
-        id: programId,
-        approvalStatus: ApprovalStatus.pending,
-      },
-      {
-        relations: ["programNote", "statusUpdatedBy"],
-      },
-    );
-
-    if (!program) {
-      throw new CustomNamedError(
-        "Program with pending status not found.",
-        PROGRAM_NOT_FOUND,
-      );
-    }
-
-    program.approvalStatus = ApprovalStatus.denied;
-    program.statusUpdatedOn = new Date();
-    program.statusUpdatedBy = { id: userId } as User;
-    program.programNote = {
-      description: payload.declinedNote,
-      noteType: NoteType.Program,
-      creator: {
+  ): Promise<void> {
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      // create Note
+      const notes = new Note();
+      notes.description = payload.declinedNote;
+      notes.noteType = NoteType.Program;
+      notes.creator = {
         id: userId,
-      } as User,
-    } as Note;
-    return this.repo.save(program);
+      } as User;
+      const noteObj = await transactionalEntityManager
+        .getRepository(Note)
+        .save(notes);
+
+      // update program
+      const program = new EducationProgram();
+      program.id = programId;
+      program.approvalStatus = ApprovalStatus.denied;
+      program.statusUpdatedOn = new Date();
+      program.statusUpdatedBy = { id: userId } as User;
+      program.programNote = noteObj;
+      await transactionalEntityManager
+        .getRepository(EducationProgram)
+        .save(program);
+
+      // update institution note
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of(institutionId)
+        .add(noteObj);
+    });
   }
 }

@@ -21,7 +21,6 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import formio from "@/components/generic/formio.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -34,6 +33,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useToastMessage } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { formio, FullPageContainer },
@@ -51,8 +51,7 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     const institutionId = ref();
-    const store = useStore();
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;

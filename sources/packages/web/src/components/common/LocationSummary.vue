@@ -82,7 +82,6 @@
   </ContentGroup>
 </template>
 <script lang="ts">
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -92,6 +91,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: {
@@ -107,8 +107,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const store = useStore();
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });

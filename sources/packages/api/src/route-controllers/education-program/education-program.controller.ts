@@ -10,7 +10,10 @@ import {
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { IInstitutionUserToken , IUserToken} from "../../auth/userToken.interface";
+import {
+  IInstitutionUserToken,
+  IUserToken,
+} from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -46,8 +49,8 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
+  getISODateOnlyString,
 } from "../../utilities";
-import { ApprovalStatus } from "../../services/education-program/constants";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -105,12 +108,7 @@ export class EducationProgramController {
     @Body() payload: EducationProgramDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
-    const newProgram = await this.saveProgram(
-      userToken,
-      payload,
-      undefined,
-      true,
-    );
+    const newProgram = await this.saveProgram(userToken, payload, undefined);
     return newProgram.id;
   }
 
@@ -132,7 +130,7 @@ export class EducationProgramController {
       throw new NotFoundException("Not able to find the requested program.");
     }
 
-    await this.saveProgram(userToken, payload, id, false);
+    await this.saveProgram(userToken, payload, id);
   }
 
   /**
@@ -146,7 +144,6 @@ export class EducationProgramController {
     userToken: IInstitutionUserToken,
     payload: EducationProgramDto,
     programId?: number,
-    createProgram?: boolean,
   ): Promise<EducationProgram> {
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.Educationprogram,
@@ -169,10 +166,7 @@ export class EducationProgramController {
       id: programId,
       userId: userToken.userId,
     };
-    return this.programService.saveEducationProgram(
-      saveProgramPaylod,
-      createProgram,
-    );
+    return this.programService.saveEducationProgram(saveProgramPaylod);
   }
 
   /**
@@ -205,28 +199,15 @@ export class EducationProgramController {
       approvalStatus: educationProgram.approvalStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
-      institutionId: educationProgram.institution.id,
-      institutionName: educationProgram.institution.legalOperatingName,
       submittedOn: educationProgram.submittedOn,
       submittedByFirstName: educationProgram.submittedBy?.firstName,
       submittedLastName: educationProgram.submittedBy?.lastName,
-      effectiveEndDate: educationProgram.effectiveEndDate,
+      effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
+      statusUpdatedOn: educationProgram.statusUpdatedOn,
+      statusUpdatedByFirstName: educationProgram.statusUpdatedBy?.firstName,
+      statusUpdatedByLastName: educationProgram.statusUpdatedBy?.lastName,
     };
 
-    if (educationProgram.approvalStatus === ApprovalStatus.denied) {
-      programDetails.deniedOn = educationProgram.statusUpdatedOn;
-      programDetails.deniedByFirstName =
-        educationProgram.statusUpdatedBy?.firstName;
-      programDetails.deniedByLastName =
-        educationProgram.statusUpdatedBy?.lastName;
-    }
-    if (educationProgram.approvalStatus === ApprovalStatus.approved) {
-      programDetails.approvedOn = educationProgram.statusUpdatedOn;
-      programDetails.approvedByFirstName =
-        educationProgram.statusUpdatedBy?.firstName;
-      programDetails.approvedByLastName =
-        educationProgram.statusUpdatedBy?.lastName;
-    }
     return programDetails;
   }
 
@@ -427,18 +408,12 @@ export class EducationProgramController {
     @Param("institutionId") institutionId: number,
     @Body() payload: ApproveProgram,
   ): Promise<void> {
-    const updatedProgram = await this.programService.approveEducationProgram(
+    await this.programService.approveEducationProgram(
+      institutionId,
       programId,
       userToken.userId,
       payload,
     );
-    /**mapping the note added for approved program to institution notes**/
-    if (updatedProgram.programNote) {
-      await this.institutionService.saveInstitutionNote(
-        institutionId,
-        updatedProgram.programNote,
-      );
-    }
   }
 
   /**
@@ -457,17 +432,11 @@ export class EducationProgramController {
     @Param("institutionId") institutionId: number,
     @Body() payload: DeclineProgram,
   ): Promise<void> {
-    const updatedProgram = await this.programService.declineEducationProgram(
+    await this.programService.declineEducationProgram(
+      institutionId,
       programId,
       userToken.userId,
       payload,
     );
-    /**mapping the note added for approved program to institution notes**/
-    if (updatedProgram.programNote) {
-      await this.institutionService.saveInstitutionNote(
-        institutionId,
-        updatedProgram.programNote,
-      );
-    }
   }
 }

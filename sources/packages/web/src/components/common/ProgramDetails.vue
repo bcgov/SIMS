@@ -72,7 +72,6 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { computed } from "vue";
 import {
@@ -82,6 +81,7 @@ import {
 import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 import { COLOR_BLUE } from "@/constants";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { ProgramStatusChip },
@@ -102,8 +102,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const store = useStore();
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;

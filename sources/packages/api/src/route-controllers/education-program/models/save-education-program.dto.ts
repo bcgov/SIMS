@@ -1,6 +1,9 @@
 import { ApprovalStatus } from "../../../services/education-program/constants";
 import { EducationProgram, ProgramIntensity } from "../../../database/entities";
-import { credentialTypeToDisplay } from "../../../utilities";
+import {
+  credentialTypeToDisplay,
+  getISODateOnlyString,
+} from "../../../utilities";
 /**
  * Dto that represents education programs form object.
  */
@@ -46,13 +49,10 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   submittedOn: Date;
   submittedByFirstName: string;
   submittedLastName: string;
-  deniedOn?: Date;
-  deniedByFirstName?: string;
-  deniedByLastName?: string;
-  approvedOn?: Date;
-  approvedByFirstName?: string;
-  approvedByLastName?: string;
-  effectiveEndDate: Date;
+  statusUpdatedOn?: Date;
+  statusUpdatedByFirstName?: string;
+  statusUpdatedByLastName?: string;
+  effectiveEndDate: string;
 }
 
 export interface ProgramDeliveryTypes {
@@ -122,18 +122,11 @@ export const transformToEducationProgramData = (
     submittedOn: program.submittedOn,
     submittedByFirstName: program.submittedBy?.firstName,
     submittedLastName: program.submittedBy?.lastName,
-    effectiveEndDate: program.effectiveEndDate,
+    effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
+    statusUpdatedOn: program.statusUpdatedOn,
+    statusUpdatedByFirstName: program.statusUpdatedBy?.firstName,
+    statusUpdatedByLastName: program.statusUpdatedBy?.lastName,
   };
-  if (program.approvalStatus === ApprovalStatus.denied) {
-    programDetails.deniedOn = program.statusUpdatedOn;
-    programDetails.deniedByFirstName = program.statusUpdatedBy?.firstName;
-    programDetails.deniedByLastName = program.statusUpdatedBy?.lastName;
-  }
-  if (program.approvalStatus === ApprovalStatus.approved) {
-    programDetails.approvedOn = program.statusUpdatedOn;
-    programDetails.approvedByFirstName = program.statusUpdatedBy?.firstName;
-    programDetails.approvedByLastName = program.statusUpdatedBy?.lastName;
-  }
 
   return programDetails;
 };

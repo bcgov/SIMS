@@ -74,7 +74,6 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
 import {
@@ -93,6 +92,7 @@ import {
   EducationProgramOfferingDto,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   props: {
@@ -112,8 +112,7 @@ export default {
     const currentPage = ref();
     const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
-    const store = useStore();
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;

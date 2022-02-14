@@ -141,7 +141,6 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
 import { ref, onMounted, computed } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
@@ -162,6 +161,7 @@ import {
   PAGINATION_LIST,
 } from "@/types";
 import InputSwitch from "primevue/inputswitch";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: {
@@ -195,8 +195,7 @@ export default {
     const institutionUserName = ref();
     const adminRoles = ref();
 
-    const store = useStore();
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
     /**
      * function to load usersListAndCount respective to the client type
      * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER

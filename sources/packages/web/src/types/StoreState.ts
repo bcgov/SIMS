@@ -2,7 +2,6 @@ import {
   UserStateForStore,
   AuthorizationsForStore,
   LocationStateForStore,
-  ClientIdType,
   InstitutionStateForStore,
 } from "@/types";
 
@@ -15,8 +14,4 @@ export interface InstitutionLocationState {
   institutionState: InstitutionStateForStore;
   userState: UserStateForStore;
   authorizationsState: AuthorizationsForStore;
-}
-
-export interface LoggedInUserClientTypeState {
-  clientType: ClientIdType;
 }

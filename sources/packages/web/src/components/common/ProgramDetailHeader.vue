@@ -8,9 +8,9 @@
             @click="goToInstitution()"
             class="label-bold-primary"
           >
-            {{ educationProgram.institutionName }}
+            {{ institutionName }}
           </a>
-          <span v-else>{{ educationProgram.institutionName }}</span>
+          <span v-else>{{ institutionName }}</span>
         </template></header-title-value
       >
       <div class="mx-2 vertical-divider"></div>
@@ -18,7 +18,7 @@
         title="Submitted"
         :value="
           educationProgram.submittedOn
-            ? originalDateOnlyLongString(educationProgram.submittedOn)
+            ? dateOnlyLongString(educationProgram.submittedOn)
             : '-'
         "
       />
@@ -29,16 +29,16 @@
     >
       <header-title-value
         title="Approved by"
-        :value="approvedBy ?? '-'"
-        v-if="approvedBy"
+        :value="statusUpdateBy ?? '-'"
+        v-if="statusUpdateBy"
       />
-      <div class="mx-2 vertical-divider" v-if="approvedBy"></div>
+      <div class="mx-2 vertical-divider" v-if="statusUpdateBy"></div>
       <header-title-value
         title="Approved"
-        v-if="educationProgram.approvedOn"
+        v-if="educationProgram.statusUpdatedOn"
         :value="
-          educationProgram.approvedOn
-            ? originalDateOnlyLongString(educationProgram.approvedOn)
+          educationProgram.statusUpdatedOn
+            ? dateOnlyLongString(educationProgram.statusUpdatedOn)
             : '-'
         "
       />
@@ -60,13 +60,13 @@
       class="row mt-1"
       v-if="ApprovalStatus.denied === educationProgram.approvalStatus"
     >
-      <header-title-value title="Denied by" :value="deniedBy" />
+      <header-title-value title="Denied by" :value="statusUpdateBy" />
       <div class="mx-2 vertical-divider"></div>
       <header-title-value
         title="Denied"
         :value="
-          educationProgram.deniedOn
-            ? originalDateOnlyLongString(educationProgram.deniedOn)
+          educationProgram.statusUpdatedOn
+            ? dateOnlyLongString(educationProgram.statusUpdatedOn)
             : '-'
         "
       />
@@ -75,12 +75,14 @@
 </template>
 
 <script lang="ts">
-import { EducationProgramData, ApprovalStatus } from "@/types";
+import { EducationProgramData, ApprovalStatus, ClientIdType } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { useStore } from "vuex";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { HeaderTitleValue },
@@ -96,25 +98,27 @@ export default {
     },
   },
   setup(props: any) {
+    const store = useStore();
     const router = useRouter();
-    const { originalDateOnlyLongString, dateOnlyLongString } = useFormatters();
-    const getFullName = (firstName: string, lastName: string) => {
-      if (firstName && lastName) {
-        return `${lastName}, ${firstName}`;
-      }
-    };
-    const approvedBy = computed(() =>
-      getFullName(
-        props.educationProgram.approvedByFirstName,
-        props.educationProgram.approvedByLastName,
-      ),
-    );
-    const deniedBy = computed(() =>
-      getFullName(
-        props.educationProgram.deniedByFirstName,
-        props.educationProgram.deniedByLastName,
-      ),
-    );
+    const { dateOnlyLongString } = useFormatters();
+
+    const institutionName = computed(() => {
+      if (AuthService.shared.authClientType === ClientIdType.Institution)
+        return store.state.institution.institutionState.legalOperatingName;
+      else if (AuthService.shared.authClientType === ClientIdType.AEST)
+        return props.educationProgram.institutionName;
+      else return "-";
+    });
+
+    const statusUpdateBy = computed(() => {
+      if (
+        props.educationProgram.statusUpdatedByFirstName &&
+        props.educationProgram.statusUpdatedByLastName
+      ) {
+        return `${props.educationProgram.statusUpdatedByLastName}, ${props.educationProgram.statusUpdatedByFirstName}`;
+      } else return undefined;
+    });
+
     const goToInstitution = () => {
       if (props.institutionId)
         router.push({
@@ -123,12 +127,11 @@ export default {
         });
     };
     return {
-      originalDateOnlyLongString,
-      approvedBy,
-      deniedBy,
       ApprovalStatus,
       goToInstitution,
       dateOnlyLongString,
+      institutionName,
+      statusUpdateBy,
     };
   },
 };

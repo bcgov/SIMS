@@ -138,6 +138,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { useStore } from "vuex";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { Status, ConfirmEditApplication, CancelApplication },
@@ -166,7 +167,8 @@ export default {
 
     const store = useStore();
 
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
+
     const sinValidStatus = computed(
       () => store.state.student.sinValidStatus.sinStatus,
     ).value;

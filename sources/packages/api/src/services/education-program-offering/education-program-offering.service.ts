@@ -20,6 +20,7 @@ import {
   sortOfferingsColumnMap,
   PaginationOptions,
   PaginatedResults,
+  getISODateOnlyString,
 } from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -113,8 +114,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const item = new EducationProgramOfferingModel();
       item.id = educationProgramOffering.id;
       item.name = educationProgramOffering.name;
-      item.studyStartDate = educationProgramOffering.studyStartDate;
-      item.studyEndDate = educationProgramOffering.studyEndDate;
+      item.studyStartDate = getISODateOnlyString(
+        educationProgramOffering.studyStartDate,
+      );
+      item.studyEndDate = getISODateOnlyString(
+        educationProgramOffering.studyEndDate,
+      );
       item.offeringDelivered = educationProgramOffering.offeringDelivered;
       item.offeringIntensity = educationProgramOffering.offeringIntensity;
       return item;

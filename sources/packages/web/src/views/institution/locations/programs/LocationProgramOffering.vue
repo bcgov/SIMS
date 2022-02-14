@@ -20,7 +20,6 @@
 </template>
 
 <script lang="ts">
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import formio from "@/components/generic/formio.vue";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -33,6 +32,7 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { formio, FullPageContainer },
@@ -54,8 +54,7 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     const initialData = ref();
-    const store = useStore();
-    const clientType = computed(() => store.state.common.clientType);
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
       return clientType.value === ClientIdType.Institution;
@@ -116,16 +115,17 @@ export default {
         const programDetails = await EducationProgramService.shared.getEducationProgramForAEST(
           props.programId,
         );
-        const institutionId = programDetails.institutionId;
-        //view program mode
-        router.push({
-          name: AESTRoutesConst.PROGRAM_DETAILS,
-          params: {
-            programId: props.programId,
-            institutionId: institutionId,
-            locationId: props.locationId,
-          },
-        });
+        if (programDetails.institutionId) {
+          //view program mode
+          router.push({
+            name: AESTRoutesConst.PROGRAM_DETAILS,
+            params: {
+              programId: props.programId,
+              institutionId: programDetails.institutionId,
+              locationId: props.locationId,
+            },
+          });
+        }
       }
     };
     const submitted = async (data: any) => {
