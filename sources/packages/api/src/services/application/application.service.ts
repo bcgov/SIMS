@@ -18,7 +18,6 @@ import {
   EducationProgram,
   PIRDeniedReason,
   MSFAANumber,
-  COEDeniedReason,
   OfferingIntensity,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
@@ -33,7 +32,6 @@ import {
   getPSTPDTDate,
   setToStartOfTheDayInPSTPDT,
   COE_WINDOW,
-  COE_DENIED_REASON_OTHER_ID,
   PIR_DENIED_REASON_OTHER_ID,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
@@ -406,7 +404,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationStatus",
         "application.pirStatus",
         "application.assessmentStatus",
-        "application.coeStatus",
         "application.applicationStatusUpdatedOn",
         "application.applicationNumber",
         "offering.offeringIntensity",
@@ -415,11 +412,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.name",
         "programYear.formName",
         "programYear.id",
-        "coeDeniedReason.id",
-        "coeDeniedReason.reason",
         "pirDeniedReasonId.id",
         "pirDeniedReasonId.reason",
-        "application.coeDeniedOtherDesc",
         "application.pirDeniedOtherDesc",
         "programYear.startDate",
         "programYear.endDate",
@@ -432,7 +426,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirDeniedReasonId", "pirDeniedReasonId")
-      .leftJoin("application.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationIdParam", {
         applicationIdParam: applicationId,
       })
@@ -735,53 +728,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Updates Confirmation of Enrollment(COE) and application status.
-   * @param applicationId application id to be updated.
-   * @param coeStatus status of the Confirmation of Enrollment.
-   * @param applicationStatus status of the application
-   * Confirmation of Enrollment and application status need to happen.
-   * @returns Status update result.
-   */
-  async updateApplicationCOEStatus(
-    applicationId: number,
-    coeStatus: COEStatus,
-    applicationStatus: ApplicationStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        coeStatus,
-        applicationStatus,
-      },
-    );
-  }
-
-  /**
-   * Updates Confirmation of Enrollment(COE) status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Confirmation of Enrollment.
-   * Confirmation of Enrollment need to happen, when the application_status is in enrollment.
-   * @returns COE status update result.
-   */
-  async updateCOEStatus(
-    applicationId: number,
-    coeStatus: COEStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        coeStatus,
-      },
-    );
-  }
-
-  /**
    * Updates overall Application status.
    * @param applicationId application id to be updated.
    * @param status status of the Application.
@@ -800,7 +746,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       {
         assessmentStatus: AssessmentStatus.completed,
         applicationStatus: ApplicationStatus.enrollment,
-        coeStatus: COEStatus.required,
       },
     );
   }
@@ -1023,16 +968,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    if (
-      appToOverride.applicationStatus !== ApplicationStatus.enrollment ||
-      appToOverride.coeStatus !== COEStatus.required
-    ) {
-      throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
     // Change status of the current application being overwritten.
     appToOverride.applicationStatus = ApplicationStatus.overwritten;
     appToOverride.applicationStatusUpdatedOn = getUTCNow();
@@ -1155,40 +1090,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.save(application);
   }
 
-  /*
-   * Gets Application details for COE of a location
-   * For COE, The source of truth is
-   * offering table (not the data given by student)
-   * @param locationId location id.
-   * @param applicationId application id.
-   * @returns application details for COE.
-   */
-  async getApplicationDetailsForCOE(
-    locationId: number,
-    applicationId: number,
-  ): Promise<Application> {
-    const query = this.repo
-      .createQueryBuilder("application")
-      .innerJoinAndSelect("application.location", "location")
-      .innerJoinAndSelect("application.student", "student")
-      .innerJoinAndSelect("student.user", "user")
-      .innerJoinAndSelect("application.offering", "offering")
-      .innerJoinAndSelect("offering.educationProgram", "educationProgram")
-      .leftJoinAndSelect("application.coeDeniedReason", "coeDeniedReason")
-      .where("application.location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.overwritten,
-      })
-      .andWhere("application.assessmentStatus = :requiredStatus", {
-        requiredStatus: AssessmentStatus.required,
-      })
-      .andWhere("application.id = :applicationId", {
-        applicationId,
-      });
-
-    return query.getOne();
-  }
-
   /**
    * checks if current PST/PDT date from offering
    * start date is inside or equal to COE window
@@ -1203,55 +1104,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         getPSTPDTDate(offeringStartDate, true),
       ) <= COE_WINDOW
     );
-  }
-
-  /**
-   * Deny the Confirmation Of Enrollment(COE) for an Application.
-   * Updates only applications that have the COE status as required.
-   * @param applicationId application id to be updated.
-   * @param locationId location id of the application.
-   * @param coeDeniedReasonId COE Denied reason id for a student application.
-   * @param otherReasonDesc when other is selected as a COE denied reason, text for the reason
-   * is populated.
-   * @returns updated application.
-   */
-  async setDeniedReasonForCOE(
-    applicationId: number,
-    locationId: number,
-    coeDeniedReasonId: number,
-    otherReasonDesc?: string,
-  ): Promise<Application> {
-    const application = await this.repo.findOne({
-      id: applicationId,
-      location: { id: locationId },
-      coeStatus: COEStatus.required,
-      applicationStatus: Not(
-        In([
-          ApplicationStatus.completed,
-          ApplicationStatus.overwritten,
-          ApplicationStatus.cancelled,
-        ]),
-      ),
-    });
-    if (!application) {
-      throw new CustomNamedError(
-        "Not able to find an application that requires a COE to be completed.",
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
-    application.coeDeniedReason = {
-      id: coeDeniedReasonId,
-    } as COEDeniedReason;
-    if (COE_DENIED_REASON_OTHER_ID === coeDeniedReasonId && !otherReasonDesc) {
-      throw new CustomNamedError(
-        "Other is selected as COE reason, specify the reason for the COE denial.",
-        COE_DENIED_REASON_NOT_FOUND_ERROR,
-      );
-    }
-    application.coeDeniedOtherDesc = otherReasonDesc;
-    application.coeStatus = COEStatus.declined;
-    return this.repo.save(application);
   }
 
   /**

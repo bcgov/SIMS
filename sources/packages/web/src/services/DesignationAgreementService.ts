@@ -1,6 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   GetDesignationAgreementDto,
+  GetDesignationAgreementsDto,
   SubmitDesignationAgreementDto,
 } from "@/types/contracts/DesignationAgreementContract";
 
@@ -29,5 +30,11 @@ export class DesignationAgreementService {
     return ApiClient.DesignationAgreement.getDesignationAgreement(
       designationId,
     );
+  }
+
+  public async getDesignationsAgreements(): Promise<
+    GetDesignationAgreementsDto[]
+  > {
+    return ApiClient.DesignationAgreement.getDesignationsAgreements();
   }
 }

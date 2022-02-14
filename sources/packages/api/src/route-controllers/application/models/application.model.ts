@@ -7,6 +7,7 @@ import {
   Application,
   Assessment,
   OfferingIntensity,
+  DisbursementSchedule,
 } from "../../../database/entities";
 import {
   dateString,
@@ -55,8 +56,8 @@ export interface GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationEndDate: string;
   applicationInstitutionName: string;
   applicationPIRStatus: ProgramInfoStatus;
-  applicationAssessmentStatus: AssessmentStatus;
   applicationCOEStatus: COEStatus;
+  applicationAssessmentStatus: AssessmentStatus;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
   programYearStartDate: Date;
@@ -249,6 +250,7 @@ export const transformToApplicationDto = (
  */
 export const transformToApplicationDetailDto = (
   applicationDetail: Application,
+  disbursement: DisbursementSchedule,
 ): GetApplicationDataDto => {
   return {
     data: applicationDetail.data,
@@ -264,12 +266,14 @@ export const transformToApplicationDetailDto = (
     applicationInstitutionName: applicationDetail.location?.name,
     applicationPIRStatus: applicationDetail.pirStatus,
     applicationAssessmentStatus: applicationDetail.assessmentStatus,
-    applicationCOEStatus: applicationDetail.coeStatus,
     applicationFormName: applicationDetail.programYear.formName,
     applicationProgramYearID: applicationDetail.programYear.id,
     applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
-    applicationCOEDeniedReason: getCOEDeniedReason(applicationDetail),
     programYearStartDate: applicationDetail.programYear.startDate,
     programYearEndDate: applicationDetail.programYear.endDate,
+    applicationCOEStatus: disbursement?.coeStatus,
+    applicationCOEDeniedReason: disbursement
+      ? getCOEDeniedReason(disbursement)
+      : undefined,
   };
 };

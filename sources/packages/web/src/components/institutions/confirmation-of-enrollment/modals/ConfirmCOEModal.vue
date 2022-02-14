@@ -23,7 +23,7 @@
         @click="updateShowConfirmCOEModal()"
         >Cancel</v-btn
       >
-      <v-btn color="success" class="text-white" @click="confirmEntrollment()"
+      <v-btn color="success" class="text-white" @click="confirmEnrollment()"
         >Continue to Confirmation</v-btn
       >
     </template>
@@ -33,6 +33,7 @@
 import Dialog from "primevue/dialog";
 import { useToastMessage } from "@/composables";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
+export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
 
 export default {
   components: {
@@ -43,7 +44,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    applicationId: {
+    disbursementScheduleId: {
       type: Number,
       required: true,
     },
@@ -59,18 +60,21 @@ export default {
     const updateShowConfirmCOEModal = () => {
       context.emit("showHideConfirmCOE");
     };
-    const confirmEntrollment = async () => {
+    const confirmEnrollment = async () => {
       try {
         await ConfirmationOfEnrollmentService.shared.confirmCOE(
           props.locationId,
-          props.applicationId,
+          props.disbursementScheduleId,
         );
         toast.success("Confirmed", "Confirmation of Enrollment Confirmed!");
       } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened while confirming the COE.",
-        );
+        let errorLabel = "Unexpected error";
+        let errorMessage = "An error happened while confirming the COE.";
+        if (error.response.data?.errorType === FIRST_COE_NOT_COMPLETE) {
+          errorMessage = error.response.data.message;
+          errorLabel = error.response.data.errorType;
+        }
+        toast.error(errorLabel, errorMessage);
       }
       updateShowConfirmCOEModal();
       context.emit("reloadData");
@@ -78,7 +82,7 @@ export default {
 
     return {
       updateShowConfirmCOEModal,
-      confirmEntrollment,
+      confirmEnrollment,
     };
   },
 };

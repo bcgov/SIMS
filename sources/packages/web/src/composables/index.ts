@@ -10,3 +10,4 @@ export * from "./useModalDialog";
 export * from "./useAuthBCSC";
 export * from "./useStudentStore";
 export * from "./useFormatters";
+export * from "./useDesignationAgreement";

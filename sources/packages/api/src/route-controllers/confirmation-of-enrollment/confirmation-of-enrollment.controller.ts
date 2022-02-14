@@ -6,11 +6,15 @@ import {
   Patch,
   NotFoundException,
   UnprocessableEntityException,
-  InternalServerErrorException,
   Body,
 } from "@nestjs/common";
-import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
+import {
+  HasLocationAccess,
+  AllowAuthorizedParty,
+  UserToken,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -20,20 +24,32 @@ import {
   DisbursementScheduleService,
 } from "../../services";
 import {
-  COEStatus,
   ApplicationStatus,
   DisbursementSchedule,
+  COEStatus,
 } from "../../database/entities";
 import { COESummaryDTO } from "../application/models/application.model";
 import { getUserFullName } from "../../utilities/auth-utils";
-import { dateString, COE_WINDOW, getCOEDeniedReason } from "../../utilities";
+import {
+  dateString,
+  COE_WINDOW,
+  getCOEDeniedReason,
+  COE_DENIED_REASON_OTHER_ID,
+  getExtendedDateFormat,
+} from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
   DenyConfirmationOfEnrollmentDto,
   COEDeniedReasonDto,
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
-export const COE_REQUEST_NOT_FOUND_ERROR = "COE_REQUEST_NOT_FOUND_ERROR";
+import { ApiProcessError } from "../../types";
+
+const COE_NOT_FOUND_MESSAGE =
+  "Confirmation of enrollment not found or application status not valid.";
+const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
+const FIRST_COE_NOT_COMPLETE_MESSAGE =
+  "First disbursement(COE) not complete. Please complete the first disbursement.";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -98,6 +114,24 @@ export class ConfirmationOfEnrollmentController {
     @Param("applicationId") applicationId: number,
   ): Promise<number> {
     try {
+      /** Validation to check if the application is in Enrollment status and first coe is in Required status.
+       * Otherwise the application is not eligible for COE override  */
+      const firstCOEofApplication =
+        await this.disbursementScheduleService.getFirstCOEOfApplication(
+          applicationId,
+        );
+      if (
+        !firstCOEofApplication ||
+        !(
+          firstCOEofApplication.application.applicationStatus ===
+            ApplicationStatus.enrollment &&
+          firstCOEofApplication.coeStatus === COEStatus.required
+        )
+      ) {
+        throw new UnprocessableEntityException(
+          `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.enrollment}' and COE status '${COEStatus.required}' to be override.`,
+        );
+      }
       const result = await this.applicationService.overrideApplicationForCOE(
         locationId,
         applicationId,
@@ -129,88 +163,117 @@ export class ConfirmationOfEnrollmentController {
   /**
    * Get the application details for Confirmation Of Enrollment(COE)
    * @param locationId location id
-   * @param applicationId application id
+   * @param disbursementScheduleId disbursement schedule id of COE
    * @returns application details for COE
    */
   @HasLocationAccess("locationId")
-  @Get(":locationId/confirmation-of-enrollment/application/:applicationId")
+  @Get(
+    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId",
+  )
   async getApplicationForCOE(
     @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("disbursementScheduleId") disbursementScheduleId: number,
   ): Promise<ApplicationDetailsForCOEDTO> {
-    const application =
-      await this.applicationService.getApplicationDetailsForCOE(
+    const disbursementSchedule =
+      await this.disbursementScheduleService.getDisbursementAndApplicationDetails(
         locationId,
-        applicationId,
+        disbursementScheduleId,
       );
+
+    if (!disbursementSchedule) {
+      throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
+    }
+
     return {
-      applicationProgramName: application.offering.educationProgram.name,
+      applicationProgramName:
+        disbursementSchedule.application.offering.educationProgram.name,
       applicationProgramDescription:
-        application.offering.educationProgram.description,
-      applicationOfferingName: application.offering.name,
-      applicationOfferingIntensity: application.offering.offeringIntensity,
+        disbursementSchedule.application.offering.educationProgram.description,
+      applicationOfferingName: disbursementSchedule.application.offering.name,
+      applicationOfferingIntensity:
+        disbursementSchedule.application.offering.offeringIntensity,
       applicationOfferingStartDate: dateString(
-        application.offering.studyStartDate,
+        disbursementSchedule.application.offering.studyStartDate,
       ),
-      applicationOfferingEndDate: dateString(application.offering.studyEndDate),
-      applicationOfferingHasStudyBreak: application.offering.lacksStudyBreaks,
-      applicationOfferingActualTuition: application.offering.actualTuitionCosts,
+      applicationOfferingEndDate: dateString(
+        disbursementSchedule.application.offering.studyEndDate,
+      ),
+      applicationOfferingHasStudyBreak:
+        disbursementSchedule.application.offering.lacksStudyBreaks,
+      applicationOfferingActualTuition:
+        disbursementSchedule.application.offering.actualTuitionCosts,
       applicationOfferingProgramRelatedCost:
-        application.offering.programRelatedCosts,
-      applicationOfferingMandatoryCost: application.offering.mandatoryFees,
+        disbursementSchedule.application.offering.programRelatedCosts,
+      applicationOfferingMandatoryCost:
+        disbursementSchedule.application.offering.mandatoryFees,
       applicationOfferingExceptionalExpenses:
-        application.offering.exceptionalExpenses,
+        disbursementSchedule.application.offering.exceptionalExpenses,
       applicationOfferingHasTuitionRemittanceRequested:
-        application.offering.tuitionRemittanceRequested,
+        disbursementSchedule.application.offering.tuitionRemittanceRequested,
       applicationOfferingTuitionRemittanceAmount:
-        application.offering.tuitionRemittanceRequestedAmount,
-      applicationOfferingStudyDelivered: application.offering.offeringDelivered,
-      applicationStudentName: getUserFullName(application.student.user),
-      applicationNumber: application.applicationNumber,
-      applicationLocationName: application.location.name,
-      applicationStatus: application.applicationStatus,
-      applicationCOEStatus: application.coeStatus,
-      applicationId: application.id,
-      applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
-        application.offering.studyStartDate,
+        disbursementSchedule.application.offering
+          .tuitionRemittanceRequestedAmount,
+      applicationOfferingStudyDelivered:
+        disbursementSchedule.application.offering.offeringDelivered,
+      applicationStudentName: getUserFullName(
+        disbursementSchedule.application.student.user,
       ),
-      applicationLocationId: application.location.id,
-      applicationDeniedReason: getCOEDeniedReason(application),
-      studyBreaks: application.offering.studyBreaks?.map((studyBreak) => ({
-        breakStartDate: dateString(studyBreak.breakStartDate),
-        breakEndDate: dateString(studyBreak.breakEndDate),
-      })),
-      applicationPIRStatus: application.pirStatus,
+      applicationNumber: disbursementSchedule.application.applicationNumber,
+      applicationLocationName: disbursementSchedule.application.location.name,
+      applicationStatus: disbursementSchedule.application.applicationStatus,
+      applicationCOEStatus: disbursementSchedule.coeStatus,
+      applicationId: disbursementSchedule.application.id,
+      applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
+        disbursementSchedule.disbursementDate,
+      ),
+      applicationLocationId: disbursementSchedule.application.location.id,
+      applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
+      studyBreaks: disbursementSchedule.application.offering.studyBreaks?.map(
+        (studyBreak) => ({
+          breakStartDate: dateString(studyBreak.breakStartDate),
+          breakEndDate: dateString(studyBreak.breakEndDate),
+        }),
+      ),
+      applicationPIRStatus: disbursementSchedule.application.pirStatus,
+      disbursementDate: getExtendedDateFormat(
+        disbursementSchedule.disbursementDate,
+      ),
     };
   }
 
   /**
-   * Confirm Enrollment
+   * Approve confirmation of enrollment(COE).
+   ** An application can have up to two COEs based on the disbursement.
+   ** Hence COE Approval happens twice for application with more than once disbursement.
+   ** Irrespective of number of COEs to be approved, Application status is set to complete
+   ** on first COE approval.
    * @param locationId location id of the application
-   * @param applicationId application id to be confirm COE.
+   * @param disbursementScheduleId disbursement schedule id of COE
    */
   @HasLocationAccess("locationId")
   @Patch(
-    ":locationId/confirmation-of-enrollment/application/:applicationId/confirm",
+    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/confirm",
   )
   async confirmEnrollment(
     @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("disbursementScheduleId") disbursementScheduleId: number,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // get application for the location if COE status is `REQUIRED`
-    const application =
-      await this.applicationService.getApplicationDetailsForCOE(
+    // Get the disbursement and application summary for COE.
+    const disbursementSchedule =
+      await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
         locationId,
-        applicationId,
+        disbursementScheduleId,
       );
-    if (!application) {
-      throw new NotFoundException("Application Not Found");
+
+    if (!disbursementSchedule) {
+      throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
     }
     // institution user can only confirm COE, when the student is
-    // within COE_WINDOW of their Program Start date
+    // within COE_WINDOW of disbursement date
     if (
       !this.applicationService.withinValidCOEWindow(
-        application.offering.studyStartDate,
+        disbursementSchedule.disbursementDate,
       )
     ) {
       throw new UnprocessableEntityException(
@@ -218,64 +281,93 @@ export class ConfirmationOfEnrollmentController {
       );
     }
 
-    //TODO: Document Number should be Updated in the same transaction when COE status changes
-    await this.disbursementScheduleService.updateDisbursementScheduleDocumentNumber(
-      applicationId,
-    );
-
-    const updatedCOEStatus =
-      await this.applicationService.updateApplicationCOEStatus(
-        applicationId,
-        COEStatus.completed,
-        ApplicationStatus.completed,
+    const firstOutstandingDisbursement =
+      await this.disbursementScheduleService.getFirstCOEOfApplication(
+        disbursementSchedule.application.id,
+        true,
       );
 
-    if (updatedCOEStatus.affected === 0) {
+    if (disbursementSchedule.id !== firstOutstandingDisbursement.id) {
       throw new UnprocessableEntityException(
-        "Confirmation of Enrollment and application status update to completed is failed",
+        new ApiProcessError(
+          FIRST_COE_NOT_COMPLETE_MESSAGE,
+          FIRST_COE_NOT_COMPLETE,
+        ),
       );
     }
 
-    // Send a message to allow the workflow to proceed.
-    await this.workflow.sendConfirmCOEMessage(application.assessmentWorkflowId);
+    await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
+      disbursementScheduleId,
+      userToken.userId,
+      disbursementSchedule.application.id,
+      disbursementSchedule.application.applicationStatus,
+    );
+
+    /** Send COE confirmation message only for first COE.
+     ** Note: If first COE is completed, then application status is moved to Completed.
+     ** In that case, COE confirmation message will not be sent for second COE.
+     */
+    if (
+      disbursementSchedule.application.applicationStatus ===
+      ApplicationStatus.enrollment
+    ) {
+      await this.workflow.sendConfirmCOEMessage(
+        disbursementSchedule.application.assessmentWorkflowId,
+      );
+    }
   }
 
   /**
-   * Deny the Confirmation Of Enrollment(COE), defining the
-   * COE status as Declined in the student application table.
+   * Deny the Confirmation Of Enrollment(COE).
+   ** Note: If an application has 2 COEs, and if the first COE is Rejected then 2nd COE is implicitly rejected.
    * @param locationId location that is completing the COE.
-   * @param applicationId application id to be updated.
+   * @param disbursementScheduleId disbursement schedule id of COE.
    * @param payload contains the denied reason of the
    * student application.
    */
   @HasLocationAccess("locationId")
   @Patch(
-    ":locationId/confirmation-of-enrollment/application/:applicationId/deny",
+    ":locationId/confirmation-of-enrollment/disbursement/:disbursementScheduleId/deny",
   )
   async denyConfirmationOfEnrollment(
     @Param("locationId") locationId: number,
-    @Param("applicationId") applicationId: number,
+    @Param("disbursementScheduleId") disbursementScheduleId: number,
     @Body() payload: DenyConfirmationOfEnrollmentDto,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    try {
-      const application = await this.applicationService.setDeniedReasonForCOE(
-        applicationId,
-        locationId,
-        payload.coeDenyReasonId,
-        payload.otherReasonDesc,
+    if (
+      payload.coeDenyReasonId === COE_DENIED_REASON_OTHER_ID &&
+      !payload.otherReasonDesc
+    ) {
+      throw new UnprocessableEntityException(
+        "Other is selected as COE reason, specify the reason for the COE denial.",
       );
-      if (application.assessmentWorkflowId) {
-        await this.workflow.deleteApplicationAssessment(
-          application.assessmentWorkflowId,
-        );
-      }
-    } catch (error) {
-      if (error.name === COE_REQUEST_NOT_FOUND_ERROR) {
-        throw new UnprocessableEntityException(error.message);
-      }
+    }
+    const disbursementSchedule =
+      await this.disbursementScheduleService.getDisbursementAndApplicationSummary(
+        locationId,
+        disbursementScheduleId,
+      );
 
-      throw new InternalServerErrorException(
-        "Error while denying a Confirmation Of Enrollment (COE).",
+    if (!disbursementSchedule) {
+      throw new NotFoundException(
+        "Unable to find a COE which could be completed.",
+      );
+    }
+    await this.disbursementScheduleService.updateCOEToDeny(
+      disbursementSchedule.application.id,
+      userToken.userId,
+      payload.coeDenyReasonId,
+      payload.otherReasonDesc,
+    );
+
+    if (
+      disbursementSchedule.application.applicationStatus ===
+        ApplicationStatus.enrollment &&
+      disbursementSchedule.application.assessmentWorkflowId
+    ) {
+      await this.workflow.deleteApplicationAssessment(
+        disbursementSchedule.application.assessmentWorkflowId,
       );
     }
   }

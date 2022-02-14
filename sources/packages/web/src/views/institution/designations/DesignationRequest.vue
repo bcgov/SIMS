@@ -26,12 +26,12 @@ import {
   useToastMessage,
 } from "@/composables";
 import { useRouter } from "vue-router";
-import DesignationAgreementForm from "@/components/common/DesignationAgreement/DesignationAgreementForm.vue";
+import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
   DesignationFormViewModes,
   DesignationLocationsListItem,
-} from "@/components/common/DesignationAgreement/DesignationAgreementForm.models";
+} from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { SubmitDesignationAgreementDto } from "@/types/contracts/DesignationAgreementContract";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -50,7 +50,8 @@ export default {
     } = useInstitutionAuth();
 
     const designationModel = reactive({} as DesignationModel);
-    designationModel.institutionName = institutionState.value.operatingName;
+    designationModel.institutionName =
+      institutionState.value.legalOperatingName;
     designationModel.institutionType = institutionState.value.institutionType;
     designationModel.isBCPrivate = institutionState.value.isBCPrivate;
     designationModel.viewMode = DesignationFormViewModes.submission;
@@ -83,15 +84,17 @@ export default {
       try {
         await DesignationAgreementService.shared.submitDesignationAgreement({
           dynamicData: model.dynamicData,
-          locations: model.locations.map(location => ({
-            locationId: location.locationId,
-            requestForDesignation: location.requestForDesignation,
-          })),
+          locations: model.locations.map(
+            (location: DesignationLocationsListItem) => ({
+              locationId: location.locationId,
+              requestForDesignation: location.requestForDesignation,
+            }),
+          ),
         } as SubmitDesignationAgreementDto);
         toastMessage.success("Submitted", "Designation agreement submitted.");
         router.push({ name: InstitutionRoutesConst.MANAGE_DESIGNATION });
       } catch (error) {
-        toastMessage.success(
+        toastMessage.error(
           "Unexpected error",
           "And unexpected error happened during the designation agreement submission.",
         );

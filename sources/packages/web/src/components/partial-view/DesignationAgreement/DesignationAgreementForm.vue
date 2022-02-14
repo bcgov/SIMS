@@ -17,7 +17,7 @@ import { RouteHelper } from "@/helpers";
 import {
   DesignationModel,
   DesignationFormViewModes,
-} from "./DesignationAgreementForm.models";
+} from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 
 export default {
   emits: ["submitDesignation"],

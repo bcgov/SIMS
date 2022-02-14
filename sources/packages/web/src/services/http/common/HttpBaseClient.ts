@@ -39,6 +39,19 @@ export default abstract class HttpBaseClient {
     }
   }
 
+  protected async getCallTyped<T>(url: string, authHeader?: any): Promise<T> {
+    try {
+      const response = await this.apiClient.get(
+        url,
+        authHeader ?? this.addAuthHeader(),
+      );
+      return response.data as T;
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
   protected async postCall<T>(url: string, payload: T): Promise<void> {
     try {
       await this.apiClient.post(url, payload, this.addAuthHeader());

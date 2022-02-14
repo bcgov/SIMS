@@ -2,7 +2,7 @@
   <div class="p-m-4">
     <HeaderNavigator
       title="Back to Programs"
-      :routeName="InstitutionRoutesConst.COE_SUMMARY"
+      :routeLocation="{ name: InstitutionRoutesConst.COE_SUMMARY }"
       subTitle="View Financial Aid Application"
       ><template #buttons>
         <v-btn color="primary" @click="toggle"
@@ -18,7 +18,7 @@
     </v-container>
     <ConfirmCOE
       :showModal="showModal"
-      :applicationId="initialData.applicationId"
+      :disbursementScheduleId="disbursementScheduleId"
       :locationId="initialData.applicationLocationId"
       @showHideConfirmCOE="showHideConfirmCOE"
       @reloadData="loadInitialData"
@@ -70,7 +70,7 @@ export default {
     HeaderNavigator,
   },
   props: {
-    applicationId: {
+    disbursementScheduleId: {
       type: Number,
       required: true,
     },
@@ -94,7 +94,7 @@ export default {
 
     const loadInitialData = async () => {
       initialData.value = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
-        props.applicationId,
+        props.disbursementScheduleId,
         props.locationId,
       );
     };
@@ -104,7 +104,7 @@ export default {
         try {
           await ConfirmationOfEnrollmentService.shared.rollbackCOE(
             props.locationId,
-            props.applicationId,
+            props.disbursementScheduleId,
           );
           toast.success(
             "Edit Program Information",
@@ -127,7 +127,7 @@ export default {
       try {
         await ConfirmationOfEnrollmentService.shared.denyConfirmationOfEnrollment(
           props.locationId,
-          props.applicationId,
+          props.disbursementScheduleId,
           submissionData,
         );
         toast.success("COE is Denied", "Application Status Has Been Updated.");
