@@ -188,7 +188,6 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param institutionId institution id.
    * @param payload ApproveProgram.
    */
-
   public async approveProgram(
     programId: number,
     institutionId: number,
@@ -206,7 +205,6 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param institutionId institution id.
    * @param payload DeclineProgram.
    */
-
   public async declineProgram(
     programId: number,
     institutionId: number,

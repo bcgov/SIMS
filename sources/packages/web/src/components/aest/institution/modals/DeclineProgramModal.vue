@@ -27,7 +27,6 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import formio from "@/components/generic/formio.vue";
 import { COLOR_BLUE } from "@/constants";
-import { ref } from "vue";
 import { DeclineProgram } from "@/types";
 
 export default {
@@ -35,21 +34,22 @@ export default {
     ModalDialogBase,
     formio,
   },
-  emits: ["submitData"],
-  setup(props: any, context: any) {
-    const { showDialog, showModal } = useModalDialog<void>();
-    const declineProgramform = ref();
+  setup() {
+    const { showDialog, resolvePromise, showModal } = useModalDialog<
+      DeclineProgram
+    >();
+    let declineProgramForm: any = undefined;
 
-    const declineProgram = async () => {
-      return declineProgramform.value.submit();
+    const declineProgram = () => {
+      return declineProgramForm.submit();
     };
-    const submitForm = async (formData: DeclineProgram) => {
+    const submitForm = (formData: DeclineProgram) => {
       showDialog.value = false;
-      context.emit("submitData", formData);
+      resolvePromise(formData);
     };
 
-    const formLoaded = async (form: any) => {
-      declineProgramform.value = form;
+    const formLoaded = (form: any) => {
+      declineProgramForm = form;
     };
 
     const dialogClosed = () => {

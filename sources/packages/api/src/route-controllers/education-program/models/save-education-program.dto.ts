@@ -2,7 +2,9 @@ import { ApprovalStatus } from "../../../services/education-program/constants";
 import { EducationProgram, ProgramIntensity } from "../../../database/entities";
 import {
   credentialTypeToDisplay,
+  getIDIRUserFullName,
   getISODateOnlyString,
+  getUserFullName,
 } from "../../../utilities";
 /**
  * Dto that represents education programs form object.
@@ -50,8 +52,7 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   submittedByFirstName: string;
   submittedLastName: string;
   statusUpdatedOn?: Date;
-  statusUpdatedByFirstName?: string;
-  statusUpdatedByLastName?: string;
+  statusUpdatedBy?: string;
   effectiveEndDate: string;
 }
 
@@ -124,8 +125,21 @@ export const transformToEducationProgramData = (
     submittedLastName: program.submittedBy?.lastName,
     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
     statusUpdatedOn: program.statusUpdatedOn,
-    statusUpdatedByFirstName: program.statusUpdatedBy?.firstName,
-    statusUpdatedByLastName: program.statusUpdatedBy?.lastName,
+    // TODO: for now - program.effectiveEndDate is added by the ministry user
+    // so, if program.effectiveEndDate is null/undefined, then
+    // the program was auto approved, when institution submitted the
+    // program, else the program was approved by ministry user.
+    // ministry user uses IDIR. Will need to update in future as
+    // proper decision is taken
+    statusUpdatedBy: program.effectiveEndDate
+      ? getIDIRUserFullName({
+          firstName: program.statusUpdatedBy?.firstName,
+          lastName: program.statusUpdatedBy?.lastName,
+        })
+      : getUserFullName({
+          firstName: program.statusUpdatedBy?.firstName as string,
+          lastName: program.statusUpdatedBy?.lastName as string,
+        }),
   };
 
   return programDetails;

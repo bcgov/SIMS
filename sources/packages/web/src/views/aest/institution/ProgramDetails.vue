@@ -30,15 +30,9 @@
       :institutionId="institutionId"
     />
     <!-- approve program modal -->
-    <ApproveProgramModal
-      ref="approveProgramModal"
-      @submitData="submitApproveProgram"
-    />
+    <ApproveProgramModal ref="approveProgramModal" />
     <!-- decline program modal -->
-    <DeclineProgramModal
-      ref="declineProgramModal"
-      @submitData="submitDeclineProgram"
-    />
+    <DeclineProgramModal ref="declineProgramModal" />
   </v-container>
 </template>
 
@@ -82,8 +76,8 @@ export default {
   },
   setup(props: any) {
     const educationProgram = ref({} as EducationProgramData);
-    const approveProgramModal = ref({} as ModalDialog<void>);
-    const declineProgramModal = ref({} as ModalDialog<void>);
+    const approveProgramModal = ref({} as ModalDialog<ApproveProgram>);
+    const declineProgramModal = ref({} as ModalDialog<DeclineProgram>);
     const toast = useToastMessage();
 
     const getEducationProgramAndOffering = async () => {
@@ -95,10 +89,6 @@ export default {
     const isPendingProgram = computed(
       () => educationProgram.value.approvalStatus === ApprovalStatus.pending,
     );
-
-    const approveProgram = async () => {
-      await approveProgramModal.value.showModal();
-    };
 
     const submitApproveProgram = async (approveProgramData: ApproveProgram) => {
       try {
@@ -120,8 +110,9 @@ export default {
       }
     };
 
-    const declineProgram = async () => {
-      await declineProgramModal.value.showModal();
+    const approveProgram = async () => {
+      const approveProgramData = await approveProgramModal.value.showModal();
+      await submitApproveProgram(approveProgramData);
     };
 
     const submitDeclineProgram = async (declineProgramData: DeclineProgram) => {
@@ -144,6 +135,11 @@ export default {
       }
     };
 
+    const declineProgram = async () => {
+      const declineProgramData = await declineProgramModal.value.showModal();
+      await submitDeclineProgram(declineProgramData);
+    };
+
     onMounted(getEducationProgramAndOffering);
 
     return {
@@ -155,8 +151,6 @@ export default {
       approveProgram,
       declineProgramModal,
       declineProgram,
-      submitApproveProgram,
-      submitDeclineProgram,
     };
   },
 };

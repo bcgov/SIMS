@@ -29,10 +29,13 @@
     >
       <header-title-value
         title="Approved by"
-        :value="statusUpdateBy ?? '-'"
-        v-if="statusUpdateBy"
+        :value="educationProgram.statusUpdatedBy ?? '-'"
+        v-if="educationProgram.statusUpdatedBy"
       />
-      <div class="mx-2 vertical-divider" v-if="statusUpdateBy"></div>
+      <div
+        class="mx-2 vertical-divider"
+        v-if="educationProgram.statusUpdatedBy"
+      ></div>
       <header-title-value
         title="Approved"
         v-if="educationProgram.statusUpdatedOn"
@@ -60,7 +63,10 @@
       class="row mt-1"
       v-if="ApprovalStatus.denied === educationProgram.approvalStatus"
     >
-      <header-title-value title="Denied by" :value="statusUpdateBy" />
+      <header-title-value
+        title="Denied by"
+        :value="educationProgram.statusUpdatedBy"
+      />
       <div class="mx-2 vertical-divider"></div>
       <header-title-value
         title="Denied"
@@ -110,15 +116,6 @@ export default {
       else return "-";
     });
 
-    const statusUpdateBy = computed(() => {
-      if (
-        props.educationProgram.statusUpdatedByFirstName &&
-        props.educationProgram.statusUpdatedByLastName
-      ) {
-        return `${props.educationProgram.statusUpdatedByLastName}, ${props.educationProgram.statusUpdatedByFirstName}`;
-      } else return undefined;
-    });
-
     const goToInstitution = () => {
       if (props.institutionId)
         router.push({
@@ -131,7 +128,6 @@ export default {
       goToInstitution,
       dateOnlyLongString,
       institutionName,
-      statusUpdateBy,
     };
   },
 };

@@ -50,6 +50,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
   getISODateOnlyString,
+  getIDIRUserFullName,
+  getUserFullName,
 } from "../../utilities";
 
 @Controller("institution/education-program")
@@ -177,7 +179,7 @@ export class EducationProgramController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":programId/details")
-  async get(
+  async getProgramDetails(
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SubsetEducationProgramDto> {
@@ -204,8 +206,21 @@ export class EducationProgramController {
       submittedLastName: educationProgram.submittedBy?.lastName,
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
       statusUpdatedOn: educationProgram.statusUpdatedOn,
-      statusUpdatedByFirstName: educationProgram.statusUpdatedBy?.firstName,
-      statusUpdatedByLastName: educationProgram.statusUpdatedBy?.lastName,
+      // TODO: for now - program.effectiveEndDate is added by the ministry user
+      // so, if program.effectiveEndDate is null/undefined, then
+      // the program was auto approved, when institution submitted the
+      // program, else the program was approved by ministry user.
+      // ministry user uses IDIR. Will need to update in future as
+      // proper decision is taken
+      statusUpdatedBy: educationProgram.effectiveEndDate
+        ? getIDIRUserFullName({
+            firstName: educationProgram.statusUpdatedBy?.firstName,
+            lastName: educationProgram.statusUpdatedBy?.lastName,
+          })
+        : getUserFullName({
+            firstName: educationProgram.statusUpdatedBy?.firstName as string,
+            lastName: educationProgram.statusUpdatedBy?.lastName as string,
+          }),
     };
 
     return programDetails;

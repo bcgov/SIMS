@@ -16,7 +16,6 @@ export interface SubsetEducationProgramDto {
   submittedByFirstName: string;
   submittedLastName: string;
   statusUpdatedOn?: Date;
-  statusUpdatedByFirstName?: string;
-  statusUpdatedByLastName?: string;
+  statusUpdatedBy?: string;
   effectiveEndDate: string;
 }
