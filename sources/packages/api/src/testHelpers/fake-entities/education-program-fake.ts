@@ -3,6 +3,7 @@ import { EducationProgram, Institution } from "../../database/entities";
 import { createFakeInstitution } from "./institution-fake";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 import { ApprovalStatus } from "../../services/education-program/constants";
+import { createFakeUser } from ".";
 
 export function createFakeEducationProgram(
   institution?: Institution,
@@ -29,5 +30,6 @@ export function createFakeEducationProgram(
   program.programDeclaration = true;
   program.institution = institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
+  program.submittedBy = createFakeUser();
   return program;
 }
