@@ -49,3 +49,24 @@ SET
   NULL;
 
 COMMENT ON COLUMN sims.education_programs.submitted_by IS 'Education program submitted by institution user.';
+
+UPDATE
+  sims.education_programs
+SET
+  submitted_by = users.id
+FROM
+  (
+    SELECT
+      id
+    FROM
+      sims.users
+    LIMIT
+      1
+  ) AS users;
+
+ALTER TABLE
+  sims.education_programs
+ALTER COLUMN
+  submitted_by
+SET
+  NOT NULL;
