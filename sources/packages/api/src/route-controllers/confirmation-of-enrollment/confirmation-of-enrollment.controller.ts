@@ -7,6 +7,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
   Body,
+  Query,
 } from "@nestjs/common";
 import {
   HasLocationAccess,
@@ -36,6 +37,12 @@ import {
   getCOEDeniedReason,
   COE_DENIED_REASON_OTHER_ID,
   getExtendedDateFormat,
+  PaginationParams,
+  PaginationOptions,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  FieldSortOrder,
+  PaginatedResults,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
@@ -62,10 +69,16 @@ export class ConfirmationOfEnrollmentController {
   ) {}
 
   /**
-   * Get all application of a location in an institution
-   * with Confirmation Of Enrollment(COE) status completed and required
-   * @param locationId location that is completing the COE.
-   * @returns student application list of an institution location
+   * Get all Confirmation Of Enrollment(COE) of a location in an institution
+   * This API is paginated with COE Status as default sort.
+   * @param locationId
+   * @param enrollmentPeriod
+   * @param searchCriteria Search text to search COE.
+   * @param sortField Field to sort COE.
+   * @param page Current page of paginated result.
+   * @param pageLimit Records per page in a paginated result.
+   * @param sortOrder sort order of COE.
+   * @returns COE Paginated Result.
    */
   @HasLocationAccess("locationId")
   @Get(
@@ -74,27 +87,45 @@ export class ConfirmationOfEnrollmentController {
   async getCOESummary(
     @Param("locationId") locationId: number,
     @Param("enrollmentPeriod") enrollmentPeriod: EnrollmentPeriod,
-  ): Promise<COESummaryDTO[]> {
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
+    @Query(PaginationParams.SortField) sortField: string,
+    @Query(PaginationParams.Page) page = DEFAULT_PAGE_NUMBER,
+    @Query(PaginationParams.PageLimit) pageLimit = DEFAULT_PAGE_LIMIT,
+    @Query(PaginationParams.SortOrder) sortOrder = FieldSortOrder.ASC,
+  ): Promise<PaginatedResults<COESummaryDTO>> {
     if (!Object.values(EnrollmentPeriod).includes(enrollmentPeriod)) {
       throw new NotFoundException("Invalid enrollment period value.");
     }
-    const disbursementSchedules =
+    const paginationOptions = {
+      page: page,
+      pageLimit: pageLimit,
+      sortField: sortField,
+      sortOrder: sortOrder,
+      searchCriteria: searchCriteria,
+    } as PaginationOptions;
+    const disbursementPaginatedResult =
       await this.disbursementScheduleService.getCOEByLocation(
         locationId,
         enrollmentPeriod,
+        paginationOptions,
       );
-    return disbursementSchedules.map((disbursement: DisbursementSchedule) => {
-      return {
-        applicationNumber: disbursement.application.applicationNumber,
-        applicationId: disbursement.application.id,
-        studyStartPeriod: disbursement.application.offering.studyStartDate,
-        studyEndPeriod: disbursement.application.offering.studyEndDate,
-        coeStatus: disbursement.coeStatus,
-        fullName: getUserFullName(disbursement.application.student.user),
-        disbursementScheduleId: disbursement.id,
-        disbursementDate: disbursement.disbursementDate,
-      };
-    }) as COESummaryDTO[];
+    return {
+      results: disbursementPaginatedResult.results.map(
+        (disbursement: DisbursementSchedule) => {
+          return {
+            applicationNumber: disbursement.application.applicationNumber,
+            applicationId: disbursement.application.id,
+            studyStartPeriod: disbursement.application.offering.studyStartDate,
+            studyEndPeriod: disbursement.application.offering.studyEndDate,
+            coeStatus: disbursement.coeStatus,
+            fullName: getUserFullName(disbursement.application.student.user),
+            disbursementScheduleId: disbursement.id,
+            disbursementDate: disbursement.disbursementDate,
+          };
+        },
+      ) as COESummaryDTO[],
+      count: disbursementPaginatedResult.count,
+    };
   }
 
   /**
