@@ -333,15 +333,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       });
     if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
       coeQuery.andWhere(
-        "disbursementSchedule.disbursementDate > :coeThresholdDate",
-        { coeThresholdDate },
+        new Brackets((qb) => {
+          qb.where(
+            "disbursementSchedule.disbursementDate > :coeThresholdDate",
+          ).orWhere("disbursementSchedule.coeStatus != :required", {
+            required: COEStatus.required,
+          });
+        }),
       );
     } else {
-      coeQuery.andWhere(
-        "disbursementSchedule.disbursementDate <= :coeThresholdDate",
-        { coeThresholdDate },
-      );
+      coeQuery
+        .andWhere("disbursementSchedule.disbursementDate <= :coeThresholdDate")
+        .andWhere("disbursementSchedule.coeStatus = :required", {
+          required: COEStatus.required,
+        });
     }
+    coeQuery.setParameter("coeThresholdDate", coeThresholdDate);
     if (paginationOptions.searchCriteria) {
       coeQuery
         .andWhere(
