@@ -32,7 +32,6 @@ import {
 import {
   EducationProgramService,
   FormService,
-  InstitutionService,
 } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -59,7 +58,6 @@ export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
-    private readonly institutionService: InstitutionService,
   ) {}
 
   /**
@@ -110,7 +108,7 @@ export class EducationProgramController {
     @Body() payload: EducationProgramDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
-    const newProgram = await this.saveProgram(userToken, payload, undefined);
+    const newProgram = await this.saveProgram(userToken, payload);
     return newProgram.id;
   }
 
@@ -202,8 +200,7 @@ export class EducationProgramController {
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
       submittedOn: educationProgram.submittedOn,
-      submittedByFirstName: educationProgram.submittedBy?.firstName,
-      submittedLastName: educationProgram.submittedBy?.lastName,
+      submittedBy: getUserFullName(educationProgram.submittedBy),
       effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
       statusUpdatedOn: educationProgram.statusUpdatedOn,
       // TODO: for now - program.effectiveEndDate is added by the ministry user
@@ -213,14 +210,8 @@ export class EducationProgramController {
       // ministry user uses IDIR. Will need to update in future as
       // proper decision is taken
       statusUpdatedBy: educationProgram.effectiveEndDate
-        ? getIDIRUserFullName({
-            firstName: educationProgram.statusUpdatedBy?.firstName,
-            lastName: educationProgram.statusUpdatedBy?.lastName,
-          })
-        : getUserFullName({
-            firstName: educationProgram.statusUpdatedBy?.firstName as string,
-            lastName: educationProgram.statusUpdatedBy?.lastName as string,
-          }),
+        ? getIDIRUserFullName(educationProgram.statusUpdatedBy)
+        : getUserFullName(educationProgram.statusUpdatedBy),
     };
 
     return programDetails;

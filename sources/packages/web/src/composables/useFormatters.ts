@@ -5,8 +5,6 @@ import {
 import { SINValidStatus } from "@/store/modules/student/student";
 import { Address, SINStatusEnum } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
-import utc from "dayjs/plugin/utc";
-dayjs.extend(utc);
 
 /**
  * Helpers to adjust how values are shown in the UI.

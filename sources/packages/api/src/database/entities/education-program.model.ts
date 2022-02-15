@@ -374,5 +374,5 @@ export class EducationProgram extends RecordDataModel {
     name: "submitted_by",
     referencedColumnName: "id",
   })
-  submittedBy?: User;
+  submittedBy: User;
 }

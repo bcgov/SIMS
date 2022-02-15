@@ -95,7 +95,6 @@ export class AuthService {
           this.renewTokenIfExpired,
           RENEW_AUTH_TOKEN_TIMER,
         );
-
         switch (clientType) {
           case ClientIdType.Student: {
             await store.dispatch(

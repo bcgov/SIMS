@@ -29,10 +29,8 @@ import {
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
-  CustomNamedError,
   SortPriority,
 } from "../../utilities";
-const PROGRAM_NOT_FOUND = "PROGRAM_NOT_FOUND";
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
@@ -566,7 +564,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.effectiveEndDate = new Date(payload.effectiveEndDate);
       program.statusUpdatedBy = { id: userId } as User;
       program.programNote = noteObj;
-      // await this.repo.save(program);
 
       await transactionalEntityManager
         .getRepository(EducationProgram)

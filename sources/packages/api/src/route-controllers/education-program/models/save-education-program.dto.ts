@@ -49,8 +49,7 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   id: number;
   institutionName: string;
   submittedOn: Date;
-  submittedByFirstName: string;
-  submittedLastName: string;
+  submittedBy: string;
   statusUpdatedOn?: Date;
   statusUpdatedBy?: string;
   effectiveEndDate: string;
@@ -121,8 +120,7 @@ export const transformToEducationProgramData = (
     institutionId: program.institution.id,
     institutionName: program.institution.legalOperatingName,
     submittedOn: program.submittedOn,
-    submittedByFirstName: program.submittedBy?.firstName,
-    submittedLastName: program.submittedBy?.lastName,
+    submittedBy: getUserFullName(educationProgram.submittedBy),
     effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
     statusUpdatedOn: program.statusUpdatedOn,
     // TODO: for now - program.effectiveEndDate is added by the ministry user
@@ -132,14 +130,8 @@ export const transformToEducationProgramData = (
     // ministry user uses IDIR. Will need to update in future as
     // proper decision is taken
     statusUpdatedBy: program.effectiveEndDate
-      ? getIDIRUserFullName({
-          firstName: program.statusUpdatedBy?.firstName,
-          lastName: program.statusUpdatedBy?.lastName,
-        })
-      : getUserFullName({
-          firstName: program.statusUpdatedBy?.firstName as string,
-          lastName: program.statusUpdatedBy?.lastName as string,
-        }),
+      ? getIDIRUserFullName(program.statusUpdatedBy)
+      : getUserFullName(program.statusUpdatedBy),
   };
 
   return programDetails;
