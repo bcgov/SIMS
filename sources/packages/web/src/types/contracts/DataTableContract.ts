@@ -85,3 +85,15 @@ export interface PaginationOptions {
   page: number;
   pageLimit: number;
 }
+
+/**
+ * DTO object for data returned by
+ * page and sort event of PrimeVue data table.
+ * TODO:This DTO must be modified when migrating to Vuetify3 accordingly.
+ */
+export interface PageAndSortEventDTO {
+  page: number;
+  rows: number;
+  sortField: string;
+  sortOrder: number;
+}

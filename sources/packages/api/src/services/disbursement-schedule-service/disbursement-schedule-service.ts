@@ -343,18 +343,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     }
     if (paginationOptions.searchCriteria) {
-      coeQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            "CONCAT(user.firstName,  ' ', user.lastName ) Ilike :searchCriteria",
-            {
-              searchCriteria: `%${paginationOptions.searchCriteria.trim()}%`,
-            },
-          ).orWhere("application.applicationNumber Ilike :searchCriteria", {
-            searchCriteria: `%${paginationOptions.searchCriteria}%`,
-          });
-        }),
-      );
+      coeQuery
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(
+              "CONCAT(user.firstName,' ', user.lastName) Ilike :searchCriteria",
+            ).orWhere("application.applicationNumber Ilike :searchCriteria");
+          }),
+        )
+        .setParameter(
+          "searchCriteria",
+          `%${paginationOptions.searchCriteria.trim()}%`,
+        );
     }
     coeQuery
       .orderBy(

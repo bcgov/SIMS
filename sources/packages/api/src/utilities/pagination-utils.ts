@@ -1,5 +1,5 @@
 // Generic interface for paginated results
-export class PaginatedResults<T> {
+export interface PaginatedResults<T> {
   results: T[];
   count: number;
 }

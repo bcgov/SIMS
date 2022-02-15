@@ -84,6 +84,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
+  PageAndSortEventDTO,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { COLOR_BLUE } from "@/constants";
@@ -150,13 +151,13 @@ export default {
       disbursements.value = disbursementAndCount;
     };
 
-    const pageEvent = async (event: any) => {
+    const pageEvent = async (event: PageAndSortEventDTO) => {
       page.value = event?.page;
       pageLimit.value = event?.rows;
       await updateSummaryList(props.locationId);
     };
 
-    const sortEvent = async (event: any) => {
+    const sortEvent = async (event: PageAndSortEventDTO) => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       sortField.value = event.sortField;

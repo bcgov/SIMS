@@ -21,3 +21,22 @@ export function addSortOptions(
   }
   return url;
 }
+
+/**
+ * Utility to build the pagination query parameters.
+ * @param url
+ * @param page
+ * @param pageLimit
+ * @param joinString The string that connects URL and the params built.
+ * For first query param it can be ? and for others it can be &.
+ * @returns URL with pagination options.
+ */
+export const addPaginationOptions = (
+  url: string,
+  page: number,
+  pageLimit: number,
+  joinString: string,
+): string => {
+  const responseURL = `${url}${joinString}${PaginationParams.Page}=${page}&${PaginationParams.PageLimit}=${pageLimit}`;
+  return responseURL;
+};

@@ -9,7 +9,7 @@ import {
   PaginationParams,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { addSortOptions } from "@/helpers";
+import { addSortOptions, addPaginationOptions } from "@/helpers";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async getCOESummary(
@@ -19,17 +19,22 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   ): Promise<PaginatedResults<COESummaryDTO>> {
     let url = `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`;
 
-    /** Adding pagination params. There is always a default page and pageLimit for paginated APIs. */
-    url = `${url}?${PaginationParams.Page}=${paginationOptions.page}&${PaginationParams.PageLimit}=${paginationOptions.pageLimit}`;
+    // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
+    url = addPaginationOptions(
+      url,
+      paginationOptions.page,
+      paginationOptions.pageLimit,
+      "?",
+    );
 
-    /**Adding Sort params. There is always a default sortField and sortOrder for COE. */
+    //Adding Sort params. There is always a default sortField and sortOrder for COE.
     url = addSortOptions(
       url,
       paginationOptions.sortField,
       paginationOptions.sortOrder,
     );
 
-    /** Search criteria is populated only when search box has search text in it. */
+    // Search criteria is populated only when search box has search text in it.
     if (paginationOptions.searchCriteria) {
       url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
