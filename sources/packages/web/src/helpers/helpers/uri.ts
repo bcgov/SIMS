@@ -37,6 +37,5 @@ export const addPaginationOptions = (
   pageLimit: number,
   joinString: string,
 ): string => {
-  const responseURL = `${url}${joinString}${PaginationParams.Page}=${page}&${PaginationParams.PageLimit}=${pageLimit}`;
-  return responseURL;
+  return `${url}${joinString}${PaginationParams.Page}=${page}&${PaginationParams.PageLimit}=${pageLimit}`;
 };
