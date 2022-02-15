@@ -43,6 +43,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   FieldSortOrder,
   PaginatedResults,
+  getISODateOnlyString,
 } from "../../utilities";
 import {
   ApplicationDetailsForCOEDTO,
@@ -120,7 +121,9 @@ export class ConfirmationOfEnrollmentController {
             coeStatus: disbursement.coeStatus,
             fullName: getUserFullName(disbursement.application.student.user),
             disbursementScheduleId: disbursement.id,
-            disbursementDate: disbursement.disbursementDate,
+            disbursementDate: getISODateOnlyString(
+              disbursement.disbursementDate,
+            ),
           };
         },
       ) as COESummaryDTO[],
