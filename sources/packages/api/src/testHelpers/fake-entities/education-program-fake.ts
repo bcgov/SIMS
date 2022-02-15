@@ -1,12 +1,12 @@
 import * as faker from "faker";
-import { EducationProgram, Institution } from "../../database/entities";
+import { EducationProgram, Institution, User } from "../../database/entities";
 import { createFakeInstitution } from "./institution-fake";
 import { ProgramIntensity } from "../../database/entities/program-intensity.type";
 import { ApprovalStatus } from "../../services/education-program/constants";
-import { createFakeUser } from ".";
 
 export function createFakeEducationProgram(
   institution?: Institution,
+  user?: User,
 ): EducationProgram {
   const program = new EducationProgram();
   program.name = faker.name.jobArea();
@@ -30,6 +30,6 @@ export function createFakeEducationProgram(
   program.programDeclaration = true;
   program.institution = institution ?? createFakeInstitution();
   program.programIntensity = ProgramIntensity.fullTime;
-  program.submittedBy = createFakeUser();
+  program.submittedBy = user;
   return program;
 }
