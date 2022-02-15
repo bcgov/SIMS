@@ -574,7 +574,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         .getRepository(Institution)
         .createQueryBuilder()
         .relation(Institution, "notes")
-        .of(institutionId)
+        .of({ id: institutionId } as Institution)
         .add(noteObj);
     });
   }
@@ -624,7 +624,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         .getRepository(Institution)
         .createQueryBuilder()
         .relation(Institution, "notes")
-        .of(institutionId)
+        .of({ id: institutionId } as Institution)
         .add(noteObj);
     });
   }
