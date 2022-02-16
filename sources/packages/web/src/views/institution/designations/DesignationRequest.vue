@@ -1,5 +1,5 @@
 <template>
-  <v-container class="ff-form-container">
+  <v-container>
     <v-row justify="center">
       <div class="pb-4 w-100 full-page-container-size">
         <h5 class="text-muted">Back to manage designation</h5>

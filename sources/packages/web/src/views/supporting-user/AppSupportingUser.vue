@@ -26,7 +26,7 @@
       />
     </v-app-bar>
     <router-view name="sidebar"></router-view>
-    <v-main class="body-background ff-form-container">
+    <v-main class="body-background">
       <v-container fluid>
         <router-view></router-view>
       </v-container>

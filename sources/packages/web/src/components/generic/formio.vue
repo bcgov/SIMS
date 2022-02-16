@@ -1,6 +1,6 @@
 <template>
   <ProgressSpinner v-if="!hideSpinner" />
-  <div ref="formioContainerRef"></div>
+  <div class="ff-form-container" ref="formioContainerRef"></div>
 </template>
 
 <script lang="ts">
