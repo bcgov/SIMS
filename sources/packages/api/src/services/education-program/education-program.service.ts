@@ -143,7 +143,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       educationProgram.intlExchangeProgramEligibility;
     program.programDeclaration = educationProgram.programDeclaration;
     program.statusUpdatedBy = { id: educationProgram.userId } as User;
-    if (educationProgram.id) {
+    if (!educationProgram.id) {
       program.submittedBy = { id: educationProgram.userId } as User;
     }
     return this.repo.save(program);
