@@ -46,11 +46,8 @@
 }
 
 .category-header-small-no-transform {
-  font-style: $font-style-normal;
-  font-weight: $formio-category-header-wt;
-  font-size: $formio-content;
-  line-height: $line-height-header-sm;
-  letter-spacing: 0.5px;
+  @extend .category-header-small;
+  text-transform: none;
 }
 
 /**Typography styles for medium small header**/
@@ -359,15 +356,5 @@
 
 .form-check-input {
   position: inherit;
-}
-
-.need-help-image {
-  position: relative;
-  bottom: 70px;
-}
-
-.welcome-image {
-  position: relative;
-  bottom: 60px;
 }
 
