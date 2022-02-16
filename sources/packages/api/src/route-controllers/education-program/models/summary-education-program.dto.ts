@@ -12,4 +12,9 @@ export interface SubsetEducationProgramDto {
   approvalStatus: string;
   programIntensity: ProgramIntensity;
   institutionProgramCode?: string;
+  submittedOn: Date;
+  submittedBy: string;
+  statusUpdatedOn?: Date;
+  statusUpdatedBy?: string;
+  effectiveEndDate: string;
 }

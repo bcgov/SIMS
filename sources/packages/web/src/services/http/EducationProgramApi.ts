@@ -8,6 +8,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   PaginatedResults,
+  ApproveProgram,
+  DeclineProgram,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { addSortOptions } from "@/helpers";
@@ -178,5 +180,39 @@ export class EducationProgramApi extends HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
+  }
+
+  /**
+   * Ministry user approve's a pending program.
+   * @param programId program id.
+   * @param institutionId institution id.
+   * @param payload ApproveProgram.
+   */
+  public async approveProgram(
+    programId: number,
+    institutionId: number,
+    payload: ApproveProgram,
+  ): Promise<void> {
+    await this.patchCall(
+      `institution/education-program/${programId}/institution/${institutionId}/approve/aest`,
+      payload,
+    );
+  }
+
+  /**
+   * Ministry user decline's a pending program.
+   * @param programId program id.
+   * @param institutionId institution id.
+   * @param payload DeclineProgram.
+   */
+  public async declineProgram(
+    programId: number,
+    institutionId: number,
+    payload: DeclineProgram,
+  ): Promise<void> {
+    await this.patchCall(
+      `institution/education-program/${programId}/institution/${institutionId}/decline/aest`,
+      payload,
+    );
   }
 }

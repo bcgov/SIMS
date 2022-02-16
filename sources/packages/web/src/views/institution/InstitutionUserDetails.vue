@@ -3,7 +3,7 @@
     <HeaderNavigator title="Manage Users" subTitle="User Summary" />
     <v-container>
       <v-card class="mt-6 py-4 px-4">
-        <InstitutionUserSummary :clientType="ClientIdType.Institution" />
+        <InstitutionUserSummary />
       </v-card>
     </v-container>
   </div>
@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import InstitutionUserSummary from "@/components/common/InstitutionUserSummary.vue";
-import { ClientIdType } from "@/types";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
@@ -19,12 +18,5 @@ export default {
     HeaderNavigator,
     InstitutionUserSummary,
   },
-  setup() {
-    return {
-      ClientIdType,
-    };
-  },
 };
 </script>
-
-<style></style>

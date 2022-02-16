@@ -63,7 +63,6 @@ export const sortOfferingsColumnMap = (fieldName: string): string => {
 export const sortProgramsColumnMap = (fieldName: string): string => {
   const programSortOptions = {
     submittedDate: "programs.createdAt",
-    approvalStatus: "programs.approvalStatus",
     programName: "programs.name",
     credentialType: "programs.credentialType",
   };

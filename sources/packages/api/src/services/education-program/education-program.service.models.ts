@@ -7,6 +7,7 @@ export interface SaveEducationProgram extends EducationProgramDto {
   id?: number;
   institutionId: number;
   approvalStatus: ApprovalStatus;
+  userId: number;
 }
 
 export class EducationProgramsSummary {

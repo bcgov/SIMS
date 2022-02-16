@@ -32,6 +32,7 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { formio, FullPageContainer },
@@ -48,20 +49,18 @@ export default {
       type: Number,
       required: true,
     },
-    clientType: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
     const initialData = ref();
+    const clientType = computed(() => AuthService.shared.authClientType);
+
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
     const isReadonly = computed(() => {
       return isAESTUser.value;
@@ -116,16 +115,17 @@ export default {
         const programDetails = await EducationProgramService.shared.getEducationProgramForAEST(
           props.programId,
         );
-        const institutionId = programDetails.institutionId;
-        //view program mode
-        router.push({
-          name: AESTRoutesConst.PROGRAM_DETAILS,
-          params: {
-            programId: props.programId,
-            institutionId: institutionId,
-            locationId: props.locationId,
-          },
-        });
+        if (programDetails.institutionId) {
+          //view program mode
+          router.push({
+            name: AESTRoutesConst.PROGRAM_DETAILS,
+            params: {
+              programId: props.programId,
+              institutionId: programDetails.institutionId,
+              locationId: props.locationId,
+            },
+          });
+        }
       }
     };
     const submitted = async (data: any) => {

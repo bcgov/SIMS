@@ -11,6 +11,7 @@ import { EducationProgram } from "./education-program.model";
 import { InstitutionLocation } from "./institution-location.model";
 import { OfferingTypes } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
+import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 
 /**
  * The main resource table to store education programs offerings related information.
@@ -35,7 +36,9 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "study_start_date",
+    type: "date",
     nullable: true,
+    transformer: dateOnlyTransformer,
   })
   studyStartDate: Date;
   /**
@@ -43,7 +46,9 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "study_end_date",
+    type: "date",
     nullable: true,
+    transformer: dateOnlyTransformer,
   })
   studyEndDate: Date;
   /**

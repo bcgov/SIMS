@@ -106,7 +106,7 @@ export default {
                       router.push({
                         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
                         params: {
-                          locationId: data.id
+                          locationId: data.id,
                         },
                       });
                     },

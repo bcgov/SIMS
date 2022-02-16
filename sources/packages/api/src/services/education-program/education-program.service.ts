@@ -3,7 +3,10 @@ import {
   EducationProgram,
   EducationProgramOffering,
   Institution,
+  Note,
+  NoteType,
   OfferingTypes,
+  User,
 } from "../../database/entities";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, Repository } from "typeorm";
@@ -14,21 +17,24 @@ import {
 import { ApprovalStatus } from "./constants";
 import { ProgramYear } from "../../database/entities/program-year.model";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { ProgramsSummary } from "../../route-controllers/education-program/models/save-education-program.dto";
+import {
+  ApproveProgram,
+  DeclineProgram,
+  ProgramsSummary,
+} from "../../route-controllers/education-program/models/save-education-program.dto";
 import {
   credentialTypeToDisplay,
-  FieldSortOrder,
   getRawCount,
   getDateOnlyFormat,
   sortProgramsColumnMap,
   PaginationOptions,
   PaginatedResults,
+  SortPriority,
 } from "../../utilities";
-
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(@Inject("Connection") private readonly connection: Connection) {
     super(connection.getRepository(EducationProgram));
     this.offeringsRepo = connection.getRepository(EducationProgramOffering);
   }
@@ -83,6 +89,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Insert/update an education program at institution level
    * that will be available for all locations.
    * @param educationProgram Information used to save the program.
+   * @param createProgram a flag, which create or edit program
    * @returns Education program created/updated.
    */
   async saveEducationProgram(
@@ -135,7 +142,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.intlExchangeProgramEligibility =
       educationProgram.intlExchangeProgramEligibility;
     program.programDeclaration = educationProgram.programDeclaration;
-
+    program.statusUpdatedBy = { id: educationProgram.userId } as User;
+    if (!educationProgram.id) {
+      program.submittedBy = { id: educationProgram.userId } as User;
+    }
     return this.repo.save(program);
   }
 
@@ -154,7 +164,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     offeringTypes: OfferingTypes[],
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    const DEFAULT_SORT_FIELD = "approvalStatus";
     const summaryResult = this.repo
       .createQueryBuilder("programs")
       .select("programs.id", "id")
@@ -208,8 +217,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       summaryResult.orderBy(
-        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.ASC,
+        `CASE programs.approvalStatus
+                WHEN '${ApprovalStatus.pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ApprovalStatus.approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ApprovalStatus.denied}' THEN ${SortPriority.Priority3}
+                ELSE ${SortPriority.Priority4}
+              END`,
       );
     }
 
@@ -251,7 +264,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<ProgramsSummary>> {
     // default data table sort field
-    const DEFAULT_SORT_FIELD = "submittedDate";
     const paginatedProgramQuery = this.repo
       .createQueryBuilder("programs")
       .select("programs.id", "programId")
@@ -278,8 +290,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "location",
         "institution.id = location.institution.id",
       )
-      .where("programs.institution.id = :institutionId", { institutionId })
-      .orderBy("programs.id");
+      .where("programs.institution.id = :institutionId", { institutionId });
 
     // this queryParams is for getRawCount, which is different from the
     // query parameter assigned to paginatedProgramQuery like
@@ -316,8 +327,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     } else {
       // default sort and order
       paginatedProgramQuery.orderBy(
-        sortProgramsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.DESC,
+        `CASE programs.approvalStatus
+                WHEN '${ApprovalStatus.pending}' THEN ${SortPriority.Priority1}
+                WHEN '${ApprovalStatus.approved}' THEN ${SortPriority.Priority2}
+                WHEN '${ApprovalStatus.denied}' THEN ${SortPriority.Priority3}
+                ELSE ${SortPriority.Priority4}
+              END`,
       );
     }
 
@@ -370,9 +385,22 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.approvalStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",
+        "programs.institution",
+        "institution.id",
+        "institution.legalOperatingName",
+        "programs.submittedOn",
+        "submittedBy.firstName",
+        "submittedBy.lastName",
+        "statusUpdatedBy.firstName",
+        "statusUpdatedBy.lastName",
+        "programs.statusUpdatedOn",
+        "programs.effectiveEndDate",
       ])
       .where("programs.id = :id", { id: programId })
       .andWhere("programs.institution.id = :institutionId", { institutionId })
+      .innerJoin("programs.institution", "institution")
+      .leftJoin("programs.submittedBy", "submittedBy")
+      .leftJoin("programs.statusUpdatedBy", "statusUpdatedBy")
       .getOne();
   }
 
@@ -483,9 +511,121 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.intlExchangeProgramEligibility",
         "programs.programDeclaration",
         "institution.id",
+        "institution.legalOperatingName",
+        "programs.submittedOn",
+        "submittedBy.firstName",
+        "submittedBy.lastName",
+        "statusUpdatedBy.firstName",
+        "statusUpdatedBy.lastName",
+        "programs.statusUpdatedOn",
+        "programs.effectiveEndDate",
       ])
+      .leftJoin("programs.submittedBy", "submittedBy")
+      .leftJoin("programs.statusUpdatedBy", "statusUpdatedBy")
       .innerJoin("programs.institution", "institution")
       .where("programs.id = :id", { id: programId })
       .getOne();
+  }
+
+  /**
+   * Approve a pending program.
+   * this is a db transaction performing
+   * 3 functions, creating note, update the
+   * program and adding institution notes
+   * @param institutionId institution id.
+   * @param programId program id.
+   * @param userId user id.
+   * @param payload ApproveProgram
+   * @param returns EducationProgram
+   */
+  async approveEducationProgram(
+    institutionId: number,
+    programId: number,
+    userId: number,
+    payload: ApproveProgram,
+  ): Promise<void> {
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      // create Note
+      const notes = new Note();
+      notes.description = payload.approvedNote;
+      notes.noteType = NoteType.Program;
+      notes.creator = {
+        id: userId,
+      } as User;
+      const noteObj = await transactionalEntityManager
+        .getRepository(Note)
+        .save(notes);
+
+      // update program
+      const program = new EducationProgram();
+      program.id = programId;
+      program.approvalStatus = ApprovalStatus.approved;
+      program.statusUpdatedOn = new Date();
+      program.effectiveEndDate = new Date(payload.effectiveEndDate);
+      program.statusUpdatedBy = { id: userId } as User;
+      program.programNote = noteObj;
+
+      await transactionalEntityManager
+        .getRepository(EducationProgram)
+        .save(program);
+
+      // update institution note
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of({ id: institutionId } as Institution)
+        .add(noteObj);
+    });
+  }
+
+  /**
+   * Approve a pending program.
+   * this is a db transaction performing
+   * 3 functions, creating note, update the
+   * program and adding institution notes
+   * @param institutionId institution id.
+   * @param programId program id.
+   * @param userId user id.
+   * @param payload DeclineProgram
+   * @param returns EducationProgram
+   */
+  async declineEducationProgram(
+    institutionId: number,
+    programId: number,
+    userId: number,
+    payload: DeclineProgram,
+  ): Promise<void> {
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      // create Note
+      const notes = new Note();
+      notes.description = payload.declinedNote;
+      notes.noteType = NoteType.Program;
+      notes.creator = {
+        id: userId,
+      } as User;
+      const noteObj = await transactionalEntityManager
+        .getRepository(Note)
+        .save(notes);
+
+      // update program
+      const program = new EducationProgram();
+      program.id = programId;
+      program.approvalStatus = ApprovalStatus.denied;
+      program.statusUpdatedOn = new Date();
+      program.statusUpdatedBy = { id: userId } as User;
+      program.programNote = noteObj;
+      await transactionalEntityManager
+        .getRepository(EducationProgram)
+        .save(program);
+
+      // update institution note
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of({ id: institutionId } as Institution)
+        .add(noteObj);
+    });
   }
 }

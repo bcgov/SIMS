@@ -3,8 +3,8 @@ import { OfferingIntensity, StudyBreak } from "../../database/entities";
 export class EducationProgramOfferingModel {
   id: number;
   name: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
 }

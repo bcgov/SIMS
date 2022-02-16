@@ -1,4 +1,4 @@
-import { DataTableSortOrder, FieldSortOrder } from "@/types";
+import { DataTableSortOrder, FieldSortOrder, PaginationParams } from "@/types";
 
 /**
  * helper to append pagination sort and order to the url
@@ -17,7 +17,25 @@ export function addSortOptions(
       sortOrder === DataTableSortOrder.DESC
         ? FieldSortOrder.DESC
         : FieldSortOrder.ASC;
-    url = `${url}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    url = `${url}&${PaginationParams.SortField}=${sortField}&${PaginationParams.SortOrder}=${sortDBOrder}`;
   }
   return url;
 }
+
+/**
+ * Utility to build the pagination query parameters.
+ * @param url
+ * @param page
+ * @param pageLimit
+ * @param joinString The string that connects URL and the params built.
+ * For first query param it can be ? and for others it can be &.
+ * @returns URL with pagination options.
+ */
+export const addPaginationOptions = (
+  url: string,
+  page: number,
+  pageLimit: number,
+  joinString: string,
+): string => {
+  return `${url}${joinString}${PaginationParams.Page}=${page}&${PaginationParams.PageLimit}=${pageLimit}`;
+};

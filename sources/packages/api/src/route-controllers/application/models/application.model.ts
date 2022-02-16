@@ -168,7 +168,7 @@ export interface COESummaryDTO {
   coeStatus: COEStatus;
   fullName: string;
   disbursementScheduleId: number;
-  disbursementDate: Date;
+  disbursementDate: string;
 }
 
 export interface ProgramYearOfApplicationDto {

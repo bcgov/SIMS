@@ -67,3 +67,33 @@ export enum ProgramSummaryFields {
   ApprovalStatus = "approvalStatus",
   IsActive = "isActive",
 }
+
+/**Pagination Query param constants **/
+export enum PaginationParams {
+  SortField = "sortField",
+  SortOrder = "sortOrder",
+  Page = "page",
+  PageLimit = "pageLimit",
+  SearchCriteria = "searchCriteria",
+}
+
+/** Pagination Options DTO */
+export interface PaginationOptions {
+  searchCriteria?: string;
+  sortField?: string;
+  sortOrder?: DataTableSortOrder;
+  page: number;
+  pageLimit: number;
+}
+
+/**
+ * Interface for data returned by
+ * page and sort event of PrimeVue data table.
+ * TODO:This DTO must be modified when migrating to Vuetify3 accordingly.
+ */
+export interface PageAndSortEvent {
+  page: number;
+  rows: number;
+  sortField: string;
+  sortOrder: number;
+}

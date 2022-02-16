@@ -6,7 +6,7 @@
     />
     <v-container>
       <v-card class="mt-6 py-4 px-4">
-        <LocationSummary :clientType="ClientIdType.Institution" />
+        <LocationSummary />
       </v-card>
     </v-container>
   </div>
@@ -14,16 +14,12 @@
 
 <script lang="ts">
 import LocationSummary from "@/components/common/LocationSummary.vue";
-import { ClientIdType } from "@/types/contracts/ConfigContract";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
   components: {
     LocationSummary,
     HeaderNavigator,
-  },
-  setup() {
-    return { ClientIdType };
   },
 };
 </script>

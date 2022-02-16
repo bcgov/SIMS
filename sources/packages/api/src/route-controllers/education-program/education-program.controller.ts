@@ -4,12 +4,16 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { IInstitutionUserToken } from "../../auth/userToken.interface";
+import {
+  IInstitutionUserToken,
+  IUserToken,
+} from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -22,6 +26,8 @@ import {
   EducationProgramDataDto,
   transformToEducationProgramData,
   ProgramsSummary,
+  DeclineProgram,
+  ApproveProgram,
 } from "./models/save-education-program.dto";
 import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
@@ -39,7 +45,11 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   PaginatedResults,
+  getISODateOnlyString,
+  getIDIRUserFullName,
+  getUserFullName,
 } from "../../utilities";
+import { ApprovalStatus } from "../../services/education-program/constants";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -146,12 +156,13 @@ export class EducationProgramController {
 
     // The payload returned from form.io contains the approvalStatus as
     // a calculated server value. If the approvalStatus value is sent
-    // from the client form it will be overrided by the server calculated one.
+    // from the client form it will be overridden by the server calculated one.
     const saveProgramPaylod: SaveEducationProgram = {
       ...submissionResult.data.data,
       programDeliveryTypes: submissionResult.data.data.programDeliveryTypes,
       institutionId: userToken.authorizations.institutionId,
       id: programId,
+      userId: userToken.userId,
     };
     return this.programService.saveEducationProgram(saveProgramPaylod);
   }
@@ -164,7 +175,7 @@ export class EducationProgramController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @Get(":programId/details")
-  async get(
+  async getProgramDetails(
     @Param("programId") programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<SubsetEducationProgramDto> {
@@ -172,7 +183,7 @@ export class EducationProgramController {
       programId,
       userToken.authorizations.institutionId,
     );
-    return {
+    const programDetails: SubsetEducationProgramDto = {
       id: educationProgram.id,
       name: educationProgram.name,
       description: educationProgram.description,
@@ -186,7 +197,25 @@ export class EducationProgramController {
       approvalStatus: educationProgram.approvalStatus,
       programIntensity: educationProgram.programIntensity,
       institutionProgramCode: educationProgram.institutionProgramCode,
+      submittedOn: educationProgram.submittedOn,
+      submittedBy: getUserFullName(educationProgram.submittedBy),
+      effectiveEndDate: getISODateOnlyString(educationProgram.effectiveEndDate),
+      statusUpdatedOn: educationProgram.statusUpdatedOn,
+      // TODO: for now - program.effectiveEndDate is added by the ministry user
+      // so, if program.effectiveEndDate is null/undefined, then
+      // the program was auto approved, when institution submitted the
+      // program, else the program was approved by ministry user.
+      // ministry user uses IDIR. Program will always denied by
+      // ministry user (i.e IDIR). Will need to update in future as
+      // proper decision is taken
+      statusUpdatedBy:
+        educationProgram.effectiveEndDate ||
+        educationProgram.approvalStatus === ApprovalStatus.denied
+          ? getIDIRUserFullName(educationProgram.statusUpdatedBy)
+          : getUserFullName(educationProgram.statusUpdatedBy),
     };
+
+    return programDetails;
   }
 
   /**
@@ -367,6 +396,54 @@ export class EducationProgramController {
         page: page,
         pageLimit: pageSize,
       },
+    );
+  }
+
+  /**
+   * Ministry user approve's a pending program.
+   * @param programId program id.
+   * @param institutionId institution id.
+   * @UserToken userToken
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Patch(":programId/institution/:institutionId/approve/aest")
+  async approveProgram(
+    @UserToken() userToken: IUserToken,
+    @Param("programId") programId: number,
+    @Param("institutionId") institutionId: number,
+    @Body() payload: ApproveProgram,
+  ): Promise<void> {
+    await this.programService.approveEducationProgram(
+      institutionId,
+      programId,
+      userToken.userId,
+      payload,
+    );
+  }
+
+  /**
+   * Ministry user decline's a pending program.
+   * @param programId program id.
+   * @param institutionId institution id.
+   * @UserToken userToken
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.aest)
+  @Groups(UserGroups.AESTUser)
+  @Patch(":programId/institution/:institutionId/decline/aest")
+  async declineProgram(
+    @UserToken() userToken: IUserToken,
+    @Param("programId") programId: number,
+    @Param("institutionId") institutionId: number,
+    @Body() payload: DeclineProgram,
+  ): Promise<void> {
+    await this.programService.declineEducationProgram(
+      institutionId,
+      programId,
+      userToken.userId,
+      payload,
     );
   }
 }

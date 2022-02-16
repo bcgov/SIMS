@@ -83,7 +83,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
@@ -91,6 +91,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: {
@@ -99,10 +100,6 @@ export default {
     TitleValue,
   },
   props: {
-    clientType: {
-      type: String,
-      required: true,
-    },
     institutionId: {
       type: Number,
       required: false,
@@ -110,6 +107,8 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const clientType = computed(() => AuthService.shared.authClientType);
+
     const goToAddNewLocation = () => {
       router.push({ name: InstitutionRoutesConst.ADD_INSTITUTION_LOCATION });
     };
@@ -123,7 +122,7 @@ export default {
     };
     const institutionLocationList = ref([] as InstitutionLocationsDetails[]);
     const getInstitutionLocationList = async () => {
-      switch (props.clientType) {
+      switch (clientType.value) {
         case ClientIdType.Institution:
           institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
           break;
@@ -164,6 +163,7 @@ export default {
       ClientIdType,
       addressList1,
       primaryContactList,
+      clientType,
     };
   },
 };
