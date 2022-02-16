@@ -127,11 +127,14 @@ export const transformToEducationProgramData = (
     // so, if program.effectiveEndDate is null/undefined, then
     // the program was auto approved, when institution submitted the
     // program, else the program was approved by ministry user.
-    // ministry user uses IDIR. Will need to update in future as
+    // ministry user uses IDIR. Program will always denied by
+    // ministry user (i.e IDIR). Will need to update in future as
     // proper decision is taken
-    statusUpdatedBy: program.effectiveEndDate
-      ? getIDIRUserFullName(program.statusUpdatedBy)
-      : getUserFullName(program.statusUpdatedBy),
+    statusUpdatedBy:
+      program.effectiveEndDate ||
+      program.approvalStatus === ApprovalStatus.denied
+        ? getIDIRUserFullName(program.statusUpdatedBy)
+        : getUserFullName(program.statusUpdatedBy),
   };
 
   return programDetails;

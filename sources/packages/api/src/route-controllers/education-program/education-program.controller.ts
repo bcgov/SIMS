@@ -29,10 +29,7 @@ import {
   DeclineProgram,
   ApproveProgram,
 } from "./models/save-education-program.dto";
-import {
-  EducationProgramService,
-  FormService,
-} from "../../services";
+import { EducationProgramService, FormService } from "../../services";
 import { FormNames } from "../../services/form/constants";
 import {
   SaveEducationProgram,
@@ -52,6 +49,7 @@ import {
   getIDIRUserFullName,
   getUserFullName,
 } from "../../utilities";
+import { ApprovalStatus } from "../../services/education-program/constants";
 
 @Controller("institution/education-program")
 export class EducationProgramController {
@@ -207,11 +205,14 @@ export class EducationProgramController {
       // so, if program.effectiveEndDate is null/undefined, then
       // the program was auto approved, when institution submitted the
       // program, else the program was approved by ministry user.
-      // ministry user uses IDIR. Will need to update in future as
+      // ministry user uses IDIR. Program will always denied by
+      // ministry user (i.e IDIR). Will need to update in future as
       // proper decision is taken
-      statusUpdatedBy: educationProgram.effectiveEndDate
-        ? getIDIRUserFullName(educationProgram.statusUpdatedBy)
-        : getUserFullName(educationProgram.statusUpdatedBy),
+      statusUpdatedBy:
+        educationProgram.effectiveEndDate ||
+        educationProgram.approvalStatus === ApprovalStatus.denied
+          ? getIDIRUserFullName(educationProgram.statusUpdatedBy)
+          : getUserFullName(educationProgram.statusUpdatedBy),
     };
 
     return programDetails;
