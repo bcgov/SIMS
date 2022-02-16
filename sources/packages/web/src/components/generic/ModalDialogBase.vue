@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showHideDialog">
+  <v-dialog v-model="showHideDialog" persistent :no-click-animation="true">
     <v-card elevation="10">
       <v-card-header>
         <v-card-title class="text-h5">
