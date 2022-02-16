@@ -138,14 +138,11 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { useStore } from "vuex";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { Status, ConfirmEditApplication, CancelApplication },
   props: {
-    clientType: {
-      type: String,
-      required: true,
-    },
     studentId: {
       type: Number,
       required: true,
@@ -170,6 +167,8 @@ export default {
 
     const store = useStore();
 
+    const clientType = computed(() => AuthService.shared.authClientType);
+
     const sinValidStatus = computed(
       () => store.state.student.sinValidStatus.sinStatus,
     ).value;
@@ -187,7 +186,7 @@ export default {
       sortField = StudentApplicationFields.Status,
       sortOrder = DataTableSortOrder.ASC,
     ) => {
-      switch (props.clientType) {
+      switch (clientType.value) {
         case ClientIdType.Student:
           applicationAndCount.value = await StudentService.shared.getAllStudentApplications(
             page,
@@ -213,7 +212,7 @@ export default {
     };
 
     onMounted(async () => {
-      if (props.clientType === ClientIdType.Student) {
+      if (clientType.value === ClientIdType.Student) {
         const restrictions = await StudentService.shared.getStudentRestriction();
         hasRestriction.value = restrictions.hasRestriction;
       }
@@ -309,6 +308,7 @@ export default {
       reloadApplication,
       SINStatusEnum,
       sinValidStatus,
+      clientType,
     };
   },
 };

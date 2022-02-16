@@ -134,11 +134,6 @@ ul.no-bullets {
   margin: 1px;
 }
 
-// horizontal divider width
-.horizontal-divider {
-  border: 1px solid #e8e8e8;
-}
-
 /** TODO: this style must be removed when moving to Vuetify3 **/
 .p-tabview-panels {
   margin-top: 16px;
@@ -169,4 +164,45 @@ ul.no-bullets {
 
 .header-button {
   bottom: 12px;
+}
+
+.label-bold {
+  font-size: $font-size-content;
+  line-height: $line-height-header-sm;
+  font-weight: $font-weight-bold;
+}
+
+// normal label bold
+.label-bold-normal {
+  @extend .label-bold;
+  color: $brand-black;
+}
+
+// normal label primary
+.label-bold-primary {
+  @extend .label-bold;
+  color: $brand-blue !important;
+}
+
+.label-value {
+  font-size: $font-size-content;
+  line-height: $line-height-header-sm;
+  font-weight: $font-style-normal;
+}
+
+// normal value bold
+.label-value-normal {
+  @extend .label-value;
+  color: $brand-black;
+}
+
+// horizontal divider width
+.horizontal-divider {
+  border: 1px solid #e8e8e8;
+}
+
+.vertical-divider {
+  border: 1px solid #8692a4;
+  height: $line-height-header-sm;
+  background-color: #8692a4;
 }

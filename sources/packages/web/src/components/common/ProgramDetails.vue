@@ -73,15 +73,15 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, computed } from "vue";
+import { computed } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramData, ProgramIntensity, ClientIdType } from "@/types";
 import ProgramStatusChip from "@/components/generic/ProgramStatusChip.vue";
 import { COLOR_BLUE } from "@/constants";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { ProgramStatusChip },
@@ -94,20 +94,22 @@ export default {
       type: Number,
       required: true,
     },
-    clientType: {
-      type: String,
+    educationProgram: {
+      type: Object,
       required: true,
+      default: {} as EducationProgramData,
     },
   },
   setup(props: any) {
     const router = useRouter();
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
 
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
 
     const programActionLabel = computed(() => {
@@ -121,7 +123,6 @@ export default {
           params: {
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.Institution,
           },
         });
       }
@@ -132,30 +133,13 @@ export default {
           params: {
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.AEST,
           },
         });
       }
     };
 
-    const educationProgram = ref({} as EducationProgramData);
-    const getEducationProgramAndOffering = async () => {
-      if (isInstitutionUser.value) {
-        educationProgram.value = await EducationProgramService.shared.getEducationProgram(
-          props.programId,
-        );
-      } else if (isAESTUser.value) {
-        educationProgram.value = await EducationProgramService.shared.getEducationProgramForAEST(
-          props.programId,
-        );
-      }
-    };
-
-    onMounted(getEducationProgramAndOffering);
-
     return {
       programButtonAction,
-      educationProgram,
       ProgramIntensity,
       isInstitutionUser,
       isAESTUser,

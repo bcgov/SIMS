@@ -1,7 +1,6 @@
 <template>
   <div>
     <span class="category-header-medium">Study period offerings</span>
-
     <div class="float-right">
       <InputText
         name="searchProgramName"
@@ -93,6 +92,7 @@ import {
   EducationProgramOfferingDto,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   props: {
@@ -104,10 +104,6 @@ export default {
       type: Number,
       required: true,
     },
-    clientType: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const router = useRouter();
@@ -116,12 +112,13 @@ export default {
     const currentPage = ref();
     const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
+    const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
       return isInstitutionUser.value ? "Edit" : "View";
@@ -148,7 +145,6 @@ export default {
             offeringId: offeringId,
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.Institution,
           },
         });
       }
@@ -159,7 +155,6 @@ export default {
             offeringId: offeringId,
             programId: props.programId,
             locationId: props.locationId,
-            clientType: ClientIdType.AEST,
           },
         });
       }

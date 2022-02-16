@@ -6,8 +6,8 @@ import { OfferingIntensity } from "@/types/contracts/OfferingContact";
 export interface EducationProgramOfferingDto {
   id: number;
   name: string;
-  studyStartDate: Date;
-  studyEndDate: Date;
+  studyStartDate: string;
+  studyEndDate: string;
   studyDates: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;

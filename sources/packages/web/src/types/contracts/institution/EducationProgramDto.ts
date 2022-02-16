@@ -77,8 +77,15 @@ export interface EducationProgramDetails {
 export interface EducationProgramData extends EducationProgramDetails {
   credentialTypeToDisplay: string;
   approvalStatus: ApprovalStatus;
-  institutionId: number;
+  institutionId?: number;
   id: number;
+  institutionName?: string;
+  submittedOn: Date;
+  submittedBy: string;
+  statusUpdatedOn?: Date;
+  statusUpdatedByFirstName?: string;
+  statusUpdatedByLastName?: string;
+  effectiveEndDate: Date;
 }
 
 export interface StudentEducationProgramDto {
@@ -146,4 +153,13 @@ export interface EntranceRequirements {
   minHighSchool: boolean;
   requirementsByInstitution: boolean;
   requirementsByBCITA: boolean;
+}
+
+export interface ApproveProgram {
+  effectiveEndDate: string;
+  approvedNote: string;
+}
+
+export interface DeclineProgram {
+  declinedNote: string;
 }

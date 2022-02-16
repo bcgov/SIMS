@@ -4,6 +4,7 @@
       <v-icon left> mdi-arrow-left </v-icon> Program detail</a
     >
   </p>
+
   <span class="heading-x-large">
     <span v-if="isReadonly">View Program</span>
     <span v-if="programId && !isReadonly">Edit Program</span>
@@ -32,6 +33,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useToastMessage } from "@/composables";
+import { AuthService } from "@/services/AuthService";
 
 export default {
   components: { formio, FullPageContainer },
@@ -44,20 +46,18 @@ export default {
       type: Number,
       required: false,
     },
-    clientType: {
-      type: Number,
-      required: true,
-    },
   },
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
     const institutionId = ref();
+    const clientType = computed(() => AuthService.shared.authClientType);
+
     const isInstitutionUser = computed(() => {
-      return props.clientType === ClientIdType.Institution;
+      return clientType.value === ClientIdType.Institution;
     });
     const isAESTUser = computed(() => {
-      return props.clientType === ClientIdType.AEST;
+      return clientType.value === ClientIdType.AEST;
     });
     const isReadonly = computed(() => {
       return isAESTUser.value;

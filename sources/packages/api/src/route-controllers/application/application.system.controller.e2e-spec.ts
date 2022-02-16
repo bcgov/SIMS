@@ -31,17 +31,19 @@ import {
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
+  User,
 } from "../../database/entities";
 import {
   createFakeLocation,
   createFakeInstitution,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
+  createFakeUser,
 } from "../../testHelpers/fake-entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { CraIntegrationModule } from "../../cra-integration/cra-integration.module";
 
-describe("Test system-access/application Controller", () => {
+describe.skip("Test system-access/application Controller", () => {
   let accesstoken: string;
   let app: INestApplication;
   let applicationRepository: Repository<Application>;
@@ -49,6 +51,7 @@ describe("Test system-access/application Controller", () => {
   let locationRepository: Repository<InstitutionLocation>;
   let programRepository: Repository<EducationProgram>;
   let offeringRepository: Repository<EducationProgramOffering>;
+  let userRepository: Repository<User>;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -84,6 +87,7 @@ describe("Test system-access/application Controller", () => {
     institutionRepository = connection.getRepository(Institution);
     programRepository = connection.getRepository(EducationProgram);
     offeringRepository = connection.getRepository(EducationProgramOffering);
+    userRepository = connection.getRepository(User);
 
     app = module.createNestApplication();
     setGlobalPipes(app);
@@ -192,15 +196,16 @@ describe("Test system-access/application Controller", () => {
       const testLocation = await locationRepository.save(
         createFakeLocation(testInstitution),
       );
+      // Create user
+      const user = await userRepository.save(createFakeUser());
       // Create fake program.
       const testProgram = await programRepository.save(
-        createFakeEducationProgram(testInstitution),
+        createFakeEducationProgram(testInstitution, user),
       );
       // Create fake offering.
       const testOffering = await offeringRepository.save(
         createFakeEducationProgramOffering(testProgram, testLocation),
       );
-
       const routeUrl = `/system-access/application/${testApplication.id}/program-info`;
       try {
         await request(app.getHttpServer())

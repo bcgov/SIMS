@@ -14,7 +14,7 @@
       <ManageProgramAndOfferingSummary
         :programId="programId"
         :locationId="locationId"
-        :clientType="ClientIdType.Institution"
+        :educationProgram="educationProgram"
       />
     </v-container>
   </div>
@@ -23,7 +23,9 @@
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
-import { ClientIdType } from "@/types";
+import { ref, onMounted } from "vue";
+import { EducationProgramData } from "@/types";
+import { EducationProgramService } from "@/services/EducationProgramService";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
@@ -38,9 +40,17 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props: any) {
+    const educationProgram = ref({} as EducationProgramData);
+    const getEducationProgramAndOffering = async () => {
+      educationProgram.value = await EducationProgramService.shared.getEducationProgram(
+        props.programId,
+      );
+    };
+
+    onMounted(getEducationProgramAndOffering);
     return {
-      ClientIdType,
+      educationProgram,
       InstitutionRoutesConst,
     };
   },

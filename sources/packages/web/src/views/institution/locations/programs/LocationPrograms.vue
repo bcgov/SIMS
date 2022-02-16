@@ -95,7 +95,6 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  ClientIdType,
   PaginatedResults,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
@@ -136,8 +135,8 @@ export default {
     const loadSummary = async (
       page = DEFAULT_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = ProgramSummaryFields.ApprovalStatus,
-      sortOrder = DataTableSortOrder.ASC,
+      sortField?: ProgramSummaryFields,
+      sortOrder?: DataTableSortOrder,
     ) => {
       loading.value = true;
       programAndCount.value = await EducationProgramService.shared.getLocationProgramsSummary(
@@ -190,7 +189,6 @@ export default {
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         params: {
           locationId: props.locationId,
-          clientType: ClientIdType.Institution,
         },
       });
     };

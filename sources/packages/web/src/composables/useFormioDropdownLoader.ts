@@ -31,10 +31,7 @@ export function useFormioDropdownLoader() {
 
   // Retrieve the list of locations from the API and
   // populate a dropdown in a Form.IO component.
-  const loadLocations = async (
-    form: any,
-    dropdownName: string,
-  ) => {
+  const loadLocations = async (form: any, dropdownName: string) => {
     return loadDropdown(
       form,
       dropdownName,

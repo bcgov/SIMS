@@ -1,6 +1,11 @@
 import { ApprovalStatus } from "../../../services/education-program/constants";
 import { EducationProgram, ProgramIntensity } from "../../../database/entities";
-import { credentialTypeToDisplay } from "../../../utilities";
+import {
+  credentialTypeToDisplay,
+  getIDIRUserFullName,
+  getISODateOnlyString,
+  getUserFullName,
+} from "../../../utilities";
 /**
  * Dto that represents education programs form object.
  */
@@ -42,6 +47,12 @@ export interface EducationProgramDataDto extends EducationProgramDto {
   approvalStatus: ApprovalStatus;
   institutionId: number;
   id: number;
+  institutionName: string;
+  submittedOn: Date;
+  submittedBy: string;
+  statusUpdatedOn?: Date;
+  statusUpdatedBy?: string;
+  effectiveEndDate: string;
 }
 
 export interface ProgramDeliveryTypes {
@@ -63,7 +74,7 @@ export interface EntranceRequirements {
 export const transformToEducationProgramData = (
   program: EducationProgram,
 ): EducationProgramDataDto => {
-  return {
+  const programDetails: EducationProgramDataDto = {
     id: program.id,
     approvalStatus: program.approvalStatus,
     name: program.name,
@@ -107,7 +118,26 @@ export const transformToEducationProgramData = (
     programDeclaration: program.programDeclaration,
     credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
     institutionId: program.institution.id,
+    institutionName: program.institution.legalOperatingName,
+    submittedOn: program.submittedOn,
+    submittedBy: getUserFullName(program.submittedBy),
+    effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
+    statusUpdatedOn: program.statusUpdatedOn,
+    // TODO: for now - program.effectiveEndDate is added by the ministry user
+    // so, if program.effectiveEndDate is null/undefined, then
+    // the program was auto approved, when institution submitted the
+    // program, else the program was approved by ministry user.
+    // ministry user uses IDIR. Program will always denied by
+    // ministry user (i.e IDIR). Will need to update in future as
+    // proper decision is taken
+    statusUpdatedBy:
+      program.effectiveEndDate ||
+      program.approvalStatus === ApprovalStatus.denied
+        ? getIDIRUserFullName(program.statusUpdatedBy)
+        : getUserFullName(program.statusUpdatedBy),
   };
+
+  return programDetails;
 };
 
 export class ProgramsSummary {
@@ -119,4 +149,13 @@ export class ProgramsSummary {
   locationId: number;
   programStatus: ApprovalStatus;
   totalOfferings: number;
+}
+
+export interface ApproveProgram {
+  effectiveEndDate: string;
+  approvedNote: string;
+}
+
+export interface DeclineProgram {
+  declinedNote: string;
 }

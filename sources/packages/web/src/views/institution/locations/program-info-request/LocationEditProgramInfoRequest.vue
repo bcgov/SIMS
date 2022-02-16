@@ -32,7 +32,6 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   GetProgramInfoRequestDto,
-  ClientIdType,
 } from "@/types";
 import {
   OFFERING_START_DATE_ERROR,
@@ -141,7 +140,6 @@ export default {
           name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
           params: {
             locationId: props.locationId,
-            clientType: ClientIdType.Institution,
           },
         });
       }
