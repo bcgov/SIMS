@@ -10595,15 +10595,9 @@
                 },
                 {
                     "title": "Married/common law Panel",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "theme": "default",
-                    "breadcrumb": "default",
-                    "breadcrumbClickable": false,
-                    "buttonSettings": {
-                        "previous": false,
-                        "cancel": false,
-                        "next": false
-                    },
-                    "scrollToTop": false,
                     "tooltip": "",
                     "customClass": "",
                     "collapsible": false,
@@ -10611,7 +10605,7 @@
                     "hideLabel": true,
                     "disabled": false,
                     "modalEdit": false,
-                    "key": "marriedCommonLawPanel",
+                    "key": "marriedPanel",
                     "tags": [],
                     "properties": {},
                     "customConditional": "",
@@ -10619,9 +10613,8 @@
                         "json": "",
                         "show": true,
                         "when": "relationshipStatus",
-                        "eq": "marriedCommonLaw"
+                        "eq": "married"
                     },
-                    "nextPage": "",
                     "logic": [],
                     "attributes": {},
                     "overlay": {
@@ -10634,7 +10627,15 @@
                     },
                     "type": "panel",
                     "label": "Married/Common law Panel",
+                    "breadcrumb": "default",
+                    "buttonSettings": {
+                        "previous": false,
+                        "cancel": false,
+                        "next": false
+                    },
                     "tabindex": "",
+                    "breadcrumbClickable": false,
+                    "scrollToTop": false,
                     "input": false,
                     "tableView": false,
                     "components": [
@@ -10671,7 +10672,7 @@
                             "conditional": {
                                 "show": true,
                                 "when": "relationshipStatus",
-                                "eq": "marriedCommonLaw"
+                                "eq": "married"
                             },
                             "type": "datetime",
                             "input": true,
@@ -10734,6 +10735,7 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "useLocaleSettings": false,
                             "allowInput": true,
                             "enableDate": true,
@@ -10750,9 +10752,7 @@
                                 "arrowkeys": true
                             },
                             "customOptions": {},
-                            "id": "enmzn3",
-                            "shortcutButtons": [],
-                            "addons": []
+                            "id": "ezu7c9n"
                         }
                     ],
                     "allowPrevious": false,
@@ -10791,10 +10791,10 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "tree": false,
-                    "id": "e7huqp",
                     "addons": [],
-                    "lazyLoad": false
+                    "tree": false,
+                    "lazyLoad": false,
+                    "id": "ewbw0si"
                 },
                 {
                     "label": "<strong>Do you have any dependants?</strong>",
@@ -12269,7 +12269,7 @@
                                             "addons": []
                                         }
                                     ],
-                                    "id": "ecpkm9j0000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ecpkm9j0000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -13266,7 +13266,7 @@
                     "encrypted": false,
                     "redrawOn": "data",
                     "customDefaultValue": "",
-                    "calculateValue": "//alert (data.dependantstatus);\nif (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'otherSingle') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue ('dependant');\n}\nelse {\n  instance.setValue ('independant');\n}",
+                    "calculateValue": "//alert (data.dependantstatus);\nif (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'other') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue ('dependant');\n}\nelse {\n  instance.setValue ('independant');\n}",
                     "calculateServer": true,
                     "key": "dependantstatus",
                     "tags": [],
@@ -13324,7 +13324,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "eqcc5ni"
+                    "id": "eknombl"
                 }
             ],
             "placeholder": "",
@@ -13369,15 +13369,9 @@
         },
         {
             "title": "Partner information",
+            "labelWidth": "",
+            "labelMargin": "",
             "theme": "default",
-            "breadcrumb": "default",
-            "breadcrumbClickable": true,
-            "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-            },
-            "scrollToTop": true,
             "tooltip": "",
             "customClass": "",
             "collapsible": false,
@@ -13393,9 +13387,8 @@
                 "json": "",
                 "show": true,
                 "when": "relationshipStatus",
-                "eq": "marriedCommonLaw"
+                "eq": "married"
             },
-            "nextPage": "",
             "logic": [],
             "attributes": {},
             "overlay": {
@@ -13408,14 +13401,20 @@
             },
             "type": "panel",
             "label": "Partner Information",
+            "breadcrumb": "default",
+            "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+            },
             "tabindex": "",
+            "breadcrumbClickable": true,
+            "scrollToTop": true,
             "input": false,
             "tableView": false,
             "components": [
                 {
                     "label": "HTML",
-                    "tag": "p",
-                    "className": "",
                     "attrs": [
                         {
                             "attr": "",
@@ -13425,30 +13424,10 @@
                     "content": "Partner information",
                     "refreshOnChange": false,
                     "customClass": "header-lg",
-                    "hidden": false,
-                    "modalEdit": false,
                     "key": "html65",
-                    "tags": [],
-                    "properties": {},
-                    "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                    },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                    },
                     "type": "htmlelement",
                     "input": false,
+                    "tableView": false,
                     "placeholder": "",
                     "prefix": "",
                     "suffix": "",
@@ -13457,10 +13436,11 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "tableView": false,
+                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -13475,6 +13455,7 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -13484,17 +13465,30 @@
                         "multiple": false,
                         "unique": false
                     },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "ezo3nq8"
+                    "addons": [],
+                    "tag": "p",
+                    "id": "e7g4j5"
                 },
                 {
                     "label": "HTML",
-                    "tag": "p",
-                    "className": "",
                     "attrs": [
                         {
                             "attr": "",
@@ -13503,43 +13497,24 @@
                     ],
                     "content": "Help text about this section will be displayed here",
                     "refreshOnChange": false,
-                    "customClass": "",
-                    "hidden": false,
-                    "modalEdit": false,
                     "key": "html66",
-                    "tags": [],
-                    "properties": {},
-                    "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": "",
-                        "json": ""
-                    },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                    },
                     "type": "htmlelement",
                     "input": false,
+                    "tableView": false,
                     "placeholder": "",
                     "prefix": "",
+                    "customClass": "",
                     "suffix": "",
                     "multiple": false,
                     "defaultValue": null,
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
-                    "tableView": false,
+                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -13554,6 +13529,7 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -13563,28 +13539,33 @@
                         "multiple": false,
                         "unique": false
                     },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "ew7qj9"
+                    "addons": [],
+                    "tag": "p",
+                    "id": "e68yx8d"
                 },
                 {
                     "label": "<strong>Does your partner have a valid Social Insurance Number?</strong>",
-                    "labelPosition": "top",
                     "optionsLabelPosition": "right",
-                    "description": "",
-                    "tooltip": "",
-                    "customClass": "",
-                    "tabindex": "",
                     "inline": false,
-                    "hidden": false,
-                    "hideLabel": false,
-                    "autofocus": false,
-                    "disabled": false,
                     "tableView": false,
-                    "modalEdit": false,
                     "values": [
                         {
                             "label": "Yes",
@@ -13597,71 +13578,73 @@
                             "shortcut": ""
                         }
                     ],
-                    "dataType": "",
-                    "persistent": true,
+                    "validate": {
+                        "required": true,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false,
+                        "onlyAvailableItems": false
+                    },
+                    "key": "isYourSpouseACanadianCitizen",
+                    "type": "radio",
+                    "input": true,
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
                     "protected": false,
-                    "dbIndex": false,
-                    "encrypted": false,
-                    "redrawOn": "",
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
                     "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
                     "customDefaultValue": "",
                     "calculateValue": "",
                     "calculateServer": false,
-                    "allowCalculateOverride": false,
-                    "validate": {
-                        "required": true,
-                        "onlyAvailableItems": false,
-                        "customMessage": "",
-                        "custom": "",
-                        "customPrivate": false,
-                        "json": "",
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                    },
-                    "errorLabel": "",
-                    "key": "isYourSpouseACanadianCitizen",
-                    "tags": [],
-                    "properties": {},
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
                     "conditional": {
                         "show": null,
                         "when": null,
-                        "eq": "",
-                        "json": ""
+                        "eq": ""
                     },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
                     "overlay": {
                         "style": "",
-                        "page": "",
                         "left": "",
                         "top": "",
                         "width": "",
                         "height": ""
                     },
-                    "type": "radio",
-                    "input": true,
-                    "placeholder": "",
-                    "prefix": "",
-                    "suffix": "",
-                    "multiple": false,
-                    "unique": false,
-                    "refreshOn": "",
-                    "dataGridLabel": false,
-                    "widget": null,
-                    "validateOn": "change",
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
+                    "addons": [],
                     "inputType": "radio",
                     "fieldSet": false,
-                    "id": "eolgirh",
-                    "defaultValue": ""
+                    "id": "ef5lhtg"
                 },
                 {
                     "label": "Additional information required",
-                    "tag": "p",
                     "className": "alert alert-info  fa fa-info-circle",
                     "attrs": [
                         {
@@ -13672,27 +13655,11 @@
                     "content": "<Strong> Please be advised your partner will need to sign in to StudentAid BC and provide additional information.</Strong><br/> \r\nPlease check your email after submitting your application. An email will be sent to you with instructions for your partner to sign in. Your application cannot proceed until this information is received.\r\n<br />",
                     "refreshOnChange": false,
                     "customClass": "banner-info",
-                    "hidden": false,
-                    "modalEdit": false,
                     "key": "additionalInformationRequired",
-                    "tags": [],
-                    "properties": {},
                     "conditional": {
                         "show": true,
                         "when": "isYourSpouseACanadianCitizen",
-                        "eq": "yes",
-                        "json": ""
-                    },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
+                        "eq": "yes"
                     },
                     "type": "htmlelement",
                     "input": false,
@@ -13705,9 +13672,11 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -13722,6 +13691,7 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -13731,16 +13701,25 @@
                         "multiple": false,
                         "unique": false
                     },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "eqyaa8b"
+                    "addons": [],
+                    "tag": "p",
+                    "id": "ebrp57"
                 },
                 {
                     "label": "Spouse Estimation",
-                    "tag": "p",
                     "className": "alert alert-warning fa fa-exclamation-circle",
                     "attrs": [
                         {
@@ -13751,27 +13730,11 @@
                     "content": "<strong> Please be advised this could delay your application</strong> \n<br />\nSince we’re unable to validate your partner’s information with Canada Revenue Agency (CRA), please estimate your partner’s income.",
                     "refreshOnChange": false,
                     "customClass": "banner-warning",
-                    "hidden": false,
-                    "modalEdit": false,
                     "key": "spouseEstimation",
-                    "tags": [],
-                    "properties": {},
                     "conditional": {
                         "show": true,
                         "when": "isYourSpouseACanadianCitizen",
-                        "eq": "no",
-                        "json": ""
-                    },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
+                        "eq": "no"
                     },
                     "type": "htmlelement",
                     "input": false,
@@ -13784,9 +13747,11 @@
                     "protected": false,
                     "unique": false,
                     "persistent": false,
+                    "hidden": false,
                     "clearOnHide": true,
                     "refreshOn": "",
                     "redrawOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": false,
                     "labelPosition": "top",
                     "description": "",
@@ -13801,6 +13766,7 @@
                     "calculateValue": "",
                     "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
                     "validateOn": "change",
                     "validate": {
                         "required": false,
@@ -13810,12 +13776,22 @@
                         "multiple": false,
                         "unique": false
                     },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
                     "allowCalculateOverride": false,
                     "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
-                    "id": "eow2c2c"
+                    "addons": [],
+                    "tag": "p",
+                    "id": "eay47qm"
                 },
                 {
                     "title": "Partner Income Panel",
@@ -13840,8 +13816,6 @@
                     "components": [
                         {
                             "label": "HTML",
-                            "tag": "p",
-                            "className": "",
                             "attrs": [
                                 {
                                     "attr": "",
@@ -13851,30 +13825,10 @@
                             "content": "Partner income",
                             "refreshOnChange": false,
                             "customClass": "header-md",
-                            "hidden": false,
-                            "modalEdit": false,
                             "key": "html67",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": "",
-                                "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                                "style": "",
-                                "page": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                            },
                             "type": "htmlelement",
                             "input": false,
+                            "tableView": false,
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -13883,10 +13837,11 @@
                             "protected": false,
                             "unique": false,
                             "persistent": false,
+                            "hidden": false,
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "tableView": false,
+                            "modalEdit": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -13901,6 +13856,7 @@
                             "calculateValue": "",
                             "calculateServer": false,
                             "widget": null,
+                            "attributes": {},
                             "validateOn": "change",
                             "validate": {
                                 "required": false,
@@ -13910,17 +13866,30 @@
                                 "multiple": false,
                                 "unique": false
                             },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
                             "allowCalculateOverride": false,
                             "encrypted": false,
                             "showCharCount": false,
                             "showWordCount": false,
+                            "properties": {},
                             "allowMultipleMasks": false,
-                            "id": "e3pwpa9"
+                            "addons": [],
+                            "tag": "p",
+                            "id": "exhpges"
                         },
                         {
                             "label": "HTML",
-                            "tag": "p",
-                            "className": "",
                             "attrs": [
                                 {
                                     "attr": "",
@@ -13929,43 +13898,24 @@
                             ],
                             "content": "Help text about this section will be displayed here",
                             "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
                             "key": "html68",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": "",
-                                "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                                "style": "",
-                                "page": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                            },
                             "type": "htmlelement",
                             "input": false,
+                            "tableView": false,
                             "placeholder": "",
                             "prefix": "",
+                            "customClass": "",
                             "suffix": "",
                             "multiple": false,
                             "defaultValue": null,
                             "protected": false,
                             "unique": false,
                             "persistent": false,
+                            "hidden": false,
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "tableView": false,
+                            "modalEdit": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -13980,6 +13930,7 @@
                             "calculateValue": "",
                             "calculateServer": false,
                             "widget": null,
+                            "attributes": {},
                             "validateOn": "change",
                             "validate": {
                                 "required": false,
@@ -13989,12 +13940,27 @@
                                 "multiple": false,
                                 "unique": false
                             },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
                             "allowCalculateOverride": false,
                             "encrypted": false,
                             "showCharCount": false,
                             "showWordCount": false,
+                            "properties": {},
                             "allowMultipleMasks": false,
-                            "id": "eedvdyj"
+                            "addons": [],
+                            "tag": "p",
+                            "id": "evpffp"
                         },
                         {
                             "label": "What was your partner’s income (as shown on line 15000 of previous year’s Canada Revenue Agency tax return)? If they didn’t file taxes, enter total income from all sources in and outside of Canada.",
@@ -14069,7 +14035,8 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
-                            "id": "e9mqj6h"
+                            "addons": [],
+                            "id": "eakjnu"
                         },
                         {
                             "label": "<strong>Will your partner be employed full-time or part-time during your study period</strong>",
@@ -14090,12 +14057,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnerEmployed",
                             "type": "radio",
@@ -14148,9 +14115,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "erofrhb"
+                            "id": "enf43pg"
                         },
                         {
                             "label": "<strong>Will  your partner be at home caring for eligible dependent children on a full-time basis during the your entire study period? </strong>",
@@ -14171,12 +14139,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnercaringforeligibleDependent",
                             "type": "radio",
@@ -14229,9 +14197,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "e1z6lyb"
+                            "id": "efeg6kc"
                         },
                         {
                             "label": "<strong>Will your partner be living with you during the your study period?</strong>",
@@ -14252,12 +14221,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnerlivingwithYou",
                             "type": "radio",
@@ -14310,9 +14279,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "ehnyp6c"
+                            "id": "e6f8sq"
                         },
                         {
                             "label": "<strong>Will your partner be a full-time post-secondary student for some or all of your study period?</strong>",
@@ -14333,12 +14303,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnerfulltimeStudent",
                             "type": "radio",
@@ -14391,9 +14361,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "e4neun"
+                            "id": "eeeyy3l"
                         },
                         {
                             "title": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
@@ -14418,86 +14389,79 @@
                             "components": [
                                 {
                                     "label": "<strong>If your partner will be a full-time student, how many weeks of your study period will they also be in studies?</strong>",
-                                    "labelPosition": "top",
-                                    "placeholder": "",
-                                    "description": "",
-                                    "tooltip": "",
                                     "prefix": "Number of Weeks",
-                                    "suffix": "",
-                                    "widget": {
-                                        "type": "input"
-                                    },
-                                    "customClass": "",
-                                    "tabindex": "",
-                                    "autocomplete": "",
-                                    "hidden": false,
-                                    "hideLabel": false,
                                     "mask": false,
-                                    "autofocus": false,
                                     "spellcheck": true,
-                                    "disabled": false,
                                     "tableView": false,
-                                    "modalEdit": false,
-                                    "multiple": false,
-                                    "persistent": true,
                                     "delimiter": false,
                                     "requireDecimal": false,
                                     "inputFormat": "plain",
-                                    "protected": false,
-                                    "dbIndex": false,
-                                    "encrypted": false,
-                                    "redrawOn": "",
-                                    "clearOnHide": true,
-                                    "customDefaultValue": "",
-                                    "calculateValue": "",
-                                    "calculateServer": false,
-                                    "allowCalculateOverride": false,
-                                    "validateOn": "change",
                                     "validate": {
                                         "required": true,
-                                        "customMessage": "",
                                         "custom": "const studyStartTime = new Date(data.studystartDate).getTime();\r\nconst studyEndTime= new Date(row.studyendDate).getTime();\r\nconst difference = (studyEndTime - studyStartTime);\r\nconst studyWeek = difference/(1000 * 60 * 60 * 24 * 7);\r\n// valid = parseInt(week);\r\n// vaild = (data.ifYourPartnerWillBeAFullTimeStudentHowManyWeeksOfYourStudyPeriodWillTheyAlsoBeInStudies <= studyWeek) ? true : \"Must be Equal to or less than Student Applicants study period\";\r\nvaildweek = (data.ifYourPartnerWillBeAFullTimeStudentHowManyWeeksOfYourStudyPeriodWillTheyAlsoBeInStudies <= studyWeek);\r\nvalid = vaildweek ? true : 'Must be Equal to or less than Student Applicants study period';\r\n",
                                         "customPrivate": false,
-                                        "json": "",
-                                        "min": "",
-                                        "max": "",
                                         "strictDateValidation": false,
                                         "multiple": false,
                                         "unique": false,
+                                        "min": "",
+                                        "max": "",
                                         "step": "any",
                                         "integer": ""
                                     },
-                                    "errorLabel": "",
                                     "key": "ifYourPartnerWillBeAFullTimeStudentHowManyWeeksOfYourStudyPeriodWillTheyAlsoBeInStudies",
-                                    "tags": [],
-                                    "properties": {},
                                     "conditional": {
                                         "show": true,
                                         "when": "partnerfulltimeStudent",
-                                        "eq": "yes",
-                                        "json": ""
+                                        "eq": "yes"
                                     },
-                                    "customConditional": "",
-                                    "logic": [],
+                                    "type": "number",
+                                    "input": true,
+                                    "placeholder": "",
+                                    "customClass": "",
+                                    "suffix": "",
+                                    "multiple": false,
+                                    "defaultValue": null,
+                                    "protected": false,
+                                    "unique": false,
+                                    "persistent": true,
+                                    "hidden": false,
+                                    "clearOnHide": true,
+                                    "refreshOn": "",
+                                    "redrawOn": "",
+                                    "modalEdit": false,
+                                    "dataGridLabel": false,
+                                    "labelPosition": "top",
+                                    "description": "",
+                                    "errorLabel": "",
+                                    "tooltip": "",
+                                    "hideLabel": false,
+                                    "tabindex": "",
+                                    "disabled": false,
+                                    "autofocus": false,
+                                    "dbIndex": false,
+                                    "customDefaultValue": "",
+                                    "calculateValue": "",
+                                    "calculateServer": false,
+                                    "widget": {
+                                        "type": "input"
+                                    },
                                     "attributes": {},
+                                    "validateOn": "change",
                                     "overlay": {
                                         "style": "",
-                                        "page": "",
                                         "left": "",
                                         "top": "",
                                         "width": "",
                                         "height": ""
                                     },
-                                    "type": "number",
-                                    "input": true,
-                                    "unique": false,
-                                    "refreshOn": "",
-                                    "dataGridLabel": false,
+                                    "allowCalculateOverride": false,
+                                    "encrypted": false,
                                     "showCharCount": false,
                                     "showWordCount": false,
+                                    "properties": {},
                                     "allowMultipleMasks": false,
-                                    "id": "epdswoon",
-                                    "defaultValue": null
+                                    "addons": [],
+                                    "id": "epd2l8"
                                 }
                             ],
                             "allowPrevious": false,
@@ -14551,26 +14515,18 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tree": false,
+                            "lazyLoad": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "ep5lg4"
+                            "id": "erpsflp"
                         },
                         {
                             "label": "<strong>Will your partner recieve income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities during the your study period?</strong>",
-                            "labelPosition": "top",
                             "optionsLabelPosition": "right",
-                            "description": "",
-                            "tooltip": "",
-                            "customClass": "",
-                            "tabindex": "",
                             "inline": false,
-                            "hidden": false,
-                            "hideLabel": false,
-                            "autofocus": false,
-                            "disabled": false,
                             "tableView": false,
-                            "modalEdit": false,
                             "values": [
                                 {
                                     "label": "Yes",
@@ -14583,67 +14539,70 @@
                                     "shortcut": ""
                                 }
                             ],
-                            "dataType": "",
-                            "persistent": true,
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "onlyAvailableItems": false
+                            },
+                            "key": "partnerrecieveIncomeAssistance",
+                            "type": "radio",
+                            "input": true,
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
                             "protected": false,
-                            "dbIndex": false,
-                            "encrypted": false,
-                            "redrawOn": "",
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
                             "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
                             "customDefaultValue": "",
                             "calculateValue": "",
                             "calculateServer": false,
-                            "allowCalculateOverride": false,
-                            "validate": {
-                                "required": true,
-                                "onlyAvailableItems": false,
-                                "customMessage": "",
-                                "custom": "",
-                                "customPrivate": false,
-                                "json": "",
-                                "strictDateValidation": false,
-                                "multiple": false,
-                                "unique": false
-                            },
-                            "errorLabel": "",
-                            "key": "partnerrecieveIncomeAssistance",
-                            "tags": [],
-                            "properties": {},
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
                             "conditional": {
                                 "show": null,
                                 "when": null,
-                                "eq": "",
-                                "json": ""
+                                "eq": ""
                             },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
                             "overlay": {
                                 "style": "",
-                                "page": "",
                                 "left": "",
                                 "top": "",
                                 "width": "",
                                 "height": ""
                             },
-                            "type": "radio",
-                            "input": true,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "unique": false,
-                            "refreshOn": "",
-                            "dataGridLabel": false,
-                            "widget": null,
-                            "validateOn": "change",
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
                             "showCharCount": false,
                             "showWordCount": false,
+                            "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "ealunos",
-                            "defaultValue": ""
+                            "id": "erbduch"
                         },
                         {
                             "title": "Provide the total income assistance/social assistance (welfare) and/or BC income assistance for persons with disabilities that your partner will be receiving during your study period Panel",
@@ -14739,7 +14698,8 @@
                                     "showWordCount": false,
                                     "properties": {},
                                     "allowMultipleMasks": false,
-                                    "id": "e9k0k58"
+                                    "addons": [],
+                                    "id": "ec9ggzb"
                                 }
                             ],
                             "allowPrevious": false,
@@ -14793,10 +14753,12 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tree": false,
+                            "lazyLoad": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "ey6jmc4b"
+                            "id": "edkwdv"
                         },
                         {
                             "label": "<strong>Will your partner be in receipt of Employment Insurance benefits during the your study period?</strong>",
@@ -14817,12 +14779,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partneremploymentInsurance",
                             "type": "radio",
@@ -14875,9 +14837,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "enklghw"
+                            "id": "e31a1pa"
                         },
                         {
                             "title": "Will your partner be in receipt of Employment Insurance benefits during the your study period Panel",
@@ -14974,7 +14937,8 @@
                                     "showWordCount": false,
                                     "properties": {},
                                     "allowMultipleMasks": false,
-                                    "id": "ei87gnna"
+                                    "addons": [],
+                                    "id": "ei6mju"
                                 }
                             ],
                             "allowPrevious": false,
@@ -15028,10 +14992,12 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tree": false,
+                            "lazyLoad": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "ei0vzm"
+                            "id": "ew2mb4"
                         },
                         {
                             "label": "<strong>Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period?</strong>",
@@ -15052,12 +15018,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnerpermanentdisabilityBenefits",
                             "type": "radio",
@@ -15110,9 +15076,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "ef7th7s"
+                            "id": "en3em5g"
                         },
                         {
                             "title": "Will your partner be in receipt of federal or provincial permanent disability benefits during the your study period Panel",
@@ -15209,7 +15176,8 @@
                                     "showWordCount": false,
                                     "properties": {},
                                     "allowMultipleMasks": false,
-                                    "id": "ecbhi1"
+                                    "addons": [],
+                                    "id": "eitn5um"
                                 }
                             ],
                             "allowPrevious": false,
@@ -15263,10 +15231,12 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tree": false,
+                            "lazyLoad": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "em80rob"
+                            "id": "e827a1k"
                         },
                         {
                             "label": "<strong>Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period?</strong>",
@@ -15287,12 +15257,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnerstudentLoan",
                             "type": "radio",
@@ -15345,9 +15315,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "eoxznh4"
+                            "id": "eu8nr9s"
                         },
                         {
                             "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your study period Panel",
@@ -15443,7 +15414,8 @@
                                     "showWordCount": false,
                                     "properties": {},
                                     "allowMultipleMasks": false,
-                                    "id": "exjd5dg"
+                                    "addons": [],
+                                    "id": "esoydt6"
                                 }
                             ],
                             "allowPrevious": false,
@@ -15497,10 +15469,12 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tree": false,
+                            "lazyLoad": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "et3rj9"
+                            "id": "ets4ead"
                         },
                         {
                             "label": "<strong>Will your partner be paying for child support and/or spousal support during the your study period?</strong>",
@@ -15521,12 +15495,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "partnerchildSupport",
                             "type": "radio",
@@ -15579,9 +15553,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "eboa3up"
+                            "id": "e12r1qh"
                         },
                         {
                             "title": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
@@ -15677,7 +15652,8 @@
                                     "showWordCount": false,
                                     "properties": {},
                                     "allowMultipleMasks": false,
-                                    "id": "epwpsk9"
+                                    "addons": [],
+                                    "id": "ehvnz5p"
                                 }
                             ],
                             "allowPrevious": false,
@@ -15731,10 +15707,12 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tree": false,
+                            "lazyLoad": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "ei3r3id"
+                            "id": "e7t47mk"
                         },
                         {
                             "label": "<strong>Durring your study period, will your partner be taking care of eligible dependants? </strong>",
@@ -15755,12 +15733,12 @@
                             ],
                             "validate": {
                                 "required": true,
-                                "onlyAvailableItems": false,
                                 "custom": "",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
-                                "unique": false
+                                "unique": false,
+                                "onlyAvailableItems": false
                             },
                             "key": "durringYourStudyPeriodWillYourPartnerBeTakingCareOfEligibleDependants",
                             "type": "radio",
@@ -15813,9 +15791,10 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "e887jy"
+                            "id": "elmurep"
                         }
                     ],
                     "allowPrevious": false,
@@ -15869,10 +15848,12 @@
                     "showWordCount": false,
                     "properties": {},
                     "allowMultipleMasks": false,
+                    "addons": [],
                     "tree": false,
+                    "lazyLoad": false,
                     "theme": "default",
                     "breadcrumb": "default",
-                    "id": "etvo8m"
+                    "id": "evhpw5x"
                 }
             ],
             "placeholder": "",
@@ -15910,8 +15891,10 @@
             "showCharCount": false,
             "showWordCount": false,
             "allowMultipleMasks": false,
+            "addons": [],
             "tree": false,
-            "id": "esudth"
+            "lazyLoad": false,
+            "id": "ecc7kw"
         },
         {
             "title": "Parent information",
@@ -27734,5 +27717,5 @@
     "name": "SFAA2023-24",
     "machineName": "SFAA2023-24",
     "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2022-02-16T23:04:55.535Z"
+    "modified": "2022-02-16T23:19:03.226Z"
 }
