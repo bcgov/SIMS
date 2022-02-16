@@ -46,7 +46,8 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
 
     const designationModel = reactive({} as DesignationModel);
-    designationModel.institutionName = institutionState.value.operatingName;
+    designationModel.institutionName =
+      institutionState.value.legalOperatingName;
     designationModel.institutionType = institutionState.value.institutionType;
     designationModel.isBCPrivate = institutionState.value.isBCPrivate;
     designationModel.viewMode = DesignationFormViewModes.viewOnly;

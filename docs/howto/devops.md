@@ -24,7 +24,7 @@ N.B: ROOT means repository root directory
 ## Prerequisites
 
 1. OpenShift namespace
-2. [OpenShit Client (OC CLI)](https://docs.openshift.com/container-platform/4.2/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli_cli-developer-commands)
+2. [OpenShift Client (OC CLI)](https://docs.openshift.com/container-platform/4.2/cli_reference/openshift_cli/getting-started-cli.html#cli-installing-cli_cli-developer-commands)
 3. Keycloak realm
 4. [Docker](https://store.docker.com/search?type=edition&offering=community) (For local development only)
 5. Make cmd (For local development only - windows users)

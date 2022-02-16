@@ -1,27 +1,44 @@
 import {
+  PaginatedResults,
   COESummaryDTO,
   ApplicationDetailsForCOEDTO,
   COEDeniedReasonDto,
   DenyConfirmationOfEnrollment,
   EnrollmentPeriod,
+  PaginationOptions,
+  PaginationParams,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
+import { addSortOptions, addPaginationOptions } from "@/helpers";
 
 export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   public async getCOESummary(
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
-  ): Promise<COESummaryDTO[]> {
-    try {
-      const response = await this.apiClient.get(
-        `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<COESummaryDTO>> {
+    let url = `institution/location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}`;
+
+    // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
+    url = addPaginationOptions(
+      url,
+      paginationOptions.page,
+      paginationOptions.pageLimit,
+      "?",
+    );
+
+    //Adding Sort params. There is always a default sortField and sortOrder for COE.
+    url = addSortOptions(
+      url,
+      paginationOptions.sortField,
+      paginationOptions.sortOrder,
+    );
+
+    // Search criteria is populated only when search box has search text in it.
+    if (paginationOptions.searchCriteria) {
+      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
     }
+    return this.getCallTyped<PaginatedResults<COESummaryDTO>>(url);
   }
 
   public async getApplicationForCOE(
