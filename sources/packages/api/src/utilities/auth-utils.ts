@@ -63,9 +63,9 @@ export function getUserFullName(user: {
   firstName: string;
   lastName: string;
 }): string {
-  return `${(user.firstName ?? "").trim()} ${(
-    user.lastName ?? ""
-  ).trim()}`.trim();
+  return user
+    ? `${(user.firstName ?? "").trim()} ${(user.lastName ?? "").trim()}`.trim()
+    : "";
 }
 
 /**
