@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <formio formName="institutiondashboard"></formio>
+    <formio formName="institutionwelcomepage"></formio>
   </v-container>
 </template>
 
