@@ -12,7 +12,7 @@ import FormUploadService from "../../services/FormUploadService";
 import { FormIOCustomEvent } from "@/types";
 
 export default {
-  emits: ["submitted", "loaded", "changed", "customEvent"],
+  emits: ["submitted", "loaded", "changed", "customEvent", "render"],
   props: {
     formName: {
       type: String,
@@ -34,7 +34,7 @@ export default {
     // Update the form submission data and triggers the form redraw.
     // Redrawing ensures that components like dropdowns are going to
     // display the correct label associated with the correct value
-    // that was loaded into the sumission data.
+    // that was loaded into the submission data.
     const updateFormSubmissionData = () => {
       if (form && props.data) {
         form.submission = {
@@ -99,12 +99,19 @@ export default {
         context.emit("changed", form, event);
       });
 
-      form.on("submit", (submision: any) => {
-        context.emit("submitted", submision.data, form);
+      form.on("submit", (submission: any) => {
+        context.emit("submitted", submission.data, form);
       });
 
       form.on("customEvent", (event: FormIOCustomEvent) => {
         context.emit("customEvent", form, event);
+      });
+
+      // The form is done rendering and has completed the attach phase.
+      // Happens, for instance, after the form has the 'redraw' method
+      // executed, for instance, after data property is changed.
+      form.on("render", (event: HTMLElement) => {
+        context.emit("render", form, event);
       });
     });
 
