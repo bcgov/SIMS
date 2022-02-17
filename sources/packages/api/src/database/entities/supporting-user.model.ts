@@ -76,6 +76,7 @@ export class SupportingUser extends RecordDataModel {
   @Column({
     name: "supporting_user_type",
     type: "enum",
+    enum: SupportingUserType,
     nullable: false,
   })
   supportingUserType: SupportingUserType;

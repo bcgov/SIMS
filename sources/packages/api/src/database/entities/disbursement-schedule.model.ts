@@ -89,6 +89,7 @@ export class DisbursementSchedule extends RecordDataModel {
   @Column({
     name: "coe_status",
     type: "enum",
+    enum: COEStatus,
   })
   coeStatus: COEStatus;
 

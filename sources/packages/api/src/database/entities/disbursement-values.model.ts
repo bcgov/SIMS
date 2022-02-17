@@ -26,6 +26,7 @@ export class DisbursementValue extends RecordDataModel {
   @Column({
     name: "value_type",
     type: "enum",
+    enum: DisbursementValueType,
     nullable: false,
   })
   valueType: DisbursementValueType;
