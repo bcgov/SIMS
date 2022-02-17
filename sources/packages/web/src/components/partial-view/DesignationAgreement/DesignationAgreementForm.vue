@@ -35,7 +35,7 @@ export default {
     const MANAGE_LOCATIONS_LINK = "goToManageLocations";
     const MANAGE_USERS_LINK = "goToManageUsers";
 
-    const formRender = async () => {
+    const formRender = () => {
       RouteHelper.AssociateHyperlinkClick(MANAGE_LOCATIONS_LINK, () =>
         router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS }),
       );
