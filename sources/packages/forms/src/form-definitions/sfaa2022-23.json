@@ -10609,7 +10609,7 @@
                     "allowCalculateOverride": false,
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -10660,7 +10660,7 @@
                     "addons": [],
                     "inputType": "radio",
                     "fieldSet": false,
-                    "id": "e76zqu",
+                    "id": "epq5uo",
                     "defaultValue": ""
                 },
                 {
@@ -12339,7 +12339,7 @@
                                             "addons": []
                                         }
                                     ],
-                                    "id": "ecpkm9j00000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ecpkm9j00000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -13336,7 +13336,7 @@
                     "encrypted": false,
                     "redrawOn": "data",
                     "customDefaultValue": "",
-                    "calculateValue": "//alert (data.dependantstatus);\nif (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'other') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue ('dependant');\n}\nelse {\n  instance.setValue ('independant');\n}",
+                    "calculateValue": "if (data.hasDependents === 'no' && (data.relationshipStatus === 'single' || data.relationshipStatus === 'other') && data.outOfHighSchoolFor4Years === 'no' && data.howWillYouBeAttendingTheProgram === \"Full Time\") {\n  instance.setValue ('dependant');\n}\nelse {\n  instance.setValue ('independant');\n}",
                     "calculateServer": true,
                     "key": "dependantstatus",
                     "tags": [],
@@ -13394,7 +13394,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "inputType": "hidden",
-                    "id": "egb193"
+                    "id": "e18odfo"
                 }
             ],
             "placeholder": "",
@@ -27787,5 +27787,5 @@
     "name": "SFAA2022-23",
     "machineName": "SFAA2022-23",
     "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2022-02-16T23:23:07.557Z"
+    "modified": "2022-02-17T17:05:30.826Z"
 }
