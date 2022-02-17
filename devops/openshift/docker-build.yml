@@ -17,12 +17,12 @@ objects:
     lookupPolicy:
       local: false
     metadata:
-      name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+      name: ${BASE_IMAGE_NAME}
     tag:
       annotations: null
       from:
         kind: DockerImage
-        name: ${BASE_IMAGE_REPO}${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+        name: ${BASE_IMAGE_REPO}${BASE_IMAGE_NAME}
       importPolicy:
         scheduled: true
       referencePolicy:
@@ -63,7 +63,7 @@ objects:
             name: artifactory-secret-credential
           from:
             kind: ImageStreamTag
-            name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+            name: ${BASE_IMAGE_NAME}
           buildArgs:
             - name: ${ARG_KEY_1}
               value: ${ARG_VAL_1}
@@ -89,8 +89,6 @@ parameters:
     value: "latest"
   - name: BASE_IMAGE_REPO
   - name: BASE_IMAGE_NAME
-    required: true
-  - name: BASE_IMAGE_TAG
     required: true
   - name: CPU_LIMIT
     value: "2"
