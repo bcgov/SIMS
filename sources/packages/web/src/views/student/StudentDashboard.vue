@@ -1,12 +1,12 @@
 <template>
-  <full-page-container>
+  <v-container>
     <RestrictionBanner
       v-if="hasRestriction"
       :restrictionMessage="restrictionMessage"
     />
     <CheckValidSINBanner />
-    <formio formName="studentdashboard"></formio>
-  </full-page-container>
+    <formio formName="studentwelcomepage"></formio>
+  </v-container>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "../../constants/routes/RouteConstants";
@@ -16,13 +16,11 @@ import { useStore } from "vuex";
 import { StudentService } from "@/services/StudentService";
 import formio from "@/components/generic/formio.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 
 export default {
   components: {
     formio,
-    FullPageContainer,
     RestrictionBanner,
     CheckValidSINBanner,
   },
