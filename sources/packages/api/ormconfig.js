@@ -24,5 +24,4 @@ module.exports = {
     entitiesDir: "src/database/entities",
   },
   entities,
-  schema: process.env.DB_SCHEMA || "sims",
 };
