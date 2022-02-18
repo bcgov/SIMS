@@ -1,9 +1,13 @@
+const directLoad =
+  process.env.ENVIRONMENT === "test" || process.env.NODE_ENV === "cmd";
 
-const directLoad = (process.env.ENVIRONMENT === "test" || process.env.NODE_ENV === "cmd")
+const entities = directLoad
+  ? ["src/database/entities/*.model{.ts,.js}"]
+  : ["dist/database/entities/*.model{.ts,.js}"];
 
-const entities = directLoad ? ["src/database/entities/*.model{.ts,.js}"] : ["dist/database/entities/*.model{.ts,.js}"];
-
-const migrations = directLoad ? ["src/database/migrations/*{.ts,.js}"] : ["dist/database/migrations/*{.ts,.js}"];
+const migrations = directLoad
+  ? ["src/database/migrations/*{.ts,.js}"]
+  : ["dist/database/migrations/*{.ts,.js}"];
 
 module.exports = {
   type: "postgres",
@@ -12,11 +16,12 @@ module.exports = {
   database: process.env.POSTGRES_DB || "aest",
   username: process.env.POSTGRES_USER || "admin",
   password: process.env.POSTGRES_PASSWORD,
+  schema: process.env.DB_SCHEMA || "sims",
   synchronize: false,
   migrations,
   cli: {
     migrationsDir: "src/database/migrations",
-    entitiesDir: "src/database/entities"
+    entitiesDir: "src/database/entities",
   },
   entities,
   schema: process.env.DB_SCHEMA || "sims",
