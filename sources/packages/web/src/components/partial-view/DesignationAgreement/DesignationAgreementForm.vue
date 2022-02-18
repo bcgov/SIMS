@@ -4,7 +4,7 @@
     :data="model"
     :readOnly="readOnly"
     @submitted="submitDesignation"
-    @loaded="formLoaded"
+    @render="formRender"
   ></formio>
 </template>
 
@@ -35,7 +35,7 @@ export default {
     const MANAGE_LOCATIONS_LINK = "goToManageLocations";
     const MANAGE_USERS_LINK = "goToManageUsers";
 
-    const formLoaded = async () => {
+    const formRender = () => {
       RouteHelper.AssociateHyperlinkClick(MANAGE_LOCATIONS_LINK, () =>
         router.push({ name: InstitutionRoutesConst.MANAGE_LOCATIONS }),
       );
@@ -52,7 +52,7 @@ export default {
       return props.model.viewMode === DesignationFormViewModes.viewOnly;
     });
 
-    return { formLoaded, submitDesignation, readOnly };
+    return { formRender, submitDesignation, readOnly };
   },
 };
 </script>

@@ -19,7 +19,7 @@ On top of Node, the project is using the Nestjs framework because it provides an
 
 Please find below some references to the main technologies being used on the application backend.
 
-- Node: v14 (<https://nodejs.org/en/>)
+- Node: v16 (<https://nodejs.org/en/>)
 - Nestjs: v7 (<https://docs.nestjs.com/>)
 - Typescript: <https://www.typescriptlang.org/>
 
