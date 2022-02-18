@@ -1,11 +1,11 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import { COEDeniedReason } from "../../database/entities/coe-denied-reason.model";
 
 @Injectable()
 export class COEDeniedReasonService extends RecordDataModelService<COEDeniedReason> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(COEDeniedReason));
   }
 

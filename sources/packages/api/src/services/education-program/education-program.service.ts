@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   EducationProgram,
   EducationProgramOffering,
@@ -34,7 +34,7 @@ import {
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
-  constructor(@Inject("Connection") private readonly connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(EducationProgram));
     this.offeringsRepo = connection.getRepository(EducationProgramOffering);
   }

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Restriction, RestrictionType } from "../../database/entities";
 import { Connection, Repository } from "typeorm";
@@ -10,7 +10,7 @@ import { EnsureFederalRestrictionResult } from "./models/federal-restriction.mod
  */
 @Injectable()
 export class RestrictionService extends RecordDataModelService<Restriction> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(Restriction));
   }
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Connection, Brackets } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { SFASApplication } from "../../database/entities";
@@ -17,7 +17,7 @@ export class SFASApplicationService
   extends DataModelService<SFASApplication>
   implements SFASDataImporter
 {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(SFASApplication));
   }
 

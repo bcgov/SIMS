@@ -1,6 +1,6 @@
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   ConfigService,
   FederalRestrictionService,
@@ -25,7 +25,7 @@ import { ProcessSFTPResponseResult } from "./fed-restriction-integration.models"
 export class FedRestrictionProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
-    @Inject("Connection") private readonly connection: Connection,
+    private readonly connection: Connection,
     config: ConfigService,
     private readonly restrictionService: RestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,

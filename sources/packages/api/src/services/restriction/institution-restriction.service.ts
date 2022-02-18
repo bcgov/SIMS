@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import { RESTRICTION_NOT_ACTIVE } from "./student-restriction.service";
@@ -22,7 +22,7 @@ import { CustomNamedError } from "../../utilities";
  */
 @Injectable()
 export class InstitutionRestrictionService extends RecordDataModelService<InstitutionRestriction> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(InstitutionRestriction));
   }
 

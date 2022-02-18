@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   Brackets,
   Connection,
@@ -25,7 +25,7 @@ import { SequenceControlService } from "../sequence-control/sequence-control.ser
 @Injectable()
 export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
   constructor(
-    @Inject("Connection") connection: Connection,
+    connection: Connection,
     private readonly sequenceService: SequenceControlService,
   ) {
     super(connection.getRepository(MSFAANumber));

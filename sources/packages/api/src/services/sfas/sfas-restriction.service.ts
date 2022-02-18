@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
 import { DataModelService } from "../../database/data.model.service";
 import { SFASRestriction } from "../../database/entities";
@@ -19,7 +19,7 @@ export class SFASRestrictionService
   extends DataModelService<SFASRestriction>
   implements SFASDataImporter
 {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(SFASRestriction));
   }
 

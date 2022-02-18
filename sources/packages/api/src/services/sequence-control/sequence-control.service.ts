@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Connection, EntityManager } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { SequenceControl } from "../../database/entities";
@@ -20,7 +20,7 @@ const TRANSACTION_IDLE_TIMEOUT_SECONDS = 30;
  */
 @Injectable()
 export class SequenceControlService extends RecordDataModelService<SequenceControl> {
-  constructor(@Inject("Connection") private readonly connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(SequenceControl));
   }
 

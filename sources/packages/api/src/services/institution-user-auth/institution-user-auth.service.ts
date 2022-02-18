@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection } from "typeorm";
 import { InstitutionUserAuth } from "../../database/entities";
@@ -12,7 +12,7 @@ import { InstitutionLocationService } from "..";
 @Injectable()
 export class InstitutionUserAuthService extends RecordDataModelService<InstitutionUserAuth> {
   constructor(
-    @Inject("Connection") connection: Connection,
+    connection: Connection,
     private readonly locationService: InstitutionLocationService,
   ) {
     super(connection.getRepository(InstitutionUserAuth));

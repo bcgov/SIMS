@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { LoggerService } from "../logger/logger.service";
 import { Connection } from "typeorm";
 import { InjectLogger } from "../common";
@@ -8,7 +8,7 @@ export class DatabaseService {
   @InjectLogger()
   logger: LoggerService;
 
-  constructor(@Inject("Connection") public connection: Connection) {
+  constructor(public connection: Connection) {
     connection
       .query(`SET SCHEMA '${process.env.DB_SCHEMA || "sims"}';`)
       .then(() => {
