@@ -61,7 +61,7 @@
   </full-page-container>
   <ConfirmEditApplication
     ref="editApplicationModal"
-    @confirmEditApplication="editApplicaion"
+    @confirmEditApplication="editApplication"
   />
 </template>
 
@@ -436,13 +436,13 @@ export default {
       applicationWizard.nextPage();
     };
 
-    const editApplicaion = () => {
+    const editApplication = () => {
       applicationWizard.submit();
     };
 
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
-        editApplicaion();
+        editApplication();
       }
     };
 
@@ -472,7 +472,7 @@ export default {
       isReadOnly,
       notDraft,
       confirmEditApplication,
-      editApplicaion,
+      editApplication,
       editApplicationModal,
       hasRestriction,
       restrictionMessage,

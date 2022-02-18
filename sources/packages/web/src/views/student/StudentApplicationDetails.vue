@@ -143,7 +143,7 @@ export default {
       );
     };
 
-    const editApplicaion = async () => {
+    const editApplication = async () => {
       try {
         await getProgramYear();
         router.push({
@@ -176,7 +176,7 @@ export default {
     };
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
-        editApplicaion();
+        editApplication();
       }
     };
     const loadMenu = () => {
@@ -194,7 +194,7 @@ export default {
             command:
               applicationDetails.value.applicationStatus ===
               ApplicationStatus.draft
-                ? editApplicaion
+                ? editApplication
                 : confirmEditApplication,
           },
           { separator: true },
@@ -259,7 +259,7 @@ export default {
       ApplicationStatus,
       showViewAssessment,
       editApplicationModal,
-      editApplicaion,
+      editApplication,
       viewApplicaion,
       hasRestriction,
       restrictionMessage,
