@@ -1,5 +1,9 @@
 {
+    "title": "Student Welcome Page",
+    "display": "form",
     "type": "form",
+    "name": "studentwelcomepage",
+    "path": "studentwelcomepage",
     "tags": [
         "common"
     ],
@@ -748,8 +752,8 @@
                                             "label": "HTML",
                                             "labelWidth": "",
                                             "labelMargin": "",
-                                            "tag": "div",
-                                            "className": "",
+                                            "tag": "p",
+                                            "className": "h-75",
                                             "attrs": [
                                                 {
                                                     "attr": "",
@@ -758,7 +762,7 @@
                                             ],
                                             "content": "Text will go here about starting your application using the button provided.",
                                             "refreshOnChange": false,
-                                            "customClass": "formio-text mb-2",
+                                            "customClass": "formio-text",
                                             "hidden": false,
                                             "modalEdit": false,
                                             "key": "html5",
@@ -824,7 +828,7 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "id": "e7qgqtt"
+                                            "id": "e42k9bj"
                                         },
                                         {
                                             "label": "Start application",
@@ -840,7 +844,7 @@
                                             "shortcut": "",
                                             "description": "",
                                             "tooltip": "",
-                                            "customClass": "mt-2",
+                                            "customClass": "",
                                             "tabindex": "",
                                             "disableOnInvalid": false,
                                             "hidden": false,
@@ -908,7 +912,7 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "id": "e12o5fb"
+                                            "id": "e14rd7f"
                                         }
                                     ],
                                     "id": "erqhyly"
@@ -966,11 +970,41 @@
                             "tableView": false,
                             "components": [
                                 {
+                                    "title": "Panel",
+                                    "labelWidth": "",
+                                    "labelMargin": "",
+                                    "theme": "default",
+                                    "tooltip": "",
+                                    "customClass": "",
                                     "collapsible": false,
+                                    "hidden": false,
                                     "hideLabel": true,
+                                    "disabled": false,
+                                    "modalEdit": false,
                                     "key": "panel4",
+                                    "tags": [],
+                                    "properties": {},
+                                    "customConditional": "",
+                                    "conditional": {
+                                        "json": "",
+                                        "show": null,
+                                        "when": null,
+                                        "eq": ""
+                                    },
+                                    "logic": [],
+                                    "attributes": {},
+                                    "overlay": {
+                                        "style": "",
+                                        "page": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
                                     "type": "panel",
                                     "label": "Panel",
+                                    "breadcrumb": "default",
+                                    "tabindex": "",
                                     "input": false,
                                     "tableView": false,
                                     "components": [
@@ -1046,14 +1080,14 @@
                                             "allowMultipleMasks": false,
                                             "addons": [],
                                             "tag": "p",
-                                            "id": "eoe5q5i"
+                                            "id": "ef7tjnd"
                                         },
                                         {
                                             "label": "HTML",
                                             "labelWidth": "",
                                             "labelMargin": "",
                                             "tag": "p",
-                                            "className": "",
+                                            "className": "h-75",
                                             "attrs": [
                                                 {
                                                     "attr": "",
@@ -1128,68 +1162,41 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "id": "eb3owl"
+                                            "id": "e8oejj"
                                         },
                                         {
                                             "label": "Manage loan",
-                                            "labelWidth": "",
-                                            "labelMargin": "",
                                             "action": "custom",
                                             "showValidations": false,
-                                            "theme": "primary",
-                                            "size": "md",
-                                            "block": false,
                                             "leftIcon": "fa fa-external-link",
-                                            "rightIcon": "",
-                                            "shortcut": "",
-                                            "description": "",
-                                            "tooltip": "",
-                                            "customClass": "",
-                                            "tabindex": "",
-                                            "disableOnInvalid": false,
-                                            "hidden": false,
-                                            "autofocus": false,
-                                            "disabled": false,
                                             "tableView": false,
-                                            "modalEdit": false,
                                             "key": "manageLoan",
-                                            "tags": [],
-                                            "properties": {},
-                                            "conditional": {
-                                                "show": null,
-                                                "when": null,
-                                                "eq": "",
-                                                "json": ""
-                                            },
-                                            "customConditional": "",
-                                            "logic": [],
-                                            "attributes": {},
-                                            "overlay": {
-                                                "style": "",
-                                                "page": "",
-                                                "left": "",
-                                                "top": "",
-                                                "width": "",
-                                                "height": ""
-                                            },
                                             "type": "button",
                                             "custom": "window.location.href = \"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\";",
                                             "input": true,
                                             "placeholder": "",
                                             "prefix": "",
+                                            "customClass": "",
                                             "suffix": "",
                                             "multiple": false,
                                             "defaultValue": null,
                                             "protected": false,
                                             "unique": false,
                                             "persistent": false,
+                                            "hidden": false,
                                             "clearOnHide": true,
                                             "refreshOn": "",
                                             "redrawOn": "",
+                                            "modalEdit": false,
                                             "dataGridLabel": true,
                                             "labelPosition": "top",
+                                            "description": "",
                                             "errorLabel": "",
+                                            "tooltip": "",
                                             "hideLabel": false,
+                                            "tabindex": "",
+                                            "disabled": false,
+                                            "autofocus": false,
                                             "dbIndex": false,
                                             "customDefaultValue": "",
                                             "calculateValue": "",
@@ -1197,6 +1204,7 @@
                                             "widget": {
                                                 "type": "input"
                                             },
+                                            "attributes": {},
                                             "validateOn": "change",
                                             "validate": {
                                                 "required": false,
@@ -1206,43 +1214,54 @@
                                                 "multiple": false,
                                                 "unique": false
                                             },
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": ""
+                                            },
+                                            "overlay": {
+                                                "style": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
                                             "allowCalculateOverride": false,
                                             "encrypted": false,
                                             "showCharCount": false,
                                             "showWordCount": false,
+                                            "properties": {},
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "id": "etzx7"
+                                            "size": "md",
+                                            "rightIcon": "",
+                                            "block": false,
+                                            "disableOnInvalid": false,
+                                            "theme": "primary",
+                                            "id": "emierm8"
                                         }
                                     ],
                                     "placeholder": "",
                                     "prefix": "",
-                                    "customClass": "",
                                     "suffix": "",
                                     "multiple": false,
                                     "defaultValue": null,
                                     "protected": false,
                                     "unique": false,
                                     "persistent": false,
-                                    "hidden": false,
                                     "clearOnHide": false,
                                     "refreshOn": "",
                                     "redrawOn": "",
-                                    "modalEdit": false,
                                     "dataGridLabel": false,
                                     "labelPosition": "top",
                                     "description": "",
                                     "errorLabel": "",
-                                    "tooltip": "",
-                                    "tabindex": "",
-                                    "disabled": false,
                                     "autofocus": false,
                                     "dbIndex": false,
                                     "customDefaultValue": "",
                                     "calculateValue": "",
                                     "calculateServer": false,
                                     "widget": null,
-                                    "attributes": {},
                                     "validateOn": "change",
                                     "validate": {
                                         "required": false,
@@ -1252,31 +1271,15 @@
                                         "multiple": false,
                                         "unique": false
                                     },
-                                    "conditional": {
-                                        "show": null,
-                                        "when": null,
-                                        "eq": ""
-                                    },
-                                    "overlay": {
-                                        "style": "",
-                                        "left": "",
-                                        "top": "",
-                                        "width": "",
-                                        "height": ""
-                                    },
                                     "allowCalculateOverride": false,
                                     "encrypted": false,
                                     "showCharCount": false,
                                     "showWordCount": false,
-                                    "properties": {},
                                     "allowMultipleMasks": false,
                                     "addons": [],
                                     "tree": false,
                                     "lazyLoad": false,
-                                    "title": "Panel",
-                                    "theme": "default",
-                                    "breadcrumb": "default",
-                                    "id": "eg9aer9q"
+                                    "id": "ewdx2u9"
                                 }
                             ],
                             "placeholder": "",
