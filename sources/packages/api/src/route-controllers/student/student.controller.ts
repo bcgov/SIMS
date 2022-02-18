@@ -208,13 +208,16 @@ export class StudentController extends BaseController {
    * @param programId
    * @returns StudentEducationProgramDto
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  // TODO: this controller is used by both student and aest,
+  // TODO: add other decorators after router POC is merged
+  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
   @Get("/education-program/:programId")
   async getStudentEducationProgram(
     @Param("programId") programId: number,
   ): Promise<StudentEducationProgramDto> {
     const educationProgram =
       await this.programService.getStudentEducationProgram(programId);
+
     return {
       id: educationProgram.id,
       name: educationProgram.name,

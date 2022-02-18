@@ -79,9 +79,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.deliveredOnline",
       ])
       .where("programs.id = :programId", { programId })
-      .andWhere("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
-      })
       .getOne();
   }
 
@@ -431,17 +428,21 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       offeringExistsQuery.andWhere("programYear.active = true");
     }
     offeringExistsQuery.select("1");
-    return this.repo
+
+    const programQuery = this.repo
       .createQueryBuilder("programs")
-      .where("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
-      })
       .andWhere(`exists(${offeringExistsQuery.getQuery()})`)
       .select("programs.id")
       .addSelect("programs.name")
       .setParameters({ locationId, programYearId })
-      .orderBy("programs.name")
-      .getMany();
+      .orderBy("programs.name");
+
+    if (!includeInActivePY) {
+      programQuery.andWhere("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      });
+    }
+    return programQuery.getMany();
   }
 
   /**

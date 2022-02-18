@@ -94,6 +94,14 @@ import {
   OFFERING_START_DATE_ERROR,
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
+  LOCATIONS_DROPDOWN_KEY,
+  PROGRAMS_DROPDOWN_KEY,
+  OFFERINGS_DROPDOWN_KEY,
+  SELECTED_OFFERING_DATE_KEY,
+  SELECTED_PROGRAM_DESC_KEY,
+  OFFERING_INTENSITY_KEY,
+  PROGRAM_NOT_LISTED,
+  OFFERING_NOT_LISTED,
 } from "@/constants";
 
 export default {
@@ -260,15 +268,9 @@ export default {
       }
     };
 
-    // Components names on Form.IO definition that will be manipulated.
-    const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
-    const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
-    const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
-    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
-    const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
-    const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
-    const PROGRAM_NOT_LISTED = "myProgramNotListed";
-    const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
+    const getSelectedId = (form: any) => {
+      return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
+    };
 
     const formLoaded = async (form: any) => {
       applicationWizard = form;
@@ -290,10 +292,7 @@ export default {
       applicationWizard.on("nextPage", prevNextNavigation);
 
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
-      const selectedLocationId = formioUtils.getComponentValueByKey(
-        form,
-        LOCATIONS_DROPDOWN_KEY,
-      );
+      const selectedLocationId = getSelectedId(form);
 
       if (selectedLocationId) {
         // when isReadOnly.value is true, then consider
@@ -364,7 +363,10 @@ export default {
         form,
         LOCATIONS_DROPDOWN_KEY,
       );
-      if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
+      if (
+        event.changed?.component.key === LOCATIONS_DROPDOWN_KEY ||
+        event.changed?.component.key === OFFERING_INTENSITY_KEY
+      ) {
         /*
           If `programnotListed` is already checked in the draft and
           when student edit the draft application and changes the
@@ -373,16 +375,19 @@ export default {
         await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
           programnotListed: false,
         });
+        const selectedLocationId = getSelectedId(form);
 
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadProgramsForLocation(
-          form,
-          +event.changed.value,
-          PROGRAMS_DROPDOWN_KEY,
-          props.programYearId,
-          isReadOnly.value,
-        );
+        if (selectedLocationId) {
+          // when isReadOnly.value is true, then consider
+          // both active and inactive program year.
+          await formioDataLoader.loadProgramsForLocation(
+            form,
+            +selectedLocationId,
+            PROGRAMS_DROPDOWN_KEY,
+            props.programYearId,
+            isReadOnly.value,
+          );
+        }
       }
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
         if (+event.changed.value > 0) {
