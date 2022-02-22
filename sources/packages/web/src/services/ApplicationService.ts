@@ -80,11 +80,11 @@ export class ApplicationService {
     return ApiClient.Application.submitApplication(applicationId, payload);
   }
 
-  public async getProgramYearOfApplication(
+  public async getApplicationWithPY(
     applicationId: number,
     includeInActivePY?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
-    return ApiClient.Application.getProgramYearOfApplication(
+    return ApiClient.Application.getApplicationWithPY(
       applicationId,
       includeInActivePY,
     );

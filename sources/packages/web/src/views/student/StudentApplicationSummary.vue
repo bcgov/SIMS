@@ -39,7 +39,7 @@ import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import { ApplicationStatus, ApplicationWithProgramYearDto } from "@/types";
+import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
@@ -63,7 +63,6 @@ export default {
   setup() {
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
-    let applicationWithPY: ApplicationWithProgramYearDto;
     const router = useRouter();
     const toast = useToastMessage();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -80,15 +79,13 @@ export default {
       showModal.value = !showModal.value;
     };
 
-    const getProgramYear = async (applicationId: number) => {
-      applicationWithPY = await ApplicationService.shared.getProgramYearOfApplication(
-        applicationId,
-      );
+    const getApplicationWithPY = async (applicationId: number) => {
+      return ApplicationService.shared.getApplicationWithPY(applicationId);
     };
 
     const goToEditApplication = async (applicationId: number) => {
       try {
-        await getProgramYear(applicationId);
+        const applicationWithPY = await getApplicationWithPY(applicationId);
         router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
@@ -99,7 +96,7 @@ export default {
         });
       } catch (error) {
         toast.error(
-          "Program Year not active",
+          "Unexpected Error",
           undefined,
           toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );

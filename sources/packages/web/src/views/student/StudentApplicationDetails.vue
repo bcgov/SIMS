@@ -78,11 +78,7 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
-import {
-  ApplicationWithProgramYearDto,
-  GetApplicationDataDto,
-  ApplicationStatus,
-} from "@/types";
+import { GetApplicationDataDto, ApplicationStatus } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
@@ -119,7 +115,6 @@ export default {
     const items = ref([] as MenuType[]);
     const menu = ref();
     const { dateString } = useFormatters();
-    let applicationWithPY: ApplicationWithProgramYearDto;
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -138,8 +133,8 @@ export default {
       ].includes(applicationDetails.value?.applicationStatus),
     );
 
-    const getProgramYear = async (includeInActivePY?: boolean) => {
-      applicationWithPY = await ApplicationService.shared.getProgramYearOfApplication(
+    const getApplicationWithPY = async (includeInActivePY?: boolean) => {
+      return ApplicationService.shared.getApplicationWithPY(
         props.id,
         includeInActivePY,
       );
@@ -147,7 +142,7 @@ export default {
 
     const editApplication = async () => {
       try {
-        await getProgramYear();
+        const applicationWithPY = await getApplicationWithPY();
         router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
@@ -158,14 +153,15 @@ export default {
         });
       } catch (error) {
         toast.error(
-          "Program Year not active",
+          "Unexpected Error",
           undefined,
           toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
+
     const viewApplication = async () => {
-      await getProgramYear(true);
+      const applicationWithPY = await getApplicationWithPY(true);
       router.push({
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
         params: {
@@ -176,6 +172,7 @@ export default {
         },
       });
     };
+
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
         editApplication();

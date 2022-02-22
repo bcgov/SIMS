@@ -126,7 +126,7 @@ export class ApplicationApi extends HttpBaseClient {
       });
   }
 
-  public async getProgramYearOfApplication(
+  public async getApplicationWithPY(
     applicationId: number,
     includeInActivePY?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
