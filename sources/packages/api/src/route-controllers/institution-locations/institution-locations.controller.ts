@@ -214,9 +214,7 @@ export class InstitutionLocationsController extends BaseController {
    * from all institution available.
    * @returns key/value pair list of all locations.
    */
-  // TODO: this controller is used by both student and aest,
-  // TODO: add other decorators after router POC is merged
-  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("options-list")
   async getOptionsList(): Promise<OptionItem[]> {
     const locations = await this.locationService.getLocations();

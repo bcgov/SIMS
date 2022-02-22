@@ -22,15 +22,14 @@ export default {
       required: true,
     },
   },
-  setup(_props: any) {
+  setup(props: any) {
     const router = useRouter();
-
     const goToApplication = (id: number) => {
       return router.push({
         name: AESTRoutesConst.APPLICATION_DETAILS,
         params: {
           applicationId: id,
-          studentId: _props.studentId,
+          studentId: props.studentId,
         },
       });
     };

@@ -228,9 +228,7 @@ export class EducationProgramController {
    * and not active program year is considered
    * @returns key/value pair list of programs.
    */
-  // TODO: this controller is used by both student and aest,
-  // TODO: add other decorators after router POC is merged
-  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("location/:locationId/program-year/:programYearId/options-list")
   async getLocationProgramsOptionList(
     @Param("locationId") locationId: number,

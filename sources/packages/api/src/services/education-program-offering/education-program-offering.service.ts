@@ -280,6 +280,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .andWhere("offerings.institutionLocation.id = :locationId", {
         locationId,
       })
+      .andWhere("programs.approvalStatus = :approvalStatus", {
+        approvalStatus: ApprovalStatus.approved,
+      })
       .andWhere("offerings.offeringType = :offeringType", {
         offeringType: OfferingTypes.public,
       })
@@ -288,9 +291,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
     if (!includeInActivePY) {
       query.andWhere("programYear.active = true");
-      query.andWhere("programs.approvalStatus = :approvalStatus", {
-        approvalStatus: ApprovalStatus.approved,
-      });
     }
     if (selectedIntensity) {
       query.andWhere("offerings.offeringIntensity = :selectedIntensity", {

@@ -152,7 +152,7 @@ export default {
       default: false,
     },
   },
-  setup(_props: any) {
+  setup(props: any) {
     const studentDetail = ref({} as StudentDetail);
     const loading = ref(false);
     const applicationAndCount = ref({} as StudentApplicationAndCount);
@@ -192,7 +192,7 @@ export default {
           break;
         case ClientIdType.AEST:
           applicationAndCount.value = await ApplicationService.shared.getAllApplicationAndCount(
-            _props.studentId,
+            props.studentId,
             page,
             pageCount,
             sortField,
@@ -225,7 +225,7 @@ export default {
     };
 
     watch(
-      () => _props.reloadData,
+      () => props.reloadData,
       () => {
         reloadApplication();
       },

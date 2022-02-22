@@ -94,14 +94,6 @@ import {
   OFFERING_START_DATE_ERROR,
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
-  LOCATIONS_DROPDOWN_KEY,
-  PROGRAMS_DROPDOWN_KEY,
-  OFFERINGS_DROPDOWN_KEY,
-  SELECTED_OFFERING_DATE_KEY,
-  SELECTED_PROGRAM_DESC_KEY,
-  OFFERING_INTENSITY_KEY,
-  PROGRAM_NOT_LISTED,
-  OFFERING_NOT_LISTED,
 } from "@/constants";
 
 export default {
@@ -267,6 +259,16 @@ export default {
         submittingApplication.value = false;
       }
     };
+
+    // Components names on Form.IO definition that will be manipulated.
+    const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
+    const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
+    const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
+    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
+    const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
+    const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
+    const PROGRAM_NOT_LISTED = "myProgramNotListed";
+    const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
 
     const getSelectedId = (form: any) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
