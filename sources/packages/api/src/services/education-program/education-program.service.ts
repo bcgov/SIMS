@@ -431,7 +431,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       offeringExistsQuery.andWhere("programYear.active = true");
     }
     offeringExistsQuery.select("1");
-
     return this.repo
       .createQueryBuilder("programs")
       .where("programs.approvalStatus = :approvalStatus", {

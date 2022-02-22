@@ -45,7 +45,6 @@ import { GetApplicationBaseDTO, WizardNavigationEvent } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import formio from "@/components/generic/formio.vue";
-
 export default {
   components: { FullPageContainer, formio },
   props: {
@@ -66,7 +65,6 @@ export default {
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     let applicationWizard: any;
-
     onMounted(async () => {
       applicationDetail.value = await ApplicationService.shared.getApplicationDetail(
         props.applicationId,

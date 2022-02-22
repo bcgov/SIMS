@@ -215,7 +215,6 @@ export class StudentController extends BaseController {
   ): Promise<StudentEducationProgramDto> {
     const educationProgram =
       await this.programService.getStudentEducationProgram(programId);
-
     return {
       id: educationProgram.id,
       name: educationProgram.name,

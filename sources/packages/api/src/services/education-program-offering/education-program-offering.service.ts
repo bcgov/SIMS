@@ -277,11 +277,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("offerings.yearOfStudy")
       .addSelect("offerings.showYearOfStudy")
       .where("offerings.educationProgram.id = :programId", { programId })
-      .andWhere("offerings.institutionLocation.id = :locationId", {
-        locationId,
-      })
       .andWhere("programs.approvalStatus = :approvalStatus", {
         approvalStatus: ApprovalStatus.approved,
+      })
+      .andWhere("offerings.institutionLocation.id = :locationId", {
+        locationId,
       })
       .andWhere("offerings.offeringType = :offeringType", {
         offeringType: OfferingTypes.public,
