@@ -29,7 +29,7 @@ describe("Test StudentDashboard.vue", () => {
     });
 
     expect(wrapper.findComponent(formio).props("formName")).toBe(
-      "studentdashboard",
+      "studentwelcomepage",
     );
   });
 });
