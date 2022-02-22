@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
@@ -21,7 +21,7 @@ import { SFASIndividualService } from "../sfas/sfas-individual.service";
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    @Inject("Connection") connection: Connection,
+    connection: Connection,
     private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(connection.getRepository(Student));

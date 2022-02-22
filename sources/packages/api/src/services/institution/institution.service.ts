@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Institution,
@@ -55,7 +51,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   institutionUserTypeAndRoleRepo: Repository<InstitutionUserTypeAndRole>;
   institutionUserAuthRepo: Repository<InstitutionUserAuth>;
   constructor(
-    @Inject("Connection") connection: Connection,
+    connection: Connection,
     private readonly bceidService: BCeIDService,
     private readonly userService: UserService,
   ) {

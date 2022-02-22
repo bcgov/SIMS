@@ -123,6 +123,7 @@ export class Application extends RecordDataModel {
   @Column({
     name: "pir_status",
     type: "enum",
+    enum: ProgramInfoStatus,
   })
   pirStatus: ProgramInfoStatus;
 
@@ -149,12 +150,14 @@ export class Application extends RecordDataModel {
   @Column({
     name: "application_status",
     type: "enum",
+    enum: ApplicationStatus,
   })
   applicationStatus: ApplicationStatus;
 
   @Column({
     name: "assessment_status",
     type: "enum",
+    enum: AssessmentStatus,
   })
   assessmentStatus: AssessmentStatus;
 

@@ -9,16 +9,13 @@ const config = require("../ormconfig");
   try {
     // Create Connection
     console.log("**** Running setupDB ****");
-    delete config.schema;
-    delete config.entities;
     const connection = await createConnection({
       ...config,
       logging: ["error", "warn", "info"],
     });
-    const schema = process.env.DB_SCHEMA || "sims";
-    await connection.query(`CREATE SCHEMA IF NOT EXISTS ${schema};`);
-    await connection.query(`SET search_path TO ${schema}, public;`);
-    await connection.query(`SET SCHEMA '${schema}';`);
+    await connection.query(`CREATE SCHEMA IF NOT EXISTS ${config.schema};`);
+    await connection.query(`SET search_path TO ${config.schema}, public;`);
+    await connection.query(`SET SCHEMA '${config.schema}';`);
     console.log(`**** Running migration ****`);
     await connection.runMigrations();
     await connection.close();
