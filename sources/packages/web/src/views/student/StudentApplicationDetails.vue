@@ -55,7 +55,9 @@
         <span class="mt-4"
           >This application was cancelled on
           {{ dateString(applicationDetails.applicationStatusUpdatedOn) }}.
-          <a class="text-primary" @click="viewApplicaion"> View application </a>
+          <a class="text-primary" @click="viewApplication">
+            View application
+          </a>
         </span>
       </div>
       <ApplicationDetails
@@ -76,15 +78,12 @@ import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import "@/assets/css/student.scss";
 import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
-import {
-  ProgramYearOfApplicationDto,
-  GetApplicationDataDto,
-  ApplicationStatus,
-} from "@/types";
+import { GetApplicationDataDto, ApplicationStatus } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used
@@ -116,14 +115,12 @@ export default {
     const items = ref([] as MenuType[]);
     const menu = ref();
     const { dateString } = useFormatters();
-    const programYear = ref({} as ProgramYearOfApplicationDto);
     const showModal = ref(false);
     const applicationDetails = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const toast = useToastMessage();
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -136,47 +133,49 @@ export default {
       ].includes(applicationDetails.value?.applicationStatus),
     );
 
-    const getProgramYear = async (includeInActivePY?: boolean) => {
-      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
+    const getApplicationWithPY = async (includeInActivePY?: boolean) => {
+      return ApplicationService.shared.getApplicationWithPY(
         props.id,
         includeInActivePY,
       );
     };
 
-    const editApplicaion = async () => {
+    const editApplication = async () => {
       try {
-        await getProgramYear();
+        const applicationWithPY = await getApplicationWithPY();
         router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: programYear.value.formName,
-            programYearId: programYear.value.programYearId,
+            selectedForm: applicationWithPY.formName,
+            programYearId: applicationWithPY.programYearId,
             id: props.id,
           },
         });
       } catch (error) {
         toast.error(
-          "Program Year not active",
+          "Unexpected Error",
           undefined,
-          TOAST_ERROR_DISPLAY_TIME,
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
-    const viewApplicaion = async () => {
-      await getProgramYear(true);
+
+    const viewApplication = async () => {
+      const applicationWithPY = await getApplicationWithPY(true);
       router.push({
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
         params: {
-          selectedForm: programYear.value.formName,
-          programYearId: programYear.value.programYearId,
+          selectedForm: applicationWithPY.formName,
+          programYearId: applicationWithPY.programYearId,
           id: props.id,
           readOnly: "readOnly",
         },
       });
     };
+
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
-        editApplicaion();
+        editApplication();
       }
     };
     const loadMenu = () => {
@@ -194,7 +193,7 @@ export default {
             command:
               applicationDetails.value.applicationStatus ===
               ApplicationStatus.draft
-                ? editApplicaion
+                ? editApplication
                 : confirmEditApplication,
           },
           { separator: true },
@@ -203,7 +202,7 @@ export default {
       items.value.push({
         label: "View",
         icon: "pi pi-fw pi-folder-open",
-        command: viewApplicaion,
+        command: viewApplication,
       });
       if (
         applicationDetails.value.applicationStatus !==
@@ -259,8 +258,8 @@ export default {
       ApplicationStatus,
       showViewAssessment,
       editApplicationModal,
-      editApplicaion,
-      viewApplicaion,
+      editApplication,
+      viewApplication,
       hasRestriction,
       restrictionMessage,
     };

@@ -15,7 +15,7 @@ export interface CreateApplicationDraftResult {
   draftId?: number;
 }
 
-export interface ProgramYearOfApplicationDto {
+export interface ApplicationWithProgramYearDto {
   applicationId: number;
   formName: string;
   programYearId: number;

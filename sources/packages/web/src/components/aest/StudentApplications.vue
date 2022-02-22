@@ -1,6 +1,8 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <p class="category-header-large color-blue">Applications</p>
+  <p class="category-header-large color-blue">
+    Applications
+  </p>
   <DataTable
     :value="applicationAndCount.applications"
     :lazy="true"
@@ -26,7 +28,7 @@
         <v-btn
           v-if="clientType === ClientIdType.Student"
           plain
-          @click="goToApplication(slotProps.data.id)"
+          @click="$emit('goToApplication', slotProps.data.id)"
           color="primary"
           v-tooltip="'Click To View this Application'"
           >{{ slotProps.data.applicationName }}
@@ -79,9 +81,11 @@
                 class="mr-2"
                 v-tooltip="'Click To Edit this Application'"
                 @click="
-                  slotProps.data.status !== ApplicationStatus.draft
-                    ? confirmEditApplication(slotProps.data.id)
-                    : editApplicaion(slotProps.data.id)
+                  $emit(
+                    'editApplicationAction',
+                    slotProps.data.status,
+                    slotProps.data.id,
+                  )
                 "
               />
             </v-btn>
@@ -94,28 +98,23 @@
               <font-awesome-icon
                 :icon="['fas', 'trash']"
                 v-tooltip="'Click To Cancel this Application'"
-                @click="openConfirmCancel(slotProps.data.id)"
+                @click="$emit('openConfirmCancel', slotProps.data.id)"
               />
             </v-btn>
           </span>
         </span>
         <span v-if="clientType === ClientIdType.AEST">
-          <v-btn outlined>View</v-btn>
+          <v-btn outlined @click="$emit('goToApplication', slotProps.data.id)"
+            >View</v-btn
+          >
         </span>
       </template>
     </Column>
   </DataTable>
-  <CancelApplication
-    :showModal="showModal"
-    :applicationId="selectedApplicationId"
-    @showHideCancelApplication="showHideCancelApplication"
-    @reloadData="reloadApplication"
-  />
-  <ConfirmEditApplication ref="editApplicationModal" />
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import {
   StudentDetail,
   ApplicationStatus,
@@ -125,27 +124,32 @@ import {
   DataTableSortOrder,
   PAGINATION_LIST,
   StudentApplicationFields,
-  ProgramYearOfApplicationDto,
   ClientIdType,
   SINStatusEnum,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, ModalDialog, useToastMessage } from "@/composables";
+import { useFormatters } from "@/composables";
 import Status from "@/views/student/ApplicationStatus.vue";
-import { useRouter } from "vue-router";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
-import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 import { useStore } from "vuex";
 import { AuthService } from "@/services/AuthService";
 
 export default {
-  components: { Status, ConfirmEditApplication, CancelApplication },
+  components: { Status },
+  emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
   props: {
     studentId: {
       type: Number,
-      required: true,
+      required: false,
+    },
+    hasRestriction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reloadData: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props: any) {
@@ -156,22 +160,13 @@ export default {
     const currentPage = ref();
     const currentPageLimit = ref();
     const { dateString } = useFormatters();
-    const router = useRouter();
-    const hasRestriction = ref(false);
-    const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const programYear = ref({} as ProgramYearOfApplicationDto);
-    const showModal = ref(false);
-    const selectedApplicationId = ref(0);
-    const toast = useToastMessage();
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
-
     const store = useStore();
 
     const clientType = computed(() => AuthService.shared.authClientType);
 
     const sinValidStatus = computed(
       () => store.state.student.sinValidStatus.sinStatus,
-    ).value;
+    );
 
     /**
      * function to load applicationListAndCount respective to the client type
@@ -212,10 +207,6 @@ export default {
     };
 
     onMounted(async () => {
-      if (clientType.value === ClientIdType.Student) {
-        const restrictions = await StudentService.shared.getStudentRestriction();
-        hasRestriction.value = restrictions.hasRestriction;
-      }
       reloadApplication();
     });
 
@@ -233,54 +224,12 @@ export default {
       loading.value = false;
     };
 
-    const openConfirmCancel = (id: number) => {
-      showModal.value = true;
-      selectedApplicationId.value = id;
-    };
-
-    const showHideCancelApplication = () => {
-      showModal.value = !showModal.value;
-    };
-
-    const goToApplication = (id: number) => {
-      return router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
-        params: {
-          id: id,
-        },
-      });
-    };
-
-    const getProgramYear = async (applicationId: number) => {
-      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
-        applicationId,
-      );
-    };
-
-    const editApplicaion = async (applicationId: number) => {
-      try {
-        await getProgramYear(applicationId);
-        router.push({
-          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-          params: {
-            selectedForm: programYear.value.formName,
-            programYearId: programYear.value.programYearId,
-            id: applicationId,
-          },
-        });
-      } catch (error) {
-        toast.error(
-          "Program Year not active",
-          undefined,
-          TOAST_ERROR_DISPLAY_TIME,
-        );
-      }
-    };
-    const confirmEditApplication = async (id: number) => {
-      if (await editApplicationModal.value.showModal()) {
-        editApplicaion(id);
-      }
-    };
+    watch(
+      () => props.reloadData,
+      () => {
+        reloadApplication();
+      },
+    );
 
     return {
       studentDetail,
@@ -295,15 +244,6 @@ export default {
       loading,
       defaultSortOrder,
       StudentApplicationFields,
-      goToApplication,
-      hasRestriction,
-      confirmEditApplication,
-      editApplicationModal,
-      editApplicaion,
-      openConfirmCancel,
-      showModal,
-      selectedApplicationId,
-      showHideCancelApplication,
       ClientIdType,
       reloadApplication,
       SINStatusEnum,

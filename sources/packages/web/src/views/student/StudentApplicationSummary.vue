@@ -16,10 +16,23 @@
         /></span>
       </v-col>
       <v-col cols="12">
-        <StudentApplications />
+        <StudentApplications
+          :hasRestriction="hasRestriction"
+          :reloadData="reloadData"
+          @editApplicationAction="editApplicationAction"
+          @openConfirmCancel="openConfirmCancel"
+          @goToApplication="goToApplication"
+        />
       </v-col>
     </v-row>
   </div>
+  <ConfirmEditApplication ref="editApplicationModal" />
+  <CancelApplication
+    :showModal="showModal"
+    :applicationId="selectedApplicationId"
+    @showHideCancelApplication="showHideCancelApplication"
+    @reloadData="setReloadData"
+  />
 </template>
 <script lang="ts">
 import { onMounted, ref } from "vue";
@@ -30,6 +43,12 @@ import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { ApplicationService } from "@/services/ApplicationService";
+import { useRouter } from "vue-router";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { useToastMessage, ModalDialog } from "@/composables";
+import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
+import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
 
 export default {
   components: {
@@ -38,14 +57,82 @@ export default {
     StudentApplications,
     CheckValidSINBanner,
     HeaderNavigator,
+    ConfirmEditApplication,
+    CancelApplication,
   },
   setup() {
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
+    const router = useRouter();
+    const toast = useToastMessage();
+    const editApplicationModal = ref({} as ModalDialog<boolean>);
+    const showModal = ref(false);
+    const selectedApplicationId = ref(0);
+    const reloadData = ref(false);
+
+    const openConfirmCancel = (id: number) => {
+      showModal.value = true;
+      selectedApplicationId.value = id;
+    };
+
+    const showHideCancelApplication = () => {
+      showModal.value = !showModal.value;
+    };
+
+    const getApplicationWithPY = async (applicationId: number) => {
+      return ApplicationService.shared.getApplicationWithPY(applicationId);
+    };
+
+    const goToEditApplication = async (applicationId: number) => {
+      try {
+        const applicationWithPY = await getApplicationWithPY(applicationId);
+        router.push({
+          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+          params: {
+            selectedForm: applicationWithPY.formName,
+            programYearId: applicationWithPY.programYearId,
+            id: applicationId,
+          },
+        });
+      } catch (error) {
+        toast.error(
+          "Unexpected Error",
+          undefined,
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
+        );
+      }
+    };
+
+    const confirmEditApplication = async (applicationId: number) => {
+      if (await editApplicationModal.value.showModal()) {
+        goToEditApplication(applicationId);
+      }
+    };
+
+    const editApplicationAction = async (
+      status: ApplicationStatus,
+      applicationId: number,
+    ) => {
+      if (status !== ApplicationStatus.draft)
+        confirmEditApplication(applicationId);
+      else goToEditApplication(applicationId);
+    };
+
+    const setReloadData = () => {
+      reloadData.value = true;
+    };
+
+    const goToApplication = (id: number) => {
+      return router.push({
+        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+        params: {
+          id: id,
+        },
+      });
+    };
 
     onMounted(async () => {
       const restrictions = await StudentService.shared.getStudentRestriction();
-
       hasRestriction.value = restrictions.hasRestriction;
       restrictionMessage.value = restrictions.restrictionMessage;
     });
@@ -54,6 +141,15 @@ export default {
       ApplicationStatus,
       hasRestriction,
       restrictionMessage,
+      editApplicationAction,
+      editApplicationModal,
+      openConfirmCancel,
+      showModal,
+      selectedApplicationId,
+      showHideCancelApplication,
+      reloadData,
+      setReloadData,
+      goToApplication,
     };
   },
 };

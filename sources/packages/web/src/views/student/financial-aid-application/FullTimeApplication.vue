@@ -61,7 +61,7 @@
   </full-page-container>
   <ConfirmEditApplication
     ref="editApplicationModal"
-    @confirmEditApplication="editApplicaion"
+    @confirmEditApplication="editApplication"
   />
 </template>
 
@@ -138,20 +138,19 @@ export default {
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast
-      const programYearDetails = await ApplicationService.shared.getProgramYearOfApplication(
+      const programYearDetails = await ApplicationService.shared.getApplicationWithPY(
         props.id,
         true,
       );
       if (!programYearDetails.active) {
         isReadOnly.value = true;
         toast.error(
-          "Program Year not active",
+          "Unexpected Error",
           "This application can no longer be edited or submitted",
-          TOAST_ERROR_DISPLAY_TIME,
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
@@ -270,6 +269,10 @@ export default {
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
 
+    const getSelectedId = (form: any) => {
+      return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
+    };
+
     const formLoaded = async (form: any) => {
       applicationWizard = form;
       await checkProgramYear();
@@ -290,10 +293,7 @@ export default {
       applicationWizard.on("nextPage", prevNextNavigation);
 
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
-      const selectedLocationId = formioUtils.getComponentValueByKey(
-        form,
-        LOCATIONS_DROPDOWN_KEY,
-      );
+      const selectedLocationId = getSelectedId(form);
 
       if (selectedLocationId) {
         // when isReadOnly.value is true, then consider
@@ -364,7 +364,10 @@ export default {
         form,
         LOCATIONS_DROPDOWN_KEY,
       );
-      if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
+      if (
+        event.changed?.component.key === LOCATIONS_DROPDOWN_KEY ||
+        event.changed?.component.key === OFFERING_INTENSITY_KEY
+      ) {
         /*
           If `programnotListed` is already checked in the draft and
           when student edit the draft application and changes the
@@ -373,16 +376,19 @@ export default {
         await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
           programnotListed: false,
         });
+        const selectedLocationId = getSelectedId(form);
 
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadProgramsForLocation(
-          form,
-          +event.changed.value,
-          PROGRAMS_DROPDOWN_KEY,
-          props.programYearId,
-          isReadOnly.value,
-        );
+        if (selectedLocationId) {
+          // when isReadOnly.value is true, then consider
+          // both active and inactive program year.
+          await formioDataLoader.loadProgramsForLocation(
+            form,
+            +selectedLocationId,
+            PROGRAMS_DROPDOWN_KEY,
+            props.programYearId,
+            isReadOnly.value,
+          );
+        }
       }
       if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
         if (+event.changed.value > 0) {
@@ -431,13 +437,13 @@ export default {
       applicationWizard.nextPage();
     };
 
-    const editApplicaion = () => {
+    const editApplication = () => {
       applicationWizard.submit();
     };
 
     const confirmEditApplication = async () => {
       if (await editApplicationModal.value.showModal()) {
-        editApplicaion();
+        editApplication();
       }
     };
 
@@ -467,7 +473,7 @@ export default {
       isReadOnly,
       notDraft,
       confirmEditApplication,
-      editApplicaion,
+      editApplication,
       editApplicationModal,
       hasRestriction,
       restrictionMessage,

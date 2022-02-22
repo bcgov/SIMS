@@ -171,7 +171,7 @@ export interface COESummaryDTO {
   disbursementDate: string;
 }
 
-export interface ProgramYearOfApplicationDto {
+export interface ApplicationWithProgramYearDto {
   applicationId: number;
   formName: string;
   programYearId: number;
