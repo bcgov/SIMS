@@ -95,6 +95,7 @@ import {
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
 } from "@/constants";
+import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 
 export default {
   components: {
@@ -138,7 +139,6 @@ export default {
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast

@@ -85,6 +85,7 @@ import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used
@@ -123,7 +124,6 @@ export default {
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     const toast = useToastMessage();
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;

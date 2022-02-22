@@ -74,6 +74,7 @@ import {
 } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 export default {
   components: {
     formio,
@@ -89,7 +90,6 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const toast = useToastMessage();
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
     const { dateOnlyLongString } = useFormatters();
     const { bcscParsedToken } = useAuthBCSC();
     const submitting = ref(false);

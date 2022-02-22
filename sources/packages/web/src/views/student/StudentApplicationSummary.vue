@@ -49,6 +49,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
+import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 
 export default {
   components: {
@@ -66,7 +67,6 @@ export default {
     const programYear = ref({} as ProgramYearOfApplicationDto);
     const router = useRouter();
     const toast = useToastMessage();
-    const TOAST_ERROR_DISPLAY_TIME = 15000;
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const showModal = ref(false);
     const selectedApplicationId = ref(0);
