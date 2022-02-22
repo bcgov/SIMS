@@ -834,7 +834,7 @@
                                             "label": "Start application",
                                             "labelWidth": "",
                                             "labelMargin": "",
-                                            "action": "submit",
+                                            "action": "event",
                                             "showValidations": false,
                                             "theme": "primary",
                                             "size": "md",
@@ -873,8 +873,8 @@
                                                 "height": ""
                                             },
                                             "type": "button",
+                                            "event": "",
                                             "input": true,
-                                            "saveOnEnter": false,
                                             "placeholder": "",
                                             "prefix": "",
                                             "suffix": "",
@@ -912,7 +912,7 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "id": "e14rd7f"
+                                            "id": "e99xqgu"
                                         }
                                     ],
                                     "id": "erqhyly"
@@ -1166,37 +1166,64 @@
                                         },
                                         {
                                             "label": "Manage loan",
+                                            "labelWidth": "",
+                                            "labelMargin": "",
                                             "action": "custom",
                                             "showValidations": false,
+                                            "theme": "primary",
+                                            "size": "md",
+                                            "block": false,
                                             "leftIcon": "fa fa-external-link",
+                                            "rightIcon": "",
+                                            "shortcut": "",
+                                            "description": "",
+                                            "tooltip": "",
+                                            "customClass": "",
+                                            "tabindex": "",
+                                            "disableOnInvalid": false,
+                                            "hidden": false,
+                                            "autofocus": false,
+                                            "disabled": false,
                                             "tableView": false,
+                                            "modalEdit": false,
                                             "key": "manageLoan",
+                                            "tags": [],
+                                            "properties": {},
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": "",
+                                                "json": ""
+                                            },
+                                            "customConditional": "",
+                                            "logic": [],
+                                            "attributes": {},
+                                            "overlay": {
+                                                "style": "",
+                                                "page": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
                                             "type": "button",
-                                            "custom": "window.location.href = \"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\";",
+                                            "custom": "window.open(\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\", \"noreferrer noopener\");",
                                             "input": true,
                                             "placeholder": "",
                                             "prefix": "",
-                                            "customClass": "",
                                             "suffix": "",
                                             "multiple": false,
                                             "defaultValue": null,
                                             "protected": false,
                                             "unique": false,
                                             "persistent": false,
-                                            "hidden": false,
                                             "clearOnHide": true,
                                             "refreshOn": "",
                                             "redrawOn": "",
-                                            "modalEdit": false,
                                             "dataGridLabel": true,
                                             "labelPosition": "top",
-                                            "description": "",
                                             "errorLabel": "",
-                                            "tooltip": "",
                                             "hideLabel": false,
-                                            "tabindex": "",
-                                            "disabled": false,
-                                            "autofocus": false,
                                             "dbIndex": false,
                                             "customDefaultValue": "",
                                             "calculateValue": "",
@@ -1204,7 +1231,6 @@
                                             "widget": {
                                                 "type": "input"
                                             },
-                                            "attributes": {},
                                             "validateOn": "change",
                                             "validate": {
                                                 "required": false,
@@ -1214,31 +1240,13 @@
                                                 "multiple": false,
                                                 "unique": false
                                             },
-                                            "conditional": {
-                                                "show": null,
-                                                "when": null,
-                                                "eq": ""
-                                            },
-                                            "overlay": {
-                                                "style": "",
-                                                "left": "",
-                                                "top": "",
-                                                "width": "",
-                                                "height": ""
-                                            },
                                             "allowCalculateOverride": false,
                                             "encrypted": false,
                                             "showCharCount": false,
                                             "showWordCount": false,
-                                            "properties": {},
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "size": "md",
-                                            "rightIcon": "",
-                                            "block": false,
-                                            "disableOnInvalid": false,
-                                            "theme": "primary",
-                                            "id": "emierm8"
+                                            "id": "ei616v9"
                                         }
                                     ],
                                     "placeholder": "",
@@ -1569,15 +1577,23 @@
                         {
                             "components": [
                                 {
-                                    "html": "<p>For further information, please refer to the StudentAid BC <a href=\"https://studentaidbc.ca/help-centre\"><strong>Help Centre.</strong></a></p>",
-                                    "label": "Content",
+                                    "label": "HTML",
                                     "labelWidth": "",
                                     "labelMargin": "",
-                                    "customClass": "",
+                                    "tag": "p",
+                                    "className": "",
+                                    "attrs": [
+                                        {
+                                            "attr": "",
+                                            "value": ""
+                                        }
+                                    ],
+                                    "content": "For further information, please refer to the StudentAid BC <a href=\"https://studentaidbc.ca/help-centre\" target=\"_blank\" rel=\"noopener noreferrer\">Help Centre.</a>",
                                     "refreshOnChange": false,
+                                    "customClass": "",
                                     "hidden": false,
                                     "modalEdit": false,
-                                    "key": "content1",
+                                    "key": "html8",
                                     "tags": [],
                                     "properties": {},
                                     "conditional": {
@@ -1597,7 +1613,7 @@
                                         "width": "",
                                         "height": ""
                                     },
-                                    "type": "content",
+                                    "type": "htmlelement",
                                     "input": false,
                                     "tableView": false,
                                     "placeholder": "",
@@ -1607,7 +1623,7 @@
                                     "defaultValue": null,
                                     "protected": false,
                                     "unique": false,
-                                    "persistent": true,
+                                    "persistent": false,
                                     "clearOnHide": true,
                                     "refreshOn": "",
                                     "redrawOn": "",
@@ -1640,7 +1656,7 @@
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
                                     "addons": [],
-                                    "id": "euwc0co"
+                                    "id": "e52f5fl"
                                 }
                             ],
                             "width": 8,

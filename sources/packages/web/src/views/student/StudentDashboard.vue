@@ -7,7 +7,7 @@
     <CheckValidSINBanner />
     <formio
       formName="studentwelcomepage"
-      @submitted="goToStudentApplication"
+      @customEvent="goToStudentApplication"
     ></formio>
   </v-container>
 </template>
@@ -21,17 +21,14 @@ import formio from "@/components/generic/formio.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { useRouter } from "vue-router";
-import { useToastMessage } from "@/composables";
 
 export default {
-  emits: ["goToStudentApplication"],
   components: {
     formio,
     RestrictionBanner,
     CheckValidSINBanner,
   },
   setup() {
-    const toast = useToastMessage();
     const store = useStore();
     const router = useRouter();
     const user = computed(() => store.state.student.profile);
