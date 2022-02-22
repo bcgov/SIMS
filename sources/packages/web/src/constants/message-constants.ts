@@ -9,8 +9,3 @@ export const PENDING_SIN_MESSAGE =
  */
 export const INVALID_SIN_MESSAGE =
   "StudentAid BC has found an issue with your account information. Please ensure your account information matches CRA and log back in. If you have further issues please contact us.";
-
-/**
- * toast display time
- */
-export const TOAST_ERROR_DISPLAY_TIME = 15000;

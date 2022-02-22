@@ -95,7 +95,6 @@ import {
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
 } from "@/constants";
-import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 
 export default {
   components: {
@@ -151,7 +150,7 @@ export default {
         toast.error(
           "Program Year not active",
           "This application can no longer be edited or submitted",
-          TOAST_ERROR_DISPLAY_TIME,
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };

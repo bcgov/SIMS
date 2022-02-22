@@ -1,7 +1,7 @@
 import {
   CreateApplicationDraftResult,
   SaveStudentApplicationDto,
-  ProgramYearOfApplicationDto,
+  ApplicationWithProgramYearDto,
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
@@ -83,7 +83,7 @@ export class ApplicationService {
   public async getProgramYearOfApplication(
     applicationId: number,
     includeInActivePY?: boolean,
-  ): Promise<ProgramYearOfApplicationDto> {
+  ): Promise<ApplicationWithProgramYearDto> {
     return ApiClient.Application.getProgramYearOfApplication(
       applicationId,
       includeInActivePY,

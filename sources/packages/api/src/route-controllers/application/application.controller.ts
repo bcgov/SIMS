@@ -34,7 +34,7 @@ import {
   GetApplicationDataDto,
   GetApplicationBaseDTO,
   ApplicationStatusToBeUpdatedDto,
-  ProgramYearOfApplicationDto,
+  ApplicationWithProgramYearDto,
   NOAApplicationDto,
   transformToApplicationDto,
   transformToApplicationDetailDto,
@@ -458,7 +458,7 @@ export class ApplicationController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
     @Query("includeInActivePY") includeInActivePY?: boolean,
-  ): Promise<ProgramYearOfApplicationDto> {
+  ): Promise<ApplicationWithProgramYearDto> {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
@@ -481,7 +481,7 @@ export class ApplicationController extends BaseController {
       programYearId: applicationProgramYear.programYear.id,
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
-    } as ProgramYearOfApplicationDto;
+    } as ApplicationWithProgramYearDto;
   }
 
   /**
