@@ -83,6 +83,7 @@ import { StudentService } from "@/services/StudentService";
 import ApplicationDetails from "@/components/students/ApplicationDetails.vue";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+
 /**
  * added MenuType interface for prime vue component menu,
  *  remove it when vuetify componnt is used

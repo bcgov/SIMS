@@ -74,6 +74,7 @@ import {
 } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+
 export default {
   components: {
     formio,
