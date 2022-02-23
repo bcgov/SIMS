@@ -151,6 +151,7 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "offering_type",
     type: "enum",
     enum: OfferingTypes,
+    enumName: "OfferingTypes",
   })
   offeringType: OfferingTypes;
   /**

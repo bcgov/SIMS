@@ -17,7 +17,8 @@ async function bootstrap() {
   app.setGlobalPrefix("api");
 
   // Using LoggerService as app logger
-  app.useLogger(app.get(LoggerService));
+  const logger = new LoggerService();
+  app.useLogger(logger);
 
   // Exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
@@ -39,17 +40,14 @@ async function bootstrap() {
   await app.listen(port);
   // Logging node http server error
   app.getHttpServer().on("error", (excp) => {
-    LoggerService.error(
-      `Application server receive ${excp}`,
-      undefined,
-      "Bootstrap",
-    );
+    logger.error(`Application server receive ${excp}`, undefined, "Bootstrap");
     exit(1);
   });
-  LoggerService.log(`Application is listing on port ${port}`, "Bootstrap");
+  logger.log(`Application is listing on port ${port}`, "Bootstrap");
 }
 bootstrap().catch((excp) => {
-  LoggerService.error(
+  const logger = new LoggerService();
+  logger.error(
     `Application bootstrap exception: ${excp}`,
     undefined,
     "Bootstrap-Main",

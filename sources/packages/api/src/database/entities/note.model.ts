@@ -17,6 +17,7 @@ export class Note extends RecordDataModel {
     name: "note_type",
     type: "enum",
     enum: NoteType,
+    enumName: "NoteType",
     nullable: false,
   })
   noteType: NoteType;
