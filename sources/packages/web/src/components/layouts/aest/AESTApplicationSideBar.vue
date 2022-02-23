@@ -6,9 +6,7 @@
           <font-awesome-icon :icon="studentMenu.icon" class="mr-2" />
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title
-            >{{ studentMenu.label }}--{{ studentId }}+++{{ applicationId }}
-          </v-list-item-title>
+          <v-list-item-title>{{ studentMenu.label }} </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-list-item
@@ -31,7 +29,8 @@
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuModel } from "@/types";
+import { MenuModel, SupportingUserType } from "@/types";
+import { SupportingUsersService } from "@/services/SupportingUserService";
 
 export default {
   props: {
@@ -50,7 +49,7 @@ export default {
 
     const studentMenu = ref<MenuModel>({
       label: "Student",
-      // TODO: in figma this icon is taken from PRO
+      // TODO: in figma this icon is PRO version
       icon: "graduation-cap",
       command: () => {
         router.push({
@@ -62,14 +61,27 @@ export default {
         });
       },
     });
-    onMounted(() => {
-      relatedPPApplications.value = [
-        {
-          label: "parent",
-          // TODO: in figma this icon is taken from PRO
-          icon: "user",
-        },
-      ];
+    onMounted(async () => {
+      const supportingUsers = await SupportingUsersService.shared.getSupportingUserForSideBar(
+        props.applicationId,
+      );
+      supportingUsers.forEach((supportingUser, index) => {
+        if (supportingUser.supportingUserType === SupportingUserType.Parent) {
+          relatedPPApplications.value.push({
+            label: `Parent ${index + 1}`,
+            // TODO: in figma this icon is PRO version
+            icon: "user",
+          });
+        }
+        if (supportingUser.supportingUserType === SupportingUserType.Partner) {
+          relatedPPApplications.value.push({
+            label: "Partner",
+            // TODO: in figma this icon is PRO version
+            icon: "user",
+          });
+        }
+      });
+      relatedPPApplications.value;
     });
 
     return {
