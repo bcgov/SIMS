@@ -1,6 +1,6 @@
 import {
   SaveStudentApplicationDto,
-  ProgramYearOfApplicationDto,
+  ApplicationWithProgramYearDto,
   ApplicationStatusToBeUpdatedDto,
   GetApplicationDataDto,
   GetApplicationBaseDTO,
@@ -126,17 +126,17 @@ export class ApplicationApi extends HttpBaseClient {
       });
   }
 
-  public async getProgramYearOfApplication(
+  public async getApplicationWithPY(
     applicationId: number,
     includeInActivePY?: boolean,
-  ): Promise<ProgramYearOfApplicationDto> {
+  ): Promise<ApplicationWithProgramYearDto> {
     try {
       let url = `application/${applicationId}/program-year`;
       if (includeInActivePY) {
         url = `${url}?includeInActivePY=${includeInActivePY}`;
       }
       const response = await this.getCall(url);
-      return response.data as ProgramYearOfApplicationDto;
+      return response.data as ApplicationWithProgramYearDto;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

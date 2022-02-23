@@ -39,7 +39,7 @@ import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
-import { ApplicationStatus, ProgramYearOfApplicationDto } from "@/types";
+import { ApplicationStatus } from "@/types";
 import StudentApplications from "@/components/aest/StudentApplications.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
@@ -49,7 +49,6 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplicationModal.vue";
-import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 
 export default {
   components: {
@@ -64,7 +63,6 @@ export default {
   setup() {
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
-    const programYear = ref({} as ProgramYearOfApplicationDto);
     const router = useRouter();
     const toast = useToastMessage();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -81,35 +79,33 @@ export default {
       showModal.value = !showModal.value;
     };
 
-    const getProgramYear = async (applicationId: number) => {
-      programYear.value = await ApplicationService.shared.getProgramYearOfApplication(
-        applicationId,
-      );
+    const getApplicationWithPY = async (applicationId: number) => {
+      return ApplicationService.shared.getApplicationWithPY(applicationId);
     };
 
-    const editApplication = async (applicationId: number) => {
+    const goToEditApplication = async (applicationId: number) => {
       try {
-        await getProgramYear(applicationId);
+        const applicationWithPY = await getApplicationWithPY(applicationId);
         router.push({
           name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
           params: {
-            selectedForm: programYear.value.formName,
-            programYearId: programYear.value.programYearId,
+            selectedForm: applicationWithPY.formName,
+            programYearId: applicationWithPY.programYearId,
             id: applicationId,
           },
         });
       } catch (error) {
         toast.error(
-          "Program Year not active",
+          "Unexpected Error",
           undefined,
-          TOAST_ERROR_DISPLAY_TIME,
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };
 
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
-        editApplication(applicationId);
+        goToEditApplication(applicationId);
       }
     };
 
@@ -119,7 +115,7 @@ export default {
     ) => {
       if (status !== ApplicationStatus.draft)
         confirmEditApplication(applicationId);
-      else editApplication(applicationId);
+      else goToEditApplication(applicationId);
     };
 
     const setReloadData = () => {

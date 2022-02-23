@@ -38,5 +38,10 @@ export function useToastMessage() {
     });
   };
 
-  return { success, error, warn };
+  /**
+   * toast display time
+   */
+  const EXTENDED_MESSAGE_DISPLAY_TIME = 15000;
+
+  return { success, error, warn, EXTENDED_MESSAGE_DISPLAY_TIME };
 }

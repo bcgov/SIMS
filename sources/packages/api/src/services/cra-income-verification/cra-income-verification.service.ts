@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Connection, In, IsNull, Repository, UpdateResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
@@ -26,7 +26,7 @@ const RETRY_BYPASS_CRA_RECEIVED_FILE_TIME = 2000;
 @Injectable()
 export class CRAIncomeVerificationService extends RecordDataModelService<CRAIncomeVerification> {
   constructor(
-    @Inject("Connection") connection: Connection,
+    connection: Connection,
     private readonly workflowService: WorkflowActionsService,
   ) {
     super(connection.getRepository(CRAIncomeVerification));

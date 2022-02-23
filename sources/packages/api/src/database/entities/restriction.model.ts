@@ -16,6 +16,7 @@ export class Restriction extends RecordDataModel {
   @Column({
     name: "restriction_type",
     type: "enum",
+    enum: RestrictionType,
     nullable: false,
   })
   restrictionType: RestrictionType;

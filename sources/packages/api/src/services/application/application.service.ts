@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, IsNull, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
@@ -60,7 +60,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   logger: LoggerService;
 
   constructor(
-    @Inject("Connection") connection: Connection,
+    connection: Connection,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
     private readonly workflow: WorkflowActionsService,

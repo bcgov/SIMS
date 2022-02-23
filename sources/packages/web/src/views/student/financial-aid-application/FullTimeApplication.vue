@@ -95,7 +95,6 @@ import {
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
 } from "@/constants";
-import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 
 export default {
   components: {
@@ -142,16 +141,16 @@ export default {
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast
-      const programYearDetails = await ApplicationService.shared.getProgramYearOfApplication(
+      const programYearDetails = await ApplicationService.shared.getApplicationWithPY(
         props.id,
         true,
       );
       if (!programYearDetails.active) {
         isReadOnly.value = true;
         toast.error(
-          "Program Year not active",
+          "Unexpected Error",
           "This application can no longer be edited or submitted",
-          TOAST_ERROR_DISPLAY_TIME,
+          toast.EXTENDED_MESSAGE_DISPLAY_TIME,
         );
       }
     };

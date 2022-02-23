@@ -16,6 +16,7 @@ export class Note extends RecordDataModel {
   @Column({
     name: "note_type",
     type: "enum",
+    enum: NoteType,
     nullable: false,
   })
   noteType: NoteType;

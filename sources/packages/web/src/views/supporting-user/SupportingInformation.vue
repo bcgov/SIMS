@@ -74,7 +74,6 @@ import {
 } from "@/types";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
-import { TOAST_ERROR_DISPLAY_TIME } from "@/constants/message-constants";
 export default {
   components: {
     formio,
@@ -158,7 +157,7 @@ export default {
             toast.error(
               "The student cannot act as a supporting user for its own application.",
               error.response.data.message,
-              TOAST_ERROR_DISPLAY_TIME,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
         }
@@ -180,35 +179,35 @@ export default {
             toast.error(
               "Application not found",
               error.response.data.message,
-              TOAST_ERROR_DISPLAY_TIME,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
             toast.warn(
               "User already provided data",
               error.response.data.message,
-              TOAST_ERROR_DISPLAY_TIME,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
             toast.warn(
               `Not expecting data for a ${props.supportingUserType}`,
               error.response.data.message,
-              TOAST_ERROR_DISPLAY_TIME,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
             toast.error(
               "The student cannot act as a supporting user for its own application.",
               error.response.data.message,
-              TOAST_ERROR_DISPLAY_TIME,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
           default:
             toast.error(
               "Unexpected error",
               "Unexpected error while submitting the supporting data.",
-              TOAST_ERROR_DISPLAY_TIME,
+              toast.EXTENDED_MESSAGE_DISPLAY_TIME,
             );
             break;
         }

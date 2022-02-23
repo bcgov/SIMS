@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Connection, InsertResult } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
@@ -12,7 +12,7 @@ import {
  */
 @Injectable()
 export class DisbursementScheduleErrorsService extends RecordDataModelService<DisbursementFeedbackErrors> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(DisbursementFeedbackErrors));
   }
 

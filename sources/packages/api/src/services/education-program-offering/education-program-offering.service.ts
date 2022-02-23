@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   EducationProgramOffering,
   EducationProgram,
@@ -24,7 +24,7 @@ import {
 } from "../../utilities";
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(EducationProgramOffering));
   }
 

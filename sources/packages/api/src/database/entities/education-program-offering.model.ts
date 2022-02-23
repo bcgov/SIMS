@@ -150,6 +150,7 @@ export class EducationProgramOffering extends RecordDataModel {
   @Column({
     name: "offering_type",
     type: "enum",
+    enum: OfferingTypes,
   })
   offeringType: OfferingTypes;
   /**

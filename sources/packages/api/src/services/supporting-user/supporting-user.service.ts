@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
@@ -18,7 +18,7 @@ import { UpdateSupportingUserInfo } from "./supporting-user.models";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
-  constructor(@Inject("Connection") private readonly connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(SupportingUser));
   }
 

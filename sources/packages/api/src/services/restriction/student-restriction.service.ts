@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   StudentRestriction,
@@ -28,7 +28,7 @@ export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
  */
 @Injectable()
 export class StudentRestrictionService extends RecordDataModelService<StudentRestriction> {
-  constructor(@Inject("Connection") connection: Connection) {
+  constructor(connection: Connection) {
     super(connection.getRepository(StudentRestriction));
   }
 
