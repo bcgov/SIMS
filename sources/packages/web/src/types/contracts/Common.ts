@@ -1,6 +1,9 @@
+// TODO: When all icon are replace to font awesome,
+// replace  icon?: string | string[] with
+// icon?:string[];
 export interface MenuModel {
   label: string;
-  icon?: string;
+  icon?: string | string[];
   command?: () => void;
   items?: MenuModel[];
 }
