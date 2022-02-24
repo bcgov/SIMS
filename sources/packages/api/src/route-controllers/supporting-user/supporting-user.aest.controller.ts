@@ -22,7 +22,7 @@ export class AESTSupportingUserController {
     @Param("applicationId") applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
     const supportingUserForApplication =
-      await this.supportingUserService.getSupportingUserByApplicationId(
+      await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
       );
     return supportingUserForApplication.map(

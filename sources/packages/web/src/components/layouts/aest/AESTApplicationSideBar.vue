@@ -10,15 +10,17 @@
         </v-list-item-content>
       </v-list-item>
       <v-list-item
-        v-for="ppAppliation in relatedPPApplications"
-        :key="ppAppliation.label"
-        @click="ppAppliation.command"
+        v-for="relatedParentPartner in relatedParentPartners"
+        :key="relatedParentPartner.label"
+        @click="relatedParentPartner.command"
       >
         <v-list-item-icon>
-          <font-awesome-icon :icon="ppAppliation.icon" class="mr-2" />
+          <font-awesome-icon :icon="relatedParentPartner.icon" class="mr-2" />
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>{{ ppAppliation.label }}</v-list-item-title>
+          <v-list-item-title>{{
+            relatedParentPartner.label
+          }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -45,7 +47,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const relatedPPApplications = ref([] as MenuModel[]);
+    const relatedParentPartners = ref([] as MenuModel[]);
 
     const studentMenu = ref<MenuModel>({
       label: "Student",
@@ -67,14 +69,14 @@ export default {
       );
       supportingUsers.forEach((supportingUser, index) => {
         if (supportingUser.supportingUserType === SupportingUserType.Parent) {
-          relatedPPApplications.value.push({
+          relatedParentPartners.value.push({
             label: `Parent ${index + 1}`,
             // TODO: in figma this icon is PRO version
             icon: "user",
           });
         }
         if (supportingUser.supportingUserType === SupportingUserType.Partner) {
-          relatedPPApplications.value.push({
+          relatedParentPartners.value.push({
             label: "Partner",
             // TODO: in figma this icon is PRO version
             icon: "user",
@@ -85,7 +87,7 @@ export default {
 
     return {
       studentMenu,
-      relatedPPApplications,
+      relatedParentPartners,
     };
   },
 };
