@@ -18,16 +18,19 @@ export class AESTSupportingUserController {
    * application, i.e ApplicationSupportingUsersDTO
    */
   @Get("application/:applicationId/aest")
-  async getSupportingUserOfAnApplication(
+  async getSupportingUsersOfAnApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUserByApplicationId(
         applicationId,
       );
-    return supportingUserForApplication.map((supportingUser) => ({
-      supportingUserId: supportingUser.id,
-      supportingUserType: supportingUser.supportingUserType,
-    }));
+    return supportingUserForApplication.map(
+      (supportingUser) =>
+        ({
+          supportingUserId: supportingUser.id,
+          supportingUserType: supportingUser.supportingUserType,
+        } as ApplicationSupportingUsersDTO),
+    );
   }
 }
