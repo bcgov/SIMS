@@ -17,6 +17,7 @@ export class Restriction extends RecordDataModel {
     name: "restriction_type",
     type: "enum",
     enum: RestrictionType,
+    enumName: "RestrictionType",
     nullable: false,
   })
   restrictionType: RestrictionType;

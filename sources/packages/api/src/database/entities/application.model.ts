@@ -124,6 +124,7 @@ export class Application extends RecordDataModel {
     name: "pir_status",
     type: "enum",
     enum: ProgramInfoStatus,
+    enumName: "ProgramInfoStatus",
   })
   pirStatus: ProgramInfoStatus;
 
@@ -151,6 +152,7 @@ export class Application extends RecordDataModel {
     name: "application_status",
     type: "enum",
     enum: ApplicationStatus,
+    enumName: "ApplicationStatus",
   })
   applicationStatus: ApplicationStatus;
 
@@ -158,6 +160,7 @@ export class Application extends RecordDataModel {
     name: "assessment_status",
     type: "enum",
     enum: AssessmentStatus,
+    enumName: "AssessmentStatus",
   })
   assessmentStatus: AssessmentStatus;
 
