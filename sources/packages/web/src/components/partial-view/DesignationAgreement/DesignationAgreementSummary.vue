@@ -2,7 +2,7 @@
   <content-group>
     <toggle-content
       :toggled="!designations.length"
-      message="You don’t have any agreements yet"
+      message="You don't have any agreements yet"
     >
       <DataTable
         :value="designations"
@@ -46,7 +46,7 @@
       <template #image>
         <v-img
           height="200"
-          alt="You don’t have any agreements yet"
+          alt="You don't have any agreements yet"
           src="@/assets/images/designation_summary.svg"
         />
       </template>
