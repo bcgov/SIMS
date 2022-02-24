@@ -65,7 +65,7 @@ export default {
       );
       formName.value = supportingUsersData.formName;
       let contactAddress = {};
-      // Here is there is only one address for now
+      // Here there is only one address for now
       supportingUsersData.contactInfo?.addresses.forEach(address => {
         contactAddress = {
           city: address.city,
