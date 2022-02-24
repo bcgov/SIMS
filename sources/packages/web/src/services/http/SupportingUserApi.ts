@@ -52,9 +52,8 @@ export class SupportingUserApi extends HttpBaseClient {
   async getSupportingUserForSideBar(
     applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
-    const supportingUsers = await this.getCall(
+    return this.getCallTyped<ApplicationSupportingUsersDTO[]>(
       `supporting-user/application/${applicationId}/aest`,
     );
-    return supportingUsers.data as ApplicationSupportingUsersDTO[];
   }
 }

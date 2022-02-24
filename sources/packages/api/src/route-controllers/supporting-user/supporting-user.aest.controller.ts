@@ -25,12 +25,9 @@ export class AESTSupportingUserController {
       await this.supportingUserService.getSupportingUserByApplicationId(
         applicationId,
       );
-    return supportingUserForApplication.map(
-      (supportingUser) =>
-        ({
-          supportingUserId: supportingUser.id,
-          supportingUserType: supportingUser.supportingUserType,
-        } as ApplicationSupportingUsersDTO),
-    );
+    return supportingUserForApplication.map((supportingUser) => ({
+      supportingUserId: supportingUser.id,
+      supportingUserType: supportingUser.supportingUserType,
+    }));
   }
 }
