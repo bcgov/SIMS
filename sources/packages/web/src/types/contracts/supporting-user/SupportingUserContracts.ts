@@ -67,3 +67,8 @@ export interface ApplicationSupportingUsersDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
+
+export interface SupportingUserFormData {
+  formName: string;
+  formData: any;
+}

@@ -38,11 +38,11 @@ export default {
   props: {
     studentId: {
       type: Number,
-      required: false,
+      required: true,
     },
     applicationId: {
       type: Number,
-      required: false,
+      required: true,
     },
   },
   setup(props: any) {
@@ -73,6 +73,16 @@ export default {
             label: `Parent ${index + 1}`,
             // TODO: in figma this icon is PRO version
             icon: "user",
+            command: () => {
+              router.push({
+                name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
+                params: {
+                  applicationId: props.applicationId,
+                  studentId: props.studentId,
+                  supportingUserId: supportingUser.supportingUserId,
+                },
+              });
+            },
           });
         }
         if (supportingUser.supportingUserType === SupportingUserType.Partner) {
@@ -80,6 +90,16 @@ export default {
             label: "Partner",
             // TODO: in figma this icon is PRO version
             icon: "user",
+            command: () => {
+              router.push({
+                name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
+                params: {
+                  applicationId: props.applicationId,
+                  studentId: props.studentId,
+                  supportingUserId: supportingUser.supportingUserId,
+                },
+              });
+            },
           });
         }
       });

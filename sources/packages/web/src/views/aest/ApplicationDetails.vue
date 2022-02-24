@@ -36,6 +36,7 @@
       </v-col>
     </v-row>
   </full-page-container>
+  <router-view />
 </template>
 <script lang="ts">
 import { onMounted, ref } from "vue";

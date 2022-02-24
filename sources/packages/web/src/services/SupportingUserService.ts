@@ -3,6 +3,7 @@ import {
   ApplicationIdentifierDTO,
   ApplicationSupportingUsersDTO,
   GetApplicationDTO,
+  SupportingUserFormData,
   SupportingUserType,
   UpdateSupportingUserDTO,
 } from "@/types";
@@ -40,6 +41,16 @@ export class SupportingUsersService {
   ): Promise<ApplicationSupportingUsersDTO[]> {
     return ApiClient.SupportingUserApi.getSupportingUsersForSideBar(
       applicationId,
+    );
+  }
+
+  async getSupportingUserData(
+    applicationId: number,
+    supportingUserId: number,
+  ): Promise<SupportingUserFormData> {
+    return ApiClient.SupportingUserApi.getSupportingUserData(
+      applicationId,
+      supportingUserId,
     );
   }
 }

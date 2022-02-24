@@ -31,6 +31,7 @@ import { AuthService } from "@/services/AuthService";
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
 import AESTApplicationSideBar from "@/components/layouts/aest/AESTApplicationSideBar.vue";
+import SupportingUser from "@/views/aest/SupportingUser.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -131,6 +132,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.AEST,
         },
+        children: [
+          {
+            path: AppRoutes.SupportingUserDetail,
+            name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
+            props: true,
+            component: SupportingUser,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+        ],
       },
       {
         path: AppRoutes.SearchStudents,

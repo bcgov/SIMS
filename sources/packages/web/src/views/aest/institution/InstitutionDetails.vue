@@ -13,7 +13,6 @@
   </div>
   <!-- TODO:replace prime tabMenu with vuetify3-->
   <TabMenu :model="items" />
-  <router-view />
 </template>
 
 <script lang="ts">

@@ -1343,4 +1343,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .getOne();
   }
+
+  /**
+   * Supporting user (e.g. parent/partner) formName
+   * of an application.
+   * @param applicationId application id.
+   * @returns application the application that was found, otherwise null.
+   */
+  async getSupportingUserFormName(applicationId: number): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select(["programYear.parentFormName", "programYear.partnerFormName"])
+      .innerJoin("application.programYear", "programYear")
+      .where("application.id = :applicationId", {
+        applicationId,
+      })
+      .getOne();
+  }
 }
