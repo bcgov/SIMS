@@ -1,12 +1,25 @@
 <template>
-  <full-page-container>
-    {{ formName }}----
+  <header-navigator
+    title="Back to student applications"
+    :routeLocation="{
+      name: AESTRoutesConst.STUDENT_APPLICATIONS,
+      params: { studentId },
+    }"
+    subTitle="Financial Aid Application"
+  >
+  </header-navigator>
+  <full-page-container class="my-2">
     <formio
       v-if="formName"
       :formName="formName"
       :data="formData"
       :readOnly="true"
     ></formio>
+    <Message severity="warn" :closable="false" v-else>
+      <strong>
+        Supporting User has not submitted the application.
+      </strong>
+    </Message>
   </full-page-container>
 </template>
 
@@ -15,11 +28,15 @@ import formio from "@/components/generic/formio.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ref, onMounted } from "vue";
 import { SupportingUsersService } from "@/services/SupportingUserService";
+import { useFormatters } from "@/composables";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
     formio,
     FullPageContainer,
+    HeaderNavigator,
   },
   props: {
     studentId: {
@@ -36,20 +53,46 @@ export default {
     },
   },
   setup(props: any) {
+    const { dateOnlyLongString } = useFormatters();
+
     const formName = ref();
     const formData = ref();
 
     onMounted(async () => {
-      // alert("hello");
       const supportingUsersData = await SupportingUsersService.shared.getSupportingUserData(
         props.applicationId,
         props.supportingUserId,
       );
-      // alert(supportingUsersData);
       formName.value = supportingUsersData.formName;
-      formData.value = supportingUsersData.formData;
+      let contactAddress = {};
+      // Here is there is only one address for now
+      supportingUsersData.contactInfo?.addresses.forEach(address => {
+        contactAddress = {
+          city: address.city,
+          country: address.country,
+          provinceState: address.province,
+          postalCode: address.postalCode,
+          addressLine1: address.addressLine1,
+          addressLine2: address.addressLine2,
+        };
+      });
+      // for both parent and partner first tab is same
+      // and the information on the 2nd tab is fed in `supportingData`
+      formData.value = {
+        givenNames: supportingUsersData.firstName,
+        lastName: supportingUsersData.lastName,
+        email: supportingUsersData.email,
+        gender: supportingUsersData.gender,
+        dateOfBirth: supportingUsersData.birthDate
+          ? dateOnlyLongString(supportingUsersData.birthDate)
+          : undefined,
+        sin: supportingUsersData.sin,
+        phone: supportingUsersData.contactInfo?.phone,
+        supportingData: supportingUsersData.supportingData,
+        ...contactAddress,
+      };
     });
-    return { formName, formData };
+    return { formName, formData, AESTRoutesConst };
   },
 };
 </script>

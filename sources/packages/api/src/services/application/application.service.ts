@@ -1353,7 +1353,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getSupportingUserFormName(applicationId: number): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")
-      .select(["programYear.parentFormName", "programYear.partnerFormName"])
+      .select([
+        "application.id",
+        "programYear.parentFormName",
+        "programYear.partnerFormName",
+      ])
       .innerJoin("application.programYear", "programYear")
       .where("application.id = :applicationId", {
         applicationId,

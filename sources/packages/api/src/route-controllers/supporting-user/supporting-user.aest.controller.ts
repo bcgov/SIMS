@@ -48,7 +48,7 @@ export class AESTSupportingUserController {
    * @param applicationId application id.
    * @returns supporting user form data and details.
    */
-  @Get("/:supportingUserId/application/:applicationId/aest")
+  @Get(":supportingUserId/application/:applicationId/aest")
   async getSupportingUserFormDetails(
     @Param("supportingUserId") supportingUserId: number,
     @Param("applicationId") applicationId: number,
@@ -56,15 +56,18 @@ export class AESTSupportingUserController {
     const supportingUserForms =
       await this.applicationService.getSupportingUserFormName(applicationId);
 
+    if (!supportingUserForms) {
+      throw new NotFoundException(
+        `Application ${applicationId} not found or Program year associated with the application not found`,
+      );
+    }
     const supportingUserForApplication =
-      await this.supportingUserService.getSupportingUserById(
-        applicationId,
+      await this.supportingUserService.getSupportingUsersDetails(
         supportingUserId,
       );
-
     if (!supportingUserForApplication) {
       throw new NotFoundException(
-        `Supporting user ${supportingUserId} not found.`,
+        `Supporting user ${supportingUserId} details not found or Supporting user has  not submitted the form`,
       );
     }
     return {
@@ -72,7 +75,14 @@ export class AESTSupportingUserController {
         supportingUserForApplication.supportingUserType,
         supportingUserForms.programYear,
       ),
-      formData: supportingUserForApplication.supportingData,
+      supportingData: supportingUserForApplication.supportingData,
+      contactInfo: supportingUserForApplication.contactInfo,
+      sin: supportingUserForApplication.sin,
+      birthDate: supportingUserForApplication.birthDate,
+      gender: supportingUserForApplication.gender,
+      email: supportingUserForApplication.user.email,
+      firstName: supportingUserForApplication.user.firstName,
+      lastName: supportingUserForApplication.user.lastName,
     };
   }
 }

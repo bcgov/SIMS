@@ -68,7 +68,27 @@ export interface ApplicationSupportingUsersDTO {
   supportingUserType: SupportingUserType;
 }
 
+export interface AddressInfo {
+  addressLine1: string;
+  addressLine2?: string;
+  province: string;
+  country: string;
+  city: string;
+  postalCode: string;
+}
+export interface ContactInfos {
+  addresses: Array<AddressInfo>;
+  phone: string;
+}
+
 export interface SupportingUserFormData {
   formName: string;
-  formData: any;
+  supportingData: any;
+  contactInfo?: ContactInfos;
+  sin?: string;
+  birthDate?: Date;
+  gender?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
 }
