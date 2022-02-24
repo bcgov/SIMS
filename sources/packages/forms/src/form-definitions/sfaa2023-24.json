@@ -1,5 +1,9 @@
 {
+    "title": "SFAA2023-24",
+    "display": "wizard",
     "type": "form",
+    "name": "SFAA2023-24",
+    "path": "sfaa2023-24",
     "tags": [
         "common"
     ],
@@ -764,7 +768,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "exz6y1"
+                    "id": "exz6y1",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -843,7 +848,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e5gyojf"
+                    "id": "e5gyojf",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -922,7 +928,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "erdyicdr"
+                    "id": "erdyicdr",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -1001,7 +1008,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "egxu9ol"
+                    "id": "egxu9ol",
+                    "addons": []
                 },
                 {
                     "label": "The school I will be attending",
@@ -1115,7 +1123,9 @@
                         "threshold": 0.3
                     },
                     "id": "ef6vu8sg",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": [],
+                    "searchDebounce": 0.3
                 },
                 {
                     "label": "My school isn't listed",
@@ -1190,7 +1200,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eydaew"
+                    "id": "eydaew",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -1269,7 +1280,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e4c1ao"
+                    "id": "e4c1ao",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -1348,7 +1360,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e4c39nw"
+                    "id": "e4c39nw",
+                    "addons": []
                 },
                 {
                     "label": "How will you be attending the program",
@@ -1427,7 +1440,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e2avb6r"
+                    "id": "e2avb6r",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -1506,7 +1520,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e4vwl6"
+                    "id": "e4vwl6",
+                    "addons": []
                 },
                 {
                     "label": "How will you be attending the program",
@@ -1623,7 +1638,9 @@
                         "threshold": 0.3
                     },
                     "id": "el8m1c",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": [],
+                    "searchDebounce": 0.3
                 },
                 {
                     "label": "HTML",
@@ -1702,7 +1719,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e1zogo"
+                    "id": "e1zogo",
+                    "addons": []
                 },
                 {
                     "label": "The program I will be attending:",
@@ -1818,11 +1836,15 @@
                         "threshold": 0.3
                     },
                     "id": "ehmxwzx",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": [],
+                    "searchDebounce": 0.3
                 },
                 {
                     "label": "My program is not listed",
                     "labelPosition": "top",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "optionsLabelPosition": "right",
                     "description": "",
                     "tooltip": "",
@@ -1860,6 +1882,8 @@
                         "required": false,
                         "onlyAvailableItems": false,
                         "customMessage": "",
+                        "minSelectedCount": "",
+                        "maxSelectedCount": "",
                         "custom": "",
                         "customPrivate": false,
                         "json": "",
@@ -1870,6 +1894,7 @@
                     "errorLabel": "",
                     "minSelectedCountMessage": "",
                     "maxSelectedCountMessage": "",
+                    "errors": "",
                     "key": "myProgramNotListed",
                     "tags": [],
                     "properties": {},
@@ -1905,8 +1930,9 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
+                    "addons": [],
                     "fieldSet": false,
-                    "id": "ewojohn"
+                    "id": "etvv9qs"
                 },
                 {
                     "label": "selectedProgramDesc",
@@ -1976,7 +2002,8 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "inputType": "hidden",
-                    "id": "ee3p2mc"
+                    "id": "ee3p2mc",
+                    "addons": []
                 },
                 {
                     "title": "programDesc",
@@ -2095,7 +2122,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "erk6bs"
+                            "id": "erk6bs",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -2169,7 +2197,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "ebiw6ol"
+                            "id": "ebiw6ol",
+                            "addons": []
                         },
                         {
                             "label": "Columns",
@@ -2248,14 +2277,16 @@
                                             "properties": {},
                                             "allowMultipleMasks": false,
                                             "tag": "p",
-                                            "id": "e30454"
+                                            "id": "e30454",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 },
                                 {
                                     "components": [
@@ -2331,14 +2362,16 @@
                                             "properties": {},
                                             "allowMultipleMasks": false,
                                             "tag": "p",
-                                            "id": "ezr7ntp"
+                                            "id": "ezr7ntp",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 }
                             ],
                             "key": "columns4",
@@ -2404,7 +2437,9 @@
                             "tree": false,
                             "autoAdjust": false,
                             "hideOnChildrenHidden": false,
-                            "id": "e5gzydg"
+                            "id": "e5gzydg",
+                            "addons": [],
+                            "lazyLoad": false
                         },
                         {
                             "label": "Columns",
@@ -2483,14 +2518,16 @@
                                             "properties": {},
                                             "allowMultipleMasks": false,
                                             "tag": "p",
-                                            "id": "ex0yioh"
+                                            "id": "ex0yioh",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 },
                                 {
                                     "components": [
@@ -2566,14 +2603,16 @@
                                             "properties": {},
                                             "allowMultipleMasks": false,
                                             "tag": "p",
-                                            "id": "ec7blool"
+                                            "id": "ec7blool",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 }
                             ],
                             "key": "columns5",
@@ -2639,7 +2678,9 @@
                             "tree": false,
                             "autoAdjust": false,
                             "hideOnChildrenHidden": false,
-                            "id": "e3fdigo"
+                            "id": "e3fdigo",
+                            "addons": [],
+                            "lazyLoad": false
                         }
                     ],
                     "placeholder": "",
@@ -2678,7 +2719,9 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "tree": false,
-                    "id": "edsnvs8"
+                    "id": "edsnvs8",
+                    "addons": [],
+                    "lazyLoad": false
                 },
                 {
                     "label": "Select when you will be taking the program",
@@ -2791,7 +2834,9 @@
                         "threshold": 0.3
                     },
                     "id": "eb4inb",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": [],
+                    "searchDebounce": 0.3
                 },
                 {
                     "label": "My study period isn’t listed",
@@ -2878,7 +2923,8 @@
                     "id": "eoslne6",
                     "defaultValue": {
                         "offeringnotListed": false
-                    }
+                    },
+                    "addons": []
                 },
                 {
                     "label": "selectedOfferingDate",
@@ -2945,7 +2991,8 @@
                     "properties": {},
                     "allowMultipleMasks": false,
                     "inputType": "hidden",
-                    "id": "eh1q3is"
+                    "id": "eh1q3is",
+                    "addons": []
                 },
                 {
                     "title": "Custom program and offering",
@@ -3065,7 +3112,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "e30m9b"
+                            "id": "e30m9b",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -3138,7 +3186,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "ei10j1p"
+                            "id": "ei10j1p",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -3211,7 +3260,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "em3zynlo"
+                            "id": "em3zynlo",
+                            "addons": []
                         },
                         {
                             "label": "Program name",
@@ -3285,7 +3335,10 @@
                             "inputFormat": "plain",
                             "inputMask": "",
                             "spellcheck": true,
-                            "id": "ek2u9li"
+                            "id": "ek2u9li",
+                            "addons": [],
+                            "displayMask": "",
+                            "truncateMultipleSpaces": false
                         },
                         {
                             "label": "Program description",
@@ -3366,7 +3419,10 @@
                             "wysiwyg": false,
                             "editor": "",
                             "fixedSize": true,
-                            "id": "e1w8o5a"
+                            "id": "e1w8o5a",
+                            "addons": [],
+                            "displayMask": "",
+                            "truncateMultipleSpaces": false
                         },
                         {
                             "label": "HTML",
@@ -3440,7 +3496,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "eh3kz5a"
+                            "id": "eh3kz5a",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -3514,7 +3571,8 @@
                             "properties": {},
                             "allowMultipleMasks": false,
                             "tag": "p",
-                            "id": "exnccd"
+                            "id": "exnccd",
+                            "addons": []
                         },
                         {
                             "label": "Columns",
@@ -3590,7 +3648,8 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "inputType": "hidden",
-                                            "id": "e2qzxte"
+                                            "id": "e2qzxte",
+                                            "addons": []
                                         },
                                         {
                                             "label": "<strong>Start date</strong>",
@@ -3720,14 +3779,16 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "datepickerMode": "day",
-                                            "id": "eqnahab"
+                                            "id": "eqnahab",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 },
                                 {
                                     "components": [
@@ -3800,7 +3861,8 @@
                                             "allowMultipleMasks": false,
                                             "inputType": "hidden",
                                             "id": "e9jayo",
-                                            "hideOnChildrenHidden": false
+                                            "hideOnChildrenHidden": false,
+                                            "addons": []
                                         },
                                         {
                                             "label": "<strong>End date</strong>",
@@ -3930,14 +3992,16 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "datepickerMode": "day",
-                                            "id": "eyw0exi"
+                                            "id": "eyw0exi",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 }
                             ],
                             "key": "columns",
@@ -4003,7 +4067,9 @@
                             "tree": false,
                             "autoAdjust": false,
                             "hideOnChildrenHidden": false,
-                            "id": "ey5rt8h"
+                            "id": "ey5rt8h",
+                            "addons": [],
+                            "lazyLoad": false
                         }
                     ],
                     "allowPrevious": false,
@@ -4043,7 +4109,9 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "tree": false,
-                    "id": "ehvspueo"
+                    "id": "ehvspueo",
+                    "addons": [],
+                    "lazyLoad": false
                 },
                 {
                     "label": "HTML",
@@ -4123,7 +4191,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "eez5j5i"
+                    "id": "eez5j5i",
+                    "addons": []
                 },
                 {
                     "label": "Student number",
@@ -4206,7 +4275,10 @@
                     "dataGridLabel": false,
                     "inputType": "text",
                     "id": "ek8w4hn",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": [],
+                    "displayMask": "",
+                    "truncateMultipleSpaces": false
                 },
                 {
                     "label": "Data Grid",
@@ -4362,8 +4434,11 @@
                             "input": true,
                             "refreshOn": "",
                             "inputType": "text",
-                            "id": "ecrze1n0000000000000000000000000",
-                            "defaultValue": ""
+                            "id": "ecrze1n000000000000000000000000000000",
+                            "defaultValue": "",
+                            "addons": [],
+                            "displayMask": "",
+                            "truncateMultipleSpaces": false
                         }
                     ],
                     "placeholder": "",
@@ -4378,7 +4453,9 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "tree": true,
-                    "id": "e36mr6f"
+                    "id": "e36mr6f",
+                    "addons": [],
+                    "lazyLoad": false
                 }
             ],
             "input": false,
@@ -4419,7 +4496,9 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "tree": false,
-            "id": "eybfjx6"
+            "id": "eybfjx6",
+            "addons": [],
+            "lazyLoad": false
         },
         {
             "title": "Personal information",
@@ -9488,7 +9567,7 @@
                                     "key": "firstName",
                                     "type": "textfield",
                                     "input": true,
-                                    "id": "el2qrn9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "el2qrn900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -9565,7 +9644,7 @@
                                     "key": "lastName",
                                     "type": "textfield",
                                     "input": true,
-                                    "id": "e618eci000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "e618eci00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -9720,7 +9799,7 @@
                                     "allowMultipleMasks": false,
                                     "inputType": "radio",
                                     "fieldSet": false,
-                                    "id": "ejv9syt00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ejv9syt0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "defaultValue": "",
                                     "addons": []
                                 },
@@ -9758,7 +9837,7 @@
                                     "key": "strongHowLongDoYouWantToGiveThisPersonAccessToYourStudentAidBcAccountStrong",
                                     "type": "radio",
                                     "input": true,
-                                    "id": "ejm9s3q000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ejm9s3q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -9865,7 +9944,7 @@
                                         "disableWeekdays": false,
                                         "maxDate": null
                                     },
-                                    "id": "earatq000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "earatq00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "prefix": "",
                                     "suffix": "",
                                     "multiple": false,
@@ -9982,27 +10061,48 @@
                             "lazyLoad": false
                         },
                         {
-                            "html": "<p>The &nbsp;Freedom of Information and Protection of Privacy Act &nbsp;prevents StudentAid BC and financial aid staff from releasing any information pertaining to this application to anyone other than you unless you provide written permission. Complete these questions if you want to authorize another person to obtain information on your behalf about this application, related appendices, or assessment details. If you authorize someone to access information on your behalf by completing these questions, they must provide your Social Insurance Number and date of birth to access any information from StudentAid BC or financial aid staff. Please ensure you have the designated person’s authorization to enter their information. Do not use a school staff member. &nbsp;</p><p>&nbsp;</p><p>Note: Information can be shared with the persons/organizations identified in the StudentAid BC declaration based on your signature, regardless of whether these questions are completed.</p>",
+                            "html": "<p>This section is optional and can be left blank. The Freedom of Information and Protection of Privacy Act prevents StudentAid<br>BC and financial aid staff from releasing any information pertaining to this application to anyone other than you unless you<br>provide written permission. Complete these questions if you want to authorize another person to obtain information on your<br>behalf about this application, related appendices, or assessment details. If you authorize someone to access information on<br>your behalf by completing these questions, they must provide your Social Insurance Number and date of birth to access any<br>information from StudentAid BC or financial aid staff. Please ensure you have the designated person’s authorization to enter<br>their information. Do not use a school staff member.</p><p>&nbsp;</p><p>Note: Information can be shared with the persons/organizations identified in the StudentAid BC declaration based on your<br>signature, regardless of whether these questions are completed.</p>",
                             "label": "Content",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "customClass": "",
                             "refreshOnChange": false,
+                            "hidden": false,
+                            "modalEdit": false,
                             "key": "content4",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": "",
+                                "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                                "style": "",
+                                "page": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
                             "type": "content",
                             "input": false,
                             "tableView": false,
                             "placeholder": "",
                             "prefix": "",
-                            "customClass": "",
                             "suffix": "",
                             "multiple": false,
                             "defaultValue": null,
                             "protected": false,
                             "unique": false,
                             "persistent": true,
-                            "hidden": false,
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "modalEdit": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -10017,7 +10117,6 @@
                             "calculateValue": "",
                             "calculateServer": false,
                             "widget": null,
-                            "attributes": {},
                             "validateOn": "change",
                             "validate": {
                                 "required": false,
@@ -10027,26 +10126,13 @@
                                 "multiple": false,
                                 "unique": false
                             },
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            },
-                            "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                            },
                             "allowCalculateOverride": false,
                             "encrypted": false,
                             "showCharCount": false,
                             "showWordCount": false,
-                            "properties": {},
                             "allowMultipleMasks": false,
-                            "id": "eopro5d",
-                            "addons": []
+                            "addons": [],
+                            "id": "ekw9k7d"
                         },
                         {
                             "label": "roiWell",
@@ -12269,7 +12355,7 @@
                                             "addons": []
                                         }
                                     ],
-                                    "id": "ecpkm9j0000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ecpkm9j0000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -13961,6 +14047,85 @@
                             "addons": [],
                             "tag": "p",
                             "id": "evpffp"
+                        },
+                        {
+                            "label": "I have been authorized by my partner to submit their financial information including their net income (previous tax year's return's Line 15000 information)",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "description": "",
+                            "tooltip": "",
+                            "shortcut": "",
+                            "inputType": "checkbox",
+                            "customClass": "",
+                            "tabindex": "",
+                            "hidden": false,
+                            "hideLabel": false,
+                            "autofocus": false,
+                            "disabled": false,
+                            "tableView": false,
+                            "modalEdit": false,
+                            "defaultValue": false,
+                            "persistent": true,
+                            "protected": false,
+                            "dbIndex": false,
+                            "encrypted": false,
+                            "redrawOn": "",
+                            "clearOnHide": true,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "allowCalculateOverride": false,
+                            "validate": {
+                                "required": true,
+                                "customMessage": "",
+                                "custom": "",
+                                "customPrivate": false,
+                                "json": "",
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "errorLabel": "",
+                            "errors": "",
+                            "key": "partnerAuthorized",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": "",
+                                "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                                "style": "",
+                                "page": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "type": "checkbox",
+                            "name": "",
+                            "value": "",
+                            "input": true,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "unique": false,
+                            "refreshOn": "",
+                            "dataGridLabel": true,
+                            "labelPosition": "right",
+                            "widget": null,
+                            "validateOn": "change",
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "id": "enrxs7i"
                         },
                         {
                             "label": "What was your partner’s income (as shown on line 15000 of previous year’s Canada Revenue Agency tax return)? If they didn’t file taxes, enter total income from all sources in and outside of Canada.",
@@ -16018,7 +16183,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "ez47c9l"
+                    "id": "ez47c9l",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -16097,7 +16263,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e037i3r"
+                    "id": "e037i3r",
+                    "addons": []
                 },
                 {
                     "label": "<strong>Is your parent(s)/step-parent/sponsor/legal guardian a resident of B.C.?</strong>",
@@ -16196,7 +16363,8 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "e12vr2m",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": []
                 },
                 {
                     "label": "<strong>Does your parent(s)/step-parent/sponsor/legal guardian have a valid Social Insurance Number?</strong>",
@@ -16285,7 +16453,8 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "edhl0tsr",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": []
                 },
                 {
                     "label": "<strong>How many parents do you live with?</strong>",
@@ -16374,7 +16543,8 @@
                     "inputType": "radio",
                     "fieldSet": false,
                     "id": "ejm2anl",
-                    "defaultValue": ""
+                    "defaultValue": "",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -16453,7 +16623,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "egvhhzk"
+                    "id": "egvhhzk",
+                    "addons": []
                 },
                 {
                     "label": "HTML",
@@ -16532,7 +16703,8 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "id": "e13cki8"
+                    "id": "e13cki8",
+                    "addons": []
                 },
                 {
                     "title": "Parental Info Request ",
@@ -16556,6 +16728,85 @@
                     "input": false,
                     "tableView": false,
                     "components": [
+                        {
+                            "label": "I have been authorized by my parent(s) to submit their financial information including their net income (previous tax year's return's Line 15000 information)",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "description": "",
+                            "tooltip": "",
+                            "shortcut": "",
+                            "inputType": "checkbox",
+                            "customClass": "",
+                            "tabindex": "",
+                            "hidden": false,
+                            "hideLabel": false,
+                            "autofocus": false,
+                            "disabled": false,
+                            "tableView": false,
+                            "modalEdit": false,
+                            "defaultValue": false,
+                            "persistent": true,
+                            "protected": false,
+                            "dbIndex": false,
+                            "encrypted": false,
+                            "redrawOn": "",
+                            "clearOnHide": true,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "allowCalculateOverride": false,
+                            "validate": {
+                                "required": true,
+                                "customMessage": "",
+                                "custom": "",
+                                "customPrivate": false,
+                                "json": "",
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "errorLabel": "",
+                            "errors": "",
+                            "key": "parentAuthorized",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": "",
+                                "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                                "style": "",
+                                "page": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "type": "checkbox",
+                            "name": "",
+                            "value": "",
+                            "input": true,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "unique": false,
+                            "refreshOn": "",
+                            "dataGridLabel": true,
+                            "labelPosition": "right",
+                            "widget": null,
+                            "validateOn": "change",
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "id": "e4cmkej"
+                        },
                         {
                             "label": "Please provide an estimation of your parents income",
                             "prefix": "$",
@@ -16629,7 +16880,8 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
-                            "id": "e4e7fo9"
+                            "id": "e4e7fo9",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -16708,7 +16960,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "eaz6oxq"
+                            "id": "eaz6oxq",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -16787,7 +17040,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ee95ppo"
+                            "id": "ee95ppo",
+                            "addons": []
                         },
                         {
                             "label": "Do your parents have dependants other than yourself?",
@@ -16868,7 +17122,8 @@
                             "allowMultipleMasks": false,
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "eq2hrdb"
+                            "id": "eq2hrdb",
+                            "addons": []
                         },
                         {
                             "title": "Your siblings and other dependents panel",
@@ -16969,7 +17224,8 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "e0bgfy"
+                                    "id": "e0bgfy",
+                                    "addons": []
                                 },
                                 {
                                     "label": "HTML",
@@ -17048,7 +17304,8 @@
                                     "showCharCount": false,
                                     "showWordCount": false,
                                     "allowMultipleMasks": false,
-                                    "id": "eguy7vn"
+                                    "id": "eguy7vn",
+                                    "addons": []
                                 },
                                 {
                                     "label": "<strong>Parent dependent table</strong>",
@@ -17098,7 +17355,7 @@
                                             "key": "ageAtStartOfYourStudyPeriod",
                                             "type": "number",
                                             "input": true,
-                                            "id": "ea6c5bs000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "ea6c5bs000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -17148,7 +17405,8 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "properties": {},
-                                            "allowMultipleMasks": false
+                                            "allowMultipleMasks": false,
+                                            "addons": []
                                         },
                                         {
                                             "label": "<strong>Will this dependant be attending high school or full-time post-secondary school at the start of your study period?</strong>",
@@ -17173,12 +17431,13 @@
                                                 "customPrivate": false,
                                                 "strictDateValidation": false,
                                                 "multiple": false,
-                                                "unique": false
+                                                "unique": false,
+                                                "onlyAvailableItems": false
                                             },
                                             "key": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod",
                                             "type": "radio",
                                             "input": true,
-                                            "id": "eqnu34000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "eqnu34000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -17228,7 +17487,8 @@
                                             "properties": {},
                                             "allowMultipleMasks": false,
                                             "inputType": "radio",
-                                            "fieldSet": false
+                                            "fieldSet": false,
+                                            "addons": []
                                         },
                                         {
                                             "label": "<strong>Did you parent(s) claim this dependant on their 20xx Income Tax Return due to a disability?</strong>",
@@ -17253,12 +17513,13 @@
                                                 "customPrivate": false,
                                                 "strictDateValidation": false,
                                                 "multiple": false,
-                                                "unique": false
+                                                "unique": false,
+                                                "onlyAvailableItems": false
                                             },
                                             "key": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability",
                                             "type": "radio",
                                             "input": true,
-                                            "id": "eajzsj000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "eajzsj000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -17308,7 +17569,8 @@
                                             "properties": {},
                                             "allowMultipleMasks": false,
                                             "inputType": "radio",
-                                            "fieldSet": false
+                                            "fieldSet": false,
+                                            "addons": []
                                         }
                                     ],
                                     "placeholder": "",
@@ -17363,7 +17625,9 @@
                                     "allowMultipleMasks": false,
                                     "tree": true,
                                     "disableAddingRemovingRows": false,
-                                    "id": "e1exjiw"
+                                    "id": "e1exjiw",
+                                    "addons": [],
+                                    "lazyLoad": false
                                 }
                             ],
                             "allowPrevious": false,
@@ -17420,7 +17684,9 @@
                             "tree": false,
                             "theme": "default",
                             "breadcrumb": "default",
-                            "id": "e8tw6ni"
+                            "id": "e8tw6ni",
+                            "addons": [],
+                            "lazyLoad": false
                         }
                     ],
                     "allowPrevious": false,
@@ -17477,7 +17743,9 @@
                     "tree": false,
                     "theme": "default",
                     "breadcrumb": "default",
-                    "id": "etv3h9q"
+                    "id": "etv3h9q",
+                    "addons": [],
+                    "lazyLoad": false
                 },
                 {
                     "title": "Estranged details panel",
@@ -17601,7 +17869,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "eor6sz"
+                            "id": "eor6sz",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -17680,7 +17949,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ec2zw4i"
+                            "id": "ec2zw4i",
+                            "addons": []
                         },
                         {
                             "label": "<strong>Please select the date you were estranged from your parents</strong>",
@@ -17806,7 +18076,8 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "datepickerMode": "day",
-                            "id": "exab4vl"
+                            "id": "exab4vl",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -17885,7 +18156,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "e7le97c"
+                            "id": "e7le97c",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -17964,7 +18236,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "eoxk0rq"
+                            "id": "eoxk0rq",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -18043,7 +18316,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "et811p"
+                            "id": "et811p",
+                            "addons": []
                         },
                         {
                             "label": "Upload supporting documents (optional):",
@@ -18134,7 +18408,8 @@
                             "privateDownload": false,
                             "id": "ez8n6sa",
                             "options": "",
-                            "fileKey": ""
+                            "fileKey": "",
+                            "addons": []
                         },
                         {
                             "label": "Columns",
@@ -18211,14 +18486,16 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "id": "e78yx82",
-                                            "hideOnChildrenHidden": false
+                                            "hideOnChildrenHidden": false,
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 },
                                 {
                                     "components": [
@@ -18292,14 +18569,16 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
-                                            "id": "erwolbi"
+                                            "id": "erwolbi",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 }
                             ],
                             "autoAdjust": false,
@@ -18370,7 +18649,9 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "tree": false,
-                            "id": "eoq6zle"
+                            "id": "eoq6zle",
+                            "addons": [],
+                            "lazyLoad": false
                         }
                     ],
                     "allowPrevious": false,
@@ -18410,7 +18691,9 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "tree": false,
-                    "id": "ewxfwx"
+                    "id": "ewxfwx",
+                    "addons": [],
+                    "lazyLoad": false
                 },
                 {
                     "title": "Parent is not a BC Resident",
@@ -18534,7 +18817,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ebltkge"
+                            "id": "ebltkge",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -18613,7 +18897,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "e9f4txe"
+                            "id": "e9f4txe",
+                            "addons": []
                         },
                         {
                             "label": "<strong>Which of the following best describes your situation?</strong>",
@@ -18719,7 +19004,8 @@
                             "allowMultipleMasks": false,
                             "inputType": "radio",
                             "fieldSet": false,
-                            "id": "ex5hv1e"
+                            "id": "ex5hv1e",
+                            "addons": []
                         },
                         {
                             "label": "<strong>Please explain your situation:</strong> <br><li>Why you should be considered a resident for StudentAid BC purposes <strong>and</strong></li><li>Why you haven't applied to your parent(s)' province of residency</li>",
@@ -18809,7 +19095,10 @@
                             "inputMask": "",
                             "fixedSize": true,
                             "id": "eec3nss",
-                            "defaultValue": ""
+                            "defaultValue": "",
+                            "addons": [],
+                            "displayMask": "",
+                            "truncateMultipleSpaces": false
                         },
                         {
                             "label": "HTML",
@@ -18888,7 +19177,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ec0pw2p"
+                            "id": "ec0pw2p",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -18967,7 +19257,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "esbrfgj"
+                            "id": "esbrfgj",
+                            "addons": []
                         },
                         {
                             "label": "HTML",
@@ -19046,7 +19337,8 @@
                             "showCharCount": false,
                             "showWordCount": false,
                             "allowMultipleMasks": false,
-                            "id": "ewghf5j"
+                            "id": "ewghf5j",
+                            "addons": []
                         },
                         {
                             "label": "Upload supporting documents",
@@ -19134,7 +19426,8 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "privateDownload": false,
-                            "id": "ej7jsv"
+                            "id": "ej7jsv",
+                            "addons": []
                         },
                         {
                             "label": "Columns",
@@ -19211,14 +19504,16 @@
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
                                             "id": "er6vb",
-                                            "hideOnChildrenHidden": false
+                                            "hideOnChildrenHidden": false,
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 },
                                 {
                                     "components": [
@@ -19292,14 +19587,16 @@
                                             "showCharCount": false,
                                             "showWordCount": false,
                                             "allowMultipleMasks": false,
-                                            "id": "e9psih"
+                                            "id": "e9psih",
+                                            "addons": []
                                         }
                                     ],
                                     "width": 6,
                                     "offset": 0,
                                     "push": 0,
                                     "pull": 0,
-                                    "size": "md"
+                                    "size": "md",
+                                    "currentWidth": 6
                                 }
                             ],
                             "autoAdjust": false,
@@ -19370,7 +19667,9 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "tree": false,
-                            "id": "eblbijh"
+                            "id": "eblbijh",
+                            "addons": [],
+                            "lazyLoad": false
                         }
                     ],
                     "placeholder": "",
@@ -19409,7 +19708,9 @@
                     "showWordCount": false,
                     "allowMultipleMasks": false,
                     "tree": false,
-                    "id": "e64qs3"
+                    "id": "e64qs3",
+                    "addons": [],
+                    "lazyLoad": false
                 }
             ],
             "placeholder": "",
@@ -19448,7 +19749,9 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "tree": false,
-            "id": "e73iekm"
+            "id": "e73iekm",
+            "addons": [],
+            "lazyLoad": false
         },
         {
             "title": "Financial information",
@@ -27570,152 +27873,6 @@
             "allowMultipleMasks": false,
             "dataGridLabel": true,
             "id": "e1fb6tf"
-        },
-        {
-            "label": "applicationId",
-            "customClass": "",
-            "modalEdit": false,
-            "persistent": true,
-            "protected": false,
-            "dbIndex": false,
-            "encrypted": false,
-            "redrawOn": "",
-            "customDefaultValue": "",
-            "calculateValue": "",
-            "calculateServer": false,
-            "key": "applicationId",
-            "tags": [],
-            "properties": {},
-            "logic": [],
-            "attributes": {},
-            "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-            },
-            "type": "hidden",
-            "input": true,
-            "placeholder": "",
-            "prefix": "",
-            "suffix": "",
-            "multiple": false,
-            "unique": false,
-            "hidden": false,
-            "clearOnHide": true,
-            "refreshOn": "",
-            "tableView": false,
-            "labelPosition": "top",
-            "description": "",
-            "errorLabel": "",
-            "tooltip": "",
-            "hideLabel": false,
-            "tabindex": "",
-            "disabled": false,
-            "autofocus": false,
-            "widget": {
-                "type": "input"
-            },
-            "validateOn": "change",
-            "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-            },
-            "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-            },
-            "allowCalculateOverride": false,
-            "showCharCount": false,
-            "showWordCount": false,
-            "allowMultipleMasks": false,
-            "inputType": "hidden",
-            "id": "em1y8gd",
-            "defaultValue": ""
-        },
-        {
-            "label": "applicationStatus",
-            "customClass": "",
-            "modalEdit": false,
-            "defaultValue": null,
-            "persistent": true,
-            "protected": false,
-            "dbIndex": false,
-            "encrypted": false,
-            "redrawOn": "",
-            "customDefaultValue": "",
-            "calculateValue": "",
-            "calculateServer": false,
-            "key": "applicationStatus",
-            "tags": [],
-            "properties": {},
-            "logic": [],
-            "attributes": {},
-            "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-            },
-            "type": "hidden",
-            "input": true,
-            "tableView": false,
-            "placeholder": "",
-            "prefix": "",
-            "suffix": "",
-            "multiple": false,
-            "unique": false,
-            "hidden": false,
-            "clearOnHide": true,
-            "refreshOn": "",
-            "dataGridLabel": false,
-            "labelPosition": "top",
-            "description": "",
-            "errorLabel": "",
-            "tooltip": "",
-            "hideLabel": false,
-            "tabindex": "",
-            "disabled": false,
-            "autofocus": false,
-            "widget": {
-                "type": "input"
-            },
-            "validateOn": "change",
-            "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-            },
-            "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-            },
-            "allowCalculateOverride": false,
-            "showCharCount": false,
-            "showWordCount": false,
-            "allowMultipleMasks": false,
-            "inputType": "hidden",
-            "id": "e6z1qd9"
         }
-    ],
-    "display": "wizard",
-    "path": "sfaa2023-24",
-    "title": "SFAA2023-24",
-    "name": "SFAA2023-24",
-    "machineName": "SFAA2023-24",
-    "created": "2021-07-12T19:51:16.443Z",
-    "modified": "2022-02-17T17:05:59.060Z"
+    ]
 }
