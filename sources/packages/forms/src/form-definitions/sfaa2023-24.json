@@ -9567,7 +9567,7 @@
                                     "key": "firstName",
                                     "type": "textfield",
                                     "input": true,
-                                    "id": "el2qrn90000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "el2qrn900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -9644,7 +9644,7 @@
                                     "key": "lastName",
                                     "type": "textfield",
                                     "input": true,
-                                    "id": "e618eci0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "e618eci00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "suffix": "",
@@ -9799,7 +9799,7 @@
                                     "allowMultipleMasks": false,
                                     "inputType": "radio",
                                     "fieldSet": false,
-                                    "id": "ejv9syt000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ejv9syt0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "defaultValue": "",
                                     "addons": []
                                 },
@@ -9837,7 +9837,7 @@
                                     "key": "strongHowLongDoYouWantToGiveThisPersonAccessToYourStudentAidBcAccountStrong",
                                     "type": "radio",
                                     "input": true,
-                                    "id": "ejm9s3q0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ejm9s3q00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -9944,7 +9944,7 @@
                                         "disableWeekdays": false,
                                         "maxDate": null
                                     },
-                                    "id": "earatq0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "earatq00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                     "prefix": "",
                                     "suffix": "",
                                     "multiple": false,
@@ -12355,7 +12355,7 @@
                                             "addons": []
                                         }
                                     ],
-                                    "id": "ecpkm9j000000000000000000000000000000000000000000000000000000000000000000000",
+                                    "id": "ecpkm9j0000000000000000000000000000000000000000000000000000000000000000000000",
                                     "placeholder": "",
                                     "prefix": "",
                                     "customClass": "",
@@ -14064,6 +14064,7 @@
                             "disabled": false,
                             "tableView": false,
                             "modalEdit": false,
+                            "defaultValue": false,
                             "persistent": true,
                             "protected": false,
                             "dbIndex": false,
@@ -14086,7 +14087,7 @@
                             },
                             "errorLabel": "",
                             "errors": "",
-                            "key": "iHaveBeenAuthorizedByMyPartnerToSubmitTheirFinancialInformationIncludingTheirNetIncomePreviousTaxYearsReturnsLine15000Information",
+                            "key": "partnerAuthorized",
                             "tags": [],
                             "properties": {},
                             "conditional": {
@@ -14124,8 +14125,7 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "ec89gjg",
-                            "defaultValue": false
+                            "id": "enrxs7i"
                         },
                         {
                             "label": "What was your partner’s income (as shown on line 15000 of previous year’s Canada Revenue Agency tax return)? If they didn’t file taxes, enter total income from all sources in and outside of Canada.",
@@ -16744,6 +16744,7 @@
                             "disabled": false,
                             "tableView": false,
                             "modalEdit": false,
+                            "defaultValue": false,
                             "persistent": true,
                             "protected": false,
                             "dbIndex": false,
@@ -16766,7 +16767,7 @@
                             },
                             "errorLabel": "",
                             "errors": "",
-                            "key": "iHaveBeenAuthorizedByMyParentSToSubmitTheirFinancialInformationIncludingTheirNetIncomePreviousTaxYearsReturnsLine15000Information",
+                            "key": "parentAuthorized",
                             "tags": [],
                             "properties": {},
                             "conditional": {
@@ -16804,8 +16805,7 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "e5jnh9i",
-                            "defaultValue": false
+                            "id": "e4cmkej"
                         },
                         {
                             "label": "Please provide an estimation of your parents income",
@@ -17355,7 +17355,7 @@
                                             "key": "ageAtStartOfYourStudyPeriod",
                                             "type": "number",
                                             "input": true,
-                                            "id": "ea6c5bs0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "ea6c5bs000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -17437,7 +17437,7 @@
                                             "key": "willThisDependantBeAttendingHighSchoolOrFullTimePostSecondarySchoolAtTheStartOfYourStudyPeriod",
                                             "type": "radio",
                                             "input": true,
-                                            "id": "eqnu340000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "eqnu34000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
@@ -17519,7 +17519,7 @@
                                             "key": "didYouParentSClaimThisDependantOnTheir20XxIncomeTaxReturnDueToADisability",
                                             "type": "radio",
                                             "input": true,
-                                            "id": "eajzsj0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                                            "id": "eajzsj000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                                             "placeholder": "",
                                             "prefix": "",
                                             "customClass": "",
