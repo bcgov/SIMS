@@ -90,6 +90,7 @@ export class DisbursementSchedule extends RecordDataModel {
     name: "coe_status",
     type: "enum",
     enum: COEStatus,
+    enumName: "COEStatus",
   })
   coeStatus: COEStatus;
 

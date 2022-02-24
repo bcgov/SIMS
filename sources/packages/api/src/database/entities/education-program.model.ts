@@ -184,6 +184,7 @@ export class EducationProgram extends RecordDataModel {
     nullable: false,
     type: "enum",
     enum: ProgramIntensity,
+    enumName: "ProgramIntensity",
   })
   programIntensity: ProgramIntensity;
 

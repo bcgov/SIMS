@@ -161,10 +161,10 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   /**
    * Get the supporting users (e.g. parent/partner) associated
    * with the particular Student Application.
-   * @param applicationId application that contains
-   * @returns  supporting users.
+   * @param applicationId application id
+   * @returns supporting users.
    */
-  async getSupportingUserByApplicationId(
+  async getSupportingUsersByApplicationId(
     applicationId: number,
   ): Promise<SupportingUser[]> {
     return this.repo

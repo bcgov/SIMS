@@ -1,10 +1,8 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import { SupportingUserService } from "../../services";
-
-import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { Groups } from "src/auth/decorators";
-import { UserGroups } from "src/auth/user-groups.enum";
+import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { UserGroups } from "../../auth/user-groups.enum";
 import { ApplicationSupportingUsersDTO } from "./models/supporting-user.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -20,11 +18,11 @@ export class AESTSupportingUserController {
    * application, i.e ApplicationSupportingUsersDTO
    */
   @Get("application/:applicationId/aest")
-  async getSupportingUserOfAnApplication(
+  async getSupportingUsersOfAnApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
     const supportingUserForApplication =
-      await this.supportingUserService.getSupportingUserByApplicationId(
+      await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
       );
     return supportingUserForApplication.map(
