@@ -35,10 +35,10 @@ export class SupportingUsersService {
     );
   }
 
-  async getSupportingUserForSideBar(
+  async getSupportingUsersForSideBar(
     applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
-    return ApiClient.SupportingUserApi.getSupportingUserForSideBar(
+    return ApiClient.SupportingUserApi.getSupportingUsersForSideBar(
       applicationId,
     );
   }

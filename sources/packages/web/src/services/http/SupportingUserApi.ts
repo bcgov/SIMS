@@ -49,7 +49,7 @@ export class SupportingUserApi extends HttpBaseClient {
     }
   }
 
-  async getSupportingUserForSideBar(
+  async getSupportingUsersForSideBar(
     applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
     return this.getCallTyped<ApplicationSupportingUsersDTO[]>(

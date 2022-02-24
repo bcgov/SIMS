@@ -64,7 +64,7 @@ export default {
       },
     });
     onMounted(async () => {
-      const supportingUsers = await SupportingUsersService.shared.getSupportingUserForSideBar(
+      const supportingUsers = await SupportingUsersService.shared.getSupportingUsersForSideBar(
         props.applicationId,
       );
       supportingUsers.forEach((supportingUser, index) => {
