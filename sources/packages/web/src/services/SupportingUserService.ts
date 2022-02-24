@@ -1,6 +1,7 @@
 import ApiClient from "./http/ApiClient";
 import {
   ApplicationIdentifierDTO,
+  ApplicationSupportingUsersDTO,
   GetApplicationDTO,
   SupportingUserType,
   UpdateSupportingUserDTO,
@@ -31,6 +32,14 @@ export class SupportingUsersService {
     await ApiClient.SupportingUserApi.updateSupportingInformation(
       supportingUserType,
       payload,
+    );
+  }
+
+  async getSupportingUsersForSideBar(
+    applicationId: number,
+  ): Promise<ApplicationSupportingUsersDTO[]> {
+    return ApiClient.SupportingUserApi.getSupportingUsersForSideBar(
+      applicationId,
     );
   }
 }

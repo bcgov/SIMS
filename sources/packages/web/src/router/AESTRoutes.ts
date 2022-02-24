@@ -30,6 +30,7 @@ import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
+import AESTApplicationSideBar from "@/components/layouts/aest/AESTApplicationSideBar.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -125,7 +126,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         props: true,
         components: {
           default: ApplicationDetails,
-          sidebar: AESTHomeSideBar,
+          sidebar: AESTApplicationSideBar,
         },
         meta: {
           clientType: ClientIdType.AEST,

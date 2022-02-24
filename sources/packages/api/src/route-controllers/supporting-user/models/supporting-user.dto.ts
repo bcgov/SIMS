@@ -1,4 +1,5 @@
 import { IsNotEmpty } from "class-validator";
+import { SupportingUserType } from "src/database/entities";
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -37,4 +38,9 @@ export interface UpdateSupportingUserDTO {
 export interface GetApplicationDTO {
   programYearStartDate: Date;
   formName: string;
+}
+
+export interface ApplicationSupportingUsersDTO {
+  supportingUserId: number;
+  supportingUserType: SupportingUserType;
 }

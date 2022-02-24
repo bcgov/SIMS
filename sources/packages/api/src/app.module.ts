@@ -59,6 +59,7 @@ import {
   NotesController,
   RestrictionController,
   DesignationAgreementController,
+  AESTSupportingUserController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -105,6 +106,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     NotesController,
     RestrictionController,
     DesignationAgreementController,
+    AESTSupportingUserController,
   ],
   providers: [
     AppService,

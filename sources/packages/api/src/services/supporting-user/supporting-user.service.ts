@@ -157,4 +157,23 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       user: { id: userId },
     });
   }
+
+  /**
+   * Get the supporting users (e.g. parent/partner) associated
+   * with the particular Student Application.
+   * @param applicationId application id
+   * @returns supporting users.
+   */
+  async getSupportingUsersByApplicationId(
+    applicationId: number,
+  ): Promise<SupportingUser[]> {
+    return this.repo
+      .createQueryBuilder("supportingUser")
+      .select(["supportingUser.id", "supportingUser.supportingUserType"])
+      .innerJoin("supportingUser.application", "application")
+      .where("application.id = :applicationId", {
+        applicationId,
+      })
+      .getMany();
+  }
 }

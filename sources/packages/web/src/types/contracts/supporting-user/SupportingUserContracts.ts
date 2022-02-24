@@ -62,3 +62,8 @@ export interface GetApplicationDTO {
   programYearStartDate: Date;
   formName: string;
 }
+
+export interface ApplicationSupportingUsersDTO {
+  supportingUserId: number;
+  supportingUserType: SupportingUserType;
+}

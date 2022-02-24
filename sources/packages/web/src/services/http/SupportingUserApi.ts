@@ -1,5 +1,6 @@
 import {
   ApplicationIdentifierDTO,
+  ApplicationSupportingUsersDTO,
   GetApplicationDTO,
   SupportingUserType,
   UpdateSupportingUserDTO,
@@ -46,5 +47,13 @@ export class SupportingUserApi extends HttpBaseClient {
       }
       throw error;
     }
+  }
+
+  async getSupportingUsersForSideBar(
+    applicationId: number,
+  ): Promise<ApplicationSupportingUsersDTO[]> {
+    return this.getCallTyped<ApplicationSupportingUsersDTO[]>(
+      `supporting-user/application/${applicationId}/aest`,
+    );
   }
 }

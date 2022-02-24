@@ -22,3 +22,4 @@ export * from "./esdc-integration/fed-restrictions-integration.system.controller
 export * from "./note/note.controller";
 export * from "./restriction/restriction.controller";
 export * from "./designation-agreement/designation-agreement.controller";
+export * from "./supporting-user/supporting-user.aest.controller";
