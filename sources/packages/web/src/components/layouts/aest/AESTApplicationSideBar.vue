@@ -52,7 +52,7 @@ export default {
     const studentMenu = ref<MenuModel>({
       label: "Student",
       // TODO: in figma this icon is PRO version
-      icon: "graduation-cap",
+      icon: ["fas", "graduation-cap"],
       command: () => {
         router.push({
           name: AESTRoutesConst.APPLICATION_DETAILS,
@@ -82,7 +82,7 @@ export default {
           relatedParentPartners.value.push({
             label: `Parent ${index + 1}`,
             // TODO: in figma this icon is PRO version
-            icon: "user",
+            icon: ["fas", "user"],
             command: () => goToSupportingUser(supportingUser.supportingUserId),
           });
         }
@@ -90,7 +90,7 @@ export default {
           relatedParentPartners.value.push({
             label: "Partner",
             // TODO: in figma this icon is PRO version
-            icon: "user",
+            icon: ["fas", "user"],
             command: () => goToSupportingUser(supportingUser.supportingUserId),
           });
         }

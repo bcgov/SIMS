@@ -83,7 +83,10 @@ export default abstract class HttpBaseClient {
   // TODO: ONCE ALL URL'S ARE UPDATED, THEN THIS
   // FUNCTION CAN BE A PRIVATE FUNCTION AND CALLED
   // BY getCallTyped OR PATCH OR POST FUNCTION
-  public addHook(url: string) {
+  // WHEN NEW MODULES ARE ADDED, UPDATE THE CASE ALSO
+  // SO, THAT THIS FUNCTION CAN BE USED TO ADD HOOD TO ALL
+  //  API URL
+  public addClientRoot(url: string) {
     switch (AuthService.shared.authClientType) {
       case ClientIdType.AEST:
         return `aest/${url}`;

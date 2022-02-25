@@ -197,9 +197,14 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "user.firstName",
         "user.lastName",
         "user.email",
+        "application.id",
+        "programYear.parentFormName",
+        "programYear.partnerFormName",
       ])
       .innerJoin("supportingUser.user", "user")
-      .andWhere("supportingUser.id = :supportingUserId", {
+      .innerJoin("supportingUser.application", "application")
+      .innerJoin("application.programYear", "programYear")
+      .where("supportingUser.id = :supportingUserId", {
         supportingUserId,
       })
       .getOne();

@@ -49,10 +49,10 @@ export interface ApplicationSupportingUsersDTO {
 export interface SupportingUserFormData {
   formName: string;
   supportingData: any;
-  contactInfo?: ContactInfo;
-  sin?: string;
-  birthDate?: Date;
-  gender?: string;
+  contactInfo: ContactInfo;
+  sin: string;
+  birthDate: Date;
+  gender: string;
   email: string;
   firstName: string;
   lastName: string;

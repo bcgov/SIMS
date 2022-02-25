@@ -45,35 +45,25 @@ export class AESTSupportingUserController {
    * Get supporting user formName and the form data
    * with the supportingUserId
    * @param supportingUserId supporting user id.
-   * @param applicationId application id.
    * @returns supporting user form data and details.
    */
-  @Get(":supportingUserId/application/:applicationId")
+  @Get(":supportingUserId")
   async getSupportingUserFormDetails(
     @Param("supportingUserId") supportingUserId: number,
-    @Param("applicationId") applicationId: number,
   ): Promise<SupportingUserFormData> {
-    const supportingUserForms =
-      await this.applicationService.getSupportingUserFormName(applicationId);
-
-    if (!supportingUserForms) {
-      throw new NotFoundException(
-        `Application ${applicationId} not found or Program year associated with the application not found`,
-      );
-    }
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersDetails(
         supportingUserId,
       );
     if (!supportingUserForApplication) {
       throw new NotFoundException(
-        `Supporting user ${supportingUserId} details not found or Supporting user has  not submitted the form`,
+        `Supporting user ${supportingUserId} details not found or Supporting user has not submitted the form`,
       );
     }
     return {
       formName: getSupportingUserForm(
         supportingUserForApplication.supportingUserType,
-        supportingUserForms.programYear,
+        supportingUserForApplication.application.programYear,
       ),
       supportingData: supportingUserForApplication.supportingData,
       contactInfo: supportingUserForApplication.contactInfo,

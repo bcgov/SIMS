@@ -84,10 +84,10 @@ export interface ContactInfos {
 export interface SupportingUserFormData {
   formName: string;
   supportingData: any;
-  contactInfo?: ContactInfos;
-  sin?: string;
-  birthDate?: Date;
-  gender?: string;
+  contactInfo: ContactInfos;
+  sin: string;
+  birthDate: Date;
+  gender: string;
   email: string;
   firstName: string;
   lastName: string;

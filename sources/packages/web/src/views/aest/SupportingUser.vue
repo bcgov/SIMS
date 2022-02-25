@@ -15,7 +15,7 @@
       :data="formData"
       :readOnly="true"
     ></formio>
-    <Message severity="warn" :closable="false" v-else>
+    <Message v-else severity="warn" :closable="false">
       <strong>
         Supporting User has not submitted the application.
       </strong>
@@ -60,13 +60,12 @@ export default {
 
     onMounted(async () => {
       const supportingUsersData = await SupportingUsersService.shared.getSupportingUserData(
-        props.applicationId,
         props.supportingUserId,
       );
       formName.value = supportingUsersData.formName;
       let contactAddress = {};
       // Here there is only one address for now
-      supportingUsersData.contactInfo?.addresses.forEach(address => {
+      supportingUsersData.contactInfo.addresses.forEach(address => {
         contactAddress = {
           city: address.city,
           country: address.country,
@@ -83,11 +82,9 @@ export default {
         lastName: supportingUsersData.lastName,
         email: supportingUsersData.email,
         gender: supportingUsersData.gender,
-        dateOfBirth: supportingUsersData.birthDate
-          ? dateOnlyLongString(supportingUsersData.birthDate)
-          : undefined,
+        dateOfBirth: dateOnlyLongString(supportingUsersData.birthDate),
         sin: supportingUsersData.sin,
-        phone: supportingUsersData.contactInfo?.phone,
+        phone: supportingUsersData.contactInfo.phone,
         supportingData: supportingUsersData.supportingData,
         ...contactAddress,
       };

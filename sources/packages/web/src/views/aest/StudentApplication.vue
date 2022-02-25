@@ -80,7 +80,7 @@ export default {
       initialData.value = applicationDetail.value.data;
     });
 
-    const formLoaded = async (form: any) => {
+    const formLoaded = (form: any) => {
       applicationWizard = form;
 
       applicationWizard.on("wizardPageSelected", (page: any, index: number) => {

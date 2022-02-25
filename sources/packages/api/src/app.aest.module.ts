@@ -17,9 +17,7 @@ import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-
   controllers: [AESTSupportingUserController],
-
   providers: [
     SupportingUserService,
     ApplicationService,
@@ -29,7 +27,7 @@ import { LoggerModule } from "./logger/logger.module";
     MSFAANumberService,
     WorkflowService,
     ConfigService,
-    TokensService
+    TokensService,
   ],
 })
 export class AppAESTModule {}
