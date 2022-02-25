@@ -55,6 +55,7 @@ export enum AppRoutes {
   Notes = "notes",
   Applications = "applications",
   ApplicationDetail = "student/:studentId/application/:applicationId",
+  SupportingUserDetail = "supporting-user/:supportingUserId",
   // Supporting Users
   SupportingUsersRoot = "/supporting-users",
   SupportingUsersDashboard = "dashboard",

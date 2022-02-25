@@ -2,6 +2,7 @@ import {
   ApplicationIdentifierDTO,
   ApplicationSupportingUsersDTO,
   GetApplicationDTO,
+  SupportingUserFormData,
   SupportingUserType,
   UpdateSupportingUserDTO,
 } from "@/types";
@@ -53,7 +54,15 @@ export class SupportingUserApi extends HttpBaseClient {
     applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
     return this.getCallTyped<ApplicationSupportingUsersDTO[]>(
-      `supporting-user/application/${applicationId}/aest`,
+      this.addClientRoot(`supporting-user/application/${applicationId}`),
+    );
+  }
+
+  async getSupportingUserData(
+    supportingUserId: number,
+  ): Promise<SupportingUserFormData> {
+    return this.getCallTyped<SupportingUserFormData>(
+      this.addClientRoot(`supporting-user/${supportingUserId}`),
     );
   }
 }
