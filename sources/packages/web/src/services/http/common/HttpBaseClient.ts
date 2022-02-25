@@ -2,6 +2,7 @@ import { AuthService } from "@/services/AuthService";
 import { AxiosRequestConfig } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
+import { ClientIdType } from "@/types";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
@@ -77,5 +78,17 @@ export default abstract class HttpBaseClient {
     }
     this.handleRequestError(error);
     throw error;
+  }
+
+  // TODO: ONCE ALL URL'S ARE UPDATED, THEN THIS
+  // FUNCTION CAN BE A PRIVATE FUNCTION AND CALLED
+  // BY getCallTyped OR PATCH OR POST FUNCTION
+  public addHook(url: string) {
+    switch (AuthService.shared.authClientType) {
+      case ClientIdType.AEST:
+        return `aest/${url}`;
+      default:
+        return url;
+    }
   }
 }

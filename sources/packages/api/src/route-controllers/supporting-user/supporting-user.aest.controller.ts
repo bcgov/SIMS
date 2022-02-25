@@ -24,7 +24,7 @@ export class AESTSupportingUserController {
    * @return list of supporting users of an
    * application, i.e ApplicationSupportingUsersDTO
    */
-  @Get("application/:applicationId/aest")
+  @Get("application/:applicationId")
   async getSupportingUsersOfAnApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
@@ -48,7 +48,7 @@ export class AESTSupportingUserController {
    * @param applicationId application id.
    * @returns supporting user form data and details.
    */
-  @Get(":supportingUserId/application/:applicationId/aest")
+  @Get(":supportingUserId/application/:applicationId")
   async getSupportingUserFormDetails(
     @Param("supportingUserId") supportingUserId: number,
     @Param("applicationId") applicationId: number,

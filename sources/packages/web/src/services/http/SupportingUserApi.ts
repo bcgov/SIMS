@@ -54,7 +54,7 @@ export class SupportingUserApi extends HttpBaseClient {
     applicationId: number,
   ): Promise<ApplicationSupportingUsersDTO[]> {
     return this.getCallTyped<ApplicationSupportingUsersDTO[]>(
-      `supporting-user/application/${applicationId}/aest`,
+      this.addHook(`supporting-user/application/${applicationId}`),
     );
   }
 
@@ -63,7 +63,9 @@ export class SupportingUserApi extends HttpBaseClient {
     supportingUserId: number,
   ): Promise<SupportingUserFormData> {
     return this.getCallTyped<SupportingUserFormData>(
-      `supporting-user/${supportingUserId}/application/${applicationId}/aest`,
+      this.addHook(
+        `supporting-user/${supportingUserId}/application/${applicationId}`,
+      ),
     );
   }
 }
