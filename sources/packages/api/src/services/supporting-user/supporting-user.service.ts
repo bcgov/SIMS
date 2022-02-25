@@ -70,7 +70,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     );
 
     try {
-      queryRunner.startTransaction();
+      await queryRunner.startTransaction();
       // Query to select the supporting user to be update.
       // The record must have the user id as null to ensure that it was never update before.
       // The table could also contains more than one record for parents so while defining
