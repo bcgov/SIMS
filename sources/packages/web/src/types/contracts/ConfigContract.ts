@@ -10,7 +10,7 @@ export enum ClientIdType {
 }
 
 export enum ClientTypeBaseRoute {
-  Student = "student",
+  Student = "students",
   Institution = "institutions",
   AEST = "aest",
   SupportingUser = "supporting-users",

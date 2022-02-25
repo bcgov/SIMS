@@ -60,16 +60,15 @@ export default {
       formName.value = supportingUsersData.formName;
       let contactAddress = {};
       // Here there is only one address for now
-      if (supportingUsersData.contactInfo.addresses.length === 1) {
+      if (supportingUsersData.contactInfo.addresses.length) {
+        const address = supportingUsersData.contactInfo.addresses[0];
         contactAddress = {
-          city: supportingUsersData.contactInfo.addresses[0].city,
-          country: supportingUsersData.contactInfo.addresses[0].country,
-          provinceState: supportingUsersData.contactInfo.addresses[0].province,
-          postalCode: supportingUsersData.contactInfo.addresses[0].postalCode,
-          addressLine1:
-            supportingUsersData.contactInfo.addresses[0].addressLine1,
-          addressLine2:
-            supportingUsersData.contactInfo.addresses[0].addressLine2,
+          city: address.city,
+          country: address.country,
+          provinceState: address.province,
+          postalCode: address.postalCode,
+          addressLine1: address.addressLine1,
+          addressLine2: address.addressLine2,
         };
       }
       // for both parent and partner first tab is same
