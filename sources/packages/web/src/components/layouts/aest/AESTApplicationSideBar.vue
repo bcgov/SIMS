@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: need to use v-list-group and update code with vuetify is -->
   <v-navigation-drawer app class="body-background">
     <v-list dense nav>
       <v-list-item @click="studentMenu.command">
@@ -38,11 +39,11 @@ export default {
   props: {
     studentId: {
       type: Number,
-      required: false,
+      required: true,
     },
     applicationId: {
       type: Number,
-      required: false,
+      required: true,
     },
   },
   setup(props: any) {
@@ -52,7 +53,7 @@ export default {
     const studentMenu = ref<MenuModel>({
       label: "Student",
       // TODO: in figma this icon is PRO version
-      icon: "graduation-cap",
+      icon: ["fas", "graduation-cap"],
       command: () => {
         router.push({
           name: AESTRoutesConst.APPLICATION_DETAILS,
@@ -63,6 +64,16 @@ export default {
         });
       },
     });
+    const goToSupportingUser = (supportingUserId: number) => {
+      router.push({
+        name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
+        params: {
+          applicationId: props.applicationId,
+          studentId: props.studentId,
+          supportingUserId: supportingUserId,
+        },
+      });
+    };
     onMounted(async () => {
       const supportingUsers = await SupportingUsersService.shared.getSupportingUsersForSideBar(
         props.applicationId,
@@ -72,14 +83,16 @@ export default {
           relatedParentPartners.value.push({
             label: `Parent ${index + 1}`,
             // TODO: in figma this icon is PRO version
-            icon: "user",
+            icon: ["fas", "user"],
+            command: () => goToSupportingUser(supportingUser.supportingUserId),
           });
         }
         if (supportingUser.supportingUserType === SupportingUserType.Partner) {
           relatedParentPartners.value.push({
             label: "Partner",
             // TODO: in figma this icon is PRO version
-            icon: "user",
+            icon: ["fas", "user"],
+            command: () => goToSupportingUser(supportingUser.supportingUserId),
           });
         }
       });

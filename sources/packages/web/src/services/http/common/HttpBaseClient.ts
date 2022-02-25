@@ -2,6 +2,7 @@ import { AuthService } from "@/services/AuthService";
 import { AxiosRequestConfig } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
+import { ClientIdType, ClientTypeBaseRoute } from "@/types";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
@@ -77,5 +78,23 @@ export default abstract class HttpBaseClient {
     }
     this.handleRequestError(error);
     throw error;
+  }
+
+  // TODO: Once all url's are updated, then this
+  // function can be a private function and called
+  // by getCallTyped or patch or post function
+  public addClientRoot(url: string) {
+    switch (AuthService.shared.authClientType) {
+      case ClientIdType.AEST:
+        return `${ClientTypeBaseRoute.AEST}/${url}`;
+      case ClientIdType.Institution:
+        return `${ClientTypeBaseRoute.Institution}/${url}`;
+      case ClientIdType.Student:
+        return `${ClientTypeBaseRoute.Student}/${url}`;
+      case ClientIdType.SupportingUsers:
+        return `${ClientTypeBaseRoute.SupportingUser}/${url}`;
+      default:
+        return url;
+    }
   }
 }
