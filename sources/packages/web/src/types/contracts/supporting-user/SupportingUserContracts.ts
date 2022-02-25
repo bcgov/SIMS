@@ -1,5 +1,7 @@
 // Expected possible errors returned by the API while submitting supporting data.
 
+import { ContactInformation } from "@/types";
+
 // Not possible to find a Student Application with the data provided by the supporting user.
 export const STUDENT_APPLICATION_NOT_FOUND = "STUDENT_APPLICATION_NOT_FOUND";
 // The same user currently authenticated already provided supporting data for the
@@ -68,23 +70,10 @@ export interface ApplicationSupportingUsersDTO {
   supportingUserType: SupportingUserType;
 }
 
-export interface AddressInfo {
-  addressLine1: string;
-  addressLine2?: string;
-  province: string;
-  country: string;
-  city: string;
-  postalCode: string;
-}
-export interface ContactInfos {
-  addresses: Array<AddressInfo>;
-  phone: string;
-}
-
 export interface SupportingUserFormData {
   formName: string;
   supportingData: any;
-  contactInfo: ContactInfos;
+  contactInfo: ContactInformation;
   sin: string;
   birthDate: Date;
   gender: string;

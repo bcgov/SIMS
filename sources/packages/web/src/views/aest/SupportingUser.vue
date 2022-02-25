@@ -43,10 +43,6 @@ export default {
       type: Number,
       required: true,
     },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     supportingUserId: {
       type: Number,
       required: true,
@@ -54,7 +50,6 @@ export default {
   },
   setup(props: any) {
     const { dateOnlyLongString } = useFormatters();
-
     const formName = ref();
     const formData = ref();
 
@@ -65,16 +60,18 @@ export default {
       formName.value = supportingUsersData.formName;
       let contactAddress = {};
       // Here there is only one address for now
-      supportingUsersData.contactInfo.addresses.forEach(address => {
+      if (supportingUsersData.contactInfo.addresses.length === 1) {
         contactAddress = {
-          city: address.city,
-          country: address.country,
-          provinceState: address.province,
-          postalCode: address.postalCode,
-          addressLine1: address.addressLine1,
-          addressLine2: address.addressLine2,
+          city: supportingUsersData.contactInfo.addresses[0].city,
+          country: supportingUsersData.contactInfo.addresses[0].country,
+          provinceState: supportingUsersData.contactInfo.addresses[0].province,
+          postalCode: supportingUsersData.contactInfo.addresses[0].postalCode,
+          addressLine1:
+            supportingUsersData.contactInfo.addresses[0].addressLine1,
+          addressLine2:
+            supportingUsersData.contactInfo.addresses[0].addressLine2,
         };
-      });
+      }
       // for both parent and partner first tab is same
       // and the information on the 2nd tab is fed in `supportingData`
       formData.value = {

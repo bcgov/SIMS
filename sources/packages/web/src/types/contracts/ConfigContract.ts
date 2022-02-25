@@ -9,6 +9,13 @@ export enum ClientIdType {
   SupportingUsers = "supportingUsers",
 }
 
+export enum ClientTypeBaseRoute {
+  Student = "student",
+  Institution = "institutions",
+  AEST = "aest",
+  SupportingUser = "supporting-users",
+}
+
 export interface AuthConfig {
   url: string;
   realm: string;

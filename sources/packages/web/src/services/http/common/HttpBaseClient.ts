@@ -2,7 +2,7 @@ import { AuthService } from "@/services/AuthService";
 import { AxiosRequestConfig } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
-import { ClientIdType } from "@/types";
+import { ClientIdType, ClientTypeBaseRoute } from "@/types";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
@@ -80,16 +80,19 @@ export default abstract class HttpBaseClient {
     throw error;
   }
 
-  // TODO: ONCE ALL URL'S ARE UPDATED, THEN THIS
-  // FUNCTION CAN BE A PRIVATE FUNCTION AND CALLED
-  // BY getCallTyped OR PATCH OR POST FUNCTION
-  // WHEN NEW MODULES ARE ADDED, UPDATE THE CASE ALSO
-  // SO, THAT THIS FUNCTION CAN BE USED TO ADD HOOD TO ALL
-  //  API URL
+  // TODO: Once all url's are updated, then this
+  // function can be a private function and called
+  // by getCallTyped or patch or post function
   public addClientRoot(url: string) {
     switch (AuthService.shared.authClientType) {
       case ClientIdType.AEST:
-        return `aest/${url}`;
+        return `${ClientTypeBaseRoute.AEST}/${url}`;
+      case ClientIdType.Institution:
+        return `${ClientTypeBaseRoute.Institution}/${url}`;
+      case ClientIdType.Student:
+        return `${ClientTypeBaseRoute.Student}/${url}`;
+      case ClientIdType.SupportingUsers:
+        return `${ClientTypeBaseRoute.SupportingUser}/${url}`;
       default:
         return url;
     }

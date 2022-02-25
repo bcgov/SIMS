@@ -45,11 +45,9 @@ export class SupportingUsersService {
   }
 
   async getSupportingUserData(
-    applicationId: number,
     supportingUserId: number,
   ): Promise<SupportingUserFormData> {
     return ApiClient.SupportingUserApi.getSupportingUserData(
-      applicationId,
       supportingUserId,
     );
   }
