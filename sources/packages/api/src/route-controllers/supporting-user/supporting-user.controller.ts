@@ -231,6 +231,7 @@ export class SupportingUserController {
           ),
         );
       }
+      throw error;
     }
   }
 }

@@ -1,11 +1,19 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import {
+  ApplicationService,
   ConfigService,
+  MSFAANumberService,
+  SequenceControlService,
+  StudentFileService,
+  SupportingUserService,
+  TokensService,
+  WorkflowActionsService,
+  WorkflowService,
   DesignationAgreementService,
-  FormService,
 } from "./services";
 import {
+  AESTSupportingUserController,
   DesignationAgreementAESTController,
   DesignationAgreementServiceController,
 } from "./route-controllers";
@@ -14,10 +22,20 @@ import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [DesignationAgreementAESTController],
+  controllers: [
+    AESTSupportingUserController,
+    DesignationAgreementAESTController,
+  ],
   providers: [
-    FormService,
+    SupportingUserService,
+    ApplicationService,
+    SequenceControlService,
+    StudentFileService,
+    WorkflowActionsService,
+    MSFAANumberService,
+    WorkflowService,
     ConfigService,
+    TokensService,
     DesignationAgreementService,
     DesignationAgreementServiceController,
   ],

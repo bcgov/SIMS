@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "./database/database.module";
+import { RouterModule } from "@nestjs/core";
 import {
   StudentService,
   UserService,
@@ -58,7 +59,6 @@ import {
   FedRestrictionsIntegrationController,
   NotesController,
   RestrictionController,
-  AESTSupportingUserController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -67,9 +67,9 @@ import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msf
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
-import { AppInstitutionModule } from "./app.institution.module";
-import { RouterModule } from "@nestjs/core";
 import { AppAESTModule } from "./app.aest.module";
+import { AppInstitutionModule } from "./app.institution.module";
+
 @Module({
   imports: [
     LoggerModule,
@@ -80,8 +80,8 @@ import { AppAESTModule } from "./app.aest.module";
     SFASIntegrationModule,
     ECertFullTimeIntegrationModule,
     FedRestrictionIntegrationModule,
-    AppInstitutionModule,
     AppAESTModule,
+    AppInstitutionModule,
     RouterModule.register([
       {
         path: "institution",
@@ -118,7 +118,6 @@ import { AppAESTModule } from "./app.aest.module";
     FedRestrictionsIntegrationController,
     NotesController,
     RestrictionController,
-    AESTSupportingUserController,
   ],
   providers: [
     AppService,

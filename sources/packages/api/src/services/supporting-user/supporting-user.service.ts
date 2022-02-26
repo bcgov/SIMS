@@ -70,7 +70,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     );
 
     try {
-      queryRunner.startTransaction();
+      await queryRunner.startTransaction();
       // Query to select the supporting user to be update.
       // The record must have the user id as null to ensure that it was never update before.
       // The table could also contains more than one record for parents so while defining
@@ -175,5 +175,38 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         applicationId,
       })
       .getMany();
+  }
+
+  /**
+   * Get the supporting users (e.g. parent/partner) details
+   * @param supportingUserId supportingUser id
+   * @returns supporting users.
+   */
+  async getSupportingUsersDetails(
+    supportingUserId: number,
+  ): Promise<SupportingUser> {
+    return this.repo
+      .createQueryBuilder("supportingUser")
+      .select([
+        "supportingUser.supportingUserType",
+        "supportingUser.contactInfo",
+        "supportingUser.sin",
+        "supportingUser.birthDate",
+        "supportingUser.gender",
+        "supportingUser.supportingData",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "application.id",
+        "programYear.parentFormName",
+        "programYear.partnerFormName",
+      ])
+      .innerJoin("supportingUser.user", "user")
+      .innerJoin("supportingUser.application", "application")
+      .innerJoin("application.programYear", "programYear")
+      .where("supportingUser.id = :supportingUserId", {
+        supportingUserId,
+      })
+      .getOne();
   }
 }
