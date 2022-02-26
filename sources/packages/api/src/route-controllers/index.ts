@@ -23,3 +23,5 @@ export * from "./note/note.controller";
 export * from "./restriction/restriction.controller";
 export * from "./designation-agreement/designation-agreement.controller";
 export * from "./supporting-user/supporting-user.aest.controller";
+export * from "./designation-agreement/designation-agreement.service.controller";
+export * from "./designation-agreement/designation-agreement.aest.controller";

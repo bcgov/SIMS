@@ -79,7 +79,7 @@ export default {
       },
       {
         label: "Settings",
-        icon: "graduation-cap",
+        icon: ["fas", "cog"],
       },
     ]);
     return {

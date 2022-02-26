@@ -58,7 +58,6 @@ import {
   FedRestrictionsIntegrationController,
   NotesController,
   RestrictionController,
-  DesignationAgreementController,
   AESTSupportingUserController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -68,7 +67,9 @@ import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msf
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
 import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
-
+import { AppInstitutionModule } from "./app.institution.module";
+import { RouterModule } from "@nestjs/core";
+import { AppAESTModule } from "./app.aest.module";
 @Module({
   imports: [
     LoggerModule,
@@ -79,6 +80,18 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     SFASIntegrationModule,
     ECertFullTimeIntegrationModule,
     FedRestrictionIntegrationModule,
+    AppInstitutionModule,
+    AppAESTModule,
+    RouterModule.register([
+      {
+        path: "institution",
+        module: AppInstitutionModule,
+      },
+      {
+        path: "aest",
+        module: AppAESTModule,
+      },
+    ]),
   ],
   controllers: [
     AppController,
@@ -105,7 +118,6 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
     FedRestrictionsIntegrationController,
     NotesController,
     RestrictionController,
-    DesignationAgreementController,
     AESTSupportingUserController,
   ],
   providers: [
