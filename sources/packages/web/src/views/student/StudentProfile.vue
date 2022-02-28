@@ -141,7 +141,10 @@ export default {
       disableBtn.value = true;
       try {
         await StudentService.shared.applyForPDStatus();
-        toast.success("Applied for PD Status!", "Successfully!");
+        toast.success(
+          "Applied for PD Status!",
+          "Your application is submitted. The outcome will display on your profile",
+        );
       } catch (error) {
         toast.error(
           "Unexpected error",
