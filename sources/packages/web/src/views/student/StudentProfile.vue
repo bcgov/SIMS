@@ -1,4 +1,9 @@
 <template>
+  <PDStatusApplicationModal
+    :showModal="showModal"
+    @applyPDStatus="applyPDStatus"
+    @hidePDApplicationModal="hidePDApplicationModal"
+  />
   <RestrictionBanner
     v-if="hasRestriction"
     :restrictionMessage="restrictionMessage"
@@ -8,7 +13,7 @@
     <span v-if="showApplyPDButton">
       <v-btn
         color="primary"
-        @click="applyPDStatus()"
+        @click="showPDApplicationModal()"
         v-if="showApplyPDButton"
         :disabled="disableBtn"
       >
@@ -67,6 +72,7 @@ import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
+import PDStatusApplicationModal from "@/components/students/modals/PDStatusApplicationModal.vue";
 
 enum FormModes {
   edit = "edit",
@@ -89,6 +95,7 @@ export default {
     RestrictionBanner,
     FullPageContainer,
     CheckValidSINBanner,
+    PDStatusApplicationModal,
   },
   props: {
     editMode: {
@@ -110,6 +117,15 @@ export default {
     const { hasStudentAccount } = useStudentStore();
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
+    const showModal = ref(false);
+
+    const hidePDApplicationModal = () => {
+      showModal.value = false;
+    };
+
+    const showPDApplicationModal = () => {
+      showModal.value = true;
+    };
 
     const getStudentInfo = async () => {
       if (hasStudentAccount) {
@@ -153,6 +169,7 @@ export default {
       }
       await getStudentInfo();
       appliedPDButton();
+      hidePDApplicationModal();
       disableBtn.value = false;
     };
 
@@ -215,6 +232,9 @@ export default {
       showPendingStatus,
       hasRestriction,
       restrictionMessage,
+      showModal,
+      hidePDApplicationModal,
+      showPDApplicationModal,
     };
   },
 };
