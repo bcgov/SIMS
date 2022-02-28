@@ -31,6 +31,10 @@ export interface GetDesignationAgreementsDto {
   endDate?: Date;
 }
 
+export interface PendingDesignationDto extends GetDesignationAgreementsDto {
+  institutionName: string;
+}
+
 /**
  * Possible status for a designation agreement.
  */

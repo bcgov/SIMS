@@ -69,13 +69,14 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * the associated locations approvals.
    * @param designationId designation id.
    * @param institutionId institution id.
+   * This value is passed only for client type Institution.
    * @returns designation agreement information.
    */
   async getInstitutionDesignationById(
     designationId: number,
-    institutionId: number,
+    institutionId?: number,
   ): Promise<DesignationAgreement> {
-    return this.repo
+    const designationQuery = this.repo
       .createQueryBuilder("designation")
       .select([
         "designation.id",
@@ -93,9 +94,14 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         "designationLocation",
       )
       .innerJoin("designationLocation.institutionLocation", "location")
-      .where("designation.id = :designationId", { designationId })
-      .andWhere("location.institution.id = :institutionId", { institutionId })
-      .getOne();
+      .where("designation.id = :designationId", { designationId });
+    if (institutionId) {
+      designationQuery.andWhere("location.institution.id = :institutionId", {
+        institutionId,
+      });
+    }
+
+    return designationQuery.getOne();
   }
 
   /**
@@ -106,26 +112,18 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
   async getInstitutionDesignationsById(
     institutionId: number,
   ): Promise<DesignationAgreement[]> {
-    return this.repo
-      .createQueryBuilder("designation")
-      .select([
-        "designation.id",
-        "designation.designationStatus",
-        "designation.submittedDate",
-        "designation.startDate",
-        "designation.endDate",
-      ])
-      .where("designation.institution.id = :institutionId", { institutionId })
-      .orderBy(
-        `CASE designation.designationStatus
-            WHEN '${DesignationAgreementStatus.Pending}' THEN ${SortPriority.Priority1}
-            WHEN '${DesignationAgreementStatus.Approved}' THEN ${SortPriority.Priority2}
-            WHEN '${DesignationAgreementStatus.Declined}' THEN ${SortPriority.Priority3}
-            ELSE ${SortPriority.Priority4}
-          END`,
-      )
-      .addOrderBy("designation.submittedDate", "DESC")
-      .getMany();
+    return this.getDesignationSummaryByFilter("institution.id", institutionId);
+  }
+
+  /**
+   * Service to get all pending designations.
+   * @returns designation summary.
+   */
+  async getAllPendingDesignations(): Promise<DesignationAgreement[]> {
+    return this.getDesignationSummaryByFilter(
+      "designation.designationStatus",
+      DesignationAgreementStatus.Pending,
+    );
   }
 
   /**
@@ -146,5 +144,39 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .limit(1)
       .getRawOne();
     return !!found;
+  }
+  /**
+   * Private service method that retrieves designation summary
+   * based on the given filter.
+   * @param filterColumn
+   * @param filterValue
+   * @returns designation summary.
+   */
+  private async getDesignationSummaryByFilter(
+    filterColumn: string,
+    filterValue: number | string,
+  ): Promise<DesignationAgreement[]> {
+    return this.repo
+      .createQueryBuilder("designation")
+      .select([
+        "designation.id",
+        "designation.designationStatus",
+        "designation.submittedDate",
+        "designation.startDate",
+        "designation.endDate",
+        "institution.operatingName",
+      ])
+      .innerJoin("designation.institution", "institution")
+      .where(`${filterColumn} = :filterValue`, { filterValue })
+      .orderBy(
+        `CASE designation.designationStatus
+            WHEN '${DesignationAgreementStatus.Pending}' THEN ${SortPriority.Priority1}
+            WHEN '${DesignationAgreementStatus.Approved}' THEN ${SortPriority.Priority2}
+            WHEN '${DesignationAgreementStatus.Declined}' THEN ${SortPriority.Priority3}
+            ELSE ${SortPriority.Priority4}
+          END`,
+      )
+      .addOrderBy("designation.submittedDate", "DESC")
+      .getMany();
   }
 }

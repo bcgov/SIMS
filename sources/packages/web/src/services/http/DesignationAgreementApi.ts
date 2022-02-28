@@ -3,6 +3,7 @@ import {
   SubmitDesignationAgreementDto,
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
+  PendingDesignationDto,
 } from "@/types/contracts/DesignationAgreementContract";
 
 /**
@@ -22,13 +23,24 @@ export class DesignationAgreementApi extends HttpBaseClient {
     designationId: number,
   ): Promise<GetDesignationAgreementDto> {
     return this.getCallTyped<GetDesignationAgreementDto>(
-      `institution/designation-agreement/${designationId}`,
+      this.addClientRoot(`designation-agreement/${designationId}`),
     );
   }
 
-  async getDesignationsAgreements(): Promise<GetDesignationAgreementsDto[]> {
+  async getDesignationsAgreements(
+    institutionId?: number,
+  ): Promise<GetDesignationAgreementsDto[]> {
+    const url = institutionId
+      ? `designation-agreement/institution/${institutionId}`
+      : "designation-agreement";
     return this.getCallTyped<GetDesignationAgreementsDto[]>(
-      `institution/designation-agreement`,
+      this.addClientRoot(url),
+    );
+  }
+
+  async getPendingDesignations(): Promise<PendingDesignationDto[]> {
+    return this.getCallTyped<PendingDesignationDto[]>(
+      this.addClientRoot("designation-agreement/status/pending"),
     );
   }
 }

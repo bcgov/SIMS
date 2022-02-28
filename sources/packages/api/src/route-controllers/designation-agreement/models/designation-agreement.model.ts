@@ -40,3 +40,7 @@ export interface GetDesignationAgreementsDto {
   startDate?: string;
   endDate?: string;
 }
+
+export interface PendingDesignationDto extends GetDesignationAgreementsDto {
+  institutionName: string;
+}

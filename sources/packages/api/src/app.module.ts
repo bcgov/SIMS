@@ -33,7 +33,6 @@ import {
   DisbursementScheduleErrorsService,
   RestrictionService,
   InstitutionRestrictionService,
-  DesignationAgreementService,
 } from "./services";
 import {
   UserController,
@@ -69,6 +68,7 @@ import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-t
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionModule } from "./app.institution.module";
+import { ClientTypeBaseRoute } from "./types";
 
 @Module({
   imports: [
@@ -84,11 +84,11 @@ import { AppInstitutionModule } from "./app.institution.module";
     AppInstitutionModule,
     RouterModule.register([
       {
-        path: "institution",
+        path: ClientTypeBaseRoute.Institution,
         module: AppInstitutionModule,
       },
       {
-        path: "aest",
+        path: ClientTypeBaseRoute.AEST,
         module: AppAESTModule,
       },
     ]),
@@ -150,7 +150,6 @@ import { AppInstitutionModule } from "./app.institution.module";
     DisbursementScheduleErrorsService,
     RestrictionService,
     InstitutionRestrictionService,
-    DesignationAgreementService,
   ],
 })
 export class AppModule {}

@@ -29,12 +29,14 @@
       <v-list-item-title class="text-muted ml-4"
         >INSTITUTIONS</v-list-item-title
       >
-      <v-list-item>
+      <v-list-item @click="pendingDesignationItem.command">
         <v-list-item-icon>
-          <font-awesome-icon :icon="['fas', 'pen-nib']" class="mr-2" />
+          <font-awesome-icon :icon="pendingDesignationItem.icon" class="mr-2" />
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>Pending designations</v-list-item-title>
+          <v-list-item-title>{{
+            pendingDesignationItem.label
+          }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -82,8 +84,20 @@ export default {
         icon: ["fas", "cog"],
       },
     ]);
+
+    const pendingDesignationItem = ref({
+      label: "Pending designations",
+      icon: ["fas", "pen-nib"],
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.PENDING_DESIGNATIONS,
+        });
+      },
+    } as MenuModel);
+
     return {
       items,
+      pendingDesignationItem,
     };
   },
 };
