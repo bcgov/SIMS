@@ -25,7 +25,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     const newFile = new StudentFile();
     newFile.fileName = createFile.fileName;
     newFile.uniqueFileName = createFile.uniqueFileName;
-    newFile.groupName = createFile.groupName;
+    if (createFile.groupName) newFile.groupName = createFile.groupName;
     newFile.mimeType = createFile.mimeType;
     newFile.fileContent = createFile.fileContent;
     newFile.student = { id: studentId } as Student;
