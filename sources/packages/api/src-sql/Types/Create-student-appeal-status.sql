@@ -1,0 +1,1 @@
+CREATE TYPE sims.student_appeal_status AS ENUM ('Pending', 'Approved', 'Declined');
