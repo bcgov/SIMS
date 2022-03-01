@@ -1,6 +1,6 @@
 <template>
-  <div class="p-m-4">
-    <header-navigator title="Institutions" subTitle="Designations" />
+  <header-navigator title="Institutions" subTitle="Designations" />
+  <v-card class="mt-4 p-4">
     <body-header
       title="Pending Designations"
       subTitle="Make a determination on each designation after viewing it's content."
@@ -44,6 +44,7 @@
             <template #body="slotProps">
               <v-btn
                 outlined
+                :color="COLOR_BLUE"
                 @click="goToViewDesignation(slotProps.data.designationId)"
               >
                 View
@@ -60,7 +61,7 @@
         </template>
       </toggle-content>
     </content-group>
-  </div>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -75,10 +76,18 @@ import {
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
+import { COLOR_BLUE } from "@/constants";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
+import ContentGroup from "@/components/generic/ContentGroup.vue";
 export default {
-  components: { HeaderNavigator, StatusChipDesignation },
+  components: {
+    HeaderNavigator,
+    StatusChipDesignation,
+    BodyHeader,
+    ContentGroup,
+  },
 
   setup() {
     const router = useRouter();
@@ -103,6 +112,7 @@ export default {
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
       dateOnlyLongString,
+      COLOR_BLUE,
     };
   },
 };

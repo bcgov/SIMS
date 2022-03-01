@@ -1,16 +1,18 @@
 <template>
   <div class="p-m-4">
     <header-navigator
-      title="Manage designations"
+      :title="navigationTitle"
       subTitle="View designation agreement"
-      :routeLocation="{
-        name: AESTRoutesConst.INSTITUTION_DESIGNATION,
-        params: { institutionId: institutionId },
-      }"
-    />
+      :routeLocation="routeLocation"
+    >
+      <template #buttons>
+        <v-btn color="primary" outlined>Decline</v-btn>
+        <v-btn class="ml-2 primary-btn-background">Approve designation</v-btn>
+      </template>
+    </header-navigator>
     <full-page-container class="mt-4">
       <designation-agreement-form
-        :model="designationModel"
+        :model="designationFormModel"
       ></designation-agreement-form>
     </full-page-container>
   </div>
@@ -44,24 +46,35 @@ export default {
   setup(props: any) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
-
-    const designationModel = reactive({} as DesignationModel);
+    const designationFormModel = reactive({} as DesignationModel);
+    const navigationTitle = props.institutionId
+      ? "Manage designations"
+      : "Pending designations";
+    const routeLocation = props.institutionId
+      ? {
+          name: AESTRoutesConst.INSTITUTION_DESIGNATION,
+          params: { institutionId: props.institutionId },
+        }
+      : { name: AESTRoutesConst.PENDING_DESIGNATIONS };
 
     onMounted(async () => {
-      const designation = await DesignationAgreementService.shared.getDesignationAgreement(
+      const designationAgreement = await DesignationAgreementService.shared.getDesignationAgreement(
         props.designationAgreementId,
       );
 
-      designationModel.institutionName = designation.institutionName;
-      designationModel.institutionType = designation.institutionType;
-      designationModel.isBCPrivate = designation.isBCPrivate;
-      designationModel.viewMode = DesignationFormViewModes.viewOnly;
-      designationModel.designationStatus = designation.designationStatus;
-      designationModel.designationStatusClass = mapDesignationChipStatus(
-        designation.designationStatus,
+      designationFormModel.institutionName =
+        designationAgreement.institutionName;
+      designationFormModel.institutionType =
+        designationAgreement.institutionType;
+      designationFormModel.isBCPrivate = designationAgreement.isBCPrivate;
+      designationFormModel.viewMode = DesignationFormViewModes.viewOnly;
+      designationFormModel.designationStatus =
+        designationAgreement.designationStatus;
+      designationFormModel.designationStatusClass = mapDesignationChipStatus(
+        designationAgreement.designationStatus,
       );
-      designationModel.dynamicData = designation.submittedData;
-      designationModel.locations = designation.locationsDesignations.map(
+      designationFormModel.dynamicData = designationAgreement.submittedData;
+      designationFormModel.locations = designationAgreement.locationsDesignations.map(
         location => ({
           locationId: location.locationId,
           locationName: location.locationName,
@@ -75,7 +88,7 @@ export default {
       );
     });
 
-    return { designationModel, AESTRoutesConst };
+    return { designationFormModel, routeLocation, navigationTitle };
   },
 };
 </script>
