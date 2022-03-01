@@ -1,11 +1,11 @@
 /**
  *File Origin type
- File original originated from like 
- Application or Student uploader form. 
- If its Temporary, then the file is uploaded 
- but the file uploaded form is not submitted, 
- when the form is submitted, the file origin is 
- updated from Temporary to the respective file_origin_type';
+ File originated from, for instance, an Application
+ or Student uploader form. If it's Temporary, then
+ the file is uploaded but the file uploaded form
+ is not submitted yet. When the form is submitted,
+ the file origin is updated from Temporary to the
+ respective file_origin_type.
  */
 export enum FileOriginType {
   /**
