@@ -24,25 +24,7 @@
         /></span>
       </v-btn>
     </span>
-    <span v-else>
-      <Message severity="warn" :closable="false" v-if="showPendingStatus">
-        <strong>PD Status: Pending</strong>
-      </Message>
-      <Message
-        severity="success"
-        :closable="false"
-        v-if="studentAllInfo.pdVerified === true"
-      >
-        <strong>PD Status: PD Confirmed</strong>
-      </Message>
-      <Message
-        severity="error"
-        :closable="false"
-        v-if="studentAllInfo.pdVerified === false"
-      >
-        <strong>PD Status: PD Denied</strong>
-      </Message>
-    </span>
+
     <formio
       formName="studentinformation"
       :data="initialData"
