@@ -13,6 +13,9 @@ export interface GetDesignationAgreementDto {
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationsDesignationsDto[];
   submittedData: any;
+  institutionName: string;
+  institutionType: string;
+  isBCPrivate: boolean;
 }
 
 export interface LocationsDesignationsDto {

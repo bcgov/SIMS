@@ -88,12 +88,17 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         "location.id",
         "location.name",
         "location.data",
+        "institution.legalOperatingName",
+        "institutionType.id",
+        "institutionType.name",
       ])
       .innerJoin(
         "designation.designationAgreementLocations",
         "designationLocation",
       )
       .innerJoin("designationLocation.institutionLocation", "location")
+      .innerJoin("designation.institution", "institution")
+      .innerJoin("institution.institutionType", "institutionType")
       .where("designation.id = :designationId", { designationId });
     if (institutionId) {
       designationQuery.andWhere("location.institution.id = :institutionId", {
@@ -164,7 +169,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         "designation.submittedDate",
         "designation.startDate",
         "designation.endDate",
-        "institution.operatingName",
+        "institution.legalOperatingName",
       ])
       .innerJoin("designation.institution", "institution")
       .where(`${filterColumn} = :filterValue`, { filterValue })

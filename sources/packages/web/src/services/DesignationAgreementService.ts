@@ -1,9 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
   SubmitDesignationAgreementDto,
   PendingDesignationDto,
+  GetDesignationAgreementDto,
 } from "@/types/contracts/DesignationAgreementContract";
 
 /**

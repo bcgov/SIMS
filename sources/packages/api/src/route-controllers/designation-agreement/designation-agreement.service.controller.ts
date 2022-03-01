@@ -5,6 +5,7 @@ import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
 } from "./models/designation-agreement.model";
+import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
 /**
  * This service controller is a provider which is created to extract the implementation of
  * controller in one place as their business logic is shared between different client types.
@@ -40,6 +41,11 @@ export class DesignationAgreementServiceController {
       designationId: designation.id,
       designationStatus: designation.designationStatus,
       submittedData: designation.submittedData,
+      institutionName: designation.institution.legalOperatingName,
+      institutionType: designation.institution.institutionType.name,
+      isBCPrivate:
+        designation.institution.institutionType.id ===
+        INSTITUTION_TYPE_BC_PRIVATE,
       locationsDesignations: designation.designationAgreementLocations.map(
         (agreementLocation) => ({
           locationId: agreementLocation.institutionLocation.id,

@@ -1,13 +1,15 @@
 <template>
-  <v-card class="mt-4">
-    <div class="mx-5 py-4">
-      <p class="category-header-large color-blue">Designation</p>
-    </div>
-    <full-page-container
-      ><designation-agreement-summary
-        :designations="designations"
-        @viewDesignation="goToViewDesignation"
-    /></full-page-container>
+  <v-card class="mt-4 p-4">
+    <body-header
+      title="Designation agreements"
+      :recordsCount="designations?.length"
+      class="m-1"
+    >
+    </body-header>
+    <designation-agreement-summary
+      :designations="designations"
+      @viewDesignation="goToViewDesignation"
+    />
   </v-card>
 </template>
 
@@ -18,9 +20,9 @@ import { GetDesignationAgreementsDto } from "@/types/contracts/DesignationAgreem
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import DesignationAgreementSummary from "@/components/partial-view/DesignationAgreement/DesignationAgreementSummary.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 export default {
-  components: { DesignationAgreementSummary, FullPageContainer },
+  components: { DesignationAgreementSummary, BodyHeader },
   props: {
     institutionId: {
       type: Number,
@@ -34,7 +36,10 @@ export default {
     const goToViewDesignation = (id: number) => {
       return router.push({
         name: AESTRoutesConst.DESIGNATION_VIEW,
-        params: { designationAgreementId: id },
+        params: {
+          designationAgreementId: id,
+          institutionId: props.institutionId,
+        },
       });
     };
 

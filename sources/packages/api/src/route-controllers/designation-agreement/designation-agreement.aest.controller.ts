@@ -67,7 +67,7 @@ export class DesignationAgreementAESTController {
           submittedDate: pendingDesignation.submittedDate,
           startDate: getISODateOnlyString(pendingDesignation.startDate),
           endDate: getISODateOnlyString(pendingDesignation.endDate),
-          institutionName: pendingDesignation.institution.operatingName,
+          institutionName: pendingDesignation.institution.legalOperatingName,
         } as PendingDesignationDto),
     );
   }

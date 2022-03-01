@@ -3,7 +3,10 @@
     <header-navigator
       title="Manage designations"
       subTitle="View designation agreement"
-      :routeLocation="{ name: AESTRoutesConst.AEST_DASHBOARD }"
+      :routeLocation="{
+        name: AESTRoutesConst.INSTITUTION_DESIGNATION,
+        params: { institutionId: institutionId },
+      }"
     />
     <full-page-container class="mt-4">
       <designation-agreement-form
@@ -16,11 +19,7 @@
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, reactive } from "vue";
-import {
-  useFormatters,
-  useInstitutionState,
-  useDesignationAgreement,
-} from "@/composables";
+import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
@@ -37,24 +36,26 @@ export default {
       type: Number,
       required: true,
     },
+    institutionId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props: any) {
-    const { institutionState } = useInstitutionState();
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
 
     const designationModel = reactive({} as DesignationModel);
-    designationModel.institutionName =
-      institutionState.value.legalOperatingName;
-    designationModel.institutionType = institutionState.value.institutionType;
-    designationModel.isBCPrivate = institutionState.value.isBCPrivate;
-    designationModel.viewMode = DesignationFormViewModes.viewOnly;
 
     onMounted(async () => {
       const designation = await DesignationAgreementService.shared.getDesignationAgreement(
         props.designationAgreementId,
       );
 
+      designationModel.institutionName = designation.institutionName;
+      designationModel.institutionType = designation.institutionType;
+      designationModel.isBCPrivate = designation.isBCPrivate;
+      designationModel.viewMode = DesignationFormViewModes.viewOnly;
       designationModel.designationStatus = designation.designationStatus;
       designationModel.designationStatusClass = mapDesignationChipStatus(
         designation.designationStatus,
