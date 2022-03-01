@@ -1,0 +1,1 @@
+CREATE TYPE sims.file_origin_type AS ENUM ('Temporary', 'Application', 'Student');

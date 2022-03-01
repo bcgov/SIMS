@@ -12,6 +12,7 @@ import StudentApplication from "@/views/student/financial-aid-application/Studen
 import Assessment from "@/views/student/NoticeOfAssessment.vue";
 import StudentProfile from "@/views/student/StudentProfile.vue";
 import Notifications from "@/views/student/Notifications.vue";
+import StudentFileUploader from "@/views/student/StudentFileUploader.vue";
 import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
@@ -104,6 +105,14 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: "notifications",
         name: StudentRoutesConst.NOTIFICATIONS,
         component: Notifications,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentFileUploader,
+        name: StudentRoutesConst.STUDENT_FILE_UPLOADER,
+        component: StudentFileUploader,
         meta: {
           clientType: ClientIdType.Student,
         },
