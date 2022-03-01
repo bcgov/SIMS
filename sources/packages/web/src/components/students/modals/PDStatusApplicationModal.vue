@@ -8,7 +8,7 @@
   >
     <template #header
       ><p class="font-weight-bold h5">
-        Apply for permanent disability status
+        Apply for a permanent disability status
       </p></template
     >
     <p>
