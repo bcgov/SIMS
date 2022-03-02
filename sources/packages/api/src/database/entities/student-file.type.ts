@@ -21,3 +21,6 @@ export enum FileOriginType {
    */
   Student = "Student",
 }
+export interface StudentFileMetadata {
+  applicationNumber?: string;
+}

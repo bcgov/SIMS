@@ -1,4 +1,3 @@
-import { StudentFileMetadata } from "../../types/studentFile";
 import {
   Column,
   Entity,
@@ -8,7 +7,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { FileOriginType } from "./student-file.type";
+import { FileOriginType, StudentFileMetadata } from "./student-file.type";
 import { Student } from "./student.model";
 
 /**
