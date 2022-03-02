@@ -38,7 +38,7 @@ COMMENT ON TABLE sims.student_assessments.student_appeal_id IS 'When the reasses
 
 COMMENT ON TABLE sims.student_assessments.student_scholastic_standing_id IS 'When the reassessment happen due to a scholastic standing change (e.g. student withdrawal), this will provide to the workflow the data that need be changed..';
 
-COMMENT ON TABLE sims.student_assessments.assessment_status sims.assessment_status IS 'Indicates the NOA approval status when the student must approve the money values prior to the institution COE approval and disbursements.';
+COMMENT ON TABLE sims.student_assessments.assessment_approval_status IS 'Indicates the assessment status (NOA approval) when the student must approve the money values prior to the institution COE approval and disbursements.';
 
 COMMENT ON COLUMN sims.student_assessments.created_at IS 'Record creation timestamp';
 
