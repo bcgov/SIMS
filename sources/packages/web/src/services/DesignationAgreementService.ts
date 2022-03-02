@@ -4,6 +4,7 @@ import {
   SubmitDesignationAgreementDto,
   PendingDesignationDto,
   GetDesignationAgreementDto,
+  DesignationAgreementStatus,
 } from "@/types/contracts/DesignationAgreementContract";
 
 /**
@@ -41,7 +42,11 @@ export class DesignationAgreementService {
     );
   }
 
-  public async getPendingDesignations(): Promise<PendingDesignationDto[]> {
-    return ApiClient.DesignationAgreement.getPendingDesignations();
+  public async getDesignationByStatus(
+    designationStatus: DesignationAgreementStatus,
+  ): Promise<PendingDesignationDto[]> {
+    return ApiClient.DesignationAgreement.getDesignationByStatus(
+      designationStatus,
+    );
   }
 }

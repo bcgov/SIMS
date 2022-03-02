@@ -1,5 +1,6 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, NotFoundException } from "@nestjs/common";
 import { DesignationAgreementService } from "../../services";
+import { DesignationAgreementStatus } from "../../database/entities";
 import { getISODateOnlyString } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -53,12 +54,22 @@ export class DesignationAgreementAESTController {
 
   /**
    * API to retrieve all pending designations.
+   * @param designationStatus
    * @returns Pending designations.
    */
-  @Get("status/pending")
-  async getPendingDesignationAgreements(): Promise<PendingDesignationDto[]> {
+  @Get("status/:designationStatus")
+  async getPendingDesignationAgreements(
+    @Param("designationStatus") designationStatus: DesignationAgreementStatus,
+  ): Promise<PendingDesignationDto[]> {
+    if (
+      !Object.values(DesignationAgreementStatus).includes(designationStatus)
+    ) {
+      throw new NotFoundException("Invalid designation agreement status.");
+    }
     const pendingDesignations =
-      await this.designationAgreementService.getAllPendingDesignations();
+      await this.designationAgreementService.getAllPendingDesignations(
+        designationStatus,
+      );
     return pendingDesignations.map(
       (pendingDesignation) =>
         ({

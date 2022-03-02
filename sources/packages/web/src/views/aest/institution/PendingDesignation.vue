@@ -67,7 +67,10 @@
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { PendingDesignationDto } from "@/types/contracts/DesignationAgreementContract";
+import {
+  PendingDesignationDto,
+  DesignationAgreementStatus,
+} from "@/types/contracts/DesignationAgreementContract";
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -102,7 +105,9 @@ export default {
     };
 
     onMounted(async () => {
-      designations.value = await DesignationAgreementService.shared.getPendingDesignations();
+      designations.value = await DesignationAgreementService.shared.getDesignationByStatus(
+        DesignationAgreementStatus.Pending,
+      );
     });
 
     return {
