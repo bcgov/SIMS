@@ -1,7 +1,7 @@
 <template>
   <ModalDialogBase
     title="Apply for a permanent disability status"
-    :showDialog="showModal"
+    :showDialog="showDialog"
   >
     <template v-slot:content>
       <v-container>
@@ -13,39 +13,31 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn outlined color="primary" @click="hidePDApplicationModal()"
-        >No</v-btn
-      >
-      <v-btn color="primary" @click="applyPDStatus()">Yes</v-btn>
+      <v-btn outlined color="primary" @click="requestPD(false)">No</v-btn>
+      <v-btn color="primary" @click="requestPD(true)">Yes</v-btn>
     </template>
   </ModalDialogBase>
 </template>
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+import { useModalDialog } from "@/composables";
 
 export default {
   components: {
     ModalDialogBase,
   },
-  props: {
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup(props: any, context: any) {
-    const applyPDStatus = () => {
-      context.emit("applyPDStatus");
-    };
-
-    const hidePDApplicationModal = () => {
-      context.emit("hidePDApplicationModal");
+  setup() {
+    const { showDialog, showModal, resolvePromise } = useModalDialog<boolean>();
+    const requestPD = async (payload: boolean) => {
+      showDialog.value = false;
+      resolvePromise(payload);
     };
 
     return {
-      applyPDStatus,
-      hidePDApplicationModal,
+      requestPD,
+      showDialog,
+      showModal,
     };
   },
 };

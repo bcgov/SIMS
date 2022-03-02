@@ -1,38 +1,16 @@
 <template>
-  <PDStatusApplicationModal
-    :showModal="showModal"
-    @applyPDStatus="applyPDStatus"
-    @hidePDApplicationModal="hidePDApplicationModal"
-  />
+  <PDStatusApplicationModal ref="pdStatusApplicationModal" />
   <RestrictionBanner
     v-if="hasRestriction"
     :restrictionMessage="restrictionMessage"
   />
   <CheckValidSINBanner />
   <full-page-container>
-    <span v-if="showApplyPDButton">
-      <v-btn
-        color="primary"
-        @click="showPDApplicationModal()"
-        v-if="showApplyPDButton"
-        :disabled="disableBtn"
-      >
-        <font-awesome-icon
-          :icon="['fas', 'external-link-square-alt']"
-          class="mr-2"
-        />
-        Apply for PD status
-        <span v-if="disableBtn">
-          &nbsp;&nbsp;
-          <ProgressSpinner style="width:30px;height:25px" strokeWidth="10"
-        /></span>
-      </v-btn>
-    </span>
-
     <formio
       formName="studentinformation"
       :data="initialData"
       @submitted="submitted"
+      @customEvent="showPDApplicationModal"
     ></formio>
   </full-page-container>
 </template>
@@ -42,6 +20,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import {
+  ModalDialog,
   useToastMessage,
   useAuthBCSC,
   useFormatters,
@@ -95,7 +74,6 @@ export default {
     const router = useRouter();
     const toast = useToastMessage();
     const showApplyPDButton = ref();
-    const disableBtn = ref(false);
     const initialData = ref({} as StudentFormData);
     const studentAllInfo = ref({} as StudentFormInfo);
     const { bcscParsedToken } = useAuthBCSC();
@@ -103,15 +81,7 @@ export default {
     const { hasStudentAccount } = useStudentStore();
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
-    const showModal = ref(false);
-
-    const hidePDApplicationModal = () => {
-      showModal.value = false;
-    };
-
-    const showPDApplicationModal = () => {
-      showModal.value = true;
-    };
+    const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
 
     const getStudentInfo = async () => {
       if (hasStudentAccount) {
@@ -128,57 +98,7 @@ export default {
         studentAllInfo.value.pdVerified === null,
     );
 
-    const appliedPDButton = () => {
-      showApplyPDButton.value = false;
-      if (
-        studentAllInfo.value?.validSin &&
-        studentAllInfo.value?.pdSentDate === null &&
-        studentAllInfo.value?.pdVerified === null
-      ) {
-        showApplyPDButton.value = true;
-      }
-    };
-
-    const applyPDStatus = async () => {
-      disableBtn.value = true;
-      try {
-        await StudentService.shared.applyForPDStatus();
-        toast.success(
-          "Applied for PD Status!",
-          "Your application is submitted. The outcome will display on your profile",
-        );
-      } catch (error) {
-        toast.error(
-          "Unexpected error",
-          "An error happened during the apply PD process. Please try after sometime.",
-        );
-      }
-      await getStudentInfo();
-      appliedPDButton();
-      hidePDApplicationModal();
-      disableBtn.value = false;
-    };
-
-    const submitted = async (args: StudentContact & { sinNumber?: string }) => {
-      try {
-        if (props.editMode) {
-          await StudentService.shared.updateStudent(args);
-          toast.success(
-            "Student Updated",
-            "Student contact information updated!",
-          );
-        } else {
-          await StudentService.shared.createStudent(args);
-          await store.dispatch("student/setHasStudentAccount", true);
-          toast.success("Student created", "Student was successfully created!");
-        }
-        router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
-      } catch {
-        toast.error("Error", "Error while saving student");
-      }
-    };
-
-    onMounted(async () => {
+    const getStudentDetails = async () => {
       const studentRestriction = await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
@@ -205,7 +125,51 @@ export default {
         };
       }
       await getStudentInfo();
-      appliedPDButton();
+    };
+
+    const applyPDStatus = async () => {
+      try {
+        await StudentService.shared.applyForPDStatus();
+        toast.success(
+          "Applied for PD Status!",
+          "Your application is submitted. The outcome will display on your profile",
+        );
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "An error happened during the apply PD process. Please try after sometime.",
+        );
+      }
+      await getStudentDetails();
+    };
+
+    const showPDApplicationModal = async () => {
+      if (await pdStatusApplicationModal.value.showModal()) {
+        await applyPDStatus();
+      }
+    };
+
+    const submitted = async (args: StudentContact & { sinNumber?: string }) => {
+      try {
+        if (props.editMode) {
+          await StudentService.shared.updateStudent(args);
+          toast.success(
+            "Student Updated",
+            "Student contact information updated!",
+          );
+        } else {
+          await StudentService.shared.createStudent(args);
+          await store.dispatch("student/setHasStudentAccount", true);
+          toast.success("Student created", "Student was successfully created!");
+        }
+        router.push({ name: StudentRoutesConst.STUDENT_DASHBOARD });
+      } catch {
+        toast.error("Error", "Error while saving student");
+      }
+    };
+
+    onMounted(async () => {
+      await getStudentDetails();
     });
 
     return {
@@ -214,12 +178,10 @@ export default {
       applyPDStatus,
       showApplyPDButton,
       studentAllInfo,
-      disableBtn,
       showPendingStatus,
       hasRestriction,
       restrictionMessage,
-      showModal,
-      hidePDApplicationModal,
+      pdStatusApplicationModal,
       showPDApplicationModal,
     };
   },
