@@ -6,13 +6,13 @@ export class AddMetaDataAndFileOriginToStudentFiles1646162265511
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-meta-data-and-file-origin.sql", "StudentFiles"),
+      getSQLFileData("Add-metadata-and-file-origin.sql", "StudentFiles"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-meta-data-and-file-origin.sql", "StudentFiles"),
+      getSQLFileData("Drop-metadata-and-file-origin.sql", "StudentFiles"),
     );
   }
 }
