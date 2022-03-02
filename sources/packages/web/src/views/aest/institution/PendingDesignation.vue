@@ -17,7 +17,7 @@
     <content-group>
       <toggle-content
         :toggled="!designations.length"
-        message="There are no pending designation agreemments."
+        message="There are no pending designation agreements"
       >
         <DataTable
           :value="designations"
@@ -84,12 +84,14 @@ import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import ToggleContent from "@/components/generic/ToggleContent.vue";
 export default {
   components: {
     HeaderNavigator,
     StatusChipDesignation,
     BodyHeader,
     ContentGroup,
+    ToggleContent,
   },
 
   setup() {

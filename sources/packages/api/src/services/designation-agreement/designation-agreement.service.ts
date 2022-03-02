@@ -9,6 +9,10 @@ import {
   InstitutionLocation,
   User,
 } from "../../database/entities";
+import {
+  UpdateDesignationDto,
+  UpdateDesignationLocationDto,
+} from "../../route-controllers/designation-agreement/models/designation-agreement.model";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -150,6 +154,58 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .limit(1)
       .getRawOne();
     return !!found;
+  }
+
+  /**
+   * Service to validate designationId passed onto API.
+   * @param designationId
+   * @returns flag that indicates if the designationId is valid data.
+   */
+  async designationExist(designationId: number): Promise<boolean> {
+    const found = await this.repo
+      .createQueryBuilder("designation")
+      .select("1")
+      .where("designation.id = :designationId", { designationId })
+      .getRawOne();
+    return !!found;
+  }
+
+  /**
+   * Update designation for Approval/Denial or re-approve.
+   * @param designationId Designation which is going to be updated.
+   * @param userId User who updates the designation.
+   * @param designationPayload update payload.
+   */
+  async updateDesignation(
+    designationId: number,
+    userId: number,
+    designationPayload: UpdateDesignationDto,
+  ): Promise<void> {
+    const designation = new DesignationAgreement();
+    designation.id = designationId;
+    designation.designationStatus = designationPayload.designationStatus;
+    designation.startDate = designationPayload.startDate;
+    designation.endDate = designationPayload.endDate;
+    designation.assessedBy = { id: userId } as User;
+    designation.assessedDate = new Date();
+    designation.designationAgreementLocations =
+      designationPayload.locationsDesignations?.map(
+        (locationPayload: UpdateDesignationLocationDto) => {
+          const location = new DesignationAgreementLocation();
+          location.id = locationPayload.designationLocationId;
+          location.approved = true;
+          location.institutionLocation = {
+            id: locationPayload.locationId,
+          } as InstitutionLocation;
+          location.requested = true;
+          location.creator = !locationPayload.designationLocationId
+            ? ({ id: userId } as User)
+            : undefined;
+          location.modifier = { id: userId } as User;
+          return location;
+        },
+      );
+    this.repo.save(designation);
   }
   /**
    * Private service method that retrieves designation summary

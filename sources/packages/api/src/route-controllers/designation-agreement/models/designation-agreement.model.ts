@@ -47,3 +47,16 @@ export interface GetDesignationAgreementsDto {
 export interface PendingDesignationDto extends GetDesignationAgreementsDto {
   institutionName: string;
 }
+
+export interface UpdateDesignationLocationDto {
+  designationLocationId?: number;
+  locationId: number;
+}
+
+export interface UpdateDesignationDto {
+  designationStatus: DesignationAgreementStatus;
+  startDate?: Date;
+  endDate?: Date;
+  locationsDesignations?: UpdateDesignationLocationDto[];
+  note: string;
+}

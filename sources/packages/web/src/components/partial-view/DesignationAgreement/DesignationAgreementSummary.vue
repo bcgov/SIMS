@@ -1,9 +1,6 @@
 <template>
   <content-group>
-    <toggle-content
-      :toggled="!designations.length"
-      message="You don't have any agreements yet"
-    >
+    <toggle-content :toggled="!designations.length" :message="toggleMessage">
       <DataTable
         :value="designations"
         :paginator="true"
@@ -78,6 +75,10 @@ export default {
   props: {
     designations: {
       type: Object,
+      required: true,
+    },
+    toggleMessage: {
+      type: String,
       required: true,
     },
   },

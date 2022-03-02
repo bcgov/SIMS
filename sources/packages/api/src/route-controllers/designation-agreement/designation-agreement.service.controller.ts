@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DesignationAgreementService } from "../../services";
-import { getISODateOnlyString } from "../../utilities";
+import {
+  getISODateOnlyString,
+  INSTITUTION_TYPE_BC_PRIVATE,
+} from "../../utilities";
 import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
 } from "./models/designation-agreement.model";
-import { INSTITUTION_TYPE_BC_PRIVATE } from "../../utilities";
 /**
  * This service controller is a provider which is created to extract the implementation of
  * controller in one place as their business logic is shared between different client types.

@@ -1,14 +1,23 @@
-import { Controller, Get, Param, NotFoundException } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  NotFoundException,
+  Patch,
+  Body,
+} from "@nestjs/common";
 import { DesignationAgreementService } from "../../services";
 import { DesignationAgreementStatus } from "../../database/entities";
 import { getISODateOnlyString } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import { IUserToken } from "../../auth/userToken.interface";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
   PendingDesignationDto,
+  UpdateDesignationDto,
 } from "./models/designation-agreement.model";
 import { DesignationAgreementServiceController } from "./designation-agreement.service.controller";
 
@@ -80,6 +89,30 @@ export class DesignationAgreementAESTController {
           endDate: getISODateOnlyString(pendingDesignation.endDate),
           institutionName: pendingDesignation.institution.legalOperatingName,
         } as PendingDesignationDto),
+    );
+  }
+
+  /**
+   * Update designation for Approval/Denial or re-approve by ministry(AEST).
+   * @param designationId
+   * @param payload Designation which is going to be updated.
+   * @param userToken
+   */
+  @Patch(":designationId")
+  async updateDesignationAgreement(
+    @Param("designationId") designationId: number,
+    @Body() payload: UpdateDesignationDto,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const designationExist =
+      this.designationAgreementService.designationExist(designationId);
+    if (!designationExist) {
+      throw new NotFoundException("Designation agreement not found.");
+    }
+    await this.designationAgreementService.updateDesignation(
+      designationId,
+      userToken.userId,
+      payload,
     );
   }
 }

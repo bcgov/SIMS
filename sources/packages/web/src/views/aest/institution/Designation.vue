@@ -8,6 +8,7 @@
     </body-header>
     <designation-agreement-summary
       :designations="designations"
+      toggleMessage="No designation agreements found"
       @viewDesignation="goToViewDesignation"
     />
   </v-card>
