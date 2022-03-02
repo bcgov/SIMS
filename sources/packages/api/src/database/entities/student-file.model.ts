@@ -1,3 +1,4 @@
+import { StudentFileMetadata } from "../../types/studentFile";
 import {
   Column,
   Entity,
@@ -75,10 +76,13 @@ export class StudentFile extends RecordDataModel {
   @Column({
     name: "file_origin",
     nullable: false,
+    type: "enum",
+    enum: FileOriginType,
+    enumName: "FileOriginType",
   })
   fileOrigin: FileOriginType;
   /**
-   * 'Metadata of the file, eg. if a file is uploaded
+   * Metadata of the file, eg. if a file is uploaded
    * from student uploader form then the metadata may
    * sometimes have the application number related to
    * the application.
@@ -88,5 +92,5 @@ export class StudentFile extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  metadata?: string;
+  metadata?: StudentFileMetadata;
 }

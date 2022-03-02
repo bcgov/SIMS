@@ -17,7 +17,7 @@ export enum FileOriginType {
    */
   Application = "Application",
   /**
-   * File submitted from student uploaded form.
+   * File submitted from student uploader form.
    */
   Student = "Student",
 }
