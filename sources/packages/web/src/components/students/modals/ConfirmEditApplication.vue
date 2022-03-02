@@ -41,6 +41,7 @@ export default {
 
     const dialogClosed = () => {
       showDialog.value = false;
+      resolvePromise(false);
     };
     const editApplication = async () => {
       showDialog.value = false;

@@ -57,6 +57,7 @@ export default {
       showDialog.value = false;
       clearInterval(interval.value);
       logoff();
+      resolvePromise(false);
     };
 
     const updateTimer = () => {
