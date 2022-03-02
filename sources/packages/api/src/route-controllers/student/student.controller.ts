@@ -24,6 +24,7 @@ import {
   EducationProgramService,
   FormService,
   StudentRestrictionService,
+  APPLICATION_NOT_FOUND,
 } from "../../services";
 import {
   FileCreateDto,
@@ -33,6 +34,7 @@ import {
   SaveStudentDto,
   StudentRestrictionDTO,
   StudentDetailDTO,
+  StudentFileUploader,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -40,7 +42,7 @@ import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ATBCCreateClientPayload } from "../../types";
+import { ApiProcessError, ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationAndCount } from "../application/models/application.model";
@@ -60,13 +62,11 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
-
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
 // 3 means 'the file' + uniqueFileName + group.
 const MAX_UPLOAD_PARTS = 3;
-
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
@@ -578,5 +578,48 @@ export class StudentController extends BaseController {
       pdStatus: determinePDStatus(student),
       hasRestriction: studentRestrictionStatus.hasRestriction,
     } as StudentDetailDTO;
+  }
+
+  /**
+   * controller to save the files submitted by the student
+   * with student uploader form.
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Post("upload-files")
+  async saveStudentUploadedFiles(
+    @UserToken() userToken: IUserToken,
+    @Body() payload: StudentFileUploader,
+  ): Promise<void> {
+    const existingStudent = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException(
+        `No student was found with the student id ${userToken.userId}`,
+      );
+    }
+    if (payload.submittedForm.applicationNumber) {
+      // Here we are checking the existence of an application irrespective of its status
+      const validApplication =
+        await this.applicationService.getApplicationByApplicationNumberStudent(
+          payload.submittedForm.applicationNumber,
+          existingStudent,
+        );
+
+      if (!validApplication) {
+        throw new NotFoundException(
+          new ApiProcessError(
+            "Application number not found",
+            APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+    }
+    await this.fileService.updateStudentFiles(
+      existingStudent,
+      payload.associatedFiles,
+      payload.submittedForm,
+    );
   }
 }

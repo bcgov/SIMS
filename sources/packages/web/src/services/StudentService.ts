@@ -13,6 +13,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   FieldSortOrder,
+  StudentFileUploader,
 } from "@/types";
 
 export class StudentService {
@@ -121,5 +122,15 @@ export class StudentService {
    */
   async getStudentDetail(studentId: number): Promise<StudentDetail> {
     return ApiClient.Students.getStudentDetail(studentId);
+  }
+
+  /**
+   * save student files from student form uploader.
+   * @param studentFilesPayload
+   */
+  async saveStudentFiles(
+    studentFilesPayload: StudentFileUploader,
+  ): Promise<void> {
+    await ApiClient.Students.saveStudentFiles(studentFilesPayload);
   }
 }

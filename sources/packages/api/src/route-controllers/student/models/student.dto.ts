@@ -79,3 +79,46 @@ export interface StudentDetailDTO {
   pdStatus: StudentPDStatus;
   hasRestriction: boolean;
 }
+
+/**
+ * Enumeration for Document purpose these are
+ * the dropdown options from the form student
+ * uploader, for the dropdown down field
+ * `Document purpose`.
+ *
+ */
+export enum DocumentPurpose {
+  Application = "application",
+  Verification = "verification",
+  Appeal = "appeal",
+  Identity = "identity",
+}
+
+/**
+ *  FormIO FileObject
+ */
+export interface FormIOFileObject {
+  name: string;
+  originalName: string;
+  size: number;
+  storage: string;
+  type: string;
+  url: string;
+}
+
+/**
+ *  Student uploader interface
+ */
+export interface StudentFileUploaderForm {
+  documentPurpose: DocumentPurpose;
+  applicationNumber?: string;
+  fileUpload: FormIOFileObject[];
+}
+
+/**
+ *  Student uploader interface
+ */
+export interface StudentFileUploader {
+  submittedForm: StudentFileUploaderForm;
+  associatedFiles: string[];
+}
