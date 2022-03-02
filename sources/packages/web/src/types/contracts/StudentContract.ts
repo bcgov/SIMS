@@ -1,5 +1,3 @@
-import { string } from "yup/lib/locale";
-
 export interface Student {
   phone: string;
   addressLine1: string;
