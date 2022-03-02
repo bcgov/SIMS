@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
+import { FileOriginType, StudentFileMetadata } from "./student-file.type";
 import { Student } from "./student.model";
 
 /**
@@ -63,4 +64,32 @@ export class StudentFile extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   student: Student;
+  /**
+   * File originated from, for instance, an Application
+   * or Student uploader form. If it's Temporary, then
+   * the file is uploaded but the file uploaded form is
+   * not submitted yet. When the form is submitted, the
+   * file origin is updated from Temporary to the
+   * respective file_origin_type.
+   */
+  @Column({
+    name: "file_origin",
+    nullable: false,
+    type: "enum",
+    enum: FileOriginType,
+    enumName: "FileOriginType",
+  })
+  fileOrigin: FileOriginType;
+  /**
+   * Metadata of the file, eg. if a file is uploaded
+   * from student uploader form then the metadata may
+   * sometimes have the application number related to
+   * the application.
+   */
+  @Column({
+    name: "metadata",
+    type: "jsonb",
+    nullable: true,
+  })
+  metadata?: StudentFileMetadata;
 }
