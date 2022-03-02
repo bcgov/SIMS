@@ -1,0 +1,2041 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_0oravyr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:collaboration id="Collaboration_0jlmrs2">
+    <bpmn:participant id="Participant_0ympl1d" name="Student Assessment Application" processRef="assessment-gateway" />
+    <bpmn:group id="Group_1vko3q7" categoryValueRef="CategoryValue_0qvowh1" />
+    <bpmn:group id="Group_16iez0e" categoryValueRef="CategoryValue_0ytk5an" />
+    <bpmn:group id="Group_0zavlct" categoryValueRef="CategoryValue_1f4panc" />
+    <bpmn:group id="Group_116gb5c" categoryValueRef="CategoryValue_05az7ag" />
+    <bpmn:group id="Group_02sc4hm" categoryValueRef="CategoryValue_1hab089" />
+    <bpmn:group id="Group_0xoh2xo" categoryValueRef="CategoryValue_0wsrr4w" />
+  </bpmn:collaboration>
+  <bpmn:process id="assessment-gateway" name="Assessment Gateway" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1xb2wts">
+      <bpmn:lane id="Lane_1440s3a" name="application in progress">
+        <bpmn:flowNodeRef>Gateway_1sjc17u</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1qliinm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0x9bma9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_17ziso7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1sw9yj8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1669sec</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1w6xq7d</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0n94rsl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0csurln</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0x1a9kw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0crzrlt</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_15ip6mw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1nys3f3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0o3ssra</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0gpagjg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0halwwn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0ejf3ug</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_14iy60w</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_145tu13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0a53uvu</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1isoyr2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0380uhw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1w2tzk7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1dxnj9x</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0dw0h40</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0wkoecx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_11wi2pz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1121s9q</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1ew03za</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0rbe42c</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1lh5sdl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_15ky2tk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1s4kqc4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1u89pu2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_05bfr8g</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_10s5nqb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1eqxjsa</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1tg73uy" name="Assessment &#38; Awards">
+        <bpmn:flowNodeRef>Activity_0f322fv</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0mc2luc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1wxl0x4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0wu28r4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_16jzsun</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1b33apa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0wv9pv1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1yidauz</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0u73tyi</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0ldfkbb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0p65yh4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CallActivity_1okgvpw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1aiys42</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1uq9e1u</bpmn:flowNodeRef>
+        <bpmn:childLaneSet id="LaneSet_17ga6r2" />
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:inclusiveGateway id="Gateway_1sjc17u">
+      <bpmn:incoming>Flow_1v14ljz</bpmn:incoming>
+      <bpmn:incoming>Flow_1awxzxa</bpmn:incoming>
+      <bpmn:incoming>Flow_08037nh</bpmn:incoming>
+      <bpmn:incoming>Flow_17bfb4u</bpmn:incoming>
+      <bpmn:outgoing>Flow_08eitum</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:callActivity id="Activity_1qliinm" name="Parent 2 CRA Income Verification" calledElement="cra-integration-income-verification">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="supportingUserParent2TotalIncome" target="providedTaxReturnIncome" />
+        <camunda:in source="programYearStartDate" target="programYearStartDate" />
+        <camunda:out source="totalIncomeDefined" target="parent2CalculatedTotalIncome" />
+        <camunda:in source="parent2SupportingUserId" target="supportingUserId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0exrlfr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1awxzxa</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_0x9bma9" name="Parent 1 CRA Income Verification" calledElement="cra-integration-income-verification">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="supportingUserParent1TotalIncome" target="providedTaxReturnIncome" />
+        <camunda:in source="programYearStartDate" target="programYearStartDate" />
+        <camunda:out source="totalIncomeDefined" target="parent1CalculatedTotalIncome" />
+        <camunda:in source="parent1SupportingUserId" target="supportingUserId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0l5o0bf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v14ljz</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_17ziso7" name="Retrieve supporting info for parent 1" calledElement="cra-integration-supporting-user">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in sourceExpression="${&#34;Parent&#34;}" target="supportingUserType" />
+        <camunda:out source="totalIncome" target="supportingUserParent1TotalIncome" />
+        <camunda:out source="supportingUserId" target="parent1SupportingUserId" />
+        <camunda:out source="parentDependentTable" target="parent1DependentTable" />
+        <camunda:out source="parentNetAssests" target="parent1NetAssests" />
+        <camunda:out source="parentEi" target="parent1Ei" />
+        <camunda:out source="parentTax" target="parent1Tax" />
+        <camunda:out source="parentCppSelfemploymentOther" target="parent1CppSelfemploymentOther" />
+        <camunda:out source="parentCppEmployment" target="parent1CppEmployment" />
+        <camunda:out source="parentContributions" target="parent1Contributions" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0myo13i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l5o0bf</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_1sw9yj8" name="Student CRA Income Verification" calledElement="cra-integration-income-verification">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="taxReturnIncome" target="providedTaxReturnIncome" />
+        <camunda:in source="programYearStartDate" target="programYearStartDate" />
+        <camunda:out source="totalIncomeDefined" target="studentCalculatedTotalIncome" />
+        <camunda:in sourceExpression="${null}" target="supportingUserId" />
+        <camunda:out source="taxYear" target="studentTaxYear" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ncxpnq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lglltu</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_1669sec" name="Determine PIR">
+      <bpmn:incoming>Flow_1mivif1</bpmn:incoming>
+      <bpmn:incoming>Flow_0s0h0sb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uyn54g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_1w6xq7d" name="Call SIMS Api to Update PIR to be &#39;not required&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">
+              <camunda:script scriptFormat="javaScript">var updateProgramInfoJson = {
+  programId: execution.getVariable("selectedProgram"),
+  offeringId: execution.getVariable("selectedOffering"),
+  locationId: execution.getVariable("selectedLocation"),
+  status: "Not Required",
+};
+JSON.stringify(updateProgramInfoJson);</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/program-info</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0msy2no</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s0h0sb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0n94rsl" name="Call SIMS Api to Update PIR to be &#39;required&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">
+              <camunda:script scriptFormat="javaScript">var updateProgramInfoJson = {
+  programId: execution.getVariable("selectedProgram"),
+  locationId: execution.getVariable("selectedLocation"),
+  status: "Required",
+};
+JSON.stringify(updateProgramInfoJson);</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/program-info</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19bqdrt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0h5cgco</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0csurln" name="Determine PIR">
+      <bpmn:incoming>Flow_0137qgv</bpmn:incoming>
+      <bpmn:outgoing>Flow_19bqdrt</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0msy2no</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateCatchEvent id="Event_0x1a9kw">
+      <bpmn:incoming>Flow_0h5cgco</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mivif1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1vtp3x6" messageRef="Message_10bsk3l" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Event_0crzrlt" name="End status error event">
+      <bpmn:incoming>Flow_0iu5w2f</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_11y5ejz" errorRef="Error_1iyuotd" />
+    </bpmn:endEvent>
+    <bpmn:intermediateThrowEvent id="Event_15ip6mw" name="Notify error">
+      <bpmn:incoming>Flow_07p9pns</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iu5w2f</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_00uv0p5">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="to">gurumoorthy.mohan@gov.bc.ca</camunda:inputParameter>
+              <camunda:inputParameter name="subject">${workflowIdErrorCode}</camunda:inputParameter>
+              <camunda:inputParameter name="text">Hello team,
+
+
+There is an error when updating the application status and workflow Id for the application ${applicationId}.
+
+
+${workflowIdErrorMsg}</camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>mail-send</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:serviceTask id="Activity_1nys3f3" name="Update workflowId and Application Status to &#39;In Progress&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "In Progress",
+  "workflowId": "${workflowId}"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/application-status-workflowId</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="applicationUpdateResponse">
+              <camunda:script scriptFormat="javascript">var statusCode = connector.getVariable("statusCode");
+if (statusCode !== 200) {
+  throw new org.camunda.bpm.engine.delegate.BpmnError(
+    "UPDATE_APPLICATION_STATUS_WORKFLOW_ID_ERROR",
+    response
+  );
+}</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1xe24er</bpmn:incoming>
+      <bpmn:outgoing>Flow_0h8gs3i</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0o3ssra" name="End error event">
+      <bpmn:incoming>Flow_1dd2smr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1m0kh8l" errorRef="Error_03twzh6" />
+    </bpmn:endEvent>
+    <bpmn:intermediateThrowEvent id="Event_0gpagjg" name="Notify error">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0v56rad</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dd2smr</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0os8qcn">
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="to">gurumoorthy.mohan@gov.bc.ca</camunda:inputParameter>
+              <camunda:inputParameter name="subject">${errorCode}</camunda:inputParameter>
+              <camunda:inputParameter name="text">Hello team,
+
+
+There is an error in the Get Application call to the SIMS API in camunda.
+
+
+${errorMsg}</camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>mail-send</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateCatchEvent id="Event_0halwwn" name="Get Application Timer">
+      <bpmn:incoming>Flow_09vg46t</bpmn:incoming>
+      <bpmn:outgoing>Flow_19n0g7g</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_08ha5ra">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="Gateway_0ejf3ug">
+      <bpmn:incoming>Flow_19n0g7g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jl2fu1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0v56rad</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_14iy60w" name="Get Application">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="appResponseCode">
+              <camunda:script scriptFormat="javascript">var statusCode = connector.getVariable("statusCode");
+var fieldNames = connector.getVariable("fieldNames");
+// Initialize all variables with null.
+// If some variable is not present the variable will be present.
+for (var i = 0; i &lt; fieldNames.length; i++) {
+  connector.setVariable(fieldNames[i], null);
+}
+if (statusCode !== 200) {
+  throw new org.camunda.bpm.engine.delegate.BpmnError(
+    "SIMS-GET-APPLICATION-ERROR",
+    response
+  );
+}
+//Function Description
+function createVariablesFromPayload(payload) {
+  for (var i = 0; i &lt; fieldNames.length; i++) {
+    var fieldName = fieldNames[i];
+    var fieldValue = null;
+    if (payload.hasProp(fieldName)) {
+      if (payload.prop(fieldName).isArray()){
+        fieldValue = payload.prop(fieldName);
+      }
+      else{
+       fieldValue = payload.prop(fieldName).value();
+      }
+      connector.setVariable(fieldName, fieldValue);
+    }
+  }
+}
+
+var output = S(connector.getVariable("response"));
+createVariablesFromPayload(output.prop("data"));
+createVariablesFromPayload(output.prop("programYearDetail"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="fieldNames">
+            <camunda:list>
+              <camunda:value>relationshipStatus</camunda:value>
+              <camunda:value>indigenousStatus</camunda:value>
+              <camunda:value>selectedProgram</camunda:value>
+              <camunda:value>selectedLocation</camunda:value>
+              <camunda:value>hasDependents</camunda:value>
+              <camunda:value>nongovernmentfundingCosts</camunda:value>
+              <camunda:value>governmentFundingCosts</camunda:value>
+              <camunda:value>offeringnotListed</camunda:value>
+              <camunda:value>selectedLocation</camunda:value>
+              <camunda:value>offeringIWillBeAttending</camunda:value>
+              <camunda:value>selectedOffering</camunda:value>
+              <camunda:value>programYear</camunda:value>
+              <camunda:value>youthInCare</camunda:value>
+              <camunda:value>scholarshipsreceviedCosts</camunda:value>
+              <camunda:value>parentvoluntarycontributionsCosts</camunda:value>
+              <camunda:value>taxReturnIncome</camunda:value>
+              <camunda:value>childsupportCosts</camunda:value>
+              <camunda:value>daycareCosts11YearsOrUnder</camunda:value>
+              <camunda:value>daycareCosts12YearsOrOver</camunda:value>
+              <camunda:value>livingWithParents</camunda:value>
+              <camunda:value>transportationCost</camunda:value>
+              <camunda:value>livingathomeRent</camunda:value>
+              <camunda:value>whenDidYouGraduateOrLeaveHighSchool</camunda:value>
+              <camunda:value>startDate</camunda:value>
+              <camunda:value>numberOfParents</camunda:value>
+              <camunda:value>dependantstatus</camunda:value>
+              <camunda:value>dependants</camunda:value>
+              <camunda:value>pleaseProvideAnEstimationOfYourParentsIncome</camunda:value>
+              <camunda:value>doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber</camunda:value>
+              <camunda:value>isYourSpouseACanadianCitizen</camunda:value>
+              <camunda:value>estimatedSpouseIncome</camunda:value>
+            </camunda:list>
+          </camunda:inputParameter>
+          <camunda:outputParameter name="estimatedSpouseIncome">${estimatedSpouseIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="isYourSpouseACanadianCitizen">${isYourSpouseACanadianCitizen}</camunda:outputParameter>
+          <camunda:outputParameter name="doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber">${doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber}</camunda:outputParameter>
+          <camunda:outputParameter name="pleaseProvideAnEstimationOfYourParentsIncome">${pleaseProvideAnEstimationOfYourParentsIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="numberOfParents">${numberOfParents}</camunda:outputParameter>
+          <camunda:outputParameter name="dependantstatus">${dependantstatus}</camunda:outputParameter>
+          <camunda:outputParameter name="programYearStartDate">${startDate}</camunda:outputParameter>
+          <camunda:outputParameter name="whenDidYouGraduateOrLeaveHighSchool">${whenDidYouGraduateOrLeaveHighSchool}</camunda:outputParameter>
+          <camunda:outputParameter name="livingathomeRent">${livingathomeRent}</camunda:outputParameter>
+          <camunda:outputParameter name="transportationCost">${transportationCost}</camunda:outputParameter>
+          <camunda:outputParameter name="indigenousStatus">${indigenousStatus}</camunda:outputParameter>
+          <camunda:outputParameter name="relationshipStatus">${relationshipStatus}</camunda:outputParameter>
+          <camunda:outputParameter name="hasDependents">${hasDependents}</camunda:outputParameter>
+          <camunda:outputParameter name="livingWithParents">${livingWithParents}</camunda:outputParameter>
+          <camunda:outputParameter name="daycareCosts12YearsOrOver">${daycareCosts12YearsOrOver}</camunda:outputParameter>
+          <camunda:outputParameter name="daycareCosts11YearsOrUnder">${daycareCosts11YearsOrUnder}</camunda:outputParameter>
+          <camunda:outputParameter name="childSupportAndOrSpousalSupport">${childsupportCosts}</camunda:outputParameter>
+          <camunda:outputParameter name="taxReturnIncome">${taxReturnIncome}</camunda:outputParameter>
+          <camunda:outputParameter name="voluntaryContributions">${parentvoluntarycontributionsCosts}</camunda:outputParameter>
+          <camunda:outputParameter name="scholarshipAmount">${scholarshipsreceviedCosts}</camunda:outputParameter>
+          <camunda:outputParameter name="selectedProgram">${selectedProgram}</camunda:outputParameter>
+          <camunda:outputParameter name="selectedOffering">${selectedOffering}</camunda:outputParameter>
+          <camunda:outputParameter name="selectedLocation">${selectedLocation}</camunda:outputParameter>
+          <camunda:outputParameter name="youthInCare">${youthInCare}</camunda:outputParameter>
+          <camunda:outputParameter name="programYear">${programYear}</camunda:outputParameter>
+          <camunda:outputParameter name="programLocation">BC</camunda:outputParameter>
+        </camunda:inputOutput>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable('error_retry', execution.getVariable("error_retry") + 1);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_03x2l2k</bpmn:incoming>
+      <bpmn:incoming>Flow_0jl2fu1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xe24er</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_145tu13" name="Get Token">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${keycloakURL}/auth/realms/${realm}/protocol/openid-connect/token</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/x-www-form-urlencoded</camunda:entry>
+                <camunda:entry key="Authorization">Basic ${base64userpass}</camunda:entry>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">grant_type=client_credentials</camunda:inputParameter>
+            <camunda:outputParameter name="simsApiAccessToken">${S(response).prop("access_token").stringValue()}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k3a6ke</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_03x2l2k</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable('workflowId', execution.getProcessInstanceId());</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1k3a6ke</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateThrowEvent id="Event_0a53uvu" name="ready-for-assessment">
+      <bpmn:incoming>Flow_0n5mbdi</bpmn:incoming>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1azrccz" name="ready-for-assessment" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:parallelGateway id="Gateway_1isoyr2">
+      <bpmn:incoming>Flow_1uyn54g</bpmn:incoming>
+      <bpmn:incoming>Flow_0lglltu</bpmn:incoming>
+      <bpmn:incoming>Flow_051cm78</bpmn:incoming>
+      <bpmn:incoming>Flow_08eitum</bpmn:incoming>
+      <bpmn:outgoing>Flow_0n5mbdi</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_0380uhw">
+      <bpmn:incoming>Flow_0h8gs3i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0137qgv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qo8vzw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ncxpnq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1bw12ec</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Activity_0f322fv" name="Call SIMS API to get offering, program, location and student details">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="appResponseCode">
+              <camunda:script scriptFormat="javascript">var statusCode = connector.getVariable("statusCode");
+var fieldNames = connector.getVariable("fieldNames");
+// Initialize all variables with null.
+// If some variable is not present the variable will be present.
+for (var i = 0; i &lt; fieldNames.length; i++) {
+  connector.setVariable(fieldNames[i], null);
+}
+if (statusCode !== 200) {
+  throw new org.camunda.bpm.engine.delegate.BpmnError(
+    "SIMS-GET-OFFERING-ERROR",
+    response
+  );
+}
+
+function createVariablesFromPayload(payload) {
+  for (var i = 0; i &lt; fieldNames.length; i++) {
+    var fieldName = fieldNames[i];
+    var fieldValue = null;
+    if (payload.hasProp(fieldName)) {
+      fieldValue = payload.prop(fieldName).value();
+      connector.setVariable(fieldName, fieldValue);
+    }
+  }
+}
+
+var output = S(connector.getVariable("response"));
+createVariablesFromPayload(output.prop("data"));
+createVariablesFromPayload(output.prop("offering"));
+createVariablesFromPayload(output.prop("program"));
+createVariablesFromPayload(output.prop("institution"));
+createVariablesFromPayload(output.prop("location"));
+createVariablesFromPayload(output.prop("student"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="fieldNames">
+            <camunda:list>
+              <camunda:value>exceptionalExpenses</camunda:value>
+              <camunda:value>mandatoryFees</camunda:value>
+              <camunda:value>actualTuitionCosts</camunda:value>
+              <camunda:value>programRelatedCosts</camunda:value>
+              <camunda:value>studyStartDate</camunda:value>
+              <camunda:value>studyEndDate</camunda:value>
+              <camunda:value>breakStartDate</camunda:value>
+              <camunda:value>breakEndDate</camunda:value>
+              <camunda:value>tuitionRemittanceRequestedAmount</camunda:value>
+              <camunda:value>offeringDelivered</camunda:value>
+              <camunda:value>offeringIntensity</camunda:value>
+              <camunda:value>programCredentialType</camunda:value>
+              <camunda:value>programLength</camunda:value>
+              <camunda:value>institutionType</camunda:value>
+              <camunda:value>institutionLocationProvince</camunda:value>
+              <camunda:value>studentPDStatus</camunda:value>
+            </camunda:list>
+          </camunda:inputParameter>
+          <camunda:outputParameter name="studentPDStatus">${studentPDStatus}</camunda:outputParameter>
+          <camunda:outputParameter name="institutionLocationProvince">${institutionLocationProvince}</camunda:outputParameter>
+          <camunda:outputParameter name="institutionType">${institutionType}</camunda:outputParameter>
+          <camunda:outputParameter name="programLength">${programLength}</camunda:outputParameter>
+          <camunda:outputParameter name="programCredentialType">${programCredentialType}</camunda:outputParameter>
+          <camunda:outputParameter name="offeringIntensity">${offeringIntensity}</camunda:outputParameter>
+          <camunda:outputParameter name="offeringDelivered">${offeringDelivered}</camunda:outputParameter>
+          <camunda:outputParameter name="tuitionRemittanceRequestedAmount">${tuitionRemittanceRequestedAmount}</camunda:outputParameter>
+          <camunda:outputParameter name="breakEndDate">${breakEndDate}</camunda:outputParameter>
+          <camunda:outputParameter name="breakStartDate">${breakStartDate}</camunda:outputParameter>
+          <camunda:outputParameter name="studyEndDate">${studyEndDate}</camunda:outputParameter>
+          <camunda:outputParameter name="studyStartDate">${studyStartDate}</camunda:outputParameter>
+          <camunda:outputParameter name="programRelatedCosts">${programRelatedCosts}</camunda:outputParameter>
+          <camunda:outputParameter name="actualTuitionCosts">${actualTuitionCosts}</camunda:outputParameter>
+          <camunda:outputParameter name="mandatoryFees">${mandatoryFees}</camunda:outputParameter>
+          <camunda:outputParameter name="exceptionalExpenses">${exceptionalExpenses}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1o2sazf</bpmn:incoming>
+      <bpmn:outgoing>Flow_123yrvx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0mc2luc" name="Get Token">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${keycloakURL}/auth/realms/${realm}/protocol/openid-connect/token</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/x-www-form-urlencoded</camunda:entry>
+                <camunda:entry key="Authorization">Basic ${base64userpass}</camunda:entry>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">grant_type=client_credentials</camunda:inputParameter>
+            <camunda:outputParameter name="simsApiAccessToken">${S(response).prop("access_token").stringValue()}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0iwnsaf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1o2sazf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="Event_1wxl0x4" name="ready-for-assessment">
+      <bpmn:outgoing>Flow_0iwnsaf</bpmn:outgoing>
+      <bpmn:linkEventDefinition id="LinkEventDefinition_1u9ocgm" name="ready-for-assessment" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:inclusiveGateway id="Gateway_1w2tzk7">
+      <bpmn:incoming>Flow_16zhfgz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0myo13i</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0jubdwo</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:endEvent id="Event_0wu28r4">
+      <bpmn:incoming>Flow_1gq6278</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_16jzsun" name="Reviewer">
+      <bpmn:incoming>Flow_16892vr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gq6278</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="Event_1b33apa" name="wait for the institution to confirm COE">
+      <bpmn:incoming>Flow_1udpycx</bpmn:incoming>
+      <bpmn:outgoing>Flow_16892vr</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0u3hjia" messageRef="Message_0nupyyq" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="Activity_0wv9pv1" name="Update Assessment Status to &#39;Required&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Required"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/assessment/status</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1f4zmxl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1udpycx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1yidauz" name="Call SIMS Api to generate MSFAA">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Completed",
+  "offeringIntensity": "${offeringIntensity}"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/msfaa-number</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19yc6c3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f4zmxl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0u73tyi" name="Update Application Status to &#39;Assessment&#39;">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="payload">{
+  "status": "Assessment"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/application/status</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_181l06a</bpmn:incoming>
+      <bpmn:outgoing>Flow_19yc6c3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0ldfkbb" name="Save assessment to SIMSDB">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/assessment/</camunda:inputParameter>
+            <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="accept">application/json</camunda:entry>
+                <camunda:entry key="Authorization">Bearer ${simsApiAccessToken}</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">
+              <camunda:script scriptFormat="javaScript">var offeringIntensity = execution.getVariable("offeringIntensity");
+if (offeringIntensity == "Part Time") {
+  var totalAcademicExpenses = execution.getVariable("totalAcademicExpenses");
+  if (totalAcademicExpenses !== undefined &amp;&amp; totalAcademicExpenses !== null) {
+    totalAcademicExpenses =
+      Math.round(parseFloat(totalAcademicExpenses) * 100) / 100;
+  }
+  var totalAssessmentNeed = execution.getVariable("totalFinancialNeed");
+  if (totalAssessmentNeed !== undefined &amp;&amp; totalAssessmentNeed !== null) {
+    totalAssessmentNeed =
+      Math.round(parseFloat(totalAssessmentNeed) * 100) / 100;
+  }
+  var tuitionCost = execution.getVariable("totalTutionCost");
+  if (tuitionCost !== undefined &amp;&amp; tuitionCost !== null) {
+    tuitionCost = Math.round(parseFloat(tuitionCost) * 100) / 100;
+  }
+  var booksAndSuppliesCost = execution.getVariable("totalBookCost");
+  if (booksAndSuppliesCost !== undefined &amp;&amp; booksAndSuppliesCost !== null) {
+    booksAndSuppliesCost =
+      Math.round(parseFloat(booksAndSuppliesCost) * 100) / 100;
+  }
+  var transportationCost = execution.getVariable("totalTransportationCost");
+  if (transportationCost !== undefined &amp;&amp; transportationCost !== null) {
+    transportationCost = Math.round(parseFloat(transportationCost) * 100) / 100;
+  }
+  var miscellaneousCost = execution.getVariable("totalMiscellaneousCost");
+  if (miscellaneousCost !== undefined &amp;&amp; miscellaneousCost !== null) {
+    miscellaneousCost = Math.round(parseFloat(miscellaneousCost) * 100) / 100;
+  }
+  var childcareCost = execution.getVariable("totalDependentExpenses");
+  if (childcareCost !== undefined &amp;&amp; childcareCost !== null) {
+    childcareCost = Math.round(parseFloat(childcareCost) * 100) / 100;
+  }
+  var totalFamilyIncome = execution.getVariable("totalFamilyIncome");
+  if (totalFamilyIncome !== undefined &amp;&amp; totalFamilyIncome !== null) {
+    totalFamilyIncome = Math.round(parseFloat(totalFamilyIncome) * 100) / 100;
+  }
+  var totalFederalAward = execution.getVariable("totalPTFederalAward");
+  if (totalFederalAward !== undefined &amp;&amp; totalFederalAward !== null) {
+    totalFederalAward = Math.round(parseFloat(totalFederalAward) * 100) / 100;
+  }
+  var totalProvincialAward = execution.getVariable("totalPTProvincialAward");
+  if (totalProvincialAward !== undefined &amp;&amp; totalProvincialAward !== null) {
+    totalProvincialAward =
+      Math.round(parseFloat(totalProvincialAward) * 100) / 100;
+  }
+  var assessmentJson = {
+    weeks: execution.getVariable("weeks"),
+    totalAcademicExpenses: totalAcademicExpenses,
+    totalAssessmentNeed: totalAssessmentNeed,
+    tuitionCost: tuitionCost,
+    booksAndSuppliesCost: booksAndSuppliesCost,
+    transportationCost: transportationCost,
+    miscellaneousCost: miscellaneousCost,
+    childcareCost: childcareCost,
+    totalFamilyIncome: totalFamilyIncome,
+    totalFederalAward: totalFederalAward,
+    totalProvincialAward: totalProvincialAward,
+  };
+} else {
+  var federalAssessmentNeed = execution.getVariable("federalAssessmentNeed");
+  var provincialAssessmentNeed = execution.getVariable(
+    "provincialAssessmentNeed"
+  );
+  var totalFederalAward = execution.getVariable("totalFederalAward");
+  var totalProvincialAward = execution.getVariable("totalProvincialAward");
+  var tuitionCost = execution.getVariable("totalTutionCost");
+  var booksAndSuppliesCost = execution.getVariable("totalBookCost");
+  var exceptionalEducationCost = execution.getVariable(
+    "totalExceptionalExpenses"
+  );
+  var totalFamilyIncome = execution.getVariable("totalFamilyIncome");
+  var livingAllowance = execution.getVariable("totalMSOL");
+  var transportationCost = execution.getVariable("totalTransportationCost");
+  var childcareCost = execution.getVariable("totalChildcareCost");
+  var alimonyOrChildSupport = execution.getVariable(
+    "totalChildSpousalSupport"
+  );
+  var secondResidenceCost = execution.getVariable(
+    "totalSecondResidenceLimit"
+  );
+  var partnerStudentLoanCost = execution.getVariable("totalLoanPayment");
+  var otherAllowableCost = execution.getVariable("otherAllowableCosts");
+  var totalAssessedCost = execution.getVariable("totalCost");
+  var studentTotalFederalContribution =
+    execution.getVariable("netFederalFsc");
+  var studentTotalProvincialContribution =
+    execution.getVariable("netProvincialFsc");
+  var partnerAssessedContribution = execution.getVariable(
+    "applicantSpouseContribution"
+  );
+  var parentAssessedContribution = execution.getVariable(
+    "parentalContribution"
+  );
+  var totalFederalContribution = execution.getVariable(
+    "netFederalContribution"
+  );
+  var totalProvincialContribution = execution.getVariable(
+    "netProvincialContribution"
+  );
+
+  if (federalAssessmentNeed !== undefined &amp;&amp; federalAssessmentNeed !== null) {
+    federalAssessmentNeed =
+      Math.round(parseFloat(federalAssessmentNeed) * 100) / 100;
+  }
+  if (
+    provincialAssessmentNeed !== undefined &amp;&amp;
+    provincialAssessmentNeed !== null
+  ) {
+    provincialAssessmentNeed =
+      Math.round(parseFloat(provincialAssessmentNeed) * 100) / 100;
+  }
+  var totalAssessmentNeed = federalAssessmentNeed + provincialAssessmentNeed;
+  if (totalAssessmentNeed !== undefined &amp;&amp; totalAssessmentNeed !== null) {
+    totalAssessmentNeed =
+      Math.round(parseFloat(totalAssessmentNeed) * 100) / 100;
+  }
+
+  if (totalFederalAward !== undefined &amp;&amp; totalFederalAward !== null) {
+    totalFederalAward = Math.round(parseFloat(totalFederalAward) * 100) / 100;
+  }
+  if (totalProvincialAward !== undefined &amp;&amp; totalProvincialAward !== null) {
+    totalProvincialAward =
+      Math.round(parseFloat(totalProvincialAward) * 100) / 100;
+  }
+  if (tuitionCost !== undefined &amp;&amp; tuitionCost !== null) {
+    tuitionCost = Math.round(parseFloat(tuitionCost) * 100) / 100;
+  }
+  if (booksAndSuppliesCost !== undefined &amp;&amp; booksAndSuppliesCost !== null) {
+    booksAndSuppliesCost =
+      Math.round(parseFloat(booksAndSuppliesCost) * 100) / 100;
+  }
+  if (
+    exceptionalEducationCost !== undefined &amp;&amp;
+    exceptionalEducationCost !== null
+  ) {
+    exceptionalEducationCost =
+      Math.round(parseFloat(exceptionalEducationCost) * 100) / 100;
+  }
+  if (livingAllowance !== undefined &amp;&amp; livingAllowance !== null) {
+    livingAllowance = Math.round(parseFloat(livingAllowance) * 100) / 100;
+  }
+  if (transportationCost !== undefined &amp;&amp; transportationCost !== null) {
+    transportationCost = Math.round(parseFloat(transportationCost) * 100) / 100;
+  }
+  if (childcareCost !== undefined &amp;&amp; childcareCost !== null) {
+    childcareCost = Math.round(parseFloat(childcareCost) * 100) / 100;
+  }
+  if (alimonyOrChildSupport !== undefined &amp;&amp; alimonyOrChildSupport !== null) {
+    alimonyOrChildSupport =
+      Math.round(parseFloat(alimonyOrChildSupport) * 100) / 100;
+  }
+  if (secondResidenceCost !== undefined &amp;&amp; secondResidenceCost !== null) {
+    secondResidenceCost =
+      Math.round(parseFloat(secondResidenceCost) * 100) / 100;
+  }
+  if (partnerStudentLoanCost !== undefined &amp;&amp; partnerStudentLoanCost !== null) {
+    partnerStudentLoanCost =
+      Math.round(parseFloat(partnerStudentLoanCost) * 100) / 100;
+  }
+  if (otherAllowableCost !== undefined &amp;&amp; otherAllowableCost !== null) {
+    otherAllowableCost = Math.round(parseFloat(otherAllowableCost) * 100) / 100;
+  }
+  if (totalAssessedCost !== undefined &amp;&amp; totalAssessedCost !== null) {
+    totalAssessedCost = Math.round(parseFloat(totalAssessedCost) * 100) / 100;
+  }
+  if (
+    studentTotalFederalContribution !== undefined &amp;&amp;
+    studentTotalFederalContribution !== null
+  ) {
+    studentTotalFederalContribution =
+      Math.round(parseFloat(studentTotalFederalContribution) * 100) / 100;
+  }
+  if (
+    studentTotalProvincialContribution !== undefined &amp;&amp;
+    studentTotalProvincialContribution !== null
+  ) {
+    studentTotalProvincialContribution =
+      Math.round(parseFloat(studentTotalProvincialContribution) * 100) / 100;
+  }
+  if (
+    partnerAssessedContribution !== undefined &amp;&amp;
+    partnerAssessedContribution !== null
+  ) {
+    partnerAssessedContribution =
+      Math.round(parseFloat(partnerAssessedContribution) * 100) / 100;
+  }
+  if (
+    parentAssessedContribution !== undefined &amp;&amp;
+    parentAssessedContribution !== null
+  ) {
+    parentAssessedContribution =
+      Math.round(parseFloat(parentAssessedContribution) * 100) / 100;
+  }
+  if (
+    totalFederalContribution !== undefined &amp;&amp;
+    totalFederalContribution !== null
+  ) {
+    totalFederalContribution =
+      Math.round(parseFloat(totalFederalContribution) * 100) / 100;
+  }
+  if (
+    totalProvincialContribution !== undefined &amp;&amp;
+    totalProvincialContribution !== null
+  ) {
+    totalProvincialContribution =
+      Math.round(parseFloat(totalProvincialContribution) * 100) / 100;
+  }
+  if (totalFamilyIncome !== undefined &amp;&amp; totalFamilyIncome !== null) {
+    totalFamilyIncome = Math.round(parseFloat(totalFamilyIncome) * 100) / 100;
+  }
+
+  var assessmentJson = {
+    weeks: execution.getVariable("weeks"),
+    totalAssessmentNeed: totalAssessmentNeed,
+    federalAssessmentNeed: federalAssessmentNeed,
+    provincialAssessmentNeed: provincialAssessmentNeed,
+    totalFederalAward: totalFederalAward,
+    totalProvincialAward: totalProvincialAward,
+    tuitionCost: tuitionCost,
+    booksAndSuppliesCost: booksAndSuppliesCost,
+    exceptionalEducationCost: exceptionalEducationCost,
+    livingAllowance: livingAllowance,
+    transportationCost: transportationCost,
+    childcareCost: childcareCost,
+    alimonyOrChildSupport: alimonyOrChildSupport,
+    secondResidenceCost: secondResidenceCost,
+    partnerStudentLoanCost: partnerStudentLoanCost,
+    otherAllowableCost: otherAllowableCost,
+    totalAssessedCost: totalAssessedCost,
+    totalFamilyIncome: totalFamilyIncome,
+    studentTotalFederalContribution: studentTotalFederalContribution,
+    studentTotalProvincialContribution: studentTotalProvincialContribution,
+    partnerAssessedContribution: partnerAssessedContribution,
+    parentAssessedContribution: parentAssessedContribution,
+    totalFederalContribution: totalFederalContribution,
+    totalProvincialContribution: totalProvincialContribution,
+  };
+}
+JSON.stringify(assessmentJson);
+</camunda:script>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fx85bq</bpmn:incoming>
+      <bpmn:outgoing>Flow_181l06a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Activity_0p65yh4" name="Calculate Award" calledElement="${definition_key.get(&#34;award&#34;)}">
+      <bpmn:extensionElements>
+        <camunda:out source="totalFederalAward" target="totalFederalAward" />
+        <camunda:out source="totalProvincialAward" target="totalProvincialAward" />
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="programYear" target="programYear" />
+        <camunda:in source="weeks" target="weeks" />
+        <camunda:in source="noOfDependents" target="noOfDependents" />
+        <camunda:in source="familySize" target="familySize" />
+        <camunda:in source="federalAssessmentNeed" target="federalAssessmentNeed" />
+        <camunda:in source="provincialAssessmentNeed" target="provincialAssessmentNeed" />
+        <camunda:in source="totalFamilyIncome" target="totalFamilyIncome" />
+        <camunda:in source="programLength" target="programLength" />
+        <camunda:in source="offeringIntensity" target="offeringIntensity" />
+        <camunda:in source="programCredentialType" target="programCredentialType" />
+        <camunda:out source="CSGFTThresholdIncome" target="CSGFTThresholdIncome" />
+        <camunda:out source="CSGFTIncomeCap" target="CSGFTIncomeCap" />
+        <camunda:in source="dependants" target="dependants" />
+        <camunda:out source="csgftdepEligibility" target="csgftdepEligibility" />
+        <camunda:in source="whenDidYouGraduateOrLeaveHighSchool" target="whenDidYouGraduateOrLeaveHighSchool" />
+        <camunda:in source="studyStartDate" target="studyStartDate" />
+        <camunda:out source="csgtuEligibility" target="csgtuEligibility" />
+        <camunda:out source="outOfSchoolInYears" target="outOfSchoolInYears" />
+        <camunda:out source="BGPDEligibility" target="BGPDEligibility" />
+        <camunda:out source="CSGTUEligibility" target="CSGTUEligibility" />
+        <camunda:out source="CSGPEligibility" target="CSGPEligibility" />
+        <camunda:out source="CSGDEligibility" target="CSGDEligibility" />
+        <camunda:out source="CSGFTEligibility" target="CSGFTEligibility" />
+        <camunda:out source="SBSDEligibility" target="SBSDEligibility" />
+        <camunda:out source="federalCSGPAmount" target="federalCSGPAmount" />
+        <camunda:out source="federalCSGDAmount" target="federalCSGDAmount" />
+        <camunda:out source="federalCSGFTAmount" target="federalCSGFTAmount" />
+        <camunda:out source="federalCSGTUAmount" target="federalCSGTUAmount" />
+        <camunda:out source="federalCSLAmount" target="federalCSLAmount" />
+        <camunda:out source="provincialBCSLAmount" target="provincialBCSLAmount" />
+        <camunda:out source="provincialBCAGAmount" target="provincialBCAGAmount" />
+        <camunda:out source="provincialSBSDAmount" target="provincialSBSDAmount" />
+        <camunda:out source="provincialBGPDAmount" target="provincialBGPDAmount" />
+        <camunda:out source="BCAGEligibility" target="BCAGEligibility" />
+        <camunda:out source="BCAG2YearEligibility" target="BCAG2YearEligibility" />
+        <camunda:in source="totalFinancialNeed" target="totalFinancialNeed" />
+        <camunda:in source="eligibleDependents12YearsOrOver" target="eligibleDependents12YearsOrOver" />
+        <camunda:in source="eligibleDependents11YearsOrUnder" target="eligibleDependents11YearsOrUnder" />
+        <camunda:in source="studentPDStatus" target="studentPDStatus" />
+        <camunda:in source="courseLoad" target="courseLoad" />
+        <camunda:out source="CSGPPDGrant" target="CSGPPDGrant" />
+        <camunda:out source="CSGPTGrant" target="CSGPTGrant" />
+        <camunda:out source="CSGPTDEPGrant" target="CSGPTDEPGrant" />
+        <camunda:out source="CSLPTGrant" target="CSLPTGrant" />
+        <camunda:out source="BCAGPTGrant" target="BCAGPTGrant" />
+        <camunda:out source="SBSDGrant" target="SBSDGrant" />
+        <camunda:out source="totalPTFederalAward" target="totalPTFederalAward" />
+        <camunda:out source="totalPTProvincialAward" target="totalPTProvincialAward" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09tnx9v</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xq6e41</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="CallActivity_1okgvpw" name="Calculate Assessment" calledElement="${definition_key.get(&#34;assessment&#34;)}">
+      <bpmn:extensionElements>
+        <camunda:in source="studyStartDate" target="studyStartDate" />
+        <camunda:in source="studyEndDate" target="studyEndDate" />
+        <camunda:in source="actualTuitionCosts" target="actualTuitionCosts" />
+        <camunda:in source="exceptionalExpenses" target="exceptionalExpenses" />
+        <camunda:in source="programRelatedCosts" target="programRelatedCosts" />
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="programYear" target="programYear" />
+        <camunda:in source="programLocation" target="programLocation" />
+        <camunda:in source="livingWithParents" target="livingWithParents" />
+        <camunda:in source="dependants" target="dependants" />
+        <camunda:in source="relationshipStatus" target="relationshipStatus" />
+        <camunda:in source="childSupportAndOrSpousalSupport" target="childSupportAndOrSpousalSupport" />
+        <camunda:in source="indigenousStatus" target="indigenousStatus" />
+        <camunda:in source="permanentDisability" target="permanentDisability" />
+        <camunda:in source="youthInCare" target="youthInCare" />
+        <camunda:in source="studentCalculatedTotalIncome" target="studentCalculatedTotalIncome" />
+        <camunda:in source="scholarshipAmount" target="scholarshipAmount" />
+        <camunda:in source="governmentFundingCosts" target="governmentFundingCosts" />
+        <camunda:in source="nongovernmentfundingCosts" target="nongovernmentfundingCosts" />
+        <camunda:in source="voluntaryContributions" target="voluntaryContributions" />
+        <camunda:in source="hasDependents" target="hasDependents" />
+        <camunda:in source="netAssests" target="netAssests" />
+        <camunda:in source="parent2Ei" target="parent2Ei" />
+        <camunda:in source="parent1Ei" target="parent1Ei" />
+        <camunda:in source="parent2CppSelfemploymentOther" target="parent2CppSelfemploymentOther" />
+        <camunda:in source="parent2CppEmployment" target="parent2CppEmployment" />
+        <camunda:in source="parent1CppSelfemploymentOther" target="parent1CppSelfemploymentOther" />
+        <camunda:in source="parent1CppEmployment" target="parent1CppEmployment" />
+        <camunda:in source="parent2Tax" target="parent2Tax" />
+        <camunda:in source="parent1Tax" target="parent1Tax" />
+        <camunda:in source="parent2CalculatedTotalIncome" target="parent2CalculatedTotalIncome" />
+        <camunda:in source="parent1CalculatedTotalIncome" target="parent1CalculatedTotalIncome" />
+        <camunda:in source="parent1Contributions" target="parentContributions" />
+        <camunda:in source="piDaycareCost" target="piDaycareCost" />
+        <camunda:in source="partnerChildSpousalSupportCost" target="partnerChildSpousalSupportCost" />
+        <camunda:in source="livingWithPartner" target="livingWithPartner" />
+        <camunda:in source="partnerLoanPayment" target="partnerLoanPayment" />
+        <camunda:in source="partnerEmploymentInsuranceBenefits" target="partnerEmploymentInsuranceBenefits" />
+        <camunda:in source="partnerDisabilityAssistance" target="partnerDisabilityAssistance" />
+        <camunda:in source="partnerPermanentDisabilityBenefits" target="partnerPermanentDisabilityBenefits" />
+        <camunda:out source="federalAssessmentNeed" target="federalAssessmentNeed" />
+        <camunda:out source="provincialAssessmentNeed" target="provincialAssessmentNeed" />
+        <camunda:out source="weeks" target="weeks" />
+        <camunda:in source="mandatoryFees" target="mandatoryFees" />
+        <camunda:out source="totalTutionCost" target="totalTutionCost" />
+        <camunda:out source="totalBookCost" target="totalBookCost" />
+        <camunda:out source="totalExceptionalExpenses" target="totalExceptionalExpenses" />
+        <camunda:out source="livingCategory" target="livingCategory" />
+        <camunda:out source="totalTransportationCost" target="totalTransportationCost" />
+        <camunda:in source="daycareCosts12YearsOrOver" target="daycareCosts12YearsOrOver" />
+        <camunda:in source="daycareCosts11YearsOrUnder" target="daycareCosts11YearsOrUnder" />
+        <camunda:out source="totalChildcareCost" target="totalChildcareCost" />
+        <camunda:out source="totalChildSpousalSupport" target="totalChildSpousalSupport" />
+        <camunda:out source="netFederalScholarship" target="netFederalScholarship" />
+        <camunda:in source="transportationCost" target="transportationCost" />
+        <camunda:in source="livingathomeRent" target="livingathomeRent" />
+        <camunda:in source="studentPDStatus" target="studentPDStatus" />
+        <camunda:in source="whenDidYouGraduateOrLeaveHighSchool" target="whenDidYouGraduateOrLeaveHighSchool" />
+        <camunda:out source="totalFamilyIncome" target="totalFamilyIncome" />
+        <camunda:out source="camundaDependantStatus" target="camundaDependantStatus" />
+        <camunda:out source="msolMonthly" target="msolMonthly" />
+        <camunda:in source="partnerCalculatedTotalIncome" target="partnerCalculatedTotalIncome" />
+        <camunda:in source="numberOfParents" target="numberOfParents" />
+        <camunda:in source="studyStartDate" target="studyStartDate" />
+        <camunda:out source="numberOfParents" target="numberOfParents" />
+        <camunda:out source="noOfdependants" target="noOfdependants" />
+        <camunda:out source="noOfParentdependants" target="noOfParentdependants" />
+        <camunda:out source="familySize" target="familySize" />
+        <camunda:out source="parentdependantJson" target="parentdependantJson" />
+        <camunda:in source="parent1DependentTable" target="parent1DependentTable" />
+        <camunda:in source="parent2DependentTable" target="parent2DependentTable" />
+        <camunda:out source="totalSecondResidenceLimit" target="totalSecondResidenceLimit" />
+        <camunda:out source="totalLoanPayment" target="totalLoanPayment" />
+        <camunda:out source="totalCost" target="totalCost" />
+        <camunda:out source="netFederalFsc" target="netFederalFsc" />
+        <camunda:out source="netProvincialFsc" target="netProvincialFsc" />
+        <camunda:out source="parentalContribution" target="parentalContribution" />
+        <camunda:out source="applicantSpouseContribution" target="applicantSpouseContribution" />
+        <camunda:out source="netFederalContribution" target="netFederalContribution" />
+        <camunda:out source="netProvincialContribution" target="netProvincialContribution" />
+        <camunda:out source="totalMSOL" target="totalMSOL" />
+        <camunda:out source="otherAllowableCosts" target="otherAllowableCosts" />
+        <camunda:in source="courseLoad" target="courseLoad" />
+        <camunda:out source="dependant11YearsOrUnderExpenses" target="dependant11YearsOrUnderExpenses" />
+        <camunda:out source="dependant12YearsOrOverExpenses" target="dependant12YearsOrOverExpenses" />
+        <camunda:out source="totalDependentExpenses" target="totalDependentExpenses" />
+        <camunda:out source="totalFinancialNeed" target="totalFinancialNeed" />
+        <camunda:out source="totalMiscellaneousCost" target="totalMiscellaneousCost" />
+        <camunda:out source="totalAcademicExpenses" target="totalAcademicExpenses" />
+        <camunda:in source="isProgramOnline" target="isProgramOnline" />
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable("courseLoad", 50);
+var isProgramOnline = false;
+if(execution.getVariable("offeringDelivered") == "online"){
+  isProgramOnline = true;
+}
+execution.setVariable("isProgramOnline", isProgramOnline);</camunda:script>
+        </camunda:executionListener>
+        <camunda:out source="eligibleDependents11YearsOrUnder" target="eligibleDependents11YearsOrUnder" />
+        <camunda:out source="eligibleDependents12YearsOrOver" target="eligibleDependents12YearsOrOver" />
+        <camunda:in source="dependantstatus" target="dependantstatus" />
+        <camunda:in source="partnerStudentStudyWeeks" target="partnerStudentStudyWeeks" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1tihd5v</bpmn:incoming>
+      <bpmn:outgoing>Flow_09tnx9v</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_1aiys42" name="Disbursement schedule" calledElement="disbursement-schedule-gateway">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="offeringIntensity" target="offeringIntensity" />
+        <camunda:in source="weeks" target="weeks" />
+        <camunda:in source="provincialAssessmentNeed" target="provincialAssessmentNeed" />
+        <camunda:in source="federalAssessmentNeed" target="federalAssessmentNeed" />
+        <camunda:in source="studyStartDate" target="studyStartDate" />
+        <camunda:in source="studyEndDate" target="studyEndDate" />
+        <camunda:out source="firstDisbursementDate" target="firstDisbursementDate" />
+        <camunda:out source="secondDisbursementDate" target="secondDisbursementDate" />
+        <camunda:out source="studyMidDate" target="studyMidDate" />
+        <camunda:in source="BGPDEligibility" target="BGPDEligibility" />
+        <camunda:in source="CSGTUEligibility" target="CSGTUEligibility" />
+        <camunda:in source="CSGPEligibility" target="CSGPEligibility" />
+        <camunda:in source="CSGDEligibility" target="CSGDEligibility" />
+        <camunda:in source="CSGFTEligibility" target="CSGFTEligibility" />
+        <camunda:in source="SBSDEligibility" target="SBSDEligibility" />
+        <camunda:in source="provincialBCSLAmount" target="provincialBCSLAmount" />
+        <camunda:in source="provincialBCAGAmount" target="provincialBCAGAmount" />
+        <camunda:in source="provincialSBSDAmount" target="provincialSBSDAmount" />
+        <camunda:in source="provincialBGPDAmount" target="provincialBGPDAmount" />
+        <camunda:in source="federalCSGPAmount" target="federalCSGPAmount" />
+        <camunda:in source="federalCSGDAmount" target="federalCSGDAmount" />
+        <camunda:in source="federalCSGFTAmount" target="federalCSGFTAmount" />
+        <camunda:in source="federalCSGTUAmount" target="federalCSGTUAmount" />
+        <camunda:in source="federalCSLAmount" target="federalCSLAmount" />
+        <camunda:in source="BCAGEligibility" target="BCAGEligibility" />
+        <camunda:in source="BCAG2YearEligibility" target="BCAG2YearEligibility" />
+        <camunda:in source="keycloakURL" target="keycloakURL" />
+        <camunda:in source="realm" target="realm" />
+        <camunda:in source="base64userpass" target="base64userpass" />
+        <camunda:in source="simsApiUrl" target="simsApiUrl" />
+        <camunda:out source="schedulesJsonString" target="schedulesJsonString" />
+        <camunda:in source="CSGPPDGrant" target="CSGPPDGrant" />
+        <camunda:in source="CSGPTGrant" target="CSGPTGrant" />
+        <camunda:in source="CSGPTDEPGrant" target="CSGPTDEPGrant" />
+        <camunda:in source="CSLPTGrant" target="CSLPTGrant" />
+        <camunda:in source="BCAGPTGrant" target="BCAGPTGrant" />
+        <camunda:in source="SBSDGrant" target="SBSDGrant" />
+        <camunda:in source="totalFinancialNeed" target="totalFinancialNeed" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0xq6e41</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fx85bq</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="Event_1eqxjsa" attachedToRef="Activity_1nys3f3">
+      <bpmn:outgoing>Flow_07p9pns</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1fcie9y" errorRef="Error_1iyuotd" camunda:errorCodeVariable="workflowIdErrorCode" camunda:errorMessageVariable="workflowIdErrorMsg" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_10s5nqb" attachedToRef="Activity_14iy60w">
+      <bpmn:outgoing>Flow_09vg46t</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1mr1y9u" errorRef="Error_03twzh6" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMsg" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0fx85bq" sourceRef="Activity_1aiys42" targetRef="Activity_0ldfkbb" />
+    <bpmn:sequenceFlow id="Flow_0xq6e41" sourceRef="Activity_0p65yh4" targetRef="Activity_1aiys42" />
+    <bpmn:sequenceFlow id="Flow_1tihd5v" name="Assign netAssets as parent1NetAssests + parent2NetAssests" sourceRef="Task_1uq9e1u" targetRef="CallActivity_1okgvpw">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="javascript">var parent1NetAssests = 0;
+var parent2NetAssests = 0; 
+if(execution.getVariable("parent1NetAssests")){
+  parent1NetAssests = execution.getVariable("parent1NetAssests");
+}
+if(execution.getVariable("parent2NetAssests")){
+  parent2NetAssests = execution.getVariable("parent2NetAssests");
+}
+execution.setVariable('netAssests', parent1NetAssests + parent2NetAssests);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1gq6278" sourceRef="Activity_16jzsun" targetRef="Event_0wu28r4" />
+    <bpmn:sequenceFlow id="Flow_16892vr" sourceRef="Event_1b33apa" targetRef="Activity_16jzsun" />
+    <bpmn:sequenceFlow id="Flow_1udpycx" sourceRef="Activity_0wv9pv1" targetRef="Event_1b33apa" />
+    <bpmn:sequenceFlow id="Flow_1f4zmxl" sourceRef="Activity_1yidauz" targetRef="Activity_0wv9pv1" />
+    <bpmn:sequenceFlow id="Flow_19yc6c3" sourceRef="Activity_0u73tyi" targetRef="Activity_1yidauz" />
+    <bpmn:sequenceFlow id="Flow_181l06a" sourceRef="Activity_0ldfkbb" targetRef="Activity_0u73tyi" />
+    <bpmn:sequenceFlow id="Flow_09tnx9v" sourceRef="CallActivity_1okgvpw" targetRef="Activity_0p65yh4" />
+    <bpmn:sequenceFlow id="Flow_123yrvx" sourceRef="Activity_0f322fv" targetRef="Task_1uq9e1u" />
+    <bpmn:sequenceFlow id="SequenceFlow_1o2sazf" sourceRef="Activity_0mc2luc" targetRef="Activity_0f322fv" />
+    <bpmn:sequenceFlow id="Flow_0iwnsaf" sourceRef="Event_1wxl0x4" targetRef="Activity_0mc2luc" />
+    <bpmn:sequenceFlow id="Flow_0qo8vzw" sourceRef="Gateway_0380uhw" targetRef="Gateway_0wkoecx" />
+    <bpmn:sequenceFlow id="Flow_0137qgv" sourceRef="Gateway_0380uhw" targetRef="Gateway_0csurln" />
+    <bpmn:sequenceFlow id="Flow_1uyn54g" sourceRef="Gateway_1669sec" targetRef="Gateway_1isoyr2" />
+    <bpmn:sequenceFlow id="Flow_0ncxpnq" sourceRef="Gateway_0380uhw" targetRef="Activity_1sw9yj8" />
+    <bpmn:sequenceFlow id="Flow_0lglltu" sourceRef="Activity_1sw9yj8" targetRef="Gateway_1isoyr2" />
+    <bpmn:sequenceFlow id="Flow_051cm78" sourceRef="Gateway_1lh5sdl" targetRef="Gateway_1isoyr2" />
+    <bpmn:sequenceFlow id="Flow_08eitum" sourceRef="Gateway_1sjc17u" targetRef="Gateway_1isoyr2" />
+    <bpmn:sequenceFlow id="Flow_0n5mbdi" sourceRef="Gateway_1isoyr2" targetRef="Event_0a53uvu" />
+    <bpmn:sequenceFlow id="Flow_1k3a6ke" name="apply settings" sourceRef="StartEvent_1" targetRef="Activity_145tu13">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="javascript">var system = java.lang.System;
+var base64 = java.util.Base64;
+execution.setVariable('keycloakURL', system.getenv('KEYCLOAK_URL'));
+var userpass = system.getenv('KEYCLOAK_CLIENTID').concat(':',system.getenv('KEYCLOAK_CLIENTSECRET'))
+var base64userpass = base64.getEncoder().encodeToString(userpass.getBytes());
+execution.setVariable('base64userpass', base64userpass);
+execution.setVariable('realm', system.getenv('KEYCLOAK_URL_REALM'));
+execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
+execution.setVariable('error_retry', 0);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_03x2l2k" sourceRef="Activity_145tu13" targetRef="Activity_14iy60w" />
+    <bpmn:sequenceFlow id="Flow_0jl2fu1" sourceRef="Gateway_0ejf3ug" targetRef="Activity_14iy60w">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${error_retry &lt; 3}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1xe24er" sourceRef="Activity_14iy60w" targetRef="Activity_1nys3f3">
+      <bpmn:extensionElements>
+        <camunda:executionListener expression="execution.removeVariable(&#34;applicationAccessToken&#34;)}" event="take" />
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_19n0g7g" sourceRef="Event_0halwwn" targetRef="Gateway_0ejf3ug" />
+    <bpmn:sequenceFlow id="Flow_0v56rad" sourceRef="Gateway_0ejf3ug" targetRef="Event_0gpagjg">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="javascript">execution.setVariable('error_retry', 0);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_09vg46t" sourceRef="Event_10s5nqb" targetRef="Event_0halwwn" />
+    <bpmn:sequenceFlow id="Flow_1dd2smr" sourceRef="Event_0gpagjg" targetRef="Event_0o3ssra" />
+    <bpmn:sequenceFlow id="Flow_07p9pns" sourceRef="Event_1eqxjsa" targetRef="Event_15ip6mw" />
+    <bpmn:sequenceFlow id="Flow_0iu5w2f" sourceRef="Event_15ip6mw" targetRef="Event_0crzrlt" />
+    <bpmn:sequenceFlow id="Flow_0ptb2hn" sourceRef="Activity_11wi2pz" targetRef="Activity_1121s9q" />
+    <bpmn:sequenceFlow id="Flow_1ggm73d" sourceRef="Activity_1121s9q" targetRef="Gateway_1lh5sdl" />
+    <bpmn:sequenceFlow id="Flow_0ud7y7a" name="Yes" sourceRef="Gateway_0wkoecx" targetRef="Gateway_1ew03za">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relationshipStatus == "married"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1kc6798" name="No" sourceRef="Gateway_0wkoecx" targetRef="Activity_0dw0h40">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relationshipStatus != "married"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1c48deu" sourceRef="Activity_0dw0h40" targetRef="Gateway_1lh5sdl" />
+    <bpmn:sequenceFlow id="Flow_0h5cgco" sourceRef="Activity_0n94rsl" targetRef="Event_0x1a9kw" />
+    <bpmn:sequenceFlow id="Flow_1mivif1" sourceRef="Event_0x1a9kw" targetRef="Gateway_1669sec" />
+    <bpmn:sequenceFlow id="Flow_0msy2no" name="Not Required" sourceRef="Gateway_0csurln" targetRef="Activity_1w6xq7d">
+      <bpmn:extensionElements>
+        <camunda:executionListener expression="${execution.setVariable(&#34;offeringAccessToken&#34;,null)}" event="take" />
+      </bpmn:extensionElements>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${selectedOffering != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_19bqdrt" name="Required" sourceRef="Gateway_0csurln" targetRef="Activity_0n94rsl">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${selectedOffering == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0s0h0sb" sourceRef="Activity_1w6xq7d" targetRef="Gateway_1669sec" />
+    <bpmn:sequenceFlow id="Flow_0myo13i" name="Dependant with 1 or 2 parents" sourceRef="Gateway_1w2tzk7" targetRef="Activity_17ziso7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${numberOfParents == "1" || numberOfParents == "2"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0l5o0bf" sourceRef="Activity_17ziso7" targetRef="Activity_0x9bma9" />
+    <bpmn:sequenceFlow id="Flow_1v14ljz" sourceRef="Activity_0x9bma9" targetRef="Gateway_1sjc17u" />
+    <bpmn:sequenceFlow id="Flow_0jubdwo" name="Dependant with 2 parents" sourceRef="Gateway_1w2tzk7" targetRef="Activity_1dxnj9x">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${numberOfParents == "2"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0exrlfr" sourceRef="Activity_1dxnj9x" targetRef="Activity_1qliinm" />
+    <bpmn:sequenceFlow id="Flow_1awxzxa" sourceRef="Activity_1qliinm" targetRef="Gateway_1sjc17u" />
+    <bpmn:callActivity id="Activity_1dxnj9x" name="Retrieve supporting info for parent 2" calledElement="cra-integration-supporting-user">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in sourceExpression="${&#34;Parent&#34;}" target="supportingUserType" />
+        <camunda:out source="totalIncome" target="supportingUserParent2TotalIncome" />
+        <camunda:out source="supportingUserId" target="parent2SupportingUserId" />
+        <camunda:out source="parentDependentTable" target="parent2DependentTable" />
+        <camunda:out source="parentNetAssests" target="parent2NetAssests" />
+        <camunda:out source="parentEi" target="parent2Ei" />
+        <camunda:out source="parentTax" target="parent2Tax" />
+        <camunda:out source="parentCppSelfemploymentOther" target="parent2CppSelfemploymentOther" />
+        <camunda:out source="parentCppEmployment" target="parent2CppEmployment" />
+        <camunda:out source="parentContributions" target="parent2Contributions" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jubdwo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0exrlfr</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0h8gs3i" sourceRef="Activity_1nys3f3" targetRef="Gateway_0380uhw" />
+    <bpmn:task id="Activity_0dw0h40" name="Set default value for income">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="partnerCalculatedTotalIncome">0</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1kc6798</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c48deu</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_0wkoecx" name="Has partner?">
+      <bpmn:incoming>Flow_0qo8vzw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ud7y7a</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kc6798</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_06axnqq" name="Partner has valid SIN" sourceRef="Gateway_1ew03za" targetRef="Activity_11wi2pz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourSpouseACanadianCitizen == "yes"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="Activity_11wi2pz" name="Retrieve supporting info for partner" calledElement="cra-integration-supporting-user">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in sourceExpression="${&#34;Partner&#34;}" target="supportingUserType" />
+        <camunda:out source="totalIncome" target="supportingUserPartnerTotalIncome" />
+        <camunda:out source="supportingUserId" target="partnerSupportingUserId" />
+        <camunda:out source="supportingData" target="supportingDataPartner" />
+        <camunda:out source="partnerChildSpousalSupportCost" target="partnerChildSpousalSupportCost" />
+        <camunda:out source="partnerLoanPayment" target="partnerLoanPayment" />
+        <camunda:out source="partnerEmploymentInsuranceBenefits" target="partnerEmploymentInsuranceBenefits" />
+        <camunda:out source="partnerDisabilityAssistance" target="partnerDisabilityAssistance" />
+        <camunda:out source="partnerPermanentDisabilityBenefits" target="partnerPermanentDisabilityBenefits" />
+        <camunda:out source="livingWithPartner" target="livingWithPartner" />
+        <camunda:out source="partnerStudentStudyWeeks" target="partnerStudentStudyWeeks" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06axnqq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ptb2hn</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_1121s9q" name="Partner CRA Income Verification" calledElement="cra-integration-income-verification">
+      <bpmn:extensionElements>
+        <camunda:in source="applicationId" target="applicationId" />
+        <camunda:in source="supportingUserPartnerTotalIncome" target="providedTaxReturnIncome" />
+        <camunda:in source="programYearStartDate" target="programYearStartDate" />
+        <camunda:out source="totalIncomeDefined" target="partnerCalculatedTotalIncome" />
+        <camunda:in source="partnerSupportingUserId" target="supportingUserId" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ptb2hn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ggm73d</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_1ew03za">
+      <bpmn:incoming>Flow_0ud7y7a</bpmn:incoming>
+      <bpmn:outgoing>Flow_06axnqq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0fiknji</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0fiknji" name="Partner has no SIN" sourceRef="Gateway_1ew03za" targetRef="Activity_0rbe42c">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isYourSpouseACanadianCitizen == "no"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_103nbxk" sourceRef="Activity_0rbe42c" targetRef="Gateway_1lh5sdl" />
+    <bpmn:task id="Activity_0rbe42c" name="Set partner estimated income as default income">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="partnerCalculatedTotalIncome">${estimatedSpouseIncome}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fiknji</bpmn:incoming>
+      <bpmn:outgoing>Flow_103nbxk</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_1lh5sdl">
+      <bpmn:incoming>Flow_1ggm73d</bpmn:incoming>
+      <bpmn:incoming>Flow_1c48deu</bpmn:incoming>
+      <bpmn:incoming>Flow_103nbxk</bpmn:incoming>
+      <bpmn:outgoing>Flow_051cm78</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_16zhfgz" name="Parent/s has valid SIN" sourceRef="Gateway_15ky2tk" targetRef="Gateway_1w2tzk7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber == "yes"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1s61mjy" name="Parent/s has no SIN" sourceRef="Gateway_15ky2tk" targetRef="Activity_1u89pu2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber == "no"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_08037nh" sourceRef="Activity_1u89pu2" targetRef="Gateway_1sjc17u" />
+    <bpmn:exclusiveGateway id="Gateway_15ky2tk">
+      <bpmn:incoming>Flow_11x0no4</bpmn:incoming>
+      <bpmn:outgoing>Flow_16zhfgz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1s61mjy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0n9bchc" name="Independant" sourceRef="Gateway_05bfr8g" targetRef="Activity_1s4kqc4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dependantstatus != "dependant"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_17bfb4u" sourceRef="Activity_1s4kqc4" targetRef="Gateway_1sjc17u" />
+    <bpmn:task id="Activity_1s4kqc4" name="Set default value for income">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="parent2CalculatedTotalIncome">0</camunda:outputParameter>
+          <camunda:outputParameter name="parent1CalculatedTotalIncome">0</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0n9bchc</bpmn:incoming>
+      <bpmn:outgoing>Flow_17bfb4u</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1bw12ec" sourceRef="Gateway_0380uhw" targetRef="Gateway_05bfr8g" />
+    <bpmn:sequenceFlow id="Flow_11x0no4" name="Dependant" sourceRef="Gateway_05bfr8g" targetRef="Gateway_15ky2tk">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dependantstatus == "dependant"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_1u89pu2" name="Set parent estimated income as default income">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="parent2CalculatedTotalIncome">0</camunda:outputParameter>
+          <camunda:outputParameter name="parent1CalculatedTotalIncome">${pleaseProvideAnEstimationOfYourParentsIncome}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1s61mjy</bpmn:incoming>
+      <bpmn:outgoing>Flow_08037nh</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_05bfr8g">
+      <bpmn:incoming>Flow_1bw12ec</bpmn:incoming>
+      <bpmn:outgoing>Flow_0n9bchc</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11x0no4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:businessRuleTask id="Task_1uq9e1u" name="Get Assessment Definition" camunda:resultVariable="definition_key" camunda:decisionRef="assessment-selector" camunda:mapDecisionResult="singleResult">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="offeringIntensity">${offeringIntensity}</camunda:inputParameter>
+          <camunda:inputParameter name="programYear">${programYear}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_123yrvx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tihd5v</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:textAnnotation id="TextAnnotation_1u0djv6">
+      <bpmn:text>Set studentCalculatedTotalIncome</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_09zyg53">
+      <bpmn:text>Updates offering, location and PIR status</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_098jvax">
+      <bpmn:text>Updates  location and PIR status</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_17l874m">
+      <bpmn:text>Get the token that will be reused to update PIR</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0xdedyz">
+      <bpmn:text>This will generate (or associate) the MSFAA number that will be present in the NOA</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0lx2onb">
+      <bpmn:text>single or split disbursement model</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0t3evxv" sourceRef="TextAnnotation_09zyg53" targetRef="Activity_1w6xq7d" />
+    <bpmn:association id="Association_0jw9yca" sourceRef="TextAnnotation_098jvax" targetRef="Activity_0n94rsl" />
+    <bpmn:association id="Association_059igsr" sourceRef="TextAnnotation_17l874m" targetRef="Activity_145tu13" />
+    <bpmn:association id="Association_036j07s" sourceRef="TextAnnotation_0xdedyz" targetRef="Activity_1yidauz" />
+    <bpmn:association id="Association_1e8tzpr" sourceRef="Activity_1aiys42" targetRef="TextAnnotation_0lx2onb" />
+    <bpmn:textAnnotation id="TextAnnotation_18hrwnq">
+      <bpmn:text>Set partnerCalculatedTotalIncome</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0k42qwl">
+      <bpmn:text>Set parent1CalculatedTotalIncome</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0nvkeaw" sourceRef="TextAnnotation_0k42qwl" targetRef="Activity_0x9bma9" />
+    <bpmn:textAnnotation id="TextAnnotation_1jshnoh">
+      <bpmn:text>Set parent2CalculatedTotalIncome</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1t6potz" sourceRef="TextAnnotation_1jshnoh" targetRef="Activity_1qliinm" />
+  </bpmn:process>
+  <bpmn:message id="Message_10bsk3l" name="sims-pir-complete" />
+  <bpmn:category id="Category_1l2du00">
+    <bpmn:categoryValue id="CategoryValue_0qvowh1" value="Get Offering" />
+  </bpmn:category>
+  <bpmn:category id="Category_0b0l947">
+    <bpmn:categoryValue id="CategoryValue_0ytk5an" value="Assessment Need" />
+  </bpmn:category>
+  <bpmn:error id="Error_03twzh6" name="SIMS-GET-APPLICATION-ERR" errorCode="SIMS-GET-APPLICATION-ERROR" camunda:errorMessage="Exception Occurred in Camunda in Get Application SIMS API call" />
+  <bpmn:message id="Message_0o1pow2" name="sims-cra-income-verification-complete" />
+  <bpmn:message id="Message_0nupyyq" name="sims-coe-complete" />
+  <bpmn:error id="Error_1iyuotd" name="UPDATE_APPLICATION_STATUS_WORKFLOW_ID_ERROR" errorCode="UPDATE_APPLICATION_STATUS_WORKFLOW_ID_ERROR" camunda:errorMessage="Exception occured when updating application status and workflow id" />
+  <bpmn:category id="Category_0zfy60u">
+    <bpmn:categoryValue id="CategoryValue_1f4panc" value="Program Information Request (PIR)" />
+  </bpmn:category>
+  <bpmn:error id="Error_0nrcjuj" name="SIMS-CREATE-INCOME-VERIFICATION" errorCode="SIMS-CREATE-INCOME-VERIFICATION" camunda:errorMessage="Some happen" />
+  <bpmn:category id="Category_0kgl10o">
+    <bpmn:categoryValue id="CategoryValue_05az7ag" value="Partner Income Verification" />
+  </bpmn:category>
+  <bpmn:category id="Category_11mlgb2">
+    <bpmn:categoryValue id="CategoryValue_1hab089" value="Student Income Verification" />
+  </bpmn:category>
+  <bpmn:category id="Category_1sdfqo2">
+    <bpmn:categoryValue id="CategoryValue_0wsrr4w" value="Parents Income Verification" />
+  </bpmn:category>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0jlmrs2">
+      <bpmndi:BPMNShape id="Participant_0ympl1d_di" bpmnElement="Participant_0ympl1d" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1970" height="1580" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1tg73uy_di" bpmnElement="Lane_1tg73uy" isHorizontal="true">
+        <dc:Bounds x="190" y="1370" width="1940" height="290" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1440s3a_di" bpmnElement="Lane_1440s3a" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="1940" height="1290" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_11x0no4_di" bpmnElement="Flow_11x0no4">
+        <di:waypoint x="910" y="1225" />
+        <di:waypoint x="910" y="1190" />
+        <di:waypoint x="975" y="1190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="903" y="1173" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bw12ec_di" bpmnElement="Flow_1bw12ec">
+        <di:waypoint x="832" y="583" />
+        <di:waypoint x="832" y="1250" />
+        <di:waypoint x="885" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17bfb4u_di" bpmnElement="Flow_17bfb4u">
+        <di:waypoint x="1390" y="1310" />
+        <di:waypoint x="1576" y="1310" />
+        <di:waypoint x="1576" y="1215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n9bchc_di" bpmnElement="Flow_0n9bchc">
+        <di:waypoint x="910" y="1275" />
+        <di:waypoint x="910" y="1300" />
+        <di:waypoint x="1290" y="1300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="919" y="1303" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08037nh_di" bpmnElement="Flow_08037nh">
+        <di:waypoint x="1200" y="1250" />
+        <di:waypoint x="1576" y="1250" />
+        <di:waypoint x="1576" y="1215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s61mjy_di" bpmnElement="Flow_1s61mjy">
+        <di:waypoint x="1000" y="1215" />
+        <di:waypoint x="1000" y="1250" />
+        <di:waypoint x="1100" y="1250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1001" y="1256" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16zhfgz_di" bpmnElement="Flow_16zhfgz">
+        <di:waypoint x="1025" y="1190" />
+        <di:waypoint x="1054" y="1190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="992" y="1146" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_103nbxk_di" bpmnElement="Flow_103nbxk">
+        <di:waypoint x="1279" y="830" />
+        <di:waypoint x="1466" y="830" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fiknji_di" bpmnElement="Flow_0fiknji">
+        <di:waypoint x="1030" y="755" />
+        <di:waypoint x="1030" y="830" />
+        <di:waypoint x="1179" y="830" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1009" y="790" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06axnqq_di" bpmnElement="Flow_06axnqq">
+        <di:waypoint x="1055" y="730" />
+        <di:waypoint x="1130" y="730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1038" y="706" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h8gs3i_di" bpmnElement="Flow_0h8gs3i">
+        <di:waypoint x="762" y="558" />
+        <di:waypoint x="807" y="558" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1awxzxa_di" bpmnElement="Flow_1awxzxa">
+        <di:waypoint x="1454" y="1190" />
+        <di:waypoint x="1551" y="1190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0exrlfr_di" bpmnElement="Flow_0exrlfr">
+        <di:waypoint x="1309" y="1190" />
+        <di:waypoint x="1354" y="1190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jubdwo_di" bpmnElement="Flow_0jubdwo">
+        <di:waypoint x="1104" y="1190" />
+        <di:waypoint x="1209" y="1190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1111" y="1156" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v14ljz_di" bpmnElement="Flow_1v14ljz">
+        <di:waypoint x="1454" y="1080" />
+        <di:waypoint x="1576" y="1080" />
+        <di:waypoint x="1576" y="1165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l5o0bf_di" bpmnElement="Flow_0l5o0bf">
+        <di:waypoint x="1309" y="1080" />
+        <di:waypoint x="1354" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0myo13i_di" bpmnElement="Flow_0myo13i">
+        <di:waypoint x="1079" y="1165" />
+        <di:waypoint x="1079" y="1080" />
+        <di:waypoint x="1209" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1109" y="1049" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s0h0sb_di" bpmnElement="Flow_0s0h0sb">
+        <di:waypoint x="1279" y="353" />
+        <di:waypoint x="1491" y="353" />
+        <di:waypoint x="1491" y="319" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19bqdrt_di" bpmnElement="Flow_19bqdrt">
+        <di:waypoint x="979" y="259" />
+        <di:waypoint x="979" y="214" />
+        <di:waypoint x="1179" y="214" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1028" y="197" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0msy2no_di" bpmnElement="Flow_0msy2no">
+        <di:waypoint x="979" y="309" />
+        <di:waypoint x="979" y="353" />
+        <di:waypoint x="1179" y="353" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1042" y="337" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mivif1_di" bpmnElement="Flow_1mivif1">
+        <di:waypoint x="1405" y="214" />
+        <di:waypoint x="1491" y="214" />
+        <di:waypoint x="1491" y="269" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h5cgco_di" bpmnElement="Flow_0h5cgco">
+        <di:waypoint x="1279" y="214" />
+        <di:waypoint x="1369" y="214" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c48deu_di" bpmnElement="Flow_1c48deu">
+        <di:waypoint x="1279" y="930" />
+        <di:waypoint x="1491" y="930" />
+        <di:waypoint x="1491" y="855" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kc6798_di" bpmnElement="Flow_1kc6798">
+        <di:waypoint x="979" y="905" />
+        <di:waypoint x="979" y="930" />
+        <di:waypoint x="1179" y="930" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="990" y="913" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ud7y7a_di" bpmnElement="Flow_0ud7y7a">
+        <di:waypoint x="979" y="855" />
+        <di:waypoint x="979" y="730" />
+        <di:waypoint x="1005" y="730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="974" y="713" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ggm73d_di" bpmnElement="Flow_1ggm73d">
+        <di:waypoint x="1400" y="730" />
+        <di:waypoint x="1491" y="730" />
+        <di:waypoint x="1491" y="805" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ptb2hn_di" bpmnElement="Flow_0ptb2hn">
+        <di:waypoint x="1230" y="730" />
+        <di:waypoint x="1300" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iu5w2f_di" bpmnElement="Flow_0iu5w2f">
+        <di:waypoint x="680" y="449" />
+        <di:waypoint x="730" y="449" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07p9pns_di" bpmnElement="Flow_07p9pns">
+        <di:waypoint x="662" y="500" />
+        <di:waypoint x="662" y="467" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dd2smr_di" bpmnElement="Flow_1dd2smr">
+        <di:waypoint x="546" y="379" />
+        <di:waypoint x="570" y="379" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09vg46t_di" bpmnElement="Flow_09vg46t">
+        <di:waypoint x="588" y="500" />
+        <di:waypoint x="588" y="477" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v56rad_di" bpmnElement="Flow_0v56rad">
+        <di:waypoint x="528" y="434" />
+        <di:waypoint x="528" y="397" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19n0g7g_di" bpmnElement="Flow_19n0g7g">
+        <di:waypoint x="570" y="459" />
+        <di:waypoint x="553" y="459" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xe24er_di" bpmnElement="Flow_1xe24er">
+        <di:waypoint x="612" y="558" />
+        <di:waypoint x="662" y="558" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jl2fu1_di" bpmnElement="Flow_0jl2fu1">
+        <di:waypoint x="528" y="484" />
+        <di:waypoint x="528" y="518" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03x2l2k_di" bpmnElement="SequenceFlow_03x2l2k">
+        <di:waypoint x="472" y="558" />
+        <di:waypoint x="512" y="558" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k3a6ke_di" bpmnElement="Flow_1k3a6ke">
+        <di:waypoint x="280" y="558" />
+        <di:waypoint x="372" y="558" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="288" y="532" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n5mbdi_di" bpmnElement="Flow_0n5mbdi">
+        <di:waypoint x="1729" y="560" />
+        <di:waypoint x="1776" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08eitum_di" bpmnElement="Flow_08eitum">
+        <di:waypoint x="1601" y="1190" />
+        <di:waypoint x="1704" y="1190" />
+        <di:waypoint x="1704" y="585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_051cm78_di" bpmnElement="Flow_051cm78">
+        <di:waypoint x="1516" y="830" />
+        <di:waypoint x="1704" y="830" />
+        <di:waypoint x="1704" y="585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lglltu_di" bpmnElement="Flow_0lglltu">
+        <di:waypoint x="1279" y="560" />
+        <di:waypoint x="1679" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ncxpnq_di" bpmnElement="Flow_0ncxpnq">
+        <di:waypoint x="857" y="558" />
+        <di:waypoint x="1179" y="558" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uyn54g_di" bpmnElement="Flow_1uyn54g">
+        <di:waypoint x="1516" y="294" />
+        <di:waypoint x="1704" y="294" />
+        <di:waypoint x="1704" y="535" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0137qgv_di" bpmnElement="Flow_0137qgv">
+        <di:waypoint x="832" y="533" />
+        <di:waypoint x="832" y="284" />
+        <di:waypoint x="954" y="284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qo8vzw_di" bpmnElement="Flow_0qo8vzw">
+        <di:waypoint x="832" y="583" />
+        <di:waypoint x="832" y="880" />
+        <di:waypoint x="954" y="880" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iwnsaf_di" bpmnElement="Flow_0iwnsaf">
+        <di:waypoint x="276" y="1490" />
+        <di:waypoint x="344" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o2sazf_di" bpmnElement="SequenceFlow_1o2sazf">
+        <di:waypoint x="444" y="1490" />
+        <di:waypoint x="474" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_123yrvx_di" bpmnElement="Flow_123yrvx">
+        <di:waypoint x="574" y="1490" />
+        <di:waypoint x="612" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09tnx9v_di" bpmnElement="Flow_09tnx9v">
+        <di:waypoint x="872" y="1490" />
+        <di:waypoint x="912" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_181l06a_di" bpmnElement="Flow_181l06a">
+        <di:waypoint x="1309" y="1490" />
+        <di:waypoint x="1372" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19yc6c3_di" bpmnElement="Flow_19yc6c3">
+        <di:waypoint x="1472" y="1490" />
+        <di:waypoint x="1522" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f4zmxl_di" bpmnElement="Flow_1f4zmxl">
+        <di:waypoint x="1622" y="1490" />
+        <di:waypoint x="1654" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1udpycx_di" bpmnElement="Flow_1udpycx">
+        <di:waypoint x="1754" y="1490" />
+        <di:waypoint x="1804" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16892vr_di" bpmnElement="Flow_16892vr">
+        <di:waypoint x="1840" y="1490" />
+        <di:waypoint x="1892" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gq6278_di" bpmnElement="Flow_1gq6278">
+        <di:waypoint x="1992" y="1490" />
+        <di:waypoint x="2074" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tihd5v_di" bpmnElement="Flow_1tihd5v">
+        <di:waypoint x="712" y="1490" />
+        <di:waypoint x="772" y="1490" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="1530" width="89" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xq6e41_di" bpmnElement="Flow_0xq6e41">
+        <di:waypoint x="1012" y="1490" />
+        <di:waypoint x="1062" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fx85bq_di" bpmnElement="Flow_0fx85bq">
+        <di:waypoint x="1162" y="1490" />
+        <di:waypoint x="1209" y="1490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_0ft8qhx_di" bpmnElement="Gateway_1sjc17u">
+        <dc:Bounds x="1551" y="1165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qliinm_di" bpmnElement="Activity_1qliinm">
+        <dc:Bounds x="1354" y="1150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0x9bma9_di" bpmnElement="Activity_0x9bma9">
+        <dc:Bounds x="1354" y="1040" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17ziso7_di" bpmnElement="Activity_17ziso7">
+        <dc:Bounds x="1209" y="1040" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sw9yj8_di" bpmnElement="Activity_1sw9yj8">
+        <dc:Bounds x="1179" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1669sec_di" bpmnElement="Gateway_1669sec" isMarkerVisible="true">
+        <dc:Bounds x="1466" y="269" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1382" y="287" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1w6xq7d_di" bpmnElement="Activity_1w6xq7d">
+        <dc:Bounds x="1179" y="313" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0n94rsl_di" bpmnElement="Activity_0n94rsl">
+        <dc:Bounds x="1179" y="174" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0csurln_di" bpmnElement="Gateway_0csurln" isMarkerVisible="true">
+        <dc:Bounds x="954" y="259" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1013" y="277" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1owdath_di" bpmnElement="Event_0x1a9kw">
+        <dc:Bounds x="1369" y="196" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tdnjs8_di" bpmnElement="Event_0crzrlt">
+        <dc:Bounds x="730" y="431" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="709" y="474" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15ip6mw_di" bpmnElement="Event_15ip6mw">
+        <dc:Bounds x="644" y="431" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="650" y="412" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nys3f3_di" bpmnElement="Activity_1nys3f3">
+        <dc:Bounds x="662" y="518" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o2wqy9_di" bpmnElement="Event_0o3ssra">
+        <dc:Bounds x="570" y="361" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="551" y="332" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_197fu5r_di" bpmnElement="Event_0gpagjg">
+        <dc:Bounds x="510" y="361" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="470" y="342" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jfch63_di" bpmnElement="Event_0halwwn">
+        <dc:Bounds x="570" y="441" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="551" y="411" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ejf3ug_di" bpmnElement="Gateway_0ejf3ug" isMarkerVisible="true">
+        <dc:Bounds x="503" y="434" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_050l70l_di" bpmnElement="Activity_14iy60w">
+        <dc:Bounds x="512" y="518" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ysovyi_di" bpmnElement="Activity_145tu13">
+        <dc:Bounds x="372" y="518" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="244" y="540" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1y0ilvy_di" bpmnElement="Event_0a53uvu">
+        <dc:Bounds x="1776" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1768" y="585" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0tyjsol_di" bpmnElement="Gateway_1isoyr2">
+        <dc:Bounds x="1679" y="535" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0cnvfzr_di" bpmnElement="Gateway_0380uhw">
+        <dc:Bounds x="807" y="533" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f322fv_di" bpmnElement="Activity_0f322fv">
+        <dc:Bounds x="474" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bsdpsu_di" bpmnElement="Activity_0mc2luc">
+        <dc:Bounds x="344" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0d52goi_di" bpmnElement="Event_1wxl0x4">
+        <dc:Bounds x="240" y="1472" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239" y="1513" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0o3etyu_di" bpmnElement="Gateway_1w2tzk7">
+        <dc:Bounds x="1054" y="1165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wu28r4_di" bpmnElement="Event_0wu28r4">
+        <dc:Bounds x="2074" y="1472" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wlwfzf_di" bpmnElement="Activity_16jzsun">
+        <dc:Bounds x="1892" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hjeg8q_di" bpmnElement="Event_1b33apa">
+        <dc:Bounds x="1804" y="1472" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1794" y="1515" width="64" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wv9pv1_di" bpmnElement="Activity_0wv9pv1">
+        <dc:Bounds x="1654" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yidauz_di" bpmnElement="Activity_1yidauz" bioc:stroke="#000000" bioc:fill="#ffffff" color:background-color="#ffffff" color:border-color="#000000">
+        <dc:Bounds x="1522" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u73tyi_di" bpmnElement="Activity_0u73tyi">
+        <dc:Bounds x="1372" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ldfkbb_di" bpmnElement="Activity_0ldfkbb">
+        <dc:Bounds x="1209" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p65yh4_di" bpmnElement="Activity_0p65yh4">
+        <dc:Bounds x="912" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1okgvpw_di" bpmnElement="CallActivity_1okgvpw">
+        <dc:Bounds x="772" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11rhs8d_di" bpmnElement="Activity_1aiys42">
+        <dc:Bounds x="1062" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dxnj9x_di" bpmnElement="Activity_1dxnj9x">
+        <dc:Bounds x="1209" y="1150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dw0h40_di" bpmnElement="Activity_0dw0h40">
+        <dc:Bounds x="1179" y="890" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wkoecx_di" bpmnElement="Gateway_0wkoecx" isMarkerVisible="true">
+        <dc:Bounds x="954" y="855" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="888" y="853" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11wi2pz_di" bpmnElement="Activity_11wi2pz">
+        <dc:Bounds x="1130" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1121s9q_di" bpmnElement="Activity_1121s9q">
+        <dc:Bounds x="1300" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ew03za_di" bpmnElement="Gateway_1ew03za" isMarkerVisible="true">
+        <dc:Bounds x="1005" y="705" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rbe42c_di" bpmnElement="Activity_0rbe42c">
+        <dc:Bounds x="1179" y="790" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1lh5sdl_di" bpmnElement="Gateway_1lh5sdl" isMarkerVisible="true">
+        <dc:Bounds x="1466" y="805" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_15ky2tk_di" bpmnElement="Gateway_15ky2tk" isMarkerVisible="true">
+        <dc:Bounds x="975" y="1165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s4kqc4_di" bpmnElement="Activity_1s4kqc4">
+        <dc:Bounds x="1290" y="1270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1u89pu2_di" bpmnElement="Activity_1u89pu2">
+        <dc:Bounds x="1100" y="1210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_05bfr8g_di" bpmnElement="Gateway_05bfr8g" isMarkerVisible="true">
+        <dc:Bounds x="885" y="1225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BusinessRuleTask_1n6nw6b_di" bpmnElement="Task_1uq9e1u">
+        <dc:Bounds x="612" y="1450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1u0djv6_di" bpmnElement="TextAnnotation_1u0djv6">
+        <dc:Bounds x="1382" y="480" width="217" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_09zyg53_di" bpmnElement="TextAnnotation_09zyg53">
+        <dc:Bounds x="1339" y="364" width="100" height="68" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_098jvax_di" bpmnElement="TextAnnotation_098jvax">
+        <dc:Bounds x="1339" y="120" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_17l874m_di" bpmnElement="TextAnnotation_17l874m">
+        <dc:Bounds x="382" y="409" width="100" height="68" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0xdedyz_di" bpmnElement="TextAnnotation_0xdedyz">
+        <dc:Bounds x="1309" y="1570" width="130" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0lx2onb_di" bpmnElement="TextAnnotation_0lx2onb">
+        <dc:Bounds x="1162" y="1370" width="100" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_18hrwnq_di" bpmnElement="TextAnnotation_18hrwnq">
+        <dc:Bounds x="1410" y="690" width="200" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k42qwl_di" bpmnElement="TextAnnotation_0k42qwl">
+        <dc:Bounds x="1476" y="1010" width="200" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1jshnoh_di" bpmnElement="TextAnnotation_1jshnoh">
+        <dc:Bounds x="1472" y="1120" width="200" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0upnywz_di" bpmnElement="Event_10s5nqb">
+        <dc:Bounds x="570" y="500" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1eqxjsa_di" bpmnElement="Event_1eqxjsa">
+        <dc:Bounds x="644" y="500" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0t3evxv_di" bpmnElement="Association_0t3evxv">
+        <di:waypoint x="1339" y="385" />
+        <di:waypoint x="1279" y="363" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0jw9yca_di" bpmnElement="Association_0jw9yca">
+        <di:waypoint x="1339" y="168" />
+        <di:waypoint x="1279" y="191" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_059igsr_di" bpmnElement="Association_059igsr">
+        <di:waypoint x="429" y="477" />
+        <di:waypoint x="425" y="518" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_036j07s_di" bpmnElement="Association_036j07s">
+        <di:waypoint x="1437" y="1570" />
+        <di:waypoint x="1527" y="1529" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1e8tzpr_di" bpmnElement="Association_1e8tzpr">
+        <di:waypoint x="1150" y="1450" />
+        <di:waypoint x="1174" y="1425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0nvkeaw_di" bpmnElement="Association_0nvkeaw">
+        <di:waypoint x="1501" y="1040" />
+        <di:waypoint x="1454" y="1049" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1t6potz_di" bpmnElement="Association_1t6potz">
+        <di:waypoint x="1513" y="1150" />
+        <di:waypoint x="1454" y="1165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Group_1vko3q7_di" bpmnElement="Group_1vko3q7">
+        <dc:Bounds x="330" y="1415" width="260" height="150" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="430" y="1422" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_16iez0e_di" bpmnElement="Group_16iez0e">
+        <dc:Bounds x="755" y="1420" width="270" height="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="848" y="1427" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0zavlct_di" bpmnElement="Group_0zavlct">
+        <dc:Bounds x="917" y="109" width="725" height="342" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1245" y="116" width="71" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_116gb5c_di" bpmnElement="Group_116gb5c">
+        <dc:Bounds x="917" y="660" width="725" height="320" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1222" y="667" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_02sc4hm_di" bpmnElement="Group_02sc4hm">
+        <dc:Bounds x="917" y="475" width="725" height="170" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1243" y="482" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0xoh2xo_di" bpmnElement="Group_0xoh2xo">
+        <dc:Bounds x="850" y="1000" width="792" height="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1208" y="1007" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
