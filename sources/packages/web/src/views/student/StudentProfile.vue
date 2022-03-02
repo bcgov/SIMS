@@ -17,6 +17,10 @@
         v-if="showApplyPDButton"
         :disabled="disableBtn"
       >
+        <font-awesome-icon
+          :icon="['fas', 'external-link-square-alt']"
+          class="mr-2"
+        />
         Apply for PD status
         <span v-if="disableBtn">
           &nbsp;&nbsp;
