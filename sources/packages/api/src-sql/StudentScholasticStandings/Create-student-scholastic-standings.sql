@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   scholastic_standing_status sims.scholastic_standing_status NOT NULL,
   assessed_date TIMESTAMP WITH TIME ZONE,
-  assessed_by INT REFERENCES sims.users(id) ON DELETE
+  f INT REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
     note_id INT REFERENCES sims.notes(id) ON DELETE
@@ -21,3 +21,30 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   SET
     NULL
 );
+
+-- ## Comments
+COMMENT ON TABLE sims.student_scholastic_standings IS 'Represents a scholastic standing change requested by the Institution due to some change in the student situation for a particular Student Application.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.id IS 'Auto-generated sequential primary key column.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.submitted_data IS 'Dynamic form data that represents the scholastic standing change requested by the Institution.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.application_id IS 'Student Application where the scholastic standing was requested.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.scholastic_standing_status IS 'Status of the current request [Pending, Approved, Denied].';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.assessed_date IS 'Date that the Ministry approved or denied the appeal.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.assessed_by IS 'Ministry user that approved or denied the appeal.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.note_id IS 'Note added by the Ministry while approving or denying the appeal.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.created_at IS 'Record creation timestamp';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.updated_at IS 'Record update timestamp';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.creator IS 'Creator of the record. Null specified the record is created by system';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.modifier IS 'Modifier of the record. Null specified the record is modified by system';
