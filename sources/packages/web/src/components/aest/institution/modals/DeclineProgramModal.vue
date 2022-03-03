@@ -36,7 +36,7 @@ export default {
   },
   setup() {
     const { showDialog, resolvePromise, showModal } = useModalDialog<
-      DeclineProgram
+      DeclineProgram | undefined
     >();
     let declineProgramForm: any = undefined;
 
@@ -44,7 +44,6 @@ export default {
       return declineProgramForm.submit();
     };
     const submitForm = (formData: DeclineProgram) => {
-      showDialog.value = false;
       resolvePromise(formData);
     };
 
@@ -53,7 +52,7 @@ export default {
     };
 
     const dialogClosed = () => {
-      showDialog.value = false;
+      resolvePromise(undefined);
     };
 
     return {

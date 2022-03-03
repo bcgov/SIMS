@@ -54,9 +54,9 @@ export default {
     };
 
     const dialogClosed = () => {
-      showDialog.value = false;
       clearInterval(interval.value);
       logoff();
+      resolvePromise(false);
     };
 
     const updateTimer = () => {
@@ -80,7 +80,6 @@ export default {
 
     const extendTime = async () => {
       clearInterval(interval.value);
-      showDialog.value = false;
       resolvePromise(true);
       initializeCounter();
     };

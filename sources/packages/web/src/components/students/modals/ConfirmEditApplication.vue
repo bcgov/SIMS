@@ -40,10 +40,9 @@ export default {
     const { showDialog, resolvePromise, showModal } = useModalDialog<boolean>();
 
     const dialogClosed = () => {
-      showDialog.value = false;
+      resolvePromise(false);
     };
     const editApplication = async () => {
-      showDialog.value = false;
       resolvePromise(true);
     };
     return {
