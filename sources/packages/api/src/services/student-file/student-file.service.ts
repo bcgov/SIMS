@@ -88,13 +88,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
    * @param uniqueFileNames list of unique file names.
    */
   async updateStudentFiles(
-    student: Student,
+    studentId: number,
     uniqueFileNames: string[],
     submittedData: StudentFileUploaderForm,
   ): Promise<UpdateResult> {
     return this.repo.update(
       {
-        student: student,
+        student: { id: studentId } as Student,
         uniqueFileName: In(uniqueFileNames),
       },
       {

@@ -1343,13 +1343,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .getOne();
   }
-  async getApplicationByApplicationNumberStudent(
+  async doesApplicationExist(
     applicationNumber: string,
-    student: Student,
-  ): Promise<Application> {
-    return this.repo.findOne({
-      applicationNumber: applicationNumber,
-      student: student,
-    });
+    studentId: number,
+  ): Promise<boolean> {
+    return !!(await this.repo.findOne({
+      where: {
+        applicationNumber: applicationNumber,
+        student: { id: studentId } as Student,
+      },
+      select: ["id"],
+    }));
   }
 }

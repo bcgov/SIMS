@@ -603,9 +603,9 @@ export class StudentController extends BaseController {
     if (payload.submittedForm.applicationNumber) {
       // Here we are checking the existence of an application irrespective of its status
       const validApplication =
-        await this.applicationService.getApplicationByApplicationNumberStudent(
+        await this.applicationService.doesApplicationExist(
           payload.submittedForm.applicationNumber,
-          existingStudent,
+          existingStudent.id,
         );
 
       if (!validApplication) {
@@ -622,7 +622,7 @@ export class StudentController extends BaseController {
     // files (saved during the upload) are update to its proper group,file_origin
     //  and add the metadata (if available)
     await this.fileService.updateStudentFiles(
-      existingStudent,
+      existingStudent.id,
       payload.associatedFiles,
       payload.submittedForm,
     );

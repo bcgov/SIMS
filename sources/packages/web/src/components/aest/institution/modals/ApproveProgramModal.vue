@@ -44,7 +44,6 @@ export default {
       return approveProgramForm.submit();
     };
     const submitForm = (formData: ApproveProgram) => {
-      showDialog.value = false;
       resolvePromise(formData);
     };
 
@@ -53,7 +52,6 @@ export default {
     };
 
     const dialogClosed = () => {
-      showDialog.value = false;
       resolvePromise(undefined);
     };
 

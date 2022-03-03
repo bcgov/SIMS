@@ -5,6 +5,7 @@ export function useModalDialog<T>() {
   let promise: (value: T) => void;
 
   const resolvePromise = (value: T) => {
+    showDialog.value = false;
     promise(value);
   };
 
