@@ -8,8 +8,13 @@
       class="m-1"
     >
       <template #actions>
-        <InputText type="text" placeholder="Search Designations" />
-        <v-btn class="ml-2 primary-btn-background"
+        <InputText
+          type="text"
+          placeholder="Search Designations"
+          v-model="searchCriteria"
+          @keyup.enter="searchDesignations"
+        />
+        <v-btn class="ml-2 primary-btn-background" @click="searchDesignations"
           ><font-awesome-icon :icon="['fas', 'search']" class="mr-2"
         /></v-btn>
       </template>
@@ -98,6 +103,7 @@ export default {
     const router = useRouter();
     const designations = ref([] as PendingDesignationDto[]);
     const { dateOnlyLongString } = useFormatters();
+    const searchCriteria = ref();
 
     const goToViewDesignation = (id: number) => {
       return router.push({
@@ -112,6 +118,13 @@ export default {
       );
     });
 
+    const searchDesignations = async () => {
+      designations.value = await DesignationAgreementService.shared.getDesignationByStatus(
+        DesignationAgreementStatus.Pending,
+        searchCriteria.value,
+      );
+    };
+
     return {
       designations,
       goToViewDesignation,
@@ -120,6 +133,8 @@ export default {
       PAGINATION_LIST,
       dateOnlyLongString,
       COLOR_BLUE,
+      searchCriteria,
+      searchDesignations,
     };
   },
 };

@@ -5,10 +5,11 @@ import {
   NotFoundException,
   Patch,
   Body,
+  Query,
 } from "@nestjs/common";
 import { DesignationAgreementService } from "../../services";
 import { DesignationAgreementStatus } from "../../database/entities";
-import { getISODateOnlyString } from "../../utilities";
+import { getISODateOnlyString, PaginationParams } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -67,8 +68,9 @@ export class DesignationAgreementAESTController {
    * @returns Pending designations.
    */
   @Get("status/:designationStatus")
-  async getPendingDesignationAgreements(
+  async getDesignationAgreementByStatus(
     @Param("designationStatus") designationStatus: DesignationAgreementStatus,
+    @Query(PaginationParams.SearchCriteria) searchCriteria: string,
   ): Promise<PendingDesignationDto[]> {
     if (
       !Object.values(DesignationAgreementStatus).includes(designationStatus)
@@ -76,8 +78,9 @@ export class DesignationAgreementAESTController {
       throw new NotFoundException("Invalid designation agreement status.");
     }
     const pendingDesignations =
-      await this.designationAgreementService.getAllPendingDesignations(
+      await this.designationAgreementService.getDesignationAgreementsByStatus(
         designationStatus,
+        searchCriteria,
       );
     return pendingDesignations.map(
       (pendingDesignation) =>

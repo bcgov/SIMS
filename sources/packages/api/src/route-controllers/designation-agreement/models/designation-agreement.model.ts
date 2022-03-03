@@ -23,12 +23,16 @@ export interface GetDesignationAgreementDto {
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationsDesignationsDto[];
   submittedData: any;
+  startDate: Date;
+  endDate: Date;
+  institutionId: number;
   institutionName: string;
   institutionType: string;
   isBCPrivate: boolean;
 }
 
 export interface LocationsDesignationsDto {
+  designationLocationId?: number;
   locationId: number;
   locationName: string;
   locationData: any;
@@ -51,9 +55,11 @@ export interface PendingDesignationDto extends GetDesignationAgreementsDto {
 export interface UpdateDesignationLocationDto {
   designationLocationId?: number;
   locationId: number;
+  approved: boolean;
 }
 
 export interface UpdateDesignationDto {
+  institutionId: number;
   designationStatus: DesignationAgreementStatus;
   startDate?: Date;
   endDate?: Date;

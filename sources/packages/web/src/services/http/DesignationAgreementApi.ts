@@ -5,7 +5,9 @@ import {
   GetDesignationAgreementsDto,
   PendingDesignationDto,
   DesignationAgreementStatus,
+  UpdateDesignationDto,
 } from "@/types/contracts/DesignationAgreementContract";
+import { PaginationParams } from "@/types";
 
 /**
  * Http API client for Designation agreements.
@@ -15,7 +17,7 @@ export class DesignationAgreementApi extends HttpBaseClient {
     designationAgreement: SubmitDesignationAgreementDto,
   ): Promise<void> {
     await this.postCall(
-      "institution/designation-agreement",
+      this.addClientRoot("designation-agreement"),
       designationAgreement,
     );
   }
@@ -41,9 +43,22 @@ export class DesignationAgreementApi extends HttpBaseClient {
 
   async getDesignationByStatus(
     designationStatus: DesignationAgreementStatus,
+    searchCriteria?: string,
   ): Promise<PendingDesignationDto[]> {
-    return this.getCallTyped<PendingDesignationDto[]>(
-      this.addClientRoot(`designation-agreement/status/${designationStatus}`),
+    let url = `designation-agreement/status/${designationStatus}`;
+    if (searchCriteria) {
+      url = `${url}?${PaginationParams.SearchCriteria}=${searchCriteria}`;
+    }
+    return this.getCallTyped<PendingDesignationDto[]>(this.addClientRoot(url));
+  }
+
+  async updateDesignationAgreement(
+    designationId: number,
+    designation: UpdateDesignationDto,
+  ): Promise<void> {
+    await this.patchCall<UpdateDesignationDto>(
+      this.addClientRoot(`designation-agreement/${designationId}`),
+      designation,
     );
   }
 }

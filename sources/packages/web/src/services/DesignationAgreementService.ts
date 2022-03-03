@@ -5,6 +5,7 @@ import {
   PendingDesignationDto,
   GetDesignationAgreementDto,
   DesignationAgreementStatus,
+  UpdateDesignationDto,
 } from "@/types/contracts/DesignationAgreementContract";
 
 /**
@@ -44,9 +45,25 @@ export class DesignationAgreementService {
 
   public async getDesignationByStatus(
     designationStatus: DesignationAgreementStatus,
+    searchCriteria?: string,
   ): Promise<PendingDesignationDto[]> {
     return ApiClient.DesignationAgreement.getDesignationByStatus(
       designationStatus,
+      searchCriteria,
+    );
+  }
+
+  public async updateDesignationAgreement(
+    designationId: number,
+    designation: UpdateDesignationDto,
+  ): Promise<void> {
+    designation.locationsDesignations = designation.locationsDesignations?.filter(
+      location =>
+        !!(location.designationLocationId || location.approved === true),
+    );
+    await ApiClient.DesignationAgreement.updateDesignationAgreement(
+      designationId,
+      designation,
     );
   }
 }

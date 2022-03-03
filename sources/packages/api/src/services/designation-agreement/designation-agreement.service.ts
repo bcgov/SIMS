@@ -7,6 +7,8 @@ import {
   DesignationAgreementStatus,
   Institution,
   InstitutionLocation,
+  Note,
+  NoteType,
   User,
 } from "../../database/entities";
 import {
@@ -21,7 +23,7 @@ import {
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {
-  constructor(connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(DesignationAgreement));
   }
 
@@ -85,12 +87,15 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         "designation.id",
         "designation.designationStatus",
         "designation.submittedData",
+        "designation.startDate",
+        "designation.endDate",
         "designationLocation.id",
         "designationLocation.requested",
         "designationLocation.approved",
         "location.id",
         "location.name",
         "location.data",
+        "institution.id",
         "institution.legalOperatingName",
         "institutionType.id",
         "institutionType.name",
@@ -124,15 +129,17 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
   }
 
   /**
-   * Service to get all pending designations.
+   * Service to get all designations by status.
    * @returns designation summary.
    */
-  async getAllPendingDesignations(
+  async getDesignationAgreementsByStatus(
     designationStatus: DesignationAgreementStatus,
+    searchCriteria: string,
   ): Promise<DesignationAgreement[]> {
     return this.getDesignationSummaryByFilter(
       "designation.designationStatus",
       designationStatus,
+      searchCriteria,
     );
   }
 
@@ -193,7 +200,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         (locationPayload: UpdateDesignationLocationDto) => {
           const location = new DesignationAgreementLocation();
           location.id = locationPayload.designationLocationId;
-          location.approved = true;
+          location.approved = locationPayload.approved;
           location.institutionLocation = {
             id: locationPayload.locationId,
           } as InstitutionLocation;
@@ -205,7 +212,27 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
           return location;
         },
       );
-    this.repo.save(designation);
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(DesignationAgreement)
+        .save(designation);
+
+      const note = new Note();
+      note.noteType = NoteType.Designation;
+      note.description = designationPayload.note;
+      note.creator = { id: userId } as User;
+
+      const updateNote = await transactionalEntityManager
+        .getRepository(Note)
+        .save(note);
+
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of({ id: designationPayload.institutionId } as Institution)
+        .add(updateNote);
+    });
   }
   /**
    * Private service method that retrieves designation summary
@@ -217,8 +244,9 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
   private async getDesignationSummaryByFilter(
     filterColumn: string,
     filterValue: number | string,
+    searchCriteria?: string,
   ): Promise<DesignationAgreement[]> {
-    return this.repo
+    const designationQuery = this.repo
       .createQueryBuilder("designation")
       .select([
         "designation.id",
@@ -229,7 +257,14 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         "institution.legalOperatingName",
       ])
       .innerJoin("designation.institution", "institution")
-      .where(`${filterColumn} = :filterValue`, { filterValue })
+      .where(`${filterColumn} = :filterValue`, { filterValue });
+    if (searchCriteria) {
+      designationQuery.andWhere(
+        "institution.legalOperatingName Ilike :searchCriteria",
+        { searchCriteria: `%${searchCriteria}%` },
+      );
+    }
+    return designationQuery
       .orderBy("designation.designationStatus", "ASC")
       .addOrderBy("designation.submittedDate", "DESC")
       .getMany();

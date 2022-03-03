@@ -6,8 +6,17 @@
       :routeLocation="routeLocation"
     >
       <template #buttons>
-        <v-btn color="primary" outlined>Decline</v-btn>
-        <v-btn class="ml-2 primary-btn-background">Approve designation</v-btn>
+        <v-btn
+          color="primary"
+          outlined
+          @click="updateDesignation(DesignationAgreementStatus.Declined)"
+          >Decline</v-btn
+        >
+        <v-btn
+          class="ml-2 primary-btn-background"
+          @click="updateDesignation(DesignationAgreementStatus.Approved)"
+          >Approve designation</v-btn
+        >
       </template>
     </header-navigator>
     <full-page-container class="mt-4">
@@ -15,24 +24,46 @@
         :model="designationFormModel"
       ></designation-agreement-form>
     </full-page-container>
+    <approve-deny-designation
+      ref="approveDenyDesignationModal"
+      :designation="updateDesignationModel"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { onMounted, reactive } from "vue";
-import { useFormatters, useDesignationAgreement } from "@/composables";
+import { onMounted, reactive, ref } from "vue";
+import {
+  useFormatters,
+  useDesignationAgreement,
+  ModalDialog,
+  useToastMessage,
+} from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
+import { DesignationAgreementService } from "@/services/DesignationAgreementService";
+import { InstitutionService } from "@/services/InstitutionService";
+import {
+  UpdateDesignationDto,
+  DesignationAgreementStatus,
+  UpdateDesignationLocationDto,
+  GetDesignationAgreementDto,
+} from "@/types/contracts/DesignationAgreementContract";
 import {
   DesignationModel,
   DesignationFormViewModes,
 } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
-import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import ApproveDenyDesignation from "@/views/aest/institution/ApproveDenyDesignation.vue";
 
 export default {
-  components: { HeaderNavigator, DesignationAgreementForm, FullPageContainer },
+  components: {
+    HeaderNavigator,
+    DesignationAgreementForm,
+    FullPageContainer,
+    ApproveDenyDesignation,
+  },
   props: {
     designationAgreementId: {
       type: Number,
@@ -46,7 +77,15 @@ export default {
   setup(props: any) {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
+    const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = reactive({} as DesignationModel);
+    const showModal = ref(false);
+    const toast = useToastMessage();
+    const showForm = ref(true);
+    const approveDenyDesignationModal = ref(
+      {} as ModalDialog<UpdateDesignationDto | boolean>,
+    );
+    const updateDesignationModel = ref({} as UpdateDesignationDto);
     const navigationTitle = props.institutionId
       ? "Manage designations"
       : "Pending designations";
@@ -57,24 +96,25 @@ export default {
         }
       : { name: AESTRoutesConst.PENDING_DESIGNATIONS };
 
-    onMounted(async () => {
-      const designationAgreement = await DesignationAgreementService.shared.getDesignationAgreement(
+    const loadDesignation = async () => {
+      designationAgreement.value = await DesignationAgreementService.shared.getDesignationAgreement(
         props.designationAgreementId,
       );
 
       designationFormModel.institutionName =
-        designationAgreement.institutionName;
+        designationAgreement.value.institutionName;
       designationFormModel.institutionType =
-        designationAgreement.institutionType;
-      designationFormModel.isBCPrivate = designationAgreement.isBCPrivate;
+        designationAgreement.value.institutionType;
+      designationFormModel.isBCPrivate = designationAgreement.value.isBCPrivate;
       designationFormModel.viewMode = DesignationFormViewModes.viewOnly;
       designationFormModel.designationStatus =
-        designationAgreement.designationStatus;
+        designationAgreement.value.designationStatus;
       designationFormModel.designationStatusClass = mapDesignationChipStatus(
-        designationAgreement.designationStatus,
+        designationAgreement.value.designationStatus,
       );
-      designationFormModel.dynamicData = designationAgreement.submittedData;
-      designationFormModel.locations = designationAgreement.locationsDesignations.map(
+      designationFormModel.dynamicData =
+        designationAgreement.value.submittedData;
+      designationFormModel.locations = designationAgreement.value.locationsDesignations.map(
         location => ({
           locationId: location.locationId,
           locationName: location.locationName,
@@ -86,9 +126,80 @@ export default {
           }),
         }),
       );
+    };
+    onMounted(async () => {
+      await loadDesignation();
     });
 
-    return { designationFormModel, routeLocation, navigationTitle };
+    const updateDesignation = async (
+      designationStatus: DesignationAgreementStatus,
+    ) => {
+      if (designationStatus === DesignationAgreementStatus.Approved) {
+        const institutionLocations = await InstitutionService.shared.getAllInstitutionLocationSummary(
+          designationAgreement.value.institutionId,
+        );
+        updateDesignationModel.value.locationsDesignations = institutionLocations?.map(
+          location =>
+            ({
+              locationId: location.id,
+              locationName: location.name,
+              locationAddress: formatter.getFormattedAddress({
+                ...location.data.address,
+                provinceState: location.data.address.province,
+              }),
+            } as UpdateDesignationLocationDto),
+        );
+        updateDesignationModel.value.locationsDesignations.forEach(location => {
+          const requestedDesignation = designationAgreement.value.locationsDesignations.find(
+            designationLocation =>
+              designationLocation.locationId === location.locationId,
+          );
+          if (requestedDesignation) {
+            location.approved =
+              requestedDesignation.approved === false ? false : true;
+            location.designationLocationId =
+              requestedDesignation.designationLocationId;
+          }
+        });
+      }
+      updateDesignationModel.value.startDate =
+        designationAgreement.value.startDate;
+      updateDesignationModel.value.endDate = designationAgreement.value.endDate;
+      updateDesignationModel.value.designationStatus = designationStatus;
+      updateDesignationModel.value.institutionId =
+        designationAgreement.value.institutionId;
+      const response = await approveDenyDesignationModal.value.showModal();
+      if (response) {
+        try {
+          await DesignationAgreementService.shared.updateDesignationAgreement(
+            props.designationAgreementId,
+            response as UpdateDesignationDto,
+          );
+        } catch (error) {
+          toast.error(
+            "Unexpected error",
+            "Unexpected error while approving/declining the designation.",
+          );
+        }
+        await loadDesignation();
+        toast.success(
+          `Designation ${designationStatus}`,
+          `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
+        );
+      }
+    };
+
+    return {
+      designationFormModel,
+      routeLocation,
+      navigationTitle,
+      approveDenyDesignationModal,
+      showModal,
+      updateDesignationModel,
+      DesignationAgreementStatus,
+      updateDesignation,
+      showForm,
+    };
   },
 };
 </script>

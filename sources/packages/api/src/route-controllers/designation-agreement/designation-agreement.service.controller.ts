@@ -48,6 +48,9 @@ export class DesignationAgreementServiceController {
       isBCPrivate:
         designation.institution.institutionType.id ===
         INSTITUTION_TYPE_BC_PRIVATE,
+      institutionId: designation.institution.id,
+      startDate: designation.startDate,
+      endDate: designation.endDate,
       locationsDesignations: designation.designationAgreementLocations.map(
         (agreementLocation) => ({
           locationId: agreementLocation.institutionLocation.id,
@@ -55,6 +58,7 @@ export class DesignationAgreementServiceController {
           locationData: agreementLocation.institutionLocation.data,
           requested: agreementLocation.requested,
           approved: agreementLocation.approved,
+          designationLocationId: agreementLocation.id,
         }),
       ),
     } as GetDesignationAgreementDto;
