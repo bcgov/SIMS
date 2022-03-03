@@ -41,7 +41,7 @@ export default {
         let errorMessage = "An error happened while submitting your documents.";
         if (error.response.data?.errorType === APPLICATION_NOT_FOUND) {
           errorMessage = error.response.data.message;
-          errorLabel = error.response.data.errorType;
+          errorLabel = "Error";
         }
         toast.error(errorLabel, errorMessage);
       }

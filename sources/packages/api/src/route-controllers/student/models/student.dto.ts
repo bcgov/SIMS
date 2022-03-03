@@ -80,7 +80,6 @@ export interface StudentDetailDTO {
   hasRestriction: boolean;
 }
 
-
 /**
  *  Student uploader interface
  */

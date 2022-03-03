@@ -465,9 +465,7 @@ export class StudentController extends BaseController {
       userToken.userId,
     );
     if (!existingStudent) {
-      throw new NotFoundException(
-        `No student was found with the student id ${userToken.userId}`,
-      );
+      throw new NotFoundException("Student not found");
     }
     const applicationsAndCount =
       await this.applicationService.getAllStudentApplications(
@@ -581,12 +579,17 @@ export class StudentController extends BaseController {
   }
 
   /**
-   * controller to save the files submitted by the student
-   * with student uploader form.
+   * This controller save the student files submitted
+   * via student uploader form.
+   *  All the file uploaded are first saved as temporary
+   * file in the db.when this controller/api is called
+   * during form submission, the temporary files
+   * (saved during the upload) are update to its proper
+   * group,file_origin and add the metadata (if available).
    * @Body payload
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Post("upload-files")
+  @Patch("upload-files")
   async saveStudentUploadedFiles(
     @UserToken() userToken: IUserToken,
     @Body() payload: StudentFileUploaderDto,
@@ -595,9 +598,7 @@ export class StudentController extends BaseController {
       userToken.userId,
     );
     if (!existingStudent) {
-      throw new NotFoundException(
-        `No student was found with user id ${userToken.userId}`,
-      );
+      throw new NotFoundException("Student Not found");
     }
     if (payload.submittedForm.applicationNumber) {
       // Here we are checking the existence of an application irrespective of its status
@@ -608,7 +609,7 @@ export class StudentController extends BaseController {
         );
 
       if (!validApplication) {
-        throw new NotFoundException(
+        throw new UnprocessableEntityException(
           new ApiProcessError(
             "Application number not found",
             APPLICATION_NOT_FOUND,
@@ -616,6 +617,10 @@ export class StudentController extends BaseController {
         );
       }
     }
+    // All the file uploaded are first saved as temporary file in the db.
+    // when this controller/api is called during form submission, the temporary
+    // files (saved during the upload) are update to its proper group,file_origin
+    //  and add the metadata (if available)
     await this.fileService.updateStudentFiles(
       existingStudent,
       payload.associatedFiles,

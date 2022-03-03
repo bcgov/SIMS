@@ -158,8 +158,8 @@ export class StudentApi extends HttpBaseClient {
   async saveStudentFiles(
     studentFilesPayload: StudentFileUploaderDto,
   ): Promise<void> {
-    await this.postCall<StudentFileUploaderDto>(
-      `students/upload-files`,
+    await this.patchCall<StudentFileUploaderDto>(
+      "students/upload-files",
       studentFilesPayload,
     );
   }
