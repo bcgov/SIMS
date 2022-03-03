@@ -202,6 +202,7 @@ export default {
           );
         }
       }
+      updateDesignationModel.value = {} as UpdateDesignationDto;
     };
 
     return {
