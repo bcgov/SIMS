@@ -37,13 +37,11 @@ export default {
           "Your documents have been submitted!",
         );
       } catch (error) {
-        let errorLabel = "Unexpected error";
         let errorMessage = "An error happened while submitting your documents.";
         if (error.response.data?.errorType === APPLICATION_NOT_FOUND) {
           errorMessage = error.response.data.message;
-          errorLabel = "Error";
         }
-        toast.error(errorLabel, errorMessage);
+        toast.error("Unexpected error", errorMessage);
       }
     };
     return { submitForm };
