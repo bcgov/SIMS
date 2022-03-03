@@ -30,7 +30,7 @@ COMMENT ON COLUMN sims.student_assessments.assessment_workflow_id IS 'Workflow i
 
 COMMENT ON COLUMN sims.student_assessments.assessment_data IS 'Represent the output of the executed assessment workflow and it is also the main content for the NOA.';
 
-COMMENT ON COLUMN sims.student_assessments.trigger_type IS 'Identifies what was the reason to the assessment happen. Usually one completed Student Application will have only one record of type "Original assessment". If more records are present they represents a reassessment that happen after the Student Application was completed, for instance, due to a student appeal.';
+COMMENT ON COLUMN sims.student_assessments.trigger_type IS 'Identifies what was the reason to the assessment happen. Usually one completed Student Application will have only one record of type "Original assessment". If more records are present they represents a reassessment that happened after the Student Application was completed, for instance, due to a student appeal.';
 
 COMMENT ON COLUMN sims.student_assessments.offering_id IS 'Offering id that must be used for any assessment/reassessment. This information can be null only during a PIR process. Upon a program/offering change, this will also represent the new/changed program/offering';
 
