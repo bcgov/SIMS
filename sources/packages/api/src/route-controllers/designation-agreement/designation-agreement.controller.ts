@@ -25,6 +25,9 @@ import {
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementServiceController } from "./designation-agreement.service.controller";
+/***
+ * Designation agreement dedicated controller for Institution.
+ * */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsInstitutionAdmin()
 @Controller("designation-agreement")

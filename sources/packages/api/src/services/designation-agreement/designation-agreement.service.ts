@@ -130,6 +130,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
 
   /**
    * Service to get all designations by status.
+   * @param searchCriteria
    * @returns designation summary.
    */
   async getDesignationAgreementsByStatus(

@@ -144,6 +144,9 @@ export default {
       designationStatus: DesignationAgreementStatus,
     ) => {
       if (designationStatus === DesignationAgreementStatus.Approved) {
+        /*If the update action is Approval, the build the designation location array for form
+          by merging the institution locations list with designation locations list
+        */
         const institutionLocations = await InstitutionService.shared.getAllInstitutionLocationSummary(
           designationAgreement.value.institutionId,
         );
@@ -172,7 +175,7 @@ export default {
               designationLocation.locationId === location.locationId,
           );
           if (requestedDesignation) {
-            location.approved = !(requestedDesignation.approved === false);
+            location.approved = requestedDesignation.approved !== false;
             location.designationLocationId =
               requestedDesignation.designationLocationId;
             location.requested = requestedDesignation.requested;
@@ -180,6 +183,7 @@ export default {
         });
       }
       const response = await approveDenyDesignationModal.value.showModal();
+      //Update designation only on a submit action.
       if (response) {
         try {
           await DesignationAgreementService.shared.updateDesignationAgreement(

@@ -1,4 +1,5 @@
 <template>
+  <!-- CSS class temporary-modal is work around for lack of responsiveness of v-dialog. -->
   <ModalDialogBase :showDialog="showDialog" @dialogClosed="dialogClosed">
     <template v-slot:content>
       <v-container class="temporary-modal">

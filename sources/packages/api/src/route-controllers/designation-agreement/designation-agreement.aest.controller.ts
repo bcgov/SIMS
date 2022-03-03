@@ -68,6 +68,7 @@ export class DesignationAgreementAESTController {
   /**
    * API to retrieve all pending designations.
    * @param designationStatus
+   * @param searchCriteria to search designation.
    * @returns Pending designations.
    */
   @Get("status/:designationStatus")
