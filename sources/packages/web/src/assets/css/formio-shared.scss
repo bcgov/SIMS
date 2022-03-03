@@ -282,7 +282,8 @@
   overflow: auto;
 }
 
-.locations-grid .table td {
+.locations-grid .table td,
+.locations-grid .table-bordered {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   border: none;

@@ -7,6 +7,7 @@
     >
       <template #buttons>
         <v-btn
+          v-if="showActionButtons"
           color="primary"
           outlined
           @click="updateDesignation(DesignationAgreementStatus.Declined)"
@@ -14,6 +15,7 @@
         >
         <v-btn
           class="ml-2 primary-btn-background"
+          v-if="showActionButtons"
           @click="updateDesignation(DesignationAgreementStatus.Approved)"
           >Approve designation</v-btn
         >
@@ -33,7 +35,8 @@
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, computed } from "vue";
+import { RouteLocationRaw } from "vue-router";
 import {
   useFormatters,
   useDesignationAgreement,
@@ -81,20 +84,26 @@ export default {
     const designationFormModel = reactive({} as DesignationModel);
     const showModal = ref(false);
     const toast = useToastMessage();
-    const showForm = ref(true);
+    const showActionButtons = computed(
+      () =>
+        designationFormModel.designationStatus !==
+        DesignationAgreementStatus.Declined,
+    );
     const approveDenyDesignationModal = ref(
       {} as ModalDialog<UpdateDesignationDto | boolean>,
     );
     const updateDesignationModel = ref({} as UpdateDesignationDto);
-    const navigationTitle = props.institutionId
-      ? "Manage designations"
-      : "Pending designations";
-    const routeLocation = props.institutionId
-      ? {
-          name: AESTRoutesConst.INSTITUTION_DESIGNATION,
-          params: { institutionId: props.institutionId },
-        }
-      : { name: AESTRoutesConst.PENDING_DESIGNATIONS };
+    let navigationTitle = "Pending designations";
+    let routeLocation: RouteLocationRaw = {
+      name: AESTRoutesConst.PENDING_DESIGNATIONS,
+    };
+    if (props.institutionId) {
+      navigationTitle = "Manage designations";
+      routeLocation = {
+        name: AESTRoutesConst.INSTITUTION_DESIGNATION,
+        params: { institutionId: props.institutionId },
+      };
+    }
 
     const loadDesignation = async () => {
       designationAgreement.value = await DesignationAgreementService.shared.getDesignationAgreement(
@@ -138,11 +147,19 @@ export default {
         const institutionLocations = await InstitutionService.shared.getAllInstitutionLocationSummary(
           designationAgreement.value.institutionId,
         );
+        updateDesignationModel.value.startDate =
+          designationAgreement.value.startDate;
+        updateDesignationModel.value.endDate =
+          designationAgreement.value.endDate;
+        updateDesignationModel.value.designationStatus = designationStatus;
+        updateDesignationModel.value.institutionId =
+          designationAgreement.value.institutionId;
         updateDesignationModel.value.locationsDesignations = institutionLocations?.map(
           location =>
             ({
               locationId: location.id,
               locationName: location.name,
+              requested: false,
               locationAddress: formatter.getFormattedAddress({
                 ...location.data.address,
                 provinceState: location.data.address.province,
@@ -155,19 +172,13 @@ export default {
               designationLocation.locationId === location.locationId,
           );
           if (requestedDesignation) {
-            location.approved =
-              requestedDesignation.approved === false ? false : true;
+            location.approved = !(requestedDesignation.approved === false);
             location.designationLocationId =
               requestedDesignation.designationLocationId;
+            location.requested = requestedDesignation.requested;
           }
         });
       }
-      updateDesignationModel.value.startDate =
-        designationAgreement.value.startDate;
-      updateDesignationModel.value.endDate = designationAgreement.value.endDate;
-      updateDesignationModel.value.designationStatus = designationStatus;
-      updateDesignationModel.value.institutionId =
-        designationAgreement.value.institutionId;
       const response = await approveDenyDesignationModal.value.showModal();
       if (response) {
         try {
@@ -175,17 +186,17 @@ export default {
             props.designationAgreementId,
             response as UpdateDesignationDto,
           );
+          await loadDesignation();
+          toast.success(
+            `Designation ${designationStatus}`,
+            `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
+          );
         } catch (error) {
           toast.error(
             "Unexpected error",
             "Unexpected error while approving/declining the designation.",
           );
         }
-        await loadDesignation();
-        toast.success(
-          `Designation ${designationStatus}`,
-          `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
-        );
       }
     };
 
@@ -198,7 +209,7 @@ export default {
       updateDesignationModel,
       DesignationAgreementStatus,
       updateDesignation,
-      showForm,
+      showActionButtons,
     };
   },
 };

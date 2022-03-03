@@ -168,11 +168,14 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * @param designationId
    * @returns flag that indicates if the designationId is valid data.
    */
-  async designationExist(designationId: number): Promise<boolean> {
+  async designationForUpdateExist(designationId: number): Promise<boolean> {
     const found = await this.repo
       .createQueryBuilder("designation")
       .select("1")
       .where("designation.id = :designationId", { designationId })
+      .andWhere("designation.designationStatus != :designationStatus", {
+        designationStatus: DesignationAgreementStatus.Declined,
+      })
       .getRawOne();
     return !!found;
   }
@@ -200,11 +203,11 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         (locationPayload: UpdateDesignationLocationDto) => {
           const location = new DesignationAgreementLocation();
           location.id = locationPayload.designationLocationId;
+          location.requested = locationPayload.requested;
           location.approved = locationPayload.approved;
           location.institutionLocation = {
             id: locationPayload.locationId,
           } as InstitutionLocation;
-          location.requested = true;
           location.creator = !locationPayload.designationLocationId
             ? ({ id: userId } as User)
             : undefined;

@@ -55,6 +55,7 @@ export interface PendingDesignationDto extends GetDesignationAgreementsDto {
 export interface UpdateDesignationLocationDto {
   designationLocationId?: number;
   locationId: number;
+  requested: boolean;
   approved: boolean;
 }
 

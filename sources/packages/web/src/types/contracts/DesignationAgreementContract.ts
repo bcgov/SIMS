@@ -68,6 +68,7 @@ export interface UpdateDesignationLocationDto {
   locationId: number;
   locationName: string;
   locationAddress: string;
+  requested: boolean;
   approved: boolean;
 }
 

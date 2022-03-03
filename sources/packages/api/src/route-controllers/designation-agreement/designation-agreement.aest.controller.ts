@@ -6,8 +6,10 @@ import {
   Patch,
   Body,
   Query,
+  BadRequestException,
 } from "@nestjs/common";
-import { DesignationAgreementService } from "../../services";
+import { DesignationAgreementService, FormService } from "../../services";
+import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementStatus } from "../../database/entities";
 import { getISODateOnlyString, PaginationParams } from "../../utilities";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -29,6 +31,7 @@ export class DesignationAgreementAESTController {
   constructor(
     private readonly designationAgreementServiceController: DesignationAgreementServiceController,
     private readonly designationAgreementService: DesignationAgreementService,
+    private readonly formService: FormService,
   ) {}
 
   /**
@@ -108,9 +111,20 @@ export class DesignationAgreementAESTController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const designationExist =
-      this.designationAgreementService.designationExist(designationId);
+      this.designationAgreementService.designationForUpdateExist(designationId);
     if (!designationExist) {
-      throw new NotFoundException("Designation agreement not found.");
+      throw new NotFoundException(
+        "Designation agreement not found or it has been declined already.",
+      );
+    }
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.ApproveDenyDesignations,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update designation agreement due to an invalid request.",
+      );
     }
     await this.designationAgreementService.updateDesignation(
       designationId,
