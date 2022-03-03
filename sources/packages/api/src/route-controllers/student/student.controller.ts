@@ -34,7 +34,7 @@ import {
   SaveStudentDto,
   StudentRestrictionDTO,
   StudentDetailDTO,
-  StudentFileUploader,
+  StudentFileUploaderDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -589,14 +589,14 @@ export class StudentController extends BaseController {
   @Post("upload-files")
   async saveStudentUploadedFiles(
     @UserToken() userToken: IUserToken,
-    @Body() payload: StudentFileUploader,
+    @Body() payload: StudentFileUploaderDto,
   ): Promise<void> {
     const existingStudent = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
     if (!existingStudent) {
       throw new NotFoundException(
-        `No student was found with the student id ${userToken.userId}`,
+        `No student was found with user id ${userToken.userId}`,
       );
     }
     if (payload.submittedForm.applicationNumber) {

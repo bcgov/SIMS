@@ -8,7 +8,7 @@
 import formio from "@/components/generic/formio.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useFormioUtils, useToastMessage } from "@/composables";
-import { StudentFileUploaderForm, StudentFileUploader } from "@/types";
+import { StudentFileUploaderForm, StudentFileUploaderDto } from "@/types";
 import { StudentService } from "@/services/StudentService";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
@@ -26,7 +26,7 @@ export default {
     ) => {
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        const payload: StudentFileUploader = {
+        const payload: StudentFileUploaderDto = {
           submittedForm,
           associatedFiles,
         };

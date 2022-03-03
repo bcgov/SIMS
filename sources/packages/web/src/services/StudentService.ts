@@ -13,7 +13,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   FieldSortOrder,
-  StudentFileUploader,
+  StudentFileUploaderDto,
 } from "@/types";
 
 export class StudentService {
@@ -129,7 +129,7 @@ export class StudentService {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploader,
+    studentFilesPayload: StudentFileUploaderDto,
   ): Promise<void> {
     await ApiClient.Students.saveStudentFiles(studentFilesPayload);
   }
