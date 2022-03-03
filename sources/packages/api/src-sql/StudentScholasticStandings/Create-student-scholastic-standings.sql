@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   scholastic_standing_status sims.scholastic_standing_status NOT NULL,
   assessed_date TIMESTAMP WITH TIME ZONE,
-  f INT REFERENCES sims.users(id) ON DELETE
+  assessed_by INT REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
     note_id INT REFERENCES sims.notes(id) ON DELETE
@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
     -- Audit columns
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-    creator INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+    creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
-    modifier INT NULL DEFAULT NULL REFERENCES users(id) ON DELETE
+    modifier INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL
 );

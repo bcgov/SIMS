@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS sims.student_appeal_requests (
         -- Audit columns
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
-        creator INT NULL DEFAULT NULL REFERENCES users (id) ON DELETE
+        creator INT NULL DEFAULT NULL REFERENCES sims.users (id) ON DELETE
     SET
         NULL,
-        modifier INT NULL DEFAULT NULL REFERENCES users (id) ON DELETE
+        modifier INT NULL DEFAULT NULL REFERENCES sims.users (id) ON DELETE
     SET
         NULL
 );
@@ -29,7 +29,7 @@ COMMENT ON COLUMN sims.student_appeal_requests.id IS 'Auto-generated sequential 
 
 COMMENT ON COLUMN sims.student_appeal_requests.student_appeal_id IS 'Relationship with the master appeal record that groups this individual ones when the Student needs an appeal, one or more can be requested at the same time.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.submitted_data jsonb IS 'Dynamic form data that represents the appeal.';
+COMMENT ON COLUMN sims.student_appeal_requests.submitted_data IS 'Dynamic form data that represents the appeal.';
 
 COMMENT ON COLUMN sims.student_appeal_requests.submitted_form_name IS 'Dynamic form name used to request the appeal.';
 

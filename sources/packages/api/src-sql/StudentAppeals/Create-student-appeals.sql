@@ -4,10 +4,10 @@ CREATE TABLE IF NOT EXISTS sims.student_appeals (
     -- Audit columns
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW (),
     updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW (),
-    creator INT NULL DEFAULT NULL REFERENCES users (id) ON DELETE
+    creator INT NULL DEFAULT NULL REFERENCES sims.users (id) ON DELETE
     SET
         NULL,
-        modifier INT NULL DEFAULT NULL REFERENCES users (id) ON DELETE
+        modifier INT NULL DEFAULT NULL REFERENCES sims.users (id) ON DELETE
     SET
         NULL
 );

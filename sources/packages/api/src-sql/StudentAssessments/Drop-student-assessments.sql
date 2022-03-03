@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS sims.student_appeals;
+DROP TABLE IF EXISTS sims.student_assessments;
