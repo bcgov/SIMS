@@ -54,6 +54,7 @@ import {
   faConciergeBell,
   faGraduationCap,
 } from "@fortawesome/free-solid-svg-icons";
+import { faFileAlt } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
   faMapPin,
@@ -71,6 +72,7 @@ library.add(
   faArrowLeft,
   faConciergeBell,
   faGraduationCap,
+  faFileAlt,
 );
 
 // Configure the UI validations rules globally available.

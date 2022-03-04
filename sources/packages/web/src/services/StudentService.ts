@@ -14,6 +14,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   FieldSortOrder,
   StudentFileUploaderDto,
+  StudentUploadedFileDto,
 } from "@/types";
 
 export class StudentService {
@@ -132,5 +133,25 @@ export class StudentService {
     studentFilesPayload: StudentFileUploaderDto,
   ): Promise<void> {
     await ApiClient.Students.saveStudentFiles(studentFilesPayload);
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return StudentUploadedFileDto[] list of student documents
+   */
+  async getStudentFiles(): Promise<StudentUploadedFileDto[]> {
+    return ApiClient.Students.getStudentFiles();
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @param uniqueFileName uniqueFileName
+   * @return
+   */
+  async downloadStudentFile(uniqueFileName: string): Promise<string> {
+    const blobObject = await ApiClient.FileUpload.download(
+      `students/files/${uniqueFileName}`,
+    );
+    return window.URL.createObjectURL(blobObject);
   }
 }

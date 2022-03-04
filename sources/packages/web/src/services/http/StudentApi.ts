@@ -7,6 +7,7 @@ import {
   SearchStudentResp,
   StudentDetail,
   StudentFileUploaderDto,
+  StudentUploadedFileDto,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -161,6 +162,16 @@ export class StudentApi extends HttpBaseClient {
     await this.patchCall<StudentFileUploaderDto>(
       "students/upload-files",
       studentFilesPayload,
+    );
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return StudentUploadedFileDto[] list of student documents
+   */
+  async getStudentFiles(): Promise<StudentUploadedFileDto[]> {
+    return this.getCallTyped<StudentUploadedFileDto[]>(
+      "students/all-documents",
     );
   }
 }
