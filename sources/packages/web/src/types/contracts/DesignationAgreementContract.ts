@@ -39,7 +39,7 @@ export interface GetDesignationAgreementsDto {
 }
 
 export interface PendingDesignationDto extends GetDesignationAgreementsDto {
-  institutionName: string;
+  legalOperatingName: string;
 }
 
 /**
@@ -64,16 +64,14 @@ export enum DesignationAgreementStatus {
 }
 
 export interface UpdateDesignationLocationDto {
-  designationLocationId?: number;
   locationId: number;
   locationName: string;
   locationAddress: string;
-  requested: boolean;
   approved: boolean;
+  existingDesignationLocation: boolean;
 }
 
 export interface UpdateDesignationDto {
-  institutionId: number;
   designationStatus: DesignationAgreementStatus;
   startDate?: Date;
   endDate?: Date;

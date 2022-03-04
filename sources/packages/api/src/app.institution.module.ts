@@ -6,20 +6,20 @@ import {
   FormService,
 } from "./services";
 import {
-  DesignationAgreementController,
-  DesignationAgreementServiceController,
+  DesignationAgreementInstitutionsController,
+  DesignationAgreementControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [DesignationAgreementController],
+  controllers: [DesignationAgreementInstitutionsController],
   providers: [
     FormService,
     ConfigService,
     DesignationAgreementService,
-    DesignationAgreementServiceController,
+    DesignationAgreementControllerService,
   ],
 })
 export class AppInstitutionModule {}

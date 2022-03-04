@@ -82,7 +82,6 @@ export default {
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationAgreement = ref({} as GetDesignationAgreementDto);
     const designationFormModel = reactive({} as DesignationModel);
-    const showModal = ref(false);
     const toast = useToastMessage();
     const showActionButtons = computed(
       () =>
@@ -143,6 +142,7 @@ export default {
     const updateDesignation = async (
       designationStatus: DesignationAgreementStatus,
     ) => {
+      updateDesignationModel.value.designationStatus = designationStatus;
       if (designationStatus === DesignationAgreementStatus.Approved) {
         /*If the update action is Approval, the build the designation location array for form
           by merging the institution locations list with designation locations list
@@ -154,33 +154,28 @@ export default {
           designationAgreement.value.startDate;
         updateDesignationModel.value.endDate =
           designationAgreement.value.endDate;
-        updateDesignationModel.value.designationStatus = designationStatus;
-        updateDesignationModel.value.institutionId =
-          designationAgreement.value.institutionId;
         updateDesignationModel.value.locationsDesignations = institutionLocations?.map(
-          location =>
-            ({
-              locationId: location.id,
-              locationName: location.name,
-              requested: false,
-              locationAddress: formatter.getFormattedAddress({
-                ...location.data.address,
-                provinceState: location.data.address.province,
-              }),
-            } as UpdateDesignationLocationDto),
+          institutionLocation => {
+            const designationLocation = {} as UpdateDesignationLocationDto;
+            designationLocation.locationId = institutionLocation.id;
+            designationLocation.locationName = institutionLocation.name;
+            designationLocation.locationAddress = formatter.getFormattedAddress(
+              {
+                ...institutionLocation.data.address,
+                provinceState: institutionLocation.data.address.province,
+              },
+            );
+            const existingDesignationLocation = designationAgreement.value.locationsDesignations.find(
+              item => item.locationId === institutionLocation.id,
+            );
+            if (existingDesignationLocation) {
+              designationLocation.approved =
+                existingDesignationLocation.approved !== false;
+              designationLocation.existingDesignationLocation = true;
+            }
+            return designationLocation;
+          },
         );
-        updateDesignationModel.value.locationsDesignations.forEach(location => {
-          const requestedDesignation = designationAgreement.value.locationsDesignations.find(
-            designationLocation =>
-              designationLocation.locationId === location.locationId,
-          );
-          if (requestedDesignation) {
-            location.approved = requestedDesignation.approved !== false;
-            location.designationLocationId =
-              requestedDesignation.designationLocationId;
-            location.requested = requestedDesignation.requested;
-          }
-        });
       }
       const response = await approveDenyDesignationModal.value.showModal();
       //Update designation only on a submit action.
@@ -190,11 +185,11 @@ export default {
             props.designationAgreementId,
             response as UpdateDesignationDto,
           );
-          await loadDesignation();
           toast.success(
             `Designation ${designationStatus}`,
             `The given designation has been ${designationStatus.toLowerCase()} and notes added.`,
           );
+          await loadDesignation();
         } catch (error) {
           toast.error(
             "Unexpected error",
@@ -210,7 +205,6 @@ export default {
       routeLocation,
       navigationTitle,
       approveDenyDesignationModal,
-      showModal,
       updateDesignationModel,
       DesignationAgreementStatus,
       updateDesignation,

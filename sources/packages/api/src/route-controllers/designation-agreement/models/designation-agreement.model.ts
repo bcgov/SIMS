@@ -49,18 +49,15 @@ export interface GetDesignationAgreementsDto {
 }
 
 export interface PendingDesignationDto extends GetDesignationAgreementsDto {
-  institutionName: string;
+  legalOperatingName: string;
 }
 
 export interface UpdateDesignationLocationDto {
-  designationLocationId?: number;
   locationId: number;
-  requested: boolean;
   approved: boolean;
 }
 
 export interface UpdateDesignationDto {
-  institutionId: number;
   designationStatus: DesignationAgreementStatus;
   startDate?: Date;
   endDate?: Date;

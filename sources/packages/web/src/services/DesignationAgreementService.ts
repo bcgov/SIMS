@@ -59,7 +59,7 @@ export class DesignationAgreementService {
   ): Promise<void> {
     designation.locationsDesignations = designation.locationsDesignations?.filter(
       location =>
-        !!(location.designationLocationId || location.approved === true),
+        location.existingDesignationLocation || location.approved === true,
     );
     await ApiClient.DesignationAgreement.updateDesignationAgreement(
       designationId,

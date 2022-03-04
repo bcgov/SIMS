@@ -22,14 +22,14 @@ import {
   PendingDesignationDto,
   UpdateDesignationDto,
 } from "./models/designation-agreement.model";
-import { DesignationAgreementServiceController } from "./designation-agreement.service.controller";
+import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("designation-agreement")
 export class DesignationAgreementAESTController {
   constructor(
-    private readonly designationAgreementServiceController: DesignationAgreementServiceController,
+    private readonly designationAgreementControllerService: DesignationAgreementControllerService,
     private readonly designationAgreementService: DesignationAgreementService,
     private readonly formService: FormService,
   ) {}
@@ -44,7 +44,7 @@ export class DesignationAgreementAESTController {
   async getDesignationAgreement(
     @Param("designationId") designationId: number,
   ): Promise<GetDesignationAgreementDto> {
-    return this.designationAgreementServiceController.getDesignationAgreement(
+    return this.designationAgreementControllerService.getDesignationAgreement(
       designationId,
     );
   }
@@ -60,13 +60,13 @@ export class DesignationAgreementAESTController {
   async getDesignationAgreements(
     @Param("institutionId") institutionId: number,
   ): Promise<GetDesignationAgreementsDto[]> {
-    return this.designationAgreementServiceController.getDesignationAgreements(
+    return this.designationAgreementControllerService.getDesignationAgreements(
       institutionId,
     );
   }
 
   /**
-   * API to retrieve all pending designations.
+   * API to retrieve all designations by status.
    * @param designationStatus
    * @param searchCriteria to search designation.
    * @returns Pending designations.
@@ -94,7 +94,7 @@ export class DesignationAgreementAESTController {
           submittedDate: pendingDesignation.submittedDate,
           startDate: getISODateOnlyString(pendingDesignation.startDate),
           endDate: getISODateOnlyString(pendingDesignation.endDate),
-          institutionName: pendingDesignation.institution.legalOperatingName,
+          legalOperatingName: pendingDesignation.institution.legalOperatingName,
         } as PendingDesignationDto),
     );
   }
@@ -111,9 +111,11 @@ export class DesignationAgreementAESTController {
     @Body() payload: UpdateDesignationDto,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    const designationExist =
-      this.designationAgreementService.designationForUpdateExist(designationId);
-    if (!designationExist) {
+    const designation =
+      await this.designationAgreementService.getDesignationForUpdate(
+        designationId,
+      );
+    if (!designation) {
       throw new NotFoundException(
         "Designation agreement not found or it has been declined already.",
       );
@@ -129,8 +131,10 @@ export class DesignationAgreementAESTController {
     }
     await this.designationAgreementService.updateDesignation(
       designationId,
+      designation.institution.id,
       userToken.userId,
       payload,
+      designation.designationAgreementLocations,
     );
   }
 }

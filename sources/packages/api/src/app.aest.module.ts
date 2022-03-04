@@ -16,7 +16,7 @@ import {
 import {
   AESTSupportingUserController,
   DesignationAgreementAESTController,
-  DesignationAgreementServiceController,
+  DesignationAgreementControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -38,7 +38,7 @@ import { LoggerModule } from "./logger/logger.module";
     ConfigService,
     TokensService,
     DesignationAgreementService,
-    DesignationAgreementServiceController,
+    DesignationAgreementControllerService,
     FormService,
   ],
 })

@@ -165,17 +165,54 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
   }
 
   /**
-   * Service to validate designationId passed onto API.
+   * Service to get designation agreement which is eligible for update.
    * @param designationId
    * @returns flag that indicates if the designationId is valid data.
    */
-  async designationForUpdateExist(designationId: number): Promise<boolean> {
-    const found = await this.repo
+  async getDesignationForUpdate(
+    designationId: number,
+  ): Promise<DesignationAgreement> {
+    return this.repo
       .createQueryBuilder("designation")
-      .select("1")
+      .select([
+        "designation.id",
+        "designationAgreementLocations.id",
+        "location.id",
+        "institution.id",
+      ])
+      .innerJoin(
+        "designation.designationAgreementLocations",
+        "designationAgreementLocations",
+      )
+      .innerJoin(
+        "designationAgreementLocations.institutionLocation",
+        "location",
+      )
+      .innerJoin("designation.institution", "institution")
       .where("designation.id = :designationId", { designationId })
       .andWhere("designation.designationStatus != :designationStatus", {
         designationStatus: DesignationAgreementStatus.Declined,
+      })
+      .getOne();
+  }
+  /**
+   * Service to validate if all the supplied locationIds
+   * in payload belongs to the right institution.
+   * @param institutionId
+   * @param designationLocations
+   * @returns result which has true when incorrect location id(s) are given.
+   */
+  async validateDesignationLocations(
+    institutionId: number,
+    designationLocations: number[],
+  ): Promise<boolean> {
+    const found = await this.connection
+      .getRepository(InstitutionLocation)
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.institution.id = :institutionId", { institutionId })
+      .andWhere("location.id NOT IN (...designationLocations)", {
+        designationLocations: designationLocations,
       })
       .getRawOne();
     return !!found;
@@ -189,8 +226,10 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    */
   async updateDesignation(
     designationId: number,
+    institutionId: number,
     userId: number,
     designationPayload: UpdateDesignationDto,
+    designationLocations: DesignationAgreementLocation[],
   ): Promise<void> {
     const designation = new DesignationAgreement();
     designation.id = designationId;
@@ -203,15 +242,22 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       designationPayload.locationsDesignations?.map(
         (locationPayload: UpdateDesignationLocationDto) => {
           const location = new DesignationAgreementLocation();
-          location.id = locationPayload.designationLocationId;
-          location.requested = locationPayload.requested;
+
           location.approved = locationPayload.approved;
           location.institutionLocation = {
             id: locationPayload.locationId,
           } as InstitutionLocation;
-          location.creator = !locationPayload.designationLocationId
-            ? ({ id: userId } as User)
-            : undefined;
+          location.creator = { id: userId } as User;
+          location.requested = false;
+          const designationLocation = designationLocations.find(
+            (item) =>
+              item.institutionLocation.id === locationPayload.locationId,
+          );
+          if (designationLocation) {
+            location.id = designationLocation.id;
+            location.creator = undefined;
+            location.requested = undefined;
+          }
           location.modifier = { id: userId } as User;
           return location;
         },
@@ -234,7 +280,7 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
         .getRepository(Institution)
         .createQueryBuilder()
         .relation(Institution, "notes")
-        .of({ id: designationPayload.institutionId } as Institution)
+        .of({ id: institutionId } as Institution)
         .add(updateNote);
     });
   }

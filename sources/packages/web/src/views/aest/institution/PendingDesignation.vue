@@ -31,7 +31,7 @@
           :rowsPerPageOptions="PAGINATION_LIST"
           :totalRecords="designations.length"
         >
-          <Column field="institutionName" header="Institution Name"></Column>
+          <Column field="legalOperatingName" header="Institution Name"></Column>
           <Column header="Submitted on"
             ><template #body="slotProps">
               <span>{{

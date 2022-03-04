@@ -14,7 +14,7 @@ import {
  * (e.g. AEST and Institution).
  */
 @Injectable()
-export class DesignationAgreementServiceController {
+export class DesignationAgreementControllerService {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
   ) {}
