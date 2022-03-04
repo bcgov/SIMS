@@ -148,6 +148,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToSync.user.lastName = userToken.lastName;
       studentToSync.user.firstName = userToken.givenNames;
       mustSave = true;
+      //TODO update the SIN validation here
     }
 
     const userTokenBirthdate = getDateOnly(userToken.birthdate);

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-const DIR = "StudentValidSIN";
+const DIR = "Student";
 
 export class StudentValidSIN1622226692249 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
