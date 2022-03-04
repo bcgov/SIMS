@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS sims.sin_validations (
   given_name_match_status_code VARCHAR(2),
   dob_match_status_code VARCHAR(2),
   -- Audit columns
-  created_at timestamp without time zone NOT NULL DEFAULT now(),
-  updated_at timestamp without time zone NOT NULL DEFAULT now(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
