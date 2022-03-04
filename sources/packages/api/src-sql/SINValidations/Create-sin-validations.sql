@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS sims.sin_validations (
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.sin_validations IS 'SIN Validations that must be performed for the student.';
+COMMENT ON TABLE sims.sin_validations IS 'SIN Validations that must be performed for the user.';
 
 COMMENT ON COLUMN sims.sin_validations.id IS 'Auto-generated sequential primary key column.';
 
@@ -37,11 +37,11 @@ COMMENT ON COLUMN sims.sin_validations.file_sent IS 'Name of the file sent to re
 
 COMMENT ON COLUMN sims.sin_validations.file_received IS 'Name of the file received for SIN validation.';
 
-COMMENT ON COLUMN sims.sin_validations.given_name_sent IS 'The student given name to match with the SIN record.';
+COMMENT ON COLUMN sims.sin_validations.given_name_sent IS 'The user given name to match with the SIN record.';
 
-COMMENT ON COLUMN sims.sin_validations.surname_sent IS 'The student surname to match with the SIN record.';
+COMMENT ON COLUMN sims.sin_validations.surname_sent IS 'The user surname to match with the SIN record.';
 
-COMMENT ON COLUMN sims.sin_validations.dob_sent IS 'The student Date of birth to match with the SIN record.';
+COMMENT ON COLUMN sims.sin_validations.dob_sent IS 'The user Date of birth to match with the SIN record.';
 
 COMMENT ON COLUMN sims.sin_validations.request_status_code IS 'This code indicates if the request has been processed successfully.';
 
