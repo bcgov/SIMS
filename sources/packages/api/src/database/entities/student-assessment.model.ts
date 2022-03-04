@@ -3,22 +3,17 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
 import {
   Application,
   AssessmentStatus,
-  DesignationAgreementLocation,
-  DesignationAgreementStatus,
   EducationProgramOffering,
-  Institution,
-  User,
+  StudentAppeal,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
-import { dateOnlyTransformer } from "../transformers/date-only.transformer";
-import { AssessmentTriggerType } from "./assessment_trigger.type";
+import { AssessmentTriggerType } from "./assessment-trigger.type";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -107,9 +102,28 @@ export class StudentAssessment extends RecordDataModel {
   })
   offering?: EducationProgramOffering;
   /**
-   * When the reassessment happen due to a student appeal, this will provide to the workflow the data that need be changed.
+   * When the reassessment happen due to a student appeal, this will provide to
+   * the workflow the data that need to be changed.
    */
-  // TODO: student_appeal_id
+  @RelationId(
+    (studentAssessment: StudentAssessment) => studentAssessment.studentAppeal,
+  )
+  studentAppealId?: number;
+  /**
+   * When the reassessment happen due to a student appeal, this will provide to
+   * the workflow the data that need to be changed.
+   */
+  @ManyToOne(() => StudentAppeal, {
+    eager: false,
+    cascade: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "student_appeal_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  studentAppeal?: StudentAppeal;
+
   // TODO: student_scholastic_standing_id
 
   /**
@@ -129,7 +143,7 @@ export class StudentAssessment extends RecordDataModel {
 /**
  * Interface for BaseAssessment values that are shared between FullTime and PartTime
  */
-export interface BaseAssessment {
+interface BaseAssessment {
   weeks: number;
   tuitionCost: number;
   childcareCost: number;
@@ -144,7 +158,7 @@ export interface BaseAssessment {
 /**
  * Interface for FullTime assessment payload.
  */
-export interface FullTimeAssessment extends BaseAssessment {
+interface FullTimeAssessment extends BaseAssessment {
   federalAssessmentNeed: number;
   provincialAssessmentNeed: number;
   exceptionalEducationCost: number;
@@ -165,7 +179,7 @@ export interface FullTimeAssessment extends BaseAssessment {
 /**
  * Interface for PartTime assessment payload.
  */
-export interface PartTimeAssessment extends BaseAssessment {
+interface PartTimeAssessment extends BaseAssessment {
   miscellaneousCost: number;
   totalAcademicExpenses: number;
 }
@@ -178,4 +192,4 @@ export interface PartTimeAssessment extends BaseAssessment {
  * Whenever there is a source code update, please ensure that properties in this interface are in sync with
  * assessment payload created by camunda workflow.
  */
-export type Assessment = FullTimeAssessment | PartTimeAssessment;
+type Assessment = FullTimeAssessment | PartTimeAssessment;

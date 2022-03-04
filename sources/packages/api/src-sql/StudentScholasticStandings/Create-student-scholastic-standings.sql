@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   id SERIAL PRIMARY KEY,
+  application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   submitted_data jsonb NOT NULL,
   approved_data jsonb NOT NULL,
-  application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   scholastic_standing_status sims.scholastic_standing_status NOT NULL,
   assessed_date TIMESTAMP WITH TIME ZONE,
   assessed_by INT REFERENCES sims.users(id) ON DELETE
@@ -27,11 +27,11 @@ COMMENT ON TABLE sims.student_scholastic_standings IS 'Represents a scholastic s
 
 COMMENT ON COLUMN sims.student_scholastic_standings.id IS 'Auto-generated sequential primary key column.';
 
+COMMENT ON COLUMN sims.student_scholastic_standings.application_id IS 'Student Application where the scholastic standing was requested.';
+
 COMMENT ON COLUMN sims.student_scholastic_standings.submitted_data IS 'Dynamic form data that represents the scholastic standing change requested by the Institution.';
 
 COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
-
-COMMENT ON COLUMN sims.student_scholastic_standings.application_id IS 'Student Application where the scholastic standing was requested.';
 
 COMMENT ON COLUMN sims.student_scholastic_standings.scholastic_standing_status IS 'Status of the current request [Pending, Approved, Denied].';
 

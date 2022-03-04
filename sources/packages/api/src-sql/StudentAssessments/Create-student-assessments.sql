@@ -34,7 +34,7 @@ COMMENT ON COLUMN sims.student_assessments.trigger_type IS 'Identifies what was 
 
 COMMENT ON COLUMN sims.student_assessments.offering_id IS 'Offering id that must be used for any assessment/reassessment. This information can be null only during a PIR process. Upon a program/offering change, this will also represent the new/changed program/offering';
 
-COMMENT ON COLUMN sims.student_assessments.student_appeal_id IS 'When the reassessment happen due to a student appeal, this will provide to the workflow the data that need be changed.';
+COMMENT ON COLUMN sims.student_assessments.student_appeal_id IS 'When the reassessment happen due to a student appeal, this will provide to the workflow the data that need to be changed.';
 
 COMMENT ON COLUMN sims.student_assessments.student_scholastic_standing_id IS 'When the reassessment happen due to a scholastic standing change (e.g. student withdrawal), this will provide to the workflow the data that need be changed..';
 
