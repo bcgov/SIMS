@@ -81,13 +81,13 @@ export enum MatchStatusCodes {
  * CRA Response Record (Trans Sub Code - 0022).
  */
 export enum SINMatchStatusCodes {
-  sinTTNStatusNotSet = "00",
-  sinTTNMatched = "01",
-  sinTTNUnderANM = "02",
-  sinTTNNotFound = "50",
-  sinTTNPendingANM = "51",
-  sinTTNMissing = "90",
-  sinTTNInvalidFormat = "91",
+  SINTTNStatusNotSet = "00",
+  SINTTNMatched = "01",
+  SINTTNUnderANM = "02",
+  SINTTNNotFound = "50",
+  SINTTNPendingANM = "51",
+  SINTTNMissing = "90",
+  SINTTNInvalidFormat = "91",
 }
 
 /**
@@ -95,12 +95,12 @@ export enum SINMatchStatusCodes {
  * CRA Response Record (Trans Sub Code - 0022).
  */
 export enum SurnameStatusCode {
-  surnameStatusNotSet = "00",
-  surnameMatchedCRA = "01",
-  previousSurnameMatched = "02",
-  ciSurnameMatched = "03",
-  surnameNotMatched = "50",
-  surnameMissing = "90",
+  SurnameStatusNotSet = "00",
+  SurnameMatchedCRA = "01",
+  PreviousSurnameMatched = "02",
+  CiSurnameMatched = "03",
+  SurnameNotMatched = "50",
+  SurnameMissing = "90",
 }
 
 /**
@@ -108,12 +108,12 @@ export enum SurnameStatusCode {
  * CRA Response Record (Trans Sub Code - 0022).
  */
 export enum GivenNameStatusCode {
-  givenNameStatusNotSet = "00",
-  givenNameMatchedCRA = "01",
-  previousGivenNameMatched = "02",
-  ciGivenNameMatched = "03",
-  givenNameNotMatched = "50",
-  givenNameMissing = "90",
+  GivenNameStatusNotSet = "00",
+  GivenNameMatchedCRA = "01",
+  PreviousGivenNameMatched = "02",
+  CiGivenNameMatched = "03",
+  GivenNameNotMatched = "50",
+  GivenNameMissing = "90",
 }
 
 /**
@@ -121,21 +121,21 @@ export enum GivenNameStatusCode {
  * CRA Response Record (Trans Sub Code - 0022).
  */
 export enum BirthDateStatusCode {
-  birthDateStatusNotSet = "00",
-  ymdMatched = "01",
-  ymMatched = "02",
-  ydMATCHED = "03",
-  mdReverseMatched = "04",
-  y5Matched = "05",
-  m1Matched = "06",
-  y5d1m1Matched = "07",
-  oneDayMatched = "08",
-  over100YMatched = "09",
-  under12YMatched = "10",
-  birthDateNotMatched = "50",
-  birthDateMissing = "90",
-  birthDateInvalidFormat = "91",
-  birthDateUnreasonable = "92",
+  BirthDateStatusNotSet = "00",
+  YmdMatched = "01",
+  YmMatched = "02",
+  YdMATCHED = "03",
+  MdReverseMatched = "04",
+  Y5Matched = "05",
+  M1Matched = "06",
+  Y5d1m1Matched = "07",
+  OneDayMatched = "08",
+  Over100YMatched = "09",
+  Under12YMatched = "10",
+  BirthDateNotMatched = "50",
+  BirthDateMissing = "90",
+  BirthDateInvalidFormat = "91",
+  BirthDateUnreasonable = "92",
 }
 
 /**

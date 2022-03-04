@@ -7,12 +7,12 @@ CREATE TABLE IF NOT EXISTS sims.sin_validations (
   given_name_sent VARCHAR(50),
   surname_sent VARCHAR(50),
   dob_sent Date,
-  request_status_code VARCHAR(2),
-  match_status_code VARCHAR(2),
-  sin_match_status_code VARCHAR(2),
-  surname_match_status_code VARCHAR(2),
-  given_name_match_status_code VARCHAR(2),
-  dob_match_status_code VARCHAR(2),
+  request_status_code CHAR(2),
+  match_status_code CHAR(2),
+  sin_match_status_code CHAR(2),
+  surname_match_status_code CHAR(2),
+  given_name_match_status_code CHAR(2),
+  dob_match_status_code CHAR(2),
   -- Audit columns
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
@@ -47,13 +47,13 @@ COMMENT ON COLUMN sims.sin_validations.request_status_code IS 'This code indicat
 
 COMMENT ON COLUMN sims.sin_validations.match_status_code IS 'This code indicates if the match is successful.';
 
-COMMENT ON COLUMN sims.sin_validations.sin_match_status_code IS 'This code gives you some error-clues on the SIN matching.';
+COMMENT ON COLUMN sims.sin_validations.sin_match_status_code IS 'This code gives some error-clues on the SIN matching.';
 
-COMMENT ON COLUMN sims.sin_validations.surname_match_status_code IS 'This code gives you some error-clues on the surname matching.';
+COMMENT ON COLUMN sims.sin_validations.surname_match_status_code IS 'This code gives some error-clues on the surname matching.';
 
-COMMENT ON COLUMN sims.sin_validations.given_name_match_status_code IS 'This code gives you some error-clues on the given name matching.';
+COMMENT ON COLUMN sims.sin_validations.given_name_match_status_code IS 'This code gives some error-clues on the given name matching.';
 
-COMMENT ON COLUMN sims.sin_validations.dob_match_status_code IS 'This code gives you some error-clues on the Birth-Date matching.';
+COMMENT ON COLUMN sims.sin_validations.dob_match_status_code IS 'This code gives some error-clues on the Birth-Date matching.';
 
 COMMENT ON COLUMN sims.sin_validations.created_at IS 'Record creation timestamp.';
 
