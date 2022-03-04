@@ -91,7 +91,6 @@ export default {
     const showModal = ref(false);
     const editCOEModal = ref({} as ModalDialog<boolean>);
     const denyCOEModal = ref({} as ModalDialog<void>);
-
     const showHideConfirmCOE = () => {
       showModal.value = !showModal.value;
     };
