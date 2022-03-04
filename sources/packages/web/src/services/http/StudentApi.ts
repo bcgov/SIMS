@@ -171,7 +171,7 @@ export class StudentApi extends HttpBaseClient {
    */
   async getStudentFiles(): Promise<StudentUploadedFileDto[]> {
     return this.getCallTyped<StudentUploadedFileDto[]>(
-      "students/all-documents",
+      "students/student-documents",
     );
   }
 }

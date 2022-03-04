@@ -1,11 +1,14 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator
-      title="Back to Programs"
+      title="Confirmation of enrolment"
       :routeLocation="{ name: InstitutionRoutesConst.COE_SUMMARY }"
       subTitle="View Financial Aid Application"
       ><template #buttons>
-        <v-btn color="primary" @click="toggle"
+        <v-btn
+          v-if="initialData.applicationCOEStatus === COEStatus.required"
+          color="primary"
+          @click="toggle"
           ><v-icon size="25">mdi-arrow-down-bold-circle</v-icon>Application
           Actions
         </v-btn>
@@ -48,7 +51,7 @@ import Information from "@/components/institutions/confirmation-of-enrollment/in
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 /**
  * added MenuType interface for prime vue component menu,
- *  remove it when vuetify componnt is used
+ *  remove it when vuetify component is used
  */
 
 export interface MenuType {
