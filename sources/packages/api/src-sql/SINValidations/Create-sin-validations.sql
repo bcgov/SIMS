@@ -7,12 +7,14 @@ CREATE TABLE IF NOT EXISTS sims.sin_validations (
   given_name_sent VARCHAR(50),
   surname_sent VARCHAR(50),
   dob_sent Date,
+  valid_sin boolean,
   request_status_code CHAR(2),
   match_status_code CHAR(2),
   sin_match_status_code CHAR(2),
   surname_match_status_code CHAR(2),
   given_name_match_status_code CHAR(2),
   dob_match_status_code CHAR(2),
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
   -- Audit columns
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
@@ -43,6 +45,8 @@ COMMENT ON COLUMN sims.sin_validations.surname_sent IS 'The user surname to matc
 
 COMMENT ON COLUMN sims.sin_validations.dob_sent IS 'The user Date of birth to match with the SIN record.';
 
+COMMENT ON COLUMN sims.sin_validations.valid_sin IS 'Indicates the status of the user SIN validation';
+
 COMMENT ON COLUMN sims.sin_validations.request_status_code IS 'This code indicates if the request has been processed successfully.';
 
 COMMENT ON COLUMN sims.sin_validations.match_status_code IS 'This code indicates if the match is successful.';
@@ -54,6 +58,8 @@ COMMENT ON COLUMN sims.sin_validations.surname_match_status_code IS 'This code g
 COMMENT ON COLUMN sims.sin_validations.given_name_match_status_code IS 'This code gives some error-clues on the given name matching.';
 
 COMMENT ON COLUMN sims.sin_validations.dob_match_status_code IS 'This code gives some error-clues on the Birth-Date matching.';
+
+COMMENT ON COLUMN sims.sin_validations.user_id IS 'Foreign key reference to users table which includes users related information';
 
 COMMENT ON COLUMN sims.sin_validations.created_at IS 'Record creation timestamp.';
 
