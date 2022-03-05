@@ -70,7 +70,10 @@ export interface UpdateDesignationLocationDto {
   approved: boolean;
   existingDesignationLocation: boolean;
 }
-
+/**
+ * DTO Object to Approve/Deny a designation agreement.
+ * startDate, endDate and locationsDesignations used only for approval.
+ */
 export interface UpdateDesignationDto {
   designationStatus: DesignationAgreementStatus;
   startDate?: Date;

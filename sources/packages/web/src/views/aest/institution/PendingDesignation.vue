@@ -108,7 +108,7 @@ export default {
     const goToViewDesignation = (id: number) => {
       return router.push({
         name: AESTRoutesConst.DESIGNATION_VIEW,
-        params: { designationAgreementId: id },
+        params: { designationId: id },
       });
     };
 

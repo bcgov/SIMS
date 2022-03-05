@@ -12,6 +12,7 @@ import {
   WorkflowService,
   DesignationAgreementService,
   FormService,
+  InstitutionLocationService,
 } from "./services";
 import {
   AESTSupportingUserController,
@@ -40,6 +41,7 @@ import { LoggerModule } from "./logger/logger.module";
     DesignationAgreementService,
     DesignationAgreementControllerService,
     FormService,
+    InstitutionLocationService,
   ],
 })
 export class AppAESTModule {}

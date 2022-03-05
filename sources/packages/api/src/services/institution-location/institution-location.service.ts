@@ -174,4 +174,26 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
 
     return allLocations.map((location) => location.id);
   }
+
+  /**
+   * Service to validate if all the supplied locationIds
+   * in a payload belongs to the given institution.
+   * @param institutionId
+   * @param designationLocations
+   * @returns result which has true when incorrect location id(s) are given.
+   */
+  async validateInstitutionLocations(
+    institutionId: number,
+    locations: number[],
+  ): Promise<boolean> {
+    const found = await this.repo
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.institution.id = :institutionId", { institutionId })
+      .andWhere("location.id IN (:...locations)", {
+        locations: locations,
+      })
+      .getRawMany();
+    return found.length === locations.length;
+  }
 }

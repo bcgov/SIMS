@@ -24,7 +24,6 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
 import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { UpdateDesignationDto } from "@/types/contracts/DesignationAgreementContract";
@@ -41,7 +40,7 @@ export default {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateDesignationDto | boolean
     >();
-    const formData = ref();
+    let formData: any = undefined;
 
     const dialogClosed = () => {
       showDialog.value = false;
@@ -49,7 +48,7 @@ export default {
     };
 
     const formLoaded = async (form: any) => {
-      formData.value = form;
+      formData = form;
     };
 
     const submitDesignationUpdate = async (data: UpdateDesignationDto) => {

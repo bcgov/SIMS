@@ -45,7 +45,7 @@ export enum AppRoutes {
   InstitutionDetail = "institution-detail/:institutionId",
   Profile = "profile",
   PendingDesignations = "institution/designation/pending",
-  DesignationAESTView = "institution/designation/view/:designationAgreementId",
+  DesignationAESTView = "institution/designation/view/:designationId/institution/:institutionId?",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",

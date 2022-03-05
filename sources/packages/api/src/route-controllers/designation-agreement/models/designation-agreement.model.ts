@@ -52,15 +52,29 @@ export interface PendingDesignationDto extends GetDesignationAgreementsDto {
   legalOperatingName: string;
 }
 
-export interface UpdateDesignationLocationDto {
+export interface UpdateDesignationLocation {
   locationId: number;
   approved: boolean;
 }
-
+/**
+ * DTO Object to Approve/Deny a designation agreement.
+ * startDate, endDate and locationsDesignations used only for approval.
+ */
 export interface UpdateDesignationDto {
   designationStatus: DesignationAgreementStatus;
   startDate?: Date;
   endDate?: Date;
-  locationsDesignations?: UpdateDesignationLocationDto[];
+  locationsDesignations?: UpdateDesignationLocation[];
+  note: string;
+}
+
+/**
+ * startDate, endDate and locationsDesignations used only for approval.
+ */
+export interface UpdateDesignation {
+  designationStatus: DesignationAgreementStatus;
+  startDate?: Date;
+  endDate?: Date;
+  locationsDesignations?: UpdateDesignationLocation[];
   note: string;
 }

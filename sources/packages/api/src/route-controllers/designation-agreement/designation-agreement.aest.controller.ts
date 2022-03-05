@@ -7,8 +7,13 @@ import {
   Body,
   Query,
   BadRequestException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { DesignationAgreementService, FormService } from "../../services";
+import {
+  DesignationAgreementService,
+  FormService,
+  InstitutionLocationService,
+} from "../../services";
 import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementStatus } from "../../database/entities";
 import { getISODateOnlyString, PaginationParams } from "../../utilities";
@@ -32,6 +37,7 @@ export class DesignationAgreementAESTController {
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
     private readonly designationAgreementService: DesignationAgreementService,
     private readonly formService: FormService,
+    private readonly institutionLocationService: InstitutionLocationService,
   ) {}
 
   /**
@@ -119,6 +125,21 @@ export class DesignationAgreementAESTController {
       throw new NotFoundException(
         "Designation agreement not found or it has been declined already.",
       );
+    }
+    if (payload.designationStatus === DesignationAgreementStatus.Approved) {
+      const locationIds = payload.locationsDesignations.map(
+        (location) => location.locationId,
+      );
+      const validInstitutionLocations =
+        this.institutionLocationService.validateInstitutionLocations(
+          designation.institution.id,
+          locationIds,
+        );
+      if (!validInstitutionLocations) {
+        throw new UnprocessableEntityException(
+          "One or more locations provided does not belong to designation institution.",
+        );
+      }
     }
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.ApproveDenyDesignations,

@@ -68,13 +68,13 @@ export default {
     ApproveDenyDesignation,
   },
   props: {
-    designationAgreementId: {
+    designationId: {
       type: Number,
       required: true,
     },
     institutionId: {
       type: Number,
-      required: true,
+      required: false,
     },
   },
   setup(props: any) {
@@ -106,7 +106,7 @@ export default {
 
     const loadDesignation = async () => {
       designationAgreement.value = await DesignationAgreementService.shared.getDesignationAgreement(
-        props.designationAgreementId,
+        props.designationId,
       );
 
       designationFormModel.institutionName =
@@ -136,6 +136,7 @@ export default {
       );
     };
     onMounted(async () => {
+      console;
       await loadDesignation();
     });
 
@@ -150,10 +151,12 @@ export default {
         const institutionLocations = await InstitutionService.shared.getAllInstitutionLocationSummary(
           designationAgreement.value.institutionId,
         );
+        //On re-approval of same designation start date and end date should be preloaded.
         updateDesignationModel.value.startDate =
           designationAgreement.value.startDate;
         updateDesignationModel.value.endDate =
           designationAgreement.value.endDate;
+
         updateDesignationModel.value.locationsDesignations = institutionLocations?.map(
           institutionLocation => {
             const designationLocation = {} as UpdateDesignationLocationDto;
@@ -182,7 +185,7 @@ export default {
       if (response) {
         try {
           await DesignationAgreementService.shared.updateDesignationAgreement(
-            props.designationAgreementId,
+            props.designationId,
             response as UpdateDesignationDto,
           );
           toast.success(
@@ -197,6 +200,7 @@ export default {
           );
         }
       }
+      //If cancel click from approval modal, Update data must be cleared.
       updateDesignationModel.value = {} as UpdateDesignationDto;
     };
 

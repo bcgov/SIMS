@@ -38,7 +38,7 @@ export default {
       return router.push({
         name: AESTRoutesConst.DESIGNATION_VIEW,
         params: {
-          designationAgreementId: id,
+          designationId: id,
           institutionId: props.institutionId,
         },
       });
