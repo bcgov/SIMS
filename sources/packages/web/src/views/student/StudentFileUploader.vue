@@ -11,7 +11,7 @@
         </full-page-container>
       </div>
       <div class="col-xs-5 col-md-5">
-        <StudentDocumentList ref="studentDocument" :reload="reloadDocuments" />
+        <StudentDocumentList :reload="reloadDocuments" />
       </div>
     </div>
   </v-container>
