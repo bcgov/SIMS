@@ -47,7 +47,7 @@ export default {
       resolvePromise(false);
     };
 
-    const formLoaded = async (form: any) => {
+    const formLoaded = (form: any) => {
       formData = form;
     };
 
@@ -56,7 +56,7 @@ export default {
       resolvePromise(data);
     };
     const submitDesignation = async () => {
-      return formData.value.submit();
+      return formData.submit();
     };
 
     return {

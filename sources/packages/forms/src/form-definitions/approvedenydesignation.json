@@ -21,7 +21,7 @@
                     "value": ""
                 }
             ],
-            "content": "{{data.designationStatus === 'Approved' ?  'Approve Designation' : 'Decline designation'}}",
+            "content": "{{data.designationStatus === 'Approved' ?  'Approve Designation' : 'Decline Designation'}}",
             "refreshOnChange": true,
             "customClass": "category-header-medium",
             "hidden": false,
@@ -89,7 +89,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "eg2hmr1"
+            "id": "eth8csh"
         },
         {
             "label": "HTML",
@@ -738,11 +738,11 @@
                     "allowCalculateOverride": false,
                     "validateOn": "change",
                     "validate": {
-                        "required": false,
+                        "required": true,
                         "minLength": "",
                         "maxLength": "",
-                        "customMessage": "",
-                        "custom": "",
+                        "customMessage": "Please select at least one location",
+                        "custom": "valid = data.locationsDesignations.filter(row => row.approved).length > 0;",
                         "customPrivate": false,
                         "json": "",
                         "strictDateValidation": false,
@@ -781,10 +781,6 @@
                                     "components": [
                                         {
                                             "label": "HTML",
-                                            "labelWidth": "",
-                                            "labelMargin": "",
-                                            "tag": "p",
-                                            "className": "",
                                             "attrs": [
                                                 {
                                                     "attr": "",
@@ -794,28 +790,7 @@
                                             "content": "<div class=\"font-weight-bold\">{{row.locationName}}</div>\n<div class=\"text-muted\">{{row.locationAddress}}</div>",
                                             "refreshOnChange": true,
                                             "customClass": "mt-n2",
-                                            "hidden": false,
-                                            "modalEdit": false,
                                             "key": "locationName",
-                                            "tags": [],
-                                            "properties": {},
-                                            "conditional": {
-                                                "show": null,
-                                                "when": null,
-                                                "eq": "",
-                                                "json": ""
-                                            },
-                                            "customConditional": "",
-                                            "logic": [],
-                                            "attributes": {},
-                                            "overlay": {
-                                                "style": "",
-                                                "page": "",
-                                                "left": "",
-                                                "top": "",
-                                                "width": "",
-                                                "height": ""
-                                            },
                                             "type": "htmlelement",
                                             "input": false,
                                             "tableView": false,
@@ -827,9 +802,11 @@
                                             "protected": false,
                                             "unique": false,
                                             "persistent": false,
+                                            "hidden": false,
                                             "clearOnHide": true,
                                             "refreshOn": "",
                                             "redrawOn": "",
+                                            "modalEdit": false,
                                             "dataGridLabel": false,
                                             "labelPosition": "top",
                                             "description": "",
@@ -844,6 +821,7 @@
                                             "calculateValue": "",
                                             "calculateServer": false,
                                             "widget": null,
+                                            "attributes": {},
                                             "validateOn": "change",
                                             "validate": {
                                                 "required": false,
@@ -853,13 +831,27 @@
                                                 "multiple": false,
                                                 "unique": false
                                             },
+                                            "conditional": {
+                                                "show": null,
+                                                "when": null,
+                                                "eq": ""
+                                            },
+                                            "overlay": {
+                                                "style": "",
+                                                "left": "",
+                                                "top": "",
+                                                "width": "",
+                                                "height": ""
+                                            },
                                             "allowCalculateOverride": false,
                                             "encrypted": false,
                                             "showCharCount": false,
                                             "showWordCount": false,
+                                            "properties": {},
                                             "allowMultipleMasks": false,
                                             "addons": [],
-                                            "id": "e1islh"
+                                            "tag": "p",
+                                            "id": "eswap4"
                                         }
                                     ],
                                     "width": 10,
@@ -937,7 +929,7 @@
                                             "inputType": "checkbox",
                                             "value": "",
                                             "name": "",
-                                            "id": "e8hwe5c"
+                                            "id": "etkwmad"
                                         }
                                     ],
                                     "width": 2,
@@ -953,7 +945,7 @@
                             "type": "columns",
                             "input": false,
                             "tableView": false,
-                            "id": "e5lm6h700000000",
+                            "id": "etnakwk",
                             "placeholder": "",
                             "prefix": "",
                             "customClass": "",
@@ -1029,7 +1021,7 @@
                     "addons": [],
                     "tree": true,
                     "lazyLoad": false,
-                    "id": "eohhc4"
+                    "id": "egoqlg4"
                 }
             ],
             "placeholder": "",
@@ -1385,6 +1377,6 @@
         }
     ],
     "created": "2022-03-02T05:41:09.953Z",
-    "modified": "2022-03-03T09:43:12.280Z",
+    "modified": "2022-03-05T02:31:31.705Z",
     "machineName": "approveDenyDesignation"
 }

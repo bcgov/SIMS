@@ -143,7 +143,7 @@ export default {
     ) => {
       updateDesignationModel.value.designationStatus = designationStatus;
       if (designationStatus === DesignationAgreementStatus.Approved) {
-        /*If the update action is Approval, the build the designation location array for form
+        /*If the update action is Approval, build the designation location array for form
           by merging the institution locations list with designation locations list
         */
         const institutionLocations = await InstitutionService.shared.getAllInstitutionLocationSummary(

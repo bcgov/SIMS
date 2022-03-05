@@ -57,6 +57,9 @@ export class DesignationAgreementService {
     designationId: number,
     designation: UpdateDesignationDto,
   ): Promise<void> {
+    /**Filtering the locations which are either approved or denied(already approved location) only.
+     * locationsDesignations will have value only when approval is done.
+     */
     designation.locationsDesignations = designation.locationsDesignations?.filter(
       location =>
         location.existingDesignationLocation || location.approved === true,
