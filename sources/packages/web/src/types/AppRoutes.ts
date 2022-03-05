@@ -6,6 +6,7 @@ export enum AppRoutes {
   StudentApplication = "application-form/:selectedForm/programYear/:programYearId/application/:id",
   StudentApplicationView = "application-form/:selectedForm/programYear/:programYearId/application/:id/:readOnly",
   StudentApplicationSummary = "my-application-summary",
+  StudentFileUploader = "file-uploader",
   StudentApplicationDetails = "application/:id",
   Assessment = "application/:applicationId/assessment",
   // Institution

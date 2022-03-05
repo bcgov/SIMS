@@ -77,6 +77,68 @@ export enum MatchStatusCodes {
 }
 
 /**
+ * SIN match status codes (SIN-TTN-STATUS-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ */
+export enum SINMatchStatusCodes {
+  SINTTNStatusNotSet = "00",
+  SINTTNMatched = "01",
+  SINTTNUnderANM = "02",
+  SINTTNNotFound = "50",
+  SINTTNPendingANM = "51",
+  SINTTNMissing = "90",
+  SINTTNInvalidFormat = "91",
+}
+
+/**
+ * Surname match status codes (SURNAME-STATUS-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ */
+export enum SurnameStatusCode {
+  SurnameStatusNotSet = "00",
+  SurnameMatchedCRA = "01",
+  PreviousSurnameMatched = "02",
+  CiSurnameMatched = "03",
+  SurnameNotMatched = "50",
+  SurnameMissing = "90",
+}
+
+/**
+ * GivenName match status codes (GIVEN-NAME-STATUS-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ */
+export enum GivenNameStatusCode {
+  GivenNameStatusNotSet = "00",
+  GivenNameMatchedCRA = "01",
+  PreviousGivenNameMatched = "02",
+  CiGivenNameMatched = "03",
+  GivenNameNotMatched = "50",
+  GivenNameMissing = "90",
+}
+
+/**
+ * BirthDate match status codes (BIRTH-DATE-STATUS-CODE) presents on
+ * CRA Response Record (Trans Sub Code - 0022).
+ */
+export enum BirthDateStatusCode {
+  BirthDateStatusNotSet = "00",
+  YmdMatched = "01",
+  YmMatched = "02",
+  YdMATCHED = "03",
+  MdReverseMatched = "04",
+  Y5Matched = "05",
+  M1Matched = "06",
+  Y5d1m1Matched = "07",
+  OneDayMatched = "08",
+  Over100YMatched = "09",
+  Under12YMatched = "10",
+  BirthDateNotMatched = "50",
+  BirthDateMissing = "90",
+  BirthDateInvalidFormat = "91",
+  BirthDateUnreasonable = "92",
+}
+
+/**
  * Inactive codes (INACTIVE-CRA-INDIVIDUAL-CODE) presents on
  * CRA Response Record (Trans Sub Code - 0022).
  * Examples of inactive could be the taxpayer is deceased or emigrant.

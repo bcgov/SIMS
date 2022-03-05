@@ -133,3 +133,19 @@ export interface StudentDetail {
   pdStatus: string;
   hasRestriction: boolean;
 }
+
+/**
+ *  Student uploader interface
+ */
+export interface StudentFileUploaderForm {
+  documentPurpose: string;
+  applicationNumber?: string;
+}
+
+/**
+ *  Student uploader interface
+ */
+export interface StudentFileUploaderDto {
+  submittedForm: StudentFileUploaderForm;
+  associatedFiles: string[];
+}

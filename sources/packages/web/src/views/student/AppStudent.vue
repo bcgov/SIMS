@@ -11,13 +11,21 @@
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
         "
-        >ApplicationS</v-btn
+        >Applications</v-btn
       >
       <v-btn
         v-if="isAuthenticated && hasStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
         >Notifications</v-btn
+      >
+      <v-btn
+        v-if="isAuthenticated && hasStudentAccount"
+        text
+        @click="
+          $router.push({ name: StudentRoutesConst.STUDENT_FILE_UPLOADER })
+        "
+        >File Uploader</v-btn
       >
       <v-btn
         v-if="isAuthenticated && hasStudentAccount"
