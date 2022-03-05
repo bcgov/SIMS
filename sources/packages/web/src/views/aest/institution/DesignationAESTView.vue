@@ -36,7 +36,6 @@
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, reactive, ref, computed } from "vue";
-import { RouteLocationRaw } from "vue-router";
 import {
   useFormatters,
   useDesignationAgreement,
@@ -92,17 +91,17 @@ export default {
       {} as ModalDialog<UpdateDesignationDto | boolean>,
     );
     const updateDesignationModel = ref({} as UpdateDesignationDto);
-    let navigationTitle = "Pending designations";
-    let routeLocation: RouteLocationRaw = {
-      name: AESTRoutesConst.PENDING_DESIGNATIONS,
-    };
-    if (props.institutionId) {
-      navigationTitle = "Manage designations";
-      routeLocation = {
-        name: AESTRoutesConst.INSTITUTION_DESIGNATION,
-        params: { institutionId: props.institutionId },
-      };
-    }
+    const routeLocation = computed(() =>
+      props.institutionId
+        ? {
+            name: AESTRoutesConst.INSTITUTION_DESIGNATION,
+            params: { institutionId: props.institutionId },
+          }
+        : { name: AESTRoutesConst.PENDING_DESIGNATIONS },
+    );
+    const navigationTitle = computed(() =>
+      props.institutionId ? "Manage designations" : "Pending designations",
+    );
 
     const loadDesignation = async () => {
       designationAgreement.value = await DesignationAgreementService.shared.getDesignationAgreement(
@@ -136,7 +135,6 @@ export default {
       );
     };
     onMounted(async () => {
-      console;
       await loadDesignation();
     });
 
