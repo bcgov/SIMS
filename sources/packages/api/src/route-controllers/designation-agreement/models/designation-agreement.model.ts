@@ -23,9 +23,16 @@ export interface GetDesignationAgreementDto {
   designationStatus: DesignationAgreementStatus;
   locationsDesignations: LocationsDesignationsDto[];
   submittedData: any;
+  startDate: Date;
+  endDate: Date;
+  institutionId: number;
+  institutionName: string;
+  institutionType: string;
+  isBCPrivate: boolean;
 }
 
 export interface LocationsDesignationsDto {
+  designationLocationId?: number;
   locationId: number;
   locationName: string;
   locationData: any;
@@ -39,4 +46,35 @@ export interface GetDesignationAgreementsDto {
   submittedDate: Date;
   startDate?: string;
   endDate?: string;
+}
+
+export interface PendingDesignationDto extends GetDesignationAgreementsDto {
+  legalOperatingName: string;
+}
+
+export interface UpdateDesignationLocation {
+  locationId: number;
+  approved: boolean;
+}
+/**
+ * DTO Object to Approve/Deny a designation agreement.
+ * startDate, endDate and locationsDesignations used only for approval.
+ */
+export interface UpdateDesignationDto {
+  designationStatus: DesignationAgreementStatus;
+  startDate?: Date;
+  endDate?: Date;
+  locationsDesignations?: UpdateDesignationLocation[];
+  note: string;
+}
+
+/**
+ * startDate, endDate and locationsDesignations used only for approval.
+ */
+export interface UpdateDesignation {
+  designationStatus: DesignationAgreementStatus;
+  startDate?: Date;
+  endDate?: Date;
+  locationsDesignations?: UpdateDesignationLocation[];
+  note: string;
 }

@@ -1,8 +1,11 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
   SubmitDesignationAgreementDto,
+  PendingDesignationDto,
+  GetDesignationAgreementDto,
+  DesignationAgreementStatus,
+  UpdateDesignationDto,
 } from "@/types/contracts/DesignationAgreementContract";
 
 /**
@@ -32,9 +35,38 @@ export class DesignationAgreementService {
     );
   }
 
-  public async getDesignationsAgreements(): Promise<
-    GetDesignationAgreementsDto[]
-  > {
-    return ApiClient.DesignationAgreement.getDesignationsAgreements();
+  public async getDesignationsAgreements(
+    institutionId?: number,
+  ): Promise<GetDesignationAgreementsDto[]> {
+    return ApiClient.DesignationAgreement.getDesignationsAgreements(
+      institutionId,
+    );
+  }
+
+  public async getDesignationByStatus(
+    designationStatus: DesignationAgreementStatus,
+    searchCriteria?: string,
+  ): Promise<PendingDesignationDto[]> {
+    return ApiClient.DesignationAgreement.getDesignationByStatus(
+      designationStatus,
+      searchCriteria,
+    );
+  }
+
+  public async updateDesignationAgreement(
+    designationId: number,
+    designation: UpdateDesignationDto,
+  ): Promise<void> {
+    /**Filtering the locations which are either approved or denied(already approved location) only.
+     * locationsDesignations will have value only when approval is done.
+     */
+    designation.locationsDesignations = designation.locationsDesignations?.filter(
+      location =>
+        location.existingDesignationLocation || location.approved === true,
+    );
+    await ApiClient.DesignationAgreement.updateDesignationAgreement(
+      designationId,
+      designation,
+    );
   }
 }

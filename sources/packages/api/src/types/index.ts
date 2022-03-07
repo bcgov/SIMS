@@ -14,3 +14,4 @@ export * from "./atbc";
 export * from "./apiProcessError";
 export * from "./pdStatus";
 export * from "./studentContact";
+export * from "./clientTypeBaseRoute";

@@ -4,7 +4,6 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  NotFoundException,
   Param,
   Post,
   UnprocessableEntityException,
@@ -17,7 +16,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { DesignationAgreementService, FormService } from "../../services";
-import { getISODateOnlyString, getUTCNow } from "../../utilities";
+import { getUTCNow } from "../../utilities";
 import {
   GetDesignationAgreementDto,
   GetDesignationAgreementsDto,
@@ -25,13 +24,18 @@ import {
 } from "./models/designation-agreement.model";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
-
+import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
+/***
+ * Designation agreement dedicated controller for Institution.
+ * */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@Controller("institution/designation-agreement")
-export class DesignationAgreementController {
+@IsInstitutionAdmin()
+@Controller("designation-agreement")
+export class DesignationAgreementInstitutionsController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
     private readonly formService: FormService,
+    private readonly designationAgreementControllerService: DesignationAgreementControllerService,
   ) {}
 
   /**
@@ -40,7 +44,6 @@ export class DesignationAgreementController {
    * for further assessment of the Ministry.
    * @returns the new designation agreement id created.
    */
-  @IsInstitutionAdmin()
   @Post()
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
@@ -97,35 +100,15 @@ export class DesignationAgreementController {
    * @param designationId designation id.
    * @returns  designation agreement information.
    */
-  @IsInstitutionAdmin()
   @Get(":designationId")
   async getDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Param("designationId") designationId: number,
   ): Promise<GetDesignationAgreementDto> {
-    const designation =
-      await this.designationAgreementService.getInstitutionDesignationById(
-        designationId,
-        userToken.authorizations.institutionId,
-      );
-    if (!designation) {
-      throw new NotFoundException("Designation agreement not found.");
-    }
-
-    return {
-      designationId: designation.id,
-      designationStatus: designation.designationStatus,
-      submittedData: designation.submittedData,
-      locationsDesignations: designation.designationAgreementLocations.map(
-        (agreementLocation) => ({
-          locationId: agreementLocation.institutionLocation.id,
-          locationName: agreementLocation.institutionLocation.name,
-          locationData: agreementLocation.institutionLocation.data,
-          requested: agreementLocation.requested,
-          approved: agreementLocation.approved,
-        }),
-      ),
-    } as GetDesignationAgreementDto;
+    return this.designationAgreementControllerService.getDesignationAgreement(
+      designationId,
+      userToken.authorizations.institutionId,
+    );
   }
 
   /**
@@ -135,24 +118,12 @@ export class DesignationAgreementController {
    * @returns the list of all the designations that
    * belongs to one the institution.
    */
-  @IsInstitutionAdmin()
   @Get()
   async getDesignationAgreements(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<GetDesignationAgreementsDto[]> {
-    const designations =
-      await this.designationAgreementService.getInstitutionDesignationsById(
-        userToken.authorizations.institutionId,
-      );
-    return designations.map(
-      (designation) =>
-        ({
-          designationId: designation.id,
-          designationStatus: designation.designationStatus,
-          submittedDate: designation.submittedDate,
-          startDate: getISODateOnlyString(designation.startDate),
-          endDate: getISODateOnlyString(designation.endDate),
-        } as GetDesignationAgreementsDto),
+    return this.designationAgreementControllerService.getDesignationAgreements(
+      userToken.authorizations.institutionId,
     );
   }
 }
