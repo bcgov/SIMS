@@ -176,7 +176,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
-   * Service to validate if all the supplied locationIds
+   * Validate if all the supplied locationIds
    * in a payload belongs to the given institution.
    * @param institutionId
    * @param designationLocations

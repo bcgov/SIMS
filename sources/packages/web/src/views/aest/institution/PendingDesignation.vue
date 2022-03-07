@@ -7,6 +7,7 @@
       :recordsCount="designations?.length"
       class="m-1"
     >
+      <!-- TODO: While moving to vuetify3, data table search here(non-lazy) can be a OOTB search from vuetify datatable. -->
       <template #actions>
         <InputText
           type="text"
