@@ -7,6 +7,7 @@ import {
   User,
   Note,
   NoteType,
+  SINValidations,
 } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
@@ -55,16 +56,20 @@ export class StudentService extends RecordDataModelService<Student> {
     otherInfo: CreateStudentInfo,
   ): Promise<Student> {
     let user: User;
+    const sinValidations: SINValidations[] = [];
     if (userInfo.userId) {
       user = { id: userInfo.userId } as User;
     } else {
       user = new User();
     }
-
+    const sinValidation = new SINValidations();
+    sinValidation.user = user;
+    sinValidations.push(sinValidation);
     user.userName = userInfo.userName;
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
+    user.sinValidations = sinValidations;
 
     const student = new Student();
     student.user = user;

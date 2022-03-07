@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from "typeorm";
+import { SINValidations } from ".";
 import { BaseModel } from "./base.model";
 
 @Entity({ name: "users" })
@@ -32,4 +39,19 @@ export class User extends BaseModel {
     name: "is_active",
   })
   isActive: boolean;
+
+  /**
+   * SIN Validation ids related to the user.
+   */
+  @RelationId((user: User) => user.sinValidations)
+  sinValidationsIds: number[];
+  /**
+   * SIN Validation related to the user.
+   */
+  @OneToMany(() => SINValidations, (sinValidation) => sinValidation.user, {
+    eager: false,
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  sinValidations: SINValidations[];
 }

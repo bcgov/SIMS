@@ -48,3 +48,4 @@ export * from "./base-sfas-application.model";
 export * from "./designation-agreement.model";
 export * from "./designation-agreement-status.type";
 export * from "./designation-agreement-location.model";
+export * from "./sin-validations.model";
