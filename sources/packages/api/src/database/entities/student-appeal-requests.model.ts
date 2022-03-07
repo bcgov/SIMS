@@ -31,7 +31,7 @@ export class StudentAppealRequest extends RecordDataModel {
   studentAppealId: number;
   /**
    * Student appeal that groups the individual requests when the Student
-   * needs an appeal, one or more can be requested at the same time.
+   * needs an appeal. One or more can be requested at the same time.
    */
   @ManyToOne(() => StudentAppeal, {
     eager: false,

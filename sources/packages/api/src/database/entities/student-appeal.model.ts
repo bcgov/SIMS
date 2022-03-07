@@ -48,6 +48,7 @@ export class StudentAppeal extends RecordDataModel {
     {
       eager: false,
       cascade: true,
+      nullable: false,
     },
   )
   appealRequests: StudentAppealRequest[];

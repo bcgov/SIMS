@@ -161,6 +161,7 @@ export class Application extends RecordDataModel {
     type: "enum",
     enum: AssessmentStatus,
     enumName: "AssessmentStatus",
+    nullable: false,
   })
   assessmentStatus: AssessmentStatus;
 

@@ -57,7 +57,7 @@ export class StudentAssessment extends RecordDataModel {
   assessmentWorkflowId?: number;
   /**
    * Represent the output of the executed assessment workflow and it is also
-   * the main content for the NOA.
+   * the main content for the NOA (Notice of Assessment).
    */
   @Column({
     name: "assessment_data",
@@ -76,6 +76,7 @@ export class StudentAssessment extends RecordDataModel {
     type: "enum",
     enum: AssessmentTriggerType,
     enumName: "AssessmentTriggerType",
+    nullable: false,
   })
   triggerType: AssessmentTriggerType;
   /**

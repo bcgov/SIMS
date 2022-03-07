@@ -19,10 +19,10 @@ COMMENT ON COLUMN sims.student_appeals.id IS 'Auto-generated sequential primary 
 
 COMMENT ON COLUMN sims.student_appeals.application_id IS 'Application that will be changed by the appeals requested.';
 
-COMMENT ON COLUMN sims.student_appeals.created_at IS 'Record creation timestamp';
+COMMENT ON COLUMN sims.student_appeals.created_at IS 'Record creation timestamp.';
 
-COMMENT ON COLUMN sims.student_appeals.updated_at IS 'Record update timestamp';
+COMMENT ON COLUMN sims.student_appeals.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.student_appeals.creator IS 'Creator of the record. Null specified the record is created by system';
+COMMENT ON COLUMN sims.student_appeals.creator IS 'Creator of the record. Null specified the record is created by system.';
 
-COMMENT ON COLUMN sims.student_appeals.modifier IS 'Modifier of the record. Null specified the record is modified by system';
+COMMENT ON COLUMN sims.student_appeals.modifier IS 'Modifier of the record. Null specified the record is modified by system.';

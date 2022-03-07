@@ -67,6 +67,7 @@ export class StudentScholasticStanding extends RecordDataModel {
     type: "enum",
     enum: ScholasticStandingStatus,
     enumName: "ScholasticStandingStatus",
+    nullable: false,
   })
   scholasticStandingStatus: ScholasticStandingStatus;
   /**

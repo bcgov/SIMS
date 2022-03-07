@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   SET
     NULL,
     -- Audit columns
-    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
@@ -41,10 +41,10 @@ COMMENT ON COLUMN sims.student_scholastic_standings.assessed_by IS 'Ministry use
 
 COMMENT ON COLUMN sims.student_scholastic_standings.note_id IS 'Note added by the Ministry while approving or denying the appeal.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.created_at IS 'Record creation timestamp';
+COMMENT ON COLUMN sims.student_scholastic_standings.created_at IS 'Record creation timestamp.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.updated_at IS 'Record update timestamp';
+COMMENT ON COLUMN sims.student_scholastic_standings.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.creator IS 'Creator of the record. Null specified the record is created by system';
+COMMENT ON COLUMN sims.student_scholastic_standings.creator IS 'Creator of the record. Null specified the record is created by system.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.modifier IS 'Modifier of the record. Null specified the record is modified by system';
+COMMENT ON COLUMN sims.student_scholastic_standings.modifier IS 'Modifier of the record. Null specified the record is modified by system.';

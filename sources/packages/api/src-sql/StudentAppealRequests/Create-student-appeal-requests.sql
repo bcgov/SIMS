@@ -27,7 +27,7 @@ COMMENT ON TABLE sims.student_appeal_requests IS 'Represents as individual appea
 
 COMMENT ON COLUMN sims.student_appeal_requests.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.student_appeal_id IS 'Relationship with the master appeal record that groups this individual ones when the Student needs an appeal, one or more can be requested at the same time.';
+COMMENT ON COLUMN sims.student_appeal_requests.student_appeal_id IS 'Relationship with the master appeal record that groups this individual ones when the Student needs an appeal. One or more can be requested at the same time.';
 
 COMMENT ON COLUMN sims.student_appeal_requests.submitted_data IS 'Dynamic form data that represents the appeal.';
 
@@ -41,10 +41,10 @@ COMMENT ON COLUMN sims.student_appeal_requests.assessed_by IS 'Ministry user tha
 
 COMMENT ON COLUMN sims.student_appeal_requests.note_id IS 'Note added by the Ministry while approving or denying the appeal.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.created_at IS 'Record creation timestamp';
+COMMENT ON COLUMN sims.student_appeal_requests.created_at IS 'Record creation timestamp.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.updated_at IS 'Record update timestamp';
+COMMENT ON COLUMN sims.student_appeal_requests.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.creator IS 'Creator of the record. Null specified the record is created by system';
+COMMENT ON COLUMN sims.student_appeal_requests.creator IS 'Creator of the record. Null specified the record is created by system.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.modifier IS 'Modifier of the record. Null specified the record is modified by system';
+COMMENT ON COLUMN sims.student_appeal_requests.modifier IS 'Modifier of the record. Null specified the record is modified by system.';
