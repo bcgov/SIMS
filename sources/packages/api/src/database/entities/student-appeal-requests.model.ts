@@ -64,12 +64,13 @@ export class StudentAppealRequest extends RecordDataModel {
    * Status of the current request [Pending, Approved, Denied].
    */
   @Column({
-    name: "student_appeal_status",
+    name: "appeal_status",
     type: "enum",
     enum: StudentAppealStatus,
-    enumName: "ScholasticStandingStatus",
+    enumName: "StudentAppealStatus",
+    nullable: false,
   })
-  scholasticStandingStatus: StudentAppealStatus;
+  appealStatus: StudentAppealStatus;
   /**
    * Date that the Ministry approved or denied the appeal.
    */

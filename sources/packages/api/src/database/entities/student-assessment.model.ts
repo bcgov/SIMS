@@ -15,6 +15,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { AssessmentTriggerType } from "./assessment-trigger.type";
 import { RecordDataModel } from "./record.model";
+import { StudentScholasticStanding } from "./student-scholastic-standing.model";
 
 /**
  * Represents all the assessments and reassessments processed for a particular
@@ -59,7 +60,7 @@ export class StudentAssessment extends RecordDataModel {
    * the main content for the NOA.
    */
   @Column({
-    name: "assessmentData",
+    name: "assessment_data",
     type: "jsonb",
     nullable: true,
   })
@@ -76,7 +77,7 @@ export class StudentAssessment extends RecordDataModel {
     enum: AssessmentTriggerType,
     enumName: "AssessmentTriggerType",
   })
-  assessmentStatus: AssessmentTriggerType;
+  triggerType: AssessmentTriggerType;
   /**
    * Offering id that must be used for any assessment/reassessment. This information can
    * be null only during a PIR process. Upon a program/offering change, this will also
@@ -115,7 +116,7 @@ export class StudentAssessment extends RecordDataModel {
    */
   @ManyToOne(() => StudentAppeal, {
     eager: false,
-    cascade: false,
+    cascade: true,
     nullable: true,
   })
   @JoinColumn({
@@ -123,9 +124,20 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   studentAppeal?: StudentAppeal;
-
-  // TODO: student_scholastic_standing_id
-
+  /**
+   * When the reassessment happen due to a scholastic standing change (e.g. student withdrawal),
+   * this will provide to the workflow the data that need be changed.
+   */
+  @ManyToOne(() => StudentScholasticStanding, {
+    eager: false,
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "student_scholastic_standing_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  studentScholasticStanding?: StudentScholasticStanding;
   /**
    * Indicates the status of the NOA approval when the student must approve the
    * money values prior to the institution COE approval and disbursements or when

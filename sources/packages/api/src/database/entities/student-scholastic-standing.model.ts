@@ -95,5 +95,5 @@ export class StudentScholasticStanding extends RecordDataModel {
     name: "note_id",
     referencedColumnName: ColumnNames.ID,
   })
-  restrictionNote?: Note;
+  note?: Note;
 }

@@ -2,12 +2,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
 import { Application } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
+import { StudentAppealRequest } from "./student-appeal-requests.model";
 
 /**
  * Represents as set of appeals requested by a student, for instance, to have his income
@@ -37,4 +39,16 @@ export class StudentAppeal extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+  /**
+   * Individual appeals that belongs to the same request.
+   */
+  @OneToMany(
+    () => StudentAppealRequest,
+    (studentAppealRequest) => studentAppealRequest.studentAppeal,
+    {
+      eager: false,
+      cascade: true,
+    },
+  )
+  appealRequests: StudentAppealRequest[];
 }

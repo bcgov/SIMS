@@ -36,7 +36,7 @@ COMMENT ON COLUMN sims.student_assessments.offering_id IS 'Offering id that must
 
 COMMENT ON COLUMN sims.student_assessments.student_appeal_id IS 'When the reassessment happen due to a student appeal, this will provide to the workflow the data that need to be changed.';
 
-COMMENT ON COLUMN sims.student_assessments.student_scholastic_standing_id IS 'When the reassessment happen due to a scholastic standing change (e.g. student withdrawal), this will provide to the workflow the data that need be changed..';
+COMMENT ON COLUMN sims.student_assessments.student_scholastic_standing_id IS 'When the reassessment happen due to a scholastic standing change (e.g. student withdrawal), this will provide to the workflow the data that need be changed.';
 
 COMMENT ON COLUMN sims.student_assessments.noa_approval_status IS 'Indicates the status of the NOA approval when the student must approve the money values prior to the institution COE approval and disbursements.';
 
