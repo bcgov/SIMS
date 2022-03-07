@@ -35,7 +35,7 @@ import {
   StudentRestrictionDTO,
   StudentDetailDTO,
   StudentFileUploaderDto,
-  StudentUploadedFileDto,
+  StudentUploadFileDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -638,7 +638,7 @@ export class StudentController extends BaseController {
   @Get("documents")
   async getStudentFiles(
     @UserToken() userToken: IUserToken,
-  ): Promise<StudentUploadedFileDto[]> {
+  ): Promise<StudentUploadFileDto[]> {
     const existingStudent = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
