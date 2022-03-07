@@ -153,7 +153,7 @@ export interface StudentFileUploaderDto {
 /**
  *  Student uploaded documents (i.e, FileOriginType.Student documents)
  */
-export interface StudentUploadedFileDto {
+export interface StudentUploadFileDto {
   fileName: string;
   uniqueFileName: string;
 }

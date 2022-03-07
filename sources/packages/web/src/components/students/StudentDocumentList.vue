@@ -25,8 +25,7 @@
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { StudentUploadedFileDto } from "@/types";
-import { boolean } from "yup";
+import { StudentUploadFileDto } from "@/types";
 
 export default {
   components: {
@@ -34,18 +33,16 @@ export default {
   },
   props: {
     reload: {
-      type: boolean,
+      type: Boolean,
     },
   },
   setup(props: any) {
-    const studentDocuments = ref([] as StudentUploadedFileDto[]);
+    const studentDocuments = ref([] as StudentUploadFileDto[]);
     const getStudentDocuments = async () => {
       studentDocuments.value = await StudentService.shared.getStudentFiles();
     };
 
-    const downloadDocument = async (
-      studentDocument: StudentUploadedFileDto,
-    ) => {
+    const downloadDocument = async (studentDocument: StudentUploadFileDto) => {
       const fileURL = await StudentService.shared.downloadStudentFile(
         studentDocument.uniqueFileName,
       );
@@ -54,6 +51,8 @@ export default {
       fileLink.setAttribute("download", studentDocument.fileName);
       document.body.appendChild(fileLink);
       fileLink.click();
+      // After download, remove the element
+      fileLink.remove();
     };
 
     onMounted(getStudentDocuments);

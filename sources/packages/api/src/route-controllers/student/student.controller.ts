@@ -635,7 +635,7 @@ export class StudentController extends BaseController {
    * @returns list of student documents
    */
   @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("student-documents")
+  @Get("documents")
   async getStudentFiles(
     @UserToken() userToken: IUserToken,
   ): Promise<StudentUploadedFileDto[]> {
