@@ -1,7 +1,7 @@
 <template>
   <ModalDialogBase :showDialog="showDialog" @dialogClosed="dialogClosed">
     <template v-slot:content>
-      <v-container class="restriction-modal">
+      <v-container class="temporary-modal">
         <formio
           formName="viewRestriction"
           :data="restrictionData"

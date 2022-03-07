@@ -7,10 +7,36 @@
         @click="item.command"
       >
         <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
+          <font-awesome-icon :icon="item.icon" class="mr-2" />
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>{{ item.label }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <v-list dense nav>
+      <v-list-item-title class="text-muted ml-4">STUDENTS</v-list-item-title>
+      <v-list-item>
+        <v-list-item-icon>
+          <font-awesome-icon :icon="['fas', 'folder-open']" class="mr-2" />
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Pending applications</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <v-list dense nav>
+      <v-list-item-title class="text-muted ml-4"
+        >INSTITUTIONS</v-list-item-title
+      >
+      <v-list-item @click="pendingDesignationItem.command">
+        <v-list-item-icon>
+          <font-awesome-icon :icon="pendingDesignationItem.icon" class="mr-2" />
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{
+            pendingDesignationItem.label
+          }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -28,7 +54,7 @@ export default {
     const items = ref<MenuModel[]>([
       {
         label: "Dashboard",
-        icon: "mdi-home-outline",
+        icon: ["fas", "home"],
         command: () => {
           router.push({
             name: AESTRoutesConst.AEST_DASHBOARD,
@@ -36,8 +62,8 @@ export default {
         },
       },
       {
-        label: "Students",
-        icon: "mdi-account-multiple-outline",
+        label: "Search Students",
+        icon: ["fas", "search"],
         command: () => {
           router.push({
             name: AESTRoutesConst.SEARCH_STUDENTS,
@@ -45,8 +71,8 @@ export default {
         },
       },
       {
-        label: "Institutions",
-        icon: "mdi-city",
+        label: "Search Institutions",
+        icon: ["fas", "search"],
         command: () => {
           router.push({
             name: AESTRoutesConst.SEARCH_INSTITUTIONS,
@@ -55,11 +81,23 @@ export default {
       },
       {
         label: "Settings",
-        icon: "mdi-wrench",
+        icon: ["fas", "cog"],
       },
     ]);
+
+    const pendingDesignationItem = ref({
+      label: "Pending designations",
+      icon: ["fas", "pen-nib"],
+      command: () => {
+        router.push({
+          name: AESTRoutesConst.PENDING_DESIGNATIONS,
+        });
+      },
+    } as MenuModel);
+
     return {
       items,
+      pendingDesignationItem,
     };
   },
 };
