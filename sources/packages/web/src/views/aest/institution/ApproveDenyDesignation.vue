@@ -1,15 +1,17 @@
 <template>
   <!-- CSS class temporary-modal is work around for lack of responsiveness of v-dialog. -->
-  <ModalDialogBase :showDialog="showDialog" @dialogClosed="dialogClosed">
+  <ModalDialogBase
+    :showDialog="showDialog"
+    @dialogClosed="dialogClosed"
+    :title="title"
+  >
     <template v-slot:content>
-      <v-container class="temporary-modal">
-        <formio
-          formName="approvedenydesignation"
-          :data="designation"
-          @loaded="formLoaded"
-          @submitted="submitDesignationUpdate"
-        ></formio>
-      </v-container>
+      <formio
+        formName="approvedenydesignation"
+        :data="designation"
+        @loaded="formLoaded"
+        @submitted="submitDesignationUpdate"
+      ></formio>
     </template>
     <template v-slot:footer>
       <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
@@ -26,8 +28,12 @@
 <script lang="ts">
 import formio from "@/components/generic/formio.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { UpdateDesignationDto } from "@/types/contracts/DesignationAgreementContract";
+import {
+  UpdateDesignationDto,
+  DesignationAgreementStatus,
+} from "@/types/contracts/DesignationAgreementContract";
 import { useModalDialog } from "@/composables";
+import { computed } from "vue";
 export default {
   components: { ModalDialogBase, formio },
   props: {
@@ -36,11 +42,18 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props: any) {
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateDesignationDto | boolean
     >();
     let formData: any = undefined;
+
+    const title = computed(() =>
+      props.designation.designationStatus ===
+      DesignationAgreementStatus.Approved
+        ? "Approve Designation"
+        : "Decline Designation",
+    );
 
     const dialogClosed = () => {
       resolvePromise(false);
@@ -64,6 +77,7 @@ export default {
       formLoaded,
       submitDesignationUpdate,
       submitDesignation,
+      title,
     };
   },
 };
