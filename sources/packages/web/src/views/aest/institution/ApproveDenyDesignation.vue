@@ -6,12 +6,14 @@
     :title="title"
   >
     <template v-slot:content>
-      <formio
-        formName="approvedenydesignation"
-        :data="designation"
-        @loaded="formLoaded"
-        @submitted="submitDesignationUpdate"
-      ></formio>
+      <div class="temporary-modal">
+        <formio
+          formName="approvedenydesignation"
+          :data="designation"
+          @loaded="formLoaded"
+          @submitted="submitDesignationUpdate"
+        ></formio>
+      </div>
     </template>
     <template v-slot:footer>
       <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
