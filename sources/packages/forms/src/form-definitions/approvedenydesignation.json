@@ -21,91 +21,9 @@
                     "value": ""
                 }
             ],
-            "content": "{{data.designationStatus === 'Approved' ?  'Approve Designation' : 'Decline Designation'}}",
-            "refreshOnChange": true,
-            "customClass": "category-header-medium",
-            "hidden": false,
-            "modalEdit": false,
-            "key": "html",
-            "tags": [],
-            "properties": {},
-            "conditional": {
-                "show": null,
-                "when": null,
-                "eq": "",
-                "json": ""
-            },
-            "customConditional": "",
-            "logic": [],
-            "attributes": {},
-            "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-            },
-            "type": "htmlelement",
-            "input": false,
-            "tableView": false,
-            "placeholder": "",
-            "prefix": "",
-            "suffix": "",
-            "multiple": false,
-            "defaultValue": null,
-            "protected": false,
-            "unique": false,
-            "persistent": false,
-            "clearOnHide": true,
-            "refreshOn": "",
-            "redrawOn": "",
-            "dataGridLabel": false,
-            "labelPosition": "top",
-            "description": "",
-            "errorLabel": "",
-            "tooltip": "",
-            "hideLabel": false,
-            "tabindex": "",
-            "disabled": false,
-            "autofocus": false,
-            "dbIndex": false,
-            "customDefaultValue": "",
-            "calculateValue": "",
-            "calculateServer": false,
-            "widget": null,
-            "validateOn": "change",
-            "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-            },
-            "allowCalculateOverride": false,
-            "encrypted": false,
-            "showCharCount": false,
-            "showWordCount": false,
-            "allowMultipleMasks": false,
-            "addons": [],
-            "id": "eth8csh"
-        },
-        {
-            "label": "HTML",
-            "labelWidth": "",
-            "labelMargin": "",
-            "tag": "p",
-            "className": "",
-            "attrs": [
-                {
-                    "attr": "",
-                    "value": ""
-                }
-            ],
             "content": "{{data.designationStatus === 'Approved' ? 'Outline the reasoning for accepting this designation. The notes will be added to the institution profile.' : 'Outline the reasoning for declining this designation. The notes will be added to the institution profile.'}}",
             "refreshOnChange": true,
-            "customClass": "mt-n4",
+            "customClass": "",
             "hidden": false,
             "modalEdit": false,
             "key": "html1",
@@ -171,7 +89,7 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "addons": [],
-            "id": "ens2wob"
+            "id": "e5ss4qo"
         },
         {
             "title": "Approve Panel",
@@ -284,7 +202,7 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "eni33zt"
+                    "id": "eethlg5"
                 },
                 {
                     "label": "Columns",
@@ -293,31 +211,10 @@
                             "components": [
                                 {
                                     "label": "Start Date",
-                                    "labelPosition": "top",
-                                    "labelWidth": "",
-                                    "labelMargin": "",
-                                    "displayInTimezone": "viewer",
-                                    "useLocaleSettings": false,
-                                    "allowInput": true,
                                     "format": "yyyy-MM-dd",
-                                    "placeholder": "",
-                                    "description": "",
-                                    "tooltip": "",
-                                    "customClass": "",
-                                    "tabindex": "",
-                                    "hidden": false,
-                                    "hideLabel": false,
-                                    "autofocus": false,
-                                    "disabled": false,
                                     "tableView": false,
-                                    "modalEdit": false,
-                                    "shortcutButtons": [],
-                                    "enableDate": true,
                                     "enableMinDateInput": false,
                                     "datePicker": {
-                                        "maxDate": null,
-                                        "disable": "",
-                                        "disableFunction": "",
                                         "disableWeekends": false,
                                         "disableWeekdays": false,
                                         "showWeeks": true,
@@ -327,70 +224,24 @@
                                         "maxMode": "year",
                                         "yearRows": 4,
                                         "yearColumns": 5,
-                                        "minDate": ""
+                                        "minDate": null,
+                                        "maxDate": null
                                     },
                                     "enableMaxDateInput": false,
                                     "enableTime": false,
-                                    "timePicker": {
-                                        "hourStep": 1,
-                                        "minuteStep": 1,
-                                        "showMeridian": true,
-                                        "readonlyInput": false,
-                                        "mousewheel": true,
-                                        "arrowkeys": true
-                                    },
-                                    "multiple": false,
-                                    "defaultValue": "",
-                                    "defaultDate": "",
                                     "customOptions": {
                                         "dateFormat": "yyyy-MM-dd"
                                     },
-                                    "persistent": true,
-                                    "protected": false,
-                                    "dbIndex": false,
-                                    "encrypted": false,
-                                    "redrawOn": "",
-                                    "clearOnHide": true,
-                                    "customDefaultValue": "",
-                                    "calculateValue": "",
-                                    "calculateServer": false,
-                                    "allowCalculateOverride": false,
                                     "validate": {
                                         "required": true,
-                                        "customMessage": "",
                                         "custom": "",
                                         "customPrivate": false,
-                                        "json": "",
                                         "strictDateValidation": false,
                                         "multiple": false,
                                         "unique": false
                                     },
-                                    "unique": false,
-                                    "validateOn": "change",
-                                    "errorLabel": "",
-                                    "errors": "",
                                     "key": "startDate",
-                                    "tags": [],
-                                    "properties": {},
-                                    "conditional": {
-                                        "show": null,
-                                        "when": null,
-                                        "eq": "",
-                                        "json": ""
-                                    },
-                                    "customConditional": "",
-                                    "logic": [],
-                                    "attributes": {},
-                                    "overlay": {
-                                        "style": "",
-                                        "page": "",
-                                        "left": "",
-                                        "top": "",
-                                        "width": "",
-                                        "height": ""
-                                    },
                                     "type": "datetime",
-                                    "timezone": "",
                                     "input": true,
                                     "widget": {
                                         "type": "calendar",
@@ -405,24 +256,76 @@
                                         "hourIncrement": 1,
                                         "minuteIncrement": 1,
                                         "time_24hr": false,
-                                        "minDate": "",
-                                        "disabledDates": "",
+                                        "minDate": null,
                                         "disableWeekends": false,
                                         "disableWeekdays": false,
-                                        "disableFunction": "",
                                         "maxDate": null,
                                         "dateFormat": "yyyy-MM-dd"
                                     },
+                                    "placeholder": "",
                                     "prefix": "",
+                                    "customClass": "",
                                     "suffix": "",
+                                    "multiple": false,
+                                    "defaultValue": "",
+                                    "protected": false,
+                                    "unique": false,
+                                    "persistent": true,
+                                    "hidden": false,
+                                    "clearOnHide": true,
                                     "refreshOn": "",
+                                    "redrawOn": "",
+                                    "modalEdit": false,
                                     "dataGridLabel": false,
+                                    "labelPosition": "top",
+                                    "description": "",
+                                    "errorLabel": "",
+                                    "tooltip": "",
+                                    "hideLabel": false,
+                                    "tabindex": "",
+                                    "disabled": false,
+                                    "autofocus": false,
+                                    "dbIndex": false,
+                                    "customDefaultValue": "",
+                                    "calculateValue": "",
+                                    "calculateServer": false,
+                                    "attributes": {},
+                                    "validateOn": "change",
+                                    "conditional": {
+                                        "show": null,
+                                        "when": null,
+                                        "eq": ""
+                                    },
+                                    "overlay": {
+                                        "style": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
+                                    "allowCalculateOverride": false,
+                                    "encrypted": false,
                                     "showCharCount": false,
                                     "showWordCount": false,
+                                    "properties": {},
                                     "allowMultipleMasks": false,
                                     "addons": [],
+                                    "useLocaleSettings": false,
+                                    "allowInput": true,
+                                    "enableDate": true,
+                                    "defaultDate": "",
+                                    "displayInTimezone": "viewer",
+                                    "timezone": "",
                                     "datepickerMode": "day",
-                                    "id": "ezw4drr"
+                                    "timePicker": {
+                                        "hourStep": 1,
+                                        "minuteStep": 1,
+                                        "showMeridian": true,
+                                        "readonlyInput": false,
+                                        "mousewheel": true,
+                                        "arrowkeys": true
+                                    },
+                                    "id": "e0150hf"
                                 }
                             ],
                             "width": 6,
@@ -547,7 +450,7 @@
                                         "arrowkeys": true
                                     },
                                     "customOptions": {},
-                                    "id": "easba0v"
+                                    "id": "edx3tad"
                                 }
                             ],
                             "width": 6,
@@ -622,7 +525,7 @@
                     "tree": false,
                     "lazyLoad": false,
                     "autoAdjust": false,
-                    "id": "emnwpb"
+                    "id": "erys6"
                 },
                 {
                     "label": "Designation Locations Header",
@@ -696,80 +599,39 @@
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tag": "p",
-                    "id": "ed1rim"
+                    "id": "e1e4gi"
                 },
                 {
                     "label": "Designation Locations",
-                    "labelPosition": "top",
-                    "labelWidth": "",
-                    "labelMargin": "",
-                    "description": "",
-                    "tooltip": "",
                     "disableAddingRemovingRows": true,
-                    "conditionalAddButton": "",
                     "reorder": false,
-                    "addAnother": "",
                     "addAnotherPosition": "bottom",
                     "layoutFixed": false,
                     "enableRowGroups": false,
                     "initEmpty": false,
                     "customClass": "locations-grid",
-                    "tabindex": "",
-                    "hidden": false,
                     "hideLabel": true,
-                    "autofocus": false,
-                    "disabled": false,
                     "tableView": false,
-                    "modalEdit": false,
                     "defaultValue": [
                         {
                             "approved": false
                         }
                     ],
-                    "persistent": true,
-                    "protected": false,
-                    "dbIndex": false,
-                    "encrypted": false,
                     "redrawOn": "data",
-                    "clearOnHide": true,
-                    "customDefaultValue": "",
-                    "calculateValue": "",
-                    "calculateServer": false,
-                    "allowCalculateOverride": false,
-                    "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "minLength": "",
-                        "maxLength": "",
                         "customMessage": "Please select at least one location",
                         "custom": "valid = data.locationsDesignations.filter(row => row.approved).length > 0;",
                         "customPrivate": false,
-                        "json": "",
                         "strictDateValidation": false,
                         "multiple": false,
                         "unique": false
                     },
-                    "errorLabel": "",
-                    "errors": "",
                     "key": "locationsDesignations",
-                    "tags": [],
-                    "properties": {},
                     "conditional": {
                         "show": true,
                         "when": "designationStatus",
-                        "eq": "Approved",
-                        "json": ""
-                    },
-                    "customConditional": "",
-                    "logic": [],
-                    "attributes": {},
-                    "overlay": {
-                        "style": "",
-                        "page": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
+                        "eq": "Approved"
                     },
                     "type": "datagrid",
                     "input": true,
@@ -851,7 +713,7 @@
                                             "allowMultipleMasks": false,
                                             "addons": [],
                                             "tag": "p",
-                                            "id": "eswap4"
+                                            "id": "eifsz"
                                         }
                                     ],
                                     "width": 10,
@@ -929,7 +791,7 @@
                                             "inputType": "checkbox",
                                             "value": "",
                                             "name": "",
-                                            "id": "etkwmad"
+                                            "id": "er686ek"
                                         }
                                     ],
                                     "width": 2,
@@ -945,7 +807,7 @@
                             "type": "columns",
                             "input": false,
                             "tableView": false,
-                            "id": "etnakwk",
+                            "id": "eunfr80000000000000000",
                             "placeholder": "",
                             "prefix": "",
                             "customClass": "",
@@ -1011,17 +873,45 @@
                     "prefix": "",
                     "suffix": "",
                     "multiple": false,
+                    "protected": false,
                     "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
                     "refreshOn": "",
+                    "modalEdit": false,
                     "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
                     "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
                     "showCharCount": false,
                     "showWordCount": false,
+                    "properties": {},
                     "allowMultipleMasks": false,
                     "addons": [],
                     "tree": true,
                     "lazyLoad": false,
-                    "id": "egoqlg4"
+                    "id": "eb99m2"
                 }
             ],
             "placeholder": "",
@@ -1062,7 +952,7 @@
             "addons": [],
             "tree": false,
             "lazyLoad": false,
-            "id": "eyof1e"
+            "id": "e8zmuwd"
         },
         {
             "label": "Notes",
@@ -1377,6 +1267,6 @@
         }
     ],
     "created": "2022-03-02T05:41:09.953Z",
-    "modified": "2022-03-05T02:31:31.705Z",
+    "modified": "2022-03-07T21:42:03.941Z",
     "machineName": "approveDenyDesignation"
 }

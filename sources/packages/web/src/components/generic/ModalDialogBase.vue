@@ -5,11 +5,13 @@
         <v-card-title class="text-h5">
           <slot name="header">
             <v-icon v-if="icon" class="mr-2" size="45">{{ icon }}</v-icon>
-            {{ title }}
+            <span v-if="title" class="category-header-medium secondary-color">{{
+              title
+            }}</span>
           </slot>
         </v-card-title>
       </v-card-header>
-      <v-card-text>
+      <v-card-text class="pt-0">
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
       <v-divider></v-divider>
