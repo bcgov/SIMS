@@ -43,7 +43,6 @@ export default {
     let formData: any = undefined;
 
     const dialogClosed = () => {
-      showDialog.value = false;
       resolvePromise(false);
     };
 
@@ -52,7 +51,6 @@ export default {
     };
 
     const submitDesignationUpdate = async (data: UpdateDesignationDto) => {
-      showDialog.value = false;
       resolvePromise(data);
     };
     const submitDesignation = async () => {
