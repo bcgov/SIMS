@@ -52,3 +52,5 @@ export * from "./student-appeal.model";
 export * from "./assessment-status.type";
 export * from "./student-assessment.model";
 export * from "./scholastic-standing-status.type";
+export * from "./student-appeal-status.type";
+export * from "./student-appeal-requests.model";
