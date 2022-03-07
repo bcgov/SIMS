@@ -34,6 +34,7 @@
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.3.1",
+    "@nestjs/swagger": "^5.2.0",
     "@nestjs/typeorm": "^8.0.3",
     "@types/ssh2-sftp-client": "^5.3.1",
     "class-transformer": "^0.3.2",
@@ -50,6 +51,7 @@
     "rxjs": "^7.5.4",
     "soap": "^0.36.0",
     "ssh2-sftp-client": "^7.1.0",
+    "swagger-ui-express": "^4.3.0",
     "typeorm": "^0.2.30"
   },
   "devDependencies": {
