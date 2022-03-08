@@ -33,7 +33,7 @@ COMMENT ON COLUMN sims.student_scholastic_standings.submitted_data IS 'Dynamic f
 
 COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.scholastic_standing_status IS 'Status of the current request [Pending, Approved, Denied].';
+COMMENT ON COLUMN sims.student_scholastic_standings.scholastic_standing_status IS 'Status of the current request (e.g. Pending, Approved, Denied).';
 
 COMMENT ON COLUMN sims.student_scholastic_standings.assessed_date IS 'Date that the Ministry approved or denied the appeal.';
 

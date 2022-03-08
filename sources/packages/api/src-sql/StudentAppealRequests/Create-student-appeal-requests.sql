@@ -33,7 +33,7 @@ COMMENT ON COLUMN sims.student_appeal_requests.submitted_data IS 'Dynamic form d
 
 COMMENT ON COLUMN sims.student_appeal_requests.submitted_form_name IS 'Dynamic form name used to request the appeal.';
 
-COMMENT ON COLUMN sims.student_appeal_requests.appeal_status IS 'Current status of the appeal [Pending, Approved, Denied].';
+COMMENT ON COLUMN sims.student_appeal_requests.appeal_status IS 'Current status of the appeal (e.g. Pending, Approved, Denied).';
 
 COMMENT ON COLUMN sims.student_appeal_requests.assessed_date IS 'Date that the Ministry approved or denied the appeal.';
 
