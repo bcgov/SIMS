@@ -36,6 +36,7 @@ import {
   UpdateOfferingIntensity,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
+import { ApiTags } from "@nestjs/swagger";
 
 /**
  * Allow system access to the application data.
@@ -45,6 +46,7 @@ import { IConfig } from "../../types";
  */
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/application")
+@ApiTags("system-access/application")
 export class ApplicationSystemController {
   private readonly config: IConfig;
   constructor(
