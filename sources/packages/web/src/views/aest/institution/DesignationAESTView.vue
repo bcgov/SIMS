@@ -22,7 +22,10 @@
       </template>
     </header-navigator>
     <full-page-container class="mt-4">
+      <!-- Form.io is not reactively binding the property readOnly. Hence loading the form only after API call is completed. -->
+      <!-- If the readOnly value change after DOM(form) is mounted, form does not respond to it.  -->
       <designation-agreement-form
+        v-if="modelLoaded"
         :model="designationFormModel"
       ></designation-agreement-form>
     </full-page-container>
@@ -102,6 +105,7 @@ export default {
     const navigationTitle = computed(() =>
       props.institutionId ? "Manage designations" : "Pending designations",
     );
+    const modelLoaded = ref(false);
 
     const loadDesignation = async () => {
       designationAgreement.value = await DesignationAgreementService.shared.getDesignationAgreement(
@@ -133,6 +137,7 @@ export default {
           }),
         }),
       );
+      modelLoaded.value = true;
     };
     onMounted(async () => {
       await loadDesignation();
@@ -211,6 +216,7 @@ export default {
       DesignationAgreementStatus,
       updateDesignation,
       showActionButtons,
+      modelLoaded,
     };
   },
 };

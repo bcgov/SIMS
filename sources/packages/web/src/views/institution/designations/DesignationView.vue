@@ -8,7 +8,10 @@
       }"
     />
     <full-page-container class="mt-4">
+      <!-- Form.io is not reactively binding the property readOnly. Hence loading the form only after API call is completed. -->
+      <!-- If the readOnly value change after DOM(form) is mounted, form does not respond to it.  -->
       <designation-agreement-form
+        v-if="modelLoaded"
         :model="designationModel"
       ></designation-agreement-form>
     </full-page-container>
@@ -17,7 +20,7 @@
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
@@ -40,6 +43,7 @@ export default {
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
     const designationModel = reactive({} as DesignationModel);
+    const modelLoaded = ref(false);
 
     onMounted(async () => {
       const designation = await DesignationAgreementService.shared.getDesignationAgreement(
@@ -67,9 +71,10 @@ export default {
           }),
         }),
       );
+      modelLoaded.value = true;
     });
 
-    return { designationModel, InstitutionRoutesConst };
+    return { designationModel, InstitutionRoutesConst, modelLoaded };
   },
 };
 </script>
