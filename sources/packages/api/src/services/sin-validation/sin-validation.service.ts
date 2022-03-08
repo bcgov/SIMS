@@ -45,7 +45,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       const repository = externalRepo ?? this.repo;
       return repository.update(
         {
-          id: craPersonRecord.userId,
+          user: { id: craPersonRecord.userId },
           dateSent: IsNull(),
           dateReceived: IsNull(),
         },
