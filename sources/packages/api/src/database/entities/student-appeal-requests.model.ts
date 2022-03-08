@@ -16,7 +16,7 @@ import { RecordDataModel } from "./record.model";
  * to have his income or dependents data changed on his Student Application
  * after it was completed.
  */
-@Entity({ name: TableNames.StudentAppealRequest })
+@Entity({ name: TableNames.StudentAppealRequests })
 export class StudentAppealRequest extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;

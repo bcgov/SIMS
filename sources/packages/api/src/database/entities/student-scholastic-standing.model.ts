@@ -15,7 +15,7 @@ import { RecordDataModel } from "./record.model";
  * Represents a scholastic standing change requested by the Institution due to some
  * change in the student situation for a particular Student Application.
  */
-@Entity({ name: TableNames.StudentScholasticStanding })
+@Entity({ name: TableNames.StudentScholasticStandings })
 export class StudentScholasticStanding extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
@@ -58,7 +58,7 @@ export class StudentScholasticStanding extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  approvedData: any;
+  approvedData?: any;
   /**
    * Status of the current request [Pending, Approved, Denied].
    */

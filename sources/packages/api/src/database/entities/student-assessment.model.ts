@@ -23,7 +23,7 @@ import { StudentScholasticStanding } from "./student-scholastic-standing.model";
  * the information present in the application itself combined with the additional
  * data present in this table (e.g. student appeals and scholastic standing changes).
  */
-@Entity({ name: TableNames.StudentAssessment })
+@Entity({ name: TableNames.StudentAssessments })
 export class StudentAssessment extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
@@ -149,8 +149,9 @@ export class StudentAssessment extends RecordDataModel {
     type: "enum",
     enum: AssessmentStatus,
     enumName: "AssessmentStatus",
+    nullable: true,
   })
-  noaApprovalStatus: AssessmentStatus;
+  noaApprovalStatus?: AssessmentStatus;
 }
 
 /**

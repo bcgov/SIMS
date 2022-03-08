@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   id SERIAL PRIMARY KEY,
   application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   submitted_data jsonb NOT NULL,
-  approved_data jsonb NOT NULL,
+  approved_data jsonb,
   scholastic_standing_status sims.scholastic_standing_status NOT NULL,
   assessed_date TIMESTAMP WITH TIME ZONE,
   assessed_by INT REFERENCES sims.users(id) ON DELETE
