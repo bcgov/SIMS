@@ -5,9 +5,11 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { FedRestrictionProcessingService } from "../../esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { ESDCFileResponseDTO } from "./models/esdc-model";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/fed-restrictions")
+@ApiTags("system-access/fed-restrictions")
 export class FedRestrictionsIntegrationController {
   constructor(
     private readonly processingService: FedRestrictionProcessingService,

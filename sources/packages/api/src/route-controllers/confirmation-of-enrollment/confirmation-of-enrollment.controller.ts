@@ -52,6 +52,7 @@ import {
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
+import { ApiTags } from "@nestjs/swagger";
 
 const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
@@ -61,6 +62,7 @@ const FIRST_COE_NOT_COMPLETE_MESSAGE =
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
+@ApiTags("institution/location")
 export class ConfirmationOfEnrollmentController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,

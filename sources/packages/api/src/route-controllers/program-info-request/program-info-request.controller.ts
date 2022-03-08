@@ -45,9 +45,11 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_INTENSITY_MISMATCH,
 } from "../../constants";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
+@ApiTags("institution/location")
 export class ProgramInfoRequestController {
   constructor(
     private readonly applicationService: ApplicationService,

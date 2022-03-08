@@ -62,12 +62,14 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
+import { ApiTags } from "@nestjs/swagger";
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
 // 3 means 'the file' + uniqueFileName + group.
 const MAX_UPLOAD_PARTS = 3;
 @Controller("students")
+@ApiTags("students")
 export class StudentController extends BaseController {
   constructor(
     private readonly userService: UserService,

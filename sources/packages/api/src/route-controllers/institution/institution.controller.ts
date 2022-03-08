@@ -70,9 +70,11 @@ import {
   InstitutionUser,
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
+@ApiTags("institution")
 export class InstitutionController extends BaseController {
   constructor(
     private readonly userService: UserService,

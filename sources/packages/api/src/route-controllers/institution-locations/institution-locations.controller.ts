@@ -34,8 +34,10 @@ import {
 } from "../application/models/application.model";
 import { getUserFullName, dateString } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("institution/location")
+@ApiTags("institution/location")
 export class InstitutionLocationsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,

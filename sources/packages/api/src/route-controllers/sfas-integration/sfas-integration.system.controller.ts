@@ -5,9 +5,11 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { SFASIntegrationProcessingService } from "../../sfas-integration/sfas-integration-processing.service";
 import { ProcessResultDTO } from "./models/sfas-integration.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/sfas-integration")
+@ApiTags("system-access/sfas-integration")
 export class SFASIntegrationController {
   constructor(private readonly sfas: SFASIntegrationProcessingService) {}
 

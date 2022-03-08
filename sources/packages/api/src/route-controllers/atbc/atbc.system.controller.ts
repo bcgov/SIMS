@@ -5,9 +5,11 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { Student } from "../../database/entities";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/atbc")
+@ApiTags("system-access/atbc")
 export class ATBCController {
   constructor(
     private readonly atbcService: ATBCService,

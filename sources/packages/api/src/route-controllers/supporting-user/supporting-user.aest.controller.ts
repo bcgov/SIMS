@@ -8,10 +8,12 @@ import {
   SupportingUserFormData,
 } from "./models/supporting-user.dto";
 import { getSupportingUserForm } from "../../utilities";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("supporting-user")
+@ApiTags("supporting-user")
 export class AESTSupportingUserController {
   constructor(
     private readonly supportingUserService: SupportingUserService,

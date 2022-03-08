@@ -41,8 +41,10 @@ import {
 } from "../../utilities";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("institution/offering")
+@ApiTags("institution/offering")
 export class EducationProgramOfferingController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,

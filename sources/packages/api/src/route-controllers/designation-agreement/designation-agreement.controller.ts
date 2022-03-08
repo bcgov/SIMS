@@ -25,9 +25,11 @@ import {
 } from "./models/designation-agreement.model";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/designation-agreement")
+@ApiTags("institution/designation-agreement")
 export class DesignationAgreementController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,

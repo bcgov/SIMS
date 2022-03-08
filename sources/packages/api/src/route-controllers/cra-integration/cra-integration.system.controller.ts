@@ -6,9 +6,11 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/cra-integration")
+@ApiTags("system-access/cra-integration")
 export class CRAIntegrationController {
   constructor(private readonly cra: CRAPersonalVerificationService) {}
 

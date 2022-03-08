@@ -50,8 +50,10 @@ import {
   getUserFullName,
 } from "../../utilities";
 import { ApprovalStatus } from "../../services/education-program/constants";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("institution/education-program")
+@ApiTags("institution/education-program")
 export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,

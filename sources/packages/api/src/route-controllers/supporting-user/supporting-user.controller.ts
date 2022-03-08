@@ -34,9 +34,11 @@ import {
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
 import { getDateOnly, getSupportingUserForm } from "../../utilities";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
+@ApiTags("supporting-user")
 export class SupportingUserController {
   constructor(
     private readonly supportingUserService: SupportingUserService,

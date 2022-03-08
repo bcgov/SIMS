@@ -6,9 +6,11 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ECertFullTimeRequestService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-request.service";
 import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
 import { ESDCFileResultDTO, ESDCFileResponseDTO } from "./models/esdc-model";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
+@ApiTags("system-access/e-cert")
 export class ECertIntegrationController {
   constructor(
     private readonly ecertFullTimeRequestService: ECertFullTimeRequestService,

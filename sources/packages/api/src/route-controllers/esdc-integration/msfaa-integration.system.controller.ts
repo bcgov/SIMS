@@ -10,9 +10,11 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { OfferingIntensity } from "../../database/entities";
 import { MSFAARequestService } from "../../esdc-integration/msfaa-integration/msfaa-request.service";
 import { MSFAAResponseService } from "../../esdc-integration/msfaa-integration/msfaa-response.service";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
+@ApiTags("system-access/msfaa-integration")
 export class MSFAAIntegrationController {
   constructor(
     private readonly msfaaRequestService: MSFAARequestService,
