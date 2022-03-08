@@ -8,7 +8,7 @@ import { SINValidation } from "../../database/entities";
 /**
  * Service layer for SIN Validations.
  */
-Injectable();
+@Injectable()
 export class SINValidationService extends RecordDataModelService<SINValidation> {
   constructor(connection: Connection) {
     super(connection.getRepository(SINValidation));
