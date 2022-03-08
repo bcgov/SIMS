@@ -35,7 +35,11 @@ COMMENT ON COLUMN sims.student_scholastic_standings.application_id IS 'Student A
 
 COMMENT ON COLUMN sims.student_scholastic_standings.submitted_data IS 'Dynamic form data that represents the scholastic standing change requested by the Institution.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.submitted_by IS 'Institution user that submitted the scholastic standing.' COMMENT ON COLUMN sims.student_scholastic_standings.submitted_date IS 'Date that the Institution user submitted the scholastic standing.' COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
+COMMENT ON COLUMN sims.student_scholastic_standings.submitted_by IS 'Institution user that submitted the scholastic standing.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.submitted_date IS 'Date that the Institution user submitted the scholastic standing.';
+
+COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
 
 COMMENT ON COLUMN sims.student_scholastic_standings.scholastic_standing_status IS 'Status of the current request (e.g. Pending, Approved, Denied).';
 

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS sims.student_appeals (
     id SERIAL PRIMARY KEY,
     application_id INT NOT NULL REFERENCES sims.applications (id) ON DELETE CASCADE,
+    submitted_date TIMESTAMP WITH TIME ZONE NOT NULL,
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW (),
@@ -18,6 +19,8 @@ COMMENT ON TABLE sims.student_appeals IS 'Represents as set of appeals requested
 COMMENT ON COLUMN sims.student_appeals.id IS 'Auto-generated sequential primary key column.';
 
 COMMENT ON COLUMN sims.student_appeals.application_id IS 'Application that will be changed by the appeals requested.';
+
+COMMENT ON COLUMN sims.student_appeals.submitted_date IS 'Date that the student submitted the appeals.';
 
 COMMENT ON COLUMN sims.student_appeals.created_at IS 'Record creation timestamp.';
 

@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -26,6 +27,15 @@ export class StudentAppeal extends RecordDataModel {
     (studentAssessment: StudentAppeal) => studentAssessment.application,
   )
   applicationId: number;
+  /**
+   * Date that the student submitted the appeals.
+   */
+  @Column({
+    name: "submitted_date",
+    type: "timestamptz",
+    nullable: false,
+  })
+  submittedDate: Date;
   /**
    * Application related to this student appeal.
    */
