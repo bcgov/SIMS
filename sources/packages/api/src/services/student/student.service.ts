@@ -7,7 +7,7 @@ import {
   User,
   Note,
   NoteType,
-  SINValidations,
+  SINValidation,
 } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
@@ -56,13 +56,13 @@ export class StudentService extends RecordDataModelService<Student> {
     otherInfo: CreateStudentInfo,
   ): Promise<Student> {
     let user: User;
-    const sinValidations: SINValidations[] = [];
+    const sinValidations: SINValidation[] = [];
     if (userInfo.userId) {
       user = { id: userInfo.userId } as User;
     } else {
       user = new User();
     }
-    const sinValidation = new SINValidations();
+    const sinValidation = new SINValidation();
     sinValidation.user = user;
     sinValidations.push(sinValidation);
     user.userName = userInfo.userName;
@@ -179,7 +179,13 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students pending SIN validation.
    */
   async getStudentsPendingSinValidation(): Promise<Student[]> {
-    return this.repo.find({ validSIN: null });
+    return await this.repo
+      .createQueryBuilder("student")
+      .innerJoin("student.user", "user")
+      .innerJoin("user.sinValidations", "sinValidations")
+      .where("sinValidations.isValidSIN is null")
+      .andWhere("sinValidations.dateSent is null")
+      .getMany();
   }
 
   /**

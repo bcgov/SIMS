@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { SINValidations } from ".";
+import { SINValidation } from ".";
 import { BaseModel } from "./base.model";
 
 @Entity({ name: "users" })
@@ -48,10 +48,10 @@ export class User extends BaseModel {
   /**
    * SIN Validation related to the user.
    */
-  @OneToMany(() => SINValidations, (sinValidation) => sinValidation.user, {
+  @OneToMany(() => SINValidation, (sinValidation) => sinValidation.user, {
     eager: false,
     cascade: true,
     onDelete: "CASCADE",
   })
-  sinValidations: SINValidations[];
+  sinValidations: SINValidation[];
 }

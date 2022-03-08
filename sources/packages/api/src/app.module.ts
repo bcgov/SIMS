@@ -34,6 +34,7 @@ import {
   RestrictionService,
   InstitutionRestrictionService,
   DesignationAgreementService,
+  SINValidationService,
 } from "./services";
 import {
   UserController,
@@ -147,6 +148,7 @@ import { AppAESTModule } from "./app.aest.module";
     RestrictionService,
     InstitutionRestrictionService,
     DesignationAgreementService,
+    SINValidationService,
   ],
 })
 export class AppModule {}

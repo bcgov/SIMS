@@ -1,5 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { CRAIncomeVerification, Student } from "../database/entities";
+import {
+  CRAIncomeVerification,
+  SINValidation,
+  Student,
+} from "../database/entities";
 import { EntityManager } from "typeorm";
 import { InjectLogger } from "../common";
 import { LoggerService } from "../logger/logger.service";
@@ -23,6 +27,7 @@ import {
 } from "./cra-integration.models";
 import { getUTCNow } from "../utilities";
 import * as path from "path";
+import { SINValidationService } from "../services/sin-validation/sin-validation.service";
 
 const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
@@ -43,6 +48,7 @@ export class CRAPersonalVerificationService {
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly workflowService: WorkflowActionsService,
+    private readonly sinValidationService: SINValidationService,
     config: ConfigService,
   ) {
     this.ftpResponseFolder =
@@ -79,7 +85,7 @@ export class CRAPersonalVerificationService {
     let uploadResult: CRAUploadResult;
     await this.sequenceService.consumeNextSequence(
       this.getCRAFileSequenceName(),
-      async (nextSequenceNumber: number) => {
+      async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log("Creating matching run content...");
           const fileContent = this.craService.createMatchingRunContent(
@@ -95,6 +101,13 @@ export class CRAPersonalVerificationService {
             generatedFile: fileInfo.filePath,
             uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
           };
+          // Updates the records in SIN Validation table for the particular user
+          const sinValidationRepo = entityManager.getRepository(SINValidation);
+          this.sinValidationService.updateRecordsInSentFile(
+            craRecords,
+            fileInfo.fileName,
+            sinValidationRepo,
+          );
         } catch (error) {
           this.logger.error(
             `Error while uploading content for SIN verification: ${error}`,
@@ -203,6 +216,7 @@ export class CRAPersonalVerificationService {
       surname: student.user.lastName,
       givenName: student.user.firstName,
       birthDate: student.birthDate,
+      userId: student.user.id,
       freeProjectArea,
     } as CRAPersonRecord;
   }
@@ -232,6 +246,7 @@ export class CRAPersonalVerificationService {
         surname: craIncomeVerification.supportingUser.user.lastName,
         givenName: craIncomeVerification.supportingUser.user.firstName,
         birthDate: craIncomeVerification.supportingUser.birthDate,
+        userId: craIncomeVerification.supportingUser.userId,
         freeProjectArea,
       } as CRAPersonRecord;
     }

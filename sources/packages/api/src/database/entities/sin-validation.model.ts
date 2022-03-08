@@ -13,8 +13,8 @@ import { RecordDataModel } from "./record.model";
 /**
  * SIN Validations that must be performed with CRA.
  */
-@Entity({ name: TableNames.SINValidations })
-export class SINValidations extends RecordDataModel {
+@Entity({ name: TableNames.SINValidation })
+export class SINValidation extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
@@ -74,7 +74,7 @@ export class SINValidations extends RecordDataModel {
     name: "dob_sent",
     nullable: true,
   })
-  dobSent?: string;
+  dobSent?: Date;
   /**
    * SIN is validated or not(e.g. null - SIN record is not sent for validation, true - SIN valid, false - SIN not valid).
    */
@@ -134,12 +134,12 @@ export class SINValidations extends RecordDataModel {
   /**
    * User id that requires a SIN validation.
    */
-  @RelationId((sinValidations: SINValidations) => sinValidations.user)
+  @RelationId((sinValidation: SINValidation) => sinValidation.user)
   userId: number;
   /**
    * User that requires a SIN validation.
    */
-  @ManyToOne(() => User, { eager: false, cascade: false })
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,

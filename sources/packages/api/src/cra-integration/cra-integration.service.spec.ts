@@ -8,6 +8,7 @@ import { IConfig } from "../types/config";
 import { CRAFileFooter } from "./cra-files/cra-file-footer";
 import { CRAFileIVRequestRecord } from "./cra-files/cra-file-iv-request-record";
 import SshServiceMock from "./__mocks__/SshServiceMock";
+import { createFakeUser } from "src/testHelpers/fake-entities";
 
 describe("CRAIntegrationService", () => {
   // Dependencies of the service being tested.
@@ -44,6 +45,7 @@ describe("CRAIntegrationService", () => {
         givenName: faker.name.firstName(),
         birthDate: faker.date.past(18),
         taxYear: faker.random.number({ min: 2000, max: 2030 }),
+        userId: createFakeUser().id,
         freeProjectArea: faker.random.alpha({ count: 30 }),
       },
       {
@@ -52,6 +54,7 @@ describe("CRAIntegrationService", () => {
         givenName: faker.name.firstName(),
         birthDate: faker.date.past(18),
         taxYear: faker.random.number({ min: 2000, max: 2030 }),
+        userId: createFakeUser().id,
         freeProjectArea: faker.random.alpha({ count: 30 }),
       },
     ];

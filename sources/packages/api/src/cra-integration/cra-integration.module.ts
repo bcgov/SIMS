@@ -14,6 +14,7 @@ import {
   WorkflowService,
   CRAIncomeVerificationService,
   SFASIndividualService,
+  SINValidationService,
 } from "../services";
 
 @Module({
@@ -32,6 +33,7 @@ import {
     MSFAANumberService,
     CRAIncomeVerificationService,
     SFASIndividualService,
+    SINValidationService,
   ],
   exports: [
     CRAPersonalVerificationService,
