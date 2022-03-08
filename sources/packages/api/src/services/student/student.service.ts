@@ -18,12 +18,15 @@ import { InjectLogger } from "../../common";
 import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
+import { SINValidationService } from "../sin-validation/sin-validation.service";
+import { CRAResponseStatusRecord } from "src/cra-integration/cra-files/cra-response-status-record";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     connection: Connection,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly sinValidationService: SINValidationService,
   ) {
     super(connection.getRepository(Student));
     this.logger.log("[Created]");
@@ -214,24 +217,28 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Update the SIN validation information on a student that
    * is marked with a pending validation.
-   * If the SIN validation status is already set, it needs to be
-   * set as NULL before it is processed again.
-   * @param sin
-   * @param validSIN
-   * @returns pending sin validation
+   * @param craRecord
+   * @param fileReceived
    */
   async updatePendingSinValidation(
-    sin: string,
-    validSIN: boolean,
+    craRecord: CRAResponseStatusRecord,
+    fileReceived: string,
   ): Promise<void> {
-    // Only allow updates on a student that has pending SIN validation.
-    const studentToUpdate = await this.repo.findOne({
-      sin,
-      validSIN: null,
-    });
-    if (studentToUpdate) {
-      studentToUpdate.validSIN = validSIN;
-      this.repo.save(studentToUpdate);
+    const student = await this.repo
+      .createQueryBuilder("student")
+      .select("user.id")
+      .innerJoin("student.user", "user")
+      .innerJoin("user.sinValidations", "sinValidations")
+      .where("sinValidations.isValidSIN is null")
+      .andWhere("student.sin  = :sin", { sin: craRecord.sin })
+      .andWhere("sinValidations.dateReceived is null")
+      .getOne();
+    if (student) {
+      await this.sinValidationService.updateRecordsInReceivedFile(
+        craRecord,
+        fileReceived,
+        student.user.id,
+      );
     }
   }
 

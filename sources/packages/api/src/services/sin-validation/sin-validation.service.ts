@@ -1,11 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, IsNull, Repository } from "typeorm";
-import { CRAPersonRecord } from "../../cra-integration/cra-integration.models";
+import {
+  CRAPersonRecord,
+  MatchStatusCodes,
+  RequestStatusCodes,
+} from "../../cra-integration/cra-integration.models";
 import { getUTCNow } from "../../utilities";
 import { SINValidation } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { CRAResponseStatusRecord } from "src/cra-integration/cra-files/cra-response-status-record";
 
 /**
  * Service layer for SIN Validations.
@@ -58,6 +63,44 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         },
       );
     }
+  }
+
+  /**
+   * Once the SIN Validation request file is created, updates the
+   * date that the file was uploaded.
+   * @param craPersonRecords records that are part of the generated
+   * file that must have the file sent name and date updated.
+   * @param fileSent filename sent for sin validation.
+   * @param [externalRepo] when provided, it is used instead of the
+   * local repository (this.repo). Useful when the command must be executed,
+   * for instance, as part of an existing transaction manage externally to this
+   * service.
+   * @returns the result of the update.
+   */
+  async updateRecordsInReceivedFile(
+    craRecord: CRAResponseStatusRecord,
+    fileReceived: string,
+    userId: number,
+  ) {
+    const isValidSIN =
+      craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
+      craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
+    return this.repo.update(
+      {
+        user: { id: userId },
+        dateReceived: IsNull(),
+        isValidSIN: IsNull(),
+      },
+      {
+        dateReceived: getUTCNow(),
+        fileReceived,
+        isValidSIN,
+        sinMatchStatusCode: craRecord.sinMatchStatusCode,
+        surnameMatchStatusCode: craRecord.surnameMatchStatusCode,
+        givenNameMatchStatusCode: craRecord.givenNameMatchStatusCode,
+        birthDateMatchStatusCode: craRecord.birthDateMatchStatusCode,
+      },
+    );
   }
 
   @InjectLogger()

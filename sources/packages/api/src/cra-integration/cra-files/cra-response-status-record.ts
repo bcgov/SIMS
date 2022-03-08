@@ -1,6 +1,10 @@
 import {
+  BirthDateStatusCode,
+  GivenNameStatusCode,
   MatchStatusCodes,
   RequestStatusCodes,
+  SINMatchStatusCodes,
+  SurnameStatusCode,
 } from "../cra-integration.models";
 import { CRAResponseRecordIdentification } from "./cra-response-record-identification";
 
@@ -39,6 +43,38 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    */
   public get matchStatusCode(): MatchStatusCodes {
     return this.line.substr(29, 2) as MatchStatusCodes;
+  }
+
+  /**
+   * SIN match status codes (SIN-TTN-STATUS-CODE) presents on
+   * CRA Response Record (Trans Sub Code - 0022).
+   */
+  public get sinMatchStatusCode(): SINMatchStatusCodes {
+    return this.line.substr(31, 2) as SINMatchStatusCodes;
+  }
+
+  /**
+   * GivenName match status codes (GIVEN-NAME-STATUS-CODE) presents on
+   * CRA Response Record (Trans Sub Code - 0022).
+   */
+  public get surnameMatchStatusCode(): SurnameStatusCode {
+    return this.line.substr(33, 2) as SurnameStatusCode;
+  }
+
+  /**
+   * GivenName match status codes (GIVEN-NAME-STATUS-CODE) presents on
+   * CRA Response Record (Trans Sub Code - 0022).
+   */
+  public get givenNameMatchStatusCode(): GivenNameStatusCode {
+    return this.line.substr(35, 2) as GivenNameStatusCode;
+  }
+
+  /**
+   * BirthDate match status codes (BIRTH-DATE-STATUS-CODE) presents on
+   * CRA Response Record (Trans Sub Code - 0022).
+   */
+  public get birthDateMatchStatusCode(): BirthDateStatusCode {
+    return this.line.substr(37, 2) as BirthDateStatusCode;
   }
 
   /**

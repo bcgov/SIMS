@@ -130,7 +130,7 @@ export class SINValidation extends RecordDataModel {
     name: "dob_match_status_code",
     nullable: true,
   })
-  dobMatchStatusCode?: string;
+  birthDateMatchStatusCode?: string;
   /**
    * User id that requires a SIN validation.
    */

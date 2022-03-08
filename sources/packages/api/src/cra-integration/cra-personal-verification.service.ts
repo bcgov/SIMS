@@ -325,7 +325,7 @@ export class CRAPersonalVerificationService {
         // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
         // request was made specifically for SIN validation.
         if (statusRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
-          await this.processSINStatus(statusRecord);
+          await this.processSINStatus(statusRecord, remoteFilePath);
           result.processSummary.push(
             `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
           );
@@ -376,14 +376,11 @@ export class CRAPersonalVerificationService {
    */
   private async processSINStatus(
     craRecord: CRAResponseStatusRecord,
+    fileReceived: string,
   ): Promise<void> {
-    const isValidSIN =
-      craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
-      craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
-
     await this.studentService.updatePendingSinValidation(
-      craRecord.sin,
-      isValidSIN,
+      craRecord,
+      fileReceived,
     );
   }
 
