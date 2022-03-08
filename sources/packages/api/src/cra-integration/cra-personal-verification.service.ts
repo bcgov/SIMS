@@ -102,12 +102,14 @@ export class CRAPersonalVerificationService {
             uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
           };
           // Updates the records in SIN Validation table for the particular user
+          this.logger.log("Updating the records in SIN Validation table");
           const sinValidationRepo = entityManager.getRepository(SINValidation);
           this.sinValidationService.updateRecordsInSentFile(
             craRecords,
             fileInfo.fileName,
             sinValidationRepo,
           );
+          this.logger.log("SIN Validation table Updated");
         } catch (error) {
           this.logger.error(
             `Error while uploading content for SIN verification: ${error}`,

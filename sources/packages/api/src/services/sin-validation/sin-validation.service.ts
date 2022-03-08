@@ -4,6 +4,8 @@ import { Connection, IsNull, Repository } from "typeorm";
 import { CRAPersonRecord } from "../../cra-integration/cra-integration.models";
 import { getUTCNow } from "../../utilities";
 import { SINValidation } from "../../database/entities";
+import { InjectLogger } from "../../common";
+import { LoggerService } from "../../logger/logger.service";
 
 /**
  * Service layer for SIN Validations.
@@ -37,6 +39,9 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           "User Id is not provided to update the SIN Validation records.",
         );
       }
+      this.logger.log(
+        `SIN Validation table update for user: ${craPersonRecord.userId}`,
+      );
       const repository = externalRepo ?? this.repo;
       return repository.update(
         {
@@ -54,4 +59,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       );
     }
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
