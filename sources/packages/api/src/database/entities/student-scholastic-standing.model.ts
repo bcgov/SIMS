@@ -51,6 +51,24 @@ export class StudentScholasticStanding extends RecordDataModel {
   })
   submittedData: any;
   /**
+   * Date that the Institution user submitted the scholastic standing.
+   */
+  @Column({
+    name: "submitted_date",
+    type: "timestamptz",
+    nullable: false,
+  })
+  submittedDate: Date;
+  /**
+   * Institution user that submitted the scholastic standing.
+   */
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
+  @JoinColumn({
+    name: "submitted_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  submittedBy: User;
+  /**
    * Dynamic form data that represents the final data revised by the Ministry.
    */
   @Column({

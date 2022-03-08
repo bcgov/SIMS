@@ -2,10 +2,14 @@ CREATE TABLE IF NOT EXISTS sims.student_scholastic_standings (
   id SERIAL PRIMARY KEY,
   application_id INT NOT NULL REFERENCES sims.applications(id) ON DELETE CASCADE,
   submitted_data jsonb NOT NULL,
-  approved_data jsonb,
-  scholastic_standing_status sims.scholastic_standing_status NOT NULL,
-  assessed_date TIMESTAMP WITH TIME ZONE,
-  assessed_by INT REFERENCES sims.users(id) ON DELETE
+  submitted_by INT NOT NULL REFERENCES sims.users(id) ON DELETE
+  SET
+    NULL,
+    submitted_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    scholastic_standing_status sims.scholastic_standing_status NOT NULL,
+    approved_data jsonb,
+    assessed_date TIMESTAMP WITH TIME ZONE,
+    assessed_by INT REFERENCES sims.users(id) ON DELETE
   SET
     NULL,
     note_id INT REFERENCES sims.notes(id) ON DELETE
@@ -31,7 +35,7 @@ COMMENT ON COLUMN sims.student_scholastic_standings.application_id IS 'Student A
 
 COMMENT ON COLUMN sims.student_scholastic_standings.submitted_data IS 'Dynamic form data that represents the scholastic standing change requested by the Institution.';
 
-COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
+COMMENT ON COLUMN sims.student_scholastic_standings.submitted_by IS 'Institution user that submitted the scholastic standing.' COMMENT ON COLUMN sims.student_scholastic_standings.submitted_date IS 'Date that the Institution user submitted the scholastic standing.' COMMENT ON COLUMN sims.student_scholastic_standings.approved_data IS 'Dynamic form data that represents the final data revised by the Ministry.';
 
 COMMENT ON COLUMN sims.student_scholastic_standings.scholastic_standing_status IS 'Status of the current request (e.g. Pending, Approved, Denied).';
 

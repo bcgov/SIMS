@@ -11,6 +11,7 @@ import {
   AssessmentStatus,
   EducationProgramOffering,
   StudentAppeal,
+  User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { AssessmentTriggerType } from "./assessment-trigger.type";
@@ -48,6 +49,24 @@ export class StudentAssessment extends RecordDataModel {
   })
   application: Application;
   /**
+   * Date that the assessment was submitted.
+   */
+  @Column({
+    name: "submitted_date",
+    type: "timestamptz",
+    nullable: false,
+  })
+  submittedDate: Date;
+  /**
+   * Users that causes the assessment to be submitted.
+   */
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
+  @JoinColumn({
+    name: "submitted_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  submittedBy: User;
+  /**
    * Workflow instance that processed this assessment.
    */
   @Column({
@@ -65,6 +84,15 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   assessmentData?: Assessment;
+  /**
+   * Date that the assessment was processed and the assessmentData was saved.
+   */
+  @Column({
+    name: "assessment_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  assessmentDate?: Date;
   /**
    * Identifies what was the reason to the assessment happen. Usually one completed
    * Student Application will have only one record of type "Original assessment".
