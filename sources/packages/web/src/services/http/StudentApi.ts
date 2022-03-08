@@ -6,6 +6,8 @@ import {
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
+  StudentFileUploaderDto,
+  StudentUploadFileDto,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -148,5 +150,26 @@ export class StudentApi extends HttpBaseClient {
   public async getStudentDetail(studentId: number): Promise<StudentDetail> {
     const response = await this.getCall(`students/${studentId}/aest`);
     return response.data as StudentDetail;
+  }
+
+  /**
+   * save student files from student form uploader.
+   * @param studentFilesPayload
+   */
+  async saveStudentFiles(
+    studentFilesPayload: StudentFileUploaderDto,
+  ): Promise<void> {
+    await this.patchCall<StudentFileUploaderDto>(
+      "students/upload-files",
+      studentFilesPayload,
+    );
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return StudentUploadFileDto[] list of student documents
+   */
+  async getStudentFiles(): Promise<StudentUploadFileDto[]> {
+    return this.getCallTyped<StudentUploadFileDto[]>("students/documents");
   }
 }

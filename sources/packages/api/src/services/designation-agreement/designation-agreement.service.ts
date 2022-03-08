@@ -7,9 +7,14 @@ import {
   DesignationAgreementStatus,
   Institution,
   InstitutionLocation,
+  Note,
+  NoteType,
   User,
 } from "../../database/entities";
-import { SortPriority } from "../../utilities";
+import {
+  UpdateDesignation,
+  UpdateDesignationLocation,
+} from "../../route-controllers/designation-agreement/models/designation-agreement.model";
 
 /**
  * Manages the operations needed for designation agreements that are submitted by the institutions
@@ -18,7 +23,7 @@ import { SortPriority } from "../../utilities";
  */
 @Injectable()
 export class DesignationAgreementService extends RecordDataModelService<DesignationAgreement> {
-  constructor(connection: Connection) {
+  constructor(private readonly connection: Connection) {
     super(connection.getRepository(DesignationAgreement));
   }
 
@@ -69,33 +74,47 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
    * the associated locations approvals.
    * @param designationId designation id.
    * @param institutionId institution id.
+   * This value is passed only for client type Institution.
    * @returns designation agreement information.
    */
   async getInstitutionDesignationById(
     designationId: number,
-    institutionId: number,
+    institutionId?: number,
   ): Promise<DesignationAgreement> {
-    return this.repo
+    const designationQuery = this.repo
       .createQueryBuilder("designation")
       .select([
         "designation.id",
         "designation.designationStatus",
         "designation.submittedData",
+        "designation.startDate",
+        "designation.endDate",
         "designationLocation.id",
         "designationLocation.requested",
         "designationLocation.approved",
         "location.id",
         "location.name",
         "location.data",
+        "institution.id",
+        "institution.legalOperatingName",
+        "institutionType.id",
+        "institutionType.name",
       ])
       .innerJoin(
         "designation.designationAgreementLocations",
         "designationLocation",
       )
       .innerJoin("designationLocation.institutionLocation", "location")
-      .where("designation.id = :designationId", { designationId })
-      .andWhere("location.institution.id = :institutionId", { institutionId })
-      .getOne();
+      .innerJoin("designation.institution", "institution")
+      .innerJoin("institution.institutionType", "institutionType")
+      .where("designation.id = :designationId", { designationId });
+    if (institutionId) {
+      designationQuery.andWhere("location.institution.id = :institutionId", {
+        institutionId,
+      });
+    }
+
+    return designationQuery.getOne();
   }
 
   /**
@@ -106,26 +125,23 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
   async getInstitutionDesignationsById(
     institutionId: number,
   ): Promise<DesignationAgreement[]> {
-    return this.repo
-      .createQueryBuilder("designation")
-      .select([
-        "designation.id",
-        "designation.designationStatus",
-        "designation.submittedDate",
-        "designation.startDate",
-        "designation.endDate",
-      ])
-      .where("designation.institution.id = :institutionId", { institutionId })
-      .orderBy(
-        `CASE designation.designationStatus
-            WHEN '${DesignationAgreementStatus.Pending}' THEN ${SortPriority.Priority1}
-            WHEN '${DesignationAgreementStatus.Approved}' THEN ${SortPriority.Priority2}
-            WHEN '${DesignationAgreementStatus.Declined}' THEN ${SortPriority.Priority3}
-            ELSE ${SortPriority.Priority4}
-          END`,
-      )
-      .addOrderBy("designation.submittedDate", "DESC")
-      .getMany();
+    return this.getDesignationSummaryByFilter("institution.id", institutionId);
+  }
+
+  /**
+   * Service to get all designations by status.
+   * @param searchCriteria
+   * @returns designation summary.
+   */
+  async getDesignationAgreementsByStatus(
+    designationStatus: DesignationAgreementStatus,
+    searchCriteria: string,
+  ): Promise<DesignationAgreement[]> {
+    return this.getDesignationSummaryByFilter(
+      "designation.designationStatus",
+      designationStatus,
+      searchCriteria,
+    );
   }
 
   /**
@@ -146,5 +162,167 @@ export class DesignationAgreementService extends RecordDataModelService<Designat
       .limit(1)
       .getRawOne();
     return !!found;
+  }
+
+  /**
+   * Service to get designation agreement which is eligible for update.
+   * @param designationId
+   * @returns flag that indicates if the designationId is valid data.
+   */
+  async getDesignationForUpdate(
+    designationId: number,
+  ): Promise<DesignationAgreement> {
+    return this.repo
+      .createQueryBuilder("designation")
+      .select([
+        "designation.id",
+        "designationAgreementLocations.id",
+        "location.id",
+        "institution.id",
+      ])
+      .innerJoin(
+        "designation.designationAgreementLocations",
+        "designationAgreementLocations",
+      )
+      .innerJoin(
+        "designationAgreementLocations.institutionLocation",
+        "location",
+      )
+      .innerJoin("designation.institution", "institution")
+      .where("designation.id = :designationId", { designationId })
+      .andWhere("designation.designationStatus != :designationStatus", {
+        designationStatus: DesignationAgreementStatus.Declined,
+      })
+      .getOne();
+  }
+
+  /**
+   * Update designation for Approval/Denial or re-approve.
+   * @param designationId Designation which is going to be updated.
+   * @param userId User who updates the designation.
+   * @param designationPayload update payload.
+   */
+  async updateDesignation(
+    designationId: number,
+    institutionId: number,
+    userId: number,
+    designationPayload: UpdateDesignation,
+    designationLocations: DesignationAgreementLocation[],
+  ): Promise<void> {
+    const designation = new DesignationAgreement();
+    designation.id = designationId;
+    designation.designationStatus = designationPayload.designationStatus;
+    designation.startDate = designationPayload.startDate;
+    designation.endDate = designationPayload.endDate;
+    designation.assessedBy = { id: userId } as User;
+    designation.assessedDate = new Date();
+    if (
+      designationPayload.designationStatus ===
+      DesignationAgreementStatus.Approved
+    ) {
+      designation.designationAgreementLocations =
+        this.buildDesignationLocations(
+          designationPayload.locationsDesignations,
+          designationLocations,
+          userId,
+        );
+    }
+
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager
+        .getRepository(DesignationAgreement)
+        .save(designation);
+
+      const note = new Note();
+      note.noteType = NoteType.Designation;
+      note.description = designationPayload.note;
+      note.creator = { id: userId } as User;
+
+      const updateNote = await transactionalEntityManager
+        .getRepository(Note)
+        .save(note);
+
+      await transactionalEntityManager
+        .getRepository(Institution)
+        .createQueryBuilder()
+        .relation(Institution, "notes")
+        .of({ id: institutionId } as Institution)
+        .add(updateNote);
+    });
+  }
+  /**
+   * Private service method that retrieves designation summary
+   * based on the given filter.
+   * Any query for designations list with single criteria can be
+   * sufficed by this filter method.
+   * @param filterColumn
+   * @param filterValue
+   * @param searchCriteria
+   * @returns designation summary.
+   */
+  private async getDesignationSummaryByFilter(
+    filterColumn: string,
+    filterValue: number | string,
+    searchCriteria?: string,
+  ): Promise<DesignationAgreement[]> {
+    const designationQuery = this.repo
+      .createQueryBuilder("designation")
+      .select([
+        "designation.id",
+        "designation.designationStatus",
+        "designation.submittedDate",
+        "designation.startDate",
+        "designation.endDate",
+        "institution.legalOperatingName",
+      ])
+      .innerJoin("designation.institution", "institution")
+      .where(`${filterColumn} = :filterValue`, { filterValue });
+    if (searchCriteria) {
+      designationQuery.andWhere(
+        "institution.legalOperatingName Ilike :searchCriteria",
+        { searchCriteria: `%${searchCriteria}%` },
+      );
+    }
+    return designationQuery
+      .orderBy("designation.designationStatus", "ASC")
+      .addOrderBy("designation.submittedDate", "DESC")
+      .getMany();
+  }
+
+  /**
+   * Private method to build designation locations for update.
+   * This builder is only for designation Approval.
+   * @param locationsDesignations
+   * @param designationLocations
+   * @param userId
+   * @returns Designation locations for approval.
+   */
+  private buildDesignationLocations(
+    locationsDesignations: UpdateDesignationLocation[],
+    designationLocations: DesignationAgreementLocation[],
+    userId: number,
+  ): DesignationAgreementLocation[] {
+    return locationsDesignations.map(
+      (locationPayload: UpdateDesignationLocation) => {
+        const location = new DesignationAgreementLocation();
+
+        location.approved = locationPayload.approved;
+        location.institutionLocation = {
+          id: locationPayload.locationId,
+        } as InstitutionLocation;
+        location.creator = { id: userId } as User;
+        location.requested = false;
+        const designationLocation = designationLocations.find(
+          (item) => item.institutionLocation.id === locationPayload.locationId,
+        );
+        if (designationLocation) {
+          location.id = designationLocation.id;
+          location.creator = undefined;
+          location.requested = undefined;
+        }
+        location.modifier = { id: userId } as User;
+        return location;
+      },
+    );
   }
 }

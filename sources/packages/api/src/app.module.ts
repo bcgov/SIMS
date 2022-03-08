@@ -33,7 +33,6 @@ import {
   DisbursementScheduleErrorsService,
   RestrictionService,
   InstitutionRestrictionService,
-  DesignationAgreementService,
 } from "./services";
 import {
   UserController,
@@ -59,7 +58,6 @@ import {
   FedRestrictionsIntegrationController,
   NotesController,
   RestrictionController,
-  DesignationAgreementController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -69,6 +67,8 @@ import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.modul
 import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { AppAESTModule } from "./app.aest.module";
+import { AppInstitutionModule } from "./app.institution.module";
+import { ClientTypeBaseRoute } from "./types";
 
 @Module({
   imports: [
@@ -81,9 +81,14 @@ import { AppAESTModule } from "./app.aest.module";
     ECertFullTimeIntegrationModule,
     FedRestrictionIntegrationModule,
     AppAESTModule,
+    AppInstitutionModule,
     RouterModule.register([
       {
-        path: "aest",
+        path: ClientTypeBaseRoute.Institution,
+        module: AppInstitutionModule,
+      },
+      {
+        path: ClientTypeBaseRoute.AEST,
         module: AppAESTModule,
       },
     ]),
@@ -113,7 +118,6 @@ import { AppAESTModule } from "./app.aest.module";
     FedRestrictionsIntegrationController,
     NotesController,
     RestrictionController,
-    DesignationAgreementController,
   ],
   providers: [
     AppService,
@@ -146,7 +150,6 @@ import { AppAESTModule } from "./app.aest.module";
     DisbursementScheduleErrorsService,
     RestrictionService,
     InstitutionRestrictionService,
-    DesignationAgreementService,
   ],
 })
 export class AppModule {}

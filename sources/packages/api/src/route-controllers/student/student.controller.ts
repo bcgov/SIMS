@@ -24,6 +24,7 @@ import {
   EducationProgramService,
   FormService,
   StudentRestrictionService,
+  APPLICATION_NOT_FOUND,
 } from "../../services";
 import {
   FileCreateDto,
@@ -33,6 +34,8 @@ import {
   SaveStudentDto,
   StudentRestrictionDTO,
   StudentDetailDTO,
+  StudentFileUploaderDto,
+  StudentUploadFileDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -40,7 +43,7 @@ import BaseController from "../BaseController";
 import { StudentInfo } from "../../types/studentInfo";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ATBCCreateClientPayload } from "../../types";
+import { ApiProcessError, ATBCCreateClientPayload } from "../../types";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
 import { StudentApplicationAndCount } from "../application/models/application.model";
@@ -60,13 +63,11 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
-
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
 // 3 means 'the file' + uniqueFileName + group.
 const MAX_UPLOAD_PARTS = 3;
-
 @Controller("students")
 export class StudentController extends BaseController {
   constructor(
@@ -465,9 +466,7 @@ export class StudentController extends BaseController {
       userToken.userId,
     );
     if (!existingStudent) {
-      throw new NotFoundException(
-        `No student was found with the student id ${userToken.userId}`,
-      );
+      throw new NotFoundException("Student not found");
     }
     const applicationsAndCount =
       await this.applicationService.getAllStudentApplications(
@@ -578,5 +577,80 @@ export class StudentController extends BaseController {
       pdStatus: determinePDStatus(student),
       hasRestriction: studentRestrictionStatus.hasRestriction,
     } as StudentDetailDTO;
+  }
+
+  /**
+   * This controller save the student files submitted
+   * via student uploader form.
+   *  All the file uploaded are first saved as temporary
+   * file in the db.when this controller/api is called
+   * during form submission, the temporary files
+   * (saved during the upload) are update to its proper
+   * group,file_origin and add the metadata (if available).
+   * @Body payload
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Patch("upload-files")
+  async saveStudentUploadedFiles(
+    @UserToken() userToken: IUserToken,
+    @Body() payload: StudentFileUploaderDto,
+  ): Promise<void> {
+    const existingStudent = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException("Student Not found");
+    }
+    if (payload.submittedForm.applicationNumber) {
+      // Here we are checking the existence of an application irrespective of its status
+      const validApplication =
+        await this.applicationService.doesApplicationExist(
+          payload.submittedForm.applicationNumber,
+          existingStudent.id,
+        );
+
+      if (!validApplication) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Application number not found",
+            APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+    }
+    // All the file uploaded are first saved as temporary file in the db.
+    // when this controller/api is called during form submission, the temporary
+    // files (saved during the upload) are update to its proper group,file_origin
+    //  and add the metadata (if available)
+    await this.fileService.updateStudentFiles(
+      existingStudent.id,
+      payload.associatedFiles,
+      payload.submittedForm,
+    );
+  }
+
+  /**
+   * This controller returns all student documents uploaded
+   * by student uploader
+   * @returns list of student documents
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get("documents")
+  async getStudentFiles(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentUploadFileDto[]> {
+    const existingStudent = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException("Student Not found");
+    }
+    const studentDocuments = await this.fileService.getStudentUploadedFiles(
+      existingStudent.id,
+    );
+    return studentDocuments.map((studentDocument) => ({
+      fileName: studentDocument.fileName,
+      uniqueFileName: studentDocument.uniqueFileName,
+    }));
   }
 }

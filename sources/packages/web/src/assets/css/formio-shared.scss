@@ -276,8 +276,21 @@
 * TODO: This style has been added as v-dialog is not being responsive. 
 * Once This bug is resolved in Vuetify3, this style can be removed.
 */
-.restriction-modal {
+.temporary-modal {
   min-width: 600px;
+  max-height: 700px;
+  overflow: auto;
+}
+
+/**
+* This style is exclusively for locations grid in
+* approve designation modal.
+*/
+.locations-grid .table td,
+.locations-grid .table-bordered {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border: none;
 }
 
 .form-status-badge {

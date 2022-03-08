@@ -6,3 +6,24 @@
   border-radius: 10px;
   word-wrap: break-word;
 }
+
+.document-box {
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  font-weight: $font-weight-bold;
+
+  /* White */
+  background: $color-white;
+
+  /* Brand Primary */
+  border: 1px solid $brand-blue;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.file-label {
+  word-break: break-all;
+  color: $brand-blue;
+  cursor: pointer;
+}

@@ -1,9 +1,6 @@
 <template>
   <content-group>
-    <toggle-content
-      :toggled="!designations.length"
-      message="You don’t have any agreements yet"
-    >
+    <toggle-content :toggled="!designations.length" :message="toggleMessage">
       <DataTable
         :value="designations"
         :paginator="true"
@@ -36,6 +33,7 @@
           <template #body="slotProps">
             <v-btn
               outlined
+              :color="COLOR_BLUE"
               @click="goToViewDesignation(slotProps.data.designationId)"
             >
               View
@@ -46,7 +44,7 @@
       <template #image>
         <v-img
           height="200"
-          alt="You don’t have any agreements yet"
+          alt="You don't have any agreements yet"
           src="@/assets/images/designation_summary.svg"
         />
       </template>
@@ -65,6 +63,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
 import { SetupContext } from "vue";
+import { COLOR_BLUE } from "@/constants";
 
 export default {
   emits: ["viewDesignation"],
@@ -76,6 +75,10 @@ export default {
   props: {
     designations: {
       type: Object,
+      required: true,
+    },
+    toggleMessage: {
+      type: String,
       required: true,
     },
   },
@@ -94,6 +97,7 @@ export default {
       DEFAULT_PAGE_LIMIT,
       DEFAULT_PAGE_NUMBER,
       PAGINATION_LIST,
+      COLOR_BLUE,
     };
   },
 };

@@ -76,8 +76,12 @@ export default {
   },
   setup(props: any) {
     const educationProgram = ref({} as EducationProgramData);
-    const approveProgramModal = ref({} as ModalDialog<ApproveProgram>);
-    const declineProgramModal = ref({} as ModalDialog<DeclineProgram>);
+    const approveProgramModal = ref(
+      {} as ModalDialog<ApproveProgram | undefined>,
+    );
+    const declineProgramModal = ref(
+      {} as ModalDialog<DeclineProgram | undefined>,
+    );
     const toast = useToastMessage();
 
     const getEducationProgramAndOffering = async () => {
@@ -112,7 +116,7 @@ export default {
 
     const approveProgram = async () => {
       const approveProgramData = await approveProgramModal.value.showModal();
-      await submitApproveProgram(approveProgramData);
+      if (approveProgramData) await submitApproveProgram(approveProgramData);
     };
 
     const submitDeclineProgram = async (declineProgramData: DeclineProgram) => {
@@ -137,7 +141,7 @@ export default {
 
     const declineProgram = async () => {
       const declineProgramData = await declineProgramModal.value.showModal();
-      await submitDeclineProgram(declineProgramData);
+      if (declineProgramData) await submitDeclineProgram(declineProgramData);
     };
 
     onMounted(getEducationProgramAndOffering);

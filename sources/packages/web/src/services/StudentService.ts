@@ -13,6 +13,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   FieldSortOrder,
+  StudentFileUploaderDto,
+  StudentUploadFileDto,
 } from "@/types";
 
 export class StudentService {
@@ -121,5 +123,40 @@ export class StudentService {
    */
   async getStudentDetail(studentId: number): Promise<StudentDetail> {
     return ApiClient.Students.getStudentDetail(studentId);
+  }
+
+  /**
+   * save student files from student form uploader.
+   * @param studentFilesPayload
+   */
+  async saveStudentFiles(
+    studentFilesPayload: StudentFileUploaderDto,
+  ): Promise<void> {
+    await ApiClient.Students.saveStudentFiles(studentFilesPayload);
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return StudentUploadFileDto[] list of student documents
+   */
+  async getStudentFiles(): Promise<StudentUploadFileDto[]> {
+    return ApiClient.Students.getStudentFiles();
+  }
+
+  /**
+   * This method is to get the requested student document.
+   * `FileUpload.download` will return the blob object of
+   * the requested file upon proper authentication.
+   * and with blob object, blob url is created for the href,
+   * and its is returned
+   * @param uniqueFileName uniqueFileName
+   * @return blob url for href (DOMString containing a URL
+   * representing the object given in the parameter)
+   */
+  async downloadStudentFile(uniqueFileName: string): Promise<string> {
+    const blobObject = await ApiClient.FileUpload.download(
+      `students/files/${uniqueFileName}`,
+    );
+    return window.URL.createObjectURL(blobObject);
   }
 }

@@ -18,4 +18,8 @@ export enum NoteType {
    * Note type Program.
    */
   Program = "Program",
+  /**
+   * Note type Designation.
+   */
+  Designation = "Designation",
 }

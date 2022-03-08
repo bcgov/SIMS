@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection } from "typeorm";
+import { Connection, In, UpdateResult } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import { StudentFile, Student } from "../../database/entities";
 import { CreateFile } from "./student-file.model";
+import { FileOriginType } from "../../database/entities/student-file.type";
+import { StudentFileUploaderForm } from "../../route-controllers/student/models/student.dto";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -79,6 +81,48 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .getMany();
   }
 
+  /**
+   * Update the files submitted by the student
+   * with proper data.
+   * @param studentId student id.
+   * @param uniqueFileNames list of unique file names.
+   */
+  async updateStudentFiles(
+    studentId: number,
+    uniqueFileNames: string[],
+    submittedData: StudentFileUploaderForm,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        student: { id: studentId } as Student,
+        uniqueFileName: In(uniqueFileNames),
+      },
+      {
+        groupName: submittedData.documentPurpose,
+        fileOrigin: FileOriginType.Student,
+        metadata: submittedData.applicationNumber
+          ? { applicationNumber: submittedData.applicationNumber }
+          : null,
+      },
+    );
+  }
+
+  /**
+   * Gets a list of student files uploaded via student Uploader
+   * (i.e, fileOrigin is FileOriginType.Student).
+   * @param studentId student id.
+   * @returns student files
+   */
+  async getStudentUploadedFiles(studentId: number): Promise<StudentFile[]> {
+    return this.repo
+      .createQueryBuilder("studentFile")
+      .where("studentFile.student.id = :studentId", { studentId })
+      .andWhere("studentFile.fileOrigin = :fileOrigin", {
+        fileOrigin: FileOriginType.Student,
+      })
+      .select(["studentFile.uniqueFileName", "studentFile.fileName"])
+      .getMany();
+  }
   @InjectLogger()
   logger: LoggerService;
 }

@@ -79,3 +79,27 @@ export interface StudentDetailDTO {
   pdStatus: StudentPDStatus;
   hasRestriction: boolean;
 }
+
+/**
+ *  Student uploader interface
+ */
+export interface StudentFileUploaderForm {
+  documentPurpose: string;
+  applicationNumber?: string;
+}
+
+/**
+ *  Student uploader interface
+ */
+export interface StudentFileUploaderDto {
+  submittedForm: StudentFileUploaderForm;
+  associatedFiles: string[];
+}
+
+/**
+ *  Student uploaded documents (i.e, FileOriginType.Student documents)
+ */
+export interface StudentUploadFileDto {
+  fileName: string;
+  uniqueFileName: string;
+}

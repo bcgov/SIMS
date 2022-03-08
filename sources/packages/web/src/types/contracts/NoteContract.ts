@@ -36,6 +36,10 @@ export enum InstitutionNoteType {
    * Note type Program.
    */
   Program = "Program",
+  /**
+   * Note type Designation.
+   */
+  Designation = "Designation",
 }
 
 /**

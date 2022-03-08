@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
-export class StudentPDStatusFields1626292228508 implements MigrationInterface {
+export class AddNoteTypeDesignation1646074191527 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-StudentPDStatusFields.sql", "Student"),
+      getSQLFileData("Add-note-type-designation.sql", "Types"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Remove-StudentPDStatusFields", "Student"),
+      getSQLFileData("Drop-note-type-designation.sql", "Types"),
     );
   }
 }
