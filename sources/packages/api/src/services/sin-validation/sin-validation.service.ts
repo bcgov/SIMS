@@ -89,12 +89,15 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       {
         user: { id: userId },
         dateReceived: IsNull(),
+        fileReceived: IsNull(),
         isValidSIN: IsNull(),
       },
       {
         dateReceived: getUTCNow(),
         fileReceived,
         isValidSIN,
+        requestStatusCode: craRecord.requestStatusCode,
+        matchStatusCode: craRecord.matchStatusCode,
         sinMatchStatusCode: craRecord.sinMatchStatusCode,
         surnameMatchStatusCode: craRecord.surnameMatchStatusCode,
         givenNameMatchStatusCode: craRecord.givenNameMatchStatusCode,
