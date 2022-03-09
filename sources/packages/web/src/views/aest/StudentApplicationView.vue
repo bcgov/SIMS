@@ -17,42 +17,39 @@
           : ""
       }}
     </h2>
-    <formio
+    <StudentApplication
       :formName="selectedForm"
       :data="initialData"
       :readOnly="true"
-      @loaded="formLoaded"
-    ></formio>
-    <v-row>
-      <v-col md="6">
-        <v-btn
-          color="primary"
-          v-show="!isFirstPage"
-          outlined
-          @click="wizardGoPrevious()"
-          >Previous section</v-btn
-        >
-      </v-col>
-      <v-col md="6" class="ml-auto text-right">
-        <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext()"
-          >Next section</v-btn
-        >
-      </v-col>
-    </v-row>
+      @loaded="loadForm"
+    />
+    <StudentApplicationCommonActions
+      :isFirstPage="isFirstPage"
+      :isLastPage="isLastPage"
+      @wizardGoPrevious="wizardGoPrevious"
+      @wizardGoNext="wizardGoNext"
+    />
   </full-page-container>
   <router-view />
 </template>
 <script lang="ts">
 import { onMounted, ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { GetApplicationBaseDTO, WizardNavigationEvent } from "@/types";
+import { GetApplicationBaseDTO } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import formio from "@/components/generic/formio.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { useStudentApplication } from "@/composables";
+import StudentApplication from "@/components/common/StudentApplication.vue";
+import StudentApplicationCommonActions from "@/components/common/StudentApplicationCommonActions.vue";
 
 export default {
-  components: { FullPageContainer, formio, HeaderNavigator },
+  components: {
+    FullPageContainer,
+    HeaderNavigator,
+    StudentApplication,
+    StudentApplicationCommonActions,
+  },
   props: {
     studentId: {
       type: Number,
@@ -69,7 +66,12 @@ export default {
     const selectedForm = ref();
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
-    let applicationWizard: any;
+    // TODO:ANN- CHECK HERE THE PROGRAMYEARID, 2ND parametre of useStudentApplication
+    const {
+      formLoaded,
+      wizardGoPrevious,
+      wizardGoNext,
+    } = useStudentApplication(true, 1);
 
     onMounted(async () => {
       applicationDetail.value = await ApplicationService.shared.getApplicationDetail(
@@ -80,36 +82,17 @@ export default {
       initialData.value = applicationDetail.value.data;
     });
 
-    const formLoaded = (form: any) => {
-      applicationWizard = form;
-
-      applicationWizard.on("wizardPageSelected", (page: any, index: number) => {
-        isFirstPage.value = index === 0;
-        isLastPage.value = applicationWizard.isLastPage();
-      });
-      // Handle the navigation using next/prev buttons.
-      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
-        isFirstPage.value = navigation.page === 0;
-        isLastPage.value = applicationWizard.isLastPage();
-      };
-      applicationWizard.on("prevPage", prevNextNavigation);
-      applicationWizard.on("nextPage", prevNextNavigation);
+    const loadForm = (form: any) => {
+      formLoaded(form);
     };
 
-    const wizardGoPrevious = () => {
-      applicationWizard.prevPage();
-    };
-
-    const wizardGoNext = () => {
-      applicationWizard.nextPage();
-    };
     return {
       applicationDetail,
       initialData,
       selectedForm,
       isFirstPage,
       isLastPage,
-      formLoaded,
+      loadForm,
       wizardGoPrevious,
       wizardGoNext,
       AESTRoutesConst,
