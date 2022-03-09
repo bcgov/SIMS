@@ -254,7 +254,7 @@ export class StudentService extends RecordDataModelService<Student> {
           .innerJoin("sinValidations.user", "user")
           .update<SINValidation>(SINValidation)
           .set({
-            dateReceived: getUTCNow(),
+            dateReceived: new Date(),
             fileReceived,
             isValidSIN,
             requestStatusCode: craRecord.requestStatusCode,

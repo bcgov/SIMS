@@ -382,8 +382,8 @@ export class CRAPersonalVerificationService {
     craRecord: CRAResponseStatusRecord,
     fileReceived: string,
   ): Promise<void> {
-    // The id to be used to find and update the CRA income verification record
-    // must be on the 'freeProjectArea' (e.g. VERIFICATION_ID:12345) that was
+    // The id to be used to find and update the SIN validation record
+    // must be on the 'freeProjectArea' (e.g. STUDENT_SIN_VALIDATION:12345) that was
     // generated during the file creation to execute the request to CRA.
     const verificationId = this.getIdFromVerificationIdTag(
       craRecord.freeProjectArea,

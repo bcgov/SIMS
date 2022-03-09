@@ -17,7 +17,7 @@ import { CRAResponseRecordIdentification } from "./cra-response-record-identific
  * that comprise the response file, what means that it
  * will be present whatever there is a need from a SIN
  * validation or a complete income verification.
- * Please note that the numbers below (e.g. line.substr(25, 2))
+ * Please note that the numbers below (e.g. line.substring(25, 2))
  * represents the position of the information in a fixed text file format.
  * The documentation about it is available on the document
  * 'Income Verification Data Exchange Technical Guide BC'.
@@ -32,7 +32,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * Named as REQUEST-STATUS-CODE on CRA documentation.
    */
   public get requestStatusCode(): RequestStatusCodes {
-    return this.line.substr(25, 2) as RequestStatusCodes;
+    return this.line.substring(25, 2) as RequestStatusCodes;
   }
 
   /**
@@ -42,7 +42,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * Named as MATCH-STATUS-CODE on CRA documentation.
    */
   public get matchStatusCode(): MatchStatusCodes {
-    return this.line.substr(29, 2) as MatchStatusCodes;
+    return this.line.substring(29, 2) as MatchStatusCodes;
   }
 
   /**
@@ -50,7 +50,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * CRA Response Record (Trans Sub Code - 0022).
    */
   public get sinMatchStatusCode(): SINMatchStatusCodes {
-    return this.line.substr(31, 2) as SINMatchStatusCodes;
+    return this.line.substring(31, 2) as SINMatchStatusCodes;
   }
 
   /**
@@ -58,7 +58,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * CRA Response Record (Trans Sub Code - 0022).
    */
   public get surnameMatchStatusCode(): SurnameStatusCode {
-    return this.line.substr(33, 2) as SurnameStatusCode;
+    return this.line.substring(33, 2) as SurnameStatusCode;
   }
 
   /**
@@ -66,7 +66,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * CRA Response Record (Trans Sub Code - 0022).
    */
   public get givenNameMatchStatusCode(): GivenNameStatusCode {
-    return this.line.substr(35, 2) as GivenNameStatusCode;
+    return this.line.substring(35, 2) as GivenNameStatusCode;
   }
 
   /**
@@ -74,7 +74,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * CRA Response Record (Trans Sub Code - 0022).
    */
   public get birthDateMatchStatusCode(): BirthDateStatusCode {
-    return this.line.substr(37, 2) as BirthDateStatusCode;
+    return this.line.substring(37, 2) as BirthDateStatusCode;
   }
 
   /**
@@ -84,7 +84,7 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * Named as INACTIVE-CRA-INDIVIDUAL-CODE on CRA documentation.
    */
   public get inactiveCode(): MatchStatusCodes {
-    return this.line.substr(39, 2) as MatchStatusCodes;
+    return this.line.substring(39, 2) as MatchStatusCodes;
   }
 
   /**
@@ -94,6 +94,6 @@ export class CRAResponseStatusRecord extends CRAResponseRecordIdentification {
    * Named as IV-RECORD-IDENTIFICATION-FIELD on CRA documentation.
    */
   public get freeProjectArea(): string {
-    return this.line.substr(41, 30).trim();
+    return this.line.substring(41, 30).trim();
   }
 }

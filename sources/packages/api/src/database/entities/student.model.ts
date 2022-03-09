@@ -79,7 +79,7 @@ export class Student extends RecordDataModel {
 
   @OneToOne(() => SINValidation, { eager: false, cascade: true })
   @JoinColumn({
-    name: "sin_validations_id",
+    name: "sin_validation_id",
     referencedColumnName: ColumnNames.ID,
   })
   sinValidation: SINValidation;

@@ -50,7 +50,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           dateReceived: IsNull(),
         },
         {
-          dateSent: getUTCNow(),
+          dateSent: new Date(),
           fileSent,
           givenNameSent: craPersonRecord.givenName,
           surnameSent: craPersonRecord.surname,

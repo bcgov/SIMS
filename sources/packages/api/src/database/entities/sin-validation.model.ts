@@ -13,7 +13,7 @@ import { RecordDataModel } from "./record.model";
 /**
  * SIN Validations that must be performed with CRA.
  */
-@Entity({ name: TableNames.SINValidation })
+@Entity({ name: TableNames.SINValidations })
 export class SINValidation extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
@@ -24,6 +24,7 @@ export class SINValidation extends RecordDataModel {
   @Column({
     name: "date_sent",
     nullable: true,
+    type: "timestamptz",
   })
   dateSent?: Date;
   /**
@@ -33,6 +34,7 @@ export class SINValidation extends RecordDataModel {
   @Column({
     name: "date_received",
     nullable: true,
+    type: "timestamptz",
   })
   dateReceived?: Date;
   /**
@@ -139,7 +141,7 @@ export class SINValidation extends RecordDataModel {
   /**
    * User that requires a SIN validation.
    */
-  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
+  @ManyToOne(() => User, { eager: false, cascade: true, nullable: false })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,
