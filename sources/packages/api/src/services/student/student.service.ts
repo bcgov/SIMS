@@ -19,11 +19,11 @@ import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import { SINValidationService } from "../sin-validation/sin-validation.service";
-import { CRAResponseStatusRecord } from "src/cra-integration/cra-files/cra-response-status-record";
+import { CRAResponseStatusRecord } from "../../cra-integration/cra-files/cra-response-status-record";
 import {
   MatchStatusCodes,
   RequestStatusCodes,
-} from "src/cra-integration/cra-integration.models";
+} from "../../cra-integration/cra-integration.models";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
