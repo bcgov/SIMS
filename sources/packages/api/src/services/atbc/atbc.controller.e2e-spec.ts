@@ -1,7 +1,7 @@
 require("../../../env_setup");
 import { closeDB } from "../../testHelpers";
 import * as faker from "faker";
-import { Student, User } from "../../database/entities";
+import { SINValidation, Student, User } from "../../database/entities";
 import {
   StudentService,
   ATBCService,
@@ -101,11 +101,14 @@ describe("Test ATBC Controller", () => {
       phone: faker.phone.phoneNumber(),
     };
     const simsUser = new User();
+    const sinValidation = new SINValidation();
     simsUser.userName = process.env.E2E_TEST_STUDENT_USERNAME;
     simsUser.email = faker.internet.email();
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
     fakestudent.user = simsUser;
+    sinValidation.user = simsUser;
+    fakestudent.sinValidation = sinValidation;
 
     // Save the student in SIMS
     await studentService.save(fakestudent);
