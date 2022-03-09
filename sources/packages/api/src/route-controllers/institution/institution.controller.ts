@@ -97,7 +97,7 @@ export class InstitutionController extends BaseController {
     }
 
     // Save institution
-    //await this.institutionService.createInstitution(userToken, payload);
+    await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
 
   @IsInstitutionAdmin()
