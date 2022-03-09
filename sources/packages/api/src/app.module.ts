@@ -33,7 +33,6 @@ import {
   DisbursementScheduleErrorsService,
   RestrictionService,
   InstitutionRestrictionService,
-  DesignationAgreementService,
   SINValidationService,
 } from "./services";
 import {
@@ -152,7 +151,6 @@ import { ClientTypeBaseRoute } from "./types";
     DisbursementScheduleErrorsService,
     RestrictionService,
     InstitutionRestrictionService,
-    DesignationAgreementService,
     SINValidationService,
   ],
 })
