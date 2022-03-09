@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.assessment_trigger_types;

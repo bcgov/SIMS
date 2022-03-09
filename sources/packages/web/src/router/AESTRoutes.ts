@@ -33,6 +33,8 @@ import LocationProgramAddEdit from "@/views/institution/locations/programs/Locat
 import LocationProgramOffering from "@/views/institution/locations/programs/LocationProgramOffering.vue";
 import AESTApplicationSideBar from "@/components/layouts/aest/AESTApplicationSideBar.vue";
 import SupportingUser from "@/views/aest/SupportingUser.vue";
+import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
+import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -287,6 +289,29 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
         ],
+      },
+      {
+        path: AppRoutes.PendingDesignations,
+        name: AESTRoutesConst.PENDING_DESIGNATIONS,
+        components: {
+          default: PendingDesignations,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.DesignationAESTView,
+        name: AESTRoutesConst.DESIGNATION_VIEW,
+        components: {
+          default: DesignationAESTView,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+        props: true,
       },
     ],
     beforeEnter: (to, _from, next) => {

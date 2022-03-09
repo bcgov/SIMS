@@ -1,23 +1,42 @@
 <template>
-  <full-page-container>
-    <formio formName="uploadStudentDocuments" @submitted="submitForm"></formio>
-  </full-page-container>
+  <v-container>
+    <header-navigator title="Student" subTitle="File uploader" />
+    <div class="row">
+      <div class="col-xs-6 col-md-7">
+        <full-page-container>
+          <formio
+            formName="uploadStudentDocuments"
+            @submitted="submitForm"
+          ></formio>
+        </full-page-container>
+      </div>
+      <div class="col-xs-5 col-md-5">
+        <StudentDocumentList :reload="reloadDocuments" />
+      </div>
+    </div>
+  </v-container>
 </template>
 
 <script lang="ts">
 import formio from "@/components/generic/formio.vue";
-import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { useFormioUtils, useToastMessage } from "@/composables";
 import { StudentFileUploaderForm, StudentFileUploaderDto } from "@/types";
 import { StudentService } from "@/services/StudentService";
+import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
+import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import { ref } from "vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export default {
   components: {
     formio,
+    StudentDocumentList,
     FullPageContainer,
+    HeaderNavigator,
   },
   setup() {
+    const reloadDocuments = ref(false);
     const formioUtils = useFormioUtils();
     const toast = useToastMessage();
     const submitForm = async (
@@ -31,7 +50,9 @@ export default {
           associatedFiles,
         };
         await StudentService.shared.saveStudentFiles(payload);
-        //TODO: reset the form & code to refresh the page-after file listing is added
+        // form reset and document list reload
+        form.submission = {};
+        reloadDocuments.value = !reloadDocuments.value;
         toast.success(
           "Document Submitted",
           "Your documents have been submitted!",
@@ -44,7 +65,7 @@ export default {
         toast.error("Unexpected error", errorMessage);
       }
     };
-    return { submitForm };
+    return { submitForm, reloadDocuments };
   },
 };
 </script>

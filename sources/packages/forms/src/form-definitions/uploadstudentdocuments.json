@@ -847,7 +847,7 @@
           "protected": false,
           "dbIndex": false,
           "encrypted": false,
-          "redrawOn": "",
+          "redrawOn": "data",
           "clearOnHide": true,
           "customDefaultValue": "",
           "calculateValue": "",
@@ -903,7 +903,9 @@
           "allowMultipleMasks": false,
           "addons": [],
           "privateDownload": false,
-          "id": "e7xo94rw"
+          "id": "ehonsnu",
+          "options": "",
+          "fileKey": ""
         }
       ],
       "placeholder": "",

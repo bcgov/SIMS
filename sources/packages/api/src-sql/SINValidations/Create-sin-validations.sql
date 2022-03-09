@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS sims.sin_validations (
   surname_match_status_code CHAR(2),
   given_name_match_status_code CHAR(2),
   dob_match_status_code CHAR(2),
-  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  user_id INT REFERENCES sims.users(id) ON DELETE CASCADE,
   -- Audit columns
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   creator INT NULL DEFAULT NULL REFERENCES sims.users(id) ON DELETE
   SET
     NULL,

@@ -8,7 +8,10 @@
       }"
     />
     <full-page-container class="mt-4">
+      <!-- Form.io is not reactively binding the property readOnly. Hence loading the form only after API call is completed. -->
+      <!-- If the readOnly value change after DOM(form) is mounted, form does not respond to it.  -->
       <designation-agreement-form
+        v-if="modelLoaded"
         :model="designationModel"
       ></designation-agreement-form>
     </full-page-container>
@@ -17,12 +20,8 @@
 
 <script lang="ts">
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import { onMounted, reactive } from "vue";
-import {
-  useFormatters,
-  useInstitutionState,
-  useDesignationAgreement,
-} from "@/composables";
+import { onMounted, reactive, ref } from "vue";
+import { useFormatters, useDesignationAgreement } from "@/composables";
 import DesignationAgreementForm from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.vue";
 import {
   DesignationModel,
@@ -41,22 +40,20 @@ export default {
     },
   },
   setup(props: any) {
-    const { institutionState } = useInstitutionState();
     const formatter = useFormatters();
     const { mapDesignationChipStatus } = useDesignationAgreement();
-
     const designationModel = reactive({} as DesignationModel);
-    designationModel.institutionName =
-      institutionState.value.legalOperatingName;
-    designationModel.institutionType = institutionState.value.institutionType;
-    designationModel.isBCPrivate = institutionState.value.isBCPrivate;
-    designationModel.viewMode = DesignationFormViewModes.viewOnly;
+    const modelLoaded = ref(false);
 
     onMounted(async () => {
       const designation = await DesignationAgreementService.shared.getDesignationAgreement(
         props.designationAgreementId,
       );
 
+      designationModel.institutionName = designation.institutionName;
+      designationModel.institutionType = designation.institutionType;
+      designationModel.isBCPrivate = designation.isBCPrivate;
+      designationModel.viewMode = DesignationFormViewModes.viewOnly;
       designationModel.designationStatus = designation.designationStatus;
       designationModel.designationStatusClass = mapDesignationChipStatus(
         designation.designationStatus,
@@ -74,9 +71,10 @@ export default {
           }),
         }),
       );
+      modelLoaded.value = true;
     });
 
-    return { designationModel, InstitutionRoutesConst };
+    return { designationModel, InstitutionRoutesConst, modelLoaded };
   },
 };
 </script>

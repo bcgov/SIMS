@@ -4,4 +4,5 @@ export const FormNames = {
   ProgramInformationRequest: "programinformationrequest",
   StudentInformation: "studentinformation",
   DesignationAgreementDetails: "designationagreementdetails",
+  ApproveDenyDesignations: "approvedenydesignation",
 };

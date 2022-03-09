@@ -131,6 +131,7 @@ export default {
           form.redraw();
         }
       },
+      { deep: true },
     );
 
     return { formioContainerRef, hideSpinner };
