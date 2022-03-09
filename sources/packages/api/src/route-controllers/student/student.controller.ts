@@ -35,6 +35,7 @@ import {
   StudentRestrictionDTO,
   StudentDetailDTO,
   StudentFileUploaderDto,
+  StudentUploadFileDto,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -628,5 +629,30 @@ export class StudentController extends BaseController {
       payload.associatedFiles,
       payload.submittedForm,
     );
+  }
+
+  /**
+   * This controller returns all student documents uploaded
+   * by student uploader
+   * @returns list of student documents
+   */
+  @AllowAuthorizedParty(AuthorizedParties.student)
+  @Get("documents")
+  async getStudentFiles(
+    @UserToken() userToken: IUserToken,
+  ): Promise<StudentUploadFileDto[]> {
+    const existingStudent = await this.studentService.getStudentByUserId(
+      userToken.userId,
+    );
+    if (!existingStudent) {
+      throw new NotFoundException("Student Not found");
+    }
+    const studentDocuments = await this.fileService.getStudentUploadedFiles(
+      existingStudent.id,
+    );
+    return studentDocuments.map((studentDocument) => ({
+      fileName: studentDocument.fileName,
+      uniqueFileName: studentDocument.uniqueFileName,
+    }));
   }
 }

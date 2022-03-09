@@ -40,4 +40,8 @@ export const TableNames = {
   SFASPartTimeApplications: "sfas_part_time_applications",
   DesignationAgreements: "designation_agreements",
   DesignationAgreementLocations: "designation_agreement_locations",
+  StudentAppeals: "student_appeals",
+  StudentAppealRequests: "student_appeal_requests",
+  StudentScholasticStandings: "student_scholastic_standings",
+  StudentAssessments: "student_assessments",
 };

@@ -10,14 +10,24 @@ import {
   TokensService,
   WorkflowActionsService,
   WorkflowService,
+  DesignationAgreementService,
+  FormService,
+  InstitutionLocationService,
 } from "./services";
-import { AESTSupportingUserController } from "./route-controllers";
+import {
+  AESTSupportingUserController,
+  DesignationAgreementAESTController,
+  DesignationAgreementControllerService,
+} from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [AESTSupportingUserController],
+  controllers: [
+    AESTSupportingUserController,
+    DesignationAgreementAESTController,
+  ],
   providers: [
     SupportingUserService,
     ApplicationService,
@@ -28,6 +38,10 @@ import { LoggerModule } from "./logger/logger.module";
     WorkflowService,
     ConfigService,
     TokensService,
+    DesignationAgreementService,
+    DesignationAgreementControllerService,
+    FormService,
+    InstitutionLocationService,
   ],
 })
 export class AppAESTModule {}

@@ -95,3 +95,11 @@ export interface StudentFileUploaderDto {
   submittedForm: StudentFileUploaderForm;
   associatedFiles: string[];
 }
+
+/**
+ *  Student uploaded documents (i.e, FileOriginType.Student documents)
+ */
+export interface StudentUploadFileDto {
+  fileName: string;
+  uniqueFileName: string;
+}

@@ -25,6 +25,7 @@
       </body-header>
       <designation-agreement-summary
         :designations="designations"
+        toggleMessage="You don't have any agreements yet"
         @viewDesignation="goToViewDesignation"
       />
     </full-page-container>
