@@ -6,6 +6,7 @@ import {
   getISODateOnlyString,
   getUserFullName,
 } from "../../../utilities";
+import { ApiProperty } from "@nestjs/swagger";
 /**
  * Dto that represents education programs form object.
  */
@@ -141,11 +142,17 @@ export const transformToEducationProgramData = (
 };
 
 export class ProgramsSummary {
+  @ApiProperty()
   programId: number;
+  @ApiProperty()
   programName: string;
+  @ApiProperty()
   submittedDate: Date;
+  @ApiProperty()
   formattedSubmittedDate: string;
+  @ApiProperty()
   locationName: string;
+  @ApiProperty()
   locationId: number;
   programStatus: ApprovalStatus;
   totalOfferings: number;

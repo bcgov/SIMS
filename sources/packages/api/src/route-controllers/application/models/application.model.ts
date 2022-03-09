@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
 import {
   ApplicationStatus,
@@ -18,18 +19,21 @@ export class SaveApplicationDto {
   /**
    * Application dynamic data.
    */
+  @ApiProperty()
   @IsNotEmpty()
   data: any;
   /**
    * Array of unique file names to be associated
    * with this application.
    */
+  @ApiProperty()
   @IsOptional()
   associatedFiles: string[];
   /**
    * Selected form of the application.
    * This will be used for ProgramYear active validation
    */
+  @ApiProperty()
   @IsInt()
   @Min(1)
   programYearId: number;
