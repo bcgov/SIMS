@@ -13,7 +13,7 @@ export interface InstitutionUserPermissionDto {
 /**
  * DTO To load the admin roles dropdown component
  */
-export interface UserRoleOptionDTO {
+export class UserRoleOptionDTO {
   name: string;
   code: string;
 }

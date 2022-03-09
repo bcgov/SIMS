@@ -2,7 +2,7 @@ import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
 import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
-import { ApiProperty } from "@nestjs/swagger";
+
 export interface ProgramOfferingBaseDTO {
   offeringName: string;
   studyStartDate: Date;
@@ -36,15 +36,14 @@ export interface SaveEducationProgramOfferingDto
  * Summary DTO of program offering.
  */
 export class EducationProgramOfferingDto {
-  @ApiProperty()
   id: number;
-  @ApiProperty()
+
   offeringName: string;
-  @ApiProperty()
+
   studyDates: string;
-  @ApiProperty()
+
   offeringDelivered: string;
-  @ApiProperty()
+
   offeringIntensity: OfferingIntensity;
 }
 

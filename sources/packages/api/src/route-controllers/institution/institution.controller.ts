@@ -97,7 +97,7 @@ export class InstitutionController extends BaseController {
     }
 
     // Save institution
-    await this.institutionService.createInstitution(userToken, payload);
+    //await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
 
   @IsInstitutionAdmin()
@@ -244,6 +244,7 @@ export class InstitutionController extends BaseController {
    * Creates all necessary records to have a new user added to the
    * institution, with the right permissions and ready to login.
    */
+
   @IsInstitutionAdmin()
   @Post("/user")
   async createInstitutionUserWithAuth(
