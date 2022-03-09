@@ -20,11 +20,15 @@ import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import { SINValidationService } from "../sin-validation/sin-validation.service";
 import { CRAResponseStatusRecord } from "src/cra-integration/cra-files/cra-response-status-record";
+import {
+  MatchStatusCodes,
+  RequestStatusCodes,
+} from "src/cra-integration/cra-integration.models";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    connection: Connection,
+    private readonly connection: Connection,
     private readonly sfasIndividualService: SFASIndividualService,
     private readonly sinValidationService: SINValidationService,
   ) {
@@ -36,6 +40,8 @@ export class StudentService extends RecordDataModelService<Student> {
     const student = await this.repo
       .createQueryBuilder("student")
       .leftJoinAndSelect("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .select(["student", "user", "sinValidation.isValidSIN"])
       .where("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return student;
@@ -209,8 +215,9 @@ export class StudentService extends RecordDataModelService<Student> {
     return await this.repo
       .createQueryBuilder("student")
       .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
       .where("user.id= :userId ", { userId })
-      .select("student.validSIN")
+      .select("sinValidation.isValidSIN")
       .getOne();
   }
 
@@ -235,11 +242,44 @@ export class StudentService extends RecordDataModelService<Student> {
       .select(["student", "user.id"])
       .getOne();
     if (student) {
-      await this.sinValidationService.updateRecordsInReceivedFile(
-        craRecord,
-        fileReceived,
-        student.user.id,
-      );
+      const isValidSIN =
+        craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
+        craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
+      return this.connection.transaction(async (transactionalEntityManager) => {
+        const updatedResult = await transactionalEntityManager
+          .getRepository(SINValidation)
+          .createQueryBuilder("sinValidations")
+          .innerJoin("sinValidations.user", "user")
+          .update<SINValidation>(SINValidation)
+          .set({
+            dateReceived: getUTCNow(),
+            fileReceived,
+            isValidSIN,
+            requestStatusCode: craRecord.requestStatusCode,
+            matchStatusCode: craRecord.matchStatusCode,
+            sinMatchStatusCode: craRecord.sinMatchStatusCode,
+            surnameMatchStatusCode: craRecord.surnameMatchStatusCode,
+            givenNameMatchStatusCode: craRecord.givenNameMatchStatusCode,
+            birthDateMatchStatusCode: craRecord.birthDateMatchStatusCode,
+          })
+          .where("user.id = :userId", { userId: student.user.id })
+          .andWhere("dateReceived is null")
+          .andWhere("fileReceived is null")
+          .andWhere("isValidSIN is null")
+          .returning(["id"])
+          .execute();
+        if (updatedResult.raw[0].id) {
+          await transactionalEntityManager
+            .getRepository(Student)
+            .createQueryBuilder("student")
+            .update<Student>(Student)
+            .set({
+              sinValidation: updatedResult.raw[0].id,
+            })
+            .where("sin  = :sin", { sin: craRecord.sin })
+            .execute();
+        }
+      });
     }
   }
 
