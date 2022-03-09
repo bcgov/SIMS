@@ -144,7 +144,7 @@ export class SINValidation extends RecordDataModel {
   /**
    * User that requires a SIN validation.
    */
-  @ManyToOne(() => User, { eager: false, cascade: true, nullable: false })
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
   @JoinColumn({
     name: "user_id",
     referencedColumnName: ColumnNames.ID,
