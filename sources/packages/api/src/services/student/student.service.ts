@@ -65,7 +65,6 @@ export class StudentService extends RecordDataModelService<Student> {
     otherInfo: CreateStudentInfo,
   ): Promise<Student> {
     let user: User;
-    const sinValidations: SINValidation[] = [];
     if (userInfo.userId) {
       user = { id: userInfo.userId } as User;
     } else {
@@ -73,12 +72,10 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     const sinValidation = new SINValidation();
     sinValidation.user = user;
-    sinValidations.push(sinValidation);
     user.userName = userInfo.userName;
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
     user.lastName = userInfo.lastName;
-    user.sinValidations = sinValidations;
 
     const student = new Student();
     student.user = user;
@@ -99,6 +96,7 @@ export class StudentService extends RecordDataModelService<Student> {
       phone: otherInfo.phone,
     };
     student.user = user;
+    student.sinValidation = sinValidation;
 
     try {
       // Get PD status from SFAS integration data.
@@ -197,9 +195,10 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "user.id",
+        "sinValidations.id",
       ])
       .innerJoin("student.user", "user")
-      .innerJoin("user.sinValidations", "sinValidations")
+      .innerJoin("student.sinValidation", "sinValidations")
       .where("sinValidations.isValidSIN is null")
       .andWhere("sinValidations.dateSent is null")
       .andWhere("sinValidations.dateReceived is null")
@@ -211,14 +210,15 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students SIN validation status.
    * @param userId information needed to select the user.
    */
-  async getStudentSinStatus(userId: number): Promise<Student> {
-    return await this.repo
+  async getStudentSinStatus(userId: number): Promise<boolean> {
+    const student = await this.repo
       .createQueryBuilder("student")
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .where("user.id= :userId ", { userId })
       .select("sinValidation.isValidSIN")
       .getOne();
+    return student?.sinValidation.isValidSIN;
   }
 
   /**
@@ -228,17 +228,19 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param fileReceived
    */
   async updatePendingSinValidation(
+    verificationId: number,
     craRecord: CRAResponseStatusRecord,
     fileReceived: string,
   ): Promise<void> {
     const student = await this.repo
       .createQueryBuilder("student")
       .innerJoin("student.user", "user")
-      .innerJoin("user.sinValidations", "sinValidations")
+      .innerJoin("student.sinValidation", "sinValidation")
       .where("student.sin  = :sin", { sin: craRecord.sin })
-      .andWhere("sinValidations.dateReceived is null")
-      .andWhere("sinValidations.fileReceived is null")
-      .andWhere("sinValidations.isValidSIN is null")
+      .andWhere("sinValidation.id = :verificationId", { verificationId })
+      .andWhere("sinValidation.dateReceived is null")
+      .andWhere("sinValidation.fileReceived is null")
+      .andWhere("sinValidation.isValidSIN is null")
       .select(["student", "user.id"])
       .getOne();
     if (student) {

@@ -43,7 +43,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         `SIN Validation table update for user: ${craPersonRecord.userId}`,
       );
       const repository = externalRepo ?? this.repo;
-      return repository.update(
+      await repository.update(
         {
           user: { id: craPersonRecord.userId },
           dateSent: IsNull(),
