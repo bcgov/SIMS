@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { User } from ".";
 import { ColumnNames, TableNames } from "../constant";
+import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { RecordDataModel } from "./record.model";
 
 /**
@@ -23,8 +24,8 @@ export class SINValidation extends RecordDataModel {
    */
   @Column({
     name: "date_sent",
-    nullable: true,
     type: "timestamptz",
+    nullable: true,
   })
   dateSent?: Date;
   /**
@@ -33,8 +34,8 @@ export class SINValidation extends RecordDataModel {
    */
   @Column({
     name: "date_received",
-    nullable: true,
     type: "timestamptz",
+    nullable: true,
   })
   dateReceived?: Date;
   /**
@@ -74,6 +75,8 @@ export class SINValidation extends RecordDataModel {
    */
   @Column({
     name: "dob_sent",
+    type: "date",
+    transformer: dateOnlyTransformer,
     nullable: true,
   })
   dobSent?: Date;
