@@ -3029,4 +3029,11 @@
             "id": "es3lmu"
         }
     ]
+    "display": "form",
+    "title": "Institution Welcome Page",
+    "name": "institutionwelcomepage",
+    "path": "institutionwelcomepage",
+    "created": "2021-12-09T06:59:23.020Z",
+    "modified": "2021-12-09T22:29:45.236Z",
+    "machineName": "institutionwelcomepage"
 }
