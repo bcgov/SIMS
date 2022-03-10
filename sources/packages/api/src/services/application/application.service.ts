@@ -19,6 +19,9 @@ import {
   PIRDeniedReason,
   MSFAANumber,
   OfferingIntensity,
+  StudentAssessment,
+  AssessmentTriggerType,
+  User,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -92,6 +95,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async submitApplication(
     applicationId: number,
+    userId: number,
     studentId: number,
     programYearId: number,
     applicationData: any,
@@ -119,6 +123,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_NOT_VALID,
       );
     }
+
+    const now = new Date();
+    const currentUser = { id: userId } as User;
+    const originalAssessment = new StudentAssessment();
+    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.submittedBy = currentUser;
+    originalAssessment.submittedDate = now;
+    originalAssessment.creator = currentUser;
+    originalAssessment.createdAt = now;
+    originalAssessment.modifier = currentUser;
+    originalAssessment.updatedAt = now;
+
     if (application.applicationStatus === ApplicationStatus.draft) {
       /**
        * Generate the application number with respect to the programYearPrefix.
@@ -132,12 +148,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.applicationStatus = ApplicationStatus.submitted;
       application.relationshipStatus = applicationData.relationshipStatus;
       application.studentNumber = applicationData.studentNumber;
-      application.applicationStatusUpdatedOn = getUTCNow();
+      application.applicationStatusUpdatedOn = now;
       application.studentFiles = await this.getSyncedApplicationFiles(
         studentId,
         application.studentFiles,
         associatedFiles,
       );
+      application.modifier = currentUser;
+      application.updatedAt = now;
+      application.studentAssessment = [originalAssessment];
+
       return this.repo.save(application);
     }
     /**
@@ -171,6 +191,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
+    application.creator = currentUser;
+    application.createdAt = now;
+    application.studentAssessment = [originalAssessment];
     await this.repo.save([application, newApplication]);
     //* Deleting the existing workflow
     this.workflow.deleteApplicationAssessment(application.assessmentWorkflowId);

@@ -196,6 +196,7 @@ export class ApplicationController extends BaseController {
       const submittedApplication =
         await this.applicationService.submitApplication(
           applicationId,
+          userToken.userId,
           student.id,
           programYear.id,
           submissionResult.data.data,

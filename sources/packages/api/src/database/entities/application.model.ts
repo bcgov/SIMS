@@ -25,6 +25,7 @@ import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
+import { StudentAssessment } from "./student-assessment.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -238,6 +239,21 @@ export class Application extends RecordDataModel {
     },
   )
   disbursementSchedules?: DisbursementSchedule[];
+  /**
+   * All assessments related to this application.
+   * The first assessment will be created upon submission, so
+   * draft applications do not have assessments associated with.
+   */
+  @OneToMany(
+    () => StudentAssessment,
+    (studentAssessment) => studentAssessment.application,
+    {
+      eager: false,
+      cascade: true,
+      nullable: true,
+    },
+  )
+  studentAssessment?: StudentAssessment[];
 }
 
 /**
