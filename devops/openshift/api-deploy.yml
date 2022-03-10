@@ -213,6 +213,8 @@ objects:
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
                 - name: BYPASS_APPLICATION_SUBMIT_VALIDATIONS
                   value: ${BYPASS_APPLICATION_SUBMIT_VALIDATIONS}
+                - name: SWAGGER_ENABLED
+                  value: ${SWAGGER_ENABLED}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}

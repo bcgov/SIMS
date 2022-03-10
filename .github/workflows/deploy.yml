@@ -75,6 +75,7 @@ jobs:
       ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
       BYPASS_CRA_INCOME_VERIFICATION: true
       BYPASS_APPLICATION_SUBMIT_VALIDATIONS: true
+      SWAGGER_ENABLED: "true"
     needs:
       - build
     steps:
