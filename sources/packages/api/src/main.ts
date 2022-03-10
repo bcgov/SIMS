@@ -15,7 +15,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
   // Configure Swagger
-  if (process.env.SWAGGER_ENABLED.toLowerCase() === "true") {
+  if (
+    process.env?.SWAGGER_ENABLED &&
+    process.env.SWAGGER_ENABLED.toLowerCase() === "true"
+  ) {
     const options = new DocumentBuilder()
       .setTitle(process.env.PROJECT_NAME)
       .setDescription(`The ${process.env.PROJECT_NAME} API description`)
