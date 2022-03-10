@@ -319,8 +319,6 @@ export class CRAPersonalVerificationService {
     // Get only the file name for logging.
     const fileName = path.basename(remoteFilePath);
     for (const statusRecord of responseFile.statusRecords) {
-      this.logger.log(statusRecord);
-      this.logger.log(statusRecord.freeProjectArea);
       try {
         // 0022 could be present in a SIN validation response or income verification response.
         // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
