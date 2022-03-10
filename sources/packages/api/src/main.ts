@@ -15,22 +15,24 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
   // Configure Swagger
-  const options = new DocumentBuilder()
-    .setTitle(process.env.PROJECT_NAME)
-    .setDescription(`The ${process.env.PROJECT_NAME} API description`)
-    .setVersion("1.0.0")
-    .addBearerAuth(
-      {
-        name: "Authorization",
-        type: "http",
-        in: "Header",
-      },
-      "access-token",
-    )
-    .addServer("/api")
-    .build();
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup("swagger", app, document);
+  if (process.env.SWAGGER_ENABLED.toLowerCase() === "true") {
+    const options = new DocumentBuilder()
+      .setTitle(process.env.PROJECT_NAME)
+      .setDescription(`The ${process.env.PROJECT_NAME} API description`)
+      .setVersion("1.0.0")
+      .addBearerAuth(
+        {
+          name: "Authorization",
+          type: "http",
+          in: "Header",
+        },
+        "access-token",
+      )
+      .addServer("/api")
+      .build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup("swagger", app, document);
+  }
 
   // Setting global prefix
   app.setGlobalPrefix("api");
