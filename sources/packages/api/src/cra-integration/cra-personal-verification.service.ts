@@ -25,7 +25,7 @@ import { getUTCNow } from "../utilities";
 import * as path from "path";
 import { SINValidationService } from "../services/sin-validation/sin-validation.service";
 
-const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
+const SIN_VALIDATION_TAG = "SIN_VALIDATION_ID";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
 /**
@@ -75,7 +75,7 @@ export class CRAPersonalVerificationService {
       return this.createCRARecordFromStudent(
         student,
         this.createFreeProjectArea(
-          STUDENT_SIN_VALIDATION_TAG,
+          SIN_VALIDATION_TAG,
           student.sinValidation.id,
         ),
       );
@@ -321,9 +321,9 @@ export class CRAPersonalVerificationService {
     for (const statusRecord of responseFile.statusRecords) {
       try {
         // 0022 could be present in a SIN validation response or income verification response.
-        // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
+        // We use the tag SIN_VALIDATION_TAG to process 0022 records only when the
         // request was made specifically for SIN validation.
-        if (statusRecord.freeProjectArea.includes(STUDENT_SIN_VALIDATION_TAG)) {
+        if (statusRecord.freeProjectArea.includes(SIN_VALIDATION_TAG)) {
           await this.processSINStatus(statusRecord, remoteFilePath);
           result.processSummary.push(
             `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
