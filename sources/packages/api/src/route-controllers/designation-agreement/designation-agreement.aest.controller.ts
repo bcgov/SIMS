@@ -28,10 +28,12 @@ import {
   UpdateDesignationDto,
 } from "./models/designation-agreement.model";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("designation-agreement")
+@ApiTags("designation-agreement")
 export class DesignationAgreementAESTController {
   constructor(
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
