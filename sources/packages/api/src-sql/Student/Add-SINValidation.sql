@@ -8,17 +8,11 @@ COMMENT ON COLUMN sims.students.sin_validation_id IS 'SIN validation record that
 
 -- Inserting the placeholder records in SIN_VALIDATIONS table for the users_id in student table --
 
-INSERT INTO SIMS.SIN_VALIDATIONS (USER_ID)
-	(SELECT USER_ID
-		FROM SIMS.STUDENTS);
+INSERT INTO SIMS.SIN_VALIDATIONS (USER_ID) (SELECT USER_ID FROM SIMS.STUDENTS);
 
 -- Updating the students table with sin_validation_id from the newly created columns mapping the user_id  --
 
-UPDATE SIMS.STUDENTS
-SET SIN_VALIDATION_ID =
-	(SELECT ID
-		FROM SIMS.SIN_VALIDATIONS
-		WHERE USER_ID = SIMS.STUDENTS.USER_ID);
+UPDATE SIMS.STUDENTS SET SIN_VALIDATION_ID = (SELECT ID FROM SIMS.SIN_VALIDATIONS WHERE USER_ID = SIMS.STUDENTS.USER_ID);
 
 -- Set the NOT NULL constraint on sin_validation_id --
 ALTER TABLE
