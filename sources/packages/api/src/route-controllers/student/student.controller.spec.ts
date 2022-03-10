@@ -17,6 +17,7 @@ import {
   StudentRestrictionService,
   FormService,
   SFASIndividualService,
+  SINValidationService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -48,6 +49,7 @@ describe("StudentController", () => {
         createMockedJwtService(),
         StudentRestrictionService,
         SFASIndividualService,
+        SINValidationService,
       ],
       controllers: [StudentController],
     }).compile();

@@ -55,7 +55,7 @@ export class UserService extends DataModelService<User> {
     return this.repo.update({ id: userId }, { email });
   }
 
-  async getActiveUser(userName: string) {
+  async getActiveUser(userName: string): Promise<User> {
     return this.repo.findOne({ userName: userName, isActive: true });
   }
 

@@ -7,6 +7,7 @@ import {
   User,
   Note,
   NoteType,
+  SINValidation,
 } from "../../database/entities";
 import { Connection } from "typeorm";
 import { UserInfo } from "../../types";
@@ -17,12 +18,14 @@ import { InjectLogger } from "../../common";
 import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
+import { SINValidationService } from "../sin-validation/sin-validation.service";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
-    connection: Connection,
+    private readonly connection: Connection,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly sinValidationService: SINValidationService,
   ) {
     super(connection.getRepository(Student));
     this.logger.log("[Created]");
@@ -32,6 +35,8 @@ export class StudentService extends RecordDataModelService<Student> {
     const student = await this.repo
       .createQueryBuilder("student")
       .leftJoinAndSelect("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .select(["student", "user", "sinValidation.isValidSIN"])
       .where("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return student;
@@ -60,7 +65,8 @@ export class StudentService extends RecordDataModelService<Student> {
     } else {
       user = new User();
     }
-
+    const sinValidation = new SINValidation();
+    sinValidation.user = user;
     user.userName = userInfo.userName;
     user.email = userInfo.email;
     user.firstName = userInfo.givenNames;
@@ -85,6 +91,7 @@ export class StudentService extends RecordDataModelService<Student> {
       phone: otherInfo.phone,
     };
     student.user = user;
+    student.sinValidation = sinValidation;
 
     try {
       // Get PD status from SFAS integration data.
@@ -174,7 +181,23 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students pending SIN validation.
    */
   async getStudentsPendingSinValidation(): Promise<Student[]> {
-    return this.repo.find({ validSIN: null });
+    return this.repo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "student.sin",
+        "student.birthDate",
+        "user.firstName",
+        "user.lastName",
+        "user.id",
+        "sinValidation.id",
+      ])
+      .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .where("sinValidation.isValidSIN is null")
+      .andWhere("sinValidation.dateSent is null")
+      .andWhere("sinValidation.dateReceived is null")
+      .getMany();
   }
 
   /**
@@ -182,37 +205,15 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students SIN validation status.
    * @param userId information needed to select the user.
    */
-  async getStudentSinStatus(userId: number): Promise<Student> {
-    return await this.repo
+  async getStudentSinStatus(userId: number): Promise<boolean | null> {
+    const student = await this.repo
       .createQueryBuilder("student")
       .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
       .where("user.id= :userId ", { userId })
-      .select("student.validSIN")
+      .select("sinValidation.isValidSIN")
       .getOne();
-  }
-
-  /**
-   * Update the SIN validation information on a student that
-   * is marked with a pending validation.
-   * If the SIN validation status is already set, it needs to be
-   * set as NULL before it is processed again.
-   * @param sin
-   * @param validSIN
-   * @returns pending sin validation
-   */
-  async updatePendingSinValidation(
-    sin: string,
-    validSIN: boolean,
-  ): Promise<void> {
-    // Only allow updates on a student that has pending SIN validation.
-    const studentToUpdate = await this.repo.findOne({
-      sin,
-      validSIN: null,
-    });
-    if (studentToUpdate) {
-      studentToUpdate.validSIN = validSIN;
-      this.repo.save(studentToUpdate);
-    }
+    return student?.sinValidation.isValidSIN;
   }
 
   /**

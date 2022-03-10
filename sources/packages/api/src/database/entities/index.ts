@@ -48,6 +48,7 @@ export * from "./base-sfas-application.model";
 export * from "./designation-agreement.model";
 export * from "./designation-agreement-status.type";
 export * from "./designation-agreement-location.model";
+export * from "./sin-validation.model";
 export * from "./student-appeal.model";
 export * from "./assessment-status.type";
 export * from "./student-assessment.model";
