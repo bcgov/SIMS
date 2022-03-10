@@ -25,7 +25,7 @@ import { getUTCNow } from "../utilities";
 import * as path from "path";
 import { SINValidationService } from "../services/sin-validation/sin-validation.service";
 
-const SIN_VALIDATION_TAG = "SIN_VALIDATION_ID";
+const SIN_VALIDATION_TAG = "SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
 /**
