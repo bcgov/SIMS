@@ -39,19 +39,4 @@ export class User extends BaseModel {
     name: "is_active",
   })
   isActive: boolean;
-
-  /**
-   * SIN Validation ids related to the user.
-   */
-  @RelationId((user: User) => user.sinValidations)
-  sinValidationsIds: number[];
-  /**
-   * SIN Validation related to the user.
-   */
-  @OneToMany(() => SINValidation, (sinValidation) => sinValidation.user, {
-    eager: false,
-    cascade: true,
-    nullable: false,
-  })
-  sinValidations: SINValidation[];
 }

@@ -190,13 +190,13 @@ export class StudentService extends RecordDataModelService<Student> {
         "user.firstName",
         "user.lastName",
         "user.id",
-        "sinValidations.id",
+        "sinValidation.id",
       ])
       .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidations")
-      .where("sinValidations.isValidSIN is null")
-      .andWhere("sinValidations.dateSent is null")
-      .andWhere("sinValidations.dateReceived is null")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .where("sinValidation.isValidSIN is null")
+      .andWhere("sinValidation.dateSent is null")
+      .andWhere("sinValidation.dateReceived is null")
       .getMany();
   }
 
