@@ -45,7 +45,6 @@ describe("CRAIntegrationService", () => {
         givenName: faker.name.firstName(),
         birthDate: faker.date.past(18),
         taxYear: faker.random.number({ min: 2000, max: 2030 }),
-        userId: createFakeUser().id,
         freeProjectArea: faker.random.alpha({ count: 30 }),
       },
       {
@@ -54,7 +53,6 @@ describe("CRAIntegrationService", () => {
         givenName: faker.name.firstName(),
         birthDate: faker.date.past(18),
         taxYear: faker.random.number({ min: 2000, max: 2030 }),
-        userId: createFakeUser().id,
         freeProjectArea: faker.random.alpha({ count: 30 }),
       },
     ];

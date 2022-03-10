@@ -51,7 +51,6 @@ export class User extends BaseModel {
   @OneToMany(() => SINValidation, (sinValidation) => sinValidation.user, {
     eager: false,
     cascade: true,
-    onDelete: "CASCADE",
   })
   sinValidations: SINValidation[];
 }

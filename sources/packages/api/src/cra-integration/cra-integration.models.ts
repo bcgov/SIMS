@@ -158,7 +158,7 @@ export interface CRAPersonRecord {
   givenName: string;
   birthDate: Date;
   taxYear?: number;
-  userId: number;
+  verificationId?: number;
   freeProjectArea?: string;
 }
 

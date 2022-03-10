@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, IsNull, Repository } from "typeorm";
-import { CRAPersonRecord } from "../../cra-integration/cra-integration.models";
-import { getUTCNow } from "../../utilities";
+import { Connection, UpdateResult } from "typeorm";
+import {
+  CRAPersonRecord,
+  MatchStatusCodes,
+  RequestStatusCodes,
+} from "../../cra-integration/cra-integration.models";
 import { SINValidation } from "../../database/entities";
 import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
+import { CRAResponseStatusRecord } from "../../cra-integration/cra-files/cra-response-status-record";
 
 /**
  * Service layer for SIN Validations.
@@ -31,33 +35,49 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   async updateRecordsInSentFile(
     craPersonRecords: CRAPersonRecord[],
     fileSent: string,
-    externalRepo?: Repository<SINValidation>,
   ) {
-    for (const craPersonRecord of craPersonRecords) {
-      if (!craPersonRecord.userId) {
-        throw new Error(
-          "User Id is not provided to update the SIN Validation records.",
-        );
-      }
-      this.logger.log(
-        `SIN Validation table update for user: ${craPersonRecord.userId}`,
-      );
-      const repository = externalRepo ?? this.repo;
-      await repository.update(
-        {
-          user: { id: craPersonRecord.userId },
-          dateSent: IsNull(),
-          dateReceived: IsNull(),
-        },
-        {
+    const sinValidationsToBeUpdated = craPersonRecords.map(
+      (record) =>
+        ({
+          id: record.verificationId,
           dateSent: new Date(),
           fileSent,
-          givenNameSent: craPersonRecord.givenName,
-          surnameSent: craPersonRecord.surname,
-          dobSent: craPersonRecord.birthDate,
-        },
-      );
-    }
+          givenNameSent: record.givenName,
+          surnameSent: record.surname,
+          dobSent: record.birthDate,
+        } as SINValidation),
+    );
+    return this.repo.save(sinValidationsToBeUpdated);
+  }
+
+  /**
+   * Update the SIN validation information on a student that
+   * is marked with a pending validation.
+   * @param craRecord
+   * @param fileReceived
+   */
+  async updatePendingSinValidation(
+    verificationId: number,
+    craRecord: CRAResponseStatusRecord,
+    fileReceived: string,
+  ): Promise<UpdateResult> {
+    const isValidSIN =
+      craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
+      craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
+    return this.repo.update(
+      { id: verificationId },
+      {
+        dateReceived: new Date(),
+        fileReceived,
+        isValidSIN,
+        requestStatusCode: craRecord.requestStatusCode,
+        matchStatusCode: craRecord.matchStatusCode,
+        sinMatchStatusCode: craRecord.sinMatchStatusCode,
+        surnameMatchStatusCode: craRecord.surnameMatchStatusCode,
+        givenNameMatchStatusCode: craRecord.givenNameMatchStatusCode,
+        birthDateMatchStatusCode: craRecord.birthDateMatchStatusCode,
+      },
+    );
   }
 
   @InjectLogger()

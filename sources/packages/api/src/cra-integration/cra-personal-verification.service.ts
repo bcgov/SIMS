@@ -78,7 +78,7 @@ export class CRAPersonalVerificationService {
     const craRecords = students.map((student) => {
       return this.createCRARecordFromStudent(
         student,
-        this.getVerificationTag(
+        this.createFreeProjectArea(
           STUDENT_SIN_VALIDATION_TAG,
           student.sinValidation.id,
         ),
@@ -88,7 +88,7 @@ export class CRAPersonalVerificationService {
     let uploadResult: CRAUploadResult;
     await this.sequenceService.consumeNextSequence(
       this.getCRAFileSequenceName(),
-      async (nextSequenceNumber: number, entityManager: EntityManager) => {
+      async (nextSequenceNumber: number) => {
         try {
           this.logger.log("Creating matching run content...");
           const fileContent = this.craService.createMatchingRunContent(
@@ -106,11 +106,9 @@ export class CRAPersonalVerificationService {
           };
           // Updates the records in SIN Validation table for the particular user
           this.logger.log("Updating the records in SIN Validation table");
-          const sinValidationRepo = entityManager.getRepository(SINValidation);
           this.sinValidationService.updateRecordsInSentFile(
             craRecords,
             fileInfo.fileName,
-            sinValidationRepo,
           );
           this.logger.log("SIN Validation table Updated");
         } catch (error) {
@@ -148,7 +146,10 @@ export class CRAPersonalVerificationService {
     const craRecords = incomeVerifications.map((incomeVerification) => {
       const craRecord = this.createCRARecordFromIncomeVerification(
         incomeVerification,
-        this.getVerificationTag(INCOME_VERIFICATION_TAG, incomeVerification.id),
+        this.createFreeProjectArea(
+          INCOME_VERIFICATION_TAG,
+          incomeVerification.id,
+        ),
       );
       craRecord.taxYear = incomeVerification.taxYear;
       return craRecord;
@@ -221,7 +222,7 @@ export class CRAPersonalVerificationService {
       surname: student.user.lastName,
       givenName: student.user.firstName,
       birthDate: student.birthDate,
-      userId: student.user.id,
+      verificationId: student.sinValidation.id,
       freeProjectArea,
     } as CRAPersonRecord;
   }
@@ -251,7 +252,6 @@ export class CRAPersonalVerificationService {
         surname: craIncomeVerification.supportingUser.user.lastName,
         givenName: craIncomeVerification.supportingUser.user.firstName,
         birthDate: craIncomeVerification.supportingUser.birthDate,
-        userId: craIncomeVerification.supportingUser.userId,
         freeProjectArea,
       } as CRAPersonRecord;
     }
@@ -323,6 +323,8 @@ export class CRAPersonalVerificationService {
     // Get only the file name for logging.
     const fileName = path.basename(remoteFilePath);
     for (const statusRecord of responseFile.statusRecords) {
+      this.logger.log(statusRecord);
+      this.logger.log(statusRecord.freeProjectArea);
       try {
         // 0022 could be present in a SIN validation response or income verification response.
         // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
@@ -385,7 +387,7 @@ export class CRAPersonalVerificationService {
     // The id to be used to find and update the SIN validation record
     // must be on the 'freeProjectArea' (e.g. STUDENT_SIN_VALIDATION:12345) that was
     // generated during the file creation to execute the request to CRA.
-    const verificationId = this.getIdFromVerificationIdTag(
+    const verificationId = this.getIdFromFreeProjectArea(
       craRecord.freeProjectArea,
     );
     if (!verificationId) {
@@ -393,7 +395,7 @@ export class CRAPersonalVerificationService {
         `Not able to extract the CRA SIN verification id from the freeProjectArea ${craRecord.freeProjectArea}`,
       );
     }
-    await this.studentService.updatePendingSinValidation(
+    await this.sinValidationService.updatePendingSinValidation(
       verificationId,
       craRecord,
       fileReceived,
@@ -420,7 +422,7 @@ export class CRAPersonalVerificationService {
     // The id to be used to find and update the CRA income verification record
     // must be on the 'freeProjectArea' (e.g. VERIFICATION_ID:12345) that was
     // generated during the file creation to execute the request to CRA.
-    const verificationId = this.getIdFromVerificationIdTag(
+    const verificationId = this.getIdFromFreeProjectArea(
       statusRecord.freeProjectArea,
     );
     if (!verificationId) {
@@ -469,7 +471,7 @@ export class CRAPersonalVerificationService {
    * @param id Verification id.
    * @returns Combined string of tag and id appended with ":".
    */
-  private getVerificationTag(tag: string, id: number): string {
+  private createFreeProjectArea(tag: string, id: number): string {
     return `${tag}:${id}`;
   }
 
@@ -480,7 +482,7 @@ export class CRAPersonalVerificationService {
    * @param tag tag that contains the id to be extracted.
    * @returns id from verification id tag
    */
-  private getIdFromVerificationIdTag(tag: string): number | null {
+  private getIdFromFreeProjectArea(tag: string): number | null {
     if (!tag?.includes(":")) {
       return null;
     }

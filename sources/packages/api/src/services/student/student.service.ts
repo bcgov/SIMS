@@ -19,11 +19,6 @@ import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import { SINValidationService } from "../sin-validation/sin-validation.service";
-import { CRAResponseStatusRecord } from "../../cra-integration/cra-files/cra-response-status-record";
-import {
-  MatchStatusCodes,
-  RequestStatusCodes,
-} from "../../cra-integration/cra-integration.models";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -219,70 +214,6 @@ export class StudentService extends RecordDataModelService<Student> {
       .select("sinValidation.isValidSIN")
       .getOne();
     return student?.sinValidation.isValidSIN;
-  }
-
-  /**
-   * Update the SIN validation information on a student that
-   * is marked with a pending validation.
-   * @param craRecord
-   * @param fileReceived
-   */
-  async updatePendingSinValidation(
-    verificationId: number,
-    craRecord: CRAResponseStatusRecord,
-    fileReceived: string,
-  ): Promise<void> {
-    const student = await this.repo
-      .createQueryBuilder("student")
-      .innerJoin("student.user", "user")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .where("student.sin  = :sin", { sin: craRecord.sin })
-      .andWhere("sinValidation.id = :verificationId", { verificationId })
-      .andWhere("sinValidation.dateReceived is null")
-      .andWhere("sinValidation.fileReceived is null")
-      .andWhere("sinValidation.isValidSIN is null")
-      .select(["student", "user.id"])
-      .getOne();
-    if (student) {
-      const isValidSIN =
-        craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
-        craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
-      return this.connection.transaction(async (transactionalEntityManager) => {
-        const updatedResult = await transactionalEntityManager
-          .getRepository(SINValidation)
-          .createQueryBuilder("sinValidations")
-          .innerJoin("sinValidations.user", "user")
-          .update<SINValidation>(SINValidation)
-          .set({
-            dateReceived: new Date(),
-            fileReceived,
-            isValidSIN,
-            requestStatusCode: craRecord.requestStatusCode,
-            matchStatusCode: craRecord.matchStatusCode,
-            sinMatchStatusCode: craRecord.sinMatchStatusCode,
-            surnameMatchStatusCode: craRecord.surnameMatchStatusCode,
-            givenNameMatchStatusCode: craRecord.givenNameMatchStatusCode,
-            birthDateMatchStatusCode: craRecord.birthDateMatchStatusCode,
-          })
-          .where("user.id = :userId", { userId: student.user.id })
-          .andWhere("dateReceived is null")
-          .andWhere("fileReceived is null")
-          .andWhere("isValidSIN is null")
-          .returning(["id"])
-          .execute();
-        if (updatedResult.raw[0].id) {
-          await transactionalEntityManager
-            .getRepository(Student)
-            .createQueryBuilder("student")
-            .update<Student>(Student)
-            .set({
-              sinValidation: updatedResult.raw[0].id,
-            })
-            .where("sin  = :sin", { sin: craRecord.sin })
-            .execute();
-        }
-      });
-    }
   }
 
   /**
