@@ -30,9 +30,6 @@ export class SINValidationGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    const student = await this.studentService.getStudentSinStatus(
-      userToken.userId,
-    );
-    return student?.validSIN;
+    return this.studentService.getStudentSinStatus(userToken.userId);
   }
 }

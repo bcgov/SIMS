@@ -33,6 +33,7 @@ import {
   DisbursementScheduleErrorsService,
   RestrictionService,
   InstitutionRestrictionService,
+  SINValidationService,
 } from "./services";
 import {
   UserController,
@@ -150,6 +151,7 @@ import { ClientTypeBaseRoute } from "./types";
     DisbursementScheduleErrorsService,
     RestrictionService,
     InstitutionRestrictionService,
+    SINValidationService,
   ],
 })
 export class AppModule {}

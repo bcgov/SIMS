@@ -1,7 +1,7 @@
 require("../../../env_setup");
 import { closeDB } from "../../testHelpers";
 import * as faker from "faker";
-import { Student, User } from "../../database/entities";
+import { SINValidation, Student, User } from "../../database/entities";
 import {
   StudentService,
   ATBCService,
@@ -17,6 +17,7 @@ import {
   StudentRestrictionService,
   FormService,
   SFASIndividualService,
+  SINValidationService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -68,6 +69,7 @@ describe("Test ATBC Controller", () => {
         FormService,
         StudentRestrictionService,
         SFASIndividualService,
+        SINValidationService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);
@@ -104,6 +106,10 @@ describe("Test ATBC Controller", () => {
     simsUser.firstName = faker.name.firstName();
     simsUser.lastName = faker.name.lastName();
     fakestudent.user = simsUser;
+    const sinValidation = new SINValidation();
+    sinValidation.user = simsUser;
+    sinValidation.isValidSIN = true;
+    fakestudent.sinValidation = sinValidation;
 
     // Save the student in SIMS
     await studentService.save(fakestudent);

@@ -119,7 +119,7 @@ export class StudentController extends BaseController {
         phone: existingStudent.contactInfo.phone,
       },
       pdVerified: existingStudent.studentPDVerified,
-      validSin: existingStudent.validSIN,
+      validSin: existingStudent.sinValidation.isValidSIN,
       pdSentDate: existingStudent.studentPDSentAt,
       pdUpdatedDate: existingStudent.studentPDUpdateAt,
       pdStatus: determinePDStatus(existingStudent),
@@ -311,7 +311,7 @@ export class StudentController extends BaseController {
     // if student has a SIN valid only, he/she should allow for a PD check.
 
     if (
-      existingStudent.validSIN &&
+      existingStudent.sinValidation.isValidSIN &&
       !existingStudent.studentPDSentAt &&
       existingStudent.studentPDVerified === null
     ) {
