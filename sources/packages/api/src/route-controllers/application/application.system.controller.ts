@@ -46,7 +46,7 @@ import { ApiTags } from "@nestjs/swagger";
  */
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/application")
-@ApiTags("system-access/application")
+@ApiTags("system-access")
 export class ApplicationSystemController {
   private readonly config: IConfig;
   constructor(

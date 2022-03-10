@@ -10,7 +10,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/cra-integration")
-@ApiTags("system-access/cra-integration")
+@ApiTags("system-access")
 export class CRAIntegrationController {
   constructor(private readonly cra: CRAPersonalVerificationService) {}
 

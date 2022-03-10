@@ -14,7 +14,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
-@ApiTags("system-access/msfaa-integration")
+@ApiTags("system-access")
 export class MSFAAIntegrationController {
   constructor(
     private readonly msfaaRequestService: MSFAARequestService,

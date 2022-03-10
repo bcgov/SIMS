@@ -49,7 +49,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-@ApiTags("institution/location")
+@ApiTags("institution")
 export class ProgramInfoRequestController {
   constructor(
     private readonly applicationService: ApplicationService,

@@ -32,7 +32,7 @@ import { ApiTags } from "@nestjs/swagger";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsInstitutionAdmin()
 @Controller("designation-agreement")
-@ApiTags("institution/designation-agreement")
+@ApiTags("institution")
 export class DesignationAgreementInstitutionsController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,

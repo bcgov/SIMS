@@ -44,7 +44,7 @@ import { EducationProgramOfferingModel } from "../../services/education-program-
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("institution/offering")
-@ApiTags("institution/offering")
+@ApiTags("institution")
 export class EducationProgramOfferingController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,

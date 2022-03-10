@@ -62,7 +62,7 @@ const FIRST_COE_NOT_COMPLETE_MESSAGE =
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-@ApiTags("institution/location")
+@ApiTags("institution")
 export class ConfirmationOfEnrollmentController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,

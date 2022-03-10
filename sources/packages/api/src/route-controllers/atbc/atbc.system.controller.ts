@@ -9,7 +9,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/atbc")
-@ApiTags("system-access/atbc")
+@ApiTags("system-access")
 export class ATBCController {
   constructor(
     private readonly atbcService: ATBCService,

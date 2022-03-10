@@ -142,15 +142,10 @@ export const transformToEducationProgramData = (
 
 export class ProgramsSummary {
   programId: number;
-
   programName: string;
-
   submittedDate: Date;
-
   formattedSubmittedDate: string;
-
   locationName: string;
-
   locationId: number;
   programStatus: ApprovalStatus;
   totalOfferings: number;

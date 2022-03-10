@@ -10,7 +10,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
-@ApiTags("system-access/e-cert")
+@ApiTags("system-access")
 export class ECertIntegrationController {
   constructor(
     private readonly ecertFullTimeRequestService: ECertFullTimeRequestService,

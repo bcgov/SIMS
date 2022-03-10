@@ -37,7 +37,7 @@ import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("institution/location")
-@ApiTags("institution/location")
+@ApiTags("institution")
 export class InstitutionLocationsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,

@@ -9,7 +9,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/fed-restrictions")
-@ApiTags("system-access/fed-restrictions")
+@ApiTags("system-access")
 export class FedRestrictionsIntegrationController {
   constructor(
     private readonly processingService: FedRestrictionProcessingService,

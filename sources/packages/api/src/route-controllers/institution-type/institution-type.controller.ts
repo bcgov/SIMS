@@ -4,7 +4,7 @@ import { InstitutionTypeService } from "../../services";
 import { OptionItem } from "../../types";
 import { ApiTags } from "@nestjs/swagger";
 @Controller("institution/type")
-@ApiTags("institution/type")
+@ApiTags("institution")
 export class InstitutionTypeController extends BaseController {
   constructor(private readonly institutionTypeService: InstitutionTypeService) {
     super();

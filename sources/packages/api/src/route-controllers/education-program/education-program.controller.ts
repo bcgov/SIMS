@@ -53,7 +53,7 @@ import { ApprovalStatus } from "../../services/education-program/constants";
 import { ApiTags } from "@nestjs/swagger";
 
 @Controller("institution/education-program")
-@ApiTags("institution/education-program")
+@ApiTags("institution")
 export class EducationProgramController {
   constructor(
     private readonly programService: EducationProgramService,

@@ -9,7 +9,7 @@ import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/sfas-integration")
-@ApiTags("system-access/sfas-integration")
+@ApiTags("system-access")
 export class SFASIntegrationController {
   constructor(private readonly sfas: SFASIntegrationProcessingService) {}
 

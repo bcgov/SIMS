@@ -70,7 +70,7 @@ import {
   InstitutionUser,
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -86,6 +86,10 @@ export class InstitutionController extends BaseController {
   }
 
   @Post()
+  @ApiOperation({ summary: "Creates a new institution" })
+  @ApiResponse({ status: 201, description: "Institution created successfully" })
+  @ApiResponse({ status: 404, description: "Not found error" })
+  @ApiResponse({ status: 401, description: "Unauthorized error" })
   async create(
     @Body() payload: CreateInstitutionDto,
     @UserToken() userToken: IInstitutionUserToken,
