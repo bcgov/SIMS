@@ -2,7 +2,7 @@ require("../../../env_setup");
 import { closeDB, setupDB } from "../../testHelpers";
 import { Connection } from "typeorm";
 import * as faker from "faker";
-import { Student, User } from "../entities";
+import { SINValidation, Student, User } from "../entities";
 import {
   SFASIndividualService,
   SINValidationService,
@@ -51,6 +51,9 @@ describe("Test student model", () => {
     user.firstName = faker.name.firstName();
     user.lastName = faker.name.lastName();
     sub.user = user;
+    const sinValidation = new SINValidation();
+    sinValidation.user = user;
+    sub.sinValidation = sinValidation;
 
     // Save
     await controller.save(sub);
