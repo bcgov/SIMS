@@ -101,37 +101,21 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
 
 export class AESTInstitutionDetailDto {
   legalOperatingName: string;
-
   operatingName: string;
-
   primaryPhone: string;
-
   primaryEmail: string;
-
   website: string;
-
   regulatingBody: string;
-
   institutionTypeName: string;
-
   formattedEstablishedDate: string;
-
   primaryContactEmail: string;
-
   primaryContactFirstName: string;
-
   primaryContactLastName: string;
-
   primaryContactPhone: string;
-
   legalAuthorityEmail: string;
-
   legalAuthorityFirstName: string;
-
   legalAuthorityLastName: string;
-
   legalAuthorityPhone: string;
-
   address: {
     addressLine1: string;
     addressLine2: string;
