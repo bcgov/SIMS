@@ -205,7 +205,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @returns Students SIN validation status.
    * @param userId information needed to select the user.
    */
-  async getStudentSinStatus(userId: number): Promise<boolean> {
+  async getStudentSinStatus(userId: number): Promise<boolean | null> {
     const student = await this.repo
       .createQueryBuilder("student")
       .innerJoin("student.user", "user")
