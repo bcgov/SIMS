@@ -22,7 +22,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
 
   /**
    * Once the SIN Validation request file is created, updates the
-   * date that the file was uploaded.
+   * data that the file was uploaded.
    * @param craPersonRecords records that are part of the generated
    * file that must have the file sent name and date updated.
    * @param fileSent filename sent for sin validation.
@@ -31,7 +31,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   async updateRecordsInSentFile(
     craPersonRecords: CRAPersonRecord[],
     fileSent: string,
-  ) {
+  ): Promise<SINValidation[]> {
     const sinValidationsToBeUpdated = craPersonRecords.map(
       (record) =>
         ({

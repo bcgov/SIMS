@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  RelationId,
-} from "typeorm";
-import { SINValidation } from ".";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { BaseModel } from "./base.model";
 
 @Entity({ name: "users" })
