@@ -108,6 +108,7 @@ describe("Test ATBC Controller", () => {
     fakestudent.user = simsUser;
     const sinValidation = new SINValidation();
     sinValidation.user = simsUser;
+    sinValidation.isValidSIN = true;
     fakestudent.sinValidation = sinValidation;
 
     // Save the student in SIMS
