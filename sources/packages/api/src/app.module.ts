@@ -34,6 +34,7 @@ import {
   RestrictionService,
   InstitutionRestrictionService,
   SINValidationService,
+  StudentAssessmentService,
 } from "./services";
 import {
   UserController,
@@ -152,6 +153,7 @@ import { ClientTypeBaseRoute } from "./types";
     RestrictionService,
     InstitutionRestrictionService,
     SINValidationService,
+    StudentAssessmentService,
   ],
 })
 export class AppModule {}

@@ -23,6 +23,7 @@ import {
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
+  StudentAssessmentService,
 } from "../../services";
 import {
   ApplicationStatus,
@@ -67,6 +68,7 @@ export class ConfirmationOfEnrollmentController {
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
+    private readonly assessmentService: StudentAssessmentService,
   ) {}
 
   /**
@@ -144,6 +146,7 @@ export class ConfirmationOfEnrollmentController {
     ":locationId/confirmation-of-enrollment/application/:applicationId/rollback",
   )
   async startCOERollback(
+    @UserToken() userToken: IUserToken,
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
   ): Promise<number> {
@@ -169,6 +172,7 @@ export class ConfirmationOfEnrollmentController {
       const result = await this.applicationService.overrideApplicationForCOE(
         locationId,
         applicationId,
+        userToken.userId,
       );
 
       if (result.overriddenApplication.assessmentWorkflowId) {
@@ -177,9 +181,7 @@ export class ConfirmationOfEnrollmentController {
         );
       }
 
-      await this.applicationService.startApplicationAssessment(
-        result.createdApplication.id,
-      );
+      await this.assessmentService.startAssessment(result.createdAssessment.id);
 
       return result.createdApplication.id;
     } catch (error) {

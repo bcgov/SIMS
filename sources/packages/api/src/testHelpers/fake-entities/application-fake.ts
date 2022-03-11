@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
   ProgramYear,
@@ -17,7 +18,7 @@ export function createFakeApplication(
   programYear?: ProgramYear,
 ): Application {
   const application = new Application();
-  application.data = {};
+  application.data = {} as ApplicationData;
   application.programYear = programYear ?? createFakeProgramYear();
   application.student = student ?? createFakeStudent();
   application.offering = offering ?? createFakeEducationProgramOffering();

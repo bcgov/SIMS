@@ -234,4 +234,4 @@ interface PartTimeAssessment extends BaseAssessment {
  * Whenever there is a source code update, please ensure that properties in this interface are in sync with
  * assessment payload created by camunda workflow.
  */
-type Assessment = FullTimeAssessment | PartTimeAssessment;
+export type Assessment = FullTimeAssessment | PartTimeAssessment;

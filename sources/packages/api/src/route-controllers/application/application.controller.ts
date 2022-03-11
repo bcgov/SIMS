@@ -26,6 +26,8 @@ import {
   SFASPartTimeApplicationsService,
   ConfigService,
   DisbursementScheduleService,
+  StudentAssessmentService,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -86,6 +88,7 @@ export class ApplicationController extends BaseController {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly assessmentService: StudentAssessmentService,
   ) {
     super();
     this.config = this.configService.getConfig();
@@ -193,23 +196,24 @@ export class ApplicationController extends BaseController {
       studyEndDate,
     );
     try {
-      const submittedApplication =
-        await this.applicationService.submitApplication(
-          applicationId,
-          userToken.userId,
-          student.id,
-          programYear.id,
-          submissionResult.data.data,
-          payload.associatedFiles,
-        );
-      this.applicationService.startApplicationAssessment(
-        submittedApplication.id,
+      const { assessment } = await this.applicationService.submitApplication(
+        applicationId,
+        userToken.userId,
+        student.id,
+        programYear.id,
+        submissionResult.data.data,
+        payload.associatedFiles,
       );
+      await this.assessmentService.startAssessment(assessment.id);
     } catch (error) {
       if (error.name === APPLICATION_NOT_FOUND) {
         throw new NotFoundException(error.message);
       }
-      if (error.name === APPLICATION_NOT_VALID) {
+      const unprocessableErrors = [
+        APPLICATION_NOT_VALID,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      ];
+      if (unprocessableErrors.includes(error.name)) {
         throw new UnprocessableEntityException(error.message);
       }
       throw new InternalServerErrorException(
