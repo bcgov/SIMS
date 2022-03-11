@@ -37,6 +37,7 @@ import {
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 /**
  * Allow system access to the application data.
@@ -47,7 +48,7 @@ import { ApiTags } from "@nestjs/swagger";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/application")
 @ApiTags("system-access")
-export class ApplicationSystemController {
+export class ApplicationSystemController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -57,6 +58,7 @@ export class ApplicationSystemController {
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
+    super();
     this.config = this.configService.getConfig();
   }
 

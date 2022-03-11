@@ -7,12 +7,15 @@ import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/cra-integration")
 @ApiTags("system-access")
-export class CRAIntegrationController {
-  constructor(private readonly cra: CRAPersonalVerificationService) {}
+export class CRAIntegrationController extends BaseController {
+  constructor(private readonly cra: CRAPersonalVerificationService) {
+    super();
+  }
 
   /**
    * Identifies all the students that still do not have their SIN

@@ -35,18 +35,21 @@ import {
 } from "../../services/supporting-user/constants";
 import { getDateOnly, getSupportingUserForm } from "../../utilities";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
 @ApiTags("supporting-user")
-export class SupportingUserController {
+export class SupportingUserController extends BaseController {
   constructor(
     private readonly supportingUserService: SupportingUserService,
     private readonly applicationService: ApplicationService,
     private readonly userService: UserService,
     private readonly formService: FormService,
     private readonly workflowActionsService: WorkflowActionsService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Gets supporting user application related information.

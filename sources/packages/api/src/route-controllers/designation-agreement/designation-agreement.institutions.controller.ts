@@ -26,6 +26,7 @@ import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 /***
  * Designation agreement dedicated controller for Institution.
  * */
@@ -33,12 +34,14 @@ import { ApiTags } from "@nestjs/swagger";
 @IsInstitutionAdmin()
 @Controller("designation-agreement")
 @ApiTags("institution")
-export class DesignationAgreementInstitutionsController {
+export class DesignationAgreementInstitutionsController extends BaseController {
   constructor(
     private readonly designationAgreementService: DesignationAgreementService,
     private readonly formService: FormService,
     private readonly designationAgreementControllerService: DesignationAgreementControllerService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Initiates a new designation agreement request. This action

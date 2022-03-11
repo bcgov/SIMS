@@ -6,15 +6,18 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { Student } from "../../database/entities";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/atbc")
 @ApiTags("system-access")
-export class ATBCController {
+export class ATBCController extends BaseController {
   constructor(
     private readonly atbcService: ATBCService,
     private readonly studentService: StudentService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Get all student applied for PD in ATBC

@@ -11,15 +11,18 @@ import { OfferingIntensity } from "../../database/entities";
 import { MSFAARequestService } from "../../esdc-integration/msfaa-integration/msfaa-request.service";
 import { MSFAAResponseService } from "../../esdc-integration/msfaa-integration/msfaa-response.service";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
 @ApiTags("system-access")
-export class MSFAAIntegrationController {
+export class MSFAAIntegrationController extends BaseController {
   constructor(
     private readonly msfaaRequestService: MSFAARequestService,
     private readonly msfaaResponseService: MSFAAResponseService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Identifies all the records where the MSFAA number

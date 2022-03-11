@@ -42,15 +42,18 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { EducationProgramOfferingModel } from "../../services/education-program-offering/education-program-offering.service.models";
 import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @Controller("institution/offering")
 @ApiTags("institution")
-export class EducationProgramOfferingController {
+export class EducationProgramOfferingController extends BaseController {
   constructor(
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly programService: EducationProgramService,
-  ) {}
+  ) {
+    super();
+  }
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
