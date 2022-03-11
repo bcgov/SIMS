@@ -19,7 +19,7 @@ import {
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
-  AESTInstitutionDetailDto,
+  InstitutionReadOnlyDto,
   BasicInstitutionInfo,
   CreateInstitutionDto,
   InstitutionDetailDto,
@@ -528,49 +528,6 @@ export class InstitutionController extends BaseController {
         postalCode: eachInstitution.institutionAddress.postalCode,
       },
     }));
-  }
-
-  /**
-   * Get the Institution details for the ministry institution detail page
-   * @param institutionId
-   * @returns AESTInstitutionDetailDto
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get("/:institutionId/detail")
-  async getAESTInstitutionDetailById(
-    @Param("institutionId") institutionId: number,
-  ): Promise<AESTInstitutionDetailDto> {
-    const institutionDetail =
-      await this.institutionService.getAESTInstitutionDetailById(institutionId);
-    return {
-      legalOperatingName: institutionDetail.legalOperatingName,
-      operatingName: institutionDetail.operatingName,
-      primaryPhone: institutionDetail.primaryPhone,
-      primaryEmail: institutionDetail.primaryEmail,
-      website: institutionDetail.website,
-      regulatingBody: institutionDetail.regulatingBody,
-      institutionTypeName: institutionDetail.institutionType.name,
-      formattedEstablishedDate: getExtendedDateFormat(
-        institutionDetail.establishedDate,
-      ),
-      primaryContactEmail:
-        institutionDetail.institutionPrimaryContact.primaryContactEmail,
-      primaryContactFirstName:
-        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
-      primaryContactLastName:
-        institutionDetail.institutionPrimaryContact.primaryContactLastName,
-      primaryContactPhone:
-        institutionDetail.institutionPrimaryContact.primaryContactPhone,
-      address: {
-        addressLine1: institutionDetail.institutionAddress.addressLine1,
-        addressLine2: institutionDetail.institutionAddress.addressLine2,
-        city: institutionDetail.institutionAddress.city,
-        country: institutionDetail.institutionAddress.country,
-        provinceState: institutionDetail.institutionAddress.provinceState,
-        postalCode: institutionDetail.institutionAddress.postalCode,
-      },
-    };
   }
 
   /**

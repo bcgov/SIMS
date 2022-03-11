@@ -82,7 +82,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   institutionTypeName: string;
 }
 
-export class AESTInstitutionDetailDto {
+export class InstitutionProfileDto {
   legalOperatingName: string;
   operatingName: string;
   primaryPhone: string;
@@ -95,14 +95,11 @@ export class AESTInstitutionDetailDto {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  address: {
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    country: string;
-    provinceState: string;
-    postalCode: string;
-  };
+  address: InstitutionAddress;
+}
+
+export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
+  legalOperatingName: string;
 }
 
 export interface BasicInstitutionInfo {

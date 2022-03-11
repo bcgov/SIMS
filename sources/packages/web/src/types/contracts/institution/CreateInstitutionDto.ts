@@ -43,6 +43,6 @@ export interface InstitutionDetailDto {
 /** Read only DTO which represents the institution profile
  ** This DTO is shared between ministry and Institution.
  */
-export interface InstitutionProfileDto extends InstitutionDto {
+export interface InstitutionReadOnlyDto extends InstitutionDto {
   legalOperatingName: string;
 }

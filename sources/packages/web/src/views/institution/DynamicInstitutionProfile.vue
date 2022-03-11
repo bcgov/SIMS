@@ -16,7 +16,7 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionDto, InstitutionProfileDto } from "../../types";
+import { InstitutionDto, InstitutionReadOnlyDto } from "../../types";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
@@ -33,7 +33,7 @@ export default {
     const router = useRouter();
     const formioDataLoader = useFormioDropdownLoader();
     // Data-bind
-    const institutionProfileModel = ref({} as InstitutionProfileDto);
+    const institutionProfileModel = ref({} as InstitutionReadOnlyDto);
 
     const updateInstitution = async (data: InstitutionDto) => {
       try {
@@ -54,7 +54,7 @@ export default {
     // Hooks
     onMounted(async () => {
       const detail = await InstitutionService.shared.getDetail();
-      institutionProfileModel.value = detail.institution as InstitutionProfileDto;
+      institutionProfileModel.value = detail.institution as InstitutionReadOnlyDto;
     });
 
     const formLoaded = async (form: any) => {
