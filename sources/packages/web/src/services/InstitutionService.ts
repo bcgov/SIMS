@@ -1,7 +1,6 @@
 import {
   Institute,
   SearchInstitutionResp,
-  AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   AESTInstitutionProgramsSummaryDto,
 } from "../types/contracts/InstituteContract";
@@ -31,6 +30,7 @@ import {
   InstitutionUserAndCountForDataTable,
   FieldSortOrder,
   PaginatedResults,
+  InstitutionReadOnlyDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -351,14 +351,14 @@ export class InstitutionService {
   }
 
   /**
-   * Get the Institution details for the ministry institution detail page
-   * @param institutionId
-   * @returns AESTInstitutionDetailDto
+   * Get the Institution details
+   * @param institutionId optional only for ministry.
+   * @returns InstitutionReadOnlyDto
    */
-  async getAESTInstitutionDetailById(
-    institutionId: number,
-  ): Promise<AESTInstitutionDetailDto> {
-    return ApiClient.Institution.getAESTInstitutionDetailById(institutionId);
+  async getInstitutionDetail(
+    institutionId?: number,
+  ): Promise<InstitutionReadOnlyDto> {
+    return ApiClient.Institution.getInstitutionDetail(institutionId);
   }
   /**
    * Get the Basic information of the institution for the ministry institution detail page header

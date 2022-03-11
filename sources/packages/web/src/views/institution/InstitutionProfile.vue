@@ -6,26 +6,26 @@
     <a href="https://www.bceid.ca/" target="_blank">bceid.ca</a>.
   </Message>
   <full-page-container>
-    <institution-profile
+    <institution-profile-form
       :profileData="institutionProfileModel"
       @submitInstitutionProfile="updateInstitution"
-    ></institution-profile>
+    ></institution-profile-form>
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionDto, InstitutionReadOnlyDto } from "../../types";
+import { InstitutionDto, InstitutionReadOnlyDto } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
 import { useStore } from "vuex";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import InstitutionProfile from "@/components/institutions/profile/InstitutionProfile.vue";
+import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 
 export default {
-  components: { FullPageContainer, InstitutionProfile },
+  components: { FullPageContainer, InstitutionProfileForm },
   setup() {
     // Hooks
     const store = useStore();
@@ -54,6 +54,7 @@ export default {
     // Hooks
     onMounted(async () => {
       const detail = await InstitutionService.shared.getDetail();
+      //Story to-do getDetail API has to be common.
       institutionProfileModel.value = detail.institution as InstitutionReadOnlyDto;
     });
 

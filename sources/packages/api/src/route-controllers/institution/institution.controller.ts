@@ -19,7 +19,6 @@ import {
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
-  InstitutionReadOnlyDto,
   BasicInstitutionInfo,
   CreateInstitutionDto,
   InstitutionDetailDto,
@@ -30,7 +29,6 @@ import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
-  getExtendedDateFormat,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
@@ -104,7 +102,7 @@ export class InstitutionController extends BaseController {
     @Body() payload: InstitutionDto,
     @UserToken() userToken: IInstitutionUserToken,
   ) {
-    await this.institutionService.updateInstitution(userToken, payload);
+    await this.institutionService.updateUserProfile(userToken, payload);
   }
 
   @Get()

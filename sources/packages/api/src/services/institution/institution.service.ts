@@ -38,6 +38,7 @@ import {
   DEFAULT_PAGE_LIMIT,
 } from "../../utilities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
+import { UpdateInstitution } from "./institution.service.model";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -226,7 +227,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getOneOrFail();
   }
 
-  async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
+  async updateUserProfile(userInfo: UserInfo, institutionDto: InstitutionDto) {
     const institution: Institution = await this.getInstituteByUserName(
       userInfo.userName,
     );
@@ -570,7 +571,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select("institution.operatingName")
+      .select(["institution.id", "institution.operatingName"])
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
   }
@@ -652,5 +653,41 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         legalSigningAuthority: InstitutionUserRoles.legalSigningAuthority,
       });
     return query.getOne();
+  }
+
+  async updateInstitution(
+    institutionId: number,
+    updateInstitution: UpdateInstitution,
+  ): Promise<void> {
+    const institution = new Institution();
+    institution.id = institutionId;
+
+    institution.operatingName = updateInstitution.operatingName;
+    institution.primaryPhone = updateInstitution.primaryPhone;
+    institution.primaryEmail = updateInstitution.primaryEmail;
+    institution.website = updateInstitution.website;
+    institution.regulatingBody = updateInstitution.regulatingBody;
+    institution.establishedDate = updateInstitution.establishedDate;
+    institution.institutionType = {
+      id: updateInstitution.institutionType,
+    } as InstitutionType;
+
+    institution.institutionPrimaryContact = {
+      primaryContactFirstName: updateInstitution.primaryContactFirstName,
+      primaryContactLastName: updateInstitution.primaryContactLastName,
+      primaryContactEmail: updateInstitution.primaryContactEmail,
+      primaryContactPhone: updateInstitution.primaryContactPhone,
+    };
+
+    institution.institutionAddress = {
+      addressLine1: updateInstitution.address.addressLine1,
+      addressLine2: updateInstitution.address.addressLine2,
+      city: updateInstitution.address.city,
+      provinceState: updateInstitution.address.provinceState,
+      country: updateInstitution.address.country,
+      postalCode: updateInstitution.address.postalCode,
+      phone: updateInstitution.primaryPhone,
+    };
+    this.repo.save(institution);
   }
 }

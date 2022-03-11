@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
+import { ClientTypeBaseRoute } from "../../../types";
 
 /**
  * DTO object for institution creation.
@@ -82,15 +83,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   institutionTypeName: string;
 }
 
-export class InstitutionProfileDto {
-  legalOperatingName: string;
-  operatingName: string;
-  primaryPhone: string;
-  primaryEmail: string;
-  website: string;
-  regulatingBody: string;
-  institutionTypeName: string;
-  formattedEstablishedDate: string;
+export class InstitutionContactDto {
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
@@ -98,8 +91,21 @@ export class InstitutionProfileDto {
   address: InstitutionAddress;
 }
 
-export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
+export class InstitutionProfileDto extends InstitutionContactDto {
+  operatingName: string;
+  primaryPhone: string;
+  primaryEmail: string;
+  website: string;
+  regulatingBody: string;
+  establishedDate: Date;
+  institutionType: number;
+}
+
+export class InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
+  formattedEstablishedDate: string;
+  institutionTypeName: string;
+  clientType: ClientTypeBaseRoute;
 }
 
 export interface BasicInstitutionInfo {
@@ -119,7 +125,7 @@ export interface SearchInstitutionRespDto {
   address: InstitutionAddress;
 }
 
-export interface InstitutionAddress {
+export class InstitutionAddress {
   addressLine1: string;
   addressLine2: string;
   city: string;

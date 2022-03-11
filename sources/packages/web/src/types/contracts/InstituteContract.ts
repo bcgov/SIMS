@@ -19,25 +19,6 @@ export interface SearchInstitutionResp {
   address: Address;
 }
 
-export interface AESTInstitutionDetailDto {
-  legalOperatingName: string;
-  operatingName: string;
-  primaryPhone: string;
-  primaryEmail: string;
-  website: string;
-  formattedEstablishedDate: string;
-  regulatingBody: string;
-  establishedDate: string;
-  // Primary Contact
-  primaryContactEmail: string;
-  primaryContactFirstName: string;
-  primaryContactLastName: string;
-  primaryContactPhone: string;
-
-  address: Address;
-  institutionTypeName: string;
-}
-
 export interface AESTInstitutionProgramsSummaryDto {
   programId: number;
   programName: string;

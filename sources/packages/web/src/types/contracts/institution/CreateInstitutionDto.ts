@@ -1,3 +1,4 @@
+import { ClientTypeBaseRoute } from "../ConfigContract";
 import { BCeIDDetailsDto } from "../UserContract";
 /**
  * DTO for institution creation/retrieval.
@@ -40,9 +41,39 @@ export interface InstitutionDetailDto {
   isBCPrivate: boolean;
 }
 
+export interface InstitutionAddress {
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceState: string;
+  country: string;
+  postalCode: string;
+}
+
+export interface InstitutionContactDto {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  address: InstitutionAddress;
+}
+
+export interface InstitutionProfileDto extends InstitutionContactDto {
+  operatingName: string;
+  primaryPhone: string;
+  primaryEmail: string;
+  website: string;
+  regulatingBody: string;
+  establishedDate: Date;
+  institutionType: number;
+}
+
 /** Read only DTO which represents the institution profile
  ** This DTO is shared between ministry and Institution.
  */
-export interface InstitutionReadOnlyDto extends InstitutionDto {
+export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
+  formattedEstablishedDate: string;
+  clientType: ClientTypeBaseRoute;
+  institutionTypeName: string;
 }

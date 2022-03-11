@@ -7,7 +7,6 @@ import {
   OptionItemDto,
   ApplicationSummaryDTO,
   SearchInstitutionResp,
-  AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   InstitutionUserAndCount,
   DataTableSortOrder,
@@ -16,6 +15,7 @@ import {
   InstitutionUserTypeAndRoleResponseDto,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
+  InstitutionReadOnlyDto,
 } from "@/types";
 import { AxiosResponse } from "axios";
 
@@ -163,13 +163,14 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async getAESTInstitutionDetailById(
-    institutionId: number,
-  ): Promise<AESTInstitutionDetailDto> {
+  public async getInstitutionDetail(
+    institutionId?: number,
+  ): Promise<InstitutionReadOnlyDto> {
     try {
-      const response = await this.getCall(
-        `institution/${institutionId}/detail`,
-      );
+      const url = institutionId
+        ? `institution/${institutionId}`
+        : "institution";
+      const response = await this.getCall(this.addClientRoot(url));
       return response.data;
     } catch (error) {
       this.handleRequestError(error);

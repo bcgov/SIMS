@@ -101,7 +101,7 @@ import { onMounted, ref } from "vue";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
-import { AESTInstitutionDetailDto } from "@/types";
+import { InstitutionReadOnlyDto } from "@/types";
 
 export default {
   components: { ContentGroup, TitleValue },
@@ -112,9 +112,9 @@ export default {
     },
   },
   setup(props: any) {
-    const institutionProfileDetail = ref({} as AESTInstitutionDetailDto);
+    const institutionProfileDetail = ref({} as InstitutionReadOnlyDto);
     onMounted(async () => {
-      institutionProfileDetail.value = await InstitutionService.shared.getAESTInstitutionDetailById(
+      institutionProfileDetail.value = await InstitutionService.shared.getInstitutionDetail(
         props.institutionId,
       );
     });
