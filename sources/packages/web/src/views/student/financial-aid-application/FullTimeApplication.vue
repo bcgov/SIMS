@@ -34,19 +34,14 @@
       </v-col>
     </v-row>
     <StudentApplication
-      :formName="selectedForm"
-      :data="initialData"
-      :readOnly="isReadOnly"
-      @loaded="loadForm"
-      @changed="formChanged"
-      @submitted="submitApplication"
-      @customEvent="customEventCallback"
-    />
-    <StudentApplicationCommonActions
-      :isFirstPage="isFirstPage"
-      :isLastPage="isLastPage"
-      @wizardGoNext="wizardGoNext"
-      @wizardGoPrevious="wizardGoPrevious"
+      :selectedForm="selectedForm"
+      :initialData="initialData"
+      :isReadOnly="isReadOnly"
+      :programYearId="programYearId"
+      @loadForm="loadForm"
+      @submitApplication="submitApplication"
+      @customEventCallback="customEventCallback"
+      @setFirstLastPage="setFirstLastPage"
     />
   </full-page-container>
   <ConfirmEditApplication
@@ -60,12 +55,7 @@ import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
-import {
-  useFormioUtils,
-  useToastMessage,
-  ModalDialog,
-  useStudentApplication,
-} from "@/composables";
+import { useFormioUtils, useToastMessage, ModalDialog } from "@/composables";
 import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
@@ -82,7 +72,6 @@ import {
   PIR_OR_DATE_OVERLAP_ERROR,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
-import StudentApplicationCommonActions from "@/components/common/StudentApplicationCommonActions.vue";
 
 export default {
   components: {
@@ -90,7 +79,6 @@ export default {
     ConfirmEditApplication,
     RestrictionBanner,
     FullPageContainer,
-    StudentApplicationCommonActions,
   },
   props: {
     id: {
@@ -116,6 +104,7 @@ export default {
     const toast = useToastMessage();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
+    let applicationWizard: any;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
@@ -124,13 +113,7 @@ export default {
     const restrictionMessage = ref("");
     const existingApplication = ref({} as GetApplicationDataDto);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
-    const {
-      formLoaded,
-      formChanged,
-      wizardGoPrevious,
-      wizardGoNext,
-      applicationWizard,
-    } = useStudentApplication(isReadOnly.value, props.programYearId);
+
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast
       const programYearDetails = await ApplicationService.shared.getApplicationWithPY(
@@ -147,6 +130,7 @@ export default {
       }
     };
     onMounted(async () => {
+      await checkProgramYear();
       //Get the student information, application information and student restriction.
       const [
         studentInfo,
@@ -254,9 +238,14 @@ export default {
     const editApplication = () => {
       applicationWizard.submit();
     };
+
     const loadForm = async (form: any) => {
-      await checkProgramYear();
-      formLoaded(form);
+      applicationWizard = form;
+    };
+
+    const setFirstLastPage = (firstPage: boolean, lastPage: boolean) => {
+      isFirstPage.value = firstPage;
+      isLastPage.value = lastPage;
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
@@ -285,12 +274,7 @@ export default {
     return {
       initialData,
       loadForm,
-      formChanged,
-      wizardGoPrevious,
-      wizardGoNext,
       wizardSubmit,
-      isFirstPage,
-      isLastPage,
       saveDraft,
       submitApplication,
       savingDraft,
@@ -303,45 +287,10 @@ export default {
       editApplicationModal,
       hasRestriction,
       restrictionMessage,
+      setFirstLastPage,
+      isFirstPage,
+      isLastPage,
     };
   },
 };
 </script>
-
-<style lang="scss">
-.fa-app-header {
-  font-family: Noto Sans;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 27px;
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-  margin: 4px 0px;
-}
-.fa-app-header-1 {
-  @extend .fa-app-header;
-  color: #485363;
-  opacity: 0.5;
-}
-.fa-app-header-2 {
-  @extend .fa-app-header;
-  top: 31px;
-  letter-spacing: -0.2px;
-  color: #485363;
-}
-.fa-app-header-3 {
-  @extend .fa-app-header;
-  color: #2965c5;
-  line-height: 34px;
-}
-.img-background {
-  background-image: url("../../../assets/images/icon_assistance.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 100%;
-  height: 100%;
-  min-height: 350px;
-}
-</style>
