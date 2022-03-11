@@ -34,17 +34,22 @@ import {
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
 import { getDateOnly, getSupportingUserForm } from "../../utilities";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
-export class SupportingUserController {
+@ApiTags("supporting-user")
+export class SupportingUserController extends BaseController {
   constructor(
     private readonly supportingUserService: SupportingUserService,
     private readonly applicationService: ApplicationService,
     private readonly userService: UserService,
     private readonly formService: FormService,
     private readonly workflowActionsService: WorkflowActionsService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Gets supporting user application related information.

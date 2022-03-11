@@ -1,11 +1,16 @@
 import { Controller, Get } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { Public } from "../../auth/decorators/public.decorator";
 import { ConfigService } from "../../services/config/config.service";
+import BaseController from "../BaseController";
 import { IConfig } from "./models/get-config.dto";
 
 @Controller("config")
-export class ConfigController {
-  constructor(private readonly configService: ConfigService) {}
+@ApiTags("config")
+export class ConfigController extends BaseController {
+  constructor(private readonly configService: ConfigService) {
+    super();
+  }
 
   @Public()
   @Get()

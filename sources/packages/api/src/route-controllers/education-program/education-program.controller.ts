@@ -50,13 +50,18 @@ import {
   getUserFullName,
 } from "../../utilities";
 import { ApprovalStatus } from "../../services/education-program/constants";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @Controller("institution/education-program")
-export class EducationProgramController {
+@ApiTags("institution")
+export class EducationProgramController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly formService: FormService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Get programs for a particular institution with pagination.

@@ -53,6 +53,8 @@ import {
 } from "../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import { EnrollmentPeriod } from "../../services/disbursement-schedule-service/disbursement-schedule.models";
 import { ApiProcessError } from "../../types";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 const COE_NOT_FOUND_MESSAGE =
   "Confirmation of enrollment not found or application status not valid.";
@@ -62,14 +64,17 @@ const FIRST_COE_NOT_COMPLETE_MESSAGE =
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-export class ConfirmationOfEnrollmentController {
+@ApiTags("institution")
+export class ConfirmationOfEnrollmentController extends BaseController {
   constructor(
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
     private readonly assessmentService: StudentAssessmentService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Get all Confirmation Of Enrollment(COE) of a location in an institution

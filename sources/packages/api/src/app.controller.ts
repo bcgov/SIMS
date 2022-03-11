@@ -1,4 +1,5 @@
 import { Controller, Get, Req } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { AppService } from "./app.service";
 import { Public } from "./auth/decorators/public.decorator";
 @Controller()
@@ -12,6 +13,7 @@ export class AppController {
   }
 
   @Get("/user-info")
+  @ApiTags("user-info")
   keycloak(@Req() req: any): object {
     console.dir(req.headers);
     return req.user;
