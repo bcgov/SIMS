@@ -13,6 +13,7 @@ import {
   TokensService,
   WorkflowActionsService,
   WorkflowService,
+  SINValidationService,
 } from "../../services";
 import { DatabaseModule } from "../../database/database.module";
 import { CRAIntegrationController } from "./cra-integration.system.controller";
@@ -40,6 +41,7 @@ describe("CRAIntegrationController", () => {
         KeycloakService,
         createMockedJwtService(),
         SFASIndividualService,
+        SINValidationService,
       ],
       controllers: [CRAIntegrationController],
     })

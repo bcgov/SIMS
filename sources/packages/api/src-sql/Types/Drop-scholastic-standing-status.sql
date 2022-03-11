@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS sims.scholastic_standing_status;

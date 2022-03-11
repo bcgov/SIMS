@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS sims.student_appeal_requests;

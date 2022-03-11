@@ -23,6 +23,7 @@ export const TableNames = {
   MSFAANumbers: "msfaa_numbers",
   COEDeniedReason: "coe_denied_reasons",
   CRAIncomeVerification: "cra_income_verifications",
+  SINValidations: "sin_validations",
   SupportingUsers: "supporting_users",
   Restrictions: "restrictions",
   StudentRestrictions: "student_restrictions",
@@ -40,4 +41,8 @@ export const TableNames = {
   SFASPartTimeApplications: "sfas_part_time_applications",
   DesignationAgreements: "designation_agreements",
   DesignationAgreementLocations: "designation_agreement_locations",
+  StudentAppeals: "student_appeals",
+  StudentAppealRequests: "student_appeal_requests",
+  StudentScholasticStandings: "student_scholastic_standings",
+  StudentAssessments: "student_assessments",
 };
