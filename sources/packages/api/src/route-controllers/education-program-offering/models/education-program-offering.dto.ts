@@ -37,13 +37,9 @@ export interface SaveEducationProgramOfferingDto
  */
 export class EducationProgramOfferingDto {
   id: number;
-
   offeringName: string;
-
   studyDates: string;
-
   offeringDelivered: string;
-
   offeringIntensity: OfferingIntensity;
 }
 

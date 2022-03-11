@@ -29,6 +29,7 @@ export FILE_UPLOAD_MAX_FILE_SIZE := $(or $(FILE_UPLOAD_MAX_FILE_SIZE), 4194304)
 export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS), .pdf,.doc,.docx,.jpg,.png)
 #SFAS Integration
 export SFAS_RECEIVE_FOLDER := $(or $(SFAS_RECEIVE_FOLDER), SFAS-Receive)
+export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, false)
 
 local:	| print-status local-build-run
 local-api: | print-status local-build api-only

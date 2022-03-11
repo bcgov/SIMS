@@ -25,6 +25,7 @@ import {
   InstitutionDetailDto,
   InstitutionDto,
   SearchInstitutionRespDto,
+  TestInstitutionDto,
 } from "./models/institution.dto";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -85,9 +86,15 @@ export class InstitutionController extends BaseController {
     super();
   }
 
+  // This is just a test for enum
+  @Post("/test")
+  test(@Body() payload: TestInstitutionDto) {
+    console.log("test");
+  }
+
   @Post()
   @ApiOperation({ summary: "Creates a new institution" })
-  @ApiResponse({ status: 201, description: "Institution created successfully" })
+  @ApiResponse({ status: 201, description: "Success" })
   @ApiResponse({ status: 404, description: "Not found error" })
   @ApiResponse({ status: 401, description: "Unauthorized error" })
   async create(

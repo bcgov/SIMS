@@ -409,3 +409,5 @@ parameters:
     value: esdc-environment-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
+  - name: SWAGGER_ENABLED
+    value: "true"

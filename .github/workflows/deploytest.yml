@@ -32,6 +32,7 @@ jobs:
       FORMS_FLOW_API_URL: "https://test-aest-ffa-api.apps.silver.devops.gov.bc.ca"
       ATBC_LOGIN_ENDPOINT: "https://auth.at-bc.ca/api/login"
       ATBC_ENDPOINT: "https://sabc.at-bc.ca/api"
+      SWAGGER_ENABLED: true
     steps:
       - name: Print env
         run: |
