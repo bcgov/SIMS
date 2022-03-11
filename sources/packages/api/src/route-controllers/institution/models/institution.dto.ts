@@ -127,16 +127,3 @@ export interface InstitutionAddress {
   country: string;
   postalCode: string;
 }
-
-/**
- *  institution test dto with enum property type for swagger poc only.
- */
-export enum InstitutionEnumTest {
-  type1 = "type1",
-  type2 = "type2",
-}
-
-export class TestInstitutionDto {
-  property1: number;
-  type: InstitutionEnumTest;
-}

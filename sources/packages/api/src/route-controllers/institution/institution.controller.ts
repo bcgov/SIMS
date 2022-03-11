@@ -25,7 +25,6 @@ import {
   InstitutionDetailDto,
   InstitutionDto,
   SearchInstitutionRespDto,
-  TestInstitutionDto,
 } from "./models/institution.dto";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -84,12 +83,6 @@ export class InstitutionController extends BaseController {
     private readonly locationService: InstitutionLocationService,
   ) {
     super();
-  }
-
-  // This is just a test for enum
-  @Post("/test")
-  test(@Body() payload: TestInstitutionDto) {
-    console.log("test");
   }
 
   @Post()
