@@ -41,20 +41,6 @@ export class CreateInstitutionDto {
   @IsNotEmpty()
   primaryContactPhone: string;
 
-  //TODO Can be broken into a different DTO if needed
-  // Legal Authority Contact Info
-  @IsNotEmpty()
-  legalAuthorityFirstName: string;
-
-  @IsNotEmpty()
-  legalAuthorityLastName: string;
-
-  @IsNotEmpty()
-  legalAuthorityEmail: string;
-
-  @IsNotEmpty()
-  legalAuthorityPhone: string;
-
   //TODO Can be broken into a different DTO
   //Primary Institution Address
   @IsNotEmpty()
@@ -109,10 +95,6 @@ export class AESTInstitutionDetailDto {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  legalAuthorityEmail: string;
-  legalAuthorityFirstName: string;
-  legalAuthorityLastName: string;
-  legalAuthorityPhone: string;
   address: {
     addressLine1: string;
     addressLine2: string;

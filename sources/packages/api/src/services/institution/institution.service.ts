@@ -195,14 +195,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactPhone: createInstitutionDto.primaryContactPhone,
     };
 
-    //Institution Legal Authority Contact Information
-    institution.legalAuthorityContact = {
-      legalAuthorityFirstName: createInstitutionDto.legalAuthorityFirstName,
-      legalAuthorityLastName: createInstitutionDto.legalAuthorityLastName,
-      legalAuthorityEmail: createInstitutionDto.legalAuthorityEmail,
-      legalAuthorityPhone: createInstitutionDto.legalAuthorityPhone,
-    };
-
     //Institution Address
     institution.institutionAddress = {
       addressLine1: createInstitutionDto.addressLine1,
@@ -262,14 +254,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactLastName: institutionDto.primaryContactLastName,
       primaryContactEmail: institutionDto.primaryContactEmail,
       primaryContactPhone: institutionDto.primaryContactPhone,
-    };
-
-    //Institution Legal Authority Contact Information
-    institution.legalAuthorityContact = {
-      legalAuthorityFirstName: institutionDto.legalAuthorityFirstName,
-      legalAuthorityLastName: institutionDto.legalAuthorityLastName,
-      legalAuthorityEmail: institutionDto.legalAuthorityEmail,
-      legalAuthorityPhone: institutionDto.legalAuthorityPhone,
     };
 
     //Institution Address

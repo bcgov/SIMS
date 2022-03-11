@@ -64,24 +64,7 @@
             </v-row>
           </content-group></v-col
         >
-        <v-col
-          ><content-group
-            ><h6 class="color-blue font-weight-bold">
-              LEGAL AUTHORIZED AUTHORITY CONTACT
-            </h6>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.legalAuthorityFirstName }}
-              {{ institutionProfileDetail.legalAuthorityLastName }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.legalAuthorityEmail }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.legalAuthorityPhone }}
-            </v-row></content-group
-          ></v-col
-        ></v-row
-      >
+      </v-row>
       <p class="category-header-large color-blue mt-2 mb-2">Mailing address</p>
       <content-group>
         <title-value

@@ -15,11 +15,6 @@ export interface InstitutionDto {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  // Legal Authority Contact
-  legalAuthorityFirstName: string;
-  legalAuthorityLastName: string;
-  legalAuthorityEmail: string;
-  legalAuthorityPhone: string;
   // Primary address
   addressLine1: string;
   addressLine2: string;
@@ -43,4 +38,11 @@ export interface InstitutionDetailDto {
   institution: UpdateInstitutionDto;
   account: BCeIDDetailsDto;
   isBCPrivate: boolean;
+}
+
+/** Read only DTO which represents the institution profile
+ ** This DTO is shared between ministry and Institution.
+ */
+export interface InstitutionProfileDto extends InstitutionDto {
+  legalOperatingName: string;
 }

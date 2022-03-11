@@ -149,14 +149,6 @@ export class InstitutionController extends BaseController {
           institutionDetail.institutionPrimaryContact.primaryContactLastName,
         primaryContactPhone:
           institutionDetail.institutionPrimaryContact.primaryContactPhone,
-        legalAuthorityEmail:
-          institutionDetail.legalAuthorityContact.legalAuthorityEmail,
-        legalAuthorityFirstName:
-          institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
-        legalAuthorityLastName:
-          institutionDetail.legalAuthorityContact.legalAuthorityLastName,
-        legalAuthorityPhone:
-          institutionDetail.legalAuthorityContact.legalAuthorityPhone,
         addressLine1: institutionDetail.institutionAddress.addressLine1,
         addressLine2: institutionDetail.institutionAddress.addressLine2,
         city: institutionDetail.institutionAddress.city,
@@ -570,14 +562,6 @@ export class InstitutionController extends BaseController {
         institutionDetail.institutionPrimaryContact.primaryContactLastName,
       primaryContactPhone:
         institutionDetail.institutionPrimaryContact.primaryContactPhone,
-      legalAuthorityEmail:
-        institutionDetail.legalAuthorityContact.legalAuthorityEmail,
-      legalAuthorityFirstName:
-        institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
-      legalAuthorityLastName:
-        institutionDetail.legalAuthorityContact.legalAuthorityLastName,
-      legalAuthorityPhone:
-        institutionDetail.legalAuthorityContact.legalAuthorityPhone,
       address: {
         addressLine1: institutionDetail.institutionAddress.addressLine1,
         addressLine2: institutionDetail.institutionAddress.addressLine2,

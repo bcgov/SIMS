@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "@/views/institution/InstitutionDashboard.vue";
 import InstitutionProfile from "@/views/institution/DynamicInstitutionProfile.vue";
+import InstitutionSetup from "@/views/institution/InstitutionSetup.vue";
 import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.vue";
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
@@ -369,7 +370,14 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.InstitutionProfile,
         name: InstitutionRoutesConst.INSTITUTION_PROFILE,
         component: InstitutionProfile,
-        props: { editMode: false },
+        meta: {
+          clientType: ClientIdType.Institution,
+        },
+      },
+      {
+        path: AppRoutes.InstitutionCreate,
+        name: InstitutionRoutesConst.INSTITUTION_CREATE,
+        component: InstitutionSetup,
         meta: {
           clientType: ClientIdType.Institution,
         },

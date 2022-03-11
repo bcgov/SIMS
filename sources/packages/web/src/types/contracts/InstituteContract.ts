@@ -33,11 +33,7 @@ export interface AESTInstitutionDetailDto {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  // Legal Authority Contact
-  legalAuthorityEmail: string;
-  legalAuthorityFirstName: string;
-  legalAuthorityLastName: string;
-  legalAuthorityPhone: string;
+
   address: Address;
   institutionTypeName: string;
 }
