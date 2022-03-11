@@ -23,7 +23,6 @@
         formName="studentapplication"
         :data="initialData"
         @loaded="formLoaded"
-        @submitted="submitted"
         @customEvent="customEventCallback"
       ></formio>
     </v-container>

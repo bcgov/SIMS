@@ -2,11 +2,6 @@ import { RouteRecordRaw } from "vue-router";
 import StudentDashboard from "@/views/student/StudentDashboard.vue";
 import Login from "@/views/student/Login.vue";
 import AppStudent from "@/views/student/AppStudent.vue";
-import FinancialAidApplication from "@/views/student/financial-aid-application/FinancialAidApplication.vue";
-import PersonalInfoQuestionnaire from "@/views/student/financial-aid-application/PersonalInfoQuestionnaire.vue";
-import SelectProgram from "@/views/student/financial-aid-application/SelectProgram.vue";
-import FinancialInfo from "@/views/student/financial-aid-application/FinancialInfo.vue";
-import ConfirmSubmission from "@/views/student/financial-aid-application/ConfirmSubmission.vue";
 import DynamicStudentApp from "@/views/student/financial-aid-application/FullTimeApplication.vue";
 import StudentApplication from "@/views/student/financial-aid-application/StudentApplication.vue";
 import Assessment from "@/views/student/NoticeOfAssessment.vue";
@@ -124,45 +119,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Student,
         },
-      },
-      {
-        path: "application",
-        name: StudentRoutesConst.FINANCIAL_AID_APPLICATION,
-        component: FinancialAidApplication,
-        children: [
-          {
-            path: "personal-info",
-            name: StudentRoutesConst.PERSONAL_INFO,
-            component: PersonalInfoQuestionnaire,
-            meta: {
-              clientType: ClientIdType.Student,
-            },
-          },
-          {
-            path: "select-program",
-            name: StudentRoutesConst.SELECT_PROGRAM,
-            component: SelectProgram,
-            meta: {
-              clientType: ClientIdType.Student,
-            },
-          },
-          {
-            path: "financial-info",
-            name: StudentRoutesConst.FINANCIAL_INFO,
-            component: FinancialInfo,
-            meta: {
-              clientType: ClientIdType.Student,
-            },
-          },
-          {
-            path: "confirm-submission",
-            name: StudentRoutesConst.CONFIRM_SUBMISSION,
-            component: ConfirmSubmission,
-            meta: {
-              clientType: ClientIdType.Student,
-            },
-          },
-        ], //Children under /Student/FinancialAidApplication
       },
       {
         path: AppRoutes.StudentApplicationSummary,
