@@ -2,6 +2,7 @@ import { OfferingTypes } from "../../../database/entities";
 import { OfferingIntensity } from "../../../database/entities/offering-intensity.type";
 import { StudyBreak } from "../../../database/entities/education-program-offering.model";
 import { ProgramOfferingModel } from "../../../services/education-program-offering/education-program-offering.service.models";
+
 export interface ProgramOfferingBaseDTO {
   offeringName: string;
   studyStartDate: Date;

@@ -22,8 +22,10 @@ import {
   AllowInactiveUser,
   Groups,
 } from "../../auth/decorators";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("users")
+@ApiTags("users")
 export class UserController extends BaseController {
   constructor(
     private readonly service: UserService,

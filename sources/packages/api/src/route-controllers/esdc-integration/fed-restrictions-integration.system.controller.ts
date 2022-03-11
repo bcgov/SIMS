@@ -5,13 +5,18 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { FedRestrictionProcessingService } from "../../esdc-integration/fed-restriction-integration/fed-restriction-processing.service";
 import { ESDCFileResponseDTO } from "./models/esdc-model";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/fed-restrictions")
-export class FedRestrictionsIntegrationController {
+@ApiTags("system-access")
+export class FedRestrictionsIntegrationController extends BaseController {
   constructor(
     private readonly processingService: FedRestrictionProcessingService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Post("process")
   async processFedRestrictionsImport(): Promise<ESDCFileResponseDTO> {

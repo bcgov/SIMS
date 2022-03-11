@@ -32,12 +32,14 @@ import {
 } from "./models/restriction.dto";
 import { OptionItem } from "../../types";
 import { getIDIRUserFullName } from "../../utilities";
+import { ApiTags } from "@nestjs/swagger";
 
 /**
  * Controller for Restrictions.
  * This consists of all Rest APIs for restrictions.
  */
 @Controller("restrictions")
+@ApiTags("restrictions")
 export class RestrictionController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,

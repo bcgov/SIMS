@@ -36,6 +36,8 @@ import {
   UpdateOfferingIntensity,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 /**
  * Allow system access to the application data.
@@ -45,7 +47,8 @@ import { IConfig } from "../../types";
  */
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/application")
-export class ApplicationSystemController {
+@ApiTags("system-access")
+export class ApplicationSystemController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -55,6 +58,7 @@ export class ApplicationSystemController {
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
+    super();
     this.config = this.configService.getConfig();
   }
 
