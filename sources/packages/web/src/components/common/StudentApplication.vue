@@ -271,13 +271,3 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.img-background {
-  background-image: url("../../assets/images/icon_assistance.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 100%;
-  height: 100%;
-  min-height: 350px;
-}
-</style>
