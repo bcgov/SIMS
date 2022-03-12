@@ -18,5 +18,5 @@ export interface UpdateInstitution {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  address: InstitutionAddress;
+  mailingAddress: InstitutionAddress;
 }

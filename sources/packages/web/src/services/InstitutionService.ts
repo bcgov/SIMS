@@ -7,7 +7,6 @@ import {
 import {
   InstitutionDto,
   EducationProgram,
-  InstitutionDetailDto,
   UpdateInstitutionDto,
   InstitutionLocation,
   InstitutionLocationsDetails,
@@ -31,6 +30,7 @@ import {
   FieldSortOrder,
   PaginatedResults,
   InstitutionReadOnlyDto,
+  InstitutionContactDto,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -73,11 +73,11 @@ export class InstitutionService {
     await ApiClient.Institution.createInstitution(data);
   }
 
-  public async updateInstitute(data: UpdateInstitutionDto) {
+  public async updateInstitute(data: InstitutionContactDto) {
     await ApiClient.Institution.updateInstitution(data);
   }
 
-  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
+  public async getDetail(authHeader?: any): Promise<InstitutionReadOnlyDto> {
     return ApiClient.Institution.getDetail(authHeader);
   }
 

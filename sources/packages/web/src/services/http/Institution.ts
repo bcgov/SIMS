@@ -1,7 +1,6 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   InstitutionDto,
-  InstitutionDetailDto,
   UpdateInstitutionDto,
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
@@ -16,8 +15,8 @@ import {
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
   InstitutionReadOnlyDto,
+  InstitutionContactDto,
 } from "@/types";
-import { AxiosResponse } from "axios";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -35,22 +34,17 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async updateInstitution(data: UpdateInstitutionDto) {
-    try {
-      await this.apiClient.patch("institution", data, this.addAuthHeader());
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  public async updateInstitution(data: InstitutionContactDto) {
+    await this.patchCall<InstitutionContactDto>("institution", data);
   }
 
-  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
+  public async getDetail(authHeader?: any): Promise<InstitutionReadOnlyDto> {
     try {
-      const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall(
+      const response = await this.getCallTyped<InstitutionReadOnlyDto>(
         "institution",
         authHeader,
       );
-      return resp.data;
+      return response;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

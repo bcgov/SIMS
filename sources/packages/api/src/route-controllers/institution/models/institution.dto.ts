@@ -83,15 +83,15 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   institutionTypeName: string;
 }
 
-export class InstitutionContactDto {
+export interface InstitutionContactDto {
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  address: InstitutionAddress;
+  mailingAddress: InstitutionAddress;
 }
 
-export class InstitutionProfileDto extends InstitutionContactDto {
+export interface InstitutionProfileDto extends InstitutionContactDto {
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -101,11 +101,12 @@ export class InstitutionProfileDto extends InstitutionContactDto {
   institutionType: number;
 }
 
-export class InstitutionReadOnlyDto extends InstitutionProfileDto {
+export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
-  formattedEstablishedDate: string;
-  institutionTypeName: string;
+  formattedEstablishedDate?: string;
+  institutionTypeName?: string;
   clientType: ClientTypeBaseRoute;
+  isBCPrivate?: boolean;
 }
 
 export interface BasicInstitutionInfo {

@@ -655,10 +655,15 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return query.getOne();
   }
 
+  /**
+   * Update institution.
+   * @param institutionId
+   * @param updateInstitution
+   */
   async updateInstitution(
     institutionId: number,
     updateInstitution: UpdateInstitution,
-  ): Promise<void> {
+  ): Promise<Institution> {
     const institution = new Institution();
     institution.id = institutionId;
 
@@ -680,14 +685,14 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     };
 
     institution.institutionAddress = {
-      addressLine1: updateInstitution.address.addressLine1,
-      addressLine2: updateInstitution.address.addressLine2,
-      city: updateInstitution.address.city,
-      provinceState: updateInstitution.address.provinceState,
-      country: updateInstitution.address.country,
-      postalCode: updateInstitution.address.postalCode,
+      addressLine1: updateInstitution.mailingAddress.addressLine1,
+      addressLine2: updateInstitution.mailingAddress.addressLine2,
+      city: updateInstitution.mailingAddress.city,
+      provinceState: updateInstitution.mailingAddress.provinceState,
+      country: updateInstitution.mailingAddress.country,
+      postalCode: updateInstitution.mailingAddress.postalCode,
       phone: updateInstitution.primaryPhone,
     };
-    this.repo.save(institution);
+    return this.repo.save(institution);
   }
 }

@@ -16,7 +16,7 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionDto, InstitutionReadOnlyDto } from "@/types";
+import { InstitutionContactDto, InstitutionReadOnlyDto } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
@@ -35,7 +35,7 @@ export default {
     // Data-bind
     const institutionProfileModel = ref({} as InstitutionReadOnlyDto);
 
-    const updateInstitution = async (data: InstitutionDto) => {
+    const updateInstitution = async (data: InstitutionContactDto) => {
       try {
         await InstitutionService.shared.updateInstitute(data);
         toast.success("Update Successful", "Institution successfully updated!");
@@ -53,9 +53,7 @@ export default {
 
     // Hooks
     onMounted(async () => {
-      const detail = await InstitutionService.shared.getDetail();
-      //Story to-do getDetail API has to be common.
-      institutionProfileModel.value = detail.institution as InstitutionReadOnlyDto;
+      institutionProfileModel.value = await InstitutionService.shared.getDetail();
     });
 
     const formLoaded = async (form: any) => {

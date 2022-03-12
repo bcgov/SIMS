@@ -69,27 +69,29 @@
       <content-group>
         <title-value
           propertyTitle="Address 1"
-          :propertyValue="institutionProfileDetail.address?.addressLine1"
+          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine1"
         />
         <title-value
           propertyTitle="Address 2"
-          :propertyValue="institutionProfileDetail.address?.addressLine2"
+          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine2"
         />
         <title-value
           propertyTitle="City"
-          :propertyValue="institutionProfileDetail.address?.city"
+          :propertyValue="institutionProfileDetail.mailingAddress?.city"
         />
         <title-value
           propertyTitle="Postal Code"
-          :propertyValue="institutionProfileDetail.address?.postalCode"
+          :propertyValue="institutionProfileDetail.mailingAddress?.postalCode"
         />
         <title-value
           propertyTitle="Province"
-          :propertyValue="institutionProfileDetail.address?.provinceState"
+          :propertyValue="
+            institutionProfileDetail.mailingAddress?.provinceState
+          "
         />
         <title-value
           propertyTitle="Country"
-          :propertyValue="institutionProfileDetail.address?.country"
+          :propertyValue="institutionProfileDetail.mailingAddress?.country"
         />
       </content-group>
     </div>

@@ -55,7 +55,7 @@ export interface InstitutionContactDto {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
-  address: InstitutionAddress;
+  mailingAddress: InstitutionAddress;
 }
 
 export interface InstitutionProfileDto extends InstitutionContactDto {
@@ -73,7 +73,8 @@ export interface InstitutionProfileDto extends InstitutionContactDto {
  */
 export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
-  formattedEstablishedDate: string;
+  formattedEstablishedDate?: string;
   clientType: ClientTypeBaseRoute;
-  institutionTypeName: string;
+  institutionTypeName?: string;
+  isBCPrivate?: boolean;
 }

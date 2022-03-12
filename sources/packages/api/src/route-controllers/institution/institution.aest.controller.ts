@@ -58,7 +58,7 @@ export class InstitutionAESTController extends BaseController {
         institutionDetail.institutionPrimaryContact.primaryContactLastName,
       primaryContactPhone:
         institutionDetail.institutionPrimaryContact.primaryContactPhone,
-      address: {
+      mailingAddress: {
         addressLine1: institutionDetail.institutionAddress.addressLine1,
         addressLine2: institutionDetail.institutionAddress.addressLine2,
         city: institutionDetail.institutionAddress.city,

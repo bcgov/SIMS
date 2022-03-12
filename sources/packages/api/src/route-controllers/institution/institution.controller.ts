@@ -21,9 +21,10 @@ import {
 import {
   BasicInstitutionInfo,
   CreateInstitutionDto,
-  InstitutionDetailDto,
   InstitutionDto,
   SearchInstitutionRespDto,
+  InstitutionReadOnlyDto,
+  InstitutionContactDto,
 } from "./models/institution.dto";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -68,6 +69,8 @@ import {
   InstitutionUser,
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
+import { ClientTypeBaseRoute } from "../../types";
+import { UpdateInstitution } from "../../services/institution/institution.service.model";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
@@ -96,80 +99,71 @@ export class InstitutionController extends BaseController {
     await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
 
+  // @IsInstitutionAdmin()
+  // @Patch("user")
+  // async updateUserProfile(
+  //   @Body() payload: InstitutionDto,
+  //   @UserToken() userToken: IInstitutionUserToken,
+  // ) {
+  //   await this.institutionService.updateUserProfile(userToken, payload);
+  // }
+
   @IsInstitutionAdmin()
   @Patch()
   async update(
-    @Body() payload: InstitutionDto,
+    @Body() payload: InstitutionContactDto,
     @UserToken() userToken: IInstitutionUserToken,
   ) {
-    await this.institutionService.updateUserProfile(userToken, payload);
+    const updateInstitution = {
+      primaryContactEmail: payload.primaryContactEmail,
+      primaryContactFirstName: payload.primaryContactFirstName,
+      primaryContactLastName: payload.primaryContactLastName,
+      primaryContactPhone: payload.primaryContactPhone,
+      mailingAddress: payload.mailingAddress,
+    } as UpdateInstitution;
+    await this.institutionService.updateInstitution(
+      userToken.authorizations.institutionId,
+      updateInstitution,
+    );
   }
 
   @Get()
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
-  ): Promise<InstitutionDetailDto> {
-    // BCeID account information.
-    const accountRequest = this.accountService.getAccountDetails(
-      token.idp_user_name,
-    );
-    // Institution account.
-    const institutionDetailRequest =
-      this.institutionService.getInstituteByUserName(token.userName);
-    // User account in SIMS.
-    const userRequest = this.userService.getActiveUser(token.userName);
-    // Execute all request in parallel.
-    const [account, institutionDetail, user] = await Promise.all([
-      accountRequest,
-      institutionDetailRequest,
-      userRequest,
-    ]);
+  ): Promise<InstitutionReadOnlyDto> {
+    const institutionDetail =
+      await this.institutionService.getInstituteByUserName(token.userName);
 
     const isBCPrivate =
       INSTITUTION_TYPE_BC_PRIVATE === institutionDetail.institutionType.id;
     return {
-      institution: {
-        userFirstName: user.firstName,
-        userLastName: user.lastName,
-        userEmail: user.email,
-        legalOperatingName: institutionDetail.legalOperatingName,
-        operatingName: institutionDetail.operatingName,
-        primaryPhone: institutionDetail.primaryPhone,
-        primaryEmail: institutionDetail.primaryEmail,
-        website: institutionDetail.website,
-        regulatingBody: institutionDetail.regulatingBody,
-        establishedDate: institutionDetail.establishedDate,
-        primaryContactEmail:
-          institutionDetail.institutionPrimaryContact.primaryContactEmail,
-        primaryContactFirstName:
-          institutionDetail.institutionPrimaryContact.primaryContactFirstName,
-        primaryContactLastName:
-          institutionDetail.institutionPrimaryContact.primaryContactLastName,
-        primaryContactPhone:
-          institutionDetail.institutionPrimaryContact.primaryContactPhone,
+      legalOperatingName: institutionDetail.legalOperatingName,
+      operatingName: institutionDetail.operatingName,
+      primaryPhone: institutionDetail.primaryPhone,
+      primaryEmail: institutionDetail.primaryEmail,
+      website: institutionDetail.website,
+      regulatingBody: institutionDetail.regulatingBody,
+      establishedDate: institutionDetail.establishedDate,
+      primaryContactEmail:
+        institutionDetail.institutionPrimaryContact.primaryContactEmail,
+      primaryContactFirstName:
+        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
+      primaryContactLastName:
+        institutionDetail.institutionPrimaryContact.primaryContactLastName,
+      primaryContactPhone:
+        institutionDetail.institutionPrimaryContact.primaryContactPhone,
+      mailingAddress: {
         addressLine1: institutionDetail.institutionAddress.addressLine1,
         addressLine2: institutionDetail.institutionAddress.addressLine2,
         city: institutionDetail.institutionAddress.city,
         country: institutionDetail.institutionAddress.country,
         provinceState: institutionDetail.institutionAddress.provinceState,
         postalCode: institutionDetail.institutionAddress.postalCode,
-        institutionType: institutionDetail.institutionType.id,
-        institutionTypeName: institutionDetail.institutionType.name,
       },
-      account: {
-        user: {
-          guid: account.user.guid,
-          displayName: account.user.displayName,
-          firstname: account.user.firstname,
-          surname: account.user.surname,
-          email: account.user.email,
-        },
-        institution: {
-          guid: account.institution.guid,
-          legalName: account.institution.legalName,
-        },
-      },
+      institutionType: institutionDetail.institutionType.id,
+      institutionTypeName: institutionDetail.institutionType.name,
       isBCPrivate: isBCPrivate,
+      clientType: ClientTypeBaseRoute.Institution,
     };
   }
 
