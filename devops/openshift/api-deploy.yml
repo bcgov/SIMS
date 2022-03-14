@@ -269,8 +269,29 @@ objects:
       to:
         kind: Service
         name: ${NAME}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: ${SWAGGER_NAME}
+    spec:
+      host: ${HOST_NAME}
+      path: ${SWAGGER_PATH}
+      port:
+        targetPort: http
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}
 parameters:
   - name: NAME
+    required: true
+  - name: SWAGGER_NAME
+    value: swagger
+    required: true
+  - name: SWAGGER_PATH
+    value: /swagger
     required: true
   - name: PROJECT
     value: sims
