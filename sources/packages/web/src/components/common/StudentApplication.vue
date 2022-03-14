@@ -8,17 +8,26 @@
     @submitted="submitted"
     @customEvent="customEvent"
   ></formio>
-  <StudentApplicationCommonActions
-    :isFirstPage="isFirstPage"
-    :isLastPage="isLastPage"
-    @wizardGoNext="wizardGoNext"
-    @wizardGoPrevious="wizardGoPrevious"
-  />
+  <v-row>
+    <v-col md="6">
+      <v-btn
+        color="primary"
+        v-show="!isFirstPage"
+        outlined
+        @click="$emit('wizardGoPrevious')"
+        >Previous section</v-btn
+      >
+    </v-col>
+    <v-col md="6" class="ml-auto text-right">
+      <v-btn color="primary" v-show="!isLastPage" @click="$emit('wizardGoNext')"
+        >Next section</v-btn
+      >
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
 import formio from "@/components/generic/formio.vue";
-import StudentApplicationCommonActions from "@/components/common/StudentApplicationCommonActions.vue";
 import {
   OfferingIntensity,
   WizardNavigationEvent,
@@ -33,14 +42,13 @@ import {
 
 export default {
   emits: [
-    "loadForm",
+    "formLoadedCallback",
     "submitApplication",
     "customEventCallback",
-    "setFirstLastPage",
+    "pageChanged",
   ],
   components: {
     formio,
-    StudentApplicationCommonActions,
   },
   props: {
     initialData: {
@@ -61,7 +69,7 @@ export default {
     },
   },
   setup(props: any, context: SetupContext) {
-    // Components names on Form.IO definition that will be manipulated.
+    // Component's names on Form.IO definition that will be manipulated.
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
@@ -84,10 +92,10 @@ export default {
     };
 
     const formLoaded = async (form: any) => {
-      // Emit loadForm event to the parent, so that parent can
+      // Emit formLoadedCallback event to the parent, so that parent can
       // perform the parent specific logic inside parent on
       // form is loaded
-      context.emit("loadForm", form);
+      context.emit("formLoadedCallback", form);
       applicationWizard = form;
       // Disable internal submit button.
       formioUtils.disableWizardButtons(applicationWizard);
@@ -96,22 +104,28 @@ export default {
       applicationWizard.on("wizardPageSelected", (page: any, index: number) => {
         isFirstPage.value = index === 0;
         isLastPage.value = applicationWizard.isLastPage();
-        // Event to set isFirstPage and isLastPage to parent
-        context.emit("setFirstLastPage", isFirstPage.value, isLastPage.value);
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          applicationWizard.page,
+          isLastPage.value,
+        );
       });
       // Handle the navigation using next/prev buttons.
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
         isLastPage.value = applicationWizard.isLastPage();
-        // Event to set isFirstPage and isLastPage to parent
-        context.emit("setFirstLastPage", isFirstPage.value, isLastPage.value);
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          applicationWizard.page,
+          isLastPage.value,
+        );
       };
       applicationWizard.on("prevPage", prevNextNavigation);
       applicationWizard.on("nextPage", prevNextNavigation);
-
-      // Emit setFirstLastPage event to the parent, so that the
-      // respective values are set on parent side
-      context.emit("setFirstLastPage", isFirstPage.value, isLastPage.value);
 
       // TODO:Ann check below code for AEST
       await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);

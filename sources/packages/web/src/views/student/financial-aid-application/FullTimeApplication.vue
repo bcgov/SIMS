@@ -38,10 +38,10 @@
       :initialData="initialData"
       :isReadOnly="isReadOnly"
       :programYearId="programYearId"
-      @loadForm="loadForm"
+      @formLoadedCallback="loadForm"
       @submitApplication="submitApplication"
       @customEventCallback="customEventCallback"
-      @setFirstLastPage="setFirstLastPage"
+      @pageChanged="pageChanged"
     />
   </full-page-container>
   <ConfirmEditApplication
@@ -243,9 +243,13 @@ export default {
       applicationWizard = form;
     };
 
-    const setFirstLastPage = (firstPage: boolean, lastPage: boolean) => {
-      isFirstPage.value = firstPage;
-      isLastPage.value = lastPage;
+    const pageChanged = (
+      isInFirstPage: boolean,
+      currentPage: number,
+      isInLastPage: boolean,
+    ) => {
+      isFirstPage.value = isInFirstPage;
+      isLastPage.value = isInLastPage;
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
@@ -287,7 +291,7 @@ export default {
       editApplicationModal,
       hasRestriction,
       restrictionMessage,
-      setFirstLastPage,
+      pageChanged,
       isFirstPage,
       isLastPage,
     };
