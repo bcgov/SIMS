@@ -5,11 +5,16 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { SFASIntegrationProcessingService } from "../../sfas-integration/sfas-integration-processing.service";
 import { ProcessResultDTO } from "./models/sfas-integration.dto";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/sfas-integration")
-export class SFASIntegrationController {
-  constructor(private readonly sfas: SFASIntegrationProcessingService) {}
+@ApiTags("system-access")
+export class SFASIntegrationController extends BaseController {
+  constructor(private readonly sfas: SFASIntegrationProcessingService) {
+    super();
+  }
 
   /**
    * Process all SFAS integration files from the SFTP,

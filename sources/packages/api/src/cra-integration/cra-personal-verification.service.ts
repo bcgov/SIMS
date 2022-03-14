@@ -23,8 +23,9 @@ import {
 } from "./cra-integration.models";
 import { getUTCNow } from "../utilities";
 import * as path from "path";
+import { SINValidationService } from "../services/sin-validation/sin-validation.service";
 
-const STUDENT_SIN_VALIDATION_TAG = "STUDENT_SIN_VALIDATION";
+const SIN_VALIDATION_TAG = "SIN_VALIDATION";
 const INCOME_VERIFICATION_TAG = "VERIFICATION_ID";
 
 /**
@@ -43,6 +44,7 @@ export class CRAPersonalVerificationService {
     private readonly sequenceService: SequenceControlService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly workflowService: WorkflowActionsService,
+    private readonly sinValidationService: SINValidationService,
     config: ConfigService,
   ) {
     this.ftpResponseFolder =
@@ -72,7 +74,10 @@ export class CRAPersonalVerificationService {
     const craRecords = students.map((student) => {
       return this.createCRARecordFromStudent(
         student,
-        STUDENT_SIN_VALIDATION_TAG,
+        this.createFreeProjectArea(
+          SIN_VALIDATION_TAG,
+          student.sinValidation.id,
+        ),
       );
     });
 
@@ -95,6 +100,13 @@ export class CRAPersonalVerificationService {
             generatedFile: fileInfo.filePath,
             uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
           };
+          // Updates the records in SIN Validation table for the particular user
+          this.logger.log("Updating the records in SIN Validation table");
+          this.sinValidationService.updateRecordsInSentFile(
+            craRecords,
+            fileInfo.fileName,
+          );
+          this.logger.log("SIN Validation table Updated");
         } catch (error) {
           this.logger.error(
             `Error while uploading content for SIN verification: ${error}`,
@@ -130,7 +142,10 @@ export class CRAPersonalVerificationService {
     const craRecords = incomeVerifications.map((incomeVerification) => {
       const craRecord = this.createCRARecordFromIncomeVerification(
         incomeVerification,
-        this.getIncomeVerificationTag(incomeVerification.id),
+        this.createFreeProjectArea(
+          INCOME_VERIFICATION_TAG,
+          incomeVerification.id,
+        ),
       );
       craRecord.taxYear = incomeVerification.taxYear;
       return craRecord;
@@ -203,6 +218,7 @@ export class CRAPersonalVerificationService {
       surname: student.user.lastName,
       givenName: student.user.firstName,
       birthDate: student.birthDate,
+      verificationId: student.sinValidation.id,
       freeProjectArea,
     } as CRAPersonRecord;
   }
@@ -305,14 +321,15 @@ export class CRAPersonalVerificationService {
     for (const statusRecord of responseFile.statusRecords) {
       try {
         // 0022 could be present in a SIN validation response or income verification response.
-        // We use the tag STUDENT_SIN_VALIDATION_TAG to process 0022 records only when the
+        // We use the tag SIN_VALIDATION_TAG to process 0022 records only when the
         // request was made specifically for SIN validation.
-        if (statusRecord.freeProjectArea == STUDENT_SIN_VALIDATION_TAG) {
-          await this.processSINStatus(statusRecord);
+        if (statusRecord.freeProjectArea.includes(SIN_VALIDATION_TAG)) {
+          await this.processSINStatus(statusRecord, remoteFilePath);
           result.processSummary.push(
             `Processed SIN validation for record line ${statusRecord.lineNumber}.`,
           );
-        } else {
+        }
+        if (statusRecord.freeProjectArea.includes(INCOME_VERIFICATION_TAG)) {
           // Find the 'Total Income' record associated with the status record.
           // This record may not be present if there is no data for the tax year, for instance.
           const totalIncomeRecord = responseFile.totalIncomeRecords.find(
@@ -359,14 +376,23 @@ export class CRAPersonalVerificationService {
    */
   private async processSINStatus(
     craRecord: CRAResponseStatusRecord,
+    fileReceived: string,
   ): Promise<void> {
-    const isValidSIN =
-      craRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
-      craRecord.matchStatusCode === MatchStatusCodes.successfulMatch;
-
-    await this.studentService.updatePendingSinValidation(
-      craRecord.sin,
-      isValidSIN,
+    // The id to be used to find and update the SIN validation record
+    // must be on the 'freeProjectArea' (e.g. SIN_VALIDATION:12345) that was
+    // generated during the file creation to execute the request to CRA.
+    const verificationId = this.getIdFromFreeProjectArea(
+      craRecord.freeProjectArea,
+    );
+    if (!verificationId) {
+      throw new Error(
+        `Not able to extract the CRA SIN verification id from the freeProjectArea ${craRecord.freeProjectArea}`,
+      );
+    }
+    await this.sinValidationService.updatePendingSinValidation(
+      verificationId,
+      craRecord,
+      fileReceived,
     );
   }
 
@@ -390,7 +416,7 @@ export class CRAPersonalVerificationService {
     // The id to be used to find and update the CRA income verification record
     // must be on the 'freeProjectArea' (e.g. VERIFICATION_ID:12345) that was
     // generated during the file creation to execute the request to CRA.
-    const verificationId = this.getIdFromIncomeVerificationIdTag(
+    const verificationId = this.getIdFromFreeProjectArea(
       statusRecord.freeProjectArea,
     );
     if (!verificationId) {
@@ -430,26 +456,27 @@ export class CRAPersonalVerificationService {
   }
 
   /**
-   * Gets income verification tag used on the freeProjectArea of the
+   * Gets verification tag used on the freeProjectArea of the
    * request file. This tag contains the id of the record on table
-   * sims.cra_income_verifications that will be used during the
-   * interpretation of the response to find the exact record that
-   * must be updated.
-   * @param id CRA income verification id.
-   * @returns income verification tag.
+   * sims.cra_income_verifications/cra_sin_validations that will be
+   * used during the interpretation of the response to find
+   * the exact record that must be updated.
+   * @param tag Identifier tag for cra_income_verifications/cra_sin_validations
+   * @param id Verification id.
+   * @returns Combined string of tag and id appended with ":".
    */
-  private getIncomeVerificationTag(id: number): string {
-    return `${INCOME_VERIFICATION_TAG}:${id}`;
+  private createFreeProjectArea(tag: string, id: number): string {
+    return `${tag}:${id}`;
   }
 
   /**
-   * Gets the id from the income verification that identifies
-   * the record on sims.cra_income_verifications that must be
-   * updated with the response data from CRA.
+   * Gets the id from the freeProjectArea that identifies
+   * the record on sims.cra_income_verifications/cra_sin_validations
+   *  that must be updated with the response data from CRA.
    * @param tag tag that contains the id to be extracted.
-   * @returns id from income verification id tag
+   * @returns id from verification id tag
    */
-  private getIdFromIncomeVerificationIdTag(tag: string): number | null {
+  private getIdFromFreeProjectArea(tag: string): number | null {
     if (!tag?.includes(":")) {
       return null;
     }

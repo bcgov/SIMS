@@ -13,6 +13,7 @@ import { ContactInfo } from "../../types";
 import { User } from "./user.model";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { Note } from ".";
+import { SINValidation } from "./sin-validation.model";
 
 @Entity({ name: TableNames.Student })
 export class Student extends RecordDataModel {
@@ -49,12 +50,6 @@ export class Student extends RecordDataModel {
   })
   gender: string;
 
-  @Column({
-    name: "valid_sin",
-    nullable: true,
-  })
-  validSIN?: boolean;
-
   @OneToOne(() => User, { eager: true, cascade: true })
   @JoinColumn({
     name: "user_id",
@@ -81,4 +76,11 @@ export class Student extends RecordDataModel {
     inverseJoinColumn: { name: ColumnNames.NoteId },
   })
   notes: Note[];
+
+  @OneToOne(() => SINValidation, { eager: false, cascade: true })
+  @JoinColumn({
+    name: "sin_validation_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  sinValidation: SINValidation;
 }

@@ -8,11 +8,13 @@ import { NoteDTO, NoteBaseDTO } from "./models/note.dto";
 import { AllowAuthorizedParty, UserToken, Groups } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import { transformToNoteDTO, transformToNoteEntity } from "../../utilities";
+import { ApiTags } from "@nestjs/swagger";
 /**
  * Controller for Notes.
  * This consists of all Rest APIs for notes.
  */
 @Controller("notes")
+@ApiTags("notes")
 export class NotesController extends BaseController {
   constructor(
     private readonly studentService: StudentService,

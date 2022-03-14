@@ -3,6 +3,7 @@ import BaseController from "../BaseController";
 import { FormService } from "../../services";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -11,6 +12,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
   AuthorizedParties.aest,
 )
 @Controller("dynamic-form")
+@ApiTags("dynamic-form")
 export class DynamicFormController extends BaseController {
   constructor(private readonly formService: FormService) {
     super();

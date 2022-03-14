@@ -5,8 +5,10 @@ import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ProgramYearDto } from "./models/program-year.dto";
+import { ApiTags } from "@nestjs/swagger";
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("program-year")
+@ApiTags("program-year")
 export class ProgramYearController extends BaseController {
   constructor(private readonly programYearService: ProgramYearService) {
     super();

@@ -71,8 +71,10 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("application")
+@ApiTags("application")
 export class ApplicationController extends BaseController {
   private readonly config: IConfig;
   constructor(

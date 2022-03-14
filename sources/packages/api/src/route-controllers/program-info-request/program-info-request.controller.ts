@@ -45,17 +45,22 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_INTENSITY_MISMATCH,
 } from "../../constants";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-export class ProgramInfoRequestController {
+@ApiTags("institution")
+export class ProgramInfoRequestController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
     private readonly pirDeniedReasonService: PIRDeniedReasonService,
     private readonly formService: FormService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Gets the information to show a Program Information Request (PIR)

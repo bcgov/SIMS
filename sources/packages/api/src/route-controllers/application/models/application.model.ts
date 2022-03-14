@@ -18,18 +18,21 @@ export class SaveApplicationDto {
   /**
    * Application dynamic data.
    */
+
   @IsNotEmpty()
   data: any;
   /**
    * Array of unique file names to be associated
    * with this application.
    */
+
   @IsOptional()
   associatedFiles: string[];
   /**
    * Selected form of the application.
    * This will be used for ProgramYear active validation
    */
+
   @IsInt()
   @Min(1)
   programYearId: number;

@@ -63,12 +63,14 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { Groups } from "../../auth/decorators";
 import { FormNames } from "../../services/form/constants";
+import { ApiTags } from "@nestjs/swagger";
 // For multipart forms, the max number of file fields.
 const MAX_UPLOAD_FILES = 1;
 // For multipart forms, the max number of parts (fields + files).
 // 3 means 'the file' + uniqueFileName + group.
 const MAX_UPLOAD_PARTS = 3;
 @Controller("students")
+@ApiTags("students")
 export class StudentController extends BaseController {
   constructor(
     private readonly userService: UserService,
@@ -119,7 +121,7 @@ export class StudentController extends BaseController {
         phone: existingStudent.contactInfo.phone,
       },
       pdVerified: existingStudent.studentPDVerified,
-      validSin: existingStudent.validSIN,
+      validSin: existingStudent.sinValidation.isValidSIN,
       pdSentDate: existingStudent.studentPDSentAt,
       pdUpdatedDate: existingStudent.studentPDUpdateAt,
       pdStatus: determinePDStatus(existingStudent),
@@ -311,7 +313,7 @@ export class StudentController extends BaseController {
     // if student has a SIN valid only, he/she should allow for a PD check.
 
     if (
-      existingStudent.validSIN &&
+      existingStudent.sinValidation.isValidSIN &&
       !existingStudent.studentPDSentAt &&
       existingStudent.studentPDVerified === null
     ) {

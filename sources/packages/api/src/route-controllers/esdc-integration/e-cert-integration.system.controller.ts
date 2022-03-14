@@ -6,14 +6,19 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ECertFullTimeRequestService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-request.service";
 import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
 import { ESDCFileResultDTO, ESDCFileResponseDTO } from "./models/esdc-model";
+import { ApiTags } from "@nestjs/swagger";
+import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
-export class ECertIntegrationController {
+@ApiTags("system-access")
+export class ECertIntegrationController extends BaseController {
   constructor(
     private readonly ecertFullTimeRequestService: ECertFullTimeRequestService,
     private readonly eCertFullTimeResponseService: ECertFullTimeResponseService,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Process disbursements available to be sent to ESDC.

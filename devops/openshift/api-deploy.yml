@@ -213,6 +213,8 @@ objects:
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
                 - name: BYPASS_APPLICATION_SUBMIT_VALIDATIONS
                   value: ${BYPASS_APPLICATION_SUBMIT_VALIDATIONS}
+                - name: SWAGGER_ENABLED
+                  value: ${SWAGGER_ENABLED}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -267,8 +269,29 @@ objects:
       to:
         kind: Service
         name: ${NAME}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: ${SWAGGER_NAME}
+    spec:
+      host: ${HOST_NAME}
+      path: ${SWAGGER_PATH}
+      port:
+        targetPort: http
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}
 parameters:
   - name: NAME
+    required: true
+  - name: SWAGGER_NAME
+    value: swagger
+    required: true
+  - name: SWAGGER_PATH
+    value: /swagger
     required: true
   - name: PROJECT
     value: sims
@@ -407,3 +430,5 @@ parameters:
     value: esdc-environment-code
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
+  - name: SWAGGER_ENABLED
+    value: "true"
