@@ -33,31 +33,16 @@
         ></v-btn>
       </v-col>
     </v-row>
-    <formio
-      :formName="selectedForm"
-      :data="initialData"
-      :readOnly="isReadOnly"
-      @loaded="formLoaded"
-      @changed="formChanged"
-      @submitted="submitApplication"
-      @customEvent="customEventCallback"
-    ></formio>
-    <v-row>
-      <v-col md="6">
-        <v-btn
-          color="primary"
-          v-show="!isFirstPage"
-          outlined
-          @click="wizardGoPrevious()"
-          >Previous section</v-btn
-        >
-      </v-col>
-      <v-col md="6" class="ml-auto text-right">
-        <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext()"
-          >Next section</v-btn
-        >
-      </v-col>
-    </v-row>
+    <StudentApplication
+      :selectedForm="selectedForm"
+      :initialData="initialData"
+      :isReadOnly="isReadOnly"
+      :programYearId="programYearId"
+      @formLoadedCallback="loadForm"
+      @submitApplication="submitApplication"
+      @customEventCallback="customEventCallback"
+      @pageChanged="pageChanged"
+    />
   </full-page-container>
   <ConfirmEditApplication
     ref="editApplicationModal"
@@ -67,23 +52,14 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import formio from "@/components/generic/formio.vue";
 import { onMounted, ref } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
+import { useFormioUtils, useToastMessage, ModalDialog } from "@/composables";
 import {
-  useFormioDropdownLoader,
-  useFormioUtils,
-  useToastMessage,
-  useFormioComponentLoader,
-  ModalDialog,
-} from "@/composables";
-import {
-  WizardNavigationEvent,
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   ApplicationStatus,
-  OfferingIntensity,
   GetApplicationDataDto,
 } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -95,10 +71,11 @@ import {
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
 } from "@/constants";
+import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default {
   components: {
-    formio,
+    StudentApplication,
     ConfirmEditApplication,
     RestrictionBanner,
     FullPageContainer,
@@ -124,14 +101,12 @@ export default {
     const router = useRouter();
     const initialData = ref({});
     const formioUtils = useFormioUtils();
-    const formioDataLoader = useFormioDropdownLoader();
-    const formioComponentLoader = useFormioComponentLoader();
     const toast = useToastMessage();
     const savingDraft = ref(false);
     const submittingApplication = ref(false);
+    let applicationWizard: any;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
-    let applicationWizard: any;
     const isReadOnly = ref(false);
     const notDraft = ref(false);
     const hasRestriction = ref(false);
@@ -155,6 +130,7 @@ export default {
       }
     };
     onMounted(async () => {
+      await checkProgramYear();
       //Get the student information, application information and student restriction.
       const [
         studentInfo,
@@ -259,166 +235,21 @@ export default {
       }
     };
 
-    // Components names on Form.IO definition that will be manipulated.
-    const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
-    const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
-    const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
-    const SELECTED_OFFERING_DATE_KEY = "selectedOfferingDate";
-    const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
-    const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
-    const PROGRAM_NOT_LISTED = "myProgramNotListed";
-    const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
-
-    const getSelectedId = (form: any) => {
-      return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
+    const editApplication = () => {
+      applicationWizard.submit();
     };
 
-    const formLoaded = async (form: any) => {
+    const loadForm = async (form: any) => {
       applicationWizard = form;
-      await checkProgramYear();
-      // Disable internal submit button.
-      formioUtils.disableWizardButtons(applicationWizard);
-      applicationWizard.options.buttonSettings.showSubmit = false;
-      // Handle the navigation using the breadcrumbs.
-      applicationWizard.on("wizardPageSelected", (page: any, index: number) => {
-        isFirstPage.value = index === 0;
-        isLastPage.value = applicationWizard.isLastPage();
-      });
-      // Handle the navigation using next/prev buttons.
-      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
-        isFirstPage.value = navigation.page === 0;
-        isLastPage.value = applicationWizard.isLastPage();
-      };
-      applicationWizard.on("prevPage", prevNextNavigation);
-      applicationWizard.on("nextPage", prevNextNavigation);
-
-      await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
-      const selectedLocationId = getSelectedId(form);
-
-      if (selectedLocationId) {
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadProgramsForLocation(
-          form,
-          +selectedLocationId,
-          PROGRAMS_DROPDOWN_KEY,
-          props.programYearId,
-          isReadOnly.value,
-        );
-      }
-
-      const selectedProgramId = formioUtils.getComponentValueByKey(
-        form,
-        PROGRAMS_DROPDOWN_KEY,
-      );
-      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-        form,
-        OFFERING_INTENSITY_KEY,
-      );
-      if (selectedProgramId && selectedIntensity) {
-        await formioComponentLoader.loadProgramDesc(
-          form,
-          selectedProgramId,
-          SELECTED_PROGRAM_DESC_KEY,
-        );
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadOfferingsForLocation(
-          form,
-          selectedProgramId,
-          selectedLocationId,
-          OFFERINGS_DROPDOWN_KEY,
-          props.programYearId,
-          selectedIntensity,
-          isReadOnly.value,
-        );
-      }
     };
 
-    const getOfferingDetails = async (form: any, locationId: number) => {
-      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-        form,
-        OFFERING_INTENSITY_KEY,
-      );
-      const educationProgramIdFromForm: number = formioUtils.getComponentValueByKey(
-        form,
-        PROGRAMS_DROPDOWN_KEY,
-      );
-      if (educationProgramIdFromForm && selectedIntensity) {
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadOfferingsForLocation(
-          form,
-          educationProgramIdFromForm,
-          locationId,
-          OFFERINGS_DROPDOWN_KEY,
-          props.programYearId,
-          selectedIntensity,
-          isReadOnly.value,
-        );
-      }
-    };
-
-    const formChanged = async (form: any, event: any) => {
-      const locationId = +formioUtils.getComponentValueByKey(
-        form,
-        LOCATIONS_DROPDOWN_KEY,
-      );
-      if (
-        event.changed?.component.key === LOCATIONS_DROPDOWN_KEY ||
-        event.changed?.component.key === OFFERING_INTENSITY_KEY
-      ) {
-        /*
-          If `programnotListed` is already checked in the draft and
-          when student edit the draft application and changes the
-          location then `programnotListed` checkbox will reset/uncheck.
-        */
-        await formioUtils.resetCheckBox(form, PROGRAM_NOT_LISTED, {
-          programnotListed: false,
-        });
-        const selectedLocationId = getSelectedId(form);
-
-        if (selectedLocationId) {
-          // when isReadOnly.value is true, then consider
-          // both active and inactive program year.
-          await formioDataLoader.loadProgramsForLocation(
-            form,
-            +selectedLocationId,
-            PROGRAMS_DROPDOWN_KEY,
-            props.programYearId,
-            isReadOnly.value,
-          );
-        }
-      }
-      if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
-        if (+event.changed.value > 0) {
-          await formioComponentLoader.loadProgramDesc(
-            form,
-            +event.changed.value,
-            SELECTED_PROGRAM_DESC_KEY,
-          );
-        }
-
-        /*
-          If `offeringnotListed` is already checked in the draft and
-          when student edit the draft application and changes the
-          offering intensity then `programnotListed` checkbox will reset/uncheck.
-        */
-        await formioUtils.resetCheckBox(form, OFFERING_NOT_LISTED, {
-          offeringnotListed: false,
-        });
-        getOfferingDetails(form, locationId);
-      }
-      if (
-        event.changed.component.key === OFFERINGS_DROPDOWN_KEY &&
-        +event.changed.value > 0
-      ) {
-        await formioComponentLoader.loadSelectedOfferingDate(
-          form,
-          +event.changed.value,
-          SELECTED_OFFERING_DATE_KEY,
-        );
-      }
+    const pageChanged = (
+      isInFirstPage: boolean,
+      currentPage: number,
+      isInLastPage: boolean,
+    ) => {
+      isFirstPage.value = isInFirstPage;
+      isLastPage.value = isInLastPage;
     };
 
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
@@ -427,18 +258,6 @@ export default {
           name: StudentRoutesConst.STUDENT_PROFILE_EDIT,
         });
       }
-    };
-
-    const wizardGoPrevious = () => {
-      applicationWizard.prevPage();
-    };
-
-    const wizardGoNext = () => {
-      applicationWizard.nextPage();
-    };
-
-    const editApplication = () => {
-      applicationWizard.submit();
     };
 
     const confirmEditApplication = async () => {
@@ -458,13 +277,8 @@ export default {
     };
     return {
       initialData,
-      formLoaded,
-      formChanged,
-      wizardGoPrevious,
-      wizardGoNext,
+      loadForm,
       wizardSubmit,
-      isFirstPage,
-      isLastPage,
       saveDraft,
       submitApplication,
       savingDraft,
@@ -477,45 +291,10 @@ export default {
       editApplicationModal,
       hasRestriction,
       restrictionMessage,
+      pageChanged,
+      isFirstPage,
+      isLastPage,
     };
   },
 };
 </script>
-
-<style lang="scss">
-.fa-app-header {
-  font-family: Noto Sans;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 27px;
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-  margin: 4px 0px;
-}
-.fa-app-header-1 {
-  @extend .fa-app-header;
-  color: #485363;
-  opacity: 0.5;
-}
-.fa-app-header-2 {
-  @extend .fa-app-header;
-  top: 31px;
-  letter-spacing: -0.2px;
-  color: #485363;
-}
-.fa-app-header-3 {
-  @extend .fa-app-header;
-  color: #2965c5;
-  line-height: 34px;
-}
-.img-background {
-  background-image: url("../../../assets/images/icon_assistance.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 100%;
-  height: 100%;
-  min-height: 350px;
-}
-</style>
