@@ -662,7 +662,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    */
   async updateInstitution(
     institutionId: number,
-    updateInstitution: UpdateInstitution,
+    updateInstitution: Partial<UpdateInstitution>,
   ): Promise<Institution> {
     const institution = new Institution();
     institution.id = institutionId;

@@ -21,7 +21,6 @@ import {
 import {
   BasicInstitutionInfo,
   CreateInstitutionDto,
-  InstitutionDto,
   SearchInstitutionRespDto,
   InstitutionReadOnlyDto,
   InstitutionContactDto,
@@ -70,8 +69,6 @@ import {
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { ClientTypeBaseRoute } from "../../types";
-import { UpdateInstitution } from "../../services/institution/institution.service.model";
-
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 export class InstitutionController extends BaseController {
@@ -111,7 +108,7 @@ export class InstitutionController extends BaseController {
   @IsInstitutionAdmin()
   @Patch()
   async update(
-    @Body() payload: InstitutionContactDto,
+    @Body() payload: Readonly<InstitutionContactDto>,
     @UserToken() userToken: IInstitutionUserToken,
   ) {
     const updateInstitution = {
@@ -120,7 +117,7 @@ export class InstitutionController extends BaseController {
       primaryContactLastName: payload.primaryContactLastName,
       primaryContactPhone: payload.primaryContactPhone,
       mailingAddress: payload.mailingAddress,
-    } as UpdateInstitution;
+    };
     await this.institutionService.updateInstitution(
       userToken.authorizations.institutionId,
       updateInstitution,
