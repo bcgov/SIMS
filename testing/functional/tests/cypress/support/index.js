@@ -14,11 +14,10 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-require('cypress-xpath')
+
 
 // Import commands.js using ES2015 syntax:
 import './commands'
-import 'cypress-mochawesome-reporter/register';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 // pass anything here you'd normally pass to cy.server().
