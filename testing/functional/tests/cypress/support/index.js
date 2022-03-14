@@ -14,7 +14,25 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+require('cypress-xpath')
 
+// Import commands.js using ES2015 syntax:
+import './commands'
+import 'cypress-mochawesome-reporter/register';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+// pass anything here you'd normally pass to cy.server().
+Cypress.Server.defaults({
+    delay: 500,
+    force404: false,
+    ignore: (xhr) => {
+        // handle custom logic for whitelisting
+        return true;
+    }
+})
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+  })
