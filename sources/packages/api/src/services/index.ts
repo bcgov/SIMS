@@ -43,3 +43,4 @@ export * from "./sfas/sfas-part-time-application.service";
 export * from "./designation-agreement/designation-agreement.service";
 export * from "./sin-validation/sin-validation.service";
 export * from "./student-assessment/student-assessment.service";
+export * from "./student-assessment/student-assessment.constants";

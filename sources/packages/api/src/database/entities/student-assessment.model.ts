@@ -71,9 +71,10 @@ export class StudentAssessment extends RecordDataModel {
    */
   @Column({
     name: "assessment_workflow_id",
+    type: "uuid",
     nullable: true,
   })
-  assessmentWorkflowId?: number;
+  assessmentWorkflowId?: string;
   /**
    * Represent the output of the executed assessment workflow and it is also
    * the main content for the NOA (Notice of Assessment).

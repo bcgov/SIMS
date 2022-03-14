@@ -71,6 +71,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionModule } from "./app.institution.module";
 import { ClientTypeBaseRoute } from "./types";
+import { AppSystemAccessModule } from "./app.system-access.module";
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { ClientTypeBaseRoute } from "./types";
     FedRestrictionIntegrationModule,
     AppAESTModule,
     AppInstitutionModule,
+    AppSystemAccessModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
@@ -92,6 +94,10 @@ import { ClientTypeBaseRoute } from "./types";
       {
         path: ClientTypeBaseRoute.AEST,
         module: AppAESTModule,
+      },
+      {
+        path: ClientTypeBaseRoute.SystemAccess,
+        module: AppSystemAccessModule,
       },
     ]),
   ],

@@ -47,7 +47,9 @@ export function setGlobalPipes(app: INestApplication) {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      transformOptions: { enableImplicitConversion: true },
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
       disableErrorMessages: false,
     }),
   );
