@@ -26,3 +26,5 @@ export * from "./supporting-user/supporting-user.aest.controller";
 export * from "./designation-agreement/designation-agreement.controller.service";
 export * from "./designation-agreement/designation-agreement.aest.controller";
 export * from "./institution/institution.aest.controller";
+export * from "./institution/institution.institutions.controller";
+export * from "./institution/institution.controller.service";

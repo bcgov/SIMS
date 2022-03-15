@@ -1,10 +1,11 @@
 <template>
-  <Message severity="info">
-    Please notice that the read-only information below is retrieved from your
-    BCeID account and it is not possible to change it here. If any read-only
-    information needs to be changed please visit
-    <a href="https://www.bceid.ca/" target="_blank" rel="noopener">bceid.ca</a>.
-  </Message>
+  <div class="ml-16">
+    <header-navigator
+      title="Profile"
+      subTitle="Edit Profile"
+      :routeLocation="institutionProfileRoute"
+    />
+  </div>
   <full-page-container>
     <institution-profile-form
       :profileData="institutionProfileModel"
@@ -18,30 +19,37 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionContactDto, InstitutionReadOnlyDto } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
-import { useStore } from "vuex";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { FullPageContainer, InstitutionProfileForm },
-  setup() {
-    // Hooks
-    const store = useStore();
+  components: { FullPageContainer, InstitutionProfileForm, HeaderNavigator },
+  props: {
+    institutionId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    // Data-bind
     const institutionProfileModel = ref({} as InstitutionReadOnlyDto);
+    const institutionProfileRoute = {
+      name: AESTRoutesConst.INSTITUTION_PROFILE,
+      params: { institutionId: props.institutionId },
+    };
 
     const updateInstitution = async (data: InstitutionContactDto) => {
       try {
-        await InstitutionService.shared.updateInstitute(data);
+        await InstitutionService.shared.updateInstitute(
+          data,
+          props.institutionId,
+        );
         toast.success("Update Successful", "Institution successfully updated!");
-        await store.dispatch("institution/getInstitutionDetails");
-        router.push({
-          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-        });
+        router.push(institutionProfileRoute);
       } catch (error) {
         toast.error(
           "Unexpected error",
@@ -50,14 +58,17 @@ export default {
       }
     };
 
-    // Hooks
     onMounted(async () => {
-      institutionProfileModel.value = await InstitutionService.shared.getDetail();
+      institutionProfileModel.value = await InstitutionService.shared.getDetail(
+        undefined,
+        props.institutionId,
+      );
     });
 
     return {
       institutionProfileModel,
       updateInstitution,
+      institutionProfileRoute,
     };
   },
 };

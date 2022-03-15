@@ -22,6 +22,7 @@ import {
   DesignationAgreementAESTController,
   DesignationAgreementControllerService,
   InstitutionAESTController,
+  InstitutionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -50,6 +51,7 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionService,
     BCeIDService,
     UserService,
+    InstitutionControllerService,
   ],
 })
 export class AppAESTModule {}

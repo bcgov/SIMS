@@ -10,6 +10,7 @@ import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
 import Profile from "@/views/aest/institution/Profile.vue";
+import ProfileEdit from "@/views/aest/institution/ProfileEdit.vue";
 import Programs from "@/views/aest/institution/Programs.vue";
 import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
@@ -87,7 +88,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: AppRoutes.Profile,
+            path: AppRoutes.AESTStudentProfile,
             name: AESTRoutesConst.STUDENT_PROFILE,
             props: true,
             component: StudentProfile,
@@ -226,7 +227,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: AppRoutes.Profile,
+            path: AppRoutes.AESTInstitutionProfile,
             name: AESTRoutesConst.INSTITUTION_PROFILE,
             props: true,
             component: Profile,
@@ -312,6 +313,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.AEST,
         },
         props: true,
+      },
+      {
+        path: AppRoutes.AESTInstitutionProfileEdit,
+        name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
+        props: true,
+        component: ProfileEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
       },
     ],
     beforeEnter: (to, _from, next) => {

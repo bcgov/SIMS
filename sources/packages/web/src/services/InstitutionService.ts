@@ -7,7 +7,6 @@ import {
 import {
   InstitutionDto,
   EducationProgram,
-  UpdateInstitutionDto,
   InstitutionLocation,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
@@ -73,12 +72,18 @@ export class InstitutionService {
     await ApiClient.Institution.createInstitution(data);
   }
 
-  public async updateInstitute(data: InstitutionContactDto) {
-    await ApiClient.Institution.updateInstitution(data);
+  public async updateInstitute(
+    data: InstitutionContactDto,
+    institutionId?: number,
+  ) {
+    await ApiClient.Institution.updateInstitution(data, institutionId);
   }
 
-  public async getDetail(authHeader?: any): Promise<InstitutionReadOnlyDto> {
-    return ApiClient.Institution.getDetail(authHeader);
+  public async getDetail(
+    authHeader?: any,
+    institutionId?: number,
+  ): Promise<InstitutionReadOnlyDto> {
+    return ApiClient.Institution.getDetail(authHeader, institutionId);
   }
 
   public async sync() {
@@ -350,16 +355,6 @@ export class InstitutionService {
     return ApiClient.Institution.searchInstitutions(legalName, operatingName);
   }
 
-  /**
-   * Get the Institution details
-   * @param institutionId optional only for ministry.
-   * @returns InstitutionReadOnlyDto
-   */
-  async getInstitutionDetail(
-    institutionId?: number,
-  ): Promise<InstitutionReadOnlyDto> {
-    return ApiClient.Institution.getInstitutionDetail(institutionId);
-  }
   /**
    * Get the Basic information of the institution for the ministry institution detail page header
    * @param institutionId

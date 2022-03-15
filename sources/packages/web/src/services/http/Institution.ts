@@ -1,7 +1,6 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   InstitutionDto,
-  UpdateInstitutionDto,
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
   ApplicationSummaryDTO,
@@ -16,6 +15,7 @@ import {
   PaginatedResults,
   InstitutionReadOnlyDto,
   InstitutionContactDto,
+  InstitutionProfileDto,
 } from "@/types";
 
 export class InstitutionApi extends HttpBaseClient {
@@ -34,21 +34,23 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async updateInstitution(data: InstitutionContactDto) {
-    await this.patchCall<InstitutionContactDto>("institution", data);
+  public async updateInstitution(
+    data: InstitutionContactDto | InstitutionProfileDto,
+    institutionId?: number,
+  ) {
+    const url = institutionId ? `institution/${institutionId}` : "institution";
+    await this.patchCall<InstitutionContactDto>(this.addClientRoot(url), data);
   }
 
-  public async getDetail(authHeader?: any): Promise<InstitutionReadOnlyDto> {
-    try {
-      const response = await this.getCallTyped<InstitutionReadOnlyDto>(
-        "institution",
-        authHeader,
-      );
-      return response;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  public async getDetail(
+    authHeader?: any,
+    institutionId?: number,
+  ): Promise<InstitutionReadOnlyDto> {
+    const url = institutionId ? `institution/${institutionId}` : "institution";
+    return await this.getCallTyped<InstitutionReadOnlyDto>(
+      this.addClientRoot(url),
+      authHeader,
+    );
   }
 
   public async sync() {
@@ -151,21 +153,6 @@ export class InstitutionApi extends HttpBaseClient {
         `institution/search?${queryString.slice(0, -1)}`,
       );
       return institution.data as SearchInstitutionResp[];
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async getInstitutionDetail(
-    institutionId?: number,
-  ): Promise<InstitutionReadOnlyDto> {
-    try {
-      const url = institutionId
-        ? `institution/${institutionId}`
-        : "institution";
-      const response = await this.getCall(this.addClientRoot(url));
-      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

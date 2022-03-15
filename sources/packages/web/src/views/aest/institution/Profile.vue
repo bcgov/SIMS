@@ -1,9 +1,13 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <div class="mb-2">
-        <p class="category-header-large color-blue">Profile</p>
-      </div>
+      <body-header title="Profile" class="m-1">
+        <template #actions>
+          <v-btn text :color="COLOR_BLUE" @click="editProfile"
+            ><font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />Edit
+          </v-btn>
+        </template>
+      </body-header>
       <content-group>
         <v-row>
           <v-col>
@@ -100,13 +104,16 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionReadOnlyDto } from "@/types";
-
+import { COLOR_BLUE } from "@/constants";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 export default {
-  components: { ContentGroup, TitleValue },
+  components: { ContentGroup, TitleValue, BodyHeader },
   props: {
     institutionId: {
       type: Number,
@@ -115,13 +122,24 @@ export default {
   },
   setup(props: any) {
     const institutionProfileDetail = ref({} as InstitutionReadOnlyDto);
+    const router = useRouter();
     onMounted(async () => {
-      institutionProfileDetail.value = await InstitutionService.shared.getInstitutionDetail(
+      institutionProfileDetail.value = await InstitutionService.shared.getDetail(
+        undefined,
         props.institutionId,
       );
     });
+
+    const editProfile = () => {
+      return router.push({
+        name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
+        params: { institutionId: props.institutionId },
+      });
+    };
     return {
       institutionProfileDetail,
+      editProfile,
+      COLOR_BLUE,
     };
   },
 };

@@ -550,12 +550,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionId Institution id.
    * @returns Location retrieved, if found, otherwise returns null.
    */
-  async getAESTInstitutionDetailById(
-    institutionId: number,
-  ): Promise<Institution> {
+  async getInstitutionDetailById(institutionId: number): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select(["institution", "institutionType.name"])
+      .select(["institution", "institutionType.id", "institutionType.name"])
       .innerJoin("institution.institutionType", "institutionType")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();

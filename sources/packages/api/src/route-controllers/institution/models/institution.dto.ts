@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { Allow, IsNotEmpty, IsOptional } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
 import { ClientTypeBaseRoute } from "../../../types";
@@ -65,26 +65,46 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   @IsOptional()
   institutionTypeName: string;
 }
+export class InstitutionAddress {
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceState: string;
+  country: string;
+  postalCode: string;
+}
 
-export interface InstitutionContactDto {
+export class InstitutionContactDto {
+  @Allow()
   primaryContactEmail: string;
+  @Allow()
   primaryContactFirstName: string;
+  @Allow()
   primaryContactLastName: string;
+  @Allow()
   primaryContactPhone: string;
+  @Allow()
   mailingAddress: InstitutionAddress;
 }
 
-export interface InstitutionProfileDto extends InstitutionContactDto {
+export class InstitutionProfileDto extends InstitutionContactDto {
+  @Allow()
   operatingName: string;
+  @Allow()
   primaryPhone: string;
+  @Allow()
   primaryEmail: string;
+  @Allow()
   website: string;
+  @Allow()
   regulatingBody: string;
+  @Allow()
   establishedDate: Date;
+  @Allow()
   institutionType: number;
 }
 
-export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
+export class InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
@@ -107,13 +127,4 @@ export interface SearchInstitutionRespDto {
   legalName: string;
   operatingName: string;
   address: InstitutionAddress;
-}
-
-export class InstitutionAddress {
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
 }
