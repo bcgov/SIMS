@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   ApplicationStatus,
+  AssessmentStatus,
   AssessmentTriggerType,
   EducationProgram,
   EducationProgramOffering,
@@ -208,6 +209,24 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         id: assessmentId,
       },
       { assessmentData, assessmentDate: new Date() },
+    );
+  }
+
+  /**
+   * Updates the assessment status.
+   * @param assessmentId assessment id to be updated.
+   * @param status status of the assessment.
+   * @returns update result.
+   */
+  async updateNOAApprovalStatus(
+    assessmentId: number,
+    status: AssessmentStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: assessmentId,
+      },
+      { noaApprovalStatus: status },
     );
   }
 }

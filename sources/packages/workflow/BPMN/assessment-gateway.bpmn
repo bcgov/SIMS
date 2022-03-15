@@ -520,7 +520,7 @@ createVariablesFromPayload(output.prop("student"));</camunda:script>
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/assessment/</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/assessment/${assessmentId}/assessment-data</camunda:inputParameter>
             <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>

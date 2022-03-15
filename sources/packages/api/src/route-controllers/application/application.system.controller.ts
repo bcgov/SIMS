@@ -20,10 +20,7 @@ import {
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  UpdateProgramInfoStatusDto,
-  UpdateAssessmentStatusDto,
   UpdateApplicationStatusDto,
-  UpdateApplicationStatusWorkflowIdDto,
   SupportingUserDto,
   CreateSupportingUsersDto,
   CreateIncomeVerificationDto,
@@ -54,94 +51,6 @@ export class ApplicationSystemController extends BaseController {
   ) {
     super();
     this.config = this.configService.getConfig();
-  }
-
-  @Patch(":applicationId/assessment")
-  async updateAssessmentInApplication(
-    @Body() assessment: any,
-    @Param("applicationId") applicationId: number,
-  ): Promise<number> {
-    const updateAssessmentInApplication =
-      await this.applicationService.updateAssessmentInApplication(
-        applicationId,
-        assessment,
-      );
-
-    return updateAssessmentInApplication.affected;
-  }
-
-  /**
-   * Updates Program Information Request (PRI) status.
-   * @param applicationId application id to be updated.
-   * @param payload status of the program information request.
-   */
-  @Patch(":id/program-info/status")
-  async updateProgramInfoRequestStatus(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateProgramInfoStatusDto,
-  ): Promise<void> {
-    const updateResult = await this.applicationService.updateProgramInfoStatus(
-      applicationId,
-      payload.status,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the program information request status with provided data.",
-      );
-    }
-  }
-
-  /**
-   * Updates overall Application status and Assessment workflowId.
-   * @param applicationId application id to be updated.
-   * @param payload contains the application status and the workflowId.
-   */
-  @Patch(":id/application-status-workflowId")
-  async updateApplicationStatusWorkflowId(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateApplicationStatusWorkflowIdDto,
-  ): Promise<void> {
-    const updateResult =
-      await this.applicationService.updateApplicationStatusWorkflowId(
-        applicationId,
-        payload.status,
-        payload.workflowId,
-      );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the overall Application status and workflowId with provided data.",
-      );
-    }
-  }
-
-  /**
-   * Updates Assessment status.
-   * @param applicationId application id to be updated.
-   * @param payload status of the program information request.
-   */
-  @Patch(":id/assessment/status")
-  async updateAssessmentStatus(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateAssessmentStatusDto,
-  ): Promise<void> {
-    const updateResult = await this.applicationService.updateAssessmentStatus(
-      applicationId,
-      payload.status,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the assessment status with provided data.",
-      );
-    }
   }
 
   /**

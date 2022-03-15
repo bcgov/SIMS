@@ -16,6 +16,7 @@ import {
   ApplicationData,
   AssessmentTriggerType,
   DisbursementValueType,
+  AssessmentStatus,
 } from "../../../database/entities";
 
 export class ProgramYearDetails {
@@ -161,4 +162,9 @@ export class CreateDisbursementsDTO {
   @ValidateNested({ each: true })
   @Type(() => DisbursementScheduleDTO)
   schedules: DisbursementScheduleDTO[];
+}
+
+export class UpdateAssessmentStatusDTO {
+  @IsEnum(AssessmentStatus)
+  status: AssessmentStatus;
 }

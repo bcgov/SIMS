@@ -1,60 +1,13 @@
-import {
-  ArrayMinSize,
-  IsArray,
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  Min,
-  ValidateNested,
-} from "class-validator";
-import { DisbursementValueType } from "../../../database/entities/disbursement-value-type";
+import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
 
 import {
-  ProgramInfoStatus,
-  AssessmentStatus,
   ApplicationStatus,
   SupportingUserType,
   OfferingIntensity,
 } from "../../../database/entities";
-import { Type } from "class-transformer";
-
-export class UpdateProgramInfoDto {
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  programId?: number;
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  offeringId?: number;
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  locationId: number;
-  @IsEnum(ProgramInfoStatus)
-  status: ProgramInfoStatus;
-}
-
-export class UpdateProgramInfoStatusDto {
-  @IsEnum(ProgramInfoStatus)
-  status: ProgramInfoStatus;
-}
-
-export class UpdateAssessmentStatusDto {
-  @IsEnum(AssessmentStatus)
-  status: AssessmentStatus;
-}
-
 export class UpdateApplicationStatusDto {
   @IsEnum(ApplicationStatus)
   status: ApplicationStatus;
-}
-
-export class UpdateApplicationStatusWorkflowIdDto extends UpdateApplicationStatusDto {
-  @IsNotEmpty()
-  workflowId: string;
 }
 
 export class UpdateOfferingIntensity extends UpdateApplicationStatusDto {
@@ -101,46 +54,4 @@ export class CreateSupportingUsersDto {
 
 export interface SupportingUserDto {
   supportingData: any;
-}
-
-/**
- * Values to be associated with a disbursement.
- */
-export class DisbursementValueDTO {
-  @IsNotEmpty()
-  valueCode: string;
-  @IsEnum(DisbursementValueType)
-  valueType: DisbursementValueType;
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  valueAmount: number;
-}
-
-/**
- * Disbursement to be created altogether
- * with its values on a Student Application.
- */
-export class DisbursementScheduleDTO {
-  @IsNotEmpty()
-  disbursementDate: Date;
-  @IsNotEmpty()
-  negotiatedExpiryDate: Date;
-  @IsArray()
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => DisbursementValueDTO)
-  disbursements: DisbursementValueDTO[];
-}
-
-/**
- * Schedules to be created altogether
- * on a Student Application.
- */
-export class CreateDisbursementsDTO {
-  @IsArray()
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => DisbursementScheduleDTO)
-  schedules: DisbursementScheduleDTO[];
 }

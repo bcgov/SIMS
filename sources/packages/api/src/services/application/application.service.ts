@@ -503,19 +503,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
-  async updateAssessmentInApplication(
-    applicationId: number,
-    assessment: any,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      { assessment },
-    );
-  }
-
   /**
    * Fetch the NOA screen values for a student application.
    * @param applicationId application id to fetch the NOA values.
@@ -710,28 +697,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Updates Program Information Request (PRI) status.
-   * @param applicationId application id to be updated.
-   * @param status status of the program information request.
-   * a PIR request need happen to an offering id be provided.
-   * @returns program information request status update result.
-   */
-  async updateProgramInfoStatus(
-    applicationId: number,
-    status: ProgramInfoStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        pirStatus: status,
-      },
-    );
-  }
-
-  /**
    * Updates Assessment status.
    * @param applicationId application id to be updated.
    * @param status status of the Assessment.
@@ -903,39 +868,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       {
         applicationStatus: applicationStatus,
-        applicationStatusUpdatedOn: getUTCNow(),
-      },
-    );
-  }
-
-  /**
-   * Update Student Application status.
-   * Only allows the update on applications that are not in a final status.
-   * The final statuses of an application are Completed, Overwritten and Cancelled.
-   * @param applicationId application id.
-   * @param applicationStatus application status that need to be updated.
-   * @returns student Application UpdateResult.
-   */
-  async updateApplicationStatusWorkflowId(
-    applicationId: number,
-    applicationStatus: ApplicationStatus,
-    workflowId: string,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(
-          In([
-            ApplicationStatus.completed,
-            ApplicationStatus.overwritten,
-            ApplicationStatus.cancelled,
-          ]),
-        ),
-        assessmentWorkflowId: IsNull(),
-      },
-      {
-        applicationStatus: applicationStatus,
-        assessmentWorkflowId: workflowId,
         applicationStatusUpdatedOn: getUTCNow(),
       },
     );

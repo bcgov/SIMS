@@ -22,6 +22,7 @@ import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import {
   ApplicationAssessmentDTO,
   CreateDisbursementsDTO,
+  UpdateAssessmentStatusDTO,
   UpdateAssessmentWorkflowIdDTO,
   UpdateProgramInfoDTO,
 } from "./models/assessment.system-access.dto";
@@ -283,6 +284,30 @@ export class AssessmentSystemAccessController extends BaseController {
         default:
           throw error;
       }
+    }
+  }
+
+  /**
+   * Updates the NOA (notice of assessment) approval status.
+   * @param assessmentId assessment id to be updated.
+   * @param payload status of the assessment.
+   */
+  @Patch(":id/noa-approval-status")
+  async updateAssessmentStatus(
+    @Param("id") assessmentId: number,
+    @Body() payload: UpdateAssessmentStatusDTO,
+  ): Promise<void> {
+    const updateResult = await this.assessmentService.updateNOAApprovalStatus(
+      assessmentId,
+      payload.status,
+    );
+
+    // Checks if some record was updated.
+    // If affected is zero it means that the update was not successful.
+    if (updateResult.affected === 0) {
+      throw new UnprocessableEntityException(
+        "Not able to update the assessment status with provided data.",
+      );
     }
   }
 }
