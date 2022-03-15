@@ -1,9 +1,9 @@
-import Welcome from "../../page-objects/student-objects/01-welcome-object"
+import WelcomeObject from "../../page-objects/student-objects/WelcomeObject"
 import Login from "../../page-objects/student-objects/02-login-object"
 
 describe("Login Page", () => {
 
-    const WelcomeObject = new Welcome()
+    const Welcome = new WelcomeObject()
     const LoginObject = new Login()
 
     beforeEach(() => {
@@ -12,7 +12,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that user able to login with a valid username and valid password.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.cardSerialNumberContinuebtn()
@@ -23,7 +23,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that user is not able to redirect to next page with invalid Card Serial Number in Virtual Card Testing.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.invalidCardSerialNumber)
             LoginObject.cardSerialNumberContinuebtn()
@@ -32,7 +32,7 @@ describe("Login Page", () => {
     })
 
     it("Test with empty Card Serial Number such that it must get failed.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt()
             LoginObject.cardSerialNumberContinuebtn()
@@ -41,7 +41,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that user can redirect to next page by pressing Enter key after typing in valid Card Serial Number.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.cardSerialNumber).should('have.value', testdata.cardSerialNumber)
             //LoginObject.cardSerialNumberContinuebtn()
@@ -51,7 +51,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that Card Serial Number with case sensitivity.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.caseSenstivityCardSerialNumber)
             LoginObject.caseSenstivityCardSerialNumber()
@@ -60,7 +60,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that Card Serial Number must be within 15 digits allowed", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.fifteenDigitCardSerialNumber)
             LoginObject.maxCharacterCardSerialNumber()
@@ -69,7 +69,7 @@ describe("Login Page", () => {
     })
 
     it.skip("Verify that user is not able to redirect to next page with valid Card Serial Number & invalid passcode.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.cardSerialNumberContinuebtn()
@@ -80,7 +80,7 @@ describe("Login Page", () => {
     })
 
     it.skip("Test with empty passcode after entering valid card serial number such that it must get failed.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.cardSerialNumber).should('have.value', testdata.cardSerialNumber)
             LoginObject.cardSerialNumberContinuebtn()
@@ -91,7 +91,7 @@ describe("Login Page", () => {
     })
 
     it("Check a user is able to login by pressing Enter after entered valid Card Serial Number & valid passcode.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.enterKeyFromCardSerialNumber()
@@ -102,7 +102,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that password is masked or visible in the form of asterisks.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.enterKeyFromCardSerialNumber()
@@ -112,7 +112,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that user remains on same page after login & then relaod page.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.enterKeyFromCardSerialNumber()
@@ -124,7 +124,7 @@ describe("Login Page", () => {
     })
 
     it("Verify that user remains on same page before login & then relaod page.", () => {
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.enterKeyFromCardSerialNumber()

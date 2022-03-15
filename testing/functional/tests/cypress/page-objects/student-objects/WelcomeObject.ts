@@ -1,4 +1,4 @@
-class Welcome {
+class WelcomeObject {
 
     checkCurrentUrl() {
         cy.url().should('include', 'https://test-aest-sims.apps.silver.devops.gov.bc.ca/student')
@@ -62,4 +62,4 @@ class Welcome {
     }
 
 }
-export default Welcome
+export default WelcomeObject

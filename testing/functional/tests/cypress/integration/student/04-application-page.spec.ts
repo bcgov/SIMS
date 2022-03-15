@@ -1,17 +1,17 @@
-import Welcome from "../../page-objects/student-objects/01-welcome-object"
+import WelcomeObject from "../../page-objects/student-objects/WelcomeObject"
 import Login from "../../page-objects/student-objects/02-login-object"
 import Application from "../../page-objects/student-objects/04-application-object"
 
 describe("Application Page", () => {
 
-    const WelcomeObject = new Welcome()
+    const Welcome = new WelcomeObject()
     const LoginObject = new Login()
     const ApplicationObject = new Application()
 
     before("Login", () => {
         cy.visit("/")
         cy.wait(2000)
-        WelcomeObject.virtualTestingBtn()
+        Welcome.virtualTestingBtn()
         cy.fixture('testdata').then((testdata) => {
             LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
             LoginObject.cardSerialNumberContinuebtn()
