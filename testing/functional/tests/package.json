@@ -6,7 +6,8 @@
     "testStudent" : "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
     "testInstitute" : "cypress run --browser chrome --spec cypress/integration/institute/*.spec.ts",
   
-    "Run cypress headless mode command" : " npm run cypress:runChrome "
+    "Run cypress headless mode command" : " npm run cypress:runChrome ",
+    "Run cypress headed mode" : " npx cypress open "
   },
 
   "devDependencies": {
