@@ -1,21 +1,21 @@
-import welcome from "../../page-objects/student-objects/01-welcome-object"
-import login from "../../page-objects/student-objects/02-login-object"
-import dashboard from "../../page-objects/student-objects/03-dashboard-object"
+import Welcome from "../../page-objects/student-objects/01-welcome-object"
+import Login from "../../page-objects/student-objects/02-login-object"
+import Dashboard from "../../page-objects/student-objects/03-dashboard-object"
 
 describe("Dashboard Page", () => {
 
-    const WelcomeObject = new welcome()
-    const LoginObject = new login()
-    const DashboardObject = new dashboard()
+    const WelcomeObject = new Welcome()
+    const LoginObject = new Login()
+    const DashboardObject = new Dashboard()
 
     it("Verify that user successfully redirects to Dashboard Page.", () => {
         cy.visit("/")
         cy.wait(2000)
         WelcomeObject.virtualTestingBtn()
-        cy.fixture('testdata').then((testdata) => {
-            LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
+        cy.fixture('testdata').then((data) => {
+            LoginObject.cardSerialNumberInputTxt().type(data.validCardSerialNumber).should('have.value', data.validCardSerialNumber)
             LoginObject.cardSerialNumberContinuebtn()
-            LoginObject.passcodeInputTxt().type(testdata.validPasscode).should('have.value', testdata.validPasscode)
+            LoginObject.passcodeInputTxt().type(data.validPasscode).should('have.value', data.validPasscode)
             LoginObject.passcodeContinurBtn()
             LoginObject.verifyLoggedInTxt()
         })

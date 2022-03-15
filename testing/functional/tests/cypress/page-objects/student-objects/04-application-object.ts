@@ -1,6 +1,5 @@
-import cypress from "cypress"
 
-class application {
+class Application {
 
     clickOnDraftStatus() {
         cy.get('//tbody/tr/td[5]').each(($el, index, $list) => {
@@ -39,7 +38,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.selectStudyYear).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     startApplicationStudyYearEnableBtn() {
@@ -54,7 +52,6 @@ class application {
     applicationAlreadyInProgressTxt() {
         cy.contains('Application already in progress').should('be.visible')
         cy.get('.v-card-actions > .v-btn').click()
-        return
     }
 
     //Start Application 
@@ -79,19 +76,16 @@ class application {
         cy.wait(2000)
         cy.xpath("(//button[@type='button'])[8]").click()
         cy.contains('Let’s get started on your application').should('be.visible')
-        return
     }
 
     NextSectionBtn() {
         cy.wait(1000)
         cy.contains('Next section').click()
-        return
     }
 
     PreviousSectionBtn() {
         cy.wait(1000)
         cy.contains('Previous section').click()
-        return
     }
 
     errorMsgTxtForSchoolAttending() {
@@ -135,7 +129,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.schoolIWillBeAttending).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     schoolIWillBeAttendingDropdownValue2() {
@@ -145,7 +138,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.schoolIWillBeAttending2).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     howWillYouAttendProgramDropdownValue() {
@@ -155,7 +147,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").eq(1).click({ force: true }).type(testdata.howWillYouAttendProgram).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     howWillYouAttendProgramDropdownValue2() {
@@ -165,7 +156,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").eq(1).click({ force: true }).type(testdata.howWillYouAttendProgram2).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     programIWIllBeAttendingDropdownValue() {
@@ -175,7 +165,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").eq(2).click({ force: true }).type(testdata.programIWIllBeAttendingDropdownValue).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     programIWIllBeAttendingDropdownValue2() {
@@ -185,7 +174,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").eq(2).click({ force: true }).type(testdata.programIWIllBeAttendingDropdownValue2).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     myStudyPeriodIsNotListedCheckbox() {
@@ -197,7 +185,6 @@ class application {
             cy.get('#eqnahab > [ref="element"] > .input-group > .input').type(testdata.studyStartDate)
         })
         cy.wait(2000)
-        return
     }
 
     studyEndDate() {
@@ -205,7 +192,6 @@ class application {
             cy.get('#eyw0exi > [ref="element"] > .input-group > .input').type(testdata.studyEndDate)
         })
         cy.wait(2000)
-        return
     }
 
     inputStudentNumber() {
@@ -213,7 +199,6 @@ class application {
             cy.get('#ek8w4hn-studentNumber').type(testdata.studentNumber)
         })
         cy.wait(2000)
-        return
     }
 
     inputStudentNumber2() {
@@ -221,7 +206,6 @@ class application {
             cy.get('#ek8w4hn-studentNumber').type(testdata.studentNumber2)
         })
         cy.wait(2000)
-        return
     }
 
     incorrectStudentNumber(){
@@ -236,7 +220,6 @@ class application {
             cy.get(".choices__input.choices__input--cloned").eq(3).click({ force: true }).type(testdata.programOffering).type('{enter}')
         })
         cy.wait(2000)
-        return
     }
 
     //
@@ -249,11 +232,10 @@ class application {
             cy.get('.fa').eq(0).click({ force: true })
             cy.wait(1000)
             cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.searchForYourSchool).type('{enter}')
-            return
+            
         })
-        return
     }
 
 }
 
-export default application
+export default Application

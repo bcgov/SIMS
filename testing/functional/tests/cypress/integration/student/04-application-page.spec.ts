@@ -1,14 +1,13 @@
-import welcome from "../../page-objects/student-objects/01-welcome-object"
-import login from "../../page-objects/student-objects/02-login-object"
-import dashboard from "../../page-objects/student-objects/03-dashboard-object"
-import application from "../../page-objects/student-objects/04-application-object"
+import Welcome from "../../page-objects/student-objects/01-welcome-object"
+import Login from "../../page-objects/student-objects/02-login-object"
+import Dashboard from "../../page-objects/student-objects/03-dashboard-object"
+import Application from "../../page-objects/student-objects/04-application-object"
 
 describe("Application Page", () => {
 
-    const WelcomeObject = new welcome()
-    const LoginObject = new login()
-    const DashboardObject = new dashboard()
-    const ApplicationObject = new application()
+    const WelcomeObject = new Welcome()
+    const LoginObject = new Login()
+    const ApplicationObject = new Application()
 
     before("Login", () => {
         cy.visit("/")

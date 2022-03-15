@@ -1,8 +1,8 @@
-import welcome from "../../page-objects/student-objects/01-welcome-object"
+import Welcome from "../../page-objects/student-objects/01-welcome-object"
 
 describe("Welcome Page", () => {
 
-    const WelcomeObject = new welcome()
+    const WelcomeObject = new Welcome()
     beforeEach(function () {
         cy.visit("/")
     })

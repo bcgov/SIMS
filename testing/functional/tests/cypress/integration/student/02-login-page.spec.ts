@@ -1,10 +1,10 @@
-import welcome from "../../page-objects/student-objects/01-welcome-object"
-import login from "../../page-objects/student-objects/02-login-object"
+import Welcome from "../../page-objects/student-objects/01-welcome-object"
+import Login from "../../page-objects/student-objects/02-login-object"
 
 describe("Login Page", () => {
 
-    const WelcomeObject = new welcome()
-    const LoginObject = new login()
+    const WelcomeObject = new Welcome()
+    const LoginObject = new Login()
 
     beforeEach(() => {
         cy.visit("/")

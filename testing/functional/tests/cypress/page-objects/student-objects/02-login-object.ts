@@ -1,4 +1,4 @@
-class login {
+class Login {
 
     cardSerialNumberInputTxt() {
         return cy.get('#csn')
@@ -7,7 +7,6 @@ class login {
     cardSerialNumberContinuebtn() {
         cy.get('#continue').click()
         cy.wait(2000)
-        return
     }
 
     passcodeInputTxt() {
@@ -17,25 +16,21 @@ class login {
     passcodeContinurBtn() {
         cy.get('#btnSubmit').click()
         cy.wait(2000)
-        return
     }
 
     verifyLoggedInTxt() {
         cy.contains('Hello!')
         cy.wait(2000)
-        return
     }
 
     cardNotFoundTxt() {
         cy.contains('Card Not Found')
         cy.wait(2000)
-        return
     }
 
     emptyCardNumberTxt() {
         cy.contains('Enter the card serial number')
         cy.wait(2000)
-        return
     }
 
     enterKeyFromCardSerialNumber() {
@@ -43,7 +38,6 @@ class login {
             .should('be.visible')
             .type('{enter}')
         cy.wait(2000)
-        return
     }
 
     enterKeyFromPasscode() {
@@ -51,7 +45,6 @@ class login {
         cy.get('#passcode')
             .should('be.visible')
             .type('{enter}')
-        return
     }
 
     passcodePageTxt(){
@@ -89,4 +82,4 @@ class login {
         //cy.xpath("//input[@type='password']").focus()
     }
 }
-export default login
+export default Login

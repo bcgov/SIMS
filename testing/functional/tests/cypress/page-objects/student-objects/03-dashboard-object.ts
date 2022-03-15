@@ -1,4 +1,4 @@
-class dashboard {
+class Dashboard {
 
     applicationBtn() {
         return cy.xpath("//button[normalize-space()='Applications']").should('be.visible').click()
@@ -79,4 +79,4 @@ class dashboard {
         })
     }
 }
-export default dashboard
+export default Dashboard
