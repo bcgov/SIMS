@@ -10,17 +10,6 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     super(connection.getRepository(InstitutionLocation));
   }
 
-  /**
-   * Get the institution location by ID.
-   * TODO: Add restriction to the database query to ensure that the
-   * the user requesting the information has access to it.
-   * @param id Location id.
-   * @returns Location retrieved, if found, otherwise returns null.
-   */
-  async getById(id: number): Promise<InstitutionLocation> {
-    return await this.repo.findOne(id);
-  }
-
   async getInstitutionLocationById(id: number): Promise<InstitutionLocation> {
     return this.repo
       .createQueryBuilder("institution_location")
@@ -195,5 +184,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       })
       .getRawMany();
     return found.length === locations.length;
+  }
+
+  /**
+   * Get institution location by location id.
+   * @param locationId location id
+   * @returns location id
+   */
+  async getLocationById(locationId: number): Promise<InstitutionLocation> {
+    return this.repo
+      .createQueryBuilder("location")
+      .select(["location.name"])
+      .where("location.id = :locationId", { locationId })
+      .getOne();
   }
 }

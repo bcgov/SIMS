@@ -26,6 +26,8 @@ import {
   SFASPartTimeApplicationsService,
   ConfigService,
   DisbursementScheduleService,
+  InstitutionLocationService,
+  EducationProgramService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -66,12 +68,14 @@ import {
   checkNotValidStudyPeriod,
   PIR_OR_DATE_OVERLAP_ERROR,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
+  getOfferingNameAndPeriod,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
 import { ApiTags } from "@nestjs/swagger";
+import { ApprovalStatus } from "src/services/education-program/constants";
 
 @Controller("application")
 @ApiTags("application")
@@ -88,6 +92,8 @@ export class ApplicationController extends BaseController {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly locationService: InstitutionLocationService,
+    private readonly programService: EducationProgramService,
   ) {
     super();
     this.config = this.configService.getConfig();
@@ -108,6 +114,42 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+    // Get selected location
+    // TODO: ADD COMMENTS
+    // TODO: DESIGNATION LOCATION ANNNNNNNNNNNNNNNNN
+    if (application.data?.selectedLocation) {
+      const selectedLocation = await this.locationService.getLocationById(
+        application.data.selectedLocation,
+      );
+      if (selectedLocation)
+        application.data.selectedLocationName = selectedLocation.name;
+      else application.data.selectedLocation = null;
+    }
+    // Get selected Program
+    // TODO: ADD COMMENTS
+    if (application.data?.selectedProgram) {
+      const selectedProgram = await this.programService.getProgramById(
+        application.data.selectedProgram,
+      );
+
+      if (selectedProgram) {
+        application.data.selectedProgramName = selectedProgram.name;
+        if (selectedProgram.approvalStatus !== ApprovalStatus.approved)
+          application.data.selectedProgram = null;
+      } else application.data.selectedProgram = null;
+    }
+    // Get selected offering
+    // TODO: ADD COMMENTS
+    if (application.data?.selectedOffering) {
+      const selectedOffering = await this.offeringService.getOfferingById(
+        application.data.selectedOffering,
+      );
+      if (selectedOffering)
+        application.data.selectedOfferingName =
+          getOfferingNameAndPeriod(selectedOffering);
+      else application.data.selectedOffering = null;
+    }
+
     const firstCOE =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
@@ -500,6 +542,7 @@ export class ApplicationController extends BaseController {
     @Param("applicationId") applicationId: number,
     @Param("studentId") studentId: number,
   ): Promise<GetApplicationBaseDTO> {
+    // TODO: ANN - ADD LOCATION, PROGRAM , OFFERING LABEL LOGIC
     const application = await this.applicationService.getApplicationByIdAndUser(
       applicationId,
       undefined,

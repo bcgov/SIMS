@@ -628,4 +628,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         .add(noteObj);
     });
   }
+
+  /**
+   * Get program irrespective of the status.
+   * @param programId Program id.
+   * @returns program
+   */
+  async getProgramById(programId: number): Promise<EducationProgram> {
+    return this.repo
+      .createQueryBuilder("programs")
+      .select(["programs.name", "programs.approvalStatus"])
+      .where("programs.id = :programId", { programId })
+      .getOne();
+  }
 }
