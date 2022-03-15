@@ -47,7 +47,7 @@ export class InstitutionApi extends HttpBaseClient {
     institutionId?: number,
   ): Promise<InstitutionReadOnlyDto> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    return await this.getCallTyped<InstitutionReadOnlyDto>(
+    return this.getCallTyped<InstitutionReadOnlyDto>(
       this.addClientRoot(url),
       authHeader,
     );

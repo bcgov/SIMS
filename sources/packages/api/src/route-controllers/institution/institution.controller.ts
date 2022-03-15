@@ -9,6 +9,7 @@ import {
   Head,
   NotFoundException,
   Query,
+  HttpStatus,
 } from "@nestjs/common";
 import {
   BCeIDService,
@@ -22,13 +23,10 @@ import {
   BasicInstitutionInfo,
   CreateInstitutionDto,
   SearchInstitutionRespDto,
-  InstitutionReadOnlyDto,
-  InstitutionContactDto,
 } from "./models/institution.dto";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
-  INSTITUTION_TYPE_BC_PRIVATE,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
@@ -68,7 +66,6 @@ import {
   InstitutionUser,
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
-import { ClientTypeBaseRoute } from "../../types";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -86,9 +83,12 @@ export class InstitutionController extends BaseController {
 
   @Post()
   @ApiOperation({ summary: "Creates a new institution" })
-  @ApiResponse({ status: 201, description: "Success" })
-  @ApiResponse({ status: 404, description: "Not found error" })
-  @ApiResponse({ status: 401, description: "Unauthorized error" })
+  @ApiResponse({ status: HttpStatus.CREATED, description: "Success" })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "Not found error" })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Unauthorized error",
+  })
   async create(
     @Body() payload: CreateInstitutionDto,
     @UserToken() userToken: IInstitutionUserToken,

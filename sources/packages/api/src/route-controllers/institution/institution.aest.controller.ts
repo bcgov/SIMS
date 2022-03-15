@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  HttpStatus,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -17,10 +18,12 @@ import {
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { InstitutionControllerService } from "./institution.controller.service";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("institution")
+@ApiTags("institution")
 export class InstitutionAESTController extends BaseController {
   constructor(
     private readonly institutionService: InstitutionService,
@@ -35,6 +38,18 @@ export class InstitutionAESTController extends BaseController {
    * @returns InstitutionReadOnlyDto
    */
   @Get("/:institutionId")
+  @ApiOperation({
+    summary: "API for AEST client to get all institutions.",
+  })
+  @ApiResponse({ status: HttpStatus.ACCEPTED, description: "Accepted" })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Institution not valid.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Unauthorized error",
+  })
   async getInstitutionDetailById(
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionReadOnlyDto> {
@@ -50,6 +65,18 @@ export class InstitutionAESTController extends BaseController {
    * @param payload
    */
   @Patch("/:institutionId")
+  @ApiOperation({
+    summary: "API for AEST client to update an institution.",
+  })
+  @ApiResponse({ status: HttpStatus.ACCEPTED, description: "Accepted" })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Institution not valid.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Unauthorized error",
+  })
   async updateInstitution(
     @Param("institutionId") institutionId: number,
     @Body() payload: InstitutionProfileDto,

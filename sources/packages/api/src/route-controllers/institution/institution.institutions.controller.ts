@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Get } from "@nestjs/common";
+import { Body, Controller, Patch, Get, HttpStatus } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -12,7 +12,7 @@ import {
   InstitutionContactDto,
   InstitutionReadOnlyDto,
 } from "./models/institution.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { ClientTypeBaseRoute } from "../../types";
@@ -20,7 +20,7 @@ import { ClientTypeBaseRoute } from "../../types";
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsInstitutionAdmin()
 @Controller("institution")
-@ApiTags("institutions")
+@ApiTags("institution")
 export class InstitutionInstitutionsController extends BaseController {
   constructor(
     private readonly institutionService: InstitutionService,
@@ -29,7 +29,19 @@ export class InstitutionInstitutionsController extends BaseController {
     super();
   }
 
+  /**
+   * Get institution details of given institution.
+   * @returns InstitutionReadOnlyDto
+   */
   @Get()
+  @ApiOperation({
+    summary: "API for institutions client to get all institutions.",
+  })
+  @ApiResponse({ status: HttpStatus.ACCEPTED, description: "Accepted" })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Unauthorized error",
+  })
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
   ): Promise<InstitutionReadOnlyDto> {
@@ -39,7 +51,19 @@ export class InstitutionInstitutionsController extends BaseController {
     );
   }
 
+  /**
+   * Update institution profile details.
+   * @param payload
+   */
   @Patch()
+  @ApiOperation({
+    summary: "API for institutions client to update an institution.",
+  })
+  @ApiResponse({ status: HttpStatus.ACCEPTED, description: "Accepted" })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Unauthorized error",
+  })
   async update(
     @Body() payload: InstitutionContactDto,
     @UserToken() userToken: IInstitutionUserToken,
