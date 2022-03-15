@@ -1,6 +1,5 @@
 import Welcome from "../../page-objects/student-objects/01-welcome-object"
 import Login from "../../page-objects/student-objects/02-login-object"
-import Dashboard from "../../page-objects/student-objects/03-dashboard-object"
 import Application from "../../page-objects/student-objects/04-application-object"
 
 describe("Application Page", () => {
