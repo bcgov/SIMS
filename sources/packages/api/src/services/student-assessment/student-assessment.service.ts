@@ -35,28 +35,39 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo
       .createQueryBuilder("assessment")
       .select([
+        "assessment.id",
         "application.data",
         "programYear.programYear",
         "programYear.startDate",
         "programYear.endDate",
-        "offering",
-        "offering.educationProgram",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+        "offering.tuitionRemittanceRequestedAmount",
+        "offering.offeringDelivered",
+        "offering.offeringIntensity",
+        "educationProgram.id",
         "educationProgram.credentialType",
         "educationProgram.completionYears",
+        "institution.id",
+        "institutionType.name",
         "location.data",
-        "institution",
-        "institutionType",
-        "student",
+        "student.id",
+        "student.studentPDVerified",
       ])
       .innerJoin("assessment.application", "application")
-      .leftJoin("assessment.offering", "offering")
-      .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
+      .leftJoin("assessment.offering", "offering")
+      .leftJoin("offering.educationProgram", "educationProgram")
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
-      .andWhere("assessment.id = :assessment", {
+      .andWhere("assessment.id = :assessmentId", {
         assessmentId,
       })
       .getOne();

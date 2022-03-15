@@ -1,9 +1,22 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  Min,
+} from "class-validator";
 import {
   ProgramInfoStatus,
   ApplicationData,
   AssessmentTriggerType,
 } from "../../../database/entities";
+
+export class ProgramYearDetails {
+  programYear: string;
+  startDate: Date;
+  endDate: Date;
+}
 
 export class ApplicationOfferingDetails {
   id: number;
@@ -32,13 +45,7 @@ export class ApplicationLocationDetails {
 }
 
 export class ApplicationStudentDetails {
-  studentPDStatus: boolean;
-}
-
-export class ProgramYearDetails {
-  programYear: string;
-  startDate: Date;
-  endDate: Date;
+  studentPDStatus?: boolean;
 }
 
 /**
@@ -106,6 +113,6 @@ export class UpdateProgramInfoStatusDto {
 }
 
 export class UpdateAssessmentWorkflowIdDTO {
-  @IsNotEmpty()
+  @IsUUID()
   workflowId: string;
 }

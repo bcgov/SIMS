@@ -2,24 +2,24 @@ import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import {
   ConfigService,
-  DesignationAgreementService,
-  FormService,
+  EducationProgramOfferingService,
+  StudentAssessmentService,
+  WorkflowActionsService,
+  WorkflowService,
 } from "./services";
-import {
-  DesignationAgreementInstitutionsController,
-  DesignationAgreementControllerService,
-} from "./route-controllers";
+import { AssessmentSystemAccessController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [DesignationAgreementInstitutionsController],
+  controllers: [AssessmentSystemAccessController],
   providers: [
-    FormService,
     ConfigService,
-    DesignationAgreementService,
-    DesignationAgreementControllerService,
+    WorkflowActionsService,
+    WorkflowService,
+    StudentAssessmentService,
+    EducationProgramOfferingService,
   ],
 })
 export class AppSystemAccessModule {}

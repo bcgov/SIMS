@@ -28,7 +28,6 @@ import { AllowAuthorizedParty } from "../../auth/decorators";
 @Controller("assessment")
 @ApiTags("System Access - Assessment")
 export class AssessmentSystemAccessController extends BaseController {
-  private readonly config: IConfig;
   constructor(
     private readonly assessmentService: StudentAssessmentService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -105,8 +104,7 @@ export class AssessmentSystemAccessController extends BaseController {
    * Updates Program Information Request (PIR) related data.
    * @param assessmentId assessment id to be updated.
    * @param payload data to be updated.
-   * @returns updates the assessment offering and/or the
-   * PIR (Program Info Request) related application data.
+   * @returns updates the assessment offering and/or the PIR (Program Info Request) related application data.
    */
   @ApiResponse({
     status: HttpStatus.OK,
@@ -190,7 +188,7 @@ export class AssessmentSystemAccessController extends BaseController {
     // If affected is zero it means that the update was not successful.
     if (updateResult.affected === 0) {
       throw new UnprocessableEntityException(
-        "Not able to update the assessment workflowId either because the id was not found of the workflow id is already present.",
+        "Not able to update the assessment workflowId either because the id was not found or the workflow id is already present.",
       );
     }
   }
