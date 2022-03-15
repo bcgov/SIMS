@@ -191,4 +191,23 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       assessment.id,
     );
   }
+
+  /**
+   * Updates the assessment data resulted from the
+   * assessment workflow process.
+   * @param assessmentId assessment to be updated.
+   * @param assessmentData data to be persisted.
+   * @returns update result.
+   */
+  async updateAssessmentData(
+    assessmentId: number,
+    assessmentData: any,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: assessmentId,
+      },
+      { assessmentData, assessmentDate: new Date() },
+    );
+  }
 }

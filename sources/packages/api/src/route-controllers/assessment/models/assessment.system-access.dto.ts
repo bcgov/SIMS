@@ -1,15 +1,21 @@
+import { Type } from "class-transformer";
 import {
+  ArrayMinSize,
+  IsArray,
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsUUID,
   Min,
+  ValidateNested,
 } from "class-validator";
 import {
   ProgramInfoStatus,
   ApplicationData,
   AssessmentTriggerType,
+  DisbursementValueType,
 } from "../../../database/entities";
 
 export class ProgramYearDetails {
@@ -115,4 +121,44 @@ export class UpdateProgramInfoStatusDto {
 export class UpdateAssessmentWorkflowIdDTO {
   @IsUUID()
   workflowId: string;
+}
+
+/**
+ * Values to be associated with a disbursement.
+ */
+export class DisbursementValueDTO {
+  @IsNotEmpty()
+  valueCode: string;
+  @IsEnum(DisbursementValueType)
+  valueType: DisbursementValueType;
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  valueAmount: number;
+}
+
+/**
+ * Disbursement to be created altogether with its values.
+ */
+export class DisbursementScheduleDTO {
+  @IsNotEmpty()
+  disbursementDate: Date;
+  @IsNotEmpty()
+  negotiatedExpiryDate: Date;
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => DisbursementValueDTO)
+  disbursements: DisbursementValueDTO[];
+}
+
+/**
+ * Schedules to be created altogether.
+ */
+export class CreateDisbursementsDTO {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => DisbursementScheduleDTO)
+  schedules: DisbursementScheduleDTO[];
 }

@@ -7,30 +7,35 @@ import {
   UnprocessableEntityException,
   Patch,
   Body,
+  Post,
 } from "@nestjs/common";
 import {
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
+  DisbursementScheduleService,
   EducationProgramOfferingService,
   StudentAssessmentService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { IConfig } from "../../types";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import {
   ApplicationAssessmentDTO,
+  CreateDisbursementsDTO,
   UpdateAssessmentWorkflowIdDTO,
   UpdateProgramInfoDTO,
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
+import { ClientTypeBaseRoute } from "src/types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")
-@ApiTags("System Access - Assessment")
+@ApiTags(`${ClientTypeBaseRoute.SystemAccess}-assessment`)
 export class AssessmentSystemAccessController extends BaseController {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
     private readonly offeringService: EducationProgramOfferingService,
+    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     super();
   }
@@ -104,7 +109,8 @@ export class AssessmentSystemAccessController extends BaseController {
    * Updates Program Information Request (PIR) related data.
    * @param assessmentId assessment id to be updated.
    * @param payload data to be updated.
-   * @returns updates the assessment offering and/or the PIR (Program Info Request) related application data.
+   * @returns updates the assessment offering and/or the PIR
+   * (Program Info Request) related application data.
    */
   @ApiResponse({
     status: HttpStatus.OK,
@@ -190,6 +196,93 @@ export class AssessmentSystemAccessController extends BaseController {
       throw new UnprocessableEntityException(
         "Not able to update the assessment workflowId either because the id was not found or the workflow id is already present.",
       );
+    }
+  }
+
+  /**
+   * Updates the assessment data resulted from the
+   * assessment workflow process.
+   * @param assessmentId assessment to be updated.
+   * @param assessment data to be persisted.
+   */
+  @Patch(":assessmentId/assessment-data")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Assessment data saved.",
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Assessment id was not found.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description:
+      "Not able to process the request with an empty assessment data.",
+  })
+  async updateAssessmentInApplication(
+    @Param("assessmentId") assessmentId: number,
+    @Body() assessment: any,
+  ): Promise<void> {
+    if (!assessment) {
+      throw new UnprocessableEntityException(
+        `Not able to process the request with an empty assessment data. Assessment id ${assessmentId}.`,
+      );
+    }
+
+    const updateResult = await this.assessmentService.updateAssessmentData(
+      assessmentId,
+      assessment,
+    );
+
+    if (updateResult.affected === 0) {
+      // No rows updated because the assessment id was not found.
+      throw new NotFoundException(
+        `Assessment id ${assessmentId} was not found.`,
+      );
+    }
+  }
+
+  /**
+   * Create the disbursements for an assessment/reassessment.
+   * Creates the disbursements and values altogether.
+   * @param assessmentId application id to associate the disbursements.
+   * @param payload array of disbursements and values to be created.
+   * @returns created disbursements ids.
+   */
+  @Post(":assessmentId/disbursements")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Disbursements and disbursements values saved.",
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Assessment id was not found.",
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description:
+      "The disbursement information is already present or either the assessment or the application is not in the correct state.",
+  })
+  async createDisbursement(
+    @Param("assessmentId") assessmentId: number,
+    @Body() payload: CreateDisbursementsDTO,
+  ): Promise<number[]> {
+    try {
+      const disbursements =
+        await this.disbursementScheduleService.createDisbursementSchedules(
+          assessmentId,
+          payload.schedules,
+        );
+      return disbursements.map((disbursement) => disbursement.id);
+    } catch (error) {
+      switch (error.name) {
+        case ASSESSMENT_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          throw error;
+      }
     }
   }
 }

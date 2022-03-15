@@ -11,6 +11,7 @@ import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
 import { RecordDataModel } from "./record.model";
+import { StudentAssessment } from "./student-assessment.model";
 
 /**
  * Dates when each disbursement will happen. Usually the disbursements
@@ -136,4 +137,13 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: true,
   })
   coeDeniedOtherDesc?: string;
+  /**
+   * Student assessment associated with this disbursement.
+   */
+  @ManyToOne(() => StudentAssessment, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "student_assessment_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  studentAssessment: StudentAssessment;
 }

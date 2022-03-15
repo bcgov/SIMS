@@ -3,12 +3,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
 import {
   Application,
   AssessmentStatus,
+  DisbursementSchedule,
   EducationProgramOffering,
   StudentAppeal,
   User,
@@ -181,6 +183,27 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   noaApprovalStatus?: AssessmentStatus;
+  /**
+   * Disbursement ids related to this assessment.
+   */
+  @RelationId(
+    (studentAssessment: StudentAssessment) =>
+      studentAssessment.disbursementSchedules,
+  )
+  disbursementSchedulesIds?: number[];
+  /**
+   * Disbursements related to this assessment.
+   */
+  @OneToMany(
+    () => DisbursementSchedule,
+    (disbursementSchedule) => disbursementSchedule.studentAssessment,
+    {
+      eager: false,
+      cascade: ["insert", "update"],
+      nullable: true,
+    },
+  )
+  disbursementSchedules?: DisbursementSchedule[];
 }
 
 /**

@@ -2,8 +2,11 @@ import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import {
   ConfigService,
+  DisbursementScheduleService,
   EducationProgramOfferingService,
+  SequenceControlService,
   StudentAssessmentService,
+  StudentRestrictionService,
   WorkflowActionsService,
   WorkflowService,
 } from "./services";
@@ -20,6 +23,9 @@ import { LoggerModule } from "./logger/logger.module";
     WorkflowService,
     StudentAssessmentService,
     EducationProgramOfferingService,
+    DisbursementScheduleService,
+    SequenceControlService,
+    StudentRestrictionService,
   ],
 })
 export class AppSystemAccessModule {}
