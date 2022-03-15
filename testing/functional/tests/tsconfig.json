@@ -9,12 +9,12 @@
     "esModuleInterop": true, 
     "emitDecoratorMetadata": true,                
     "experimentalDecorators": true,
-    "types": ["cypress","node"],
+    "types": ["cypress","node","cypress-xpath"],
     "outDir": "tsConvertedFiles",
     
   },
   "include": [
-    "**/*.ts"
+    "**/*"
   ],
   "exclude": [
     "tsConvertedFiles",

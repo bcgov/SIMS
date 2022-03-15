@@ -1,8 +1,20 @@
 {
-  "devDependencies": {
-    "cypress": "^9.5.1"
+
+  "scripts": {
+    
+    "cypress:runChrome" : "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
+    "testStudent" : "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
+    "testInstitute" : "cypress run --browser chrome --spec cypress/integration/institute/*.spec.ts",
+  
+    "Run cypress headless mode command" : " npm run cypress:runChrome "
   },
-  "dependencies": {
-    "typescript": "^4.6.2"
+
+  "devDependencies": {
+    "cypress": "^9.5.1",
+    "cypress-mochawesome-reporter": "^2.3.0",
+    "cypress-xpath": "^1.6.2",
+    "ts-loader": "^9.2.7",
+    "typescript": "^4.6.2",
+    "webpack": "^5.70.0"
   }
 }
