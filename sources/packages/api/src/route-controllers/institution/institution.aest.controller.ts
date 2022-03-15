@@ -19,7 +19,9 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-
+/**
+ * Institution controller for AEST Client.
+ */
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("institution")

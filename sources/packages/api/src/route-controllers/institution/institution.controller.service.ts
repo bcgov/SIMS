@@ -7,6 +7,9 @@ import {
 import { InstitutionReadOnlyDto } from "./models/institution.dto";
 import { ClientTypeBaseRoute } from "../../types";
 
+/**
+ * Service/Provider for Institutions controller to wrap the common methods.
+ */
 @Injectable()
 export class InstitutionControllerService {
   constructor(private readonly institutionService: InstitutionService) {}

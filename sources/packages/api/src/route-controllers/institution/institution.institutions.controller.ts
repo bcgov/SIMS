@@ -16,7 +16,9 @@ import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { ClientTypeBaseRoute } from "../../types";
-
+/**
+ * Institution controller for institutions Client.
+ */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsInstitutionAdmin()
 @Controller("institution")
