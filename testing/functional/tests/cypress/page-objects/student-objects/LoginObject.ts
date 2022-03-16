@@ -74,7 +74,6 @@ class Login {
 
     verifyFocusCardSerialNumber() {
         cy.get("#csn").focus();
-        //cy.xpath("//input[@type='password']").focus()
     }
 }
 export default Login;

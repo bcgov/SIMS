@@ -45,7 +45,6 @@ describe("Login Page", () => {
     it("Verify that user can redirect to next page by pressing Enter key after typing in valid Card Serial Number.", () => {
         Welcome.virtualTestingBtn()
         Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        //Login.cardSerialNumberContinuebtn()
         Login.enterKeyFromCardSerialNumber()
         Login.passcodePageTxt()
     })

@@ -223,7 +223,6 @@ class Application {
     }
     //<EndRegion--------------------------Draft Status------------------------------------->
 
-    //Working....
     ProgramPageTxt() {
         //Dropdown selection
         cy.fixture('draftApplicationData').then((testdata) => {

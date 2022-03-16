@@ -63,7 +63,7 @@ describe("Application Page", () => {
         Application.selectStudyYearDropdownValue()
         Application.startApplicationStudyYearEnableBtn()
 
-        //On click -> Alert in progress popup open
+        //Info:- On click -> Alert in progress popup open
         Application.startApplicationTuitionWaiverBtn()
         Application.applicationAlreadyInProgressTxt()
 

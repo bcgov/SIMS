@@ -57,7 +57,6 @@ class WelcomeObject {
         cy.contains('Virtual testing').should('be.visible')
         cy.wait(2000)
         cy.get('#tile_btn_virtual_device_div_id > h2').click({ force: true })
-        //cy.contains('Card Serial Number').should('be.visible')
         cy.wait(2000)
     }
 
