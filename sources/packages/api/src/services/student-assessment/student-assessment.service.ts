@@ -12,9 +12,11 @@ import {
 } from "../../database/entities";
 import { Connection, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError } from "../../utilities";
-import { INVALID_OPERATION_IN_THE_CURRENT_STATUS } from "../application/application.service";
 import { WorkflowActionsService } from "..";
-import { ASSESSMENT_NOT_FOUND } from "./student-assessment.constants";
+import {
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
+} from "./student-assessment.constants";
 
 /**
  * Manages the student assessment related operations.
@@ -71,7 +73,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
-      .andWhere("assessment.id = :assessmentId", {
+      .where("assessment.id = :assessmentId", {
         assessmentId,
       })
       .getOne();
@@ -166,7 +168,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     if (assessment.assessmentWorkflowId) {
       throw new CustomNamedError(
         `Student assessment was already started and has a workflow associated with. Assessment id ${assessmentId}`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 
@@ -176,7 +178,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     ) {
       throw new CustomNamedError(
         `An assessment with a trigger type '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.submitted}'. Assessment id ${assessmentId}`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 
@@ -186,7 +188,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     ) {
       throw new CustomNamedError(
         `An assessment with a trigger type other than '${AssessmentTriggerType.OriginalAssessment}' can only be started with a Student Application in the status '${ApplicationStatus.completed}'. Assessment id ${assessmentId}`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 

@@ -18,12 +18,12 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   APPLICATION_NOT_FOUND,
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
   StudentAssessmentService,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import {
   ApplicationStatus,
@@ -193,7 +193,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:
           throw new NotFoundException(error.message);
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           throw new UnprocessableEntityException(error.message);
         default:
           throw error;

@@ -28,6 +28,7 @@ import {
   DisbursementScheduleService,
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -213,6 +214,7 @@ export class ApplicationController extends BaseController {
           throw new NotFoundException(error.message);
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           throw new UnprocessableEntityException(error.message);
         default:
           // TODO: add logger.
