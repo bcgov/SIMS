@@ -56,7 +56,7 @@ class WelcomeObject {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible").click()
         cy.contains('Virtual testing').should('be.visible')
         cy.wait(2000)
-        cy.get('#tile_btn_virtual_device_div_id > h2').click({force:true})
+        cy.get('#tile_btn_virtual_device_div_id > h2').click({ force: true })
         //cy.contains('Card Serial Number').should('be.visible')
         cy.wait(2000)
     }

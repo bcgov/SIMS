@@ -1,158 +1,159 @@
 import WelcomeObject from "../../page-objects/student-objects/WelcomeObject"
-import Login from "../../page-objects/student-objects/02-login-object"
-import Application from "../../page-objects/student-objects/04-application-object"
+import LoginObject from "../../page-objects/student-objects/LoginObject"
+import ApplicationObject from "../../page-objects/student-objects/ApplicationObject"
 
 describe("Application Page", () => {
 
     const Welcome = new WelcomeObject()
-    const LoginObject = new Login()
-    const ApplicationObject = new Application()
+    const Login = new LoginObject()
+    const Application = new ApplicationObject()
+
+    const username = Cypress.env('cardSerialNumber')
+    const password = Cypress.env('passcode')
 
     before("Login", () => {
         cy.visit("/")
         cy.wait(2000)
         Welcome.virtualTestingBtn()
-        cy.fixture('testdata').then((testdata) => {
-            LoginObject.cardSerialNumberInputTxt().type(testdata.validCardSerialNumber).should('have.value', testdata.validCardSerialNumber)
-            LoginObject.cardSerialNumberContinuebtn()
-            LoginObject.passcodeInputTxt().type(testdata.validPasscode).should('have.value', testdata.validPasscode)
-            LoginObject.passcodeContinurBtn()
-            LoginObject.verifyLoggedInTxt()
-        })
+        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
+        Login.cardSerialNumberContinuebtn()
+        Login.passcodeInputTxt().type(password).should('have.value', password)
+        Login.passcodeContinurBtn()
+        Login.verifyLoggedInTxt()
     })
 
     it("Verify that user able to redirect to Application Page", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.verifyApplicationTxt()
+        Application.applicationBtn()
+        Application.verifyApplicationTxt()
     })
 
     it("Verify that Start New Application button must be present on the page & clickable", () => {
-        ApplicationObject.startNewApplicationBtn()
-        ApplicationObject.verifyStartNewApplicationTxt()
+        Application.startNewApplicationBtn()
+        Application.verifyStartNewApplicationTxt()
         cy.go('back')
     })
 
     it("Verify that Start Application button must be disable if study year not selected in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.startNewApplicationBtn()
-        ApplicationObject.startApplicationStudyYearDisableBtn()
+        Application.applicationBtn()
+        Application.startNewApplicationBtn()
+        Application.startApplicationStudyYearDisableBtn()
     })
 
     it("Verify that Start Application button must be enable if study year selected in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.startNewApplicationBtn()
-        ApplicationObject.startApplicationStudyYearDisableBtn()
-        ApplicationObject.selectStudyYearDropdownValue()
-        ApplicationObject.startApplicationStudyYearEnableBtn()
+        Application.applicationBtn()
+        Application.startNewApplicationBtn()
+        Application.startApplicationStudyYearDisableBtn()
+        Application.selectStudyYearDropdownValue()
+        Application.startApplicationStudyYearEnableBtn()
     })
 
     it("Verify that Start Application button must be disable if selected study year is removed in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.startNewApplicationBtn()
-        ApplicationObject.selectStudyYearDropdownValue()
-        ApplicationObject.startApplicationStudyYearEnableBtn()
-        ApplicationObject.removedBtn()
-        ApplicationObject.startApplicationStudyYearDisableBtn()
+        Application.applicationBtn()
+        Application.startNewApplicationBtn()
+        Application.selectStudyYearDropdownValue()
+        Application.startApplicationStudyYearEnableBtn()
+        Application.removedBtn()
+        Application.startApplicationStudyYearDisableBtn()
     })
 
     it("Verify that Start Application button must be clickable in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.startNewApplicationBtn()
-        ApplicationObject.startApplicationStudyYearDisableBtn()
-        ApplicationObject.selectStudyYearDropdownValue()
-        ApplicationObject.startApplicationStudyYearEnableBtn()
+        Application.applicationBtn()
+        Application.startNewApplicationBtn()
+        Application.startApplicationStudyYearDisableBtn()
+        Application.selectStudyYearDropdownValue()
+        Application.startApplicationStudyYearEnableBtn()
 
         //On click -> Alert in progress popup open
-        ApplicationObject.startApplicationTuitionWaiverBtn()
-        ApplicationObject.applicationAlreadyInProgressTxt()
+        Application.startApplicationTuitionWaiverBtn()
+        Application.applicationAlreadyInProgressTxt()
 
-        ApplicationObject.startApplicationBCloanForgivenessProgramBtn()
-        ApplicationObject.applicationAlreadyInProgressTxt()
+        Application.startApplicationBCloanForgivenessProgramBtn()
+        Application.applicationAlreadyInProgressTxt()
 
-        ApplicationObject.startApplicationPacificLeaderLoanForgivenessBtn()
-        ApplicationObject.applicationAlreadyInProgressTxt()
+        Application.startApplicationPacificLeaderLoanForgivenessBtn()
+        Application.applicationAlreadyInProgressTxt()
 
-        ApplicationObject.startApplicationInterestFreeStatusBtn()
-        ApplicationObject.applicationAlreadyInProgressTxt()
+        Application.startApplicationInterestFreeStatusBtn()
+        Application.applicationAlreadyInProgressTxt()
 
     })
 
     it("By clicking on edit button it redirects to Welcome Page in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
+        Application.applicationBtn()
+        Application.draftApplication()
     })
 
     it("By clicking on Next Section button from Welcome Page it redirects to Program Page in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
     })
 
     it("Check without selecting any mandatory fields in Program section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.errorMsgTxtForSchoolAttending()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.NextSectionBtn()
+        Application.errorMsgTxtForSchoolAttending()
     })
 
     it("Verify that user must be redirect to previous form by selecting Previous section button in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.WelcomeBtn()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.PreviousSectionBtn()
-        ApplicationObject.WelcomeTxt()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.WelcomeBtn()
+        Application.NextSectionBtn()
+        Application.PreviousSectionBtn()
+        Application.WelcomeTxt()
     })
-    
+
     it("Verify that user able to check the checkbox in Program section in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.mySchoolIsNotListedCheckbox()
-        ApplicationObject.checkboxAlertMsg()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.mySchoolIsNotListedCheckbox()
+        Application.checkboxAlertMsg()
     })
 
     it("Verify that user able to uncheck the checkbox in Program section in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.mySchoolIsNotListedCheckbox()
-        ApplicationObject.uncheckAlertMsg()
-        ApplicationObject.checkboxAlertMsgNotExist()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.mySchoolIsNotListedCheckbox()
+        Application.uncheckAlertMsg()
+        Application.checkboxAlertMsgNotExist()
     })
 
     it("Verify that user able to edit all details in Program page in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.schoolIWillBeAttendingDropdownValue()
-        ApplicationObject.howWillYouAttendProgramDropdownValue()
-        ApplicationObject.programIWIllBeAttendingDropdownValue()
-        ApplicationObject.myStudyPeriodIsNotListedCheckbox()
-        ApplicationObject.studyStartDate()
-        ApplicationObject.studyEndDate()
-        ApplicationObject.inputStudentNumber()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.schoolIWillBeAttendingDropdownValue()
+        Application.howWillYouAttendProgramDropdownValue()
+        Application.programIWIllBeAttendingDropdownValue()
+        Application.myStudyPeriodIsNotListedCheckbox()
+        Application.studyStartDate()
+        Application.studyEndDate()
+        Application.inputStudentNumber()
     })
 
     it("Verify that Student number must have no more than 12 characters in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.incorrectStudentNumber()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.incorrectStudentNumber()
     })
 
     it("Verify that user enter data in mandatory fields to save program in application form.", () => {
-        ApplicationObject.applicationBtn()
-        ApplicationObject.draftApplication()
-        ApplicationObject.NextSectionBtn()
-        ApplicationObject.schoolIWillBeAttendingDropdownValue2()
-        ApplicationObject.howWillYouAttendProgramDropdownValue2()
-        ApplicationObject.programIWIllBeAttendingDropdownValue2()
-        ApplicationObject.programOfferingDropdownValue()
-        ApplicationObject.inputStudentNumber2()
-        ApplicationObject.NextSectionBtn()
+        Application.applicationBtn()
+        Application.draftApplication()
+        Application.NextSectionBtn()
+        Application.schoolIWillBeAttendingDropdownValue2()
+        Application.howWillYouAttendProgramDropdownValue2()
+        Application.programIWIllBeAttendingDropdownValue2()
+        Application.programOfferingDropdownValue()
+        Application.inputStudentNumber2()
+        Application.NextSectionBtn()
     })
 
 })

@@ -69,13 +69,12 @@ class Dashboard {
         cy.contains('Enter Your Passcode').should('not.exist')
     }
 
-    clickOnDraftStatus(){
-        cy.get('//tbody/tr/td[5]').each(($el,index,$list)=>{
+    clickOnDraftStatus() {
+        cy.get('//tbody/tr/td[5]').each(($el) => {
 
-        if($el.text()==='Draft')
-        {
-            $el.click()
-        }
+            if ($el.text() === 'Draft') {
+                $el.click()
+            }
         })
     }
 }

@@ -208,12 +208,12 @@ class Application {
         cy.wait(2000)
     }
 
-    incorrectStudentNumber(){
+    incorrectStudentNumber() {
         cy.get('#ek8w4hn-studentNumber').type("SDPLETW3543543FSFSD")
         cy.contains("Student number must have no more than 12 characters.").should('be.visible')
     }
 
-    programOfferingDropdownValue(){
+    programOfferingDropdownValue() {
         cy.fixture('draftApplicationData').then((testdata) => {
             cy.xpath("//div[@id='eb4inb']//div[@class='form-control ui fluid selection dropdown']").click({ force: true })
             cy.wait(1000)
@@ -221,9 +221,7 @@ class Application {
         })
         cy.wait(2000)
     }
-
-    //
-
+    //<EndRegion--------------------------Draft Status------------------------------------->
 
     //Working....
     ProgramPageTxt() {
@@ -232,7 +230,6 @@ class Application {
             cy.get('.fa').eq(0).click({ force: true })
             cy.wait(1000)
             cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.searchForYourSchool).type('{enter}')
-            
         })
     }
 
