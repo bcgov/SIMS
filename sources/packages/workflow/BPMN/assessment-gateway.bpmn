@@ -769,7 +769,7 @@ if (offeringIntensity == "Part Time") {
     totalProvincialContribution: totalProvincialContribution,
   };
 }
-JSON.stringify(assessmentJson);
+JSON.stringify({ data: assessmentJson });
 </camunda:script>
             </camunda:inputParameter>
           </camunda:inputOutput>

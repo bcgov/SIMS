@@ -205,7 +205,7 @@ export class AssessmentSystemAccessController extends BaseController {
    * Updates the assessment data resulted from the
    * assessment workflow process.
    * @param assessmentId assessment to be updated.
-   * @param assessment data to be persisted.
+   * @param payload data to be persisted.
    */
   @Patch(":assessmentId/assessment-data")
   @ApiResponse({
