@@ -276,24 +276,24 @@ export interface ApplicationData {
    * provide the name that he would be looking for and the API need this value
    * to be returned sometimes before the PIR (Program Info Request) is completed.
    */
-  programName: string;
+  programName?: string;
   /**
    * While submitting a Student Application it is possible that the student
    * did not find the program in the list. In this situation the student will
    * provide the description that he would be looking for and the API need this value
    * to be returned sometimes before the PIR (Program Info Request) is completed.
    */
-  programDescription: string;
+  programDescription?: string;
   /**
    * Study start date provided by the student when the desired option was not found.
    */
-  studystartDate: string;
+  studystartDate?: string;
   /**
    * Study end date provided by the student when the desired option was not found.
    */
-  studyendDate: string;
+  studyendDate?: string;
   /**
    * Defines if the Student will take a full-time or part-time course.
    */
-  howWillYouBeAttendingTheProgram: OfferingIntensity;
+  howWillYouBeAttendingTheProgram?: OfferingIntensity;
 }
