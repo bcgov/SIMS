@@ -28,7 +28,7 @@ import {
   UpdateProgramInfoDTO,
 } from "./models/assessment.system-access.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
-import { ClientTypeBaseRoute } from "src/types";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("assessment")
