@@ -13,7 +13,7 @@ import {
   InstitutionUserTypeAndRoleResponseDto,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
-  InstitutionReadOnlyDTO,
+  InstitutionDetailDTO,
   InstitutionContactDTO,
   InstitutionProfileDTO,
 } from "@/types";
@@ -45,9 +45,9 @@ export class InstitutionApi extends HttpBaseClient {
   public async getDetail(
     institutionId?: number,
     authHeader?: any,
-  ): Promise<InstitutionReadOnlyDTO> {
+  ): Promise<InstitutionDetailDTO> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    return this.getCallTyped<InstitutionReadOnlyDTO>(
+    return this.getCallTyped<InstitutionDetailDTO>(
       this.addClientRoot(url),
       authHeader,
     );

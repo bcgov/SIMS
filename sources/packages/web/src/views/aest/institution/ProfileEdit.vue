@@ -19,7 +19,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   InstitutionContactDTO,
-  InstitutionReadOnlyDTO,
+  InstitutionDetailDTO,
   ClientIdType,
 } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -40,7 +40,7 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const institutionProfileModel = ref({} as InstitutionReadOnlyDTO);
+    const institutionProfileModel = ref({} as InstitutionDetailDTO);
     const institutionProfileRoute = {
       name: AESTRoutesConst.INSTITUTION_PROFILE,
       params: { institutionId: props.institutionId },

@@ -10,11 +10,12 @@ import { InstitutionService } from "../../services";
 
 import {
   InstitutionContactDTO,
-  InstitutionReadOnlyDTO,
+  InstitutionDetailDTO,
 } from "./models/institution.dto";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
+
 /**
  * Institution controller for institutions Client.
  */
@@ -32,12 +33,12 @@ export class InstitutionInstitutionsController extends BaseController {
 
   /**
    * Get institution details of given institution.
-   * @returns InstitutionReadOnlyDTO
+   * @returns InstitutionDetailDTO
    */
   @Get()
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
-  ): Promise<InstitutionReadOnlyDTO> {
+  ): Promise<InstitutionDetailDTO> {
     return this.institutionControllerService.getInstitutionDetail(
       token.authorizations.institutionId,
     );

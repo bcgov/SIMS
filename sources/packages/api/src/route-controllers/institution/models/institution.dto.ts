@@ -1,8 +1,8 @@
 import {
-  Allow,
+  IsDate,
   IsNotEmpty,
   IsOptional,
-  IsDefined,
+  IsPositive,
   ValidateNested,
 } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
@@ -74,7 +74,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
 export class InstitutionAddress {
   @IsNotEmpty()
   addressLine1: string;
-  @Allow()
+  @IsOptional()
   addressLine2: string;
   @IsNotEmpty()
   city: string;
@@ -111,13 +111,13 @@ export class InstitutionProfileDTO extends InstitutionContactDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
-  @IsNotEmpty()
+  @IsDate()
   establishedDate: Date;
-  @IsNotEmpty()
+  @IsPositive()
   institutionType: number;
 }
 
-export class InstitutionReadOnlyDTO extends InstitutionProfileDTO {
+export class InstitutionDetailDTO extends InstitutionProfileDTO {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   institutionTypeName?: string;

@@ -9,7 +9,7 @@ import {
   getExtendedDateFormat,
 } from "../../utilities";
 import {
-  InstitutionReadOnlyDTO,
+  InstitutionDetailDTO,
   InstitutionContactDTO,
   InstitutionProfileDTO,
 } from "./models/institution.dto";
@@ -28,16 +28,16 @@ export class InstitutionControllerService {
   /**
    * Get institution detail.
    * @param institutionId
-   * @returns InstitutionReadOnlyDTO
+   * @returns InstitutionDetailDTO
    */
   async getInstitutionDetail(
     institutionId: number,
-  ): Promise<InstitutionReadOnlyDTO> {
+  ): Promise<InstitutionDetailDTO> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
 
     if (!institutionDetail) {
-      throw new NotFoundException("Institution not valid");
+      throw new NotFoundException("Institution not found.");
     }
     const isBCPrivate =
       INSTITUTION_TYPE_BC_PRIVATE === institutionDetail.institutionType.id;

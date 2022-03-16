@@ -72,7 +72,7 @@ export interface InstitutionProfileDTO extends InstitutionContactDTO {
  ** This DTO is shared between ministry and Institution.
  ** This is for view only purpose of Institution not for Update/Create.
  */
-export interface InstitutionReadOnlyDTO extends InstitutionProfileDTO {
+export interface InstitutionDetailDTO extends InstitutionProfileDTO {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   clientType?: ClientIdType;

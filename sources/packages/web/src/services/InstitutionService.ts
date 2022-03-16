@@ -28,7 +28,7 @@ import {
   InstitutionUserAndCountForDataTable,
   FieldSortOrder,
   PaginatedResults,
-  InstitutionReadOnlyDTO,
+  InstitutionDetailDTO,
   InstitutionContactDTO,
 } from "../types";
 import ApiClient from "./http/ApiClient";
@@ -68,7 +68,7 @@ export class InstitutionService {
     return [];
   }
 
-  public async createInstitution(data: InstitutionDto) {
+  public async createInstitution(data: InstitutionDto): Promise<void> {
     await ApiClient.Institution.createInstitution(data);
   }
 
@@ -82,7 +82,7 @@ export class InstitutionService {
   public async getDetail(
     institutionId?: number,
     authHeader?: any,
-  ): Promise<InstitutionReadOnlyDTO> {
+  ): Promise<InstitutionDetailDTO> {
     return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 

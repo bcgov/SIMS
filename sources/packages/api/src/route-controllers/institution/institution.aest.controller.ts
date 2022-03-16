@@ -12,7 +12,7 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   InstitutionProfileDTO,
-  InstitutionReadOnlyDTO,
+  InstitutionDetailDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
@@ -36,12 +36,12 @@ export class InstitutionAESTController extends BaseController {
   /**
    * Get institution details of given institution.
    * @param institutionId
-   * @returns InstitutionReadOnlyDTO.
+   * @returns InstitutionDetailDTO.
    */
   @Get("/:institutionId")
   async getInstitutionDetailById(
     @Param("institutionId") institutionId: number,
-  ): Promise<InstitutionReadOnlyDTO> {
+  ): Promise<InstitutionDetailDTO> {
     return this.institutionControllerService.getInstitutionDetail(
       institutionId,
     );
@@ -60,7 +60,7 @@ export class InstitutionAESTController extends BaseController {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);
     if (!institution) {
-      throw new NotFoundException("Institution not valid.");
+      throw new NotFoundException("Institution not found.");
     }
     await this.institutionService.updateInstitution(institutionId, payload);
   }
