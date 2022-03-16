@@ -199,15 +199,16 @@ export class ApplicationController extends BaseController {
       studyEndDate,
     );
     try {
-      const { assessment } = await this.applicationService.submitApplication(
-        applicationId,
-        userToken.userId,
-        student.id,
-        programYear.id,
-        submissionResult.data.data,
-        payload.associatedFiles,
-      );
-      await this.assessmentService.startAssessment(assessment.id);
+      const { createdAssessment } =
+        await this.applicationService.submitApplication(
+          applicationId,
+          userToken.userId,
+          student.id,
+          programYear.id,
+          submissionResult.data.data,
+          payload.associatedFiles,
+        );
+      await this.assessmentService.startAssessment(createdAssessment.id);
     } catch (error) {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:

@@ -161,7 +161,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.studentAssessment = [originalAssessment];
 
       await this.repo.save(application);
-      return { application, assessment: originalAssessment };
+      return { application, createdAssessment: originalAssessment };
     }
     /**
      * If a student submit/re-submit and an existing application that is not in draft state,

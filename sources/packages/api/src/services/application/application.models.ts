@@ -8,5 +8,5 @@ export interface ApplicationOverriddenResult {
 
 export interface ApplicationSubmissionResult {
   application: Application;
-  assessment: StudentAssessment;
+  createdAssessment: StudentAssessment;
 }
