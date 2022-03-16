@@ -16,6 +16,9 @@ import { INVALID_OPERATION_IN_THE_CURRENT_STATUS } from "../application/applicat
 import { WorkflowActionsService } from "..";
 import { ASSESSMENT_NOT_FOUND } from "./student-assessment.constants";
 
+/**
+ * Manages the student assessment related operations.
+ */
 @Injectable()
 export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
   constructor(
@@ -213,7 +216,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Updates the assessment status.
+   * Updates the NOA (notice of assessment) approval status.
+   * The NOA status defines if the student needs to provide
+   * his approval to the NOA or not.
    * @param assessmentId assessment id to be updated.
    * @param status status of the assessment.
    * @returns update result.

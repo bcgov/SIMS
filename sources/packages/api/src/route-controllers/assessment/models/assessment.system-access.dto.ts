@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNotEmptyObject,
   IsNumber,
   IsOptional,
   IsUUID,
@@ -114,7 +115,7 @@ export class UpdateProgramInfoDTO {
   status: ProgramInfoStatus;
 }
 
-export class UpdateProgramInfoStatusDto {
+export class UpdateProgramInfoStatusDTO {
   @IsEnum(ProgramInfoStatus)
   status: ProgramInfoStatus;
 }
@@ -122,6 +123,11 @@ export class UpdateProgramInfoStatusDto {
 export class UpdateAssessmentWorkflowIdDTO {
   @IsUUID()
   workflowId: string;
+}
+
+export class UpdateAssessmentDataDTO {
+  @IsNotEmptyObject()
+  data: any;
 }
 
 /**

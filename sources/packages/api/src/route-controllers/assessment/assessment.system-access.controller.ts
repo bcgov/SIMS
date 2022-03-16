@@ -22,6 +22,7 @@ import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import {
   ApplicationAssessmentDTO,
   CreateDisbursementsDTO,
+  UpdateAssessmentDataDTO,
   UpdateAssessmentStatusDTO,
   UpdateAssessmentWorkflowIdDTO,
   UpdateProgramInfoDTO,
@@ -215,24 +216,13 @@ export class AssessmentSystemAccessController extends BaseController {
     status: HttpStatus.NOT_FOUND,
     description: "Assessment id was not found.",
   })
-  @ApiResponse({
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-    description:
-      "Not able to process the request with an empty assessment data.",
-  })
-  async updateAssessmentInApplication(
+  async updateAssessmentData(
     @Param("assessmentId") assessmentId: number,
-    @Body() assessment: any,
+    @Body() payload: UpdateAssessmentDataDTO,
   ): Promise<void> {
-    if (!assessment) {
-      throw new UnprocessableEntityException(
-        `Not able to process the request with an empty assessment data. Assessment id ${assessmentId}.`,
-      );
-    }
-
     const updateResult = await this.assessmentService.updateAssessmentData(
       assessmentId,
-      assessment,
+      payload.data,
     );
 
     if (updateResult.affected === 0) {
@@ -252,7 +242,7 @@ export class AssessmentSystemAccessController extends BaseController {
    */
   @Post(":assessmentId/disbursements")
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description: "Disbursements and disbursements values saved.",
   })
   @ApiResponse({
@@ -289,10 +279,16 @@ export class AssessmentSystemAccessController extends BaseController {
 
   /**
    * Updates the NOA (notice of assessment) approval status.
+   * The NOA status defines if the student needs to provide
+   * his approval to the NOA or not.
    * @param assessmentId assessment id to be updated.
-   * @param payload status of the assessment.
+   * @param payload status of the NOA approval.
    */
   @Patch(":id/noa-approval-status")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "NOA approval updated.",
+  })
   async updateAssessmentStatus(
     @Param("id") assessmentId: number,
     @Body() payload: UpdateAssessmentStatusDTO,
