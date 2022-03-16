@@ -201,7 +201,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     await this.workflow.deleteApplicationAssessment(
       application.assessmentWorkflowId,
     );
-    return { application, assessment: originalAssessment };
+    return { application, createdAssessment: originalAssessment };
   }
 
   /**
