@@ -22,6 +22,7 @@ import {
   StudentAssessment,
   AssessmentTriggerType,
   User,
+  ApplicationData,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -103,7 +104,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     auditUserId: number,
     studentId: number,
     programYearId: number,
-    applicationData: any,
+    applicationData: ApplicationData,
     associatedFiles: string[],
   ): Promise<ApplicationSubmissionResult> {
     const application = await this.getApplicationToSave(
@@ -246,7 +247,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async saveDraftApplication(
     studentId: number,
     programYearId: number,
-    applicationData: any,
+    applicationData: ApplicationData,
     associatedFiles: string[],
     applicationId?: number,
   ): Promise<Application> {

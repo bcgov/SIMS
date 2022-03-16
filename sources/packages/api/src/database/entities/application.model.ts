@@ -260,6 +260,8 @@ export class Application extends RecordDataModel {
 /**
  * Represents the application dynamic data that in some way is used
  * by the API, hence not anymore dynamic and required to be present.
+ * ! This is a subset of all possible properties that could be part
+ * ! of the application data payload.
  */
 export interface ApplicationData {
   /**
@@ -296,4 +298,16 @@ export interface ApplicationData {
    * Defines if the Student will take a full-time or part-time course.
    */
   howWillYouBeAttendingTheProgram?: OfferingIntensity;
+  /**
+   * Offering id selected by the student.
+   */
+  selectedOffering?: number;
+  /**
+   * Relationship status declared by the student.
+   */
+  relationshipStatus?: RelationshipStatus;
+  /**
+   * Student number.
+   */
+  studentNumber?: string;
 }

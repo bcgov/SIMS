@@ -132,6 +132,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * assessment.
    * @param assessmentId assessment id to be updated.
    * @param assessmentWorkflowId workflowId to be updated.
+   * @returns update result.
    */
   async updateWorkflowId(
     assessmentId: number,

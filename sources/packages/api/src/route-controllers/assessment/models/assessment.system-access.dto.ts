@@ -3,11 +3,11 @@ import {
   ArrayMinSize,
   IsArray,
   IsEnum,
-  IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsUUID,
   Min,
   ValidateNested,
@@ -97,16 +97,12 @@ export class ApplicationAssessmentDTO {
 
 export class UpdateProgramInfoDTO {
   @IsOptional()
-  @IsInt()
-  @Min(1)
+  @IsPositive()
   programId?: number;
   @IsOptional()
-  @IsInt()
-  @Min(1)
+  @IsPositive()
   offeringId?: number;
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
+  @IsPositive()
   locationId: number;
   @IsEnum(ProgramInfoStatus)
   status: ProgramInfoStatus;
@@ -135,7 +131,6 @@ export class DisbursementValueDTO {
   valueCode: string;
   @IsEnum(DisbursementValueType)
   valueType: DisbursementValueType;
-  @IsNotEmpty()
   @IsNumber()
   @Min(0)
   valueAmount: number;
