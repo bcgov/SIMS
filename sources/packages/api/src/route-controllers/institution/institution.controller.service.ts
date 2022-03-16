@@ -9,9 +9,9 @@ import {
   getExtendedDateFormat,
 } from "../../utilities";
 import {
-  InstitutionReadOnlyDto,
-  InstitutionContactDto,
-  InstitutionProfileDto,
+  InstitutionReadOnlyDTO,
+  InstitutionContactDTO,
+  InstitutionProfileDTO,
 } from "./models/institution.dto";
 import { FormNames } from "../../services/form/constants";
 
@@ -29,11 +29,11 @@ export class InstitutionControllerService {
    * Get institution detail.
    * @param institutionId
    * @param clientType
-   * @returns InstitutionReadOnlyDto
+   * @returns InstitutionReadOnlyDTO
    */
   async getInstitutionDetail(
     institutionId: number,
-  ): Promise<InstitutionReadOnlyDto> {
+  ): Promise<InstitutionReadOnlyDTO> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
 
@@ -80,7 +80,7 @@ export class InstitutionControllerService {
    * @param payload form data to validate.
    */
   async validateDryRunSubmissionForUpdate(
-    payload: InstitutionContactDto | InstitutionProfileDto,
+    payload: InstitutionContactDTO | InstitutionProfileDTO,
   ): Promise<void> {
     const submissionResult = await this.formService.dryRunSubmission(
       FormNames.InstitutionProfile,

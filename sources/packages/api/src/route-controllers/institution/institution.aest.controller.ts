@@ -5,19 +5,18 @@ import {
   NotFoundException,
   Param,
   Patch,
-  HttpStatus,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  InstitutionProfileDto,
-  InstitutionReadOnlyDto,
+  InstitutionProfileDTO,
+  InstitutionReadOnlyDTO,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 
 /**
  * Institution controller for AEST Client.
@@ -37,24 +36,12 @@ export class InstitutionAESTController extends BaseController {
   /**
    * Get institution details of given institution.
    * @param institutionId
-   * @returns InstitutionReadOnlyDto
+   * @returns InstitutionReadOnlyDTO
    */
   @Get("/:institutionId")
-  @ApiOperation({
-    summary: "API for AEST client to get all institutions.",
-  })
-  @ApiResponse({ status: HttpStatus.ACCEPTED, description: "Accepted" })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "Institution not valid.",
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: "Unauthorized error",
-  })
   async getInstitutionDetailById(
     @Param("institutionId") institutionId: number,
-  ): Promise<InstitutionReadOnlyDto> {
+  ): Promise<InstitutionReadOnlyDTO> {
     return this.institutionControllerService.getInstitutionDetail(
       institutionId,
     );
@@ -66,21 +53,9 @@ export class InstitutionAESTController extends BaseController {
    * @param payload
    */
   @Patch("/:institutionId")
-  @ApiOperation({
-    summary: "API for AEST client to update an institution.",
-  })
-  @ApiResponse({ status: HttpStatus.ACCEPTED, description: "Accepted" })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "Institution not valid.",
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: "Unauthorized error",
-  })
   async updateInstitution(
     @Param("institutionId") institutionId: number,
-    @Body() payload: InstitutionProfileDto,
+    @Body() payload: InstitutionProfileDTO,
   ): Promise<void> {
     const institution =
       this.institutionService.getBasicInstitutionDetailById(institutionId);

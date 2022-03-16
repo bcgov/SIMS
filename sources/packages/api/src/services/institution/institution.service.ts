@@ -17,10 +17,7 @@ import {
   InstitutionUserType,
   UserInfo,
 } from "../../types";
-import {
-  CreateInstitutionDto,
-  InstitutionDto,
-} from "../../route-controllers/institution/models/institution.dto";
+import { CreateInstitutionDto } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";

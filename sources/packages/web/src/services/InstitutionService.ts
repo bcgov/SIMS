@@ -28,8 +28,8 @@ import {
   InstitutionUserAndCountForDataTable,
   FieldSortOrder,
   PaginatedResults,
-  InstitutionReadOnlyDto,
-  InstitutionContactDto,
+  InstitutionReadOnlyDTO,
+  InstitutionContactDTO,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -73,17 +73,17 @@ export class InstitutionService {
   }
 
   public async updateInstitute(
-    data: InstitutionContactDto,
+    data: InstitutionContactDTO,
     institutionId?: number,
   ): Promise<void> {
     await ApiClient.Institution.updateInstitution(data, institutionId);
   }
 
   public async getDetail(
-    authHeader?: any,
     institutionId?: number,
-  ): Promise<InstitutionReadOnlyDto> {
-    return ApiClient.Institution.getDetail(authHeader, institutionId);
+    authHeader?: any,
+  ): Promise<InstitutionReadOnlyDTO> {
+    return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 
   public async sync() {

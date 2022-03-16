@@ -18,8 +18,8 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
-  InstitutionContactDto,
-  InstitutionReadOnlyDto,
+  InstitutionContactDTO,
+  InstitutionReadOnlyDTO,
   ClientIdType,
 } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
@@ -40,13 +40,13 @@ export default {
   setup(props: any) {
     const toast = useToastMessage();
     const router = useRouter();
-    const institutionProfileModel = ref({} as InstitutionReadOnlyDto);
+    const institutionProfileModel = ref({} as InstitutionReadOnlyDTO);
     const institutionProfileRoute = {
       name: AESTRoutesConst.INSTITUTION_PROFILE,
       params: { institutionId: props.institutionId },
     };
 
-    const updateInstitution = async (data: InstitutionContactDto) => {
+    const updateInstitution = async (data: InstitutionContactDTO) => {
       try {
         await InstitutionService.shared.updateInstitute(
           data,
@@ -64,7 +64,6 @@ export default {
 
     onMounted(async () => {
       institutionProfileModel.value = await InstitutionService.shared.getDetail(
-        undefined,
         props.institutionId,
       );
       institutionProfileModel.value.clientType = ClientIdType.AEST;

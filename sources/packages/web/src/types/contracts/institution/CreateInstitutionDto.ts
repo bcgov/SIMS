@@ -50,7 +50,7 @@ export interface InstitutionAddress {
   postalCode: string;
 }
 
-export interface InstitutionContactDto {
+export interface InstitutionContactDTO {
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
@@ -58,7 +58,7 @@ export interface InstitutionContactDto {
   mailingAddress: InstitutionAddress;
 }
 
-export interface InstitutionProfileDto extends InstitutionContactDto {
+export interface InstitutionProfileDTO extends InstitutionContactDTO {
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -70,8 +70,9 @@ export interface InstitutionProfileDto extends InstitutionContactDto {
 
 /** Read only DTO which represents the institution profile
  ** This DTO is shared between ministry and Institution.
+ ** This is for view only purpose of Institution not for Update/Create.
  */
-export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
+export interface InstitutionReadOnlyDTO extends InstitutionProfileDTO {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   clientType?: ClientIdType;

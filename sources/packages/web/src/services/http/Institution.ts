@@ -13,9 +13,9 @@ import {
   InstitutionUserTypeAndRoleResponseDto,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
-  InstitutionReadOnlyDto,
-  InstitutionContactDto,
-  InstitutionProfileDto,
+  InstitutionReadOnlyDTO,
+  InstitutionContactDTO,
+  InstitutionProfileDTO,
 } from "@/types";
 
 export class InstitutionApi extends HttpBaseClient {
@@ -35,19 +35,19 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   public async updateInstitution(
-    data: InstitutionContactDto | InstitutionProfileDto,
+    data: InstitutionContactDTO | InstitutionProfileDTO,
     institutionId?: number,
   ): Promise<void> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    await this.patchCall<InstitutionContactDto>(this.addClientRoot(url), data);
+    await this.patchCall<InstitutionContactDTO>(this.addClientRoot(url), data);
   }
 
   public async getDetail(
-    authHeader?: any,
     institutionId?: number,
-  ): Promise<InstitutionReadOnlyDto> {
+    authHeader?: any,
+  ): Promise<InstitutionReadOnlyDTO> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
-    return this.getCallTyped<InstitutionReadOnlyDto>(
+    return this.getCallTyped<InstitutionReadOnlyDTO>(
       this.addClientRoot(url),
       authHeader,
     );

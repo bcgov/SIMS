@@ -109,7 +109,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
-import { InstitutionReadOnlyDto } from "@/types";
+import { InstitutionReadOnlyDTO } from "@/types";
 import { COLOR_BLUE } from "@/constants";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 export default {
@@ -121,11 +121,10 @@ export default {
     },
   },
   setup(props: any) {
-    const institutionProfileDetail = ref({} as InstitutionReadOnlyDto);
+    const institutionProfileDetail = ref({} as InstitutionReadOnlyDTO);
     const router = useRouter();
     onMounted(async () => {
       institutionProfileDetail.value = await InstitutionService.shared.getDetail(
-        undefined,
         props.institutionId,
       );
     });

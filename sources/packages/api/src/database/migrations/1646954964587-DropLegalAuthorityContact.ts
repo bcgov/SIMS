@@ -12,7 +12,10 @@ export class DropLegalAuthorityContact1646954964587
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Add-col-legal-authority-contact.sql", "Institution"),
+      getSQLFileData(
+        "Rollback-drop-col-legal-authority-contact.sql",
+        "Institution",
+      ),
     );
   }
 }

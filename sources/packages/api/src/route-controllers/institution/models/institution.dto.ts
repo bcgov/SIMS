@@ -1,7 +1,6 @@
-import { Allow, IsNotEmpty, IsOptional } from "class-validator";
+import { Allow, IsNotEmpty, IsOptional, IsDefined } from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
-import { ClientTypeBaseRoute } from "../../../types";
 
 /**
  * DTO object for institution creation.
@@ -66,28 +65,34 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   institutionTypeName: string;
 }
 export class InstitutionAddress {
+  @IsNotEmpty()
   addressLine1: string;
+  @IsNotEmpty()
   addressLine2: string;
+  @IsNotEmpty()
   city: string;
+  @IsNotEmpty()
   provinceState: string;
+  @IsNotEmpty()
   country: string;
+  @IsNotEmpty()
   postalCode: string;
 }
 
-export class InstitutionContactDto {
-  @Allow()
+export class InstitutionContactDTO {
+  @IsNotEmpty()
   primaryContactEmail: string;
-  @Allow()
+  @IsNotEmpty()
   primaryContactFirstName: string;
-  @Allow()
+  @IsNotEmpty()
   primaryContactLastName: string;
-  @Allow()
+  @IsNotEmpty()
   primaryContactPhone: string;
-  @Allow()
+  @IsDefined()
   mailingAddress: InstitutionAddress;
 }
 
-export class InstitutionProfileDto extends InstitutionContactDto {
+export class InstitutionProfileDTO extends InstitutionContactDTO {
   @Allow()
   operatingName: string;
   @Allow()
@@ -104,7 +109,7 @@ export class InstitutionProfileDto extends InstitutionContactDto {
   institutionType: number;
 }
 
-export class InstitutionReadOnlyDto extends InstitutionProfileDto {
+export class InstitutionReadOnlyDTO extends InstitutionProfileDTO {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   institutionTypeName?: string;

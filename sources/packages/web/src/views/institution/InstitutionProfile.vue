@@ -17,7 +17,7 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionContactDto, InstitutionReadOnlyDto } from "@/types";
+import { InstitutionContactDTO, InstitutionReadOnlyDTO } from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
@@ -34,9 +34,9 @@ export default {
     const toast = useToastMessage();
     const router = useRouter();
     // Data-bind
-    const institutionProfileModel = ref({} as InstitutionReadOnlyDto);
+    const institutionProfileModel = ref({} as InstitutionReadOnlyDTO);
 
-    const updateInstitution = async (data: InstitutionContactDto) => {
+    const updateInstitution = async (data: InstitutionContactDTO) => {
       try {
         await InstitutionService.shared.updateInstitute(data);
         toast.success("Update Successful", "Institution successfully updated!");
