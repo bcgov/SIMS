@@ -39,10 +39,78 @@ export class SaveApplicationDto {
 }
 
 /**
+ * Student Application partial form data from formio
+ */
+export interface StudentApplicationFormData {
+  pdStatus?: string;
+  bcResident?: string;
+  craConsent?: boolean;
+  citizenship?: string;
+  fullTimeJob?: string;
+  youthInCare?: string;
+  childSupport?: string;
+  studentEmail?: string;
+  hasDependents?: string;
+  studentGender?: string;
+  studentNumber?: string;
+  dependantstatus?: string;
+  selectedProgram?: number;
+  selectedProgramName?: string;
+  studentLastName?: string;
+  taxReturnIncome?: number;
+  indigenousStatus?: string;
+  selectedLocation?: number;
+  selectedLocationName: string;
+  selectedOffering?: number;
+  selectedOfferingName?: string;
+  governmentFunding?: string;
+  livingWithParents?: string;
+  studentGivenNames?: string;
+  exceptionalExpense?: string;
+  myProgramNotListed?: {
+    programnotListed?: false;
+  };
+  relationshipStatus?: string;
+  studentDateOfBirth?: string;
+  studentHomeAddress?: string;
+  studentPhoneNumber?: string;
+  fulltimelabourForce?: string;
+  mySchoolIsNotListed?: false;
+  selectedProgramDesc?: {
+    id: number;
+    name?: string;
+    description?: string;
+    credentialType?: string;
+    deliveryMethod?: string;
+    credentialTypeToDisplay?: string;
+  };
+  studentAidBcConsent?: true;
+  nonGovernmentFunding?: string;
+  scholarshipsReceived?: string;
+  selectedOfferingDate?: string;
+  studentInfoConfirmed?: true;
+  myStudyPeriodIsntListed?: {
+    offeringnotListed?: false;
+  };
+  outOfHighSchoolFor4Years?: string;
+  supportnocustodyDependants?: string;
+  addTrustContactToContactSABC?: string;
+  hasSignificantDegreeOfIncome?: string;
+  parentvoluntaryContributions?: string;
+  haveDaycareCosts12YearsOrOver?: string;
+  haveDaycareCosts11YearsOrUnder?: string;
+  howWillYouBeAttendingTheProgram?: string;
+  bcIncomeassistanceforDisabilities?: string;
+  whenDidYouGraduateOrLeaveHighSchool?: string;
+  strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong?: string;
+  strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong?: string;
+}
+
+/**
  * Base DTO for application
  */
 export interface GetApplicationBaseDTO {
-  data: any;
+  data: Partial<StudentApplicationFormData>;
   id: number;
   applicationStatus: ApplicationStatus;
   applicationNumber: string;

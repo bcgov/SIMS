@@ -542,7 +542,6 @@ export class ApplicationController extends BaseController {
     @Param("applicationId") applicationId: number,
     @Param("studentId") studentId: number,
   ): Promise<GetApplicationBaseDTO> {
-    // TODO: ANN - ADD LOCATION, PROGRAM , OFFERING LABEL LOGIC
     const application = await this.applicationService.getApplicationByIdAndUser(
       applicationId,
       undefined,
@@ -553,6 +552,38 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+
+    // Get selected location
+    // TODO: ADD COMMENTS
+    // TODO: DESIGNATION LOCATION ANNNNNNNNNNNNNNNNN
+    if (application.data?.selectedLocation) {
+      const selectedLocation = await this.locationService.getLocationById(
+        application.data.selectedLocation,
+      );
+      if (selectedLocation)
+        application.data.selectedLocationName = selectedLocation.name;
+    }
+    // Get selected Program
+    // TODO: ADD COMMENTS
+    if (application.data?.selectedProgram) {
+      const selectedProgram = await this.programService.getProgramById(
+        application.data.selectedProgram,
+      );
+      if (selectedProgram) {
+        application.data.selectedProgramName = selectedProgram.name;
+      }
+    }
+    // Get selected offering
+    // TODO: ADD COMMENTS
+    if (application.data?.selectedOffering) {
+      const selectedOffering = await this.offeringService.getOfferingById(
+        application.data.selectedOffering,
+      );
+      if (selectedOffering)
+        application.data.selectedOfferingName =
+          getOfferingNameAndPeriod(selectedOffering);
+    }
+
     return transformToApplicationDto(application);
   }
 
