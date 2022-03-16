@@ -130,7 +130,7 @@ export default {
     });
 
     const editProfile = () => {
-      return router.push({
+      router.push({
         name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
         params: { institutionId: props.institutionId },
       });

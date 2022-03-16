@@ -28,7 +28,6 @@ export class InstitutionControllerService {
   /**
    * Get institution detail.
    * @param institutionId
-   * @param clientType
    * @returns InstitutionReadOnlyDTO
    */
   async getInstitutionDetail(

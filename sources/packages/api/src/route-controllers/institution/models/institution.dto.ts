@@ -1,6 +1,13 @@
-import { Allow, IsNotEmpty, IsOptional, IsDefined } from "class-validator";
+import {
+  Allow,
+  IsNotEmpty,
+  IsOptional,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
+import { Type } from "class-transformer";
 
 /**
  * DTO object for institution creation.
@@ -88,7 +95,8 @@ export class InstitutionContactDTO {
   primaryContactLastName: string;
   @IsNotEmpty()
   primaryContactPhone: string;
-  @IsDefined()
+  @ValidateNested()
+  @Type(() => InstitutionAddress)
   mailingAddress: InstitutionAddress;
 }
 
