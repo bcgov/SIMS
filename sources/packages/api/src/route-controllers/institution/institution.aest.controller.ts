@@ -36,7 +36,7 @@ export class InstitutionAESTController extends BaseController {
   /**
    * Get institution details of given institution.
    * @param institutionId
-   * @returns InstitutionReadOnlyDTO
+   * @returns InstitutionReadOnlyDTO.
    */
   @Get("/:institutionId")
   async getInstitutionDetailById(
