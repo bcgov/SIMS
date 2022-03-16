@@ -97,7 +97,7 @@ describe("Login Page", () => {
         Login.verifyMaskablePassword()
     })
 
-    it("Verify that user remains on same page after login & then relaod page.", () => {
+    it("Verify that user remains on same page after login & then reload page.", () => {
         Welcome.virtualTestingBtn()
         Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
         Login.enterKeyFromCardSerialNumber()

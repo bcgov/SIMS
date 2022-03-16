@@ -8,3 +8,10 @@ dist/
 **/.DS_Store
 .vscode/
 *.log
+
+#from reports
+cypress/report/
+cypress/screenshots/
+
+#from cypress json
+cypress.json
