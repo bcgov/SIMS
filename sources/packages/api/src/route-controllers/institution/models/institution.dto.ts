@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import {
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  ValidateNested,
+} from "class-validator";
 import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
+import { Type } from "class-transformer";
 
 /**
  * DTO object for institution creation.
@@ -30,16 +37,6 @@ export class CreateInstitutionDto {
   primaryContactEmail: string;
   @IsNotEmpty()
   primaryContactPhone: string;
-  //TODO Can be broken into a different DTO if needed
-  // Legal Authority Contact Info
-  @IsNotEmpty()
-  legalAuthorityFirstName: string;
-  @IsNotEmpty()
-  legalAuthorityLastName: string;
-  @IsNotEmpty()
-  legalAuthorityEmail: string;
-  @IsNotEmpty()
-  legalAuthorityPhone: string;
   //TODO Can be broken into a different DTO
   //Primary Institution Address
   @IsNotEmpty()
@@ -74,32 +71,57 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
   @IsOptional()
   institutionTypeName: string;
 }
+export class InstitutionAddress {
+  @IsNotEmpty()
+  addressLine1: string;
+  @IsOptional()
+  addressLine2: string;
+  @IsNotEmpty()
+  city: string;
+  @IsNotEmpty()
+  provinceState: string;
+  @IsNotEmpty()
+  country: string;
+  @IsNotEmpty()
+  postalCode: string;
+}
 
-export class AESTInstitutionDetailDto {
-  legalOperatingName: string;
-  operatingName: string;
-  primaryPhone: string;
-  primaryEmail: string;
-  website: string;
-  regulatingBody: string;
-  institutionTypeName: string;
-  formattedEstablishedDate: string;
+export class InstitutionContactDTO {
+  @IsNotEmpty()
   primaryContactEmail: string;
+  @IsNotEmpty()
   primaryContactFirstName: string;
+  @IsNotEmpty()
   primaryContactLastName: string;
+  @IsNotEmpty()
   primaryContactPhone: string;
-  legalAuthorityEmail: string;
-  legalAuthorityFirstName: string;
-  legalAuthorityLastName: string;
-  legalAuthorityPhone: string;
-  address: {
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    country: string;
-    provinceState: string;
-    postalCode: string;
-  };
+  @ValidateNested()
+  @Type(() => InstitutionAddress)
+  mailingAddress: InstitutionAddress;
+}
+
+export class InstitutionProfileDTO extends InstitutionContactDTO {
+  @IsNotEmpty()
+  operatingName: string;
+  @IsNotEmpty()
+  primaryPhone: string;
+  @IsNotEmpty()
+  primaryEmail: string;
+  @IsNotEmpty()
+  website: string;
+  @IsNotEmpty()
+  regulatingBody: string;
+  @IsDate()
+  establishedDate: Date;
+  @IsPositive()
+  institutionType: number;
+}
+
+export class InstitutionDetailDTO extends InstitutionProfileDTO {
+  legalOperatingName: string;
+  formattedEstablishedDate?: string;
+  institutionTypeName?: string;
+  isBCPrivate?: boolean;
 }
 
 export interface BasicInstitutionInfo {
@@ -117,13 +139,4 @@ export interface SearchInstitutionRespDto {
   legalName: string;
   operatingName: string;
   address: InstitutionAddress;
-}
-
-export interface InstitutionAddress {
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  provinceState: string;
-  country: string;
-  postalCode: string;
 }

@@ -13,6 +13,7 @@ export enum AppRoutes {
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",
   InstitutionProfile = "institution-profile",
+  InstitutionCreate = "institution-create",
   InstitutionUserProfile = "institution-user-profile",
   InstitutionProfileEdit = "institution-profile/edit",
   InstitutionManageLocations = "manage-locations",
@@ -44,7 +45,9 @@ export enum AppRoutes {
   ProgramDetail = "institution/:institutionId/location/:locationId/program-detail/:programId",
   SearchInstitutions = "search-institutions",
   InstitutionDetail = "institution-detail/:institutionId",
-  Profile = "profile",
+  AESTStudentProfile = "student-profile",
+  AESTInstitutionProfile = "institution-profile",
+  AESTInstitutionProfileEdit = "institution-profile/:institutionId/edit",
   PendingDesignations = "institution/designation/pending",
   DesignationAESTView = "institution/designation/:designationId/institution/:institutionId?",
   // program

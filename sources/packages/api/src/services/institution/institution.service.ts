@@ -17,10 +17,7 @@ import {
   InstitutionUserType,
   UserInfo,
 } from "../../types";
-import {
-  CreateInstitutionDto,
-  InstitutionDto,
-} from "../../route-controllers/institution/models/institution.dto";
+import { CreateInstitutionDto } from "../../route-controllers/institution/models/institution.dto";
 import { LoggerService } from "../../logger/logger.service";
 import { BCeIDService } from "../bceid/bceid.service";
 import { InjectLogger } from "../../common";
@@ -38,6 +35,7 @@ import {
   DEFAULT_PAGE_LIMIT,
 } from "../../utilities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
+import { UpdateInstitution } from "./institution.service.model";
 export const LEGAL_SIGNING_AUTHORITY_EXIST = "LEGAL_SIGNING_AUTHORITY_EXIST";
 export const LEGAL_SIGNING_AUTHORITY_MSG =
   "Legal signing authority already exist for this Institution.";
@@ -195,14 +193,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       primaryContactPhone: createInstitutionDto.primaryContactPhone,
     };
 
-    //Institution Legal Authority Contact Information
-    institution.legalAuthorityContact = {
-      legalAuthorityFirstName: createInstitutionDto.legalAuthorityFirstName,
-      legalAuthorityLastName: createInstitutionDto.legalAuthorityLastName,
-      legalAuthorityEmail: createInstitutionDto.legalAuthorityEmail,
-      legalAuthorityPhone: createInstitutionDto.legalAuthorityPhone,
-    };
-
     //Institution Address
     institution.institutionAddress = {
       addressLine1: createInstitutionDto.addressLine1,
@@ -232,58 +222,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .where("user.userName = :userName", { userName })
       .andWhere("user.isActive = :isActive", { isActive: true })
       .getOneOrFail();
-  }
-
-  async updateInstitution(userInfo: UserInfo, institutionDto: InstitutionDto) {
-    const institution: Institution = await this.getInstituteByUserName(
-      userInfo.userName,
-    );
-
-    const user = await this.userService.getActiveUser(userInfo.userName);
-
-    if (user) {
-      user.email = institutionDto.userEmail;
-      await this.userService.save(user);
-    }
-
-    institution.operatingName = institutionDto.operatingName;
-    institution.primaryPhone = institutionDto.primaryPhone;
-    institution.primaryEmail = institutionDto.primaryEmail;
-    institution.website = institutionDto.website;
-    institution.regulatingBody = institutionDto.regulatingBody;
-    institution.establishedDate = institutionDto.establishedDate;
-    institution.institutionType = {
-      id: institutionDto.institutionType,
-    } as InstitutionType;
-
-    //Institution Primary Contact Information
-    institution.institutionPrimaryContact = {
-      primaryContactFirstName: institutionDto.primaryContactFirstName,
-      primaryContactLastName: institutionDto.primaryContactLastName,
-      primaryContactEmail: institutionDto.primaryContactEmail,
-      primaryContactPhone: institutionDto.primaryContactPhone,
-    };
-
-    //Institution Legal Authority Contact Information
-    institution.legalAuthorityContact = {
-      legalAuthorityFirstName: institutionDto.legalAuthorityFirstName,
-      legalAuthorityLastName: institutionDto.legalAuthorityLastName,
-      legalAuthorityEmail: institutionDto.legalAuthorityEmail,
-      legalAuthorityPhone: institutionDto.legalAuthorityPhone,
-    };
-
-    //Institution Address
-    institution.institutionAddress = {
-      addressLine1: institutionDto.addressLine1,
-      addressLine2: institutionDto.addressLine2,
-      city: institutionDto.city,
-      provinceState: institutionDto.provinceState,
-      country: institutionDto.country,
-      postalCode: institutionDto.postalCode,
-      phone: institutionDto.primaryPhone,
-    };
-
-    return await this.save(institution);
   }
 
   async syncInstitution(userInfo: UserInfo): Promise<void> {
@@ -565,12 +503,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param institutionId Institution id.
    * @returns Location retrieved, if found, otherwise returns null.
    */
-  async getAESTInstitutionDetailById(
-    institutionId: number,
-  ): Promise<Institution> {
+  async getInstitutionDetailById(institutionId: number): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select(["institution", "institutionType.name"])
+      .select(["institution", "institutionType.id", "institutionType.name"])
       .innerJoin("institution.institutionType", "institutionType")
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
@@ -586,7 +522,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   ): Promise<Institution> {
     return this.repo
       .createQueryBuilder("institution")
-      .select("institution.operatingName")
+      .select(["institution.id", "institution.operatingName"])
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
   }
@@ -668,5 +604,47 @@ export class InstitutionService extends RecordDataModelService<Institution> {
         legalSigningAuthority: InstitutionUserRoles.legalSigningAuthority,
       });
     return query.getOne();
+  }
+
+  /**
+   * Update institution.
+   * @param institutionId
+   * @param updateInstitution
+   * @returns updated Institution
+   */
+  async updateInstitution(
+    institutionId: number,
+    updateInstitution: Partial<UpdateInstitution>,
+  ): Promise<Institution> {
+    const institution = new Institution();
+    institution.id = institutionId;
+
+    institution.operatingName = updateInstitution.operatingName;
+    institution.primaryPhone = updateInstitution.primaryPhone;
+    institution.primaryEmail = updateInstitution.primaryEmail;
+    institution.website = updateInstitution.website;
+    institution.regulatingBody = updateInstitution.regulatingBody;
+    institution.establishedDate = updateInstitution.establishedDate;
+    institution.institutionType = {
+      id: updateInstitution.institutionType,
+    } as InstitutionType;
+
+    institution.institutionPrimaryContact = {
+      primaryContactFirstName: updateInstitution.primaryContactFirstName,
+      primaryContactLastName: updateInstitution.primaryContactLastName,
+      primaryContactEmail: updateInstitution.primaryContactEmail,
+      primaryContactPhone: updateInstitution.primaryContactPhone,
+    };
+
+    institution.institutionAddress = {
+      addressLine1: updateInstitution.mailingAddress.addressLine1,
+      addressLine2: updateInstitution.mailingAddress.addressLine2,
+      city: updateInstitution.mailingAddress.city,
+      provinceState: updateInstitution.mailingAddress.provinceState,
+      country: updateInstitution.mailingAddress.country,
+      postalCode: updateInstitution.mailingAddress.postalCode,
+      phone: updateInstitution.primaryPhone,
+    };
+    return this.repo.save(institution);
   }
 }

@@ -190,7 +190,7 @@ export class AuthService {
         return true;
       }
       this.priorityRedirect = {
-        name: InstitutionRoutesConst.INSTITUTION_PROFILE,
+        name: InstitutionRoutesConst.INSTITUTION_CREATE,
       };
       return false;
     }

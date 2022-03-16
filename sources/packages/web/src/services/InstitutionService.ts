@@ -1,15 +1,12 @@
 import {
   Institute,
   SearchInstitutionResp,
-  AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   AESTInstitutionProgramsSummaryDto,
 } from "../types/contracts/InstituteContract";
 import {
   InstitutionDto,
   EducationProgram,
-  InstitutionDetailDto,
-  UpdateInstitutionDto,
   InstitutionLocation,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
@@ -31,6 +28,8 @@ import {
   InstitutionUserAndCountForDataTable,
   FieldSortOrder,
   PaginatedResults,
+  InstitutionDetailDTO,
+  InstitutionContactDTO,
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
@@ -69,16 +68,22 @@ export class InstitutionService {
     return [];
   }
 
-  public async createInstitutionV2(data: InstitutionDto) {
+  public async createInstitution(data: InstitutionDto): Promise<void> {
     await ApiClient.Institution.createInstitution(data);
   }
 
-  public async updateInstitute(data: UpdateInstitutionDto) {
-    await ApiClient.Institution.updateInstitution(data);
+  public async updateInstitute(
+    data: InstitutionContactDTO,
+    institutionId?: number,
+  ): Promise<void> {
+    await ApiClient.Institution.updateInstitution(data, institutionId);
   }
 
-  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
-    return ApiClient.Institution.getDetail(authHeader);
+  public async getDetail(
+    institutionId?: number,
+    authHeader?: any,
+  ): Promise<InstitutionDetailDTO> {
+    return ApiClient.Institution.getDetail(institutionId, authHeader);
   }
 
   public async sync() {
@@ -350,16 +355,6 @@ export class InstitutionService {
     return ApiClient.Institution.searchInstitutions(legalName, operatingName);
   }
 
-  /**
-   * Get the Institution details for the ministry institution detail page
-   * @param institutionId
-   * @returns AESTInstitutionDetailDto
-   */
-  async getAESTInstitutionDetailById(
-    institutionId: number,
-  ): Promise<AESTInstitutionDetailDto> {
-    return ApiClient.Institution.getAESTInstitutionDetailById(institutionId);
-  }
   /**
    * Get the Basic information of the institution for the ministry institution detail page header
    * @param institutionId
