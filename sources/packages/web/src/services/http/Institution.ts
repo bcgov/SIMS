@@ -37,7 +37,7 @@ export class InstitutionApi extends HttpBaseClient {
   public async updateInstitution(
     data: InstitutionContactDto | InstitutionProfileDto,
     institutionId?: number,
-  ) {
+  ): Promise<void> {
     const url = institutionId ? `institution/${institutionId}` : "institution";
     await this.patchCall<InstitutionContactDto>(this.addClientRoot(url), data);
   }

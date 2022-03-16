@@ -68,14 +68,14 @@ export class InstitutionService {
     return [];
   }
 
-  public async createInstitutionV2(data: InstitutionDto) {
+  public async createInstitution(data: InstitutionDto) {
     await ApiClient.Institution.createInstitution(data);
   }
 
   public async updateInstitute(
     data: InstitutionContactDto,
     institutionId?: number,
-  ) {
+  ): Promise<void> {
     await ApiClient.Institution.updateInstitution(data, institutionId);
   }
 

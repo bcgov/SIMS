@@ -16,9 +16,9 @@ import {
   InstitutionReadOnlyDto,
 } from "./models/institution.dto";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+
 /**
  * Institution controller for AEST Client.
  */
@@ -57,7 +57,6 @@ export class InstitutionAESTController extends BaseController {
   ): Promise<InstitutionReadOnlyDto> {
     return this.institutionControllerService.getInstitutionDetail(
       institutionId,
-      ClientTypeBaseRoute.AEST,
     );
   }
 

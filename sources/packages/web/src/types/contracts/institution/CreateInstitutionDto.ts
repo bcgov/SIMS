@@ -1,4 +1,4 @@
-import { ClientTypeBaseRoute } from "../ConfigContract";
+import { ClientIdType } from "../ConfigContract";
 import { BCeIDDetailsDto } from "../UserContract";
 /**
  * DTO for institution creation/retrieval.
@@ -74,7 +74,7 @@ export interface InstitutionProfileDto extends InstitutionContactDto {
 export interface InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
-  clientType: ClientTypeBaseRoute;
+  clientType?: ClientIdType;
   institutionTypeName?: string;
   isBCPrivate?: boolean;
 }

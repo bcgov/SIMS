@@ -108,7 +108,6 @@ export class InstitutionReadOnlyDto extends InstitutionProfileDto {
   legalOperatingName: string;
   formattedEstablishedDate?: string;
   institutionTypeName?: string;
-  clientType: ClientTypeBaseRoute;
   isBCPrivate?: boolean;
 }
 

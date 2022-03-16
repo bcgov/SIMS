@@ -1,4 +1,5 @@
 <template>
+  <header-navigator title="Manage institutions" subTitle="Manage Profile" />
   <Message severity="info">
     Please notice that the read-only information below is retrieved from your
     BCeID account and it is not possible to change it here. If any read-only
@@ -23,9 +24,10 @@ import { useToastMessage } from "@/composables";
 import { useStore } from "vuex";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { FullPageContainer, InstitutionProfileForm },
+  components: { FullPageContainer, InstitutionProfileForm, HeaderNavigator },
   setup() {
     // Hooks
     const store = useStore();

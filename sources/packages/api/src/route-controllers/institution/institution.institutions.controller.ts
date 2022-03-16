@@ -15,7 +15,6 @@ import {
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
-import { ClientTypeBaseRoute } from "../../types";
 /**
  * Institution controller for institutions Client.
  */
@@ -49,7 +48,6 @@ export class InstitutionInstitutionsController extends BaseController {
   ): Promise<InstitutionReadOnlyDto> {
     return this.institutionControllerService.getInstitutionDetail(
       token.authorizations.institutionId,
-      ClientTypeBaseRoute.Institution,
     );
   }
 
@@ -69,7 +67,7 @@ export class InstitutionInstitutionsController extends BaseController {
   async update(
     @Body() payload: InstitutionContactDto,
     @UserToken() userToken: IInstitutionUserToken,
-  ) {
+  ): Promise<void> {
     await this.institutionService.updateInstitution(
       userToken.authorizations.institutionId,
       payload,

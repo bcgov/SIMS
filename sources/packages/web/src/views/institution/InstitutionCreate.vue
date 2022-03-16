@@ -1,4 +1,5 @@
 <template>
+  <header-navigator title="Manage institutions" subTitle="Manage Profile" />
   <Message severity="info">
     Please notice that the read-only information below is retrieved from your
     BCeID account and it is not possible to change it here. If any read-only
@@ -26,9 +27,10 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioDropdownLoader, useToastMessage } from "@/composables";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
+import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
 export default {
-  components: { formio, FullPageContainer },
+  components: { formio, FullPageContainer, HeaderNavigator },
   setup() {
     // Hooks
     const store = useStore();
@@ -39,27 +41,22 @@ export default {
     const initialData = ref({});
 
     const submitted = async (data: InstitutionDto) => {
-      let redirectHome = true;
       try {
-        await InstitutionService.shared.createInstitutionV2(data);
+        await InstitutionService.shared.createInstitution(data);
         await store.dispatch("institution/initialize");
         toast.success(
           "Create Successful",
           "Institution and User successfully created!",
         );
+        await store.dispatch("institution/getInstitutionDetails");
+        router.push({
+          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
+        });
       } catch (error) {
-        redirectHome = false;
         toast.error(
           "Unexpected error",
           "Unexpected error while creating the institution.",
         );
-      }
-
-      await store.dispatch("institution/getInstitutionDetails");
-      if (redirectHome) {
-        router.push({
-          name: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-        });
       }
     };
 
@@ -67,10 +64,10 @@ export default {
       const bceidAccount = await UserService.shared.getBCeIDAccountDetails();
       if (bceidAccount) {
         initialData.value = {
-          userFirstName: bceidAccount?.user.firstname,
-          userLastName: bceidAccount?.user.surname,
-          userEmail: bceidAccount?.user.email,
-          institutionLegalName: bceidAccount?.institution.legalName,
+          userFirstName: bceidAccount.user.firstname,
+          userLastName: bceidAccount.user.surname,
+          userEmail: bceidAccount.user.email,
+          institutionLegalName: bceidAccount.institution.legalName,
         };
       } else {
         toast.error("BCeID Account error", "Unable to fetch account details.");

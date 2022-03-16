@@ -1,28 +1,38 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InstitutionService } from "../../services";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InstitutionService, FormService } from "../../services";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
   getExtendedDateFormat,
 } from "../../utilities";
-import { InstitutionReadOnlyDto } from "./models/institution.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import {
+  InstitutionReadOnlyDto,
+  InstitutionContactDto,
+  InstitutionProfileDto,
+} from "./models/institution.dto";
+import { FormNames } from "../../services/form/constants";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.
  */
 @Injectable()
 export class InstitutionControllerService {
-  constructor(private readonly institutionService: InstitutionService) {}
+  constructor(
+    private readonly institutionService: InstitutionService,
+    private readonly formService: FormService,
+  ) {}
 
   /**
-   *
+   * Get institution detail.
    * @param institutionId
    * @param clientType
    * @returns InstitutionReadOnlyDto
    */
   async getInstitutionDetail(
     institutionId: number,
-    clientType: ClientTypeBaseRoute,
   ): Promise<InstitutionReadOnlyDto> {
     const institutionDetail =
       await this.institutionService.getInstitutionDetailById(institutionId);
@@ -61,8 +71,25 @@ export class InstitutionControllerService {
         provinceState: institutionDetail.institutionAddress.provinceState,
         postalCode: institutionDetail.institutionAddress.postalCode,
       },
-      clientType: clientType,
       isBCPrivate: isBCPrivate,
     };
+  }
+
+  /**
+   * Validate dry run submission.
+   * @param payload form data to validate.
+   */
+  async validateDryRunSubmissionForUpdate(
+    payload: InstitutionContactDto | InstitutionProfileDto,
+  ): Promise<void> {
+    const submissionResult = await this.formService.dryRunSubmission(
+      FormNames.InstitutionProfile,
+      payload,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to update institution due to an invalid request.",
+      );
+    }
   }
 }

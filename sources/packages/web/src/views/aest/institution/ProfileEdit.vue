@@ -17,7 +17,11 @@
 <script lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { InstitutionContactDto, InstitutionReadOnlyDto } from "@/types";
+import {
+  InstitutionContactDto,
+  InstitutionReadOnlyDto,
+  ClientIdType,
+} from "@/types";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useToastMessage } from "@/composables";
@@ -63,6 +67,7 @@ export default {
         undefined,
         props.institutionId,
       );
+      institutionProfileModel.value.clientType = ClientIdType.AEST;
     });
 
     return {

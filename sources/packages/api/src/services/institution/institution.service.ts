@@ -227,50 +227,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .getOneOrFail();
   }
 
-  async updateUserProfile(userInfo: UserInfo, institutionDto: InstitutionDto) {
-    const institution: Institution = await this.getInstituteByUserName(
-      userInfo.userName,
-    );
-
-    const user = await this.userService.getActiveUser(userInfo.userName);
-
-    if (user) {
-      user.email = institutionDto.userEmail;
-      await this.userService.save(user);
-    }
-
-    institution.operatingName = institutionDto.operatingName;
-    institution.primaryPhone = institutionDto.primaryPhone;
-    institution.primaryEmail = institutionDto.primaryEmail;
-    institution.website = institutionDto.website;
-    institution.regulatingBody = institutionDto.regulatingBody;
-    institution.establishedDate = institutionDto.establishedDate;
-    institution.institutionType = {
-      id: institutionDto.institutionType,
-    } as InstitutionType;
-
-    //Institution Primary Contact Information
-    institution.institutionPrimaryContact = {
-      primaryContactFirstName: institutionDto.primaryContactFirstName,
-      primaryContactLastName: institutionDto.primaryContactLastName,
-      primaryContactEmail: institutionDto.primaryContactEmail,
-      primaryContactPhone: institutionDto.primaryContactPhone,
-    };
-
-    //Institution Address
-    institution.institutionAddress = {
-      addressLine1: institutionDto.addressLine1,
-      addressLine2: institutionDto.addressLine2,
-      city: institutionDto.city,
-      provinceState: institutionDto.provinceState,
-      country: institutionDto.country,
-      postalCode: institutionDto.postalCode,
-      phone: institutionDto.primaryPhone,
-    };
-
-    return await this.save(institution);
-  }
-
   async syncInstitution(userInfo: UserInfo): Promise<void> {
     const account = await this.bceidService.getAccountDetails(
       userInfo.idp_user_name,
@@ -657,6 +613,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Update institution.
    * @param institutionId
    * @param updateInstitution
+   * @returns updated Institution
    */
   async updateInstitution(
     institutionId: number,
