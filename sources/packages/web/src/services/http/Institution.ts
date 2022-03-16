@@ -1,13 +1,10 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   InstitutionDto,
-  InstitutionDetailDto,
-  UpdateInstitutionDto,
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
   ApplicationSummaryDTO,
   SearchInstitutionResp,
-  AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   InstitutionUserAndCount,
   DataTableSortOrder,
@@ -16,8 +13,10 @@ import {
   InstitutionUserTypeAndRoleResponseDto,
   AESTInstitutionProgramsSummaryDto,
   PaginatedResults,
+  InstitutionDetailDTO,
+  InstitutionContactDTO,
+  InstitutionProfileDTO,
 } from "@/types";
-import { AxiosResponse } from "axios";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -35,26 +34,23 @@ export class InstitutionApi extends HttpBaseClient {
     }
   }
 
-  public async updateInstitution(data: UpdateInstitutionDto) {
-    try {
-      await this.apiClient.patch("institution", data, this.addAuthHeader());
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  public async updateInstitution(
+    data: InstitutionContactDTO | InstitutionProfileDTO,
+    institutionId?: number,
+  ): Promise<void> {
+    const url = institutionId ? `institution/${institutionId}` : "institution";
+    await this.patchCall<InstitutionContactDTO>(this.addClientRoot(url), data);
   }
 
-  public async getDetail(authHeader?: any): Promise<InstitutionDetailDto> {
-    try {
-      const resp: AxiosResponse<InstitutionDetailDto> = await this.getCall(
-        "institution",
-        authHeader,
-      );
-      return resp.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  public async getDetail(
+    institutionId?: number,
+    authHeader?: any,
+  ): Promise<InstitutionDetailDTO> {
+    const url = institutionId ? `institution/${institutionId}` : "institution";
+    return this.getCallTyped<InstitutionDetailDTO>(
+      this.addClientRoot(url),
+      authHeader,
+    );
   }
 
   public async sync() {
@@ -157,20 +153,6 @@ export class InstitutionApi extends HttpBaseClient {
         `institution/search?${queryString.slice(0, -1)}`,
       );
       return institution.data as SearchInstitutionResp[];
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  public async getAESTInstitutionDetailById(
-    institutionId: number,
-  ): Promise<AESTInstitutionDetailDto> {
-    try {
-      const response = await this.getCall(
-        `institution/${institutionId}/detail`,
-      );
-      return response.data;
     } catch (error) {
       this.handleRequestError(error);
       throw error;

@@ -21,12 +21,6 @@ export function createFakeInstitution(): Institution {
     primaryContactEmail: faker.internet.email(),
     primaryContactPhone: faker.phone.phoneNumber(),
   };
-  institution.legalAuthorityContact = {
-    legalAuthorityFirstName: faker.name.firstName(),
-    legalAuthorityLastName: faker.name.lastName(),
-    legalAuthorityEmail: faker.internet.email(),
-    legalAuthorityPhone: faker.phone.phoneNumber(),
-  };
   institution.institutionAddress = {
     phone: faker.phone.phoneNumber(),
     addressLine1: faker.address.streetAddress(),

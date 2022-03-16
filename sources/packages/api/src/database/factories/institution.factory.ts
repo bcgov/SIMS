@@ -30,12 +30,6 @@ export async function institutionFactory(
     primaryContactFirstName: faker.name.firstName(),
     primaryContactPhone: faker.phone.phoneNumber(),
   };
-  institution.legalAuthorityContact = {
-    legalAuthorityEmail: faker.internet.email(),
-    legalAuthorityLastName: faker.name.lastName(),
-    legalAuthorityFirstName: faker.name.firstName(),
-    legalAuthorityPhone: faker.phone.phoneNumber(),
-  };
   institution.regulatingBody = "ICBC";
   institution.users = incoming?.users;
   return institution;

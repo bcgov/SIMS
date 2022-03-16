@@ -10,6 +10,7 @@ import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
 import InstitutionDetails from "@/views/aest/institution/InstitutionDetails.vue";
 import Profile from "@/views/aest/institution/Profile.vue";
+import ProfileEdit from "@/views/aest/institution/ProfileEdit.vue";
 import Programs from "@/views/aest/institution/Programs.vue";
 import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
@@ -17,7 +18,7 @@ import Designation from "@/views/aest/institution/Designation.vue";
 import Restrictions from "@/views/aest/institution/Restrictions.vue";
 import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
-import StudentApplication from "@/views/aest/StudentApplication.vue";
+import StudentApplicationView from "@/views/aest/StudentApplicationView.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
@@ -87,7 +88,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: AppRoutes.Profile,
+            path: AppRoutes.AESTStudentProfile,
             name: AESTRoutesConst.STUDENT_PROFILE,
             props: true,
             component: StudentProfile,
@@ -139,7 +140,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: "",
             name: AESTRoutesConst.APPLICATION_DETAILS,
             props: true,
-            component: StudentApplication,
+            component: StudentApplicationView,
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -226,7 +227,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
         children: [
           {
-            path: AppRoutes.Profile,
+            path: AppRoutes.AESTInstitutionProfile,
             name: AESTRoutesConst.INSTITUTION_PROFILE,
             props: true,
             component: Profile,
@@ -312,6 +313,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           clientType: ClientIdType.AEST,
         },
         props: true,
+      },
+      {
+        path: AppRoutes.AESTInstitutionProfileEdit,
+        name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
+        props: true,
+        component: ProfileEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
       },
     ],
     beforeEnter: (to, _from, next) => {

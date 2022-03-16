@@ -1,9 +1,13 @@
 <template>
   <v-card class="mt-4">
     <div class="mx-5 py-4">
-      <div class="mb-2">
-        <p class="category-header-large color-blue">Profile</p>
-      </div>
+      <body-header title="Profile" class="m-1">
+        <template #actions>
+          <v-btn text :color="COLOR_BLUE" @click="editProfile"
+            ><font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />Edit
+          </v-btn>
+        </template>
+      </body-header>
       <content-group>
         <v-row>
           <v-col>
@@ -64,49 +68,34 @@
             </v-row>
           </content-group></v-col
         >
-        <v-col
-          ><content-group
-            ><h6 class="color-blue font-weight-bold">
-              LEGAL AUTHORIZED AUTHORITY CONTACT
-            </h6>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.legalAuthorityFirstName }}
-              {{ institutionProfileDetail.legalAuthorityLastName }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.legalAuthorityEmail }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.legalAuthorityPhone }}
-            </v-row></content-group
-          ></v-col
-        ></v-row
-      >
+      </v-row>
       <p class="category-header-large color-blue mt-2 mb-2">Mailing address</p>
       <content-group>
         <title-value
           propertyTitle="Address 1"
-          :propertyValue="institutionProfileDetail.address?.addressLine1"
+          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine1"
         />
         <title-value
           propertyTitle="Address 2"
-          :propertyValue="institutionProfileDetail.address?.addressLine2"
+          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine2"
         />
         <title-value
           propertyTitle="City"
-          :propertyValue="institutionProfileDetail.address?.city"
+          :propertyValue="institutionProfileDetail.mailingAddress?.city"
         />
         <title-value
           propertyTitle="Postal Code"
-          :propertyValue="institutionProfileDetail.address?.postalCode"
+          :propertyValue="institutionProfileDetail.mailingAddress?.postalCode"
         />
         <title-value
           propertyTitle="Province"
-          :propertyValue="institutionProfileDetail.address?.provinceState"
+          :propertyValue="
+            institutionProfileDetail.mailingAddress?.provinceState
+          "
         />
         <title-value
           propertyTitle="Country"
-          :propertyValue="institutionProfileDetail.address?.country"
+          :propertyValue="institutionProfileDetail.mailingAddress?.country"
         />
       </content-group>
     </div>
@@ -115,13 +104,16 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
-import { AESTInstitutionDetailDto } from "@/types";
-
+import { InstitutionDetailDTO } from "@/types";
+import { COLOR_BLUE } from "@/constants";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 export default {
-  components: { ContentGroup, TitleValue },
+  components: { ContentGroup, TitleValue, BodyHeader },
   props: {
     institutionId: {
       type: Number,
@@ -129,14 +121,24 @@ export default {
     },
   },
   setup(props: any) {
-    const institutionProfileDetail = ref({} as AESTInstitutionDetailDto);
+    const institutionProfileDetail = ref({} as InstitutionDetailDTO);
+    const router = useRouter();
     onMounted(async () => {
-      institutionProfileDetail.value = await InstitutionService.shared.getAESTInstitutionDetailById(
+      institutionProfileDetail.value = await InstitutionService.shared.getDetail(
         props.institutionId,
       );
     });
+
+    const editProfile = () => {
+      router.push({
+        name: AESTRoutesConst.INSTITUTION_PROFILE_EDIT,
+        params: { institutionId: props.institutionId },
+      });
+    };
     return {
       institutionProfileDetail,
+      editProfile,
+      COLOR_BLUE,
     };
   },
 };
