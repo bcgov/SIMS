@@ -13,7 +13,6 @@ import {
   APPLICATION_NOT_FOUND,
   ConfigService,
   CRAIncomeVerificationService,
-  EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SupportingUserService,
 } from "../../services";
@@ -44,7 +43,6 @@ export class ApplicationSystemController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly configService: ConfigService,

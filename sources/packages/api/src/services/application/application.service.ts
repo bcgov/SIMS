@@ -134,6 +134,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const originalAssessment = new StudentAssessment();
     originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
     originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
 
     if (application.applicationStatus === ApplicationStatus.draft) {
@@ -664,61 +665,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Updates Program Information Request (PIR) related data.
-   * @param applicationId application id to be updated.
-   * @param locationId location id related to the offering.
-   * @param status status of the program information request.
-   * @param programId program id related to the application.
-   * When the application do not have an offering, this is used
-   * to determine the associated program.
-   * @param offering offering id, when available, otherwise
-   * a PIR request need happen to an offering id be provided.
-   * @returns program info update result.
-   */
-  async updateProgramInfo(
-    applicationId: number,
-    locationId: number,
-    status: ProgramInfoStatus,
-    programId?: number,
-    offeringId?: number,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        location: { id: locationId },
-        pirProgram: { id: programId },
-        offering: { id: offeringId },
-        pirStatus: status,
-      },
-    );
-  }
-
-  /**
-   * Updates Assessment status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Assessment.
-   * An assessment need to happen, when the application_status is in assessment.
-   * @returns assessment status update result.
-   */
-  async updateAssessmentStatus(
-    applicationId: number,
-    status: AssessmentStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        assessmentStatus: status,
-      },
-    );
-  }
-
-  /**
    * Updates overall Application status.
    * @param applicationId application id to be updated.
    * @param status status of the Application.
@@ -978,6 +924,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const originalAssessment = new StudentAssessment();
     originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
     originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
     newApplication.studentAssessment = [originalAssessment];
 
@@ -1285,6 +1232,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .getOne();
   }
+
   async doesApplicationExist(
     applicationNumber: string,
     studentId: number,
