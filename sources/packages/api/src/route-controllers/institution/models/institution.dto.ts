@@ -67,7 +67,7 @@ export class InstitutionDto extends PartialType(CreateInstitutionDto) {
 export class InstitutionAddress {
   @IsNotEmpty()
   addressLine1: string;
-  @IsNotEmpty()
+  @Allow()
   addressLine2: string;
   @IsNotEmpty()
   city: string;
@@ -93,19 +93,19 @@ export class InstitutionContactDTO {
 }
 
 export class InstitutionProfileDTO extends InstitutionContactDTO {
-  @Allow()
+  @IsNotEmpty()
   operatingName: string;
-  @Allow()
+  @IsNotEmpty()
   primaryPhone: string;
-  @Allow()
+  @IsNotEmpty()
   primaryEmail: string;
-  @Allow()
+  @IsNotEmpty()
   website: string;
-  @Allow()
+  @IsNotEmpty()
   regulatingBody: string;
-  @Allow()
+  @IsNotEmpty()
   establishedDate: Date;
-  @Allow()
+  @IsNotEmpty()
   institutionType: number;
 }
 

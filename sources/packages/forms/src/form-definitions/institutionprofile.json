@@ -27,7 +27,7 @@
       "customConditional": "",
       "logic": [
         {
-          "name": "Client type Not AEST",
+          "name": "Client type not AEST",
           "trigger": {
             "type": "javascript",
             "javascript": "result = (data.clientType !== 'aest')"
@@ -132,7 +132,7 @@
           "allowMultipleMasks": false,
           "addons": [],
           "tag": "p",
-          "id": "ete7bv"
+          "id": "eekf0p"
         },
         {
           "html": "<p><span style=\"background-color:rgb(255,255,255);color:rgba(0,0,0,0.87);\">Please enter your institution information below. You will be able edit these details in your institution profile.</span></p>",
@@ -199,7 +199,7 @@
           "properties": {},
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eesq6b9"
+          "id": "eis4qu"
         },
         {
           "label": "Legal Operating Name",
@@ -276,7 +276,7 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "esrj46"
+          "id": "e785qus"
         },
         {
           "html": "<p>If you would like your institution name to be displayed to users of StudentAid BC please enter it below</p>",
@@ -343,7 +343,7 @@
           "properties": {},
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eriiamw"
+          "id": "ejdzuoj"
         },
         {
           "label": "Institution Operating Name (Optional)",
@@ -420,7 +420,7 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "el2iqt"
+          "id": "eukjsq"
         },
         {
           "label": "Columns",
@@ -503,7 +503,7 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "e8rbhml"
+                  "id": "euf6u5n"
                 }
               ],
               "width": 6,
@@ -591,7 +591,7 @@
                   "displayMask": "",
                   "spellcheck": true,
                   "truncateMultipleSpaces": false,
-                  "id": "e3ocxkp"
+                  "id": "ehe6txm"
                 }
               ],
               "width": 6,
@@ -667,7 +667,7 @@
           "tree": false,
           "lazyLoad": false,
           "autoAdjust": false,
-          "id": "ecqinlt"
+          "id": "em63olr"
         },
         {
           "label": "Institution Website",
@@ -744,7 +744,7 @@
           "displayMask": "",
           "spellcheck": true,
           "truncateMultipleSpaces": false,
-          "id": "eayh5eh"
+          "id": "e8ktvcb"
         },
         {
           "label": "Institution Regulating body",
@@ -866,7 +866,7 @@
           },
           "customOptions": {},
           "useExactSearch": false,
-          "id": "ed5eft"
+          "id": "eu6dych"
         },
         {
           "label": "Established Date",
@@ -981,7 +981,7 @@
             "arrowkeys": true
           },
           "customOptions": {},
-          "id": "eaa6hl"
+          "id": "enrlnj"
         },
         {
           "label": "Institution Type",
@@ -1087,7 +1087,7 @@
           },
           "customOptions": {},
           "useExactSearch": false,
-          "id": "ebvappp"
+          "id": "egvjsrq"
         }
       ],
       "placeholder": "",
@@ -1129,7 +1129,7 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "e4iugh"
+      "id": "eysctc"
     },
     {
       "legend": "",
@@ -3115,5 +3115,5 @@
   "title": "Institution Profile",
   "machineName": "institutionProfile",
   "created": "2021-06-28T22:07:09.693Z",
-  "modified": "2022-03-12T00:20:40.424Z"
+  "modified": "2022-03-16T01:50:08.050Z"
 }
