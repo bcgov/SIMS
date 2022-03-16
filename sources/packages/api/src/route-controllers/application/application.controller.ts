@@ -208,19 +208,18 @@ export class ApplicationController extends BaseController {
       );
       await this.assessmentService.startAssessment(assessment.id);
     } catch (error) {
-      if (error.name === APPLICATION_NOT_FOUND) {
-        throw new NotFoundException(error.message);
+      switch (error.name) {
+        case APPLICATION_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case APPLICATION_NOT_VALID:
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          // TODO: add logger.
+          throw new InternalServerErrorException(
+            "Unexpected error while submitting the application.",
+          );
       }
-      const unprocessableErrors = [
-        APPLICATION_NOT_VALID,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      ];
-      if (unprocessableErrors.includes(error.name)) {
-        throw new UnprocessableEntityException(error.message);
-      }
-      throw new InternalServerErrorException(
-        "Unexpected error while submitting the application.",
-      );
     }
   }
 

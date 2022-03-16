@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, IsNull, Not, UpdateResult, Brackets } from "typeorm";
+import { Connection, In, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -849,8 +849,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
    * @param applicationId application to be rolled back.
-   * @param auditUserId user that should be considered and the
-   * one that is causing the changes.
+   * @param auditUserId user that should be considered the one
+   * that is causing the changes.
    * @returns the overridden and the newly created application.
    */
   async overrideApplicationForCOE(

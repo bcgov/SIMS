@@ -81,17 +81,14 @@ export class ApplicationAssessmentDTO {
    * Program details for student application.
    */
   program: ApplicationProgramDetails;
-
   /**
    * Institution details for student application.
    */
   institution: ApplicationInstitutionDetails;
-
   /**
    * Location details for student application.
    */
   location: ApplicationLocationDetails;
-
   /**
    * Student details for student application.
    */
