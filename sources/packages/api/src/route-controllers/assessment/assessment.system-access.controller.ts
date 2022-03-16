@@ -122,7 +122,7 @@ export class AssessmentSystemAccessController extends BaseController {
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description:
-      "Not able to find the offering associate with the program and location.",
+      "Not able to find the offering associated with the program and location.",
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -141,7 +141,7 @@ export class AssessmentSystemAccessController extends BaseController {
       );
       if (!offering) {
         throw new UnprocessableEntityException(
-          "Not able to find the offering associate with the program and location.",
+          "Not able to find the offering associated with the program and location.",
         );
       }
     }
@@ -258,6 +258,8 @@ export class AssessmentSystemAccessController extends BaseController {
     @Param("assessmentId") assessmentId: number,
     @Body() payload: CreateDisbursementsDTO,
   ): Promise<number[]> {
+    console.log(payload.schedules);
+
     try {
       const disbursements =
         await this.disbursementScheduleService.createDisbursementSchedules(

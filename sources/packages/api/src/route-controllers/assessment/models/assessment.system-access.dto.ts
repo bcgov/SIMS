@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsArray,
+  IsDate,
   IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -140,9 +141,9 @@ export class DisbursementValueDTO {
  * Disbursement to be created altogether with its values.
  */
 export class DisbursementScheduleDTO {
-  @IsNotEmpty()
+  @IsDate()
   disbursementDate: Date;
-  @IsNotEmpty()
+  @IsDate()
   negotiatedExpiryDate: Date;
   @IsArray()
   @ArrayMinSize(1)

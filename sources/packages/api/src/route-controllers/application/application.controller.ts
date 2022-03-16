@@ -83,7 +83,7 @@ export class ApplicationController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowService: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -436,7 +436,7 @@ export class ApplicationController extends BaseController {
       studentApplication.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
-      await this.workflow.deleteApplicationAssessment(
+      await this.workflowService.deleteApplicationAssessment(
         studentApplication.assessmentWorkflowId,
       );
     }
