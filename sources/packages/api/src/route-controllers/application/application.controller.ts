@@ -26,6 +26,9 @@ import {
   SFASPartTimeApplicationsService,
   ConfigService,
   DisbursementScheduleService,
+  StudentAssessmentService,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -80,7 +83,7 @@ export class ApplicationController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowService: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -88,6 +91,7 @@ export class ApplicationController extends BaseController {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly assessmentService: StudentAssessmentService,
   ) {
     super();
     this.config = this.configService.getConfig();
@@ -195,27 +199,30 @@ export class ApplicationController extends BaseController {
       studyEndDate,
     );
     try {
-      const submittedApplication =
+      const { createdAssessment } =
         await this.applicationService.submitApplication(
           applicationId,
+          userToken.userId,
           student.id,
           programYear.id,
           submissionResult.data.data,
           payload.associatedFiles,
         );
-      this.applicationService.startApplicationAssessment(
-        submittedApplication.id,
-      );
+      await this.assessmentService.startAssessment(createdAssessment.id);
     } catch (error) {
-      if (error.name === APPLICATION_NOT_FOUND) {
-        throw new NotFoundException(error.message);
+      switch (error.name) {
+        case APPLICATION_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case APPLICATION_NOT_VALID:
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          // TODO: add logger.
+          throw new InternalServerErrorException(
+            "Unexpected error while submitting the application.",
+          );
       }
-      if (error.name === APPLICATION_NOT_VALID) {
-        throw new UnprocessableEntityException(error.message);
-      }
-      throw new InternalServerErrorException(
-        "Unexpected error while submitting the application.",
-      );
     }
   }
 
@@ -430,7 +437,7 @@ export class ApplicationController extends BaseController {
       studentApplication.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
-      await this.workflow.deleteApplicationAssessment(
+      await this.workflowService.deleteApplicationAssessment(
         studentApplication.assessmentWorkflowId,
       );
     }

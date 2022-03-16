@@ -18,11 +18,12 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   APPLICATION_NOT_FOUND,
   WorkflowActionsService,
   COEDeniedReasonService,
   DisbursementScheduleService,
+  StudentAssessmentService,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import {
   ApplicationStatus,
@@ -70,6 +71,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly workflow: WorkflowActionsService,
     private readonly deniedCOEReasonService: COEDeniedReasonService,
+    private readonly assessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -149,6 +151,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
     ":locationId/confirmation-of-enrollment/application/:applicationId/rollback",
   )
   async startCOERollback(
+    @UserToken() userToken: IUserToken,
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
   ): Promise<number> {
@@ -174,6 +177,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       const result = await this.applicationService.overrideApplicationForCOE(
         locationId,
         applicationId,
+        userToken.userId,
       );
 
       if (result.overriddenApplication.assessmentWorkflowId) {
@@ -182,16 +186,14 @@ export class ConfirmationOfEnrollmentController extends BaseController {
         );
       }
 
-      await this.applicationService.startApplicationAssessment(
-        result.createdApplication.id,
-      );
+      await this.assessmentService.startAssessment(result.createdAssessment.id);
 
       return result.createdApplication.id;
     } catch (error) {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:
           throw new NotFoundException(error.message);
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           throw new UnprocessableEntityException(error.message);
         default:
           throw error;

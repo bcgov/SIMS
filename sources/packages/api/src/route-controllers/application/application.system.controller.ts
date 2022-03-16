@@ -11,28 +11,19 @@ import {
 import {
   ApplicationService,
   APPLICATION_NOT_FOUND,
-  APPLICATION_NOT_VALID,
   ConfigService,
   CRAIncomeVerificationService,
-  DisbursementScheduleService,
-  EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   SupportingUserService,
 } from "../../services";
-import { ApplicationDataDto } from "./models/application.model";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  UpdateProgramInfoDto,
-  UpdateProgramInfoStatusDto,
-  UpdateAssessmentStatusDto,
   UpdateApplicationStatusDto,
-  UpdateApplicationStatusWorkflowIdDto,
   SupportingUserDto,
   CreateSupportingUsersDto,
   CreateIncomeVerificationDto,
   CRAVerificationIncomeDetailsDto,
-  CreateDisbursementsDTO,
   UpdateOfferingIntensity,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
@@ -52,198 +43,12 @@ export class ApplicationSystemController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly incomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly configService: ConfigService,
-    private readonly disbursementScheduleService: DisbursementScheduleService,
   ) {
     super();
     this.config = this.configService.getConfig();
-  }
-
-  @Get(":id")
-  async getByApplicationId(
-    @Param("id") applicationId: number,
-  ): Promise<ApplicationDataDto> {
-    const application = await this.applicationService.getApplicationById(
-      applicationId,
-    );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-
-    return {
-      data: application.data,
-      // Kept for backward compatibility. To be removed in upcoming PR.
-      programYear: application.programYear.programYear,
-      programYearDetail: {
-        programYear: application.programYear.programYear,
-        startDate: application.programYear.startDate,
-        endDate: application.programYear.endDate,
-      },
-      offering: {
-        id: application.offering?.id,
-        studyStartDate: application.offering?.studyStartDate,
-        studyEndDate: application.offering?.studyEndDate,
-        actualTuitionCosts: application.offering?.actualTuitionCosts,
-        programRelatedCosts: application.offering?.programRelatedCosts,
-        mandatoryFees: application.offering?.mandatoryFees,
-        exceptionalExpenses: application.offering?.exceptionalExpenses,
-        tuitionRemittanceRequestedAmount:
-          application.offering?.tuitionRemittanceRequestedAmount,
-        offeringDelivered: application.offering?.offeringDelivered,
-        offeringIntensity: application.offering?.offeringIntensity,
-      },
-      program: {
-        programCredentialType:
-          application.offering?.educationProgram?.credentialType,
-        programLength: application.offering?.educationProgram?.completionYears,
-      },
-      institution: {
-        institutionType:
-          application.location?.institution?.institutionType?.name,
-      },
-      location: {
-        institutionLocationProvince:
-          application.location?.data?.address?.province,
-      },
-      student: {
-        studentPDStatus: application.student.studentPDVerified,
-      },
-    };
-  }
-
-  @Patch(":applicationId/assessment")
-  async updateAssessmentInApplication(
-    @Body() assessment: any,
-    @Param("applicationId") applicationId: number,
-  ): Promise<number> {
-    const updateAssessmentInApplication =
-      await this.applicationService.updateAssessmentInApplication(
-        applicationId,
-        assessment,
-      );
-
-    return updateAssessmentInApplication.affected;
-  }
-
-  /**
-   * Updates Program Information Request (PIR) related data.
-   * @param applicationId application id to be updated.
-   * @param payload data to be updated.
-   * @returns success HTTP 200 status code if PIR was updated
-   * or a HTTP 422 error in case of failure to update it.
-   */
-  @Patch(":id/program-info")
-  async updateProgramInfoRequest(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateProgramInfoDto,
-  ): Promise<void> {
-    if (payload.offeringId) {
-      const offering = await this.offeringService.getProgramOffering(
-        payload.locationId,
-        payload.programId,
-        payload.offeringId,
-      );
-      if (!offering) {
-        throw new UnprocessableEntityException(
-          "Not able to find the offering associate with the program and location.",
-        );
-      }
-    }
-
-    const updateResult = await this.applicationService.updateProgramInfo(
-      applicationId,
-      payload.locationId,
-      payload.status,
-      payload.programId,
-      payload.offeringId,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new NotFoundException(
-        "Not able to update the program information request with provided data.",
-      );
-    }
-  }
-
-  /**
-   * Updates Program Information Request (PRI) status.
-   * @param applicationId application id to be updated.
-   * @param payload status of the program information request.
-   */
-  @Patch(":id/program-info/status")
-  async updateProgramInfoRequestStatus(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateProgramInfoStatusDto,
-  ): Promise<void> {
-    const updateResult = await this.applicationService.updateProgramInfoStatus(
-      applicationId,
-      payload.status,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the program information request status with provided data.",
-      );
-    }
-  }
-
-  /**
-   * Updates overall Application status and Assessment workflowId.
-   * @param applicationId application id to be updated.
-   * @param payload contains the application status and the workflowId.
-   */
-  @Patch(":id/application-status-workflowId")
-  async updateApplicationStatusWorkflowId(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateApplicationStatusWorkflowIdDto,
-  ): Promise<void> {
-    const updateResult =
-      await this.applicationService.updateApplicationStatusWorkflowId(
-        applicationId,
-        payload.status,
-        payload.workflowId,
-      );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the overall Application status and workflowId with provided data.",
-      );
-    }
-  }
-
-  /**
-   * Updates Assessment status.
-   * @param applicationId application id to be updated.
-   * @param payload status of the program information request.
-   */
-  @Patch(":id/assessment/status")
-  async updateAssessmentStatus(
-    @Param("id") applicationId: number,
-    @Body() payload: UpdateAssessmentStatusDto,
-  ): Promise<void> {
-    const updateResult = await this.applicationService.updateAssessmentStatus(
-      applicationId,
-      payload.status,
-    );
-
-    // Checks if some record was updated.
-    // If affected is zero it means that the update was not successful.
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        "Not able to update the assessment status with provided data.",
-      );
-    }
   }
 
   /**
@@ -412,38 +217,5 @@ export class ApplicationSystemController extends BaseController {
     }
 
     return { supportingData: supportingUser.supportingData };
-  }
-
-  /**
-   * Create the disbursements while the application is 'In Progress'.
-   * Ensures that the application do not have any disbursements records
-   * and creates the disbursements and values altogether.
-   * @param applicationId application id to associate the disbursements.
-   * @param payload array of disbursements and values to be created.
-   * @returns created disbursements ids.
-   */
-  @Post(":applicationId/disbursements")
-  async createDisbursement(
-    @Param("applicationId") applicationId: number,
-    @Body() payload: CreateDisbursementsDTO,
-  ): Promise<number[]> {
-    try {
-      const disbursements =
-        await this.disbursementScheduleService.createDisbursementSchedules(
-          applicationId,
-          payload.schedules,
-        );
-      return disbursements.map((disbursement) => disbursement.id);
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-        case APPLICATION_NOT_VALID:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
-      }
-    }
   }
 }

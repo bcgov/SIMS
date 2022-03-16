@@ -12,17 +12,23 @@ export class WorkflowActionsService {
    * Starts application assessment.
    * @param workflowName workflow to be started.
    * @param applicationId application id to be processed.
+   * @param assessmentId student assessment that need to be processed.
    * @returns result of the application start.
    */
   async startApplicationAssessment(
     workflowName: string,
     applicationId: number,
+    assessmentId: number,
   ): Promise<WorkflowStartResult> {
     try {
       return await this.workflowService.start(workflowName, {
         variables: {
           applicationId: {
             value: applicationId,
+            type: "integer",
+          },
+          assessmentId: {
+            value: assessmentId,
             type: "integer",
           },
         },

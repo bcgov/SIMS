@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import { IsObject, IsOptional, IsPositive } from "class-validator";
 import {
   ApplicationStatus,
   ProgramInfoStatus,
@@ -18,23 +18,19 @@ export class SaveApplicationDto {
   /**
    * Application dynamic data.
    */
-
-  @IsNotEmpty()
+  @IsObject()
   data: any;
   /**
    * Array of unique file names to be associated
    * with this application.
    */
-
   @IsOptional()
   associatedFiles: string[];
   /**
    * Selected form of the application.
    * This will be used for ProgramYear active validation
    */
-
-  @IsInt()
-  @Min(1)
+  @IsPositive()
   programYearId: number;
 }
 

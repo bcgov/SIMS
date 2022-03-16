@@ -3,12 +3,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
 import {
   Application,
   AssessmentStatus,
+  DisbursementSchedule,
   EducationProgramOffering,
   StudentAppeal,
   User,
@@ -40,7 +42,7 @@ export class StudentAssessment extends RecordDataModel {
    */
   @ManyToOne(() => Application, {
     eager: false,
-    cascade: false,
+    cascade: ["update"],
     nullable: false,
   })
   @JoinColumn({
@@ -71,9 +73,10 @@ export class StudentAssessment extends RecordDataModel {
    */
   @Column({
     name: "assessment_workflow_id",
+    type: "uuid",
     nullable: true,
   })
-  assessmentWorkflowId?: number;
+  assessmentWorkflowId?: string;
   /**
    * Represent the output of the executed assessment workflow and it is also
    * the main content for the NOA (Notice of Assessment).
@@ -180,6 +183,27 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   noaApprovalStatus?: AssessmentStatus;
+  /**
+   * Disbursement ids related to this assessment.
+   */
+  @RelationId(
+    (studentAssessment: StudentAssessment) =>
+      studentAssessment.disbursementSchedules,
+  )
+  disbursementSchedulesIds?: number[];
+  /**
+   * Disbursements related to this assessment.
+   */
+  @OneToMany(
+    () => DisbursementSchedule,
+    (disbursementSchedule) => disbursementSchedule.studentAssessment,
+    {
+      eager: false,
+      cascade: ["insert", "update"],
+      nullable: true,
+    },
+  )
+  disbursementSchedules?: DisbursementSchedule[];
 }
 
 /**
@@ -234,4 +258,4 @@ interface PartTimeAssessment extends BaseAssessment {
  * Whenever there is a source code update, please ensure that properties in this interface are in sync with
  * assessment payload created by camunda workflow.
  */
-type Assessment = FullTimeAssessment | PartTimeAssessment;
+export type Assessment = FullTimeAssessment | PartTimeAssessment;
