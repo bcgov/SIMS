@@ -212,6 +212,7 @@ export class ProgramInfoRequestController extends BaseController {
           "Not able to complete the Program Information Request due to an invalid request.",
         );
       }
+      // TODO: Check authorization to ensure that the location has access to this application.
       const application = await this.applicationService.getApplicationById(
         applicationId,
       );

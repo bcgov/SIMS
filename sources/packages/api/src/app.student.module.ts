@@ -20,6 +20,7 @@ import {
   WorkflowService,
   StudentRestrictionService,
   DesignationAgreementLocationService,
+  StudentAssessmentService,
 } from "./services";
 import { ApplicationStudentController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -48,6 +49,7 @@ import { LoggerModule } from "./logger/logger.module";
     WorkflowService,
     StudentRestrictionService,
     DesignationAgreementLocationService,
+    StudentAssessmentService,
   ],
 })
 export class AppStudentModule {}

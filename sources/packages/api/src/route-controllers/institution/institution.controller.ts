@@ -9,6 +9,7 @@ import {
   Head,
   NotFoundException,
   Query,
+  HttpStatus,
 } from "@nestjs/common";
 import {
   BCeIDService,
@@ -19,18 +20,13 @@ import {
   LEGAL_SIGNING_AUTHORITY_MSG,
 } from "../../services";
 import {
-  AESTInstitutionDetailDto,
   BasicInstitutionInfo,
   CreateInstitutionDto,
-  InstitutionDetailDto,
-  InstitutionDto,
   SearchInstitutionRespDto,
 } from "./models/institution.dto";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
-  INSTITUTION_TYPE_BC_PRIVATE,
-  getExtendedDateFormat,
   FieldSortOrder,
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
@@ -87,9 +83,12 @@ export class InstitutionController extends BaseController {
 
   @Post()
   @ApiOperation({ summary: "Creates a new institution" })
-  @ApiResponse({ status: 201, description: "Success" })
-  @ApiResponse({ status: 404, description: "Not found error" })
-  @ApiResponse({ status: 401, description: "Unauthorized error" })
+  @ApiResponse({ status: HttpStatus.CREATED, description: "Success" })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "Not found error" })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: "Unauthorized error",
+  })
   async create(
     @Body() payload: CreateInstitutionDto,
     @UserToken() userToken: IInstitutionUserToken,
@@ -103,91 +102,6 @@ export class InstitutionController extends BaseController {
     // Save institution
     await this.institutionService.createInstitution(userToken, payload);
   } //create method ends
-
-  @IsInstitutionAdmin()
-  @Patch()
-  async update(
-    @Body() payload: InstitutionDto,
-    @UserToken() userToken: IInstitutionUserToken,
-  ) {
-    await this.institutionService.updateInstitution(userToken, payload);
-  }
-
-  @Get()
-  async getInstitutionDetail(
-    @UserToken() token: IInstitutionUserToken,
-  ): Promise<InstitutionDetailDto> {
-    // BCeID account information.
-    const accountRequest = this.accountService.getAccountDetails(
-      token.idp_user_name,
-    );
-    // Institution account.
-    const institutionDetailRequest =
-      this.institutionService.getInstituteByUserName(token.userName);
-    // User account in SIMS.
-    const userRequest = this.userService.getActiveUser(token.userName);
-    // Execute all request in parallel.
-    const [account, institutionDetail, user] = await Promise.all([
-      accountRequest,
-      institutionDetailRequest,
-      userRequest,
-    ]);
-
-    const isBCPrivate =
-      INSTITUTION_TYPE_BC_PRIVATE === institutionDetail.institutionType.id;
-    return {
-      institution: {
-        userFirstName: user.firstName,
-        userLastName: user.lastName,
-        userEmail: user.email,
-        legalOperatingName: institutionDetail.legalOperatingName,
-        operatingName: institutionDetail.operatingName,
-        primaryPhone: institutionDetail.primaryPhone,
-        primaryEmail: institutionDetail.primaryEmail,
-        website: institutionDetail.website,
-        regulatingBody: institutionDetail.regulatingBody,
-        establishedDate: institutionDetail.establishedDate,
-        primaryContactEmail:
-          institutionDetail.institutionPrimaryContact.primaryContactEmail,
-        primaryContactFirstName:
-          institutionDetail.institutionPrimaryContact.primaryContactFirstName,
-        primaryContactLastName:
-          institutionDetail.institutionPrimaryContact.primaryContactLastName,
-        primaryContactPhone:
-          institutionDetail.institutionPrimaryContact.primaryContactPhone,
-        legalAuthorityEmail:
-          institutionDetail.legalAuthorityContact.legalAuthorityEmail,
-        legalAuthorityFirstName:
-          institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
-        legalAuthorityLastName:
-          institutionDetail.legalAuthorityContact.legalAuthorityLastName,
-        legalAuthorityPhone:
-          institutionDetail.legalAuthorityContact.legalAuthorityPhone,
-        addressLine1: institutionDetail.institutionAddress.addressLine1,
-        addressLine2: institutionDetail.institutionAddress.addressLine2,
-        city: institutionDetail.institutionAddress.city,
-        country: institutionDetail.institutionAddress.country,
-        provinceState: institutionDetail.institutionAddress.provinceState,
-        postalCode: institutionDetail.institutionAddress.postalCode,
-        institutionType: institutionDetail.institutionType.id,
-        institutionTypeName: institutionDetail.institutionType.name,
-      },
-      account: {
-        user: {
-          guid: account.user.guid,
-          displayName: account.user.displayName,
-          firstname: account.user.firstname,
-          surname: account.user.surname,
-          email: account.user.email,
-        },
-        institution: {
-          guid: account.institution.guid,
-          legalName: account.institution.legalName,
-        },
-      },
-      isBCPrivate: isBCPrivate,
-    };
-  }
 
   @Patch("/sync")
   async sync(@UserToken() token: IInstitutionUserToken) {
@@ -543,57 +457,6 @@ export class InstitutionController extends BaseController {
         postalCode: eachInstitution.institutionAddress.postalCode,
       },
     }));
-  }
-
-  /**
-   * Get the Institution details for the ministry institution detail page
-   * @param institutionId
-   * @returns AESTInstitutionDetailDto
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @Get("/:institutionId/detail")
-  async getAESTInstitutionDetailById(
-    @Param("institutionId") institutionId: number,
-  ): Promise<AESTInstitutionDetailDto> {
-    const institutionDetail =
-      await this.institutionService.getAESTInstitutionDetailById(institutionId);
-    return {
-      legalOperatingName: institutionDetail.legalOperatingName,
-      operatingName: institutionDetail.operatingName,
-      primaryPhone: institutionDetail.primaryPhone,
-      primaryEmail: institutionDetail.primaryEmail,
-      website: institutionDetail.website,
-      regulatingBody: institutionDetail.regulatingBody,
-      institutionTypeName: institutionDetail.institutionType.name,
-      formattedEstablishedDate: getExtendedDateFormat(
-        institutionDetail.establishedDate,
-      ),
-      primaryContactEmail:
-        institutionDetail.institutionPrimaryContact.primaryContactEmail,
-      primaryContactFirstName:
-        institutionDetail.institutionPrimaryContact.primaryContactFirstName,
-      primaryContactLastName:
-        institutionDetail.institutionPrimaryContact.primaryContactLastName,
-      primaryContactPhone:
-        institutionDetail.institutionPrimaryContact.primaryContactPhone,
-      legalAuthorityEmail:
-        institutionDetail.legalAuthorityContact.legalAuthorityEmail,
-      legalAuthorityFirstName:
-        institutionDetail.legalAuthorityContact.legalAuthorityFirstName,
-      legalAuthorityLastName:
-        institutionDetail.legalAuthorityContact.legalAuthorityLastName,
-      legalAuthorityPhone:
-        institutionDetail.legalAuthorityContact.legalAuthorityPhone,
-      address: {
-        addressLine1: institutionDetail.institutionAddress.addressLine1,
-        addressLine2: institutionDetail.institutionAddress.addressLine2,
-        city: institutionDetail.institutionAddress.city,
-        country: institutionDetail.institutionAddress.country,
-        provinceState: institutionDetail.institutionAddress.provinceState,
-        postalCode: institutionDetail.institutionAddress.postalCode,
-      },
-    };
   }
 
   /**

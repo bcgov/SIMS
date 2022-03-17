@@ -11,11 +11,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import {
-  InstitutionAddress,
-  InstitutionPrimaryContact,
-  LegalAuthorityContact,
-} from "../../types";
+import { InstitutionAddress, InstitutionPrimaryContact } from "../../types";
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
 import { Note } from ".";
@@ -71,12 +67,6 @@ export class Institution extends RecordDataModel {
     nullable: false,
   })
   institutionPrimaryContact: InstitutionPrimaryContact;
-
-  @Column({
-    name: "legal_authority_contact",
-    type: "jsonb",
-  })
-  legalAuthorityContact: LegalAuthorityContact;
 
   @Column({
     name: "institution_address",

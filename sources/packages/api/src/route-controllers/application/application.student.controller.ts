@@ -10,6 +10,7 @@ import {
   Patch,
   UnprocessableEntityException,
   Query,
+  HttpStatus,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -28,6 +29,9 @@ import {
   DisbursementScheduleService,
   InstitutionLocationService,
   EducationProgramService,
+  StudentAssessmentService,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -61,8 +65,16 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
-import { ApiTags } from "@nestjs/swagger";
-import { ApprovalStatus } from "src/services/education-program/constants";
+import {
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { ApprovalStatus } from "../../services/education-program/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
@@ -72,7 +84,7 @@ export class ApplicationStudentController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
-    private readonly workflow: WorkflowActionsService,
+    private readonly workflowService: WorkflowActionsService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -82,12 +94,21 @@ export class ApplicationStudentController extends BaseController {
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
+    private readonly assessmentService: StudentAssessmentService,
   ) {
     super();
     this.config = this.configService.getConfig();
   }
 
   @Get(":id")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Application found.",
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Application id not found.",
+  })
   async getByApplicationId(
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -163,6 +184,17 @@ export class ApplicationStudentController extends BaseController {
   @CheckSinValidation()
   @CheckRestrictions()
   @Patch(":applicationId/submit")
+  @ApiOkResponse({ description: "Application submitted" })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active. OR  Invalid study dates. OR \
+      Selected study start date is not within the program year. \
+      OR APPLICATION_NOT_VALID. OR INVALID_OPERATION_IN_THE_CURRENT_STATUS. \
+      OR ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE",
+  })
+  @ApiBadRequestResponse({ description: "Form validation failed" })
+  @ApiNotFoundResponse({ description: "Application not found" })
+  @ApiInternalServerErrorResponse({ description: "Unexpected error" })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -229,27 +261,30 @@ export class ApplicationStudentController extends BaseController {
       studyEndDate,
     );
     try {
-      const submittedApplication =
+      const { createdAssessment } =
         await this.applicationService.submitApplication(
           applicationId,
+          userToken.userId,
           student.id,
           programYear.id,
           submissionResult.data.data,
           payload.associatedFiles,
         );
-      this.applicationService.startApplicationAssessment(
-        submittedApplication.id,
-      );
+      await this.assessmentService.startAssessment(createdAssessment.id);
     } catch (error) {
-      if (error.name === APPLICATION_NOT_FOUND) {
-        throw new NotFoundException(error.message);
+      switch (error.name) {
+        case APPLICATION_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case APPLICATION_NOT_VALID:
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          // TODO: add logger.
+          throw new InternalServerErrorException(
+            "Unexpected error while submitting the application.",
+          );
       }
-      if (error.name === APPLICATION_NOT_VALID) {
-        throw new UnprocessableEntityException(error.message);
-      }
-      throw new InternalServerErrorException(
-        "Unexpected error while submitting the application.",
-      );
     }
   }
 
@@ -265,6 +300,12 @@ export class ApplicationStudentController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
+  @ApiOkResponse({ description: "Draft application created." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active. OR MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
+  })
+  @ApiInternalServerErrorResponse({ description: "Unexpected error" })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -314,6 +355,9 @@ export class ApplicationStudentController extends BaseController {
   @CheckSinValidation()
   @CheckRestrictions()
   @Patch(":applicationId/draft")
+  @ApiOkResponse({ description: "Draft application updated." })
+  @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
+  @ApiInternalServerErrorResponse({ description: "Unexpected error" })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -348,6 +392,11 @@ export class ApplicationStudentController extends BaseController {
    * @returns NOA and application data.
    */
   @Get(":applicationId/assessment")
+  @ApiOkResponse({ description: "Retrieved assessment values." })
+  @ApiNotFoundResponse({
+    description:
+      "Application id not found. OR Assessment for the application is not calculated.",
+  })
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -402,6 +451,10 @@ export class ApplicationStudentController extends BaseController {
    * @param applicationId application id to be updated.
    */
   @CheckRestrictions()
+  @ApiOkResponse({ description: "Assessment confirmed." })
+  @ApiUnprocessableEntityResponse({
+    description: "Student not found. OR Assessment confirmation failed",
+  })
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
     @UserToken() userToken: IUserToken,
@@ -433,6 +486,12 @@ export class ApplicationStudentController extends BaseController {
    * @param applicationId application id to be updated.
    * @body payload contains the status, that need to be updated
    */
+
+  @ApiOkResponse({ description: "Student Application status updated." })
+  @ApiNotFoundResponse({ description: "Application not found" })
+  @ApiUnprocessableEntityResponse({
+    description: "Application Status update failed",
+  })
   @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
     @UserToken() userToken: IUserToken,
@@ -446,7 +505,7 @@ export class ApplicationStudentController extends BaseController {
       );
 
     if (!studentApplication) {
-      throw new UnprocessableEntityException(
+      throw new NotFoundException(
         `Application ${applicationId} associated with requested student does not exist.`,
       );
     }
@@ -459,7 +518,7 @@ export class ApplicationStudentController extends BaseController {
       studentApplication.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
-      await this.workflow.deleteApplicationAssessment(
+      await this.workflowService.deleteApplicationAssessment(
         studentApplication.assessmentWorkflowId,
       );
     }
@@ -483,6 +542,8 @@ export class ApplicationStudentController extends BaseController {
    * then consider both active and inactive program year.
    * @returns program year details of the application
    */
+  @ApiOkResponse({ description: "Program year details fetched." })
+  @ApiNotFoundResponse({ description: "student not found" })
   @Get(":applicationId/program-year")
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
@@ -494,9 +555,7 @@ export class ApplicationStudentController extends BaseController {
     );
 
     if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
+      throw new NotFoundException("The user is not associated with a student.");
     }
 
     const applicationProgramYear =

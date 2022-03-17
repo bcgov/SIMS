@@ -25,11 +25,14 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     authHeader are only needed for initial stores, 
     since during the first initializing token are not ready yet
     */
-    const response = await InstitutionService.shared.getDetail(authHeader);
+    const response = await InstitutionService.shared.getDetail(
+      undefined,
+      authHeader,
+    );
     context.commit("setInstitutionDetails", {
-      legalOperatingName: response.institution.legalOperatingName,
-      operatingName: response.institution.operatingName,
-      institutionType: response.institution.institutionTypeName,
+      legalOperatingName: response.legalOperatingName,
+      operatingName: response.operatingName,
+      institutionType: response.institutionTypeName,
       isBCPrivate: response.isBCPrivate,
     } as InstitutionStateForStore);
   },

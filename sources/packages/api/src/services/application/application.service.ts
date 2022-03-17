@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Connection, In, IsNull, Not, UpdateResult, Brackets } from "typeorm";
+import { Connection, In, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
 import { InjectLogger } from "../../common";
 import {
@@ -19,10 +19,17 @@ import {
   PIRDeniedReason,
   MSFAANumber,
   OfferingIntensity,
+  StudentAssessment,
+  AssessmentTriggerType,
+  User,
+  ApplicationData,
 } from "../../database/entities";
 import { SequenceControlService } from "../../services/sequence-control/sequence-control.service";
 import { StudentFileService } from "../student-file/student-file.service";
-import { ApplicationOverriddenResult } from "./application.models";
+import {
+  ApplicationOverriddenResult,
+  ApplicationSubmissionResult,
+} from "./application.models";
 import { WorkflowActionsService } from "../workflow/workflow-actions.service";
 import { MSFAANumberService } from "../msfaa-number/msfaa-number.service";
 import {
@@ -84,6 +91,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Application.
    * a new application with status 'Submitted'
    * @param applicationId application id that must be updated to submitted.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @param studentId student id for authorization validations.
    * @param programYearId program year associated with the submission.
    * @param applicationData dynamic data received from Form.IO form.
@@ -92,11 +101,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
    */
   async submitApplication(
     applicationId: number,
+    auditUserId: number,
     studentId: number,
     programYearId: number,
-    applicationData: any,
+    applicationData: ApplicationData,
     associatedFiles: string[],
-  ): Promise<Application> {
+  ): Promise<ApplicationSubmissionResult> {
     const application = await this.getApplicationToSave(
       studentId,
       undefined,
@@ -119,6 +129,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_NOT_VALID,
       );
     }
+
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const originalAssessment = new StudentAssessment();
+    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
+    originalAssessment.creator = auditUser;
+
     if (application.applicationStatus === ApplicationStatus.draft) {
       /**
        * Generate the application number with respect to the programYearPrefix.
@@ -132,13 +151,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.applicationStatus = ApplicationStatus.submitted;
       application.relationshipStatus = applicationData.relationshipStatus;
       application.studentNumber = applicationData.studentNumber;
-      application.applicationStatusUpdatedOn = getUTCNow();
+      application.applicationStatusUpdatedOn = now;
       application.studentFiles = await this.getSyncedApplicationFiles(
         studentId,
         application.studentFiles,
         associatedFiles,
       );
-      return this.repo.save(application);
+      application.modifier = auditUser;
+      application.studentAssessment = [originalAssessment];
+
+      await this.repo.save(application);
+      return { application, createdAssessment: originalAssessment };
     }
     /**
      * If a student submit/re-submit and an existing application that is not in draft state,
@@ -171,10 +194,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       [],
       associatedFiles,
     );
+    application.creator = auditUser;
+    application.studentAssessment = [originalAssessment];
     await this.repo.save([application, newApplication]);
     //* Deleting the existing workflow
-    this.workflow.deleteApplicationAssessment(application.assessmentWorkflowId);
-    return newApplication;
+    await this.workflow.deleteApplicationAssessment(
+      application.assessmentWorkflowId,
+    );
+    return { application, createdAssessment: originalAssessment };
   }
 
   /**
@@ -220,7 +247,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async saveDraftApplication(
     studentId: number,
     programYearId: number,
-    applicationData: any,
+    applicationData: ApplicationData,
     associatedFiles: string[],
     applicationId?: number,
   ): Promise<Application> {
@@ -463,19 +490,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
 
-  async updateAssessmentInApplication(
-    applicationId: number,
-    assessment: any,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      { assessment },
-    );
-  }
-
   /**
    * Fetch the NOA screen values for a student application.
    * @param applicationId application id to fetch the NOA values.
@@ -621,6 +635,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } else {
       query.andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
+          ApplicationStatus.submitted,
           ApplicationStatus.completed,
           ApplicationStatus.overwritten,
           ApplicationStatus.cancelled,
@@ -633,83 +648,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
     }
     return query.getOne();
-  }
-
-  /**
-   * Updates Program Information Request (PIR) related data.
-   * @param applicationId application id to be updated.
-   * @param locationId location id related to the offering.
-   * @param status status of the program information request.
-   * @param programId program id related to the application.
-   * When the application do not have an offering, this is used
-   * to determine the associated program.
-   * @param offering offering id, when available, otherwise
-   * a PIR request need happen to an offering id be provided.
-   * @returns program info update result.
-   */
-  async updateProgramInfo(
-    applicationId: number,
-    locationId: number,
-    status: ProgramInfoStatus,
-    programId?: number,
-    offeringId?: number,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        location: { id: locationId },
-        pirProgram: { id: programId },
-        offering: { id: offeringId },
-        pirStatus: status,
-      },
-    );
-  }
-
-  /**
-   * Updates Program Information Request (PRI) status.
-   * @param applicationId application id to be updated.
-   * @param status status of the program information request.
-   * a PIR request need happen to an offering id be provided.
-   * @returns program information request status update result.
-   */
-  async updateProgramInfoStatus(
-    applicationId: number,
-    status: ProgramInfoStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        pirStatus: status,
-      },
-    );
-  }
-
-  /**
-   * Updates Assessment status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Assessment.
-   * An assessment need to happen, when the application_status is in assessment.
-   * @returns assessment status update result.
-   */
-  async updateAssessmentStatus(
-    applicationId: number,
-    status: AssessmentStatus,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(ApplicationStatus.overwritten),
-      },
-      {
-        assessmentStatus: status,
-      },
-    );
   }
 
   /**
@@ -868,39 +806,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Update Student Application status.
-   * Only allows the update on applications that are not in a final status.
-   * The final statuses of an application are Completed, Overwritten and Cancelled.
-   * @param applicationId application id.
-   * @param applicationStatus application status that need to be updated.
-   * @returns student Application UpdateResult.
-   */
-  async updateApplicationStatusWorkflowId(
-    applicationId: number,
-    applicationStatus: ApplicationStatus,
-    workflowId: string,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        applicationStatus: Not(
-          In([
-            ApplicationStatus.completed,
-            ApplicationStatus.overwritten,
-            ApplicationStatus.cancelled,
-          ]),
-        ),
-        assessmentWorkflowId: IsNull(),
-      },
-      {
-        applicationStatus: applicationStatus,
-        assessmentWorkflowId: workflowId,
-        applicationStatusUpdatedOn: getUTCNow(),
-      },
-    );
-  }
-
-  /**
    * Gets program year details for a student application
    * @param studentId student id.
    * @param applicationId application id.
@@ -930,11 +835,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * process and start the assessment all over again.
    * @param locationId location id executing the COE rollback.
    * @param applicationId application to be rolled back.
+   * @param auditUserId user that should be considered the one
+   * that is causing the changes.
    * @returns the overridden and the newly created application.
    */
   async overrideApplicationForCOE(
     locationId: number,
     applicationId: number,
+    auditUserId: number,
   ): Promise<ApplicationOverriddenResult> {
     //only override application when pir status is not "not required"
     const appToOverride = await this.repo.findOne(
@@ -953,9 +861,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+
     // Change status of the current application being overwritten.
     appToOverride.applicationStatus = ApplicationStatus.overwritten;
-    appToOverride.applicationStatusUpdatedOn = getUTCNow();
+    appToOverride.applicationStatusUpdatedOn = now;
+    appToOverride.modifier = auditUser;
 
     // Create a new application record based off Overwritten
     // record to rollback state of application.
@@ -983,7 +895,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     } as ProgramYear;
     newApplication.pirStatus = ProgramInfoStatus.required;
     newApplication.applicationStatus = ApplicationStatus.submitted;
-    newApplication.applicationStatusUpdatedOn = getUTCNow();
+    newApplication.applicationStatusUpdatedOn = now;
     newApplication.studentFiles = appToOverride.studentFiles.map(
       (applicationFile: ApplicationStudentFile) => {
         // Recreate file associations for new application.
@@ -995,44 +907,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
     );
 
+    const originalAssessment = new StudentAssessment();
+    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
+    originalAssessment.creator = auditUser;
+    newApplication.studentAssessment = [originalAssessment];
+
     await this.repo.save([appToOverride, newApplication]);
 
     return {
       overriddenApplication: appToOverride,
       createdApplication: newApplication,
+      createdAssessment: originalAssessment,
     };
   }
 
-  /**
-   * Starts an application assessment workflow associating
-   * the created workflow with the Student Application.
-   * @param applicationId Student Application to have the
-   * workflow started.
-   */
-  async startApplicationAssessment(applicationId: number) {
-    const application = await this.repo.findOne({
-      id: applicationId,
-      applicationStatus: Not(ApplicationStatus.overwritten),
-    });
-    if (!application) {
-      throw new CustomNamedError(
-        "Student Application not found.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (application.applicationStatus !== ApplicationStatus.submitted) {
-      throw new CustomNamedError(
-        `Student Application must be in ${ApplicationStatus.submitted} status to start the assessment workflow.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-      );
-    }
-
-    await this.workflow.startApplicationAssessment(
-      application.data.workflowName,
-      application.id,
-    );
-  }
   /**
    * Deny the Program Info Request (PIR) for an Application.
    * Updates only applications that have the PIR status as required.
@@ -1328,6 +1218,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       )
       .getOne();
   }
+
   async doesApplicationExist(
     applicationNumber: string,
     studentId: number,

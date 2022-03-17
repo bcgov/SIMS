@@ -12,7 +12,6 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
   StudentFileUploaderDto,
   StudentUploadFileDto,
 } from "@/types";

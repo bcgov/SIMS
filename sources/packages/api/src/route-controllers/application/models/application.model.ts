@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, Min } from "class-validator";
+import { IsObject, IsOptional, IsPositive } from "class-validator";
 import {
   ApplicationStatus,
   ProgramInfoStatus,
@@ -8,6 +8,7 @@ import {
   Assessment,
   OfferingIntensity,
   DisbursementSchedule,
+  ApplicationData,
 } from "../../../database/entities";
 import {
   dateString,
@@ -18,99 +19,27 @@ export class SaveApplicationDto {
   /**
    * Application dynamic data.
    */
-
-  @IsNotEmpty()
+  @IsObject()
   data: any;
   /**
    * Array of unique file names to be associated
    * with this application.
    */
-
   @IsOptional()
   associatedFiles: string[];
   /**
    * Selected form of the application.
    * This will be used for ProgramYear active validation
    */
-
-  @IsInt()
-  @Min(1)
+  @IsPositive()
   programYearId: number;
-}
-
-/**
- * Student Application partial form data from formio
- */
-export interface StudentApplicationFormData {
-  pdStatus?: string;
-  bcResident?: string;
-  craConsent?: boolean;
-  citizenship?: string;
-  fullTimeJob?: string;
-  youthInCare?: string;
-  childSupport?: string;
-  studentEmail?: string;
-  hasDependents?: string;
-  studentGender?: string;
-  studentNumber?: string;
-  dependantstatus?: string;
-  selectedProgram?: number;
-  selectedProgramName?: string;
-  studentLastName?: string;
-  taxReturnIncome?: number;
-  indigenousStatus?: string;
-  selectedLocation?: number;
-  selectedLocationName: string;
-  selectedOffering?: number;
-  selectedOfferingName?: string;
-  governmentFunding?: string;
-  livingWithParents?: string;
-  studentGivenNames?: string;
-  exceptionalExpense?: string;
-  myProgramNotListed?: {
-    programnotListed?: false;
-  };
-  relationshipStatus?: string;
-  studentDateOfBirth?: string;
-  studentHomeAddress?: string;
-  studentPhoneNumber?: string;
-  fulltimelabourForce?: string;
-  mySchoolIsNotListed?: false;
-  selectedProgramDesc?: {
-    id: number;
-    name?: string;
-    description?: string;
-    credentialType?: string;
-    deliveryMethod?: string;
-    credentialTypeToDisplay?: string;
-  };
-  studentAidBcConsent?: true;
-  nonGovernmentFunding?: string;
-  scholarshipsReceived?: string;
-  selectedOfferingDate?: string;
-  studentInfoConfirmed?: true;
-  myStudyPeriodIsntListed?: {
-    offeringnotListed?: false;
-  };
-  outOfHighSchoolFor4Years?: string;
-  supportnocustodyDependants?: string;
-  addTrustContactToContactSABC?: string;
-  hasSignificantDegreeOfIncome?: string;
-  parentvoluntaryContributions?: string;
-  haveDaycareCosts12YearsOrOver?: string;
-  haveDaycareCosts11YearsOrUnder?: string;
-  howWillYouBeAttendingTheProgram?: string;
-  bcIncomeassistanceforDisabilities?: string;
-  whenDidYouGraduateOrLeaveHighSchool?: string;
-  strongIfYouMustRelocateToADifferentCityToAttendSchoolDoYouWantToProvideACostToBeConsideredStrong?: string;
-  strongYouMayBeEligibleForAnAdditionalTransportationAllowanceIfThereIsNoLimitedLocalPublicTransitWhereYouLiveOrIfYouAreRequiredDueToSpecialCircumstancesDoYouWantToBeAssessedForAdditionalTransportationCostsStrong?: string;
 }
 
 /**
  * Base DTO for application
  */
 export interface GetApplicationBaseDTO {
-  data: Partial<StudentApplicationFormData>;
+  data: ApplicationData;
   id: number;
   applicationStatus: ApplicationStatus;
   applicationNumber: string;

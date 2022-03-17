@@ -13,6 +13,7 @@ import {
   EducationProgramOffering,
   InstitutionLocation,
   MSFAANumber,
+  OfferingIntensity,
   PIRDeniedReason,
   RelationshipStatus,
 } from ".";
@@ -25,6 +26,7 @@ import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
+import { Assessment, StudentAssessment } from "./student-assessment.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -36,7 +38,7 @@ export class Application extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  data: any;
+  data: ApplicationData;
 
   @Column({
     name: "application_number",
@@ -238,56 +240,97 @@ export class Application extends RecordDataModel {
     },
   )
   disbursementSchedules?: DisbursementSchedule[];
+  /**
+   * All assessments related to this application.
+   * The first assessment will be created upon submission, so
+   * draft applications do not have assessments associated with.
+   */
+  @OneToMany(
+    () => StudentAssessment,
+    (studentAssessment) => studentAssessment.application,
+    {
+      eager: false,
+      cascade: true,
+      nullable: true,
+    },
+  )
+  studentAssessment?: StudentAssessment[];
 }
 
 /**
- * Interface for BaseAssessment values that are shared between FullTime and PartTime
+ * Represents the application dynamic data that in some way is used
+ * by the API, hence not anymore dynamic and required to be present.
+ * ! This is a subset of all possible properties that could be part
+ * ! of the application data payload.
  */
-export interface BaseAssessment {
-  weeks: number;
-  tuitionCost: number;
-  childcareCost: number;
-  transportationCost: number;
-  booksAndSuppliesCost: number;
-  totalFederalAward: number;
-  totalProvincialAward: number;
-  totalFamilyIncome: number;
-  totalAssessmentNeed: number;
+export interface ApplicationData {
+  /**
+   * The workflow name is defined in the form data to allow, for instance,
+   * different program years to call different assessment workflows.
+   * For instance, the assessment workflow for the program year 2020/21
+   * can be called assessment_v1 and the same for for 2021/22 can be called
+   * assessment_v2.
+   */
+  workflowName: string;
+  /**
+   * While submitting a Student Application it is possible that the student
+   * did not find the program in the list. In this situation the student will
+   * provide the name that he would be looking for and the API need this value
+   * to be returned sometimes before the PIR (Program Info Request) is completed.
+   */
+  programName?: string;
+  /**
+   * While submitting a Student Application it is possible that the student
+   * did not find the program in the list. In this situation the student will
+   * provide the description that he would be looking for and the API need this value
+   * to be returned sometimes before the PIR (Program Info Request) is completed.
+   */
+  programDescription?: string;
+  /**
+   * Study start date provided by the student when the desired option was not found.
+   */
+  studystartDate?: string;
+  /**
+   * Study end date provided by the student when the desired option was not found.
+   */
+  studyendDate?: string;
+  /**
+   * Defines if the Student will take a full-time or part-time course.
+   */
+  howWillYouBeAttendingTheProgram?: OfferingIntensity;
+  /**
+   * Offering id selected by the student.
+   */
+  selectedOffering?: number;
+  /**
+   * Offering name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedOfferingName?: string;
+  /**
+   * Relationship status declared by the student.
+   */
+  relationshipStatus?: RelationshipStatus;
+  /**
+   * Student number.
+   */
+  studentNumber?: string;
+  /**
+   * Program id selected by the student.
+   */
+  selectedProgram?: number;
+  /**
+   * Program name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedProgramName?: string;
+  /**
+   * Location id selected by the student.
+   */
+  selectedLocation?: number;
+  /**
+   * Location name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedLocationName?: string;
 }
-/**
- * Interface for FullTime assessment payload.
- */
-export interface FullTimeAssessment extends BaseAssessment {
-  federalAssessmentNeed: number;
-  provincialAssessmentNeed: number;
-  exceptionalEducationCost: number;
-  livingAllowance: number;
-  alimonyOrChildSupport: number;
-  secondResidenceCost: number;
-  partnerStudentLoanCost: number;
-  totalAssessedCost: number;
-  studentTotalFederalContribution: number;
-  studentTotalProvincialContribution: number;
-  partnerAssessedContribution: number;
-  parentAssessedContribution: number;
-  totalFederalContribution: number;
-  totalProvincialContribution: number;
-  otherAllowableCost: number;
-}
-
-/**
- * Interface for PartTime assessment payload.
- */
-export interface PartTimeAssessment extends BaseAssessment {
-  miscellaneousCost: number;
-  totalAcademicExpenses: number;
-}
-/**
- * This is a type which provides the contract for FullTime and PartTime assessment payload
- * which is stored to database by workflow.
- * It is possible that more properties can be added to the assessment payload
- * without updating this interface and displayed in NOA form.
- * Whenever there is a source code update, please ensure that properties in this interface are in sync with
- * assessment payload created by camunda workflow.
- */
-export type Assessment = FullTimeAssessment | PartTimeAssessment;

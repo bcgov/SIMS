@@ -28,7 +28,7 @@ import {
   transformToApplicationSummaryDTO,
   getOfferingNameAndPeriod,
 } from "../../utilities";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -51,6 +51,8 @@ export class ApplicationAESTController extends BaseController {
    * @returns Application details
    */
   @Get(":applicationId")
+  @ApiOkResponse({ description: "Application details fetched." })
+  @ApiNotFoundResponse({ description: "Application not found" })
   async getApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<GetApplicationBaseDTO> {
@@ -113,6 +115,7 @@ export class ApplicationAESTController extends BaseController {
    * @queryParm sortOrder, order to be sorted
    * @returns Student Application list with total count
    */
+  @ApiOkResponse({ description: "All student application retrieved." })
   @Get("student/:studentId")
   async getSummaryByStudentId(
     @Query("sortField") sortField: string,

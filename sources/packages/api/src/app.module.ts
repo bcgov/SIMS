@@ -35,6 +35,7 @@ import {
   InstitutionRestrictionService,
   SINValidationService,
   DesignationAgreementLocationService,
+  StudentAssessmentService,
 } from "./services";
 import {
   UserController,
@@ -71,6 +72,7 @@ import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionModule } from "./app.institution.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentModule } from "./app.student.module";
+import { AppSystemAccessModule } from "./app.system-access.module";
 
 @Module({
   imports: [
@@ -85,6 +87,7 @@ import { AppStudentModule } from "./app.student.module";
     AppAESTModule,
     AppInstitutionModule,
     AppStudentModule,
+    AppSystemAccessModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
@@ -97,6 +100,10 @@ import { AppStudentModule } from "./app.student.module";
       {
         path: ClientTypeBaseRoute.Student,
         module: AppStudentModule,
+      },
+      {
+        path: ClientTypeBaseRoute.SystemAccess,
+        module: AppSystemAccessModule,
       },
     ]),
   ],
@@ -158,6 +165,7 @@ import { AppStudentModule } from "./app.student.module";
     InstitutionRestrictionService,
     SINValidationService,
     DesignationAgreementLocationService,
+    StudentAssessmentService,
   ],
 })
 export class AppModule {}

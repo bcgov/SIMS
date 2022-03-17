@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0cjijbh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0cjijbh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="disbursement-schedule-gateway" name="Disbursement Schedule Gateway" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1bh2hll</bpmn:outgoing>
@@ -31,7 +31,7 @@ JSON.stringify(disbursementSchedulesPayload);</camunda:script>
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/disbursements</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/assessment/${assessmentId}/disbursements</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
@@ -385,6 +385,10 @@ execution.setVariable("disbursementSchedulesPayload", schedulesJson);</bpmn:scri
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="disbursement-schedule-gateway">
+      <bpmndi:BPMNEdge id="Flow_0x6ecq2_di" bpmnElement="Flow_0x6ecq2">
+        <di:waypoint x="900" y="200" />
+        <di:waypoint x="930" y="200" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pzqmu4_di" bpmnElement="Flow_1pzqmu4">
         <di:waypoint x="340" y="200" />
         <di:waypoint x="395" y="200" />
@@ -423,10 +427,6 @@ execution.setVariable("disbursementSchedulesPayload", schedulesJson);</bpmn:scri
         <di:waypoint x="770" y="200" />
         <di:waypoint x="800" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0x6ecq2_di" bpmnElement="Flow_0x6ecq2">
-        <di:waypoint x="900" y="200" />
-        <di:waypoint x="930" y="200" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bh2hll_di" bpmnElement="Flow_1bh2hll">
         <di:waypoint x="188" y="200" />
         <di:waypoint x="240" y="200" />
@@ -434,11 +434,11 @@ execution.setVariable("disbursementSchedulesPayload", schedulesJson);</bpmn:scri
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="152" y="182" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dxrqac_di" bpmnElement="Event_0dxrqac">
+        <dc:Bounds x="1062" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1y6cnrq_di" bpmnElement="Activity_00bh6vj">
         <dc:Bounds x="930" y="160" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0dfo8bs_di" bpmnElement="Activity_1ce72s2">
-        <dc:Bounds x="800" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_04a2cip_di" bpmnElement="Activity_04gsgby">
         <dc:Bounds x="240" y="160" width="100" height="80" />
@@ -455,8 +455,8 @@ execution.setVariable("disbursementSchedulesPayload", schedulesJson);</bpmn:scri
       <bpmndi:BPMNShape id="Activity_0rrpp1a_di" bpmnElement="PartTimeDisbursementCalculation">
         <dc:Bounds x="520" y="240" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0dxrqac_di" bpmnElement="Event_0dxrqac">
-        <dc:Bounds x="1062" y="182" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_0dfo8bs_di" bpmnElement="Activity_1ce72s2">
+        <dc:Bounds x="800" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

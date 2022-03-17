@@ -17,24 +17,24 @@ import {
   Brackets,
   OrderByCondition,
 } from "typeorm";
-import {
-  APPLICATION_NOT_FOUND,
-  APPLICATION_NOT_VALID,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-  SequenceControlService,
-  StudentRestrictionService,
-} from "..";
+import { SequenceControlService, StudentRestrictionService } from "..";
 import { RecordDataModelService } from "../../database/data.model.service";
 import {
   Application,
   ApplicationStatus,
+  AssessmentTriggerType,
   COEStatus,
   DisbursementSchedule,
   DisbursementValue,
   OfferingIntensity,
+  StudentAssessment,
 } from "../../database/entities";
 import { Disbursement, EnrollmentPeriod } from "./disbursement-schedule.models";
 import * as dayjs from "dayjs";
+import {
+  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
+} from "../student-assessment/student-assessment.constants";
 
 const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
   "DISBURSEMENT_DOCUMENT_NUMBER";
@@ -44,14 +44,14 @@ const DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP =
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  private readonly applicationRepo: Repository<Application>;
+  private readonly assessmentRepo: Repository<StudentAssessment>;
   constructor(
     private readonly connection: Connection,
     private readonly sequenceService: SequenceControlService,
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(connection.getRepository(DisbursementSchedule));
-    this.applicationRepo = connection.getRepository(Application);
+    this.assessmentRepo = connection.getRepository(StudentAssessment);
   }
 
   /**
@@ -63,43 +63,58 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    * ! Once the Student Application already has disbursements, another
    * ! scenarios must be considered, for instance, if some amount of money
    * ! was already released to the student.
-   * @param applicationId application id to associate the disbursements.
+   * @param assessmentId application id to associate the disbursements.
    * @param disbursements array of disbursements and values to be created.
    * @returns created disbursements.
    */
   async createDisbursementSchedules(
-    applicationId: number,
+    assessmentId: number,
     disbursements: Disbursement[],
   ): Promise<DisbursementSchedule[]> {
-    const application = await this.applicationRepo
-      .createQueryBuilder("application")
+    const assessment = await this.assessmentRepo
+      .createQueryBuilder("assessment")
       .select([
+        "assessment.id",
         "application.id",
         "application.applicationStatus",
         "disbursementSchedules.id",
       ])
-      .leftJoin("application.disbursementSchedules", "disbursementSchedules")
-      .where("application.id = :applicationId", { applicationId })
+      .innerJoin("assessment.application", "application")
+      .leftJoin("assessment.disbursementSchedules", "disbursementSchedules")
+      .where("assessment.id = :assessmentId", { assessmentId })
       .getOne();
 
-    if (!application) {
+    if (!assessment) {
       throw new CustomNamedError(
-        "Student Application not found.",
-        APPLICATION_NOT_FOUND,
+        "Student assessment not found.",
+        ASSESSMENT_NOT_FOUND,
       );
     }
 
-    if (application.applicationStatus !== ApplicationStatus.inProgress) {
+    if (
+      assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
+      assessment.application.applicationStatus !== ApplicationStatus.inProgress
+    ) {
       throw new CustomNamedError(
-        `Student Application is not in the expected status. The application must be in application status '${ApplicationStatus.inProgress}' to disbursements be created.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        `Student Assessment and Student Application are not in the expected status. Expecting assessment status '${AssessmentTriggerType.OriginalAssessment}' when the application status is '${ApplicationStatus.inProgress}'.`,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 
-    if (application.disbursementSchedules?.length > 0) {
+    if (
+      assessment.triggerType !== AssessmentTriggerType.OriginalAssessment &&
+      assessment.application.applicationStatus === ApplicationStatus.completed
+    ) {
       throw new CustomNamedError(
-        `Disbursements were already created for this Student Application.`,
-        APPLICATION_NOT_VALID,
+        `Student Assessment and Student Application are not in the expected status. Expecting application status '${ApplicationStatus.completed}' when the assessment status is not '${AssessmentTriggerType.OriginalAssessment}'.`,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+
+    if (assessment.disbursementSchedules?.length > 0) {
+      throw new CustomNamedError(
+        `Disbursements were already created for this Student Assessment.`,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 
@@ -116,11 +131,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           return newValue;
         },
       );
-      application.disbursementSchedules.push(newDisbursement);
+      // TODO: Kept for backward compatibility. It will be removed in an upcoming PR.
+      newDisbursement.application = {
+        id: assessment.application.id,
+      } as Application;
+      assessment.disbursementSchedules.push(newDisbursement);
     }
 
-    await this.applicationRepo.save(application);
-    return application.disbursementSchedules;
+    await this.assessmentRepo.save(assessment);
+    return assessment.disbursementSchedules;
   }
 
   /**
