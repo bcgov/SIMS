@@ -121,7 +121,7 @@ export class StudentController extends BaseController {
         phone: existingStudent.contactInfo.phone,
       },
       pdVerified: existingStudent.studentPDVerified,
-      validSin: existingStudent.sinValidation.isValidSIN,
+      validSin: existingStudent.sinValidation?.isValidSIN,
       pdSentDate: existingStudent.studentPDSentAt,
       pdUpdatedDate: existingStudent.studentPDUpdateAt,
       pdStatus: determinePDStatus(existingStudent),

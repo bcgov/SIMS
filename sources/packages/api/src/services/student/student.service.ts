@@ -143,27 +143,25 @@ export class StudentService extends RecordDataModelService<Student> {
         "Not able to find a student using the username (bcsc name)",
       );
     }
-
     let mustSave = false;
-
-    if (
-      userToken.email !== studentToSync.user.email ||
-      userToken.lastName !== studentToSync.user.lastName ||
-      userToken.givenNames !== studentToSync.user.firstName
-    ) {
-      studentToSync.user.email = userToken.email;
-      studentToSync.user.lastName = userToken.lastName;
-      studentToSync.user.firstName = userToken.givenNames;
-      mustSave = true;
-      //TODO update the SIN validation here
-    }
-
+    const sinValidation = new SINValidation();
     const userTokenBirthdate = getDateOnly(userToken.birthdate);
     if (
       userTokenBirthdate !== studentToSync.birthDate ||
-      userToken.gender !== studentToSync.gender
+      userToken.lastName !== studentToSync.user.lastName ||
+      userToken.givenNames != studentToSync.user.firstName
     ) {
       studentToSync.birthDate = userTokenBirthdate;
+      studentToSync.user.lastName = userToken.lastName;
+      studentToSync.user.firstName = userToken.givenNames;
+      studentToSync.sinValidation = sinValidation;
+      mustSave = true;
+    }
+    if (
+      userToken.email !== studentToSync.user.email ||
+      userToken.gender !== studentToSync.gender
+    ) {
+      studentToSync.user.email = userToken.email;
       studentToSync.gender = userToken.gender;
       mustSave = true;
     }
