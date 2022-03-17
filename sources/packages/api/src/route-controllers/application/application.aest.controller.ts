@@ -16,7 +16,6 @@ import {
   GetApplicationBaseDTO,
   transformToApplicationDto,
   StudentApplicationAndCount,
-  ApplicationFormData,
 } from "./models/application.model";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -27,10 +26,10 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   transformToApplicationSummaryDTO,
-  getOfferingNameAndPeriod,
 } from "../../utilities";
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
+import { ApplicationControllerService } from "./application.controller";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -39,9 +38,7 @@ import { ClientTypeBaseRoute } from "../../types";
 export class ApplicationAESTController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly offeringService: EducationProgramOfferingService,
-    private readonly locationService: InstitutionLocationService,
-    private readonly programService: EducationProgramService,
+    private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
   }
@@ -66,39 +63,12 @@ export class ApplicationAESTController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    const additionalFormData = {} as ApplicationFormData;
-    // Get selected location Name
-    if (application.data.selectedLocation) {
-      const selectedLocation = await this.locationService.getLocationById(
-        application.data.selectedLocation,
-      );
 
-      // Assign location name for readonly form
-      if (selectedLocation) {
-        additionalFormData.selectedLocationName = selectedLocation.name;
-      }
-    }
-    // Get selected program name
-    if (application.data.selectedProgram) {
-      const selectedProgram = await this.programService.getProgramById(
-        application.data.selectedProgram,
+    const [applicationData, additionalFormData] =
+      await this.applicationControllerService.addLabelsAndResetDropdownForReadOnly(
+        application.data,
       );
-      if (selectedProgram) {
-        // Assign program name for readonly form
-        additionalFormData.selectedProgramName = selectedProgram.name;
-      }
-    }
-    // Get selected offering name.
-    if (application.data.selectedOffering) {
-      const selectedOffering = await this.offeringService.getOfferingById(
-        application.data.selectedOffering,
-      );
-      if (selectedOffering) {
-        additionalFormData.selectedOfferingName =
-          getOfferingNameAndPeriod(selectedOffering);
-      }
-    }
-
+    application.data = applicationData;
     return transformToApplicationDto(application, additionalFormData);
   }
   /**

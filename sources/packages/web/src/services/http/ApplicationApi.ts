@@ -11,7 +11,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  FieldSortOrder,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 

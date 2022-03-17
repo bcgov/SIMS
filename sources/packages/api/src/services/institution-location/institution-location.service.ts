@@ -5,7 +5,6 @@ import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
-import { DesignationAgreementStatus } from "../../database/entities";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(

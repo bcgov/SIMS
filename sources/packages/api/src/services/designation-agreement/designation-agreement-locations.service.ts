@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, SelectQueryBuilder } from "typeorm";
-import { DesignationAgreementLocation } from "../../database/entities";
+import {
+  DesignationAgreementLocation,
+  DesignationAgreementStatus,
+} from "../../database/entities";
 
 /**
  * Manages the operations needed for designation agreements location.
@@ -29,7 +32,9 @@ export class DesignationAgreementLocationService extends RecordDataModelService<
         "designationAgreementLocation.designationAgreement",
         "designationAgreement",
       )
-      .where("designationAgreement.designationStatus = 'Approved'")
+      .where(
+        `designationAgreement.designationStatus = '${DesignationAgreementStatus.Approved}'`,
+      )
       .andWhere("designationAgreementLocation.approved = true")
       .andWhere(
         "NOW() BETWEEN designationAgreement.startDate AND designationAgreement.endDate",

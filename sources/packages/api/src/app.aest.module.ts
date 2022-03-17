@@ -30,6 +30,7 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
+import { ApplicationControllerService } from "./route-controllers/application/application.controller";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -60,6 +61,7 @@ import { LoggerModule } from "./logger/logger.module";
     BCeIDService,
     UserService,
     InstitutionControllerService,
+    ApplicationControllerService,
   ],
 })
 export class AppAESTModule {}

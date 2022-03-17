@@ -10,7 +10,6 @@ import {
   Patch,
   UnprocessableEntityException,
   Query,
-  HttpStatus,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -42,7 +41,6 @@ import {
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
   transformToApplicationDetailDto,
-  ApplicationFormData,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -60,7 +58,6 @@ import {
   checkNotValidStudyPeriod,
   PIR_OR_DATE_OVERLAP_ERROR,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-  getOfferingNameAndPeriod,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
@@ -74,7 +71,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { ApprovalStatus } from "../../services/education-program/constants";
+import { ApplicationControllerService } from "./application.controller";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
@@ -92,9 +89,8 @@ export class ApplicationStudentsController extends BaseController {
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly locationService: InstitutionLocationService,
-    private readonly programService: EducationProgramService,
     private readonly assessmentService: StudentAssessmentService,
+    private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
     this.config = this.configService.getConfig();
@@ -120,54 +116,12 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    const additionalFormData = {} as ApplicationFormData;
-    // Check wether the selected location is designated or not.
-    // If selected location is not designated, then make the
-    // selectedLocation null
-    if (application.data.selectedLocation) {
-      const designatedLocation =
-        await this.locationService.getDesignatedLocationById(
-          application.data.selectedLocation,
-        );
-      const selectedLocation = await this.locationService.getLocationById(
-        application.data.selectedLocation,
-      );
-      if (!designatedLocation) {
-        application.data.selectedLocation = null;
-      }
-      // Assign location name for readonly form
-      additionalFormData.selectedLocationName = selectedLocation?.name;
-    }
-    // Check wether the program is approved or not.
-    // If selected program is not approved, then make the
-    // selectedLocation null
-    if (application.data.selectedProgram) {
-      const selectedProgram = await this.programService.getProgramById(
-        application.data.selectedProgram,
-      );
 
-      if (selectedProgram) {
-        // Assign program name for readonly form
-        additionalFormData.selectedProgramName = selectedProgram.name;
-        if (selectedProgram.approvalStatus !== ApprovalStatus.approved) {
-          application.data.selectedProgram = null;
-        }
-      } else {
-        application.data.selectedProgram = null;
-      }
-    }
-    // Get selected offering details.
-    if (application.data.selectedOffering) {
-      const selectedOffering = await this.offeringService.getOfferingById(
-        application.data.selectedOffering,
+    const [applicationData, additionalFormData] =
+      await this.applicationControllerService.addLabelsAndResetDropdownForReadOnly(
+        application.data,
       );
-      if (selectedOffering) {
-        additionalFormData.selectedOfferingName =
-          getOfferingNameAndPeriod(selectedOffering);
-      } else {
-        application.data.selectedOffering = null;
-      }
-    }
+    application.data = applicationData;
 
     const firstCOE =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
@@ -197,7 +151,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiOkResponse({ description: "Application submitted." })
   @ApiUnprocessableEntityResponse({
     description:
-      "Program Year is not active or invalid study dates or selected study start date is not within the program year or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE",
+      "Program Year is not active or invalid study dates or selected study start date is not within the program year or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE.",
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
