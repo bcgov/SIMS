@@ -80,6 +80,78 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
+   * Get the assessment data to load the NOA (Notice of Assessment)
+   * for a student application.
+   * @param assessmentId assessment id to be retrieved.
+   * @param studentId associated student of the application. Provide
+   * when an authorization check is needed.
+   * @returns assessment NOA data.
+   */
+  async getAssessmentForNOA(
+    assessmentId: number,
+    studentId?: number,
+  ): Promise<StudentAssessment> {
+    const query = this.repo
+      .createQueryBuilder("assessment")
+      .select([
+        "assessment.assessmentData",
+        "application.applicationNumber",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "educationProgram.name",
+        "location.name",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.offeringIntensity",
+        "msfaaNumber.msfaaNumber",
+        "disbursementSchedule.disbursementDate",
+        "disbursementValue.valueType",
+        "disbursementValue.valueCode",
+        "disbursementValue.valueAmount",
+      ])
+      .innerJoin("assessment.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("application.msfaaNumber", "msfaaNumber")
+      .innerJoin("student.user", "user")
+      .innerJoin("assessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("assessment.disbursementSchedules", "disbursementSchedule")
+      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .where("assessment.id = :assessmentId", { assessmentId })
+      .orderBy("disbursementSchedule.disbursementDate");
+
+    if (studentId) {
+      query.andWhere("student.id = :studentId", { studentId });
+    }
+    return query.getOne();
+  }
+
+  /**
+   * Get the assessments associated with an application.
+   * @param applicationId application id.
+   * @param triggerType optional type to filter.
+   * @returns filtered assessments. Please note that 'Original assessment'
+   * will always return only one record.
+   */
+  async getAssessmentsByApplicationId(
+    applicationId: number,
+    triggerType?: AssessmentTriggerType,
+  ): Promise<StudentAssessment[]> {
+    const query = this.repo
+      .createQueryBuilder("assessment")
+      .select(["assessment.id"])
+      .innerJoin("assessment.application", "application")
+      .where("application.id = :applicationId", { applicationId });
+    if (triggerType) {
+      query.andWhere("assessment.triggerType = :triggerType", { triggerType });
+    }
+    return query.getMany();
+  }
+
+  /**
    * Updates Program Information Request (PIR) related data.
    * @param assessmentId assessment id to be updated.
    * @param locationId location id related to the offering.
@@ -236,5 +308,46 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       },
       { noaApprovalStatus: status },
     );
+  }
+
+  /**
+   * Updates assessment and application statuses when
+   * the student is confirming the NOA (Notice of Assessment).
+   * @param assessmentId assessment id to be updated.
+   * @param studentId student confirming the NOA.
+   * @returns update result. One and only one record
+   * is expected to be updated.
+   */
+  async studentConfirmAssessment(
+    assessmentId: number,
+    studentId: number,
+  ): Promise<StudentAssessment> {
+    const assessment = await this.repo
+      .createQueryBuilder("assessment")
+      .select(["assessment.id", "application.id"])
+      .innerJoin("assessment.application", "application")
+      .where("assessment.id = :assessmentId", { assessmentId })
+      .andWhere("application.student.id = :studentId", { studentId })
+      .getOne();
+
+    if (!assessment) {
+      throw new CustomNamedError(
+        `Not able to find the assessment for the student.`,
+        ASSESSMENT_NOT_FOUND,
+      );
+    }
+
+    if (
+      assessment.application.applicationStatus !== ApplicationStatus.assessment
+    ) {
+      throw new CustomNamedError(
+        `Application status expected to be '${ApplicationStatus.assessment} to allow the NOA confirmation.`,
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+
+    assessment.noaApprovalStatus = AssessmentStatus.completed;
+    assessment.application.applicationStatus = ApplicationStatus.enrollment;
+    return this.repo.save(assessment);
   }
 }

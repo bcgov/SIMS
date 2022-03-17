@@ -45,13 +45,6 @@ export class Application extends RecordDataModel {
   })
   applicationNumber: string;
 
-  @Column({
-    name: "assessment",
-    type: "jsonb",
-    nullable: true,
-  })
-  assessment: Assessment;
-
   @RelationId((application: Application) => application.student)
   studentId: number;
 

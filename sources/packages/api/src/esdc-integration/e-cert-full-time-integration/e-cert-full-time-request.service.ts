@@ -140,13 +140,12 @@ export class ECertFullTimeRequestService {
       educationalStartDate: disbursement.application.offering.studyStartDate,
       educationalEndDate: disbursement.application.offering.studyEndDate,
       federalInstitutionCode: disbursement.application.location.institutionCode,
-      weeksOfStudy: disbursement.application.assessment.weeks,
+      weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
       fieldOfStudy,
       yearOfStudy: disbursement.application.offering.yearOfStudy,
       completionYears:
         disbursement.application.offering.educationProgram.completionYears,
-      // TODO: not available (to be defined/added).
-      enrollmentConfirmationDate: now,
+      enrollmentConfirmationDate: disbursement.coeUpdatedAt,
       dateOfBirth: disbursement.application.student.birthDate,
       lastName: disbursement.application.student.user.lastName,
       firstName: disbursement.application.student.user.firstName,
