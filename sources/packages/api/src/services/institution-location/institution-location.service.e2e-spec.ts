@@ -8,6 +8,7 @@ import { BCeIDService } from "../bceid/bceid.service";
 import { UserService } from "../user/user.service";
 import { ConfigService } from "../config/config.service";
 import { SINValidationService } from "../sin-validation/sin-validation.service";
+import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 
 describe("InstitutionLocationService", () => {
   let service: InstitutionLocationService;
@@ -23,6 +24,7 @@ describe("InstitutionLocationService", () => {
         UserService,
         ConfigService,
         SINValidationService,
+        DesignationAgreementLocationService,
       ],
     }).compile();
     await module.init();
