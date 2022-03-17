@@ -148,6 +148,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     if (triggerType) {
       query.andWhere("assessment.triggerType = :triggerType", { triggerType });
     }
+
     return query.getMany();
   }
 
@@ -324,7 +325,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   ): Promise<StudentAssessment> {
     const assessment = await this.repo
       .createQueryBuilder("assessment")
-      .select(["assessment.id", "application.id"])
+      .select([
+        "assessment.id",
+        "application.id",
+        "application.applicationStatus",
+      ])
       .innerJoin("assessment.application", "application")
       .where("assessment.id = :assessmentId", { assessmentId })
       .andWhere("application.student.id = :studentId", { studentId })
@@ -341,7 +346,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       assessment.application.applicationStatus !== ApplicationStatus.assessment
     ) {
       throw new CustomNamedError(
-        `Application status expected to be '${ApplicationStatus.assessment} to allow the NOA confirmation.`,
+        `Application status expected to be '${ApplicationStatus.assessment}' to allow the NOA confirmation.`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
