@@ -115,7 +115,7 @@ export class ApplicationAESTController extends BaseController {
    * @queryParm sortOrder, order to be sorted
    * @returns Student Application list with total count
    */
-  @ApiOkResponse({ description: "All student application retrieved." })
+  @ApiOkResponse({ description: "All student applications retrieved." })
   @Get("student/:studentId")
   async getSummaryByStudentId(
     @Query("sortField") sortField: string,
