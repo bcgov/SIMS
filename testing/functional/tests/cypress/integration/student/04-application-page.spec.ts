@@ -130,7 +130,7 @@ describe("Application Page", () => {
         Application.NextSectionBtn()
         Application.schoolIWillBeAttendingDropdownValue()
         Application.howWillYouAttendProgramDropdownValue()
-        Application.programIWIllBeAttendingDropdownValue()
+       //Application.programIWIllBeAttendingDropdownValue()
         Application.myStudyPeriodIsNotListedCheckbox()
         Application.studyStartDate()
         Application.studyEndDate()
@@ -149,11 +149,11 @@ describe("Application Page", () => {
         Application.draftApplication()
         Application.NextSectionBtn()
         Application.schoolIWillBeAttendingDropdownValue2()
+
         Application.howWillYouAttendProgramDropdownValue2()
         Application.programIWIllBeAttendingDropdownValue2()
-        Application.programOfferingDropdownValue()
+        //Application.programOfferingDropdownValue()
         Application.inputStudentNumber2()
-        Application.NextSectionBtn()
     })
 
 })
