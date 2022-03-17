@@ -52,7 +52,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApplicationStatus, Student } from "../../database/entities";
-import { ApiProcessError, IConfig } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
@@ -71,7 +71,6 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -79,7 +78,7 @@ import { ApprovalStatus } from "../../services/education-program/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
-@ApiTags("application")
+@ApiTags(`${ClientTypeBaseRoute.Student}-application`)
 export class ApplicationStudentsController extends BaseController {
   private readonly config: IConfig;
   constructor(
@@ -198,10 +197,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiOkResponse({ description: "Application submitted." })
   @ApiUnprocessableEntityResponse({
     description:
-      "Program Year is not active. OR  Invalid study dates. OR \
-      Selected study start date is not within the program year. \
-      OR APPLICATION_NOT_VALID. OR INVALID_OPERATION_IN_THE_CURRENT_STATUS. \
-      OR ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE",
+      "Program Year is not active or invalid study dates or selected study start date is not within the program year or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE",
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
@@ -314,7 +310,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiOkResponse({ description: "Draft application created." })
   @ApiUnprocessableEntityResponse({
     description:
-      "Program Year is not active. OR MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
+      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
   })
   @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   @Post("draft")
@@ -406,7 +402,7 @@ export class ApplicationStudentsController extends BaseController {
   @ApiOkResponse({ description: "Retrieved assessment values." })
   @ApiNotFoundResponse({
     description:
-      "Application id not found. OR Assessment for the application is not calculated.",
+      "Application id not found or Assessment for the application is not calculated.",
   })
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
@@ -464,7 +460,7 @@ export class ApplicationStudentsController extends BaseController {
   @CheckRestrictions()
   @ApiOkResponse({ description: "Assessment confirmed." })
   @ApiUnprocessableEntityResponse({
-    description: "Student not found. OR Assessment confirmation failed.",
+    description: "Student not found or Assessment confirmation failed.",
   })
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(

@@ -4,7 +4,7 @@ import { Connection, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocation } from "../../database/entities";
 
 /**
- * Manages the operations needed for designation agreements location
+ * Manages the operations needed for designation agreements location.
  */
 @Injectable()
 export class DesignationAgreementLocationService extends RecordDataModelService<DesignationAgreementLocation> {
@@ -21,7 +21,7 @@ export class DesignationAgreementLocationService extends RecordDataModelService<
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
-  getExistApprovedDesignationInstitutionLocation(): SelectQueryBuilder<DesignationAgreementLocation> {
+  getExistsDesignatedLocation(): SelectQueryBuilder<DesignationAgreementLocation> {
     return this.repo
       .createQueryBuilder("designationAgreementLocation")
       .select("1")
@@ -29,10 +29,10 @@ export class DesignationAgreementLocationService extends RecordDataModelService<
         "designationAgreementLocation.designationAgreement",
         "designationAgreement",
       )
-      .where("designationAgreement.designationStatus = :designationStatus")
+      .where("designationAgreement.designationStatus = 'Approved'")
       .andWhere("designationAgreementLocation.approved = true")
       .andWhere(
-        ":now BETWEEN designationAgreement.startDate AND designationAgreement.endDate",
+        "NOW() BETWEEN designationAgreement.startDate AND designationAgreement.endDate",
       )
       .andWhere(
         "designationAgreementLocation.institutionLocation = location.id",

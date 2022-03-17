@@ -114,21 +114,17 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns all locations.
    */
   async getLocations(): Promise<Partial<InstitutionLocation>[]> {
-    const query = this.repo
+    return this.repo
       .createQueryBuilder("location")
       .select("location.id")
       .addSelect("location.name")
       .orderBy("location.name")
       .andWhere(
         `EXISTS(${this.designationAgreementLocationService
-          .getExistApprovedDesignationInstitutionLocation()
+          .getExistsDesignatedLocation()
           .getSql()})`,
-      );
-    query.setParameters({
-      designationStatus: DesignationAgreementStatus.Approved,
-      now: new Date(),
-    });
-    return query.getMany();
+      )
+      .getMany();
   }
 
   async getInstitutionLocation(
@@ -221,19 +217,15 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getDesignatedLocationById(
     locationId: number,
   ): Promise<InstitutionLocation> {
-    const query = this.repo
+    return this.repo
       .createQueryBuilder("location")
       .select(["location.name"])
       .where("location.id = :locationId", { locationId })
       .andWhere(
         `EXISTS(${this.designationAgreementLocationService
-          .getExistApprovedDesignationInstitutionLocation()
+          .getExistsDesignatedLocation()
           .getSql()})`,
-      );
-    query.setParameters({
-      designationStatus: DesignationAgreementStatus.Approved,
-      now: new Date(),
-    });
-    return query.getOne();
+      )
+      .getOne();
   }
 }

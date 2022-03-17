@@ -30,11 +30,12 @@ import {
   getOfferingNameAndPeriod,
 } from "../../utilities";
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("application")
-@ApiTags("application")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-application`)
 export class ApplicationAESTController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
