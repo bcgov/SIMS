@@ -1,3 +1,4 @@
+import { addPaginationOptions, addSortOptions } from "@/helpers";
 import {
   SaveStudentApplicationDto,
   ApplicationWithProgramYearDto,
@@ -178,15 +179,12 @@ export class ApplicationApi extends HttpBaseClient {
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<StudentApplicationAndCount> {
-    let URL = `students/application-summary?page=${page}&pageLimit=${pageCount}`;
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    return this.getCallTyped<StudentApplicationAndCount>(URL);
+    let url = "students/application-summary";
+    // Adding pagination params. There is always a default page and pageCount for paginated APIs.
+    url = addPaginationOptions(url, page, pageCount, "?");
+    //Adding Sort params. There is always a default sortField and sortOrder for COE.
+    url = addSortOptions(url, sortField, sortOrder);
+    return this.getCallTyped<StudentApplicationAndCount>(url);
   }
 
   /**
@@ -207,16 +205,13 @@ export class ApplicationApi extends HttpBaseClient {
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<StudentApplicationAndCount> {
-    let URL = `application/student/${studentId}?page=${page}&pageLimit=${pageCount}`;
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
+    let url = `application/student/${studentId}`;
+    // Adding pagination params. There is always a default page and pageCount for paginated APIs.
+    url = addPaginationOptions(url, page, pageCount, "?");
+    //Adding Sort params. There is always a default sortField and sortOrder for COE.
+    url = addSortOptions(url, sortField, sortOrder);
     return this.getCallTyped<StudentApplicationAndCount>(
-      this.addClientRoot(URL),
+      this.addClientRoot(url),
     );
   }
 }
