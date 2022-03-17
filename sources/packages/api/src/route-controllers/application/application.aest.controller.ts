@@ -67,26 +67,18 @@ export class ApplicationAESTController extends BaseController {
       );
     }
     const additionalFormData = {} as ApplicationFormData;
-    // Check wether the selected location is designated or not.
-    // If selected location is not designated, then make the
-    // selectedLocation null
+    // Get selected location Name
     if (application.data.selectedLocation) {
-      const designatedLocation =
-        await this.locationService.getDesignatedLocationById(
-          application.data.selectedLocation,
-        );
       const selectedLocation = await this.locationService.getLocationById(
         application.data.selectedLocation,
       );
-      if (!designatedLocation) {
-        application.data.selectedLocation = null;
-      }
+
       // Assign location name for readonly form
-      additionalFormData.selectedLocationName = selectedLocation.name;
+      if (selectedLocation) {
+        additionalFormData.selectedLocationName = selectedLocation.name;
+      }
     }
-    // Check wether the program is approved or not.
-    // If selected program is not approved, then make the
-    // selectedLocation null
+    // Get selected program name
     if (application.data.selectedProgram) {
       const selectedProgram = await this.programService.getProgramById(
         application.data.selectedProgram,
@@ -96,7 +88,7 @@ export class ApplicationAESTController extends BaseController {
         additionalFormData.selectedProgramName = selectedProgram.name;
       }
     }
-    // Get selected offering details.
+    // Get selected offering name.
     if (application.data.selectedOffering) {
       const selectedOffering = await this.offeringService.getOfferingById(
         application.data.selectedOffering,
