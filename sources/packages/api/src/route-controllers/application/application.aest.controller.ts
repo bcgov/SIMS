@@ -52,7 +52,7 @@ export class ApplicationAESTController extends BaseController {
    */
   @Get(":applicationId")
   @ApiOkResponse({ description: "Application details fetched." })
-  @ApiNotFoundResponse({ description: "Application not found" })
+  @ApiNotFoundResponse({ description: "Application not found." })
   async getApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<GetApplicationBaseDTO> {

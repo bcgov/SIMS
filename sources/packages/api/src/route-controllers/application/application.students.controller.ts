@@ -79,7 +79,7 @@ import { ApprovalStatus } from "../../services/education-program/constants";
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
 @ApiTags("application")
-export class ApplicationStudentController extends BaseController {
+export class ApplicationStudentsController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -193,7 +193,7 @@ export class ApplicationStudentController extends BaseController {
       OR ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE",
   })
   @ApiBadRequestResponse({ description: "Form validation failed" })
-  @ApiNotFoundResponse({ description: "Application not found" })
+  @ApiNotFoundResponse({ description: "Application not found." })
   @ApiInternalServerErrorResponse({ description: "Unexpected error" })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
@@ -305,7 +305,7 @@ export class ApplicationStudentController extends BaseController {
     description:
       "Program Year is not active. OR MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
   })
-  @ApiInternalServerErrorResponse({ description: "Unexpected error" })
+  @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -357,7 +357,7 @@ export class ApplicationStudentController extends BaseController {
   @Patch(":applicationId/draft")
   @ApiOkResponse({ description: "Draft application updated." })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
-  @ApiInternalServerErrorResponse({ description: "Unexpected error" })
+  @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -453,7 +453,7 @@ export class ApplicationStudentController extends BaseController {
   @CheckRestrictions()
   @ApiOkResponse({ description: "Assessment confirmed." })
   @ApiUnprocessableEntityResponse({
-    description: "Student not found. OR Assessment confirmation failed",
+    description: "Student not found. OR Assessment confirmation failed.",
   })
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
@@ -488,9 +488,9 @@ export class ApplicationStudentController extends BaseController {
    */
 
   @ApiOkResponse({ description: "Student Application status updated." })
-  @ApiNotFoundResponse({ description: "Application not found" })
+  @ApiNotFoundResponse({ description: "Application not found." })
   @ApiUnprocessableEntityResponse({
-    description: "Application Status update failed",
+    description: "Application Status update failed.",
   })
   @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
@@ -543,7 +543,7 @@ export class ApplicationStudentController extends BaseController {
    * @returns program year details of the application
    */
   @ApiOkResponse({ description: "Program year details fetched." })
-  @ApiNotFoundResponse({ description: "student not found" })
+  @ApiNotFoundResponse({ description: "Student not found." })
   @Get(":applicationId/program-year")
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
