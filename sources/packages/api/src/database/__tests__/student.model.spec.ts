@@ -3,11 +3,7 @@ import { closeDB, setupDB } from "../../testHelpers";
 import { Connection } from "typeorm";
 import * as faker from "faker";
 import { SINValidation, Student, User } from "../entities";
-import {
-  SFASIndividualService,
-  SINValidationService,
-  StudentService,
-} from "../../services";
+import { SFASIndividualService, StudentService } from "../../services";
 
 jest.setTimeout(15000);
 
@@ -23,12 +19,7 @@ describe("Test student model", () => {
   it("should save student model object with user relationship and address jsonb", async () => {
     // Create
     const sfasIndividualService = new SFASIndividualService(connection);
-    const sinvalidationService = new SINValidationService(connection);
-    const controller = new StudentService(
-      connection,
-      sfasIndividualService,
-      sinvalidationService,
-    );
+    const controller = new StudentService(connection, sfasIndividualService);
     const sub = new Student();
     sub.sin = "9999999999";
     sub.birthDate = faker.date.past(18);

@@ -42,6 +42,7 @@ import {
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
   transformToApplicationDetailDto,
+  ApplicationFormData,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -122,6 +123,7 @@ export class ApplicationStudentsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+    const additionalFormData = {} as ApplicationFormData;
     // Check wether the selected location is designated or not.
     // If selected location is not designated, then make the
     // selectedLocation null
@@ -135,7 +137,7 @@ export class ApplicationStudentsController extends BaseController {
       );
       if (!designatedLocation) application.data.selectedLocation = null;
       // Assign location name for readonly form
-      application.data.selectedLocationName = selectedLocation?.name;
+      additionalFormData.selectedLocationName = selectedLocation?.name;
     }
     // Check wether the program is approved or not.
     // If selected program is not approved, then make the
@@ -147,7 +149,7 @@ export class ApplicationStudentsController extends BaseController {
 
       if (selectedProgram) {
         // Assign program name for readonly form
-        application.data.selectedProgramName = selectedProgram.name;
+        additionalFormData.selectedProgramName = selectedProgram.name;
         if (selectedProgram.approvalStatus !== ApprovalStatus.approved)
           application.data.selectedProgram = null;
       } else application.data.selectedProgram = null;
@@ -158,7 +160,7 @@ export class ApplicationStudentsController extends BaseController {
         application.data.selectedOffering,
       );
       if (selectedOffering)
-        application.data.selectedOfferingName =
+        additionalFormData.selectedOfferingName =
           getOfferingNameAndPeriod(selectedOffering);
       else application.data.selectedOffering = null;
     }
@@ -167,7 +169,11 @@ export class ApplicationStudentsController extends BaseController {
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
       );
-    return transformToApplicationDetailDto(application, firstCOE);
+    return transformToApplicationDetailDto(
+      application,
+      additionalFormData,
+      firstCOE,
+    );
   }
 
   /**

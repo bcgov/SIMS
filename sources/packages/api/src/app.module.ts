@@ -69,9 +69,9 @@ import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.modul
 import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { AppAESTModule } from "./app.aest.module";
-import { AppInstitutionModule } from "./app.institution.module";
+import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
-import { AppStudentModule } from "./app.student.module";
+import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 
 @Module({
@@ -85,13 +85,13 @@ import { AppSystemAccessModule } from "./app.system-access.module";
     ECertFullTimeIntegrationModule,
     FedRestrictionIntegrationModule,
     AppAESTModule,
-    AppInstitutionModule,
-    AppStudentModule,
+    AppInstitutionsModule,
+    AppStudentsModule,
     AppSystemAccessModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
-        module: AppInstitutionModule,
+        module: AppInstitutionsModule,
       },
       {
         path: ClientTypeBaseRoute.AEST,
@@ -99,7 +99,7 @@ import { AppSystemAccessModule } from "./app.system-access.module";
       },
       {
         path: ClientTypeBaseRoute.Student,
-        module: AppStudentModule,
+        module: AppStudentsModule,
       },
       {
         path: ClientTypeBaseRoute.SystemAccess,

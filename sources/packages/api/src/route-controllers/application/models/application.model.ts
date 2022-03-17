@@ -35,11 +35,31 @@ export class SaveApplicationDto {
   programYearId: number;
 }
 
+export interface ApplicationFormData extends ApplicationData {
+  /**
+   * Offering name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedOfferingName?: string;
+
+  /**
+   * Program name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedProgramName?: string;
+
+  /**
+   * Location name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedLocationName?: string;
+}
+
 /**
  * Base DTO for application
  */
 export interface GetApplicationBaseDTO {
-  data: ApplicationData;
+  data: ApplicationFormData;
   id: number;
   applicationStatus: ApplicationStatus;
   applicationNumber: string;
@@ -228,13 +248,15 @@ export interface StudentApplicationAndCount {
 /**
  * Transformation util for Application.
  * @param application
+ * @param additionalFormData
  * @returns Application DTO
  */
 export const transformToApplicationDto = (
   application: Application,
+  additionalFormData: ApplicationFormData,
 ): GetApplicationBaseDTO => {
   return {
-    data: application.data,
+    data: { ...application.data, ...additionalFormData },
     id: application.id,
     applicationStatus: application.applicationStatus,
     applicationNumber: application.applicationNumber,
@@ -245,15 +267,17 @@ export const transformToApplicationDto = (
 
 /**
  * Transformation util for Application.
- * @param application
+ * @param applicationDetail
+ * @param additionalFormData
  * @returns Application DTO
  */
 export const transformToApplicationDetailDto = (
   applicationDetail: Application,
+  additionalFormData: ApplicationFormData,
   disbursement: DisbursementSchedule,
 ): GetApplicationDataDto => {
   return {
-    data: applicationDetail.data,
+    data: { ...applicationDetail.data, ...additionalFormData },
     id: applicationDetail.id,
     applicationStatus: applicationDetail.applicationStatus,
     applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,

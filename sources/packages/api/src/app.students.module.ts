@@ -52,4 +52,4 @@ import { LoggerModule } from "./logger/logger.module";
     StudentAssessmentService,
   ],
 })
-export class AppStudentModule {}
+export class AppStudentsModule {}

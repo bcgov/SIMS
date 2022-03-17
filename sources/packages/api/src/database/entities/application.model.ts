@@ -303,11 +303,6 @@ export interface ApplicationData {
    */
   selectedOffering?: number;
   /**
-   * Offering name selected by the student.
-   * This is for html component of readonly form.
-   */
-  selectedOfferingName?: string;
-  /**
    * Relationship status declared by the student.
    */
   relationshipStatus?: RelationshipStatus;
@@ -320,17 +315,7 @@ export interface ApplicationData {
    */
   selectedProgram?: number;
   /**
-   * Program name selected by the student.
-   * This is for html component of readonly form.
-   */
-  selectedProgramName?: string;
-  /**
    * Location id selected by the student.
    */
   selectedLocation?: number;
-  /**
-   * Location name selected by the student.
-   * This is for html component of readonly form.
-   */
-  selectedLocationName?: string;
 }

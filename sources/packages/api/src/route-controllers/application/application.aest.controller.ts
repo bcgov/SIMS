@@ -16,6 +16,7 @@ import {
   GetApplicationBaseDTO,
   transformToApplicationDto,
   StudentApplicationAndCount,
+  ApplicationFormData,
 } from "./models/application.model";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -64,6 +65,7 @@ export class ApplicationAESTController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+    const additionalFormData = {} as ApplicationFormData;
     // Check wether the selected location is designated or not.
     // If selected location is not designated, then make the
     // selectedLocation null
@@ -77,7 +79,7 @@ export class ApplicationAESTController extends BaseController {
       );
       if (!designatedLocation) application.data.selectedLocation = null;
       // Assign location name for readonly form
-      application.data.selectedLocationName = selectedLocation.name;
+      additionalFormData.selectedLocationName = selectedLocation.name;
     }
     // Check wether the program is approved or not.
     // If selected program is not approved, then make the
@@ -88,7 +90,7 @@ export class ApplicationAESTController extends BaseController {
       );
       if (selectedProgram) {
         // Assign program name for readonly form
-        application.data.selectedProgramName = selectedProgram.name;
+        additionalFormData.selectedProgramName = selectedProgram.name;
       }
     }
     // Get selected offering details.
@@ -97,11 +99,11 @@ export class ApplicationAESTController extends BaseController {
         application.data.selectedOffering,
       );
       if (selectedOffering)
-        application.data.selectedOfferingName =
+        additionalFormData.selectedOfferingName =
           getOfferingNameAndPeriod(selectedOffering);
     }
 
-    return transformToApplicationDto(application);
+    return transformToApplicationDto(application, additionalFormData);
   }
   /**
    * API to fetch all the applications that belong to student.
@@ -124,7 +126,7 @@ export class ApplicationAESTController extends BaseController {
     @Query("page") page = DEFAULT_PAGE_NUMBER,
     @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
   ): Promise<StudentApplicationAndCount> {
-    const applicationsAndCount =
+    const [applications, count] =
       await this.applicationService.getAllStudentApplications(
         sortField,
         studentId,
@@ -134,10 +136,10 @@ export class ApplicationAESTController extends BaseController {
       );
 
     return {
-      applications: applicationsAndCount[0].map((application: Application) => {
+      applications: applications.map((application: Application) => {
         return transformToApplicationSummaryDTO(application);
       }),
-      totalApplications: applicationsAndCount[1],
+      totalApplications: count,
     };
   }
 }
