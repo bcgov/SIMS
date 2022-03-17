@@ -10,7 +10,6 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
   StudentApplicationAndCount,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";

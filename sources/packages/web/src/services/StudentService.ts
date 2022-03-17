@@ -65,7 +65,7 @@ export class StudentService {
    * Get all the applications for a student
    * @param page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
+   * @param pageCount, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
