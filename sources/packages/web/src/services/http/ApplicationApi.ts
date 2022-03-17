@@ -6,6 +6,11 @@ import {
   GetApplicationBaseDTO,
   StudentApplicationAndCount,
   NoticeOfAssessmentDTO,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  StudentApplicationFields,
+  DataTableSortOrder,
+  FieldSortOrder,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -13,7 +18,7 @@ export class ApplicationApi extends HttpBaseClient {
   public async getApplicationData(applicationId: number): Promise<any> {
     try {
       const response = await this.apiClient.get(
-        `application/${applicationId}`,
+        this.addClientRoot(`application/${applicationId}`),
         this.addAuthHeader(),
       );
       return response.data as GetApplicationDataDto;
@@ -29,7 +34,7 @@ export class ApplicationApi extends HttpBaseClient {
   public async getNOA(applicationId: number): Promise<NoticeOfAssessmentDTO> {
     try {
       const response = await this.apiClient.get(
-        `application/${applicationId}/assessment`,
+        this.addClientRoot(`application/${applicationId}/assessment`),
         this.addAuthHeader(),
       );
       return response.data;
@@ -42,7 +47,7 @@ export class ApplicationApi extends HttpBaseClient {
   public async confirmAssessment(applicationId: number): Promise<void> {
     try {
       await this.apiClient.patch(
-        `application/${applicationId}/confirm-assessment`,
+        this.addClientRoot(`application/${applicationId}/confirm-assessment`),
         {},
         this.addAuthHeader(),
       );
@@ -58,7 +63,7 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<void> {
     try {
       await this.apiClient.patch(
-        `application/${applicationId}/status`,
+        this.addClientRoot(`application/${applicationId}/status`),
         payload,
         this.addAuthHeader(),
       );
@@ -73,7 +78,7 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<number> {
     try {
       const response = await this.apiClient.post(
-        "application/draft",
+        this.addClientRoot("application/draft"),
         payload,
         this.addAuthHeader(),
       );
@@ -95,7 +100,7 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<number> {
     try {
       const response = await this.apiClient.patch(
-        `application/${applicationId}/draft`,
+        this.addClientRoot(`application/${applicationId}/draft`),
         payload,
         this.addAuthHeader(),
       );
@@ -114,7 +119,7 @@ export class ApplicationApi extends HttpBaseClient {
     // this errors are displayed in client side in toast message
     await this.apiClient
       .patch(
-        `application/${applicationId}/submit`,
+        this.addClientRoot(`application/${applicationId}/submit`),
         payload,
         this.addAuthHeader(),
       )
@@ -131,7 +136,7 @@ export class ApplicationApi extends HttpBaseClient {
     includeInActivePY?: boolean,
   ): Promise<ApplicationWithProgramYearDto> {
     try {
-      let url = `application/${applicationId}/program-year`;
+      let url = this.addClientRoot(`application/${applicationId}/program-year`);
       if (includeInActivePY) {
         url = `${url}?includeInActivePY=${includeInActivePY}`;
       }
@@ -146,36 +151,72 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * API Client for application detail.
    * @param applicationId
-   * @param userId
    * @returns
    */
   public async getApplicationDetails(
     applicationId: number,
-    studentId: number,
   ): Promise<GetApplicationBaseDTO> {
     const response = await this.getCall(
-      `application/${applicationId}/student/${studentId}/aest`,
+      this.addClientRoot(`application/${applicationId}`),
     );
     return response.data as GetApplicationBaseDTO;
   }
 
   /**
    * API Client to get student applications.
-   * ! Because of code duplication, this function
-   * ! is used in both AEST(Ministry) student application summary
-   * ! as well as student application summary.
-   * ! only passed URL value will be different.
-   * ! Both are using same interface
-   * ! In future, if any of them needs a
-   * ! different interface, use create a
-   * ! different functions for both
-   * @param url to be send
-   * @returns
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageLimit, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns StudentApplicationAndCount
    */
-  public async getAllApplicationAndCount(
-    url: string,
+  public async getAllApplicationAndCountForStudent(
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    sortField?: StudentApplicationFields,
+    sortOrder?: DataTableSortOrder,
   ): Promise<StudentApplicationAndCount> {
-    const response = await this.getCall(url);
-    return response.data as StudentApplicationAndCount;
+    let URL = `students/application-summary?page=${page}&pageLimit=${pageCount}`;
+    if (sortField && sortOrder) {
+      const sortDBOrder =
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
+      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    }
+    return this.getCallTyped<StudentApplicationAndCount>(URL);
+  }
+
+  /**
+   * API Client to get student applications for AEST.
+   * @param studentId student id
+   * @param page, page number if nothing is passed then
+   * DEFAULT_PAGE_NUMBER is taken
+   * @param pageCount, limit of the page if nothing is
+   * passed then DEFAULT_PAGE_LIMIT is taken
+   * @param sortField, field to be sorted
+   * @param sortOrder, order to be sorted
+   * @returns StudentApplicationAndCount
+   */
+  public async getAllApplicationAndCountForAEST(
+    studentId: number,
+    page = DEFAULT_PAGE_NUMBER,
+    pageCount = DEFAULT_PAGE_LIMIT,
+    sortField?: StudentApplicationFields,
+    sortOrder?: DataTableSortOrder,
+  ): Promise<StudentApplicationAndCount> {
+    let URL = `application/student/${studentId}?page=${page}&pageLimit=${pageCount}`;
+    if (sortField && sortOrder) {
+      const sortDBOrder =
+        sortOrder === DataTableSortOrder.DESC
+          ? FieldSortOrder.DESC
+          : FieldSortOrder.ASC;
+      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
+    }
+    return this.getCallTyped<StudentApplicationAndCount>(
+      this.addClientRoot(URL),
+    );
   }
 }

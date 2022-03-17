@@ -78,15 +78,12 @@ export class StudentService {
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<StudentApplicationAndCount> {
-    let URL = `students/application-summary?page=${page}&pageLimit=${pageCount}`;
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    return ApiClient.Application.getAllApplicationAndCount(URL);
+    return ApiClient.Application.getAllApplicationAndCountForStudent(
+      page,
+      pageCount,
+      sortField,
+      sortOrder,
+    );
   }
 
   public async checkStudent(): Promise<boolean> {

@@ -13,11 +13,15 @@ import {
   DesignationAgreementService,
   FormService,
   InstitutionLocationService,
+  DesignationAgreementLocationService,
+  EducationProgramOfferingService,
+  EducationProgramService,
 } from "./services";
 import {
   AESTSupportingUserController,
   DesignationAgreementAESTController,
   DesignationAgreementControllerService,
+  ApplicationAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -27,6 +31,7 @@ import { LoggerModule } from "./logger/logger.module";
   controllers: [
     AESTSupportingUserController,
     DesignationAgreementAESTController,
+    ApplicationAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -42,6 +47,9 @@ import { LoggerModule } from "./logger/logger.module";
     DesignationAgreementControllerService,
     FormService,
     InstitutionLocationService,
+    DesignationAgreementLocationService,
+    EducationProgramOfferingService,
+    EducationProgramService,
   ],
 })
 export class AppAESTModule {}

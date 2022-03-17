@@ -14,12 +14,12 @@
         color="primary"
         v-show="!isFirstPage"
         outlined
-        @click="$emit('wizardGoPrevious')"
+        @click="wizardGoPrevious"
         >Previous section</v-btn
       >
     </v-col>
     <v-col md="6" class="ml-auto text-right">
-      <v-btn color="primary" v-show="!isLastPage" @click="$emit('wizardGoNext')"
+      <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext"
         >Next section</v-btn
       >
     </v-col>
@@ -127,7 +127,6 @@ export default {
       applicationWizard.on("prevPage", prevNextNavigation);
       applicationWizard.on("nextPage", prevNextNavigation);
 
-      // TODO:Ann check below code for AEST
       if (!props.isReadOnly) {
         await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
         const selectedLocationId = getSelectedId(form);

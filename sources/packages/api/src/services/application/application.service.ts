@@ -377,25 +377,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
   /**
-   * Fetches application by applicationId and userId|studentId.
-   * When studentId is supplied, studentId is preferred as search criteria.
-   * When studentId is not supplied, then userId is used.
+   * Fetches application by applicationId and userId (optional).
    * @param applicationId
    * @param userId
-   * @param studentId
    * @returns
    */
   async getApplicationByIdAndUser(
     applicationId: number,
     userId?: number,
-    studentId?: number,
   ): Promise<Application> {
-    if (!userId && !studentId) {
-      throw new CustomNamedError(
-        "Either student id or user id is mandatory to retrieve an application.",
-        INSUFFICIENT_APPLICATION_SEARCH_PARAMS,
-      );
-    }
     const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
@@ -432,13 +422,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       });
-
     if (userId) {
       applicationQuery.andWhere("user.id = :userId", { userId });
-    }
-
-    if (studentId) {
-      applicationQuery.andWhere("student.id = :studentId", { studentId });
     }
     return applicationQuery.getOne();
   }

@@ -34,36 +34,23 @@ import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
   GetApplicationDataDto,
-  GetApplicationBaseDTO,
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
-  transformToApplicationDto,
   transformToApplicationDetailDto,
-  StudentApplicationAndCount,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
   CheckSinValidation,
-  Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { UserGroups } from "../../auth/user-groups.enum";
-import {
-  ApplicationStatus,
-  Application,
-  Student,
-} from "../../database/entities";
+import { ApplicationStatus, Student } from "../../database/entities";
 import { ApiProcessError, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
   PIR_OR_DATE_OVERLAP_ERROR,
@@ -77,9 +64,10 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { ApprovalStatus } from "src/services/education-program/constants";
 
+@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
 @ApiTags("application")
-export class ApplicationController extends BaseController {
+export class ApplicationStudentController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -99,7 +87,6 @@ export class ApplicationController extends BaseController {
     this.config = this.configService.getConfig();
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":id")
   async getByApplicationId(
     @Param("id") applicationId: number,
@@ -114,32 +101,37 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-    // Get selected location
-    // TODO: ADD COMMENTS
-    // TODO: DESIGNATION LOCATION ANNNNNNNNNNNNNNNNN
+    // Check wether the selected location is designated or not.
+    // If selected location is not designated, then make the
+    // selectedLocation null
     if (application.data?.selectedLocation) {
+      const designatedLocation =
+        await this.locationService.getDesignatedLocationById(
+          application.data.selectedLocation,
+        );
       const selectedLocation = await this.locationService.getLocationById(
         application.data.selectedLocation,
       );
-      if (selectedLocation)
-        application.data.selectedLocationName = selectedLocation.name;
-      else application.data.selectedLocation = null;
+      if (!designatedLocation) application.data.selectedLocation = null;
+      // Assign location name for readonly form
+      application.data.selectedLocationName = selectedLocation?.name;
     }
-    // Get selected Program
-    // TODO: ADD COMMENTS
+    // Check wether the program is approved or not.
+    // If selected program is not approved, then make the
+    // selectedLocation null
     if (application.data?.selectedProgram) {
       const selectedProgram = await this.programService.getProgramById(
         application.data.selectedProgram,
       );
 
       if (selectedProgram) {
+        // Assign program name for readonly form
         application.data.selectedProgramName = selectedProgram.name;
         if (selectedProgram.approvalStatus !== ApprovalStatus.approved)
           application.data.selectedProgram = null;
       } else application.data.selectedProgram = null;
     }
-    // Get selected offering
-    // TODO: ADD COMMENTS
+    // Get selected offering details.
     if (application.data?.selectedOffering) {
       const selectedOffering = await this.offeringService.getOfferingById(
         application.data.selectedOffering,
@@ -156,6 +148,7 @@ export class ApplicationController extends BaseController {
       );
     return transformToApplicationDetailDto(application, firstCOE);
   }
+
   /**
    * Submit an existing student application changing the status
    * to submitted and triggering the necessary processes.
@@ -169,7 +162,6 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
   async submitApplication(
     @Body() payload: SaveApplicationDto,
@@ -273,7 +265,6 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -322,7 +313,6 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -357,7 +347,6 @@ export class ApplicationController extends BaseController {
    * @param userToken associated student of the application.
    * @returns NOA and application data.
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
@@ -413,7 +402,6 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    */
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
   async studentConfirmAssessment(
     @UserToken() userToken: IUserToken,
@@ -445,7 +433,6 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    * @body payload contains the status, that need to be updated
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
     @UserToken() userToken: IUserToken,
@@ -496,7 +483,6 @@ export class ApplicationController extends BaseController {
    * then consider both active and inactive program year.
    * @returns program year details of the application
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/program-year")
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
@@ -526,104 +512,6 @@ export class ApplicationController extends BaseController {
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
     } as ApplicationWithProgramYearDto;
-  }
-
-  /**
-   * API to fetch application details by applicationId and studentId.
-   * This API will be used by ministry users.
-   * @param applicationId
-   * @param userId
-   * @returns Application details
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get(":applicationId/student/:studentId/aest")
-  async getByStudentAndApplicationId(
-    @Param("applicationId") applicationId: number,
-    @Param("studentId") studentId: number,
-  ): Promise<GetApplicationBaseDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
-      applicationId,
-      undefined,
-      studentId,
-    );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-
-    // Get selected location
-    // TODO: ADD COMMENTS
-    // TODO: DESIGNATION LOCATION ANNNNNNNNNNNNNNNNN
-    if (application.data?.selectedLocation) {
-      const selectedLocation = await this.locationService.getLocationById(
-        application.data.selectedLocation,
-      );
-      if (selectedLocation)
-        application.data.selectedLocationName = selectedLocation.name;
-    }
-    // Get selected Program
-    // TODO: ADD COMMENTS
-    if (application.data?.selectedProgram) {
-      const selectedProgram = await this.programService.getProgramById(
-        application.data.selectedProgram,
-      );
-      if (selectedProgram) {
-        application.data.selectedProgramName = selectedProgram.name;
-      }
-    }
-    // Get selected offering
-    // TODO: ADD COMMENTS
-    if (application.data?.selectedOffering) {
-      const selectedOffering = await this.offeringService.getOfferingById(
-        application.data.selectedOffering,
-      );
-      if (selectedOffering)
-        application.data.selectedOfferingName =
-          getOfferingNameAndPeriod(selectedOffering);
-    }
-
-    return transformToApplicationDto(application);
-  }
-
-  /**
-   * API to fetch all the applications that belong to student.
-   * This API will be used by ministry users.
-   * @param studentId student id
-   * @queryParm page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, page size or records per page, if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, order to be sorted
-   * @returns Student Application list with total count
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("student/:studentId/aest")
-  async getSummaryByStudentId(
-    @Query("sortField") sortField: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Param("studentId") studentId: number,
-    @Query("page") page = DEFAULT_PAGE_NUMBER,
-    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<StudentApplicationAndCount> {
-    const applicationsAndCount =
-      await this.applicationService.getAllStudentApplications(
-        sortField,
-        studentId,
-        page,
-        pageLimit,
-        sortOrder,
-      );
-
-    return {
-      applications: applicationsAndCount[0].map((application: Application) => {
-        return transformToApplicationSummaryDTO(application);
-      }),
-      totalApplications: applicationsAndCount[1],
-    };
   }
 
   /**

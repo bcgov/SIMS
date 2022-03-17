@@ -34,6 +34,7 @@ import {
   RestrictionService,
   InstitutionRestrictionService,
   SINValidationService,
+  DesignationAgreementLocationService,
 } from "./services";
 import {
   UserController,
@@ -42,7 +43,6 @@ import {
   InstitutionController,
   ConfigController,
   DynamicFormController,
-  ApplicationController,
   InstitutionLocationsController,
   CRAIntegrationController,
   EducationProgramController,
@@ -70,6 +70,7 @@ import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restrict
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionModule } from "./app.institution.module";
 import { ClientTypeBaseRoute } from "./types";
+import { AppStudentModule } from "./app.student.module";
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { ClientTypeBaseRoute } from "./types";
     FedRestrictionIntegrationModule,
     AppAESTModule,
     AppInstitutionModule,
+    AppStudentModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
@@ -91,6 +93,10 @@ import { ClientTypeBaseRoute } from "./types";
       {
         path: ClientTypeBaseRoute.AEST,
         module: AppAESTModule,
+      },
+      {
+        path: ClientTypeBaseRoute.Student,
+        module: AppStudentModule,
       },
     ]),
   ],
@@ -102,7 +108,6 @@ import { ClientTypeBaseRoute } from "./types";
     InstitutionController,
     ConfigController,
     DynamicFormController,
-    ApplicationController,
     InstitutionLocationsController,
     CRAIntegrationController,
     EducationProgramController,
@@ -152,6 +157,7 @@ import { ClientTypeBaseRoute } from "./types";
     RestrictionService,
     InstitutionRestrictionService,
     SINValidationService,
+    DesignationAgreementLocationService,
   ],
 })
 export class AppModule {}

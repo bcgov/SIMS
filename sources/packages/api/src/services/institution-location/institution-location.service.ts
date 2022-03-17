@@ -4,9 +4,14 @@ import { InstitutionLocation } from "../../database/entities/institution-locatio
 import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
+import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
+import { DesignationAgreementStatus } from "../../database/entities";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
-  constructor(connection: Connection) {
+  constructor(
+    connection: Connection,
+    private readonly designationAgreementLocationService: DesignationAgreementLocationService,
+  ) {
     super(connection.getRepository(InstitutionLocation));
   }
 
@@ -109,12 +114,21 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns all locations.
    */
   async getLocations(): Promise<Partial<InstitutionLocation>[]> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("location")
       .select("location.id")
       .addSelect("location.name")
       .orderBy("location.name")
-      .getMany();
+      .andWhere(
+        `EXISTS(${this.designationAgreementLocationService
+          .getExistApprovedDesignationInstitutionLocation()
+          .getSql()})`,
+      );
+    query.setParameters({
+      designationStatus: DesignationAgreementStatus.Approved,
+      now: new Date(),
+    });
+    return query.getMany();
   }
 
   async getInstitutionLocation(
@@ -189,13 +203,37 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Get institution location by location id.
    * @param locationId location id
-   * @returns location id
+   * @returns InstitutionLocation
    */
   async getLocationById(locationId: number): Promise<InstitutionLocation> {
     return this.repo
       .createQueryBuilder("location")
-      .select(["location.name"])
+      .select(["location.name", "location.id"])
       .where("location.id = :locationId", { locationId })
       .getOne();
+  }
+
+  /**
+   * Get institution location by location id.
+   * @param locationId location id
+   * @returns InstitutionLocation
+   */
+  async getDesignatedLocationById(
+    locationId: number,
+  ): Promise<InstitutionLocation> {
+    const query = this.repo
+      .createQueryBuilder("location")
+      .select(["location.name"])
+      .where("location.id = :locationId", { locationId })
+      .andWhere(
+        `EXISTS(${this.designationAgreementLocationService
+          .getExistApprovedDesignationInstitutionLocation()
+          .getSql()})`,
+      );
+    query.setParameters({
+      designationStatus: DesignationAgreementStatus.Approved,
+      now: new Date(),
+    });
+    return query.getOne();
   }
 }

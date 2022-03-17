@@ -42,3 +42,4 @@ export * from "./restriction/institution-restriction.service";
 export * from "./sfas/sfas-part-time-application.service";
 export * from "./designation-agreement/designation-agreement.service";
 export * from "./sin-validation/sin-validation.service";
+export * from "./designation-agreement/designation-agreement-locations.service";

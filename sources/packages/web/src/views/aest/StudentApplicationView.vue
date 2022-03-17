@@ -59,10 +59,12 @@ export default {
     onMounted(async () => {
       applicationDetail.value = await ApplicationService.shared.getApplicationDetail(
         props.applicationId,
-        props.studentId,
       );
       selectedForm.value = applicationDetail.value.applicationFormName;
-      initialData.value = applicationDetail.value.data;
+      initialData.value = {
+        ...applicationDetail.value.data,
+        isReadOnly: true,
+      };
     });
 
     return {
