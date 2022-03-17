@@ -102,12 +102,10 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   @Get(":id")
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOkResponse({
     description: "Application found.",
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
+  @ApiNotFoundResponse({
     description: "Application id not found.",
   })
   async getByApplicationId(
@@ -127,7 +125,7 @@ export class ApplicationStudentsController extends BaseController {
     // Check wether the selected location is designated or not.
     // If selected location is not designated, then make the
     // selectedLocation null
-    if (application.data?.selectedLocation) {
+    if (application.data.selectedLocation) {
       const designatedLocation =
         await this.locationService.getDesignatedLocationById(
           application.data.selectedLocation,
@@ -135,14 +133,16 @@ export class ApplicationStudentsController extends BaseController {
       const selectedLocation = await this.locationService.getLocationById(
         application.data.selectedLocation,
       );
-      if (!designatedLocation) application.data.selectedLocation = null;
+      if (!designatedLocation) {
+        application.data.selectedLocation = null;
+      }
       // Assign location name for readonly form
       additionalFormData.selectedLocationName = selectedLocation?.name;
     }
     // Check wether the program is approved or not.
     // If selected program is not approved, then make the
     // selectedLocation null
-    if (application.data?.selectedProgram) {
+    if (application.data.selectedProgram) {
       const selectedProgram = await this.programService.getProgramById(
         application.data.selectedProgram,
       );
@@ -150,19 +150,24 @@ export class ApplicationStudentsController extends BaseController {
       if (selectedProgram) {
         // Assign program name for readonly form
         additionalFormData.selectedProgramName = selectedProgram.name;
-        if (selectedProgram.approvalStatus !== ApprovalStatus.approved)
+        if (selectedProgram.approvalStatus !== ApprovalStatus.approved) {
           application.data.selectedProgram = null;
-      } else application.data.selectedProgram = null;
+        }
+      } else {
+        application.data.selectedProgram = null;
+      }
     }
     // Get selected offering details.
-    if (application.data?.selectedOffering) {
+    if (application.data.selectedOffering) {
       const selectedOffering = await this.offeringService.getOfferingById(
         application.data.selectedOffering,
       );
-      if (selectedOffering)
+      if (selectedOffering) {
         additionalFormData.selectedOfferingName =
           getOfferingNameAndPeriod(selectedOffering);
-      else application.data.selectedOffering = null;
+      } else {
+        application.data.selectedOffering = null;
+      }
     }
 
     const firstCOE =
@@ -190,7 +195,7 @@ export class ApplicationStudentsController extends BaseController {
   @CheckSinValidation()
   @CheckRestrictions()
   @Patch(":applicationId/submit")
-  @ApiOkResponse({ description: "Application submitted" })
+  @ApiOkResponse({ description: "Application submitted." })
   @ApiUnprocessableEntityResponse({
     description:
       "Program Year is not active. OR  Invalid study dates. OR \
@@ -198,9 +203,9 @@ export class ApplicationStudentsController extends BaseController {
       OR APPLICATION_NOT_VALID. OR INVALID_OPERATION_IN_THE_CURRENT_STATUS. \
       OR ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE",
   })
-  @ApiBadRequestResponse({ description: "Form validation failed" })
+  @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
-  @ApiInternalServerErrorResponse({ description: "Unexpected error" })
+  @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
