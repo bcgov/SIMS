@@ -36,7 +36,12 @@ export class StudentService extends RecordDataModelService<Student> {
       .createQueryBuilder("student")
       .leftJoinAndSelect("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
-      .select(["student", "user", "sinValidation.isValidSIN"])
+      .select([
+        "student",
+        "user",
+        "sinValidation.isValidSIN",
+        "sinValidation.id",
+      ])
       .where("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return student;
@@ -144,16 +149,16 @@ export class StudentService extends RecordDataModelService<Student> {
       );
     }
     let mustSave = false;
-    const sinValidation = new SINValidation();
     const userTokenBirthdate = getDateOnly(userToken.birthdate);
     if (userToken.givenNames === undefined) {
       userToken.givenNames = null;
     }
     if (
-      userTokenBirthdate !== studentToSync.birthDate ||
+      userTokenBirthdate.getTime() !== studentToSync.birthDate.getTime() ||
       userToken.lastName !== studentToSync.user.lastName ||
       userToken.givenNames !== studentToSync.user.firstName
     ) {
+      const sinValidation = new SINValidation();
       studentToSync.birthDate = userTokenBirthdate;
       studentToSync.user.lastName = userToken.lastName;
       studentToSync.user.firstName = userToken.givenNames;
