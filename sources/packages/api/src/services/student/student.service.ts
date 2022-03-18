@@ -18,7 +18,6 @@ import { InjectLogger } from "../../common";
 import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
-import { SINValidationService } from "../sin-validation/sin-validation.service";
 import * as dayjs from "dayjs";
 
 @Injectable()
