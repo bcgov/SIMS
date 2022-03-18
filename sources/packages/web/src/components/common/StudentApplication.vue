@@ -14,12 +14,12 @@
         color="primary"
         v-show="!isFirstPage"
         outlined
-        @click="$emit('wizardGoPrevious')"
+        @click="wizardGoPrevious"
         >Previous section</v-btn
       >
     </v-col>
     <v-col md="6" class="ml-auto text-right">
-      <v-btn color="primary" v-show="!isLastPage" @click="$emit('wizardGoNext')"
+      <v-btn color="primary" v-show="!isLastPage" @click="wizardGoNext"
         >Next section</v-btn
       >
     </v-col>
@@ -126,48 +126,48 @@ export default {
       };
       applicationWizard.on("prevPage", prevNextNavigation);
       applicationWizard.on("nextPage", prevNextNavigation);
+      if (!props.isReadOnly) {
+        await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
+        const selectedLocationId = getSelectedId(form);
 
-      // TODO:Ann check below code for AEST
-      await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
-      const selectedLocationId = getSelectedId(form);
+        if (selectedLocationId) {
+          // when isReadOnly.value is true, then consider
+          // both active and inactive program year.
+          await formioDataLoader.loadProgramsForLocation(
+            form,
+            +selectedLocationId,
+            PROGRAMS_DROPDOWN_KEY,
+            props.programYearId,
+            props.isReadOnly,
+          );
+        }
 
-      if (selectedLocationId) {
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadProgramsForLocation(
+        const selectedProgramId = formioUtils.getComponentValueByKey(
           form,
-          +selectedLocationId,
           PROGRAMS_DROPDOWN_KEY,
-          props.programYearId,
-          props.isReadOnly,
         );
-      }
-
-      const selectedProgramId = formioUtils.getComponentValueByKey(
-        form,
-        PROGRAMS_DROPDOWN_KEY,
-      );
-      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-        form,
-        OFFERING_INTENSITY_KEY,
-      );
-      if (selectedProgramId && selectedIntensity) {
-        await formioComponentLoader.loadProgramDesc(
+        const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
           form,
-          selectedProgramId,
-          SELECTED_PROGRAM_DESC_KEY,
+          OFFERING_INTENSITY_KEY,
         );
-        // when isReadOnly.value is true, then consider
-        // both active and inactive program year.
-        await formioDataLoader.loadOfferingsForLocation(
-          form,
-          selectedProgramId,
-          selectedLocationId,
-          OFFERINGS_DROPDOWN_KEY,
-          props.programYearId,
-          selectedIntensity,
-          props.isReadOnly,
-        );
+        if (selectedProgramId && selectedIntensity) {
+          await formioComponentLoader.loadProgramDesc(
+            form,
+            selectedProgramId,
+            SELECTED_PROGRAM_DESC_KEY,
+          );
+          // when isReadOnly.value is true, then consider
+          // both active and inactive program year.
+          await formioDataLoader.loadOfferingsForLocation(
+            form,
+            selectedProgramId,
+            selectedLocationId,
+            OFFERINGS_DROPDOWN_KEY,
+            props.programYearId,
+            selectedIntensity,
+            props.isReadOnly,
+          );
+        }
       }
     };
 
@@ -226,7 +226,7 @@ export default {
           );
         }
       }
-      if (event.changed.component.key === PROGRAMS_DROPDOWN_KEY) {
+      if (event.changed?.component.key === PROGRAMS_DROPDOWN_KEY) {
         if (+event.changed.value > 0) {
           await formioComponentLoader.loadProgramDesc(
             form,
@@ -246,7 +246,7 @@ export default {
         getOfferingDetails(form, locationId);
       }
       if (
-        event.changed.component.key === OFFERINGS_DROPDOWN_KEY &&
+        event.changed?.component.key === OFFERINGS_DROPDOWN_KEY &&
         +event.changed.value > 0
       ) {
         await formioComponentLoader.loadSelectedOfferingDate(

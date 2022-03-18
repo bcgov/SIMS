@@ -29,42 +29,33 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
   GetApplicationDataDto,
-  GetApplicationBaseDTO,
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
-  transformToApplicationDto,
-  transformToApplicationDetailDto,
-  StudentApplicationAndCount,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
   CheckSinValidation,
-  Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { UserGroups } from "../../auth/user-groups.enum";
+import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApplicationStatus,
-  Application,
   Student,
+  AssessmentTriggerType,
 } from "../../database/entities";
-import { ApiProcessError, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
   PIR_OR_DATE_OVERLAP_ERROR,
@@ -74,11 +65,19 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { ApplicationControllerService } from "./application.controller.service";
 
+@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
-@ApiTags("application")
-export class ApplicationController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.Student}-application`)
+export class ApplicationStudentsController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -92,13 +91,19 @@ export class ApplicationController extends BaseController {
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
+    private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
     this.config = this.configService.getConfig();
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":id")
+  @ApiOkResponse({
+    description: "Application found.",
+  })
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
   async getByApplicationId(
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -112,12 +117,22 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+
+    application.data =
+      await this.applicationControllerService.generateApplicationFormData(
+        application.data,
+      );
+
     const firstCOE =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
       );
-    return transformToApplicationDetailDto(application, firstCOE);
+    return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
+      application,
+      firstCOE,
+    );
   }
+
   /**
    * Submit an existing student application changing the status
    * to submitted and triggering the necessary processes.
@@ -131,8 +146,14 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
+  @ApiOkResponse({ description: "Application submitted." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active or invalid study dates or selected study start date is not within the program year or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE.",
+  })
+  @ApiBadRequestResponse({ description: "Form validation failed." })
+  @ApiNotFoundResponse({ description: "Application not found." })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -238,7 +259,11 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Draft application created." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
+  })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -287,8 +312,9 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
+  @ApiOkResponse({ description: "Draft application updated." })
+  @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -322,8 +348,14 @@ export class ApplicationController extends BaseController {
    * @param userToken associated student of the application.
    * @returns NOA and application data.
    */
+  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
+  @ApiOkResponse({ description: "Retrieved assessment values." })
+  @ApiNotFoundResponse({
+    description:
+      "Application id not found or Assessment for the application is not calculated.",
+  })
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -331,24 +363,34 @@ export class ApplicationController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
-    const application =
-      await this.applicationService.getAssessmentByApplicationId(
+
+    // TODO: temporary code to allow the assessment to be retrieved using the application id.
+    const [originalAssessment] =
+      await this.assessmentService.getAssessmentsByApplicationId(
         applicationId,
-        student.id,
+        AssessmentTriggerType.OriginalAssessment,
       );
-    if (!application) {
+    // TODO: end of the temporary code that will be removed.
+
+    const assessment = await this.assessmentService.getAssessmentForNOA(
+      originalAssessment.id,
+      student.id,
+    );
+
+    if (!assessment) {
       throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
+        "Assessment was not found for the the student.",
       );
     }
-    if (!application.assessment) {
+
+    if (!assessment.assessmentData) {
       throw new NotFoundException(
         `Assessment for the application id ${applicationId} was not calculated.`,
       );
     }
     //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
     const disbursementDetails = {};
-    application.disbursementSchedules.forEach((schedule, index) => {
+    assessment.disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
       disbursementDetails[`${disbursementIdentifier}Date`] = dateString(
         schedule.disbursementDate,
@@ -360,15 +402,15 @@ export class ApplicationController extends BaseController {
     });
 
     return {
-      assessment: application.assessment,
-      applicationNumber: application.applicationNumber,
-      fullName: getUserFullName(application.student.user),
-      programName: application.offering.educationProgram.name,
-      locationName: application.location.name,
-      offeringIntensity: application.offering.offeringIntensity,
-      offeringStudyStartDate: dateString(application.offering.studyStartDate),
-      offeringStudyEndDate: dateString(application.offering.studyEndDate),
-      msfaaNumber: application.msfaaNumber.msfaaNumber,
+      assessment: assessment.assessmentData,
+      applicationNumber: assessment.application.applicationNumber,
+      fullName: getUserFullName(assessment.application.student.user),
+      programName: assessment.offering.educationProgram.name,
+      locationName: assessment.offering.institutionLocation.name,
+      offeringIntensity: assessment.offering.offeringIntensity,
+      offeringStudyStartDate: dateString(assessment.offering.studyStartDate),
+      offeringStudyEndDate: dateString(assessment.offering.studyEndDate),
+      msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
       disbursement: disbursementDetails,
     };
   }
@@ -378,8 +420,12 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    */
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Assessment confirmed." })
+  @ApiUnprocessableEntityResponse({
+    description: "Student not found or Assessment confirmation failed.",
+  })
   @Patch(":applicationId/confirm-assessment")
+  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   async studentConfirmAssessment(
     @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
@@ -394,14 +440,28 @@ export class ApplicationController extends BaseController {
       );
     }
 
-    const updateResult = await this.applicationService.studentConfirmAssessment(
-      applicationId,
-      student.id,
-    );
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        `Confirmation of Assessment for the application id ${applicationId} failed.`,
+    // TODO: temporary code to allow the assessment to be retrieved using the application id.
+    const [originalAssessment] =
+      await this.assessmentService.getAssessmentsByApplicationId(
+        applicationId,
+        AssessmentTriggerType.OriginalAssessment,
       );
+    // TODO: end of the temporary code that will be removed.
+
+    try {
+      await this.assessmentService.studentConfirmAssessment(
+        originalAssessment.id,
+        student.id,
+      );
+    } catch (error) {
+      switch (error.name) {
+        case ASSESSMENT_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          throw error;
+      }
     }
   }
 
@@ -410,7 +470,11 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    * @body payload contains the status, that need to be updated
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Student Application status updated." })
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiUnprocessableEntityResponse({
+    description: "Application Status update failed.",
+  })
   @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
     @UserToken() userToken: IUserToken,
@@ -424,7 +488,7 @@ export class ApplicationController extends BaseController {
       );
 
     if (!studentApplication) {
-      throw new UnprocessableEntityException(
+      throw new NotFoundException(
         `Application ${applicationId} associated with requested student does not exist.`,
       );
     }
@@ -461,7 +525,8 @@ export class ApplicationController extends BaseController {
    * then consider both active and inactive program year.
    * @returns program year details of the application
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Program year details fetched." })
+  @ApiNotFoundResponse({ description: "Student not found." })
   @Get(":applicationId/program-year")
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
@@ -473,9 +538,7 @@ export class ApplicationController extends BaseController {
     );
 
     if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
+      throw new NotFoundException("The user is not associated with a student.");
     }
 
     const applicationProgramYear =
@@ -491,72 +554,6 @@ export class ApplicationController extends BaseController {
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
     } as ApplicationWithProgramYearDto;
-  }
-
-  /**
-   * API to fetch application details by applicationId and studentId.
-   * This API will be used by ministry users.
-   * @param applicationId
-   * @param userId
-   * @returns Application details
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get(":applicationId/student/:studentId/aest")
-  async getByStudentAndApplicationId(
-    @Param("applicationId") applicationId: number,
-    @Param("studentId") studentId: number,
-  ): Promise<GetApplicationBaseDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
-      applicationId,
-      undefined,
-      studentId,
-    );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-    return transformToApplicationDto(application);
-  }
-
-  /**
-   * API to fetch all the applications that belong to student.
-   * This API will be used by ministry users.
-   * @param studentId student id
-   * @queryParm page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, page size or records per page, if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, order to be sorted
-   * @returns Student Application list with total count
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("student/:studentId/aest")
-  async getSummaryByStudentId(
-    @Query("sortField") sortField: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Param("studentId") studentId: number,
-    @Query("page") page = DEFAULT_PAGE_NUMBER,
-    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<StudentApplicationAndCount> {
-    const applicationsAndCount =
-      await this.applicationService.getAllStudentApplications(
-        sortField,
-        studentId,
-        page,
-        pageLimit,
-        sortOrder,
-      );
-
-    return {
-      applications: applicationsAndCount[0].map((application: Application) => {
-        return transformToApplicationSummaryDTO(application);
-      }),
-      totalApplications: applicationsAndCount[1],
-    };
   }
 
   /**

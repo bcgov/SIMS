@@ -10,7 +10,6 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
   StudentApplicationAndCount,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
@@ -93,17 +92,12 @@ export class ApplicationService {
   /**
    * Get application detail of given application
    * @param applicationId
-   * @param userId
    * @returns GetApplicationBaseDTO
    */
   async getApplicationDetail(
     applicationId: number,
-    studentId: number,
   ): Promise<GetApplicationBaseDTO> {
-    return ApiClient.Application.getApplicationDetails(
-      applicationId,
-      studentId,
-    );
+    return ApiClient.Application.getApplicationDetails(applicationId);
   }
 
   /**
@@ -111,7 +105,7 @@ export class ApplicationService {
    * @param studentId student id
    * @param page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
+   * @param pageCount, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
@@ -124,14 +118,12 @@ export class ApplicationService {
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<StudentApplicationAndCount> {
-    let URL = `application/student/${studentId}/aest?page=${page}&pageLimit=${pageCount}`;
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    return ApiClient.Application.getAllApplicationAndCount(URL);
+    return ApiClient.Application.getAllApplicationAndCountForAEST(
+      studentId,
+      page,
+      pageCount,
+      sortField,
+      sortOrder,
+    );
   }
 }

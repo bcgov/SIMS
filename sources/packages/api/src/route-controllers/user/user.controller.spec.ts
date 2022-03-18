@@ -8,6 +8,7 @@ import {
   UserService,
   InstitutionService,
   InstitutionLocationService,
+  DesignationAgreementLocationService,
 } from "../../services";
 import { UserController } from "./user.controller";
 
@@ -24,6 +25,7 @@ describe("UserController", () => {
         ConfigService,
         InstitutionService,
         InstitutionLocationService,
+        DesignationAgreementLocationService,
       ],
       controllers: [UserController],
     }).compile();

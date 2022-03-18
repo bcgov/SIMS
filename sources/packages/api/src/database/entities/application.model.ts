@@ -26,7 +26,7 @@ import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
-import { Assessment, StudentAssessment } from "./student-assessment.model";
+import { StudentAssessment } from "./student-assessment.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
@@ -44,13 +44,6 @@ export class Application extends RecordDataModel {
     name: "application_number",
   })
   applicationNumber: string;
-
-  @Column({
-    name: "assessment",
-    type: "jsonb",
-    nullable: true,
-  })
-  assessment: Assessment;
 
   @RelationId((application: Application) => application.student)
   studentId: number;
@@ -310,4 +303,12 @@ export interface ApplicationData {
    * Student number.
    */
   studentNumber?: string;
+  /**
+   * Program id selected by the student.
+   */
+  selectedProgram?: number;
+  /**
+   * Location id selected by the student.
+   */
+  selectedLocation?: number;
 }

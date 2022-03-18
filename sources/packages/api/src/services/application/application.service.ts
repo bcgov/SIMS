@@ -11,7 +11,6 @@ import {
   ApplicationStatus,
   Student,
   StudentFile,
-  AssessmentStatus,
   COEStatus,
   ProgramYear,
   InstitutionLocation,
@@ -404,25 +403,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .getOne();
   }
   /**
-   * Fetches application by applicationId and userId|studentId.
-   * When studentId is supplied, studentId is preferred as search criteria.
-   * When studentId is not supplied, then userId is used.
+   * Fetches application by applicationId and userId (optional).
    * @param applicationId
    * @param userId
-   * @param studentId
    * @returns
    */
   async getApplicationByIdAndUser(
     applicationId: number,
     userId?: number,
-    studentId?: number,
   ): Promise<Application> {
-    if (!userId && !studentId) {
-      throw new CustomNamedError(
-        "Either student id or user id is mandatory to retrieve an application.",
-        INSUFFICIENT_APPLICATION_SEARCH_PARAMS,
-      );
-    }
     const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
@@ -459,13 +448,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       });
-
     if (userId) {
       applicationQuery.andWhere("user.id = :userId", { userId });
-    }
-
-    if (studentId) {
-      applicationQuery.andWhere("student.id = :studentId", { studentId });
     }
     return applicationQuery.getOne();
   }
@@ -502,49 +486,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.id = :applicationId", {
         applicationId,
       })
-      .getOne();
-  }
-
-  /**
-   * Fetch the NOA screen values for a student application.
-   * @param applicationId application id to fetch the NOA values.
-   * @param studentId associated student of the application.
-   * @returns NOA and application data.
-   */
-  async getAssessmentByApplicationId(
-    applicationId: number,
-    studentId: number,
-  ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.assessment",
-        "application.applicationNumber",
-        "student.id",
-        "user.firstName",
-        "user.lastName",
-        "educationProgram.name",
-        "location.name",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.offeringIntensity",
-        "msfaaNumber.msfaaNumber",
-        "disbursementSchedule.disbursementDate",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("application.offering", "offering")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.location", "location")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
-      .innerJoin("application.disbursementSchedules", "disbursementSchedule")
-      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("student.id = :studentId", { studentId })
-      .orderBy("disbursementSchedule.disbursementDate")
       .getOne();
   }
 
@@ -663,29 +604,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
     }
     return query.getOne();
-  }
-
-  /**
-   * Updates overall Application status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Application.
-   * @returns COE status update result.
-   */
-  async studentConfirmAssessment(
-    applicationId: number,
-    studentId: number,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        student: { id: studentId },
-        applicationStatus: ApplicationStatus.assessment,
-      },
-      {
-        assessmentStatus: AssessmentStatus.completed,
-        applicationStatus: ApplicationStatus.enrollment,
-      },
-    );
   }
 
   /**

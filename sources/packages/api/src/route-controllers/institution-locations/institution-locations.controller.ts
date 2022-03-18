@@ -219,7 +219,7 @@ export class InstitutionLocationsController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get("options-list")
   async getOptionsList(): Promise<OptionItem[]> {
-    const locations = await this.locationService.getLocations();
+    const locations = await this.locationService.getDesignatedLocations();
     return locations.map((location) => ({
       id: location.id,
       description: location.name,
