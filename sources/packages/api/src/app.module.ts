@@ -34,6 +34,7 @@ import {
   RestrictionService,
   InstitutionRestrictionService,
   SINValidationService,
+  DesignationAgreementLocationService,
   StudentAssessmentService,
 } from "./services";
 import {
@@ -43,7 +44,6 @@ import {
   InstitutionController,
   ConfigController,
   DynamicFormController,
-  ApplicationController,
   InstitutionLocationsController,
   CRAIntegrationController,
   EducationProgramController,
@@ -69,8 +69,9 @@ import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.modul
 import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { AppAESTModule } from "./app.aest.module";
-import { AppInstitutionModule } from "./app.institution.module";
+import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
+import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 
 @Module({
@@ -84,16 +85,21 @@ import { AppSystemAccessModule } from "./app.system-access.module";
     ECertFullTimeIntegrationModule,
     FedRestrictionIntegrationModule,
     AppAESTModule,
-    AppInstitutionModule,
+    AppInstitutionsModule,
+    AppStudentsModule,
     AppSystemAccessModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
-        module: AppInstitutionModule,
+        module: AppInstitutionsModule,
       },
       {
         path: ClientTypeBaseRoute.AEST,
         module: AppAESTModule,
+      },
+      {
+        path: ClientTypeBaseRoute.Student,
+        module: AppStudentsModule,
       },
       {
         path: ClientTypeBaseRoute.SystemAccess,
@@ -109,7 +115,6 @@ import { AppSystemAccessModule } from "./app.system-access.module";
     InstitutionController,
     ConfigController,
     DynamicFormController,
-    ApplicationController,
     InstitutionLocationsController,
     CRAIntegrationController,
     EducationProgramController,
@@ -159,6 +164,7 @@ import { AppSystemAccessModule } from "./app.system-access.module";
     RestrictionService,
     InstitutionRestrictionService,
     SINValidationService,
+    DesignationAgreementLocationService,
     StudentAssessmentService,
   ],
 })

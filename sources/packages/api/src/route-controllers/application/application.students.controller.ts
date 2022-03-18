@@ -36,20 +36,15 @@ import BaseController from "../BaseController";
 import {
   SaveApplicationDto,
   GetApplicationDataDto,
-  GetApplicationBaseDTO,
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
-  transformToApplicationDto,
-  transformToApplicationDetailDto,
-  StudentApplicationAndCount,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
   UserToken,
   CheckRestrictions,
   CheckSinValidation,
-  Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -60,13 +55,11 @@ import {
   AssessmentTriggerType,
 } from "../../database/entities";
 import { ApiProcessError, IConfig } from "../../types";
+import { ApplicationStatus, Student } from "../../database/entities";
+import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
-  FieldSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  transformToApplicationSummaryDTO,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
   PIR_OR_DATE_OVERLAP_ERROR,
@@ -76,11 +69,19 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
 } from "../../constants";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
+import { ApplicationControllerService } from "./application.controller.service";
 
+@AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
-@ApiTags("application")
-export class ApplicationController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.Student}-application`)
+export class ApplicationStudentsController extends BaseController {
   private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
@@ -94,13 +95,19 @@ export class ApplicationController extends BaseController {
     private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
+    private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
     this.config = this.configService.getConfig();
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":id")
+  @ApiOkResponse({
+    description: "Application found.",
+  })
+  @ApiNotFoundResponse({
+    description: "Application id not found.",
+  })
   async getByApplicationId(
     @Param("id") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -114,12 +121,22 @@ export class ApplicationController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+
+    application.data =
+      await this.applicationControllerService.generateApplicationFormData(
+        application.data,
+      );
+
     const firstCOE =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
       );
-    return transformToApplicationDetailDto(application, firstCOE);
+    return await this.applicationControllerService.transformToApplicationDetailForStudentDTO(
+      application,
+      firstCOE,
+    );
   }
+
   /**
    * Submit an existing student application changing the status
    * to submitted and triggering the necessary processes.
@@ -133,8 +150,14 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/submit")
+  @ApiOkResponse({ description: "Application submitted." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active or invalid study dates or selected study start date is not within the program year or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE.",
+  })
+  @ApiBadRequestResponse({ description: "Form validation failed." })
+  @ApiNotFoundResponse({ description: "Application not found." })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -240,7 +263,11 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Draft application created." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
+  })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -289,8 +316,9 @@ export class ApplicationController extends BaseController {
    */
   @CheckSinValidation()
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/draft")
+  @ApiOkResponse({ description: "Draft application updated." })
+  @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -327,6 +355,11 @@ export class ApplicationController extends BaseController {
   // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
+  @ApiOkResponse({ description: "Retrieved assessment values." })
+  @ApiNotFoundResponse({
+    description:
+      "Application id not found or Assessment for the application is not calculated.",
+  })
   async getAssessmentInApplication(
     @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
@@ -391,7 +424,10 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    */
   @CheckRestrictions()
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Assessment confirmed." })
+  @ApiUnprocessableEntityResponse({
+    description: "Student not found or Assessment confirmation failed.",
+  })
   @Patch(":applicationId/confirm-assessment")
   // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   async studentConfirmAssessment(
@@ -438,7 +474,11 @@ export class ApplicationController extends BaseController {
    * @param applicationId application id to be updated.
    * @body payload contains the status, that need to be updated
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Student Application status updated." })
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiUnprocessableEntityResponse({
+    description: "Application Status update failed.",
+  })
   @Patch(":applicationId/status")
   async updateStudentApplicationStatus(
     @UserToken() userToken: IUserToken,
@@ -452,7 +492,7 @@ export class ApplicationController extends BaseController {
       );
 
     if (!studentApplication) {
-      throw new UnprocessableEntityException(
+      throw new NotFoundException(
         `Application ${applicationId} associated with requested student does not exist.`,
       );
     }
@@ -489,7 +529,8 @@ export class ApplicationController extends BaseController {
    * then consider both active and inactive program year.
    * @returns program year details of the application
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @ApiOkResponse({ description: "Program year details fetched." })
+  @ApiNotFoundResponse({ description: "Student not found." })
   @Get(":applicationId/program-year")
   async programYearOfApplication(
     @UserToken() userToken: IUserToken,
@@ -501,9 +542,7 @@ export class ApplicationController extends BaseController {
     );
 
     if (!student) {
-      throw new UnprocessableEntityException(
-        "The user is not associated with a student.",
-      );
+      throw new NotFoundException("The user is not associated with a student.");
     }
 
     const applicationProgramYear =
@@ -519,72 +558,6 @@ export class ApplicationController extends BaseController {
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
     } as ApplicationWithProgramYearDto;
-  }
-
-  /**
-   * API to fetch application details by applicationId and studentId.
-   * This API will be used by ministry users.
-   * @param applicationId
-   * @param userId
-   * @returns Application details
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get(":applicationId/student/:studentId/aest")
-  async getByStudentAndApplicationId(
-    @Param("applicationId") applicationId: number,
-    @Param("studentId") studentId: number,
-  ): Promise<GetApplicationBaseDTO> {
-    const application = await this.applicationService.getApplicationByIdAndUser(
-      applicationId,
-      undefined,
-      studentId,
-    );
-    if (!application) {
-      throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
-      );
-    }
-    return transformToApplicationDto(application);
-  }
-
-  /**
-   * API to fetch all the applications that belong to student.
-   * This API will be used by ministry users.
-   * @param studentId student id
-   * @queryParm page, page number if nothing is passed then
-   * DEFAULT_PAGE_NUMBER is taken
-   * @queryParm pageLimit, page size or records per page, if nothing is
-   * passed then DEFAULT_PAGE_LIMIT is taken
-   * @queryParm sortField, field to be sorted
-   * @queryParm sortOrder, order to be sorted
-   * @returns Student Application list with total count
-   */
-  @Groups(UserGroups.AESTUser)
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Get("student/:studentId/aest")
-  async getSummaryByStudentId(
-    @Query("sortField") sortField: string,
-    @Query("sortOrder") sortOrder: FieldSortOrder,
-    @Param("studentId") studentId: number,
-    @Query("page") page = DEFAULT_PAGE_NUMBER,
-    @Query("pageLimit") pageLimit = DEFAULT_PAGE_LIMIT,
-  ): Promise<StudentApplicationAndCount> {
-    const applicationsAndCount =
-      await this.applicationService.getAllStudentApplications(
-        sortField,
-        studentId,
-        page,
-        pageLimit,
-        sortOrder,
-      );
-
-    return {
-      applications: applicationsAndCount[0].map((application: Application) => {
-        return transformToApplicationSummaryDTO(application);
-      }),
-      totalApplications: applicationsAndCount[1],
-    };
   }
 
   /**

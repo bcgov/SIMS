@@ -18,14 +18,13 @@ import { InjectLogger } from "../../common";
 import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
-import { SINValidationService } from "../sin-validation/sin-validation.service";
+import * as dayjs from "dayjs";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
   constructor(
     private readonly connection: Connection,
     private readonly sfasIndividualService: SFASIndividualService,
-    private readonly sinValidationService: SINValidationService,
   ) {
     super(connection.getRepository(Student));
     this.logger.log("[Created]");
@@ -36,7 +35,12 @@ export class StudentService extends RecordDataModelService<Student> {
       .createQueryBuilder("student")
       .leftJoinAndSelect("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
-      .select(["student", "user", "sinValidation.isValidSIN"])
+      .select([
+        "student",
+        "user",
+        "sinValidation.isValidSIN",
+        "sinValidation.id",
+      ])
       .where("user.userName = :userNameParam", { userNameParam: userName })
       .getOne();
     return student;
@@ -143,27 +147,29 @@ export class StudentService extends RecordDataModelService<Student> {
         "Not able to find a student using the username (bcsc name)",
       );
     }
-
     let mustSave = false;
-
+    if (userToken.givenNames === undefined) {
+      userToken.givenNames = null;
+    }
     if (
-      userToken.email !== studentToSync.user.email ||
+      !dayjs(userToken.birthdate).isSame(studentToSync.birthDate) ||
       userToken.lastName !== studentToSync.user.lastName ||
       userToken.givenNames !== studentToSync.user.firstName
     ) {
-      studentToSync.user.email = userToken.email;
+      const sinValidation = new SINValidation();
+      studentToSync.birthDate = getDateOnly(userToken.birthdate);
       studentToSync.user.lastName = userToken.lastName;
       studentToSync.user.firstName = userToken.givenNames;
+      sinValidation.user = studentToSync.user;
+      studentToSync.sinValidation = sinValidation;
       mustSave = true;
-      //TODO update the SIN validation here
     }
-
-    const userTokenBirthdate = getDateOnly(userToken.birthdate);
+    // This condition is not added above, as email and gender does not trigger SIN validation request.
     if (
-      userTokenBirthdate !== studentToSync.birthDate ||
+      userToken.email !== studentToSync.user.email ||
       userToken.gender !== studentToSync.gender
     ) {
-      studentToSync.birthDate = userTokenBirthdate;
+      studentToSync.user.email = userToken.email;
       studentToSync.gender = userToken.gender;
       mustSave = true;
     }

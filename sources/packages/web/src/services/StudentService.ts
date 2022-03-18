@@ -12,7 +12,6 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  FieldSortOrder,
   StudentFileUploaderDto,
   StudentUploadFileDto,
 } from "@/types";
@@ -66,7 +65,7 @@ export class StudentService {
    * Get all the applications for a student
    * @param page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
-   * @param pageLimit, limit of the page if nothing is
+   * @param pageCount, limit of the page if nothing is
    * passed then DEFAULT_PAGE_LIMIT is taken
    * @param sortField, field to be sorted
    * @param sortOrder, order to be sorted
@@ -78,15 +77,12 @@ export class StudentService {
     sortField?: StudentApplicationFields,
     sortOrder?: DataTableSortOrder,
   ): Promise<StudentApplicationAndCount> {
-    let URL = `students/application-summary?page=${page}&pageLimit=${pageCount}`;
-    if (sortField && sortOrder) {
-      const sortDBOrder =
-        sortOrder === DataTableSortOrder.DESC
-          ? FieldSortOrder.DESC
-          : FieldSortOrder.ASC;
-      URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
-    }
-    return ApiClient.Application.getAllApplicationAndCount(URL);
+    return ApiClient.Application.getAllApplicationAndCountForStudent(
+      page,
+      pageCount,
+      sortField,
+      sortOrder,
+    );
   }
 
   public async checkStudent(): Promise<boolean> {

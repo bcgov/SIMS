@@ -34,4 +34,4 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionControllerService,
   ],
 })
-export class AppInstitutionModule {}
+export class AppInstitutionsModule {}

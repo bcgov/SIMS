@@ -13,6 +13,7 @@ import {
   StudentService,
   SFASIndividualService,
   SINValidationService,
+  DesignationAgreementLocationService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -46,6 +47,7 @@ const jwtModule = JwtModule.register({
     StudentService,
     SFASIndividualService,
     SINValidationService,
+    DesignationAgreementLocationService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
