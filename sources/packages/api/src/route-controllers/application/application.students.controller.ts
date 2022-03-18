@@ -122,7 +122,7 @@ export class ApplicationStudentsController extends BaseController {
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
       );
-    return await this.applicationControllerService.transformToApplicationDetailForStudentDTO(
+    return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
       application,
       firstCOE,
     );

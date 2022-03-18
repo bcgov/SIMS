@@ -4,17 +4,11 @@ import {
   ProgramInfoStatus,
   AssessmentStatus,
   COEStatus,
-  Application,
   Assessment,
   OfferingIntensity,
-  DisbursementSchedule,
   ApplicationData,
 } from "../../../database/entities";
-import {
-  dateString,
-  getPIRDeniedReason,
-  getCOEDeniedReason,
-} from "../../../utilities";
+
 export class SaveApplicationDto {
   /**
    * Application dynamic data.
