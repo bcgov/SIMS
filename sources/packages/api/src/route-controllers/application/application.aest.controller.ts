@@ -59,11 +59,10 @@ export class ApplicationAESTController extends BaseController {
       );
     }
 
-    const additionalFormData =
+    application.data =
       await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    application.data = additionalFormData;
     return transformToApplicationDto(application);
   }
   /**

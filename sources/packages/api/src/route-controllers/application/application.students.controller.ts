@@ -114,11 +114,10 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    const additionalFormData =
+    application.data =
       await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    application.data = additionalFormData;
 
     const firstCOE =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
