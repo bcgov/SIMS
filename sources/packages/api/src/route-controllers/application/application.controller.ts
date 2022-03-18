@@ -23,12 +23,12 @@ export class ApplicationControllerService {
   /**
    * Add location, program and offering labels
    * and reset the dropdown value for non
-   *  designated location and not approved
+   * designated location and not approved
    * programs.
    * @param data application data
    * @returns [ApplicationData, ApplicationFormData]
    */
-  async addLabelsAndResetDropdownForReadOnly(
+  async addLabelsAndResetDropdownForNotApproved(
     data: ApplicationData,
   ): Promise<[ApplicationData, ApplicationFormData]> {
     const additionalFormData = {} as ApplicationFormData;

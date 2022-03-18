@@ -26,8 +26,6 @@ import {
   SFASPartTimeApplicationsService,
   ConfigService,
   DisbursementScheduleService,
-  InstitutionLocationService,
-  EducationProgramService,
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -65,7 +63,6 @@ import {
 } from "../../constants";
 import {
   ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -118,7 +115,7 @@ export class ApplicationStudentsController extends BaseController {
     }
 
     const [applicationData, additionalFormData] =
-      await this.applicationControllerService.addLabelsAndResetDropdownForReadOnly(
+      await this.applicationControllerService.addLabelsAndResetDropdownForNotApproved(
         application.data,
       );
     application.data = applicationData;
@@ -155,7 +152,6 @@ export class ApplicationStudentsController extends BaseController {
   })
   @ApiBadRequestResponse({ description: "Form validation failed." })
   @ApiNotFoundResponse({ description: "Application not found." })
-  @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   async submitApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,
@@ -266,7 +262,6 @@ export class ApplicationStudentsController extends BaseController {
     description:
       "Program Year is not active or MORE_THAN_ONE_APPLICATION_DRAFT_ERROR.",
   })
-  @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   @Post("draft")
   async createDraftApplication(
     @Body() payload: SaveApplicationDto,
@@ -318,7 +313,6 @@ export class ApplicationStudentsController extends BaseController {
   @Patch(":applicationId/draft")
   @ApiOkResponse({ description: "Draft application updated." })
   @ApiNotFoundResponse({ description: "APPLICATION_DRAFT_NOT_FOUND." })
-  @ApiInternalServerErrorResponse({ description: "Unexpected error." })
   async updateDraftApplication(
     @Body() payload: SaveApplicationDto,
     @Param("applicationId") applicationId: number,

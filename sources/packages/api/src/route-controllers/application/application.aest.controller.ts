@@ -5,12 +5,7 @@ import {
   Param,
   Query,
 } from "@nestjs/common";
-import {
-  ApplicationService,
-  EducationProgramOfferingService,
-  InstitutionLocationService,
-  EducationProgramService,
-} from "../../services";
+import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import {
   GetApplicationBaseDTO,
@@ -65,7 +60,7 @@ export class ApplicationAESTController extends BaseController {
     }
 
     const [applicationData, additionalFormData] =
-      await this.applicationControllerService.addLabelsAndResetDropdownForReadOnly(
+      await this.applicationControllerService.addLabelsAndResetDropdownForNotApproved(
         application.data,
       );
     application.data = applicationData;
