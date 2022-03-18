@@ -9,7 +9,6 @@ import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import {
   GetApplicationBaseDTO,
-  transformToApplicationDto,
   StudentApplicationAndCount,
 } from "./models/application.model";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -24,7 +23,7 @@ import {
 } from "../../utilities";
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
-import { ApplicationControllerService } from "./application.controller";
+import { ApplicationControllerService } from "./application.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -63,7 +62,9 @@ export class ApplicationAESTController extends BaseController {
       await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    return transformToApplicationDto(application);
+    return this.applicationControllerService.transformToApplicationForAESTDTO(
+      application,
+    );
   }
   /**
    * API to fetch all the applications that belong to student.

@@ -38,7 +38,6 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
-  transformToApplicationDetailDto,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -68,7 +67,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { ApplicationControllerService } from "./application.controller";
+import { ApplicationControllerService } from "./application.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
@@ -123,7 +122,10 @@ export class ApplicationStudentsController extends BaseController {
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
       );
-    return transformToApplicationDetailDto(application, firstCOE);
+    return await this.applicationControllerService.transformToApplicationDetailForStudentDTO(
+      application,
+      firstCOE,
+    );
   }
 
   /**

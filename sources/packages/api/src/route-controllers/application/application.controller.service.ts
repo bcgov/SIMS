@@ -4,14 +4,25 @@ import {
   InstitutionLocationService,
   EducationProgramService,
 } from "../../services";
-import { ApplicationFormData } from "./models/application.model";
+import {
+  ApplicationFormData,
+  GetApplicationBaseDTO,
+  GetApplicationDataDto,
+} from "./models/application.model";
 import {
   credentialTypeToDisplay,
+  dateString,
   deliveryMethod,
+  getCOEDeniedReason,
   getOfferingNameAndPeriod,
+  getPIRDeniedReason,
 } from "../../utilities";
 import { ApprovalStatus } from "../../services/education-program/constants";
-import { ApplicationData } from "../../database/entities";
+import {
+  Application,
+  ApplicationData,
+  DisbursementSchedule,
+} from "../../database/entities";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -100,5 +111,60 @@ export class ApplicationControllerService {
       }
     }
     return { ...data, ...additionalFormData };
+  }
+
+  /**
+   * Transformation util for Application.
+   * @param application
+   * @returns Application DTO
+   */
+  async transformToApplicationForAESTDTO(
+    application: Application,
+  ): Promise<GetApplicationBaseDTO> {
+    return {
+      data: application.data,
+      id: application.id,
+      applicationStatus: application.applicationStatus,
+      applicationNumber: application.applicationNumber,
+      applicationFormName: application.programYear.formName,
+      applicationProgramYearID: application.programYear.id,
+    } as GetApplicationBaseDTO;
+  }
+
+  /**
+   * Transformation util for Application.
+   * @param applicationDetail
+   * @param disbursement
+   * @returns Application DTO
+   */
+  async transformToApplicationDetailForStudentDTO(
+    applicationDetail: Application,
+    disbursement: DisbursementSchedule,
+  ): Promise<GetApplicationDataDto> {
+    return {
+      data: applicationDetail.data,
+      id: applicationDetail.id,
+      applicationStatus: applicationDetail.applicationStatus,
+      applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
+      applicationNumber: applicationDetail.applicationNumber,
+      applicationOfferingIntensity:
+        applicationDetail.offering?.offeringIntensity,
+      applicationStartDate: dateString(
+        applicationDetail.offering?.studyStartDate,
+      ),
+      applicationEndDate: dateString(applicationDetail.offering?.studyEndDate),
+      applicationInstitutionName: applicationDetail.location?.name,
+      applicationPIRStatus: applicationDetail.pirStatus,
+      applicationAssessmentStatus: applicationDetail.assessmentStatus,
+      applicationFormName: applicationDetail.programYear.formName,
+      applicationProgramYearID: applicationDetail.programYear.id,
+      applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
+      programYearStartDate: applicationDetail.programYear.startDate,
+      programYearEndDate: applicationDetail.programYear.endDate,
+      applicationCOEStatus: disbursement?.coeStatus,
+      applicationCOEDeniedReason: disbursement
+        ? getCOEDeniedReason(disbursement)
+        : undefined,
+    };
   }
 }
