@@ -146,10 +146,14 @@ export class StudentService extends RecordDataModelService<Student> {
 
     let mustSave = false;
 
+    if (userToken.givenNames === undefined) {
+      userToken.givenNames = null;
+    }
+
     if (
       userToken.email !== studentToSync.user.email ||
       userToken.lastName !== studentToSync.user.lastName ||
-      userToken.givenNames !== studentToSync.user.firstName
+      userToken.givenNames != studentToSync.user.firstName
     ) {
       studentToSync.user.email = userToken.email;
       studentToSync.user.lastName = userToken.lastName;

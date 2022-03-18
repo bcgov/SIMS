@@ -324,6 +324,7 @@ export class ApplicationController extends BaseController {
    * @param userToken associated student of the application.
    * @returns NOA and application data.
    */
+  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   async getAssessmentInApplication(
@@ -392,6 +393,7 @@ export class ApplicationController extends BaseController {
   @CheckRestrictions()
   @AllowAuthorizedParty(AuthorizedParties.student)
   @Patch(":applicationId/confirm-assessment")
+  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   async studentConfirmAssessment(
     @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
