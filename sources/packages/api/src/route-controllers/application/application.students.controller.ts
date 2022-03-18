@@ -47,16 +47,12 @@ import {
   CheckSinValidation,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { UserGroups } from "../../auth/user-groups.enum";
+import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApplicationStatus,
-  Application,
   Student,
   AssessmentTriggerType,
 } from "../../database/entities";
-import { ApiProcessError, IConfig } from "../../types";
-import { ApplicationStatus, Student } from "../../database/entities";
-import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   dateString,
   getUserFullName,
