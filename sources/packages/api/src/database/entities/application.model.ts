@@ -26,7 +26,7 @@ import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
 import { DisbursementSchedule } from "./disbursement-schedule.model";
-import { Assessment, StudentAssessment } from "./student-assessment.model";
+import { StudentAssessment } from "./student-assessment.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {

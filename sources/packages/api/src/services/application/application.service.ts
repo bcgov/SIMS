@@ -11,7 +11,6 @@ import {
   ApplicationStatus,
   Student,
   StudentFile,
-  AssessmentStatus,
   COEStatus,
   ProgramYear,
   InstitutionLocation,
