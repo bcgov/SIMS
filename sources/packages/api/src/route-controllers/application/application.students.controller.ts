@@ -29,6 +29,7 @@ import {
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  ASSESSMENT_NOT_FOUND,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -46,8 +47,12 @@ import {
   CheckSinValidation,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApplicationStatus, Student } from "../../database/entities";
 import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
+import {
+  ApplicationStatus,
+  Student,
+  AssessmentTriggerType,
+} from "../../database/entities";
 import {
   dateString,
   getUserFullName,
@@ -343,6 +348,8 @@ export class ApplicationStudentsController extends BaseController {
    * @param userToken associated student of the application.
    * @returns NOA and application data.
    */
+  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
+  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   @ApiOkResponse({ description: "Retrieved assessment values." })
   @ApiNotFoundResponse({
@@ -356,24 +363,34 @@ export class ApplicationStudentsController extends BaseController {
     const student = await this.studentService.getStudentByUserId(
       userToken.userId,
     );
-    const application =
-      await this.applicationService.getAssessmentByApplicationId(
+
+    // TODO: temporary code to allow the assessment to be retrieved using the application id.
+    const [originalAssessment] =
+      await this.assessmentService.getAssessmentsByApplicationId(
         applicationId,
-        student.id,
+        AssessmentTriggerType.OriginalAssessment,
       );
-    if (!application) {
+    // TODO: end of the temporary code that will be removed.
+
+    const assessment = await this.assessmentService.getAssessmentForNOA(
+      originalAssessment.id,
+      student.id,
+    );
+
+    if (!assessment) {
       throw new NotFoundException(
-        `Application id ${applicationId} was not found.`,
+        "Assessment was not found for the the student.",
       );
     }
-    if (!application.assessment) {
+
+    if (!assessment.assessmentData) {
       throw new NotFoundException(
         `Assessment for the application id ${applicationId} was not calculated.`,
       );
     }
     //Disbursement data is populated with dynamic key in a defined pattern to be compatible with form table.
     const disbursementDetails = {};
-    application.disbursementSchedules.forEach((schedule, index) => {
+    assessment.disbursementSchedules.forEach((schedule, index) => {
       const disbursementIdentifier = `disbursement${index + 1}`;
       disbursementDetails[`${disbursementIdentifier}Date`] = dateString(
         schedule.disbursementDate,
@@ -385,15 +402,15 @@ export class ApplicationStudentsController extends BaseController {
     });
 
     return {
-      assessment: application.assessment,
-      applicationNumber: application.applicationNumber,
-      fullName: getUserFullName(application.student.user),
-      programName: application.offering.educationProgram.name,
-      locationName: application.location.name,
-      offeringIntensity: application.offering.offeringIntensity,
-      offeringStudyStartDate: dateString(application.offering.studyStartDate),
-      offeringStudyEndDate: dateString(application.offering.studyEndDate),
-      msfaaNumber: application.msfaaNumber.msfaaNumber,
+      assessment: assessment.assessmentData,
+      applicationNumber: assessment.application.applicationNumber,
+      fullName: getUserFullName(assessment.application.student.user),
+      programName: assessment.offering.educationProgram.name,
+      locationName: assessment.offering.institutionLocation.name,
+      offeringIntensity: assessment.offering.offeringIntensity,
+      offeringStudyStartDate: dateString(assessment.offering.studyStartDate),
+      offeringStudyEndDate: dateString(assessment.offering.studyEndDate),
+      msfaaNumber: assessment.application.msfaaNumber.msfaaNumber,
       disbursement: disbursementDetails,
     };
   }
@@ -408,6 +425,7 @@ export class ApplicationStudentsController extends BaseController {
     description: "Student not found or Assessment confirmation failed.",
   })
   @Patch(":applicationId/confirm-assessment")
+  // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
   async studentConfirmAssessment(
     @UserToken() userToken: IUserToken,
     @Param("applicationId") applicationId: number,
@@ -422,14 +440,28 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    const updateResult = await this.applicationService.studentConfirmAssessment(
-      applicationId,
-      student.id,
-    );
-    if (updateResult.affected === 0) {
-      throw new UnprocessableEntityException(
-        `Confirmation of Assessment for the application id ${applicationId} failed.`,
+    // TODO: temporary code to allow the assessment to be retrieved using the application id.
+    const [originalAssessment] =
+      await this.assessmentService.getAssessmentsByApplicationId(
+        applicationId,
+        AssessmentTriggerType.OriginalAssessment,
       );
+    // TODO: end of the temporary code that will be removed.
+
+    try {
+      await this.assessmentService.studentConfirmAssessment(
+        originalAssessment.id,
+        student.id,
+      );
+    } catch (error) {
+      switch (error.name) {
+        case ASSESSMENT_NOT_FOUND:
+          throw new NotFoundException(error.message);
+        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          throw error;
+      }
     }
   }
 

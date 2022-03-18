@@ -182,7 +182,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursement.disbursementDate",
         "application.applicationNumber",
         "application.data",
-        "application.assessment",
         "application.relationshipStatus",
         "application.studentNumber",
         "offering.id",
@@ -204,6 +203,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementValue.valueType",
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
+        "disbursement.coeUpdatedAt",
+        "studentAssessment.assessmentData",
       ])
       .innerJoin("disbursement.application", "application")
       .innerJoin("application.location", "location")
@@ -214,6 +215,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.msfaaNumber", "msfaaNumber")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
+      .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .where("disbursement.dateSent is null")
       .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
         disbursementMinDate,

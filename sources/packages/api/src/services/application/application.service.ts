@@ -11,7 +11,6 @@ import {
   ApplicationStatus,
   Student,
   StudentFile,
-  AssessmentStatus,
   COEStatus,
   ProgramYear,
   InstitutionLocation,
@@ -491,49 +490,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Fetch the NOA screen values for a student application.
-   * @param applicationId application id to fetch the NOA values.
-   * @param studentId associated student of the application.
-   * @returns NOA and application data.
-   */
-  async getAssessmentByApplicationId(
-    applicationId: number,
-    studentId: number,
-  ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.assessment",
-        "application.applicationNumber",
-        "student.id",
-        "user.firstName",
-        "user.lastName",
-        "educationProgram.name",
-        "location.name",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.offeringIntensity",
-        "msfaaNumber.msfaaNumber",
-        "disbursementSchedule.disbursementDate",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("application.offering", "offering")
-      .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.location", "location")
-      .innerJoin("application.msfaaNumber", "msfaaNumber")
-      .innerJoin("application.disbursementSchedules", "disbursementSchedule")
-      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("student.id = :studentId", { studentId })
-      .orderBy("disbursementSchedule.disbursementDate")
-      .getOne();
-  }
-
-  /**
    * get all student applications.
    * @param page, page number if nothing is passed then
    * DEFAULT_PAGE_NUMBER is taken
@@ -648,29 +604,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
     }
     return query.getOne();
-  }
-
-  /**
-   * Updates overall Application status.
-   * @param applicationId application id to be updated.
-   * @param status status of the Application.
-   * @returns COE status update result.
-   */
-  async studentConfirmAssessment(
-    applicationId: number,
-    studentId: number,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-        student: { id: studentId },
-        applicationStatus: ApplicationStatus.assessment,
-      },
-      {
-        assessmentStatus: AssessmentStatus.completed,
-        applicationStatus: ApplicationStatus.enrollment,
-      },
-    );
   }
 
   /**
