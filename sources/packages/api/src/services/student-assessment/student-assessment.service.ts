@@ -148,7 +148,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     if (triggerType) {
       query.andWhere("assessment.triggerType = :triggerType", { triggerType });
     }
-
     return query.getMany();
   }
 
@@ -316,8 +315,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * the student is confirming the NOA (Notice of Assessment).
    * @param assessmentId assessment id to be updated.
    * @param studentId student confirming the NOA.
-   * @returns update result. One and only one record
-   * is expected to be updated.
+   * @returns updated record.
    */
   async studentConfirmAssessment(
     assessmentId: number,
