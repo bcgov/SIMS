@@ -140,7 +140,7 @@ export class InstitutionController extends BaseController {
         "The user has no institution associated with.",
       );
     }
-    const institutionUserAndCount = await this.institutionService.allUsers(
+    const [institutionUsers, count] = await this.institutionService.allUsers(
       searchName,
       sortField,
       institution.id,
@@ -149,12 +149,10 @@ export class InstitutionController extends BaseController {
       sortOrder,
     );
     return {
-      users: institutionUserAndCount[0].map(
-        (eachInstitutionUser: InstitutionUser) => {
-          return transformToInstitutionUserRespDto(eachInstitutionUser);
-        },
-      ),
-      totalUsers: institutionUserAndCount[1],
+      users: institutionUsers.map((eachInstitutionUser: InstitutionUser) => {
+        return transformToInstitutionUserRespDto(eachInstitutionUser);
+      }),
+      totalUsers: count,
     };
   }
 

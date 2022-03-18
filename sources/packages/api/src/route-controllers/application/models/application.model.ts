@@ -8,6 +8,7 @@ import {
   Assessment,
   OfferingIntensity,
   DisbursementSchedule,
+  ApplicationData,
 } from "../../../database/entities";
 import {
   dateString,
@@ -34,11 +35,45 @@ export class SaveApplicationDto {
   programYearId: number;
 }
 
+export interface ApplicationFormData extends ApplicationData {
+  /**
+   * Offering name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedOfferingName?: string;
+
+  /**
+   * Program name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedProgramName?: string;
+
+  /**
+   * Location name selected by the student.
+   * This is for html component of readonly form.
+   */
+  selectedLocationName?: string;
+
+  /**
+   * Program details of the selected program
+   * this is HTML Component in formio, this
+   * should'not be saved in db
+   */
+  selectedProgramDesc?: {
+    credentialType?: string;
+    credentialTypeToDisplay?: string;
+    deliveryMethod?: string;
+    description?: string;
+    id?: number;
+    name?: string;
+  };
+}
+
 /**
  * Base DTO for application
  */
 export interface GetApplicationBaseDTO {
-  data: any;
+  data: ApplicationFormData;
   id: number;
   applicationStatus: ApplicationStatus;
   applicationNumber: string;
@@ -223,56 +258,3 @@ export interface StudentApplicationAndCount {
   applications: ApplicationSummaryDTO[];
   totalApplications: number;
 }
-
-/**
- * Transformation util for Application.
- * @param application
- * @returns Application DTO
- */
-export const transformToApplicationDto = (
-  application: Application,
-): GetApplicationBaseDTO => {
-  return {
-    data: application.data,
-    id: application.id,
-    applicationStatus: application.applicationStatus,
-    applicationNumber: application.applicationNumber,
-    applicationFormName: application.programYear.formName,
-    applicationProgramYearID: application.programYear.id,
-  } as GetApplicationBaseDTO;
-};
-
-/**
- * Transformation util for Application.
- * @param application
- * @returns Application DTO
- */
-export const transformToApplicationDetailDto = (
-  applicationDetail: Application,
-  disbursement: DisbursementSchedule,
-): GetApplicationDataDto => {
-  return {
-    data: applicationDetail.data,
-    id: applicationDetail.id,
-    applicationStatus: applicationDetail.applicationStatus,
-    applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
-    applicationNumber: applicationDetail.applicationNumber,
-    applicationOfferingIntensity: applicationDetail.offering?.offeringIntensity,
-    applicationStartDate: dateString(
-      applicationDetail.offering?.studyStartDate,
-    ),
-    applicationEndDate: dateString(applicationDetail.offering?.studyEndDate),
-    applicationInstitutionName: applicationDetail.location?.name,
-    applicationPIRStatus: applicationDetail.pirStatus,
-    applicationAssessmentStatus: applicationDetail.assessmentStatus,
-    applicationFormName: applicationDetail.programYear.formName,
-    applicationProgramYearID: applicationDetail.programYear.id,
-    applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
-    programYearStartDate: applicationDetail.programYear.startDate,
-    programYearEndDate: applicationDetail.programYear.endDate,
-    applicationCOEStatus: disbursement?.coeStatus,
-    applicationCOEDeniedReason: disbursement
-      ? getCOEDeniedReason(disbursement)
-      : undefined,
-  };
-};

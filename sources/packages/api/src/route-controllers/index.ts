@@ -4,7 +4,6 @@ export * from "./program-year/program-year.controller";
 export * from "./config/config.controller";
 export * from "./institution/institution.controller";
 export * from "./dynamic-form/dynamic-form.controller";
-export * from "./application/application.controller";
 export * from "./institution-locations/institution-locations.controller";
 export * from "./cra-integration/cra-integration.system.controller";
 export * from "./education-program/education-program.controller";
@@ -25,6 +24,8 @@ export * from "./designation-agreement/designation-agreement.institutions.contro
 export * from "./supporting-user/supporting-user.aest.controller";
 export * from "./designation-agreement/designation-agreement.controller.service";
 export * from "./designation-agreement/designation-agreement.aest.controller";
+export * from "./application/application.aest.controller";
+export * from "./application/application.students.controller";
 export * from "./assessment/assessment.system-access.controller";
 export * from "./institution/institution.aest.controller";
 export * from "./institution/institution.institutions.controller";

@@ -15,6 +15,7 @@ import {
   userFactory,
 } from "../../database/factories";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 
 const factory = async (
   userService: UserService,
@@ -48,6 +49,7 @@ describe("InstitutionService", () => {
         ConfigService,
         UserService,
         InstitutionLocationService,
+        DesignationAgreementLocationService,
       ],
     }).compile();
     await module.init();

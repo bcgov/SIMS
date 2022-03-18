@@ -310,4 +310,12 @@ export interface ApplicationData {
    * Student number.
    */
   studentNumber?: string;
+  /**
+   * Program id selected by the student.
+   */
+  selectedProgram?: number;
+  /**
+   * Location id selected by the student.
+   */
+  selectedLocation?: number;
 }
