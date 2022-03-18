@@ -150,17 +150,16 @@ export class StudentService extends RecordDataModelService<Student> {
       );
     }
     let mustSave = false;
-    const userTokenBirthdate = getDateOnly(userToken.birthdate);
     if (userToken.givenNames === undefined) {
       userToken.givenNames = null;
     }
     if (
-      !dayjs(userToken.birthdate).isSame(dayjs(studentToSync.birthDate)) ||
+      !dayjs(userToken.birthdate).isSame(studentToSync.birthDate) ||
       userToken.lastName !== studentToSync.user.lastName ||
       userToken.givenNames !== studentToSync.user.firstName
     ) {
       const sinValidation = new SINValidation();
-      studentToSync.birthDate = userTokenBirthdate;
+      studentToSync.birthDate = getDateOnly(userToken.birthdate);
       studentToSync.user.lastName = userToken.lastName;
       studentToSync.user.firstName = userToken.givenNames;
       sinValidation.user = studentToSync.user;
