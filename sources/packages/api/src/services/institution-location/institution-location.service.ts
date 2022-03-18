@@ -3,7 +3,10 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
-import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
+import {
+  DesignatedAndNotDesignatedLocations,
+  InstitutionLocationTypeDto,
+} from "../../route-controllers/institution-locations/models/institution-location.dto";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
@@ -177,7 +180,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * Validate if all the supplied locationIds
    * in a payload belongs to the given institution.
    * @param institutionId
-   * @param designationLocations
+   * @param locations
    * @returns result which has true when incorrect location id(s) are given.
    */
   async validateInstitutionLocations(
@@ -200,31 +203,21 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @param locationId location id
    * @returns InstitutionLocation
    */
-  async getLocationById(locationId: number): Promise<InstitutionLocation> {
-    return this.repo
-      .createQueryBuilder("location")
-      .select(["location.name", "location.id"])
-      .where("location.id = :locationId", { locationId })
-      .getOne();
-  }
-
-  /**
-   * Get institution location by location id.
-   * @param locationId location id
-   * @returns InstitutionLocation
-   */
-  async getDesignatedLocationById(
+  async getLocation(
     locationId: number,
-  ): Promise<InstitutionLocation> {
+  ): Promise<DesignatedAndNotDesignatedLocations> {
     return this.repo
       .createQueryBuilder("location")
-      .select(["location.name"])
-      .where("location.id = :locationId", { locationId })
-      .andWhere(
-        `EXISTS(${this.designationAgreementLocationService
-          .getExistsDesignatedLocation()
-          .getSql()})`,
+      .select("location.name", "locationName")
+      .addSelect(
+        `CASE
+          WHEN EXISTS(${this.designationAgreementLocationService
+            .getExistsDesignatedLocation()
+            .getSql()}) THEN true
+          ELSE false
+        END "isDesignated"`,
       )
-      .getOne();
+      .where("location.id = :locationId", { locationId })
+      .getRawOne();
   }
 }

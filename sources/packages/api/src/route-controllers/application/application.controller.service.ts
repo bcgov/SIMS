@@ -53,18 +53,14 @@ export class ApplicationControllerService {
     // If selected location is not designated, then make the
     // selectedLocation null
     if (data.selectedLocation) {
-      const designatedLocation =
-        await this.locationService.getDesignatedLocationById(
-          data.selectedLocation,
-        );
-      const selectedLocation = await this.locationService.getLocationById(
+      const designatedLocation = await this.locationService.getLocation(
         data.selectedLocation,
       );
-      if (!designatedLocation) {
+      if (!designatedLocation.isDesignated) {
         data.selectedLocation = null;
       }
       // Assign location name for readonly form
-      additionalFormData.selectedLocationName = selectedLocation?.name;
+      additionalFormData.selectedLocationName = designatedLocation.locationName;
     }
     // Check wether the program is approved or not.
     // If selected program is not approved, then make the

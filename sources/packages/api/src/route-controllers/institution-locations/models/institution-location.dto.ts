@@ -64,3 +64,8 @@ export interface InstitutionLocationsSummaryDto {
     postalCode: string;
   };
 }
+
+export interface DesignatedAndNotDesignatedLocations {
+  locationName: string;
+  isDesignated: boolean;
+}
