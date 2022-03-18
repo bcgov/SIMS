@@ -19,6 +19,7 @@ import { getDateOnly, getUTCNow, removeWhiteSpaces } from "../../utilities";
 import { CreateStudentInfo } from "./student.service.models";
 import { SFASIndividualService } from "../sfas/sfas-individual.service";
 import { SINValidationService } from "../sin-validation/sin-validation.service";
+import * as dayjs from "dayjs";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -154,7 +155,7 @@ export class StudentService extends RecordDataModelService<Student> {
       userToken.givenNames = null;
     }
     if (
-      userTokenBirthdate.getTime() !== studentToSync.birthDate.getTime() ||
+      !dayjs(userToken.birthdate).isSame(dayjs(studentToSync.birthDate)) ||
       userToken.lastName !== studentToSync.user.lastName ||
       userToken.givenNames !== studentToSync.user.firstName
     ) {
