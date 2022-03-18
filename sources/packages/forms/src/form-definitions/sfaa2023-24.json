@@ -1168,7 +1168,7 @@
                     "tableView": true,
                     "modalEdit": false,
                     "multiple": false,
-                    "persistent": true,
+                    "persistent": false,
                     "inputFormat": "plain",
                     "protected": false,
                     "dbIndex": false,
@@ -1226,7 +1226,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "efn7d4d",
+                    "id": "exbxl5",
                     "defaultValue": ""
                 },
                 {
@@ -1986,7 +1986,7 @@
                     "tableView": true,
                     "modalEdit": false,
                     "multiple": false,
-                    "persistent": true,
+                    "persistent": false,
                     "inputFormat": "plain",
                     "protected": false,
                     "dbIndex": false,
@@ -2044,7 +2044,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "e2ps1aj",
+                    "id": "eh3en9c",
                     "defaultValue": ""
                 },
                 {
@@ -2138,14 +2138,16 @@
                 },
                 {
                     "label": "selectedProgramDesc",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "customClass": "",
                     "modalEdit": false,
                     "defaultValue": null,
-                    "persistent": true,
+                    "persistent": false,
                     "protected": false,
                     "dbIndex": false,
                     "encrypted": false,
-                    "redrawOn": "",
+                    "redrawOn": "data",
                     "customDefaultValue": "",
                     "calculateValue": "",
                     "calculateServer": false,
@@ -2203,21 +2205,15 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
+                    "addons": [],
                     "inputType": "hidden",
-                    "id": "ee3p2mc",
-                    "addons": []
+                    "id": "etg4ns"
                 },
                 {
                     "title": "programDesc",
+                    "labelWidth": "",
+                    "labelMargin": "",
                     "theme": "default",
-                    "breadcrumb": "default",
-                    "breadcrumbClickable": true,
-                    "buttonSettings": {
-                        "previous": true,
-                        "cancel": true,
-                        "next": true
-                    },
-                    "scrollToTop": false,
                     "tooltip": "",
                     "customClass": "",
                     "collapsible": false,
@@ -2228,14 +2224,13 @@
                     "key": "programDesc",
                     "tags": [],
                     "properties": {},
-                    "customConditional": "show =\n  (!!data.selectedProgram &&\n  !!data.selectedLocation &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );",
+                    "customConditional": "show =\r\n  ((!!data.selectedProgram &&\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\r\n  ) || (data.isReadOnly && data.selectedProgramDesc?.id));\r\n",
                     "conditional": {
                         "json": "",
                         "show": null,
                         "when": null,
                         "eq": ""
                     },
-                    "nextPage": "",
                     "logic": [],
                     "attributes": {},
                     "overlay": {
@@ -2248,12 +2243,24 @@
                     },
                     "type": "panel",
                     "label": "programDesc",
+                    "breadcrumb": "default",
+                    "buttonSettings": {
+                        "previous": true,
+                        "cancel": true,
+                        "next": true
+                    },
                     "tabindex": "",
+                    "breadcrumbClickable": true,
+                    "scrollToTop": false,
                     "input": false,
                     "tableView": false,
                     "components": [
                         {
                             "label": "HTML",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "tag": "p",
+                            "className": "",
                             "attrs": [
                                 {
                                     "attr": "",
@@ -2263,7 +2270,28 @@
                             "content": "{{data.selectedProgramDesc?.name}}",
                             "refreshOnChange": true,
                             "customClass": "category-header-medium primary-color",
+                            "hidden": false,
+                            "modalEdit": false,
                             "key": "html31",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": "",
+                                "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                                "style": "",
+                                "page": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
                             "type": "htmlelement",
                             "input": false,
                             "tableView": false,
@@ -2276,11 +2304,9 @@
                             "protected": false,
                             "unique": false,
                             "persistent": false,
-                            "hidden": false,
                             "clearOnHide": true,
                             "refreshOn": "",
                             "redrawOn": "",
-                            "modalEdit": false,
                             "dataGridLabel": false,
                             "labelPosition": "top",
                             "description": "",
@@ -2295,7 +2321,6 @@
                             "calculateValue": "",
                             "calculateServer": false,
                             "widget": null,
-                            "attributes": {},
                             "validateOn": "change",
                             "validate": {
                                 "required": false,
@@ -2305,27 +2330,13 @@
                                 "multiple": false,
                                 "unique": false
                             },
-                            "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                            },
-                            "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                            },
                             "allowCalculateOverride": false,
                             "encrypted": false,
                             "showCharCount": false,
                             "showWordCount": false,
-                            "properties": {},
                             "allowMultipleMasks": false,
-                            "tag": "p",
-                            "id": "erk6bs",
-                            "addons": []
+                            "addons": [],
+                            "id": "e28oabp"
                         },
                         {
                             "label": "HTML",
@@ -2398,9 +2409,9 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
+                            "addons": [],
                             "tag": "p",
-                            "id": "ebiw6ol",
-                            "addons": []
+                            "id": "enq9g58"
                         },
                         {
                             "label": "Columns",
@@ -2478,9 +2489,9 @@
                                             "showWordCount": false,
                                             "properties": {},
                                             "allowMultipleMasks": false,
+                                            "addons": [],
                                             "tag": "p",
-                                            "id": "e30454",
-                                            "addons": []
+                                            "id": "ei2br35"
                                         }
                                     ],
                                     "width": 6,
@@ -2563,9 +2574,9 @@
                                             "showWordCount": false,
                                             "properties": {},
                                             "allowMultipleMasks": false,
+                                            "addons": [],
                                             "tag": "p",
-                                            "id": "ezr7ntp",
-                                            "addons": []
+                                            "id": "e0x5r6d"
                                         }
                                     ],
                                     "width": 6,
@@ -2580,6 +2591,7 @@
                             "type": "columns",
                             "input": false,
                             "tableView": false,
+                            "hideOnChildrenHidden": false,
                             "placeholder": "",
                             "prefix": "",
                             "customClass": "",
@@ -2636,12 +2648,11 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
-                            "tree": false,
-                            "autoAdjust": false,
-                            "hideOnChildrenHidden": false,
-                            "id": "e5gzydg",
                             "addons": [],
-                            "lazyLoad": false
+                            "tree": false,
+                            "lazyLoad": false,
+                            "autoAdjust": false,
+                            "id": "eez5alo"
                         },
                         {
                             "label": "Columns",
@@ -2719,9 +2730,9 @@
                                             "showWordCount": false,
                                             "properties": {},
                                             "allowMultipleMasks": false,
+                                            "addons": [],
                                             "tag": "p",
-                                            "id": "ex0yioh",
-                                            "addons": []
+                                            "id": "epg7d"
                                         }
                                     ],
                                     "width": 6,
@@ -2804,9 +2815,9 @@
                                             "showWordCount": false,
                                             "properties": {},
                                             "allowMultipleMasks": false,
+                                            "addons": [],
                                             "tag": "p",
-                                            "id": "ec7blool",
-                                            "addons": []
+                                            "id": "eqc9rb"
                                         }
                                     ],
                                     "width": 6,
@@ -2821,6 +2832,7 @@
                             "type": "columns",
                             "input": false,
                             "tableView": false,
+                            "hideOnChildrenHidden": false,
                             "placeholder": "",
                             "prefix": "",
                             "customClass": "",
@@ -2877,12 +2889,11 @@
                             "showWordCount": false,
                             "properties": {},
                             "allowMultipleMasks": false,
-                            "tree": false,
-                            "autoAdjust": false,
-                            "hideOnChildrenHidden": false,
-                            "id": "e3fdigo",
                             "addons": [],
-                            "lazyLoad": false
+                            "tree": false,
+                            "lazyLoad": false,
+                            "autoAdjust": false,
+                            "id": "eqdrv0j"
                         }
                     ],
                     "placeholder": "",
@@ -2920,10 +2931,10 @@
                     "showCharCount": false,
                     "showWordCount": false,
                     "allowMultipleMasks": false,
-                    "tree": false,
-                    "id": "edsnvs8",
                     "addons": [],
-                    "lazyLoad": false
+                    "tree": false,
+                    "lazyLoad": false,
+                    "id": "epj0vbe"
                 },
                 {
                     "label": "Select when you will be taking the program",
@@ -3073,7 +3084,7 @@
                     "tableView": true,
                     "modalEdit": false,
                     "multiple": false,
-                    "persistent": true,
+                    "persistent": false,
                     "inputFormat": "plain",
                     "protected": false,
                     "dbIndex": false,
@@ -3131,7 +3142,7 @@
                     "dataGridLabel": false,
                     "addons": [],
                     "inputType": "text",
-                    "id": "e5rm9iu",
+                    "id": "edjq3kg",
                     "defaultValue": ""
                 },
                 {
@@ -4730,7 +4741,7 @@
                             "input": true,
                             "refreshOn": "",
                             "inputType": "text",
-                            "id": "ecrze1n000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                            "id": "ecrze1n00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
                             "defaultValue": "",
                             "addons": [],
                             "displayMask": "",

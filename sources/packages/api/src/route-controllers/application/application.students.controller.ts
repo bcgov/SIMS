@@ -114,21 +114,17 @@ export class ApplicationStudentsController extends BaseController {
       );
     }
 
-    const [applicationData, additionalFormData] =
-      await this.applicationControllerService.addLabelsAndResetDropdownForNotApproved(
+    const additionalFormData =
+      await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    application.data = applicationData;
+    application.data = additionalFormData;
 
     const firstCOE =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
         applicationId,
       );
-    return transformToApplicationDetailDto(
-      application,
-      additionalFormData,
-      firstCOE,
-    );
+    return transformToApplicationDetailDto(application, firstCOE);
   }
 
   /**
@@ -441,7 +437,6 @@ export class ApplicationStudentsController extends BaseController {
    * @param applicationId application id to be updated.
    * @body payload contains the status, that need to be updated
    */
-
   @ApiOkResponse({ description: "Student Application status updated." })
   @ApiNotFoundResponse({ description: "Application not found." })
   @ApiUnprocessableEntityResponse({

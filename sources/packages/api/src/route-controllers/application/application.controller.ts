@@ -5,9 +5,14 @@ import {
   EducationProgramService,
 } from "../../services";
 import { ApplicationFormData } from "./models/application.model";
-import { getOfferingNameAndPeriod } from "../../utilities";
+import {
+  credentialTypeToDisplay,
+  deliveryMethod,
+  getOfferingNameAndPeriod,
+} from "../../utilities";
 import { ApprovalStatus } from "../../services/education-program/constants";
 import { ApplicationData } from "../../database/entities";
+
 /**
  * This service controller is a provider which is created to extract the implementation of
  * controller in one place as their business logic is shared between different client types.
@@ -20,17 +25,18 @@ export class ApplicationControllerService {
     private readonly locationService: InstitutionLocationService,
     private readonly programService: EducationProgramService,
   ) {}
+
   /**
    * Add location, program and offering labels
    * and reset the dropdown value for non
    * designated location and not approved
    * programs.
    * @param data application data
-   * @returns [ApplicationData, ApplicationFormData]
+   * @returns ApplicationFormData
    */
-  async addLabelsAndResetDropdownForNotApproved(
+  async generateApplicationFormData(
     data: ApplicationData,
-  ): Promise<[ApplicationData, ApplicationFormData]> {
+  ): Promise<ApplicationFormData> {
     const additionalFormData = {} as ApplicationFormData;
     // Check wether the selected location is designated or not.
     // If selected location is not designated, then make the
@@ -60,6 +66,20 @@ export class ApplicationControllerService {
       if (selectedProgram) {
         // Assign program name for readonly form
         additionalFormData.selectedProgramName = selectedProgram.name;
+        // Program details
+        additionalFormData.selectedProgramDesc = {
+          credentialType: selectedProgram.credentialType,
+          credentialTypeToDisplay: credentialTypeToDisplay(
+            selectedProgram.credentialType,
+          ),
+          deliveryMethod: deliveryMethod(
+            selectedProgram.deliveredOnline,
+            selectedProgram.deliveredOnSite,
+          ),
+          description: selectedProgram.description,
+          id: selectedProgram.id,
+          name: selectedProgram.name,
+        };
         if (selectedProgram.approvalStatus !== ApprovalStatus.approved) {
           data.selectedProgram = null;
         }
@@ -79,6 +99,6 @@ export class ApplicationControllerService {
         data.selectedOffering = null;
       }
     }
-    return [data, additionalFormData];
+    return { ...data, ...additionalFormData };
   }
 }

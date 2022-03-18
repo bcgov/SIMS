@@ -176,7 +176,7 @@ export default {
         ...applicationData.data,
         ...studentFormData,
         ...programYear,
-        isReadOnly: isReadOnly,
+        isReadOnly: isReadOnly.value,
       };
       existingApplication.value = applicationData;
     });

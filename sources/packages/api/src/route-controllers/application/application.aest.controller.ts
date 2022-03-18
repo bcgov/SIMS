@@ -59,12 +59,12 @@ export class ApplicationAESTController extends BaseController {
       );
     }
 
-    const [applicationData, additionalFormData] =
-      await this.applicationControllerService.addLabelsAndResetDropdownForNotApproved(
+    const additionalFormData =
+      await this.applicationControllerService.generateApplicationFormData(
         application.data,
       );
-    application.data = applicationData;
-    return transformToApplicationDto(application, additionalFormData);
+    application.data = additionalFormData;
+    return transformToApplicationDto(application);
   }
   /**
    * API to fetch all the applications that belong to student.

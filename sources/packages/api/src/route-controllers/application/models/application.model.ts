@@ -53,6 +53,20 @@ export interface ApplicationFormData extends ApplicationData {
    * This is for html component of readonly form.
    */
   selectedLocationName?: string;
+
+  /**
+   * Program details of the selected program
+   * this is HTML Component in formio, this
+   * should'not be saved in db
+   */
+  selectedProgramDesc?: {
+    credentialType?: string;
+    credentialTypeToDisplay?: string;
+    deliveryMethod?: string;
+    description?: string;
+    id?: number;
+    name?: string;
+  };
 }
 
 /**
@@ -253,10 +267,9 @@ export interface StudentApplicationAndCount {
  */
 export const transformToApplicationDto = (
   application: Application,
-  additionalFormData: ApplicationFormData,
 ): GetApplicationBaseDTO => {
   return {
-    data: { ...application.data, ...additionalFormData },
+    data: application.data,
     id: application.id,
     applicationStatus: application.applicationStatus,
     applicationNumber: application.applicationNumber,
@@ -273,11 +286,10 @@ export const transformToApplicationDto = (
  */
 export const transformToApplicationDetailDto = (
   applicationDetail: Application,
-  additionalFormData: ApplicationFormData,
   disbursement: DisbursementSchedule,
 ): GetApplicationDataDto => {
   return {
-    data: { ...applicationDetail.data, ...additionalFormData },
+    data: applicationDetail.data,
     id: applicationDetail.id,
     applicationStatus: applicationDetail.applicationStatus,
     applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,

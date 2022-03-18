@@ -536,7 +536,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param programId program id.
    * @param userId user id.
    * @param payload ApproveProgram
-   * @param returns EducationProgram
    */
   async approveEducationProgram(
     institutionId: number,
@@ -588,7 +587,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param programId program id.
    * @param userId user id.
    * @param payload DeclineProgram
-   * @param returns EducationProgram
    */
   async declineEducationProgram(
     institutionId: number,
@@ -637,7 +635,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getProgramById(programId: number): Promise<EducationProgram> {
     return this.repo
       .createQueryBuilder("programs")
-      .select(["programs.name", "programs.approvalStatus"])
+      .select([
+        "programs.name",
+        "programs.approvalStatus",
+        "programs.credentialType",
+        "programs.deliveredOnline",
+        "programs.deliveredOnSite",
+        "programs.description",
+        "programs.id",
+      ])
       .where("programs.id = :programId", { programId })
       .getOne();
   }

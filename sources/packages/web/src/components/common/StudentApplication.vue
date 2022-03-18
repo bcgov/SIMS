@@ -126,7 +126,6 @@ export default {
       };
       applicationWizard.on("prevPage", prevNextNavigation);
       applicationWizard.on("nextPage", prevNextNavigation);
-
       if (!props.isReadOnly) {
         await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
         const selectedLocationId = getSelectedId(form);
