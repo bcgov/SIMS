@@ -166,6 +166,7 @@ export class StudentService extends RecordDataModelService<Student> {
       studentToSync.sinValidation = sinValidation;
       mustSave = true;
     }
+    // This condition is not added above, as email and gender does not trigger SIN validation request.
     if (
       userToken.email !== studentToSync.user.email ||
       userToken.gender !== studentToSync.gender
