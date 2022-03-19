@@ -1164,4 +1164,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: ["id"],
     }));
   }
+
+  async getApplicationToRequestChange(
+    applicationNumber: string,
+    userId: number,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select(["application.id", "application.applicationNumber"])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("user.id = :userId", { userId })
+      .andWhere("application.applicationNumber = :applicationNumber", {
+        applicationNumber,
+      })
+      .andWhere("application.applicationStatus = :completed", {
+        completed: ApplicationStatus.completed,
+      })
+      .getOne();
+  }
 }

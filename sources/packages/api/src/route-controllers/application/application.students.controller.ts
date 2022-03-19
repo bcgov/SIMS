@@ -39,6 +39,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
+  ApplicationPrimaryDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -617,5 +618,31 @@ export class ApplicationStudentsController extends BaseController {
         );
       }
     }
+  }
+
+  /**
+   * Get application to request a change.
+   * @param applicationNumber
+   * @param userToken
+   */
+  @Get(":applicationNumber/change")
+  async getApplicationToRequestChange(
+    @Param("applicationNumber") applicationNumber: string,
+    @UserToken() userToken: IUserToken,
+  ): Promise<ApplicationPrimaryDTO> {
+    const application =
+      await this.applicationService.getApplicationToRequestChange(
+        applicationNumber,
+        userToken.userId,
+      );
+    if (!application) {
+      throw new NotFoundException(
+        "Given application either does not exist or is not complete to request change.",
+      );
+    }
+    return {
+      id: application.id,
+      applicationNumber: application.applicationNumber,
+    };
   }
 }
