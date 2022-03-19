@@ -389,7 +389,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("application.location", "location")
-      .leftJoin("application.offering", "offering")
+      .innerJoin("application.studentAssessment", "assessment")
+      .leftJoin("assessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
@@ -397,6 +398,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
       })
       .andWhere("location.id = :locationId", { locationId })
+      .andWhere("assessment.triggerType = :triggerType", {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+      })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       })

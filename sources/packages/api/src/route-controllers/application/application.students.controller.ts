@@ -349,7 +349,6 @@ export class ApplicationStudentsController extends BaseController {
    * @returns NOA and application data.
    */
   // TODO: Move this endpoint to a specific assessment controller and use the assessment id instead of the application id.
-  @AllowAuthorizedParty(AuthorizedParties.student)
   @Get(":applicationId/assessment")
   @ApiOkResponse({ description: "Retrieved assessment values." })
   @ApiNotFoundResponse({

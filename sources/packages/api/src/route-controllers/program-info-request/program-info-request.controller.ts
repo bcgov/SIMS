@@ -37,6 +37,7 @@ import {
   EducationProgramOffering,
   ProgramInfoStatus,
   Application,
+  AssessmentTriggerType,
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
@@ -97,6 +98,23 @@ export class ProgramInfoRequestController extends BaseController {
         "Program Information Request (PIR) not found.",
       );
     }
+    if (!application.studentAssessment) {
+      throw new UnprocessableEntityException(
+        "Student application is missing related assessment.",
+      );
+    }
+    // Original assessment to be used as a reference.
+    const [studentAssessment] = application.studentAssessment;
+    if (
+      studentAssessment.triggerType !== AssessmentTriggerType.OriginalAssessment
+    ) {
+      throw new UnprocessableEntityException(
+        `Student application is missing original assessment ${AssessmentTriggerType.OriginalAssessment}.`,
+      );
+    }
+    // Offering that belongs to the original assessment.
+    const offering = studentAssessment.offering;
+
     const result = {} as GetProgramInfoRequestDto;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
@@ -106,8 +124,8 @@ export class ProgramInfoRequestController extends BaseController {
     // If an offering is present, this value will be the program id associated
     // with the offering, otherwise the program id from PIR will be used.
     result.selectedProgram =
-      application.offering?.educationProgram.id ?? application.pirProgram?.id;
-    result.selectedOffering = application.offering?.id;
+      offering?.educationProgram.id ?? application.pirProgram?.id;
+    result.selectedOffering = studentAssessment.offering?.id;
     result.pirStatus = application.pirStatus;
     // Load application dynamic data.
     result.studentCustomProgram = application.data.programName;
@@ -119,22 +137,21 @@ export class ProgramInfoRequestController extends BaseController {
       application.data.howWillYouBeAttendingTheProgram;
     result.programYearId = application.programYear.id;
     result.isActiveProgramYear = application.programYear.active;
-    if (application.offering) {
-      result.offeringName = application.offering.name;
-      result.studyStartDate = application.offering.studyStartDate;
-      result.studyEndDate = application.offering.studyEndDate;
-      result.actualTuitionCosts = application.offering.actualTuitionCosts;
-      result.programRelatedCosts = application.offering.programRelatedCosts;
-      result.mandatoryFees = application.offering.mandatoryFees;
-      result.exceptionalExpenses = application.offering.exceptionalExpenses;
+    if (offering) {
+      result.offeringName = offering.name;
+      result.studyStartDate = offering.studyStartDate;
+      result.studyEndDate = offering.studyEndDate;
+      result.actualTuitionCosts = offering.actualTuitionCosts;
+      result.programRelatedCosts = offering.programRelatedCosts;
+      result.mandatoryFees = offering.mandatoryFees;
+      result.exceptionalExpenses = offering.exceptionalExpenses;
       result.tuitionRemittanceRequestedAmount =
-        application.offering.tuitionRemittanceRequestedAmount;
-      result.offeringDelivered = application.offering.offeringDelivered;
-      result.lacksStudyBreaks = application.offering.lacksStudyBreaks;
-      result.tuitionRemittanceRequested =
-        application.offering.tuitionRemittanceRequested;
-      result.offeringType = application.offering.offeringType;
-      result.offeringIntensity = application.offering.offeringIntensity;
+        offering.tuitionRemittanceRequestedAmount;
+      result.offeringDelivered = offering.offeringDelivered;
+      result.lacksStudyBreaks = offering.lacksStudyBreaks;
+      result.tuitionRemittanceRequested = offering.tuitionRemittanceRequested;
+      result.offeringType = offering.offeringType;
+      result.offeringIntensity = offering.offeringIntensity;
     }
 
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
