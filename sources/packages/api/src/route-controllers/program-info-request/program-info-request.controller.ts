@@ -32,6 +32,7 @@ import {
   checkNotValidStudyPeriod,
   checkStudyStartDateWithinProgramYear,
   checkOfferingIntensityMismatch,
+  getISODateOnlyString,
 } from "../../utilities";
 import {
   EducationProgramOffering,
@@ -98,23 +99,23 @@ export class ProgramInfoRequestController extends BaseController {
         "Program Information Request (PIR) not found.",
       );
     }
-    if (!application.studentAssessment) {
+    if (!application.currentAssessment) {
       throw new UnprocessableEntityException(
         "Student application is missing related assessment.",
       );
     }
     // Original assessment to be used as a reference.
-    const [studentAssessment] = application.studentAssessment;
+    // PIR process happens only during original assessment.
     if (
-      studentAssessment.triggerType !== AssessmentTriggerType.OriginalAssessment
+      application.currentAssessment.triggerType !==
+      AssessmentTriggerType.OriginalAssessment
     ) {
       throw new UnprocessableEntityException(
         `Student application is missing original assessment ${AssessmentTriggerType.OriginalAssessment}.`,
       );
     }
     // Offering that belongs to the original assessment.
-    const offering = studentAssessment.offering;
-
+    const offering = application.currentAssessment.offering;
     const result = {} as GetProgramInfoRequestDto;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
@@ -125,7 +126,7 @@ export class ProgramInfoRequestController extends BaseController {
     // with the offering, otherwise the program id from PIR will be used.
     result.selectedProgram =
       offering?.educationProgram.id ?? application.pirProgram?.id;
-    result.selectedOffering = studentAssessment.offering?.id;
+    result.selectedOffering = offering?.id;
     result.pirStatus = application.pirStatus;
     // Load application dynamic data.
     result.studentCustomProgram = application.data.programName;
@@ -354,11 +355,12 @@ export class ProgramInfoRequestController extends BaseController {
       locationId,
     );
     return applications.map((eachApplication: Application) => {
+      const offering = eachApplication.currentAssessment?.offering;
       return {
-        applicationNumber: eachApplication.applicationNumber,
         applicationId: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
+        applicationNumber: eachApplication.applicationNumber,
+        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
         pirStatus: eachApplication.pirStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };

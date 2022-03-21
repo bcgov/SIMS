@@ -7,7 +7,6 @@ import {
   RelationshipStatus,
   Student,
 } from "../../database/entities";
-import { createFakeEducationProgramOffering } from "./education-program-offering-fake";
 import { createFakeProgramYear } from "./program-year-fake";
 import { createFakeStudent } from "./student-fake";
 import { getUTCNow } from "../../utilities/date-utils";
@@ -21,7 +20,6 @@ export function createFakeApplication(
   application.data = {} as ApplicationData;
   application.programYear = programYear ?? createFakeProgramYear();
   application.student = student ?? createFakeStudent();
-  application.offering = offering ?? createFakeEducationProgramOffering();
   application.applicationStatusUpdatedOn = getUTCNow();
   application.applicationStatus = ApplicationStatus.submitted;
   application.relationshipStatus = RelationshipStatus.Single;

@@ -151,12 +151,14 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         "students.gender",
         "students.contactInfo",
         "users.email",
+        "currentAssessment.id",
         "offering.offeringIntensity",
       ])
       .innerJoin("msfaaNumber.student", "students")
       .innerJoin("students.user", "users")
       .innerJoin("msfaaNumber.referenceApplication", "referenceApplication")
-      .innerJoin("referenceApplication.offering", "offering")
+      .innerJoin("referenceApplication.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .where("msfaaNumber.dateRequested is null")
       .andWhere("offering.offeringIntensity = :offeringIntensity", {

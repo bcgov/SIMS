@@ -190,8 +190,8 @@ export interface ApplicationStatusToBeUpdatedDto {
 }
 export interface COESummaryDTO {
   applicationNumber: string;
-  studyStartPeriod: Date;
-  studyEndPeriod: Date;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
   applicationId: number;
   coeStatus: COEStatus;
   fullName: string;
@@ -244,7 +244,7 @@ export interface ApplicationSummaryDTO {
   studyEndPeriod: string;
   id: number;
   applicationName: string;
-  submitted: string;
+  submitted?: Date;
   status: string;
 }
 

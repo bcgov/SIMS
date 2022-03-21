@@ -120,11 +120,12 @@ export class ConfirmationOfEnrollmentController extends BaseController {
     return {
       results: disbursementPaginatedResult.results.map(
         (disbursement: DisbursementSchedule) => {
+          const offering = disbursement.studentAssessment.offering;
           return {
             applicationNumber: disbursement.application.applicationNumber,
             applicationId: disbursement.application.id,
-            studyStartPeriod: disbursement.application.offering.studyStartDate,
-            studyEndPeriod: disbursement.application.offering.studyEndDate,
+            studyStartPeriod: getISODateOnlyString(offering.studyStartDate),
+            studyEndPeriod: getISODateOnlyString(offering.studyEndDate),
             coeStatus: disbursement.coeStatus,
             fullName: getUserFullName(disbursement.application.student.user),
             disbursementScheduleId: disbursement.id,
@@ -225,56 +226,41 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       throw new NotFoundException(COE_NOT_FOUND_MESSAGE);
     }
 
+    const offering = disbursementSchedule.studentAssessment.offering;
     return {
-      applicationProgramName:
-        disbursementSchedule.application.offering.educationProgram.name,
-      applicationProgramDescription:
-        disbursementSchedule.application.offering.educationProgram.description,
-      applicationOfferingName: disbursementSchedule.application.offering.name,
-      applicationOfferingIntensity:
-        disbursementSchedule.application.offering.offeringIntensity,
-      applicationOfferingStartDate: dateString(
-        disbursementSchedule.application.offering.studyStartDate,
-      ),
-      applicationOfferingEndDate: dateString(
-        disbursementSchedule.application.offering.studyEndDate,
-      ),
-      applicationOfferingHasStudyBreak:
-        disbursementSchedule.application.offering.lacksStudyBreaks,
-      applicationOfferingActualTuition:
-        disbursementSchedule.application.offering.actualTuitionCosts,
-      applicationOfferingProgramRelatedCost:
-        disbursementSchedule.application.offering.programRelatedCosts,
-      applicationOfferingMandatoryCost:
-        disbursementSchedule.application.offering.mandatoryFees,
-      applicationOfferingExceptionalExpenses:
-        disbursementSchedule.application.offering.exceptionalExpenses,
+      applicationProgramName: offering.educationProgram.name,
+      applicationProgramDescription: offering.educationProgram.description,
+      applicationOfferingName: offering.name,
+      applicationOfferingIntensity: offering.offeringIntensity,
+      applicationOfferingStartDate: dateString(offering.studyStartDate),
+      applicationOfferingEndDate: dateString(offering.studyEndDate),
+      applicationOfferingHasStudyBreak: offering.lacksStudyBreaks,
+      applicationOfferingActualTuition: offering.actualTuitionCosts,
+      applicationOfferingProgramRelatedCost: offering.programRelatedCosts,
+      applicationOfferingMandatoryCost: offering.mandatoryFees,
+      applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
       applicationOfferingHasTuitionRemittanceRequested:
-        disbursementSchedule.application.offering.tuitionRemittanceRequested,
+        offering.tuitionRemittanceRequested,
       applicationOfferingTuitionRemittanceAmount:
-        disbursementSchedule.application.offering
-          .tuitionRemittanceRequestedAmount,
-      applicationOfferingStudyDelivered:
-        disbursementSchedule.application.offering.offeringDelivered,
+        offering.tuitionRemittanceRequestedAmount,
+      applicationOfferingStudyDelivered: offering.offeringDelivered,
       applicationStudentName: getUserFullName(
         disbursementSchedule.application.student.user,
       ),
       applicationNumber: disbursementSchedule.application.applicationNumber,
-      applicationLocationName: disbursementSchedule.application.location.name,
+      applicationLocationName: offering.institutionLocation.name,
       applicationStatus: disbursementSchedule.application.applicationStatus,
       applicationCOEStatus: disbursementSchedule.coeStatus,
       applicationId: disbursementSchedule.application.id,
       applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
         disbursementSchedule.disbursementDate,
       ),
-      applicationLocationId: disbursementSchedule.application.location.id,
+      applicationLocationId: offering.institutionLocation.id,
       applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
-      studyBreaks: disbursementSchedule.application.offering.studyBreaks?.map(
-        (studyBreak) => ({
-          breakStartDate: dateString(studyBreak.breakStartDate),
-          breakEndDate: dateString(studyBreak.breakEndDate),
-        }),
-      ),
+      studyBreaks: offering.studyBreaks?.map((studyBreak) => ({
+        breakStartDate: dateString(studyBreak.breakStartDate),
+        breakEndDate: dateString(studyBreak.breakEndDate),
+      })),
       applicationPIRStatus: disbursementSchedule.application.pirStatus,
       disbursementDate: getExtendedDateFormat(
         disbursementSchedule.disbursementDate,

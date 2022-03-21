@@ -141,19 +141,17 @@ export class ApplicationControllerService {
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
   ): Promise<GetApplicationDataDto> {
+    const offering = applicationDetail.currentAssessment?.offering;
     return {
       data: applicationDetail.data,
       id: applicationDetail.id,
       applicationStatus: applicationDetail.applicationStatus,
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,
-      applicationOfferingIntensity:
-        applicationDetail.offering?.offeringIntensity,
-      applicationStartDate: dateString(
-        applicationDetail.offering?.studyStartDate,
-      ),
-      applicationEndDate: dateString(applicationDetail.offering?.studyEndDate),
-      applicationInstitutionName: applicationDetail.location?.name,
+      applicationOfferingIntensity: offering?.offeringIntensity,
+      applicationStartDate: dateString(offering?.studyStartDate),
+      applicationEndDate: dateString(offering?.studyEndDate),
+      applicationInstitutionName: applicationDetail?.location?.name,
       applicationPIRStatus: applicationDetail.pirStatus,
       applicationAssessmentStatus: applicationDetail.assessmentStatus,
       applicationFormName: applicationDetail.programYear.formName,
