@@ -3,11 +3,9 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
-import {
-  DesignatedAndNotDesignatedLocations,
-  InstitutionLocationTypeDto,
-} from "../../route-controllers/institution-locations/models/institution-location.dto";
+import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
+import { LocationWithDesigationStatus } from "./institution-location.models";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
@@ -203,9 +201,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @param locationId location id
    * @returns InstitutionLocation
    */
-  async getLocation(
-    locationId: number,
-  ): Promise<DesignatedAndNotDesignatedLocations> {
+  async getLocation(locationId: number): Promise<LocationWithDesigationStatus> {
     return this.repo
       .createQueryBuilder("location")
       .select("location.name", "locationName")
@@ -215,7 +211,8 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
             .getExistsDesignatedLocation()
             .getSql()}) THEN true
           ELSE false
-        END "isDesignated"`,
+        END`,
+        "isDesignated",
       )
       .where("location.id = :locationId", { locationId })
       .getRawOne();
