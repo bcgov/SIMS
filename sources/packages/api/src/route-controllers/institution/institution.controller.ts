@@ -18,6 +18,7 @@ import {
   InstitutionLocationService,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
+  DesignationAgreementLocationService,
 } from "../../services";
 import {
   BasicInstitutionInfo,
@@ -67,12 +68,14 @@ import {
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import Helper from "../../helpers/utilfunctions";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 @ApiTags("institution")
 export class InstitutionController extends BaseController {
   constructor(
+    private readonly designationAgreementLocationService: DesignationAgreementLocationService,
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,
@@ -490,49 +493,12 @@ export class InstitutionController extends BaseController {
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations.
-    const InstitutionLocationData =
-      await this.locationService.getAllInstitutionLocations(institutionId);
-    return InstitutionLocationData.map(
-      (institutionLocation: InstitutionLocation) => {
-        return {
-          id: institutionLocation.id,
-          name: institutionLocation.name,
-          data: {
-            address: {
-              addressLine1: institutionLocation.data.address?.addressLine1,
-              addressLine2: institutionLocation.data.address?.addressLine2,
-              province: institutionLocation.data.address?.province,
-              country: institutionLocation.data.address?.country,
-              city: institutionLocation.data.address?.city,
-              postalCode: institutionLocation.data.address?.postalCode,
-            },
-          },
-          primaryContact: {
-            primaryContactFirstName:
-              institutionLocation.primaryContact.firstName,
-            primaryContactLastName: institutionLocation.primaryContact.lastName,
-            primaryContactEmail: institutionLocation.primaryContact.email,
-            primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-          },
-          institution: {
-            institutionPrimaryContact: {
-              primaryContactEmail:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactEmail,
-              primaryContactFirstName:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactFirstName,
-              primaryContactLastName:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactLastName,
-              primaryContactPhone:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactPhone,
-            },
-          },
-          institutionCode: institutionLocation.institutionCode,
-        } as InstitutionLocationsDetailsDto;
-      },
+    const DesignationAgreementLocationData =
+      await this.designationAgreementLocationService.getAllDesignatedAgreementLocations(
+        institutionId,
+      );
+    return Helper.mapDesignationAgreementLocationToInstitutionLocationDTO(
+      DesignationAgreementLocationData,
     );
   }
 

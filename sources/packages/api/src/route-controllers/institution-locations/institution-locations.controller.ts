@@ -10,7 +10,11 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import BaseController from "../BaseController";
-import { InstitutionLocationService, FormService } from "../../services";
+import {
+  InstitutionLocationService,
+  FormService,
+  DesignationAgreementLocationService,
+} from "../../services";
 import {
   InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
@@ -35,11 +39,13 @@ import {
 import { getUserFullName, dateString } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiTags } from "@nestjs/swagger";
+import Helper from "../../helpers/utilfunctions";
 
 @Controller("institution/location")
 @ApiTags("institution")
 export class InstitutionLocationsController extends BaseController {
   constructor(
+    private readonly designationAgreementLocationService: DesignationAgreementLocationService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
@@ -140,45 +146,14 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations.
-    const InstitutionLocationData =
-      await this.locationService.getAllInstitutionLocations(
+    const DesignationAgreementLocationData =
+      await this.designationAgreementLocationService.getAllDesignatedAgreementLocations(
         userToken.authorizations.institutionId,
       );
-    return InstitutionLocationData.map((el: InstitutionLocation) => {
-      return {
-        id: el.id,
-        name: el.name,
-        data: {
-          address: {
-            addressLine1: el.data.address?.addressLine1,
-            addressLine2: el.data.address?.addressLine2,
-            province: el.data.address?.province,
-            country: el.data.address?.country,
-            city: el.data.address?.city,
-            postalCode: el.data.address?.postalCode,
-          },
-        },
-        primaryContact: {
-          primaryContactFirstName: el.primaryContact.firstName,
-          primaryContactLastName: el.primaryContact.lastName,
-          primaryContactEmail: el.primaryContact.email,
-          primaryContactPhone: el.primaryContact.phoneNumber,
-        },
-        institution: {
-          institutionPrimaryContact: {
-            primaryContactEmail:
-              el.institution.institutionPrimaryContact.primaryContactEmail,
-            primaryContactFirstName:
-              el.institution.institutionPrimaryContact.primaryContactFirstName,
-            primaryContactLastName:
-              el.institution.institutionPrimaryContact.primaryContactLastName,
-            primaryContactPhone:
-              el.institution.institutionPrimaryContact.primaryContactPhone,
-          },
-        },
-        institutionCode: el.institutionCode,
-      } as InstitutionLocationsDetailsDto;
-    });
+
+    return Helper.mapDesignationAgreementLocationToInstitutionLocationDTO(
+      DesignationAgreementLocationData,
+    );
   }
 
   /**

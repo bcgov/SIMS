@@ -1,3 +1,93 @@
+import { InstitutionLocationsDetailsDto } from "../route-controllers/institution-locations/models/institution-location.dto";
+import { DesignationAgreementLocation } from "../database/entities";
+import { DesignationAgreementStatus } from "../database/entities";
+
 export default class Helper {
-  //Placeholder for Helper methods
+  /**
+   * helper function to map attributes from designation agreement location model to institution location dto.
+   * @param designationAgreementLocationData
+   * @returns designation agreement locations and their designation statuses.
+   */
+  static mapDesignationAgreementLocationToInstitutionLocationDTO(
+    designationAgreementLocationData: DesignationAgreementLocation[],
+  ) {
+    return designationAgreementLocationData.map(
+      (el: DesignationAgreementLocation) => {
+        return {
+          id: el.institutionLocation.id,
+          name: el.institutionLocation.name,
+          isDesignated: this.isLocationDesignated(
+            el.designationAgreement.designationStatus,
+            el.approved,
+            el.designationAgreement.startDate,
+            el.designationAgreement.endDate,
+          ),
+          data: {
+            address: {
+              addressLine1: el.institutionLocation.data.address?.addressLine1,
+              addressLine2: el.institutionLocation.data.address?.addressLine2,
+              province: el.institutionLocation.data.address?.province,
+              country: el.institutionLocation.data.address?.country,
+              city: el.institutionLocation.data.address?.city,
+              postalCode: el.institutionLocation.data.address?.postalCode,
+            },
+          },
+          primaryContact: {
+            primaryContactFirstName:
+              el.institutionLocation.primaryContact?.firstName,
+            primaryContactLastName:
+              el.institutionLocation.primaryContact?.lastName,
+            primaryContactEmail: el.institutionLocation.primaryContact?.email,
+            primaryContactPhone:
+              el.institutionLocation.primaryContact?.phoneNumber,
+          },
+          institution: {
+            institutionPrimaryContact: {
+              primaryContactEmail:
+                el.institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactEmail,
+              primaryContactFirstName:
+                el.institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactFirstName,
+              primaryContactLastName:
+                el.institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactLastName,
+              primaryContactPhone:
+                el.institutionLocation.institution.institutionPrimaryContact
+                  .primaryContactPhone,
+            },
+          },
+          institutionCode: el.institutionLocation.institutionCode,
+        } as InstitutionLocationsDetailsDto;
+      },
+    );
+  }
+  private static isLocationDesignated(
+    designationAgreementStatus: DesignationAgreementStatus,
+    isApproved: boolean,
+    startDate: Date,
+    endDate: Date,
+  ): boolean {
+    if (
+      designationAgreementStatus === DesignationAgreementStatus.Approved &&
+      isApproved &&
+      this.isDesignationAgreementLocationDateValid(startDate, endDate)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private static isDesignationAgreementLocationDateValid(
+    startDate: Date,
+    endDate: Date,
+  ): boolean {
+    const currentDate = new Date();
+    if (currentDate >= startDate && currentDate <= endDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

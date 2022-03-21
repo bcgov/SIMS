@@ -27,7 +27,7 @@ export interface InstitutionLocationTypeDto {
 /**
  * Interface which defines the contract of how institution location data is passed to Vue component
  */
-export interface InstitutionLocationsDetailsDto {
+export class InstitutionLocationsDetailsDto {
   id: number;
   name: string;
   data: {
@@ -45,6 +45,7 @@ export interface InstitutionLocationsDetailsDto {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
+  isDesignated: boolean;
 }
 
 export interface UserLocationDto {
