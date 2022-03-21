@@ -101,19 +101,6 @@ export class Application extends RecordDataModel {
   })
   programYear: ProgramYear;
 
-  // @RelationId((application: Application) => application.offering)
-  // offeringId?: number;
-
-  // @ManyToOne(() => EducationProgramOffering, {
-  //   eager: false,
-  //   cascade: true,
-  // })
-  // @JoinColumn({
-  //   name: "offering_id",
-  //   referencedColumnName: ColumnNames.ID,
-  // })
-  // offering?: EducationProgramOffering;
-
   @Column({
     name: "pir_status",
     type: "enum",
