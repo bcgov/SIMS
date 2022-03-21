@@ -1,10 +1,12 @@
 import { InstitutionLocationsDetailsDto } from "../route-controllers/institution-locations/models/institution-location.dto";
-import { DesignationAgreementLocation } from "../database/entities";
-import { DesignationAgreementStatus } from "../database/entities";
+import {
+  DesignationAgreementLocation,
+  DesignationAgreementStatus,
+} from "../database/entities";
 
 export default class Helper {
   /**
-   * helper function to map attributes from designation agreement location model to institution location dto.
+   * helper method to map attributes from designation agreement location model to institution location dto.
    * @param designationAgreementLocationData
    * @returns designation agreement locations and their designation statuses.
    */
@@ -62,6 +64,15 @@ export default class Helper {
       },
     );
   }
+
+  /**
+   * internal helper function to check if location is designated or not.
+   * @param  designationAgreementStatus
+   * @param  isApproved
+   * @param  startDate
+   * @param  endDate
+   * @returns true or false.
+   */
   private static isLocationDesignated(
     designationAgreementStatus: DesignationAgreementStatus,
     isApproved: boolean,
@@ -79,6 +90,12 @@ export default class Helper {
     }
   }
 
+  /**
+   * internal helper function to check if current date is between start date and end date.
+   * @param  startDate
+   * @param  endDate
+   * @returns true or false.
+   */
   private static isDesignationAgreementLocationDateValid(
     startDate: Date,
     endDate: Date,

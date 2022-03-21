@@ -67,7 +67,13 @@ import {
   InstitutionUser,
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiOkResponse,
+  ApiNotFoundResponse,
+} from "@nestjs/swagger";
 import Helper from "../../helpers/utilfunctions";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -488,6 +494,12 @@ export class InstitutionController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
+  @ApiOkResponse({
+    description: "Institution locations found.",
+  })
+  @ApiNotFoundResponse({
+    description: "Institution locations not found.",
+  })
   @Get("/:institutionId/location-summary")
   async getAllInstitutionLocationSummaryForAEST(
     @Param("institutionId") institutionId: number,

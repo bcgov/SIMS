@@ -38,7 +38,7 @@ import {
 } from "../application/models/application.model";
 import { getUserFullName, dateString } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import Helper from "../../helpers/utilfunctions";
 
 @Controller("institution/location")
@@ -141,6 +141,12 @@ export class InstitutionLocationsController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
+  @ApiOkResponse({
+    description: "Institution locations found.",
+  })
+  @ApiNotFoundResponse({
+    description: "Institution locations not found.",
+  })
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
