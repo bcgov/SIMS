@@ -8,7 +8,7 @@
     @submitted="submitted"
     @customEvent="customEvent"
   ></formio>
-  <v-row>
+  <v-row v-if="!!formInstance">
     <v-col md="6">
       <v-btn
         color="primary"
@@ -92,7 +92,7 @@ export default {
     };
 
     const formDependencies = async () => {
-      if (!props.isReadOnly && !!Object.keys(formInstance).length) {
+      if (!props.isReadOnly && !!formInstance) {
         await formioDataLoader.loadLocations(
           formInstance,
           LOCATIONS_DROPDOWN_KEY,
@@ -144,7 +144,6 @@ export default {
       // form is loaded
       context.emit("formLoadedCallback", form);
       formInstance = form;
-      console.log(formInstance, "+++++formInstance");
       // Disable internal submit button.
       formioUtils.disableWizardButtons(formInstance);
       formInstance.options.buttonSettings.showSubmit = false;
@@ -294,6 +293,7 @@ export default {
       isLastPage,
       submitted,
       customEvent,
+      formInstance,
     };
   },
 };
