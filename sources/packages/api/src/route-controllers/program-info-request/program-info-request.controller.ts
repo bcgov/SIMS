@@ -99,11 +99,6 @@ export class ProgramInfoRequestController extends BaseController {
         "Program Information Request (PIR) not found.",
       );
     }
-    if (!application.currentAssessment) {
-      throw new UnprocessableEntityException(
-        "Student application is missing related assessment.",
-      );
-    }
     // Original assessment to be used as a reference.
     // PIR process happens only during original assessment.
     if (
