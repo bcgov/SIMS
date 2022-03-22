@@ -58,6 +58,7 @@ export enum AppRoutes {
   Users = "users",
   Designation = "designation",
   Restrictions = "restrictions",
+  FileUploads = "files",
   Notes = "notes",
   Applications = "applications",
   ApplicationDetail = "student/:studentId/application/:applicationId",

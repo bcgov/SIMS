@@ -72,6 +72,7 @@ export const AESTRoutesConst = {
   STUDENT_PROFILE: Symbol(),
   STUDENT_APPLICATIONS: Symbol(),
   STUDENT_RESTRICTION: Symbol(),
+  STUDENT_FILE_UPLOADS: Symbol(),
   STUDENT_NOTES: Symbol(),
   PROGRAM_DETAILS: Symbol(),
   SEARCH_INSTITUTIONS: Symbol(),

@@ -72,6 +72,16 @@ export default {
         },
       },
       {
+        label: "File Uploads",
+        icon: "fa fa-file-text-o",
+        command: () => {
+          router.push({
+            name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
+            params: { studentId: props.studentId },
+          });
+        },
+      },
+      {
         label: "Notes",
         icon: "fa fa-sticky-note-o",
 
