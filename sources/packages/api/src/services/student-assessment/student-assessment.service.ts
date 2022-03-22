@@ -190,10 +190,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessment.offering = {
       id: offeringId,
     } as EducationProgramOffering;
-    // TODO: Kept for backward compatibility. It will be removed in an upcoming PR.
-    assessment.application.offering = {
-      id: offeringId,
-    } as EducationProgramOffering;
 
     return this.repo.save(assessment);
   }
