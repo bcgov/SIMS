@@ -1,5 +1,6 @@
 import { InstitutionPrimaryContact } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
+import { DesignationAgreementStatus } from "../../../database/entities";
 
 export class GetInstitutionLocationDto {
   id: number;
@@ -45,7 +46,7 @@ export class InstitutionLocationsDetailsDto {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
-  isDesignated: boolean;
+  designationStatus: DesignationAgreementStatus;
 }
 
 export interface UserLocationDto {

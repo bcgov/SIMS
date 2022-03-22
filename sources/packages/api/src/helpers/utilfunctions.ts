@@ -18,7 +18,7 @@ export default class Helper {
         return {
           id: el.institutionLocation.id,
           name: el.institutionLocation.name,
-          isDesignated: this.isLocationDesignated(
+          designationStatus: this.getDesignationStatus(
             el.designationAgreement.designationStatus,
             el.approved,
             el.designationAgreement.startDate,
@@ -71,22 +71,22 @@ export default class Helper {
    * @param  isApproved
    * @param  startDate
    * @param  endDate
-   * @returns true or false.
+   * @returns designation status.
    */
-  private static isLocationDesignated(
+  private static getDesignationStatus(
     designationAgreementStatus: DesignationAgreementStatus,
     isApproved: boolean,
     startDate: Date,
     endDate: Date,
-  ): boolean {
+  ): DesignationAgreementStatus {
     if (
       designationAgreementStatus === DesignationAgreementStatus.Approved &&
       isApproved &&
       this.isDesignationAgreementLocationDateValid(startDate, endDate)
     ) {
-      return true;
+      return DesignationAgreementStatus.Designated;
     } else {
-      return false;
+      return DesignationAgreementStatus.NotDesignated;
     }
   }
 
