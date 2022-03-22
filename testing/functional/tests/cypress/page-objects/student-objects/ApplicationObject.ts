@@ -1,4 +1,4 @@
-export default class Application {
+export default class ApplicationObject {
 
     clickOnDraftStatus() {
         cy.get('//tbody/tr/td[5]').each(($el, index, $list) => {

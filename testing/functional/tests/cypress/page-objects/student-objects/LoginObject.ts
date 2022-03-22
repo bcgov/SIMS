@@ -1,4 +1,4 @@
-export default class Login {
+export default class LoginObject {
     cardSerialNumberInputText() {
         return cy.get("#csn");
     }

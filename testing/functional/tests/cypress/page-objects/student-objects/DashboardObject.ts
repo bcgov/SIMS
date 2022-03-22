@@ -1,4 +1,4 @@
-export default class Dashboard {
+export default class DashboardObject {
 
     applicationButton() {
         return cy.xpath("//button[normalize-space()='Applications']").should('be.visible').click()
