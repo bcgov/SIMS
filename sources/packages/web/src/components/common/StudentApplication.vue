@@ -91,7 +91,7 @@ export default {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
     };
 
-    const formDependencies = async () => {
+    const loadFormDependencies = async () => {
       if (!props.isReadOnly && !!formInstance) {
         await formioDataLoader.loadLocations(
           formInstance,
@@ -173,7 +173,7 @@ export default {
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
-      formDependencies();
+      loadFormDependencies();
     };
 
     const getOfferingDetails = async (form: any, locationId: number) => {
@@ -281,7 +281,7 @@ export default {
     watch(
       () => props.initialData,
       () => {
-        formDependencies();
+        loadFormDependencies();
       },
     );
     return {
