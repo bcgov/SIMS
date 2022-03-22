@@ -219,7 +219,7 @@ export class ApplicationApi extends HttpBaseClient {
     applicationNumber: string,
   ): Promise<ApplicationPrimaryDTO> {
     return this.getCallTyped<ApplicationPrimaryDTO>(
-      this.addClientRoot(`application/${applicationNumber}/change`),
+      this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
   }
 }

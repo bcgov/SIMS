@@ -74,7 +74,7 @@ export default {
   setup() {
     const toast = useToastMessage();
     let requestFormData: any = undefined;
-    let applictionId: number;
+    let applicationId: number;
     const appealFormNames = ref([] as string[]);
     const appealForms: any = [];
     const showRequestForAppeal = computed(
@@ -90,7 +90,7 @@ export default {
         const application = await ApplicationService.shared.getApplicationForRequestChange(
           data.applicationNumber,
         );
-        applictionId = application.id;
+        applicationId = application.id;
         appealFormNames.value = data.formNames;
       } catch (error) {
         let errorMessage = "An error happened while requesting a change.";
@@ -118,7 +118,7 @@ export default {
       appealForms.forEach((form: any) => {
         form.submit();
         studentAppeals.push({
-          applicationId: applictionId,
+          applicationId: applicationId,
           formName: form.form.path,
           formData: form.data,
         });

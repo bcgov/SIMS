@@ -622,11 +622,12 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
-   * Get application to request a change.
+   * Get application to request appeal.
    * @param applicationNumber
    * @param userToken
+   * @returns application
    */
-  @Get(":applicationNumber/change")
+  @Get(":applicationNumber/appeal")
   async getApplicationToRequestChange(
     @Param("applicationNumber") applicationNumber: string,
     @UserToken() userToken: IUserToken,

@@ -15,7 +15,7 @@ export default {
   },
   setup(props: any, context: any) {
     const formLoaded = (form: any) => {
-      context.emit("appealFormLoaded", form);
+      context.emit("appealFormLoaded", form, "hello");
     };
     return { formLoaded };
   },
