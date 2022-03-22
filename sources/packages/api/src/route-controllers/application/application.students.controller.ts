@@ -65,6 +65,7 @@ import {
 import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
+  INVALID_APPLICATION_NUMBER,
 } from "../../constants";
 import {
   ApiBadRequestResponse,
@@ -637,7 +638,10 @@ export class ApplicationStudentsController extends BaseController {
       );
     if (!application) {
       throw new NotFoundException(
-        "Given application either does not exist or is not complete to request change.",
+        new ApiProcessError(
+          "Given application either does not exist or is not complete to request change.",
+          INVALID_APPLICATION_NUMBER,
+        ),
       );
     }
     return {

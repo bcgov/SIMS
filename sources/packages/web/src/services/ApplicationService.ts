@@ -11,6 +11,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
   StudentApplicationAndCount,
+  ApplicationPrimaryDTO,
 } from "@/types";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import ApiClient from "../services/http/ApiClient";
@@ -124,6 +125,14 @@ export class ApplicationService {
       pageCount,
       sortField,
       sortOrder,
+    );
+  }
+
+  public async getApplicationForRequestChange(
+    applicationNumber: string,
+  ): Promise<ApplicationPrimaryDTO> {
+    return ApiClient.Application.getApplicationForRequestChange(
+      applicationNumber,
     );
   }
 }
