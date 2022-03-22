@@ -1,33 +1,33 @@
-class Login {
-    cardSerialNumberInputTxt() {
+export default class Login {
+    cardSerialNumberInputText() {
         return cy.get("#csn");
     }
 
-    cardSerialNumberContinuebtn() {
+    cardSerialNumberContinueButton() {
         cy.get("#continue").click();
         cy.wait(2000);
     }
 
-    passcodeInputTxt() {
+    passcodeInputText() {
         return cy.get("#passcode");
     }
 
-    passcodeContinurBtn() {
+    passcodeContinueButton() {
         cy.get("#btnSubmit").click();
         cy.wait(2000);
     }
 
-    verifyLoggedInTxt() {
+    verifyLoggedInText() {
         cy.contains("Hello!");
         cy.wait(2000);
     }
 
-    cardNotFoundTxt() {
+    cardNotFoundText() {
         cy.contains("Card Not Found");
         cy.wait(2000);
     }
 
-    emptyCardNumberTxt() {
+    emptyCardNumberText() {
         cy.contains("Enter the card serial number");
         cy.wait(2000);
     }
@@ -42,7 +42,7 @@ class Login {
         cy.get("#passcode").should("be.visible").type("{enter}");
     }
 
-    passcodePageTxt() {
+    passcodePageText() {
         cy.contains("Enter Your Passcode");
         cy.wait(2000);
     }
@@ -55,11 +55,11 @@ class Login {
         cy.get("input#csn.form-control.text-uppercase").should("be.visible");
     }
 
-    incorrectPasscodeTxt() {
+    incorrectPasscodeText() {
         cy.contains("Please re-enter your passcode").should("be.visible");
     }
 
-    whiteSpacePasscodeTxt() {
+    whiteSpacePasscodeText() {
         cy.contains("Please try again later").should("be.visible");
     }
 
@@ -76,4 +76,3 @@ class Login {
         cy.get("#csn").focus();
     }
 }
-export default Login;

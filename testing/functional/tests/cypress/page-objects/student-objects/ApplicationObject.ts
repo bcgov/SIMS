@@ -1,5 +1,4 @@
-
-class Application {
+export default class Application {
 
     clickOnDraftStatus() {
         cy.get('//tbody/tr/td[5]').each(($el, index, $list) => {
@@ -10,61 +9,61 @@ class Application {
         })
     }
 
-    applicationBtn() {
+    applicationButton() {
         return cy.xpath("//button[normalize-space()='Applications']").should('be.visible').click()
     }
 
-    verifyApplicationTxt() {
+    verifyApplicationText() {
         return cy.contains('My Applications').should('be.visible')
     }
 
-    startNewApplicationBtn() {
+    startNewApplicationButton() {
         return cy.contains('Start New Application').should('be.visible').click()
     }
 
     //<StartRegion----------------------------Start New Application------------------------------>
-    verifyStartNewApplicationTxt() {
+    verifyStartNewApplicationText() {
         return cy.contains('Select an application to begin').should('be.visible')
     }
 
-    startApplicationStudyYearDisableBtn() {
+    startApplicationStudyYearDisableButton() {
         return cy.xpath("//button[@disabled='disabled']").should('be.visible')
     }
 
-    selectStudyYearDropdownValue() {
-        cy.fixture('newApplicationForm').then((testdata) => {
+    selectStudyYearDropdown() {
+        cy.fixture('newApplicationForm').then((testData) => {
             cy.get('.form-group').eq(1).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.selectStudyYear).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testData.selectStudyYear).type('{enter}')
         })
         cy.wait(2000)
     }
 
-    startApplicationStudyYearEnableBtn() {
+    startApplicationStudyYearEnableButton() {
         return cy.xpath("//button[@disabled='disabled']").should('not.exist')
     }
 
-    removedBtn() {
+    removedButton() {
         return cy.xpath("//button[normalize-space()='Remove item']").click()
     }
 
     //Alert message in "Already In Progress" 
-    applicationAlreadyInProgressTxt() {
+    applicationAlreadyInProgressText() {
         cy.contains('Application already in progress').should('be.visible')
         cy.get('.v-card-actions > .v-btn').click()
     }
 
     //Start Application 
-    startApplicationTuitionWaiverBtn() {
+    startApplicationTuitionWaiverButton() {
         return cy.xpath("//button[@name='data[startApplication1]']").click()
     }
-    startApplicationBCloanForgivenessProgramBtn() {
+    startApplicationBCloanForgivenessProgramButton() {
         return cy.xpath("//button[@name='data[startApplication2]']").click()
     }
-    startApplicationPacificLeaderLoanForgivenessBtn() {
+    startApplicationPacificLeaderLoanForgivenessButton() {
         return cy.xpath("//button[@name='data[startApplication4]']").click()
     }
-    startApplicationInterestFreeStatusBtn() {
+    startApplicationInterestFreeStatusButton() {
         return cy.xpath("//button[@name='data[startApplication3]']").click()
     }
 
@@ -78,12 +77,12 @@ class Application {
         cy.contains('Let’s get started on your application').should('be.visible')
     }
 
-    NextSectionBtn() {
+    NextSectionButton() {
         cy.wait(1000)
         cy.contains('Next section').click()
     }
 
-    PreviousSectionBtn() {
+    PreviousSectionButton() {
         cy.wait(1000)
         cy.contains('Previous section').click()
     }
@@ -94,11 +93,11 @@ class Application {
         cy.get('.form-control.ui.fluid.selection.dropdown.is-invalid').should('be.visible')
     }
 
-    WelcomeTxt() {
+    WelcomeText() {
         return cy.contains('Let’s get started on your application').should('be.visible')
     }
 
-    WelcomeBtn() {
+    WelcomeButton() {
         //Welcome Btn
         cy.get(':nth-child(1) > .page-link').click()
     }
@@ -107,71 +106,71 @@ class Application {
         cy.xpath("//input[@type='checkbox']").check()
     }
 
-    checkboxAlertMsg() {
+    checkboxAlertMessage() {
         cy.contains("Your institution may not be designated by StudentAid BC").should('be.visible')
         cy.wait(1000)
     }
 
-    uncheckAlertMsg() {
+    uncheckAlertMessage() {
         cy.contains("My school isn't listed").click()
         cy.wait(1000)
     }
 
-    checkboxAlertMsgNotExist() {
+    checkboxAlertMessageNotExist() {
         cy.contains("Your institution may not be designated by StudentAid BC").should('not.exist')
         cy.wait(1000)
     }
 
-    schoolIWillBeAttendingDropdownValue() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    schoolIWillBeAttendingDropdown() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.form-group').eq(1).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.schoolIWillBeAttending).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testData.schoolIWillBeAttending).type('{enter}')
         })
         cy.wait(2000)
     }
 
-    schoolIWillBeAttendingDropdownValue2() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    schoolIWillBeAttendingDropdown2() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.form-group').eq(1).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.schoolIWillBeAttending2).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testData.schoolIWillBeAttending2).type('{enter}')
         })
         cy.wait(2000)
     }
 
-    howWillYouAttendProgramDropdownValue() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    howWillYouAttendProgramDropdown() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.form-group').eq(4).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").eq(1).click({ force: true }).type(testdata.howWillYouAttendProgram).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").eq(1).click({ force: true }).type(testData.howWillYouAttendProgram).type('{enter}')
         })
         cy.wait(2000)
     }
 
-    howWillYouAttendProgramDropdownValue2() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    howWillYouAttendProgramDropdown2() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.form-group').eq(4).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").eq(1).click({ force: true }).type(testdata.howWillYouAttendProgram2).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").eq(1).click({ force: true }).type(testData.howWillYouAttendProgram2).type('{enter}')
         })
         cy.wait(2000)
     }
 
-    programIWIllBeAttendingDropdownValue() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    programIWillBeAttendingDropdown() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.form-group').eq(6).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").eq(2).click({ force: true }).type(testdata.programIWIllBeAttendingDropdownValue).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").eq(2).click({ force: true }).type(testData.programIWillBeAttendingDropdown).type('{enter}')
         })
         cy.wait(2000)
     }
 
-    programIWIllBeAttendingDropdownValue2() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    programIWillBeAttendingDropdown2() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.form-group').eq(6).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").eq(2).click({ force: true }).type(testdata.programIWIllBeAttendingDropdownValue2).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").eq(2).click({ force: true }).type(testData.programIWillBeAttendingDropdown2).type('{enter}')
         })
         cy.wait(2000)
     }
@@ -181,29 +180,29 @@ class Application {
     }
 
     studyStartDate() {
-        cy.fixture('draftApplicationData').then((testdata) => {
-            cy.get('#eqnahab > [ref="element"] > .input-group > .input').type(testdata.studyStartDate)
+        cy.fixture('draftApplicationData').then((testData) => {
+            cy.get('#eqnahab > [ref="element"] > .input-group > .input').type(testData.studyStartDate)
         })
         cy.wait(2000)
     }
 
     studyEndDate() {
-        cy.fixture('draftApplicationData').then((testdata) => {
-            cy.get('#eyw0exi > [ref="element"] > .input-group > .input').type(testdata.studyEndDate)
+        cy.fixture('draftApplicationData').then((testData) => {
+            cy.get('#eyw0exi > [ref="element"] > .input-group > .input').type(testData.studyEndDate)
         })
         cy.wait(2000)
     }
 
     inputStudentNumber() {
-        cy.fixture('draftApplicationData').then((testdata) => {
-            cy.get('#ek8w4hn-studentNumber').type(testdata.studentNumber)
+        cy.fixture('draftApplicationData').then((testData) => {
+            cy.get('#ek8w4hn-studentNumber').type(testData.studentNumber)
         })
         cy.wait(2000)
     }
 
     inputStudentNumber2() {
-        cy.fixture('draftApplicationData').then((testdata) => {
-            cy.get('#ek8w4hn-studentNumber').type(testdata.studentNumber2)
+        cy.fixture('draftApplicationData').then((testData) => {
+            cy.get('#ek8w4hn-studentNumber').type(testData.studentNumber2)
         })
         cy.wait(2000)
     }
@@ -213,25 +212,23 @@ class Application {
         cy.contains("Student number must have no more than 12 characters.").should('be.visible')
     }
 
-    programOfferingDropdownValue() {
-        cy.fixture('draftApplicationData').then((testdata) => {
+    programOfferingDropdown() {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.xpath("//div[@id='eb4inb']//div[@class='form-control ui fluid selection dropdown']").click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").eq(3).click({ force: true }).type(testdata.programOffering).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").eq(3).click({ force: true }).type(testData.programOffering).type('{enter}')
         })
         cy.wait(2000)
     }
     //<EndRegion--------------------------Draft Status------------------------------------->
 
-    ProgramPageTxt() {
+    ProgramPageText() {
         //Dropdown selection
-        cy.fixture('draftApplicationData').then((testdata) => {
+        cy.fixture('draftApplicationData').then((testData) => {
             cy.get('.fa').eq(0).click({ force: true })
             cy.wait(1000)
-            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testdata.searchForYourSchool).type('{enter}')
+            cy.get(".choices__input.choices__input--cloned").click({ force: true }).type(testData.searchForYourSchool).type('{enter}')
         })
     }
 
 }
-
-export default Application

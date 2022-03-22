@@ -1,4 +1,4 @@
-class WelcomeObject {
+export default class WelcomeObject {
 
     checkCurrentUrl() {
         cy.url().should('include', 'https://test-aest-sims.apps.silver.devops.gov.bc.ca/student')
@@ -10,41 +10,41 @@ class WelcomeObject {
         cy.wait(2000)
     }
 
-    loginWithBCSCBtn() {
+    loginWithBCSCButton() {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible")
         cy.wait(2000)
     }
 
-    signUpWithBCSCBtn() {
+    signUpWithBCSCButton() {
         cy.xpath("//button[normalize-space()='Sign Up with BCSC']").should("be.visible")
         cy.wait(2000)
     }
 
-    verifyLoginBtn() {
+    verifyLoginButton() {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible").click()
         cy.contains('Log in to: SIMS - Test')
         cy.wait(2000)
     }
 
-    verifySignUpBtn() {
+    verifySignUpButton() {
         cy.xpath("//button[normalize-space()='Sign Up with BCSC']").should("be.visible").click()
         cy.contains('Log in to: SIMS - Test')
         cy.wait(2000)
     }
 
-    verifySetUpBtn() {
+    verifySetUpButton() {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible").click()
         cy.get('#cardtap-get-setup-btn').should('be.visible').click()
         cy.wait(2000)
     }
 
-    cancelLoginBtn() {
+    cancelLoginButton() {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible").click()
         cy.get('#cancelLoginLnk').should('be.visible').click()
         cy.wait(2000)
     }
 
-    bcServicesCardAppBtn() {
+    bcServicesCardAppButton() {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible").click()
         cy.contains('BC Services Card app').should('be.visible')
         cy.get('#tile_remote_mobile_card_device_div_id').click()
@@ -52,7 +52,7 @@ class WelcomeObject {
         cy.wait(2000)
     }
 
-    virtualTestingBtn() {
+    virtualTestingButton() {
         cy.xpath("//button[normalize-space()='Login with BCSC']").should("be.visible").click()
         cy.contains('Virtual testing').should('be.visible')
         cy.wait(2000)
@@ -61,4 +61,3 @@ class WelcomeObject {
     }
 
 }
-export default WelcomeObject

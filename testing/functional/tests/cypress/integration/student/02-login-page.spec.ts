@@ -3,8 +3,8 @@ import LoginObject from "../../page-objects/student-objects/LoginObject"
 
 describe("Login Page", () => {
 
-    const Welcome = new WelcomeObject()
-    const Login = new LoginObject()
+    const welcomeObject = new WelcomeObject()
+    const loginObject = new LoginObject()
 
     const username = Cypress.env('cardSerialNumber')
     const password = Cypress.env('passcode')
@@ -19,101 +19,101 @@ describe("Login Page", () => {
     })
 
     it("Verify that user able to login with a valid username and valid password.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.cardSerialNumberContinuebtn()
-        Login.passcodeInputTxt().type(password).should('have.value', password)
-        Login.passcodeContinurBtn()
-        Login.verifyLoggedInTxt()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.cardSerialNumberContinueButton()
+        loginObject.passcodeInputText().type(password).should('have.value', password)
+        loginObject.passcodeContinueButton()
+        loginObject.verifyLoggedInText()
 
     })
 
     it("Verify that user is not able to redirect to next page with invalid Card Serial Number in Virtual Card Testing.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(invalidUsername)
-        Login.cardSerialNumberContinuebtn()
-        Login.cardNotFoundTxt()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(invalidUsername)
+        loginObject.cardSerialNumberContinueButton()
+        loginObject.cardNotFoundText()
     })
 
     it("Test with empty Card Serial Number such that it must get failed.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt()
-        Login.cardSerialNumberContinuebtn()
-        Login.emptyCardNumberTxt()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText()
+        loginObject.cardSerialNumberContinueButton()
+        loginObject.emptyCardNumberText()
     })
 
     it("Verify that user can redirect to next page by pressing Enter key after typing in valid Card Serial Number.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.enterKeyFromCardSerialNumber()
-        Login.passcodePageTxt()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.enterKeyFromCardSerialNumber()
+        loginObject.passcodePageText()
     })
 
     it("Verify that Card Serial Number with case sensitivity.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(caseUsername)
-        Login.caseSenstivityCardSerialNumber()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(caseUsername)
+        loginObject.caseSenstivityCardSerialNumber()
     })
 
     it("Verify that Card Serial Number must be within 15 digits allowed", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(fifteenUsername)
-        Login.maxCharacterCardSerialNumber()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(fifteenUsername)
+        loginObject.maxCharacterCardSerialNumber()
     })
 
     it.skip("Verify that user is not able to redirect to next page with valid Card Serial Number & invalid passcode.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.cardSerialNumberContinuebtn()
-        Login.passcodeInputTxt().type(invalidPassword).should('have.value', invalidPassword)
-        Login.passcodeContinurBtn()
-        Login.incorrectPasscodeTxt()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.cardSerialNumberContinueButton()
+        loginObject.passcodeInputText().type(invalidPassword).should('have.value', invalidPassword)
+        loginObject.passcodeContinueButton()
+        loginObject.incorrectPasscodeText()
     })
 
     it.skip("Test with empty passcode after entering valid card serial number such that it must get failed.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.cardSerialNumberContinuebtn()
-        Login.passcodeInputTxt().type('  ')
-        Login.passcodeContinurBtn()
-        Login.whiteSpacePasscodeTxt()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.cardSerialNumberContinueButton()
+        loginObject.passcodeInputText().type('  ')
+        loginObject.passcodeContinueButton()
+        loginObject.whiteSpacePasscodeText()
     })
 
-    it("Check a user is able to login by pressing Enter after entered valid Card Serial Number & valid passcode.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.enterKeyFromCardSerialNumber()
-        Login.passcodeInputTxt().type(password).should('have.value', password)
-        Login.enterKeyFromPasscode()
-        Login.verifyLoggedInTxt()
+    it("Check a user is able to loginObject by pressing Enter after entered valid Card Serial Number & valid passcode.", () => {
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.enterKeyFromCardSerialNumber()
+        loginObject.passcodeInputText().type(password).should('have.value', password)
+        loginObject.enterKeyFromPasscode()
+        loginObject.verifyLoggedInText()
     })
 
     it("Verify that password is masked or visible in the form of asterisks.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.enterKeyFromCardSerialNumber()
-        Login.passcodeInputTxt().type(password).should('have.value', password)
-        Login.verifyMaskablePassword()
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.enterKeyFromCardSerialNumber()
+        loginObject.passcodeInputText().type(password).should('have.value', password)
+        loginObject.verifyMaskablePassword()
     })
 
-    it("Verify that user remains on same page after login & then reload page.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.enterKeyFromCardSerialNumber()
-        Login.passcodeInputTxt().type(password).should('have.value', password)
-        Login.enterKeyFromPasscode()
+    it("Verify that user remains on same page after loginObject & then reload page.", () => {
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.enterKeyFromCardSerialNumber()
+        loginObject.passcodeInputText().type(password).should('have.value', password)
+        loginObject.enterKeyFromPasscode()
         cy.reload()
-        Login.verifyLoggedInTxt()
+        loginObject.verifyLoggedInText()
     })
 
-    it("Verify that user remains on same page before login & then reload page.", () => {
-        Welcome.virtualTestingBtn()
-        Login.cardSerialNumberInputTxt().type(username).should('have.value', username)
-        Login.enterKeyFromCardSerialNumber()
+    it("Verify that user remains on same page before loginObject & then reload page.", () => {
+        welcomeObject.virtualTestingButton()
+        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
+        loginObject.enterKeyFromCardSerialNumber()
         cy.reload()
-        Login.passcodeInputTxt().type(password).should('have.value', password)
-        Login.enterKeyFromPasscode()
-        Login.verifyLoggedInTxt()
+        loginObject.passcodeInputText().type(password).should('have.value', password)
+        loginObject.enterKeyFromPasscode()
+        loginObject.verifyLoggedInText()
     })
 
 

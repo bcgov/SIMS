@@ -16,7 +16,7 @@
  * @type {Cypress.PluginConfig}
  */
 module.exports = (on, config) => {
-    require('cypress-mochawesome-reporter/plugin')(on);
+    require(`cypress-mochawesome-reporter/plugin`)(on);
     // `on` is used to hook into various events Cypress emits
     // `config` is the resolved Cypress config
   };

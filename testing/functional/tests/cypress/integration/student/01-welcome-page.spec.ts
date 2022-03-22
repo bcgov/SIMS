@@ -2,46 +2,46 @@ import WelcomeObject from "../../page-objects/student-objects/WelcomeObject"
 
 describe("Welcome Page", () => {
 
-    const welcome = new WelcomeObject()
+    const welcomeObject = new WelcomeObject()
     beforeEach(function () {
         cy.visit("/")
     })
 
     it("Validate student URL", () => {
-        welcome.checkCurrentUrl()
+        welcomeObject.checkCurrentUrl()
     })
 
-    it("Validate welcome page", () => {
-        welcome.getWelcomeText()
+    it("Validate welcomeObject page", () => {
+        welcomeObject.getWelcomeText()
     })
 
     it("Validate Login with BCSC & Sign Up with BCSC buttons are visible", () => {
-        welcome.loginWithBCSCBtn()
-        welcome.signUpWithBCSCBtn()
+        welcomeObject.loginWithBCSCButton()
+        welcomeObject.signUpWithBCSCButton()
     })
 
     it("Verify that clicking on Login with BCSC button redirects to appropriate page or not", () => {
-        welcome.verifyLoginBtn()
+        welcomeObject.verifyLoginButton()
     })
 
     it("Verify that clicking on Sign Up with BCSC button redirects to appropriate page or not", () => {
-        welcome.verifySignUpBtn()
+        welcomeObject.verifySignUpButton()
     })
 
     it("Verify that Setup BC Service card button redirects to appropriate page or not", () => {
-        welcome.verifySetUpBtn()
+        welcomeObject.verifySetUpButton()
     })
 
     it("Verify that cancel login link redirects to appropriate page or not", () => {
-        welcome.cancelLoginBtn()
+        welcomeObject.cancelLoginButton()
     })
 
     it("Verify that BC Service card button redirects to appropriate page or not", () => {
-        welcome.bcServicesCardAppBtn()
+        welcomeObject.bcServicesCardAppButton()
     })
 
     it("Verify that virtual testing button redirects to appropriate page or not", () => {
-        welcome.virtualTestingBtn()
+        welcomeObject.virtualTestingButton()
     })
 
 })

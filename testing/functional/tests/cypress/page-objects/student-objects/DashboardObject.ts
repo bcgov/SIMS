@@ -1,30 +1,30 @@
-class Dashboard {
+export default class Dashboard {
 
-    applicationBtn() {
+    applicationButton() {
         return cy.xpath("//button[normalize-space()='Applications']").should('be.visible').click()
     }
 
-    notificationBtn() {
+    notificationButton() {
         return cy.xpath("//button[normalize-space()='Notifications']").should('be.visible').click()
     }
 
-    fileUploaderBtn() {
+    fileUploaderButton() {
         return cy.xpath("//button[normalize-space()='File Uploader']").should('be.visible').click()
     }
 
-    profileBtn() {
+    profileButton() {
         return cy.xpath("//button[normalize-space()='Profile']").should('be.visible').click()
     }
 
-    personIconBtn() {
+    personIconButton() {
         return cy.xpath("//button[contains(@class,'v-btn--size-default mr-5')]").should('be.visible').click()
     }
 
-    startApplicationBtn() {
+    startapplicationButton() {
         return cy.xpath("//button[normalize-space()='Start application']").should('be.visible').click()
     }
 
-    manageLoanBtn() {
+    manageLoanButon() {
         return cy.xpath("//button[@name='data[manageLoan]']").should('be.visible').click()
     }
 
@@ -64,7 +64,7 @@ class Dashboard {
         cy.contains('Welcome to StudentAid BC').should('be.visible')
     }
 
-    verifyBackBtn() {
+    verifyBackButton() {
         cy.go('back')
         cy.contains('Enter Your Passcode').should('not.exist')
     }
@@ -78,4 +78,3 @@ class Dashboard {
         })
     }
 }
-export default Dashboard
