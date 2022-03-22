@@ -47,7 +47,11 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_INTENSITY_MISMATCH,
 } from "../../constants";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -76,6 +80,13 @@ export class ProgramInfoRequestController extends BaseController {
    * @param applicationId
    * @returns program info request
    */
+  @ApiNotFoundResponse({
+    description:
+      "The application was not found under the provided location or the application is not expecting a Program Information Request (PIR) at this moment.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Student application is missing original assessment.",
+  })
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request/application/:applicationId")
   async getProgramInfoRequest(
@@ -106,7 +117,7 @@ export class ProgramInfoRequestController extends BaseController {
       AssessmentTriggerType.OriginalAssessment
     ) {
       throw new UnprocessableEntityException(
-        `Student application is missing original assessment ${AssessmentTriggerType.OriginalAssessment}.`,
+        "Student application is missing original assessment.",
       );
     }
     // Offering that belongs to the original assessment.
