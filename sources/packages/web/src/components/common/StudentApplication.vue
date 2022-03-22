@@ -1,5 +1,6 @@
 <template>
   <formio
+    v-if="Object.keys(initialData).length > 0"
     :formName="selectedForm"
     :data="initialData"
     :readOnly="isReadOnly"
