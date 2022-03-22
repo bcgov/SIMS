@@ -1,6 +1,5 @@
 <template>
   <formio
-    v-if="Object.keys(initialData).length > 0"
     :formName="selectedForm"
     :data="initialData"
     :readOnly="isReadOnly"
@@ -34,7 +33,7 @@ import {
   WizardNavigationEvent,
   FormIOCustomEvent,
 } from "@/types";
-import { ref, SetupContext } from "vue";
+import { ref, SetupContext, watch } from "vue";
 import {
   useFormioComponentLoader,
   useFormioDropdownLoader,
@@ -80,7 +79,7 @@ export default {
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
 
-    let applicationWizard: any;
+    let formInstance: any;
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const formioComponentLoader = useFormioComponentLoader();
@@ -92,75 +91,43 @@ export default {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
     };
 
-    const formLoaded = async (form: any) => {
-      // Emit formLoadedCallback event to the parent, so that parent can
-      // perform the parent specific logic inside parent on
-      // form is loaded
-      context.emit("formLoadedCallback", form);
-      applicationWizard = form;
-      // Disable internal submit button.
-      formioUtils.disableWizardButtons(applicationWizard);
-      applicationWizard.options.buttonSettings.showSubmit = false;
-      // Handle the navigation using the breadcrumbs.
-      applicationWizard.on("wizardPageSelected", (page: any, index: number) => {
-        isFirstPage.value = index === 0;
-        isLastPage.value = applicationWizard.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent
-        context.emit(
-          "pageChanged",
-          isFirstPage.value,
-          applicationWizard.page,
-          isLastPage.value,
+    const formDependencies = async () => {
+      if (!props.isReadOnly && !!Object.keys(formInstance).length) {
+        await formioDataLoader.loadLocations(
+          formInstance,
+          LOCATIONS_DROPDOWN_KEY,
         );
-      });
-      // Handle the navigation using next/prev buttons.
-      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
-        isFirstPage.value = navigation.page === 0;
-        isLastPage.value = applicationWizard.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent
-        context.emit(
-          "pageChanged",
-          isFirstPage.value,
-          applicationWizard.page,
-          isLastPage.value,
-        );
-      };
-      applicationWizard.on("prevPage", prevNextNavigation);
-      applicationWizard.on("nextPage", prevNextNavigation);
-      if (!props.isReadOnly) {
-        await formioDataLoader.loadLocations(form, LOCATIONS_DROPDOWN_KEY);
-        const selectedLocationId = getSelectedId(form);
+        const selectedLocationId = getSelectedId(formInstance);
 
         if (selectedLocationId) {
           // when isReadOnly.value is true, then consider
           // both active and inactive program year.
           await formioDataLoader.loadProgramsForLocation(
-            form,
+            formInstance,
             +selectedLocationId,
             PROGRAMS_DROPDOWN_KEY,
             props.programYearId,
             props.isReadOnly,
           );
         }
-
         const selectedProgramId = formioUtils.getComponentValueByKey(
-          form,
+          formInstance,
           PROGRAMS_DROPDOWN_KEY,
         );
         const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-          form,
+          formInstance,
           OFFERING_INTENSITY_KEY,
         );
         if (selectedProgramId && selectedIntensity) {
           await formioComponentLoader.loadProgramDesc(
-            form,
+            formInstance,
             selectedProgramId,
             SELECTED_PROGRAM_DESC_KEY,
           );
           // when isReadOnly.value is true, then consider
           // both active and inactive program year.
           await formioDataLoader.loadOfferingsForLocation(
-            form,
+            formInstance,
             selectedProgramId,
             selectedLocationId,
             OFFERINGS_DROPDOWN_KEY,
@@ -170,6 +137,44 @@ export default {
           );
         }
       }
+    };
+    const formLoaded = async (form: any) => {
+      // Emit formLoadedCallback event to the parent, so that parent can
+      // perform the parent specific logic inside parent on
+      // form is loaded
+      context.emit("formLoadedCallback", form);
+      formInstance = form;
+      console.log(formInstance, "+++++formInstance");
+      // Disable internal submit button.
+      formioUtils.disableWizardButtons(formInstance);
+      formInstance.options.buttonSettings.showSubmit = false;
+      // Handle the navigation using the breadcrumbs.
+      formInstance.on("wizardPageSelected", (page: any, index: number) => {
+        isFirstPage.value = index === 0;
+        isLastPage.value = formInstance.isLastPage();
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          formInstance.page,
+          isLastPage.value,
+        );
+      });
+      // Handle the navigation using next/prev buttons.
+      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
+        isFirstPage.value = navigation.page === 0;
+        isLastPage.value = formInstance.isLastPage();
+        // Event to set isInFirstPage, current page and isInLastPage to parent
+        context.emit(
+          "pageChanged",
+          isFirstPage.value,
+          formInstance.page,
+          isLastPage.value,
+        );
+      };
+      formInstance.on("prevPage", prevNextNavigation);
+      formInstance.on("nextPage", prevNextNavigation);
+      formDependencies();
     };
 
     const getOfferingDetails = async (form: any, locationId: number) => {
@@ -259,11 +264,11 @@ export default {
     };
 
     const wizardGoPrevious = () => {
-      applicationWizard.prevPage();
+      formInstance.prevPage();
     };
 
     const wizardGoNext = () => {
-      applicationWizard.nextPage();
+      formInstance.nextPage();
     };
 
     const submitted = (args: any, form: any) => {
@@ -273,6 +278,13 @@ export default {
     const customEvent = (form: any, event: FormIOCustomEvent) => {
       context.emit("customEventCallback", form, event);
     };
+
+    watch(
+      () => props.initialData,
+      () => {
+        formDependencies();
+      },
+    );
     return {
       wizardGoNext,
       wizardGoPrevious,
