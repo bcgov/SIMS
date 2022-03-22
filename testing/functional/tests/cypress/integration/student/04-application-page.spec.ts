@@ -130,10 +130,6 @@ describe("Application Page", () => {
         applicationObject.NextSectionButton()
         applicationObject.schoolIWillBeAttendingDropdown()
         applicationObject.howWillYouAttendProgramDropdown()
-        //applicationObject.programIWillBeAttendingDropdown()
-        //applicationObject.myStudyPeriodIsNotListedCheckbox()
-        //applicationObject.studyStartDate()
-        //applicationObject.studyEndDate()
         applicationObject.inputStudentNumber()
     })
 
@@ -149,10 +145,8 @@ describe("Application Page", () => {
         applicationObject.draftApplication()
         applicationObject.NextSectionButton()
         applicationObject.schoolIWillBeAttendingDropdown2()
-
         applicationObject.howWillYouAttendProgramDropdown2()
         applicationObject.programIWillBeAttendingDropdown2()
-        //Application.programOfferingDropdown()
         applicationObject.inputStudentNumber2()
     })
 
