@@ -481,8 +481,13 @@ export class InstitutionController extends BaseController {
       await this.institutionService.getBasicInstitutionDetailById(
         institutionId,
       );
+    const designationAgreementStatus =
+      await this.designationAgreementLocationService.getDesignationAgreementLocationStatus(
+        institutionId,
+      );
     return {
       operatingName: institutionDetail.operatingName,
+      designationAgreementStatus: designationAgreementStatus,
     };
   }
 

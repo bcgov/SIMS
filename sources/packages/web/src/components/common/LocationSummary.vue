@@ -28,9 +28,8 @@
         <span>
           <font-awesome-icon :icon="['fas', 'map-pin']" />
           <span class="category-header-medium mx-2">{{ item.name }}</span>
-          <designation-and-restriction-status-badge
-            class="mb-4 ml-4"
-            status="designated"
+          <status-chip-designation-agreement-location
+            :status="item.designationStatus"
           />
         </span>
       </v-col>
@@ -88,16 +87,16 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
-import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
 import { AuthService } from "@/services/AuthService";
+import StatusChipDesignationAgreementLocation from "@/components/generic/StatusChipDesignationAgreementLocation.vue";
 
 export default {
   components: {
     ContentGroup,
-    DesignationAndRestrictionStatusBadge,
     TitleValue,
+    StatusChipDesignationAgreementLocation,
   },
   props: {
     institutionId: {

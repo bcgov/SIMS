@@ -5,9 +5,8 @@
     </div>
     <span class="heading-x-large mb-2">
       {{ institutionBasicDetail.operatingName }}
-      <designation-and-restriction-status-badge
-        class="mb-4 ml-4"
-        status="designated"
+      <status-chip-designation-agreement-location
+        :status="institutionBasicDetail.designationAgreementStatus"
       />
     </span>
   </div>
@@ -17,14 +16,15 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import DesignationAndRestrictionStatusBadge from "@/components/generic/DesignationAndRestrictionStatusBadge.vue";
+import StatusChipDesignationAgreementLocation from "@/components/generic/StatusChipDesignationAgreementLocation.vue";
 import { BasicInstitutionInfo } from "@/types";
+import { useStore } from "vuex";
 export default {
-  components: { DesignationAndRestrictionStatusBadge },
+  components: { StatusChipDesignationAgreementLocation },
   props: {
     institutionId: {
       type: Number,
@@ -32,7 +32,13 @@ export default {
     },
   },
   setup(props: any) {
+    const store = useStore();
     const router = useRouter();
+
+    const institutionLocations = computed(
+      () => store.state.institution.institutionLocationsState,
+    );
+
     const institutionBasicDetail = ref({} as BasicInstitutionInfo);
     // TODO: replace all fa isons with fas as per figma with replace with vuetify3
     const items = ref([
@@ -118,6 +124,7 @@ export default {
       institutionBasicDetail,
       AESTRoutesConst,
       items,
+      institutionLocations,
     };
   },
 };
