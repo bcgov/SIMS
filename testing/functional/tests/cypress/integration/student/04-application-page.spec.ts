@@ -125,7 +125,7 @@ describe("Application Page", () => {
     applicationObject.NextSectionButton().click();
     applicationObject.NextSectionButton().click();
     applicationObject.errorMsgTxtForSchoolAttending().should("be.visible");
-    applicationObject.selectStudyYearDropdown;
+    applicationObject.selectStudyYearDropdown();
   });
 
   it("Verify that user must be redirect to previous form by clicking on button in application form.", () => {
