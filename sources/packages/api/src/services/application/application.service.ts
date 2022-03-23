@@ -11,7 +11,6 @@ import {
   ApplicationStatus,
   Student,
   StudentFile,
-  COEStatus,
   ProgramYear,
   InstitutionLocation,
   EducationProgram,
@@ -157,7 +156,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         associatedFiles,
       );
       application.modifier = auditUser;
-      application.studentAssessment = [originalAssessment];
+      application.studentAssessments = [originalAssessment];
+      application.currentAssessment = originalAssessment;
 
       await this.repo.save(application);
       return { application, createdAssessment: originalAssessment };
@@ -194,7 +194,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       associatedFiles,
     );
     application.creator = auditUser;
-    application.studentAssessment = [originalAssessment];
+    application.studentAssessments = [originalAssessment];
+    application.currentAssessment = originalAssessment;
     await this.repo.save([application, newApplication]);
     //* Deleting the existing workflow
     await this.workflow.deleteApplicationAssessment(
@@ -365,22 +366,35 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
-        "programYear",
+        "application.pirStatus",
+        "application.data",
+        "application.pirDeniedOtherDesc",
+        "currentAssessment.id",
+        "currentAssessment.triggerType",
         "location.name",
-        "student",
+        "student.id",
         "user.firstName",
         "user.lastName",
-        "pirProgram.name",
         "pirProgram.id",
-        "offering.id",
-        "application.pirStatus",
-        "offering",
+        "pirProgram.name",
         "educationProgram.id",
-        "application.data",
-        "programYear.id",
-        "application.pirDeniedOtherDesc",
+        "offering.id",
+        "offering.name",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+        "offering.tuitionRemittanceRequestedAmount",
+        "offering.offeringDelivered",
+        "offering.lacksStudyBreaks",
+        "offering.tuitionRemittanceRequested",
+        "offering.offeringType",
+        "offering.offeringIntensity",
         "PIRDeniedReason.reason",
         "PIRDeniedReason.id",
+        "programYear.id",
         "programYear.active",
         "programYear.startDate",
         "programYear.endDate",
@@ -389,7 +403,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
       .innerJoin("application.location", "location")
-      .leftJoin("application.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
@@ -415,26 +430,30 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
-        "application.data",
         "application.id",
+        "application.data",
         "application.applicationStatus",
         "application.pirStatus",
         "application.assessmentStatus",
         "application.applicationStatusUpdatedOn",
         "application.applicationNumber",
+        "application.pirDeniedOtherDesc",
+        "currentAssessment.id",
+        "offering.id",
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
+        "location.id",
         "location.name",
-        "programYear.formName",
-        "programYear.id",
         "pirDeniedReasonId.id",
         "pirDeniedReasonId.reason",
-        "application.pirDeniedOtherDesc",
+        "programYear.id",
+        "programYear.formName",
         "programYear.startDate",
         "programYear.endDate",
       ])
-      .leftJoin("application.offering", "offering")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
       .leftJoin("institution.institutionType", "institutionType")
@@ -477,7 +496,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "student",
       ])
       .innerJoin("application.programYear", "programYear")
-      .leftJoin("application.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .leftJoin("application.location", "location")
       .leftJoin("location.institution", "institution")
@@ -512,12 +532,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.applicationNumber",
         "application.id",
+        "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",
       ])
-      .leftJoin("application.offering", "offering")
-      .where("application.student_id = :studentId", { studentId })
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .where("application.student.id = :studentId", { studentId })
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.overwritten,
       });
@@ -608,12 +630,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Set the offering for Program Info Request (PIR).
-   * Once the offering is set it will be a workflow responsibility
-   * to set the PIR status to completed.
    * Updates only applications that have the PIR status as required.
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
-   * @param offering offering to be set in the student application.
+   * @param offering offering to be set in the assessment.
    * @returns updated application.
    */
   async setOfferingForProgramInfoRequest(
@@ -621,12 +641,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
     locationId: number,
     offering: EducationProgramOffering,
   ): Promise<Application> {
-    const application = await this.repo.findOne({
-      id: applicationId,
-      location: { id: locationId },
-      pirStatus: ProgramInfoStatus.required,
-      applicationStatus: Not(ApplicationStatus.overwritten),
-    });
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .select(["application.id", "currentAssessment.id"])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus != :applicationStatus", {
+        applicationStatus: ApplicationStatus.overwritten,
+      })
+      .andWhere("application.pirStatus = :pirStatus", {
+        pirStatus: ProgramInfoStatus.required,
+      })
+      .getOne();
+
     if (!application) {
       throw new CustomNamedError(
         "Not able to find an application that requires a PIR to be completed.",
@@ -634,7 +662,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
 
-    application.offering = offering;
+    application.currentAssessment.offering = offering;
     application.pirStatus = ProgramInfoStatus.completed;
     return this.repo.save(application);
   }
@@ -646,17 +674,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns Student Active Application list.
    */
   async getActiveApplications(locationId: number): Promise<Application[]> {
+    // TODO: there are two similar methods to get one and many records for the same list/details getActiveApplication and getActiveApplications. Can we use only one?
     return this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
         "application.id",
+        "currentAssessment.id",
         "application.applicationStatus",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "student",
       ])
-      .leftJoin("application.offering", "offering")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
@@ -669,7 +700,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * get applications of an institution location
+   * Get applications of an institution location
    * with PIR status required and completed.
    * @param locationId location id .
    * @returns student Application list.
@@ -681,11 +712,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationNumber",
         "application.id",
         "application.pirStatus",
+        "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "student",
       ])
-      .leftJoin("application.offering", "offering")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoinAndSelect("student.user", "user")
       .where("application.location.id = :locationId", { locationId })
@@ -777,7 +810,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     auditUserId: number,
   ): Promise<ApplicationOverriddenResult> {
-    //only override application when pir status is not "not required"
+    // Only override application when pir status is not "not required".
     const appToOverride = await this.repo.findOne(
       {
         id: applicationId,
@@ -818,11 +851,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: appToOverride.pirProgramId,
       } as EducationProgram;
     }
-    if (appToOverride.offeringId) {
-      newApplication.offering = {
-        id: appToOverride.offeringId,
-      } as EducationProgramOffering;
-    }
+    // TODO: SIMS#28 Do we need to clone the assessment?
     newApplication.programYear = {
       id: appToOverride.programYearId,
     } as ProgramYear;
@@ -845,7 +874,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
-    newApplication.studentAssessment = [originalAssessment];
+    newApplication.studentAssessments = [originalAssessment];
+    newApplication.currentAssessment = originalAssessment;
 
     await this.repo.save([appToOverride, newApplication]);
 
@@ -958,13 +988,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
       const previousSignedApplication =
         await this.getPreviouslySignedApplication(application.studentId);
 
-      // checks if the MSFAA number is still valid.
-      const hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
-        // Previously signed and completed application offering end date in considered the start date.
-        previousSignedApplication?.offering.studyEndDate,
-        // Start date of the offering of the current application is considered the end date.
-        application.offering.studyStartDate,
-      );
+      let hasValidMSFAANumber = false;
+      if (previousSignedApplication) {
+        const [originalAssessment] =
+          previousSignedApplication.studentAssessments;
+        // checks if the MSFAA number is still valid.
+        hasValidMSFAANumber = this.msfaaNumberService.isMSFAANumberValid(
+          // Previously signed and completed application offering end date in considered the start date.
+          originalAssessment.offering.studyEndDate,
+          // Start date of the offering of the current application is considered the end date.
+          originalAssessment.offering.studyStartDate,
+        );
+      }
 
       if (hasValidMSFAANumber) {
         // Reuse the MSFAA number.
@@ -994,14 +1029,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getPreviouslySignedApplication(
     studentId: number,
   ): Promise<Application> {
+    // TODO: Need to check for offering intensity? It seems to be a gap.
     return this.repo
       .createQueryBuilder("applications")
       .select(["applications.id", "msfaaNumbers.id", "offerings.studyEndDate"])
-      .innerJoin("applications.offering", "offerings")
+      .innerJoin("applications.studentAssessments", "assessment")
+      .innerJoin("assessment.offering", "offerings")
       .innerJoin("applications.msfaaNumber", "msfaaNumbers")
       .innerJoin("applications.student", "students")
       .where("applications.applicationStatus = :completedStatus", {
         completedStatus: ApplicationStatus.completed,
+      })
+      .andWhere("assessment.triggerType = :triggerType", {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
       })
       .andWhere("students.id = :studentId", { studentId })
       .andWhere("msfaaNumbers.dateSigned is not null")
@@ -1021,11 +1061,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     locationId: number,
   ): Promise<Application> {
+    // TODO: there are two similar methods to get one and many records for the same list/details getActiveApplication and getActiveApplications. Can we use only one?
     return this.repo
       .createQueryBuilder("application")
       .select([
         "application.applicationStatus",
         "application.applicationNumber",
+        "currentAssessment.id",
         "offering.offeringIntensity",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1037,18 +1079,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.firstName",
         "user.lastName",
       ])
-      .innerJoin("application.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
-      .innerJoin("application.location", "location")
+      .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("location.id = :locationId", { locationId })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.completed,
-      })
-      .andWhere("application.coeStatus = :coeStatus", {
-        coeStatus: COEStatus.completed,
       })
       .getOne();
   }
@@ -1099,10 +1139,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Validates to make sure that a student cannot create more than one application with overlapping study period dates.
    * When an application is pending for PIR approval then study period dates are subjective. In this case another application
    * is not allowed to be created because on PIR approval the study period dates may overlap with an existing application.
-   * @param userId
-   * @param studyStartDate
-   * @param studyEndDate
-   * @param currentApplicationId
+   * @param userId user to be verified.
+   * @param studyStartDate offering start date.
+   * @param studyEndDate offering start date.
+   * @param currentApplicationId current application that should be skipped during this verification.
    * @returns Overlapping or PIR pending Application.
    */
   async validatePIRAndDateOverlap(
@@ -1114,9 +1154,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo
       .createQueryBuilder("application")
       .select(["application.id"])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .leftJoin("application.offering", "offering")
       .where("user.id = :userId", { userId })
       .andWhere("application.id != :currentApplicationId", {
         currentApplicationId,

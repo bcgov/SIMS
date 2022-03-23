@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import {
   EducationProgram,
-  EducationProgramOffering,
   InstitutionLocation,
   MSFAANumber,
   OfferingIntensity,
@@ -101,19 +100,6 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   programYear: ProgramYear;
-
-  @RelationId((application: Application) => application.offering)
-  offeringId?: number;
-
-  @ManyToOne(() => EducationProgramOffering, {
-    eager: false,
-    cascade: true,
-  })
-  @JoinColumn({
-    name: "offering_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  offering?: EducationProgramOffering;
 
   @Column({
     name: "pir_status",
@@ -247,7 +233,23 @@ export class Application extends RecordDataModel {
       nullable: true,
     },
   )
-  studentAssessment?: StudentAssessment[];
+  studentAssessments?: StudentAssessment[];
+  /**
+   * Represents the assessment that holds the current information
+   * for this application. The application could have many assessments
+   * but only one should be considered as the 'current/active' at
+   * one point in time.
+   */
+  @ManyToOne(() => StudentAssessment, {
+    eager: false,
+    cascade: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "current_assessment_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  currentAssessment?: StudentAssessment;
 }
 
 /**

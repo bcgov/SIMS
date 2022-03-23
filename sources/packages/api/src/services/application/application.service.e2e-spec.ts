@@ -26,7 +26,6 @@ import {
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import {
-  createFakeEducationProgramOffering,
   createFakeMSFAANumber,
   createFakeStudent,
 } from "../../testHelpers/fake-entities";
@@ -36,9 +35,7 @@ import * as dayjs from "dayjs";
 const createFakeApplicationInAssessment = (student: Student): Application => {
   const fakeApplication = createFakeApplication();
   fakeApplication.student = student;
-  fakeApplication.offering = createFakeEducationProgramOffering();
   fakeApplication.relationshipStatus = RelationshipStatus.Single;
-  fakeApplication.offering.studyStartDate = new Date();
   fakeApplication.applicationStatus = ApplicationStatus.assessment;
   return fakeApplication;
 };
@@ -164,10 +161,8 @@ describe.skip("ApplicationService", () => {
       // Create a completed and signed fake application.
       const fakeCompletedApplication = createFakeApplication();
       fakeCompletedApplication.student = testStudent;
-      fakeCompletedApplication.offering = createFakeEducationProgramOffering();
       // Make the application be considered outside the valid period.
-      fakeCompletedApplication.offering.studyEndDate =
-        createDateInMSFAAValidPeriod(1);
+      // TODO: Create Date MSFAA In MSFAA Valid Period with increment 1.
       fakeCompletedApplication.msfaaNumber = testMSFAANumber;
       fakeCompletedApplication.applicationStatus = ApplicationStatus.completed;
       const testCompletedApplication = await applicationRepository.save(
@@ -209,10 +204,8 @@ describe.skip("ApplicationService", () => {
       // offering end date still inside the MSFAA valid period.
       const fakeCompletedApplication = createFakeApplication();
       fakeCompletedApplication.student = testStudent;
-      fakeCompletedApplication.offering = createFakeEducationProgramOffering();
       // Make the application be considered still in the valid MSFAA period.
-      fakeCompletedApplication.offering.studyEndDate =
-        createDateInMSFAAValidPeriod(-1);
+      // TODO: Create Date MSFAA In MSFAA Valid Period with increment -1.
       fakeCompletedApplication.msfaaNumber = testMSFAANumber;
       fakeCompletedApplication.applicationStatus = ApplicationStatus.completed;
       const testCompletedApplication = await applicationRepository.save(
@@ -252,7 +245,6 @@ describe.skip("ApplicationService", () => {
       expectedEndDate.setHours(0, 0, 0, 0);
       // Create fake application that must be returned.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
-      fakeApplication.offering.studyEndDate = expectedEndDate;
       fakeApplication.msfaaNumber = testMSFAANumber;
       fakeApplication.applicationStatus = ApplicationStatus.completed;
       const testApplication = await applicationRepository.save(fakeApplication);
@@ -260,10 +252,6 @@ describe.skip("ApplicationService", () => {
       // While querying the database the testApplication must be retrieve instead of this one.
       const olderFakeApplication = createFakeApplication();
       olderFakeApplication.student = testStudent;
-      olderFakeApplication.offering = createFakeEducationProgramOffering();
-      olderFakeApplication.offering.studyEndDate = dayjs(expectedEndDate)
-        .subtract(1, "days")
-        .toDate();
       olderFakeApplication.msfaaNumber = testMSFAANumber;
       olderFakeApplication.applicationStatus = ApplicationStatus.completed;
       // Save older fake application.
@@ -278,9 +266,6 @@ describe.skip("ApplicationService", () => {
         expect(previouslySignedApplication.id).toBe(testApplication.id);
         expect(previouslySignedApplication.msfaaNumber.id).toBe(
           testMSFAANumber.id,
-        );
-        expect(previouslySignedApplication.offering.studyEndDate).toStrictEqual(
-          expectedEndDate,
         );
       } finally {
         await applicationRepository.remove(testApplication);
