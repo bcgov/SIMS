@@ -14,6 +14,34 @@
           <template #empty>
             <p class="text-center font-weight-bold">No records found.</p>
           </template>
+          <Column
+            field="groupName"
+            header="Document Purpose"
+            sortable="true"
+          ></Column>
+          <Column field="metadata" header="Application #">
+            <template #body="slotProps">{{
+              `${slotProps.data.metadata?.applicationNumber}`
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="Date Submitted"
+            ><template #body="slotProps">{{
+              dateOnlyLongString(slotProps.data.updatedAt)
+            }}</template></Column
+          >
+          <Column field="updatedAt" header="File">
+            <template #body="slotProps">
+              <div
+                class="file-label"
+                @click="downloadDocument(slotProps.data.studentDocument)"
+              >
+                <span class="mr-4">
+                  <font-awesome-icon :icon="['far', 'file-alt']"
+                /></span>
+                <span>{{ slotProps.data.fileName }}</span>
+              </div>
+            </template></Column
+          >
         </DataTable>
       </content-group>
     </div>
@@ -25,6 +53,8 @@ import { onMounted, ref } from "vue";
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
+import { useFormatters } from "@/composables";
+import { StudentUploadFileDto } from "@/types";
 
 export default {
   components: {
@@ -37,16 +67,35 @@ export default {
     },
   },
   setup(props: any) {
-    const studentFileUploads = ref();
+    const studentFileUploads = ref([] as StudentUploadFileDto[]);
+    const { dateOnlyLongString } = useFormatters();
     const loadStudentFileUploads = async () => {
       studentFileUploads.value = await StudentService.shared.getStudentFiles(
         props.studentId,
       );
     };
+    const downloadDocument = async (studentDocument: StudentUploadFileDto) => {
+      const fileURL = await StudentService.shared.downloadStudentFile(
+        studentDocument.uniqueFileName,
+      );
+      const fileLink = document.createElement("a");
+      fileLink.href = fileURL;
+      fileLink.setAttribute("download", studentDocument.fileName);
+      document.body.appendChild(fileLink);
+      fileLink.click();
+      // After download, remove the element
+      fileLink.remove();
+    };
     onMounted(async () => {
       await loadStudentFileUploads();
     });
-    return { studentFileUploads, DEFAULT_PAGE_LIMIT, PAGINATION_LIST };
+    return {
+      studentFileUploads,
+      downloadDocument,
+      DEFAULT_PAGE_LIMIT,
+      PAGINATION_LIST,
+      dateOnlyLongString,
+    };
   },
 };
 </script>

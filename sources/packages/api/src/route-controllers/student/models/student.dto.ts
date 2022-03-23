@@ -102,4 +102,11 @@ export interface StudentFileUploaderDto {
 export interface StudentUploadFileDto {
   fileName: string;
   uniqueFileName: string;
+  metadata: StudentFileMetadataDTO;
+  groupName: string;
+  updatedAt: Date;
+}
+
+export interface StudentFileMetadataDTO {
+  applicationNumber?: string;
 }
