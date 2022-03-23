@@ -80,7 +80,9 @@ export class DesignationAgreementLocationService extends RecordDataModelService<
       .getMany();
   }
 
-  async getDesignationAgreementLocationStatus(institutionId: number) {
+  async getDesignationAgreementLocationStatus(
+    institutionId: number,
+  ): Promise<DesignationAgreementStatus> {
     const designationAgreementLocations =
       Helper.mapDesignationAgreementLocationToInstitutionLocationDTO(
         await this.getAllDesignatedAgreementLocations(institutionId),
