@@ -139,14 +139,14 @@ export class InstitutionLocationsController extends BaseController {
    * @param userToken
    * @returns All the institution locations for the given institution.
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
-  @IsInstitutionAdmin()
   @ApiOkResponse({
     description: "Institution locations found.",
   })
   @ApiNotFoundResponse({
     description: "Institution locations not found.",
   })
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,

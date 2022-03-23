@@ -471,6 +471,10 @@ export class InstitutionController extends BaseController {
    * @param institutionId
    * @returns BasicInstitutionInfo
    */
+  @ApiOkResponse({ description: "Institution found." })
+  @ApiNotFoundResponse({
+    description: "Institution not found.",
+  })
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
   @Get("/:institutionId/basic-details")
