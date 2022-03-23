@@ -201,6 +201,14 @@ export default class ApplicationObject {
     return cy.get("#eoslne6-offeringnotListed");
   }
 
+  programName(){
+    return cy.get("#ek2u9li-programName");
+  }
+
+  programDescription(){
+    return cy.get("e1w8o5a-programDescription")
+  }
+
   studyStartDate() {
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get('#eqnahab > [ref="element"] > .input-group > .input').type(

@@ -210,17 +210,6 @@ describe("Login Page", () => {
       .should("be.visible")
       .type("{enter}");
     cy.reload();
-    welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait(2000);
-    loginObject
-      .cardSerialNumberInputText()
-      .type(username)
-      .should("have.value", username);
-    cy.wait(2000);
-    loginObject
-      .enterKeyFromCardSerialNumber()
-      .should("be.visible")
-      .type("{enter}");
     loginObject
       .passcodeInputText()
       .type(password)

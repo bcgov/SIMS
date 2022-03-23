@@ -175,6 +175,7 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.NextSectionButton().click();
+    cy.wait(2000);
     applicationObject.incorrectStudentNumber().type("SDPLETW3543543FSFSD");
     applicationObject.incorrectStudentNumberText().should("be.visible");
   });
@@ -188,5 +189,23 @@ describe("Application Page", () => {
     applicationObject.howWillYouAttendProgramDropdown2();
     applicationObject.programIWillBeAttendingDropdown2();
     applicationObject.inputStudentNumber2();
+  });
+
+  it.skip("Verify that user redirect to Personal Information page from Program page in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    applicationObject.schoolIWillBeAttendingDropdown2();
+    applicationObject.howWillYouAttendProgramDropdown2();
+    applicationObject.myStudyPeriodIsNotListedCheckbox();
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.programName().type(testData.programNameData);
+      applicationObject.programDescription().type(testData.programDescriptionData);
+    });
+    applicationObject.studyStartDate();
+    applicationObject.studyEndDate();
+    applicationObject.inputStudentNumber2();
+    applicationObject.NextSectionButton().click();
   });
 });
