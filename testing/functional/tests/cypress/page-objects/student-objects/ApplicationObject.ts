@@ -76,7 +76,6 @@ export default class ApplicationObject {
   //<StartRegion--------------------------Draft Status------------------------------------->
 
   draftApplication() {
-    //return cy.xpath("(//button[@type='button'])[8]")
     return cy.get(":nth-child(1) > .svg-inline--fa > path");
   }
 
@@ -122,7 +121,7 @@ export default class ApplicationObject {
     return cy.contains("My school isn't listed");
   }
 
-  checkboxAlertMessageNotExist() {
+  checkboxNotExist() {
     return cy.contains(
       "Your institution may not be designated by StudentAid BC"
     );
