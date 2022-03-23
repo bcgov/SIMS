@@ -53,18 +53,14 @@ export class ApplicationControllerService {
     // If selected location is not designated, then make the
     // selectedLocation null
     if (data.selectedLocation) {
-      const designatedLocation =
-        await this.locationService.getDesignatedLocationById(
-          data.selectedLocation,
-        );
-      const selectedLocation = await this.locationService.getLocationById(
+      const designatedLocation = await this.locationService.getLocation(
         data.selectedLocation,
       );
-      if (!designatedLocation) {
+      if (!designatedLocation.isDesignated) {
         data.selectedLocation = null;
       }
       // Assign location name for readonly form
-      additionalFormData.selectedLocationName = selectedLocation?.name;
+      additionalFormData.selectedLocationName = designatedLocation.locationName;
     }
     // Check wether the program is approved or not.
     // If selected program is not approved, then make the
@@ -141,19 +137,17 @@ export class ApplicationControllerService {
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
   ): Promise<GetApplicationDataDto> {
+    const offering = applicationDetail.currentAssessment?.offering;
     return {
       data: applicationDetail.data,
       id: applicationDetail.id,
       applicationStatus: applicationDetail.applicationStatus,
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,
-      applicationOfferingIntensity:
-        applicationDetail.offering?.offeringIntensity,
-      applicationStartDate: dateString(
-        applicationDetail.offering?.studyStartDate,
-      ),
-      applicationEndDate: dateString(applicationDetail.offering?.studyEndDate),
-      applicationInstitutionName: applicationDetail.location?.name,
+      applicationOfferingIntensity: offering?.offeringIntensity,
+      applicationStartDate: dateString(offering?.studyStartDate),
+      applicationEndDate: dateString(offering?.studyEndDate),
+      applicationInstitutionName: applicationDetail?.location?.name,
       applicationPIRStatus: applicationDetail.pirStatus,
       applicationAssessmentStatus: applicationDetail.assessmentStatus,
       applicationFormName: applicationDetail.programYear.formName,

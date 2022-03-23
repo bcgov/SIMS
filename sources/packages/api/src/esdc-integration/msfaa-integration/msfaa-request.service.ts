@@ -127,8 +127,8 @@ export class MSFAARequestService {
       msfaaNumber: pendingMSFAARecords.msfaaNumber,
       sin: pendingMSFAARecords.student.sin,
       institutionCode:
-        pendingMSFAARecords.referenceApplication.offering.institutionLocation
-          .institutionCode,
+        pendingMSFAARecords.referenceApplication.currentAssessment.offering
+          .institutionLocation.institutionCode,
       birthDate: pendingMSFAARecords.student.birthDate,
       surname: pendingMSFAARecords.student.user.lastName,
       givenName: pendingMSFAARecords.student.user.firstName,

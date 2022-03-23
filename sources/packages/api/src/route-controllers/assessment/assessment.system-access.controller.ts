@@ -258,8 +258,6 @@ export class AssessmentSystemAccessController extends BaseController {
     @Param("assessmentId") assessmentId: number,
     @Body() payload: CreateDisbursementsDTO,
   ): Promise<number[]> {
-    console.log(payload.schedules);
-
     try {
       const disbursements =
         await this.disbursementScheduleService.createDisbursementSchedules(

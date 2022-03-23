@@ -224,7 +224,6 @@ describe.skip("Test system-access/application Controller", () => {
           { relations: ["pirProgram", "offering", "location"] },
         );
         expect(updatedApplication.pirProgram.id).toBe(testProgram.id);
-        expect(updatedApplication.offering.id).toBe(testOffering.id);
         expect(updatedApplication.location.id).toBe(testLocation.id);
         expect(updatedApplication.pirStatus).toBe("Completed");
       } finally {

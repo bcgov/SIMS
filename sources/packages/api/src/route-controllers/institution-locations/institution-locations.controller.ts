@@ -32,7 +32,11 @@ import {
   ActiveApplicationSummaryDTO,
   ActiveApplicationDataDto,
 } from "../application/models/application.model";
-import { getUserFullName, dateString } from "../../utilities";
+import {
+  getUserFullName,
+  dateString,
+  getISODateOnlyString,
+} from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -196,15 +200,12 @@ export class InstitutionLocationsController extends BaseController {
       locationId,
     );
     return applications.map((eachApplication: Application) => {
+      const offering = eachApplication.currentAssessment?.offering;
       return {
         applicationNumber: eachApplication.applicationNumber,
         applicationId: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate
-          ? eachApplication.offering?.studyStartDate
-          : "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate
-          ? eachApplication.offering?.studyEndDate
-          : "",
+        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
         applicationStatus: eachApplication.applicationStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };
@@ -290,20 +291,18 @@ export class InstitutionLocationsController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
+    const offering = application.currentAssessment.offering;
     return {
       applicationStatus: application.applicationStatus,
       applicationNumber: application.applicationNumber,
-      applicationOfferingIntensity: application.offering.offeringIntensity,
-      applicationOfferingStartDate: dateString(
-        application.offering.studyStartDate,
-      ),
-      applicationOfferingEndDate: dateString(application.offering.studyEndDate),
-      applicationLocationName: application.location.name,
+      applicationOfferingIntensity: offering.offeringIntensity,
+      applicationOfferingStartDate: dateString(offering.studyStartDate),
+      applicationOfferingEndDate: dateString(offering.studyEndDate),
+      applicationLocationName: offering.institutionLocation.name,
       applicationStudentName: getUserFullName(application.student.user),
-      applicationOfferingName: application.offering.name,
-      applicationProgramDescription:
-        application.offering.educationProgram.description,
-      applicationProgramName: application.offering.educationProgram.name,
+      applicationOfferingName: offering.name,
+      applicationProgramDescription: offering.educationProgram.description,
+      applicationProgramName: offering.educationProgram.name,
     };
   }
 }
