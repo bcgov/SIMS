@@ -157,7 +157,7 @@ describe("Application Page", () => {
     cy.wait(2000);
     applicationObject.mySchoolIsNotListedCheckbox().check();
     applicationObject.uncheckAlertMessage().click();
-    applicationObject.checkboxNotExist().should("not.exist");
+    applicationObject.checkboxAlertMessage().should("not.exist");
   });
 
   it("Verify that user able to edit all details in Program page in application form.", () => {
@@ -189,7 +189,4 @@ describe("Application Page", () => {
     applicationObject.programIWillBeAttendingDropdown2();
     applicationObject.inputStudentNumber2();
   });
-
-  
-
 });

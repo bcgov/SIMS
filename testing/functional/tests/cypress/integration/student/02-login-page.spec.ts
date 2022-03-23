@@ -19,10 +19,8 @@ describe("Login Page", () => {
   it("Verify that user able to login with a valid username and valid password.", () => {
     welcomeObject.virtualTestingButton().should("be.visible").click();
     welcomeObject.virtualTestingButtonText().should("be.visible");
-    cy.server()
-    cy.route("GET",'/cardtap').as("cardTap")
     welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait("@cardTap");
+    cy.wait(2000);
     loginObject
       .cardSerialNumberInputText()
       .type(username)

@@ -121,12 +121,6 @@ export default class ApplicationObject {
     return cy.contains("My school isn't listed");
   }
 
-  checkboxNotExist() {
-    return cy.contains(
-      "Your institution may not be designated by StudentAid BC"
-    );
-  }
-
   schoolIWillBeAttendingDropdown() {
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
