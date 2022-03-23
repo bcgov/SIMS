@@ -15,7 +15,12 @@ import { StudentAppealDTO } from "./models/student-appeal.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
@@ -38,8 +43,16 @@ export class StudentAppealStudentsController extends BaseController {
    * @param payload student appeal with appeal requests.
    * @param userToken
    */
+  @ApiCreatedResponse({ description: "Student appeal created successfully" })
+  @ApiNotFoundResponse({
+    description:
+      "Application either not found or not eligible to request for change.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "There is an existing appeal for this student.",
+  })
   @Post("application/:applicationId")
-  async updateDesignationAgreement(
+  async submitStudentAppeal(
     @Param("applicationId") applicationId: number,
     @Body() payload: StudentAppealDTO,
     @UserToken() userToken: IUserToken,
