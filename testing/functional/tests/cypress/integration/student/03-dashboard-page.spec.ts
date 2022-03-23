@@ -54,7 +54,7 @@ describe("Dashboard Page", () => {
     dashboardObject.welcomeToStudentBC().should("be.visible").click();
   });
 
-  it.only("Verify that clicking on back button doesn't logout the user once is user is logged in", () => {
+  it("Verify that clicking on back button doesn't logout the user once is user is logged in", () => {
     cy.wait(2000);
     cy.visit("/");
     cy.reload();
