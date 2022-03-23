@@ -1,153 +1,192 @@
-import WelcomeObject from "../../page-objects/student-objects/WelcomeObject"
-import LoginObject from "../../page-objects/student-objects/LoginObject"
-import ApplicationObject from "../../page-objects/student-objects/ApplicationObject"
+import WelcomeObject from "../../page-objects/student-objects/WelcomeObject";
+import LoginObject from "../../page-objects/student-objects/LoginObject";
+import ApplicationObject from "../../page-objects/student-objects/ApplicationObject";
 
 describe("Application Page", () => {
+  const welcomeObject = new WelcomeObject();
+  const loginObject = new LoginObject();
+  const applicationObject = new ApplicationObject();
 
-    const welcomeObject = new WelcomeObject()
-    const loginObject = new LoginObject()
-    const applicationObject = new ApplicationObject()
+  const username = Cypress.env("cardSerialNumber");
+  const password = Cypress.env("passcode");
 
-    const username = Cypress.env('cardSerialNumber')
-    const password = Cypress.env('passcode')
+  before("Login", () => {
+    cy.visit("/");
+    welcomeObject.virtualTestingButton().should("be.visible").click();
+    welcomeObject.virtualTestingButtonText().should("be.visible");
+    welcomeObject.virtualDeviceId().click({ force: true });
+    cy.wait(2000);
+    loginObject
+      .cardSerialNumberInputText()
+      .type(username)
+      .should("have.value", username);
+    cy.wait(2000);
+    loginObject.cardSerialNumberContinueButton().click();
+    loginObject
+      .passcodeInputText()
+      .type(password)
+      .should("have.value", password);
+    loginObject.passcodeContinueButton().click();
+    loginObject.verifyLoggedInText();
+  });
 
-    before("Login", () => {
-        cy.visit("/")
-        cy.wait(2000)
-        welcomeObject.virtualTestingButton()
-        loginObject.cardSerialNumberInputText().type(username).should('have.value', username)
-        loginObject.cardSerialNumberContinueButton()
-        loginObject.passcodeInputText().type(password).should('have.value', password)
-        loginObject.passcodeContinueButton()
-        loginObject.verifyLoggedInText()
-    })
+  it("Verify that user able to redirect to Application Page", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.verifyApplicationText().should("be.visible");
+  });
 
-    it("Verify that user able to redirect to Application Page", () => {
-        applicationObject.applicationButton()
-        applicationObject.verifyApplicationText()
-    })
+  it("Verify that Start New Application button must be present on the page & clickable", () => {
+    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject.verifyStartNewApplicationText().should("be.visible");
+    cy.go("back");
+  });
 
-    it("Verify that Start New Application button must be present on the page & clickable", () => {
-        applicationObject.startNewApplicationButton()
-        applicationObject.verifyStartNewApplicationText()
-        cy.go('back')
-    })
+  it("Verify that Start Application button must be disable if study year not selected in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject
+      .startApplicationStudyYearDisableButton()
+      .should("be.visible");
+  });
 
-    it("Verify that Start Application button must be disable if study year not selected in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.startNewApplicationButton()
-        applicationObject.startApplicationStudyYearDisableButton()
-    })
+  it("Verify that Start Application button must be enable if study year selected in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject
+      .startApplicationStudyYearDisableButton()
+      .should("be.visible");
+    applicationObject.selectStudyYearDropdown();
+    applicationObject
+      .startApplicationStudyYearEnableButton()
+      .should("not.exist");
+  });
 
-    it("Verify that Start Application button must be enable if study year selected in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.startNewApplicationButton()
-        applicationObject.startApplicationStudyYearDisableButton()
-        applicationObject.selectStudyYearDropdown()
-        applicationObject.startApplicationStudyYearEnableButton()
-    })
+  it("Verify that Start Application button must be disable if selected study year is removed in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject.selectStudyYearDropdown();
+    applicationObject
+      .startApplicationStudyYearEnableButton()
+      .should("not.exist");
+    applicationObject.removedButton().click();
+    applicationObject
+      .startApplicationStudyYearDisableButton()
+      .should("be.visible");
+  });
 
-    it("Verify that Start Application button must be disable if selected study year is removed in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.startNewApplicationButton()
-        applicationObject.selectStudyYearDropdown()
-        applicationObject.startApplicationStudyYearEnableButton()
-        applicationObject.removedButton()
-        applicationObject.startApplicationStudyYearDisableButton()
-    })
+  it("Verify that Start Application button must be clickable in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject
+      .startApplicationStudyYearDisableButton()
+      .should("be.visible");
+    applicationObject.selectStudyYearDropdown();
+    applicationObject
+      .startApplicationStudyYearEnableButton()
+      .should("not.exist");
 
-    it("Verify that Start Application button must be clickable in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.startNewApplicationButton()
-        applicationObject.startApplicationStudyYearDisableButton()
-        applicationObject.selectStudyYearDropdown()
-        applicationObject.startApplicationStudyYearEnableButton()
+    //Info:- On click -> Alert in progress popup open
+    applicationObject.startApplicationTuitionWaiverButton().click();
+    applicationObject.applicationAlreadyInProgressText().should("be.visible");
+    applicationObject.applicationAlreadyInProgressTextCard().click();
 
-        //Info:- On click -> Alert in progress popup open
-        applicationObject.startApplicationTuitionWaiverButton()
-        applicationObject.applicationAlreadyInProgressText()
+    applicationObject.startApplicationBCloanForgivenessProgramButton();
+    applicationObject.applicationAlreadyInProgressText().should("be.visible");
+    applicationObject.applicationAlreadyInProgressTextCard().click();
 
-        applicationObject.startApplicationBCloanForgivenessProgramButton()
-        applicationObject.applicationAlreadyInProgressText()
+    applicationObject.startApplicationPacificLeaderLoanForgivenessButton();
+    applicationObject.applicationAlreadyInProgressText().should("be.visible");
+    applicationObject.applicationAlreadyInProgressTextCard().click();
 
-        applicationObject.startApplicationPacificLeaderLoanForgivenessButton()
-        applicationObject.applicationAlreadyInProgressText()
+    applicationObject.startApplicationInterestFreeStatusButton();
+    applicationObject.applicationAlreadyInProgressText().should("be.visible");
+    applicationObject.applicationAlreadyInProgressTextCard().click();
+  });
 
-        applicationObject.startApplicationInterestFreeStatusButton()
-        applicationObject.applicationAlreadyInProgressText()
+  it("By clicking on edit button it redirects to Welcome Page in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+  });
 
-    })
+  it("By clicking on Next Section button from Welcome Page it redirects to Program Page in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton();
+  });
 
-    it("By clicking on edit button it redirects to Welcome Page in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-    })
+  it("Check without selecting any mandatory fields in Program section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    cy.wait(2000);
+    applicationObject.draftApplication().click({ force: true });
+    cy.wait(2000);
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    applicationObject.NextSectionButton().click();
+    applicationObject.errorMsgTxtForSchoolAttending().should("be.visible");
+    applicationObject.selectStudyYearDropdown;
+  });
 
-    it("By clicking on Next Section button from Welcome Page it redirects to Program Page in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-    })
+  it("Verify that user must be redirect to previous form by clicking on button in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    applicationObject.NextSectionButton().click();
+    cy.wait(2000);
+    cy.go("back");
+    applicationObject.verifyApplicationText().should("be.visible");
+  });
 
-    it("Check without selecting any mandatory fields in Program section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.NextSectionButton()
-        applicationObject.errorMsgTxtForSchoolAttending()
-    })
+  it("Verify that user able to check the checkbox in Program section in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    cy.wait(2000);
+    applicationObject.mySchoolIsNotListedCheckbox().check();
+    applicationObject.checkboxAlertMessage().should("be.visible");
+  });
 
-    it("Verify that user must be redirect to previous form by selecting Previous section button in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.WelcomeButton()
-        applicationObject.NextSectionButton()
-        applicationObject.PreviousSectionButton()
-        applicationObject.WelcomeText()
-    })
+  it("Verify that user able to uncheck the checkbox in Program section in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    cy.wait(2000);
+    applicationObject.mySchoolIsNotListedCheckbox().check();
+    applicationObject.uncheckAlertMessage().click();
+    applicationObject.checkboxAlertMessageNotExist().should("not.exist");
+  });
 
-    it("Verify that user able to check the checkbox in Program section in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.mySchoolIsNotListedCheckbox()
-        applicationObject.checkboxAlertMessage()
-    })
+  it("Verify that user able to edit all details in Program page in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    applicationObject.schoolIWillBeAttendingDropdown();
+    applicationObject.howWillYouAttendProgramDropdown();
+    applicationObject.inputStudentNumber();
+  });
 
-    it("Verify that user able to uncheck the checkbox in Program section in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.mySchoolIsNotListedCheckbox()
-        applicationObject.uncheckAlertMessage()
-        applicationObject.checkboxAlertMessageNotExist()
-    })
+  it("Verify that Student number must have no more than 12 characters in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    applicationObject.incorrectStudentNumber().type("SDPLETW3543543FSFSD");
+    applicationObject.incorrectStudentNumberText().should("be.visible");
+  });
 
-    it("Verify that user able to edit all details in Program page in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.schoolIWillBeAttendingDropdown()
-        applicationObject.howWillYouAttendProgramDropdown()
-        applicationObject.inputStudentNumber()
-    })
-
-    it("Verify that Student number must have no more than 12 characters in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.incorrectStudentNumber()
-    })
-
-    it("Verify that user enter data in mandatory fields to save program in application form.", () => {
-        applicationObject.applicationButton()
-        applicationObject.draftApplication()
-        applicationObject.NextSectionButton()
-        applicationObject.schoolIWillBeAttendingDropdown2()
-        applicationObject.howWillYouAttendProgramDropdown2()
-        applicationObject.programIWillBeAttendingDropdown2()
-        applicationObject.inputStudentNumber2()
-    })
-
-})
+  it("Verify that user enter data in mandatory fields to save program in application form.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.NextSectionButton().click();
+    applicationObject.schoolIWillBeAttendingDropdown2();
+    applicationObject.howWillYouAttendProgramDropdown2();
+    applicationObject.programIWillBeAttendingDropdown2();
+    applicationObject.inputStudentNumber2();
+  });
+});
