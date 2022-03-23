@@ -6,8 +6,12 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { StudentAppealService, ApplicationService } from "../../services";
-import { StudentAppealRequestDTO } from "./models/student-appeal.dto";
+import {
+  StudentAppealService,
+  ApplicationService,
+  FormService,
+} from "../../services";
+import { StudentAppealDTO } from "./models/student-appeal.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -23,6 +27,7 @@ export class StudentAppealStudentsController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
     private readonly applicationService: ApplicationService,
+    private readonly formService: FormService,
   ) {
     super();
   }
@@ -30,13 +35,13 @@ export class StudentAppealStudentsController extends BaseController {
   /**
    * Submit student appeal.
    * @param applicationId application for which the appeal is submitted.
-   * @param payload appeal requests.
+   * @param payload student appeal with appeal requests.
    * @param userToken
    */
   @Post("application/:applicationId")
   async updateDesignationAgreement(
     @Param("applicationId") applicationId: number,
-    @Body() payload: StudentAppealRequestDTO[],
+    @Body() payload: StudentAppealDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const application = this.applicationService.getApplicationToRequestChange(
@@ -59,10 +64,18 @@ export class StudentAppealStudentsController extends BaseController {
         "There is already a pending appeal for this student.",
       );
     }
+    const submissionResults = payload.studentAppealRequests.map(
+      (studentAppeal) =>
+        this.formService.dryRunSubmission(
+          studentAppeal.formName,
+          studentAppeal.formData,
+        ),
+    );
+    await Promise.all(submissionResults);
     await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
-      payload,
+      payload.studentAppealRequests,
     );
   }
 }

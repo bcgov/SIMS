@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentAppealRequestDTO } from "@/types/contracts/student/StudentRequestChange";
+import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
 
 /**
  * Client service layer for Student Appeal.
@@ -14,11 +14,11 @@ export class StudentAppealService {
 
   async submitStudentAppeal(
     applicationId: number,
-    studentAppeals: StudentAppealRequestDTO[],
+    studentAppeal: StudentAppealDTO,
   ): Promise<void> {
     await ApiClient.StudentAppealApi.submitStudentAppeal(
       applicationId,
-      studentAppeals,
+      studentAppeal,
     );
   }
 }

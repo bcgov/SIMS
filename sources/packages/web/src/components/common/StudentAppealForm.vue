@@ -10,12 +10,12 @@ export default {
   props: {
     formName: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   setup(props: any, context: any) {
     const formLoaded = (form: any) => {
-      context.emit("appealFormLoaded", form, "hello");
+      context.emit("appealFormLoaded", form);
     };
     return { formLoaded };
   },

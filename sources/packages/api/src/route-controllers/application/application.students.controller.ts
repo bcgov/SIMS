@@ -623,10 +623,19 @@ export class ApplicationStudentsController extends BaseController {
 
   /**
    * Get application to request appeal.
+   ** Application eligible to be requested for
+   ** a change will be returned.
    * @param applicationNumber
    * @param userToken
    * @returns application
    */
+  @ApiOkResponse({
+    description: "Returns application which can be requested for change.",
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Application either not found or not eligible to request for change.",
+  })
   @Get(":applicationNumber/appeal")
   async getApplicationToRequestChange(
     @Param("applicationNumber") applicationNumber: string,

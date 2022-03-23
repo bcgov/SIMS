@@ -62,7 +62,9 @@ export interface ApplicationFormData extends ApplicationData {
     name?: string;
   };
 }
-
+/**
+ * Application DTO with primary identifier(s)
+ */
 export class ApplicationPrimaryDTO {
   id: number;
   applicationNumber: string;

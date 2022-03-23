@@ -1,5 +1,5 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { StudentAppealRequestDTO } from "@/types/contracts/student/StudentRequestChange";
+import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
 
 /**
  * Http API client for Student Appeal.
@@ -7,11 +7,11 @@ import { StudentAppealRequestDTO } from "@/types/contracts/student/StudentReques
 export class StudentAppealApi extends HttpBaseClient {
   public async submitStudentAppeal(
     applicationId: number,
-    studentAppealRequests: StudentAppealRequestDTO[],
+    studentAppeal: StudentAppealDTO,
   ): Promise<void> {
-    await this.postCall<StudentAppealRequestDTO[]>(
+    await this.postCall<StudentAppealDTO>(
       this.addClientRoot(`appeal/application/${applicationId}`),
-      studentAppealRequests,
+      studentAppeal,
     );
   }
 }

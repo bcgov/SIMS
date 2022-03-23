@@ -1165,6 +1165,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }));
   }
 
+  /**
+   * Retrieve application with application number in
+   * completed status.
+   ** Application id is used to perform same lookup by id
+   ** instead of application number.
+   * @param applicationNumber
+   * @param userId
+   * @param applicationId
+   * @returns
+   */
   async getApplicationToRequestChange(
     applicationNumber: string,
     userId: number,

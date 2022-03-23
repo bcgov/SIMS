@@ -53,7 +53,11 @@
 </template>
 <script lang="ts">
 import { computed, ref } from "vue";
-import { StudentRequest, StudentAppealRequestDTO } from "@/types";
+import {
+  StudentRequest,
+  StudentAppealRequestDTO,
+  StudentAppealDTO,
+} from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import formio from "@/components/generic/formio.vue";
@@ -124,10 +128,13 @@ export default {
           formData: form.data,
         });
       });
+      const studentAppeal = {
+        studentAppealRequests: studentAppealRequests,
+      } as StudentAppealDTO;
       try {
         await StudentAppealService.shared.submitStudentAppeal(
           applicationId,
-          studentAppealRequests,
+          studentAppeal,
         );
         toast.success(
           "Request submitted",
