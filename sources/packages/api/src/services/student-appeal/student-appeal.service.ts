@@ -32,8 +32,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<void> {
     const studentAppeal = new StudentAppeal();
+    const currentDateTime = new Date();
     studentAppeal.application = { id: applicationId } as Application;
     studentAppeal.creator = { id: userId } as User;
+    studentAppeal.submittedDate = currentDateTime;
     studentAppeal.appealRequests = studentAppealRequests.map(
       (appealRequest) =>
         ({
@@ -41,6 +43,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           submittedData: appealRequest.formData,
           appealStatus: StudentAppealStatus.Pending,
           creator: { id: userId } as User,
+          createdAt: currentDateTime,
         } as StudentAppealRequest),
     );
     this.repo.save(studentAppeal);
@@ -52,7 +55,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * @returns exist status
    */
   async hasExistingAppeal(userId: number): Promise<boolean> {
-    const existingAppeal = this.repo
+    const existingAppeal = await this.repo
       .createQueryBuilder("appeal")
       .select("1")
       .innerJoin("appeal.appealRequests", "appealRequests")

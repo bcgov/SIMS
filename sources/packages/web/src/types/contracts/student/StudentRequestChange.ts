@@ -3,8 +3,7 @@ export interface StudentRequest {
   formNames: string[];
 }
 
-export interface StudentAppealDTO {
-  applicationId: number;
+export interface StudentAppealRequestDTO {
   formName: string;
   formData: any;
 }

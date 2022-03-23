@@ -53,8 +53,9 @@
 </template>
 <script lang="ts">
 import { computed, ref } from "vue";
-import { StudentRequest, StudentAppealDTO } from "@/types";
+import { StudentRequest, StudentAppealRequestDTO } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
+import { StudentAppealService } from "@/services/StudentAppealService";
 import formio from "@/components/generic/formio.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
@@ -76,7 +77,7 @@ export default {
     let requestFormData: any = undefined;
     let applicationId: number;
     const appealFormNames = ref([] as string[]);
-    const appealForms: any = [];
+    let appealForms: any = [];
     const showRequestForAppeal = computed(
       () => appealFormNames.value.length === 0,
     );
@@ -107,22 +108,40 @@ export default {
 
     const backToRequest = () => {
       appealFormNames.value = [];
+      appealForms = [];
     };
 
     const appealFormLoaded = (form: any) => {
       appealForms.push(form);
     };
 
-    const submitAppeal = () => {
-      const studentAppeals = [] as StudentAppealDTO[];
+    const submitAppeal = async () => {
+      const studentAppealRequests = [] as StudentAppealRequestDTO[];
       appealForms.forEach((form: any) => {
         form.submit();
-        studentAppeals.push({
-          applicationId: applicationId,
+        studentAppealRequests.push({
           formName: form.form.path,
           formData: form.data,
         });
       });
+      try {
+        await StudentAppealService.shared.submitStudentAppeal(
+          applicationId,
+          studentAppealRequests,
+        );
+        toast.success(
+          "Request submitted",
+          "The request for change has been submitted successfully.",
+        );
+        //TODO: Redirect to appeal view page once it is developed.
+        backToRequest();
+      } catch (error) {
+        let errorMessage = "An error happened while requesting a change.";
+        if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
+          errorMessage = error.response.data.message;
+        }
+        toast.error("Unexpected error", errorMessage);
+      }
     };
 
     return {

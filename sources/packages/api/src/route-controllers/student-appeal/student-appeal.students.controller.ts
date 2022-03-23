@@ -52,12 +52,11 @@ export class StudentAppealStudentsController extends BaseController {
         ),
       );
     }
-    const existingStudentAppeal = this.studentAppealService.hasExistingAppeal(
-      userToken.userId,
-    );
+    const existingStudentAppeal =
+      await this.studentAppealService.hasExistingAppeal(userToken.userId);
     if (existingStudentAppeal) {
       throw new UnprocessableEntityException(
-        "There is already a pending appeal exist for this student.",
+        "There is already a pending appeal for this student.",
       );
     }
     await this.studentAppealService.saveStudentAppeals(

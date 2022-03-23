@@ -1180,7 +1180,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         completed: ApplicationStatus.completed,
       });
     if (applicationId) {
-      applicationQuery.andWhere("application.applicationId = :applicationId", {
+      applicationQuery.andWhere("application.id = :applicationId", {
         applicationId,
       });
     } else {
