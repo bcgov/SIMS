@@ -480,9 +480,10 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementSchedule.disbursementDate",
         "application.id",
         "application.applicationStatus",
-        "application.assessmentWorkflowId",
+        "assessment.assessmentWorkflowId",
       ])
       .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("disbursementSchedule.studentAssessment", "assessment")
       .innerJoin("application.location", "location")
       .where("location.id = :locationId", { locationId })
       .andWhere("disbursementSchedule.id = :disbursementScheduleId", {

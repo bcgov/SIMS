@@ -497,11 +497,11 @@ export class ApplicationStudentsController extends BaseController {
       payload &&
       ApplicationStatus.cancelled === payload.applicationStatus &&
       ApplicationStatus.draft !== studentApplication.applicationStatus &&
-      studentApplication.assessmentWorkflowId
+      studentApplication.currentAssessment.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
       await this.workflowService.deleteApplicationAssessment(
-        studentApplication.assessmentWorkflowId,
+        studentApplication.currentAssessment.assessmentWorkflowId,
       );
     }
     // updating the application status

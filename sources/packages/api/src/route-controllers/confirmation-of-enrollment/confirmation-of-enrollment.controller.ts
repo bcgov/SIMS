@@ -181,9 +181,9 @@ export class ConfirmationOfEnrollmentController extends BaseController {
         userToken.userId,
       );
 
-      if (result.overriddenApplication.assessmentWorkflowId) {
+      if (result.overriddenApplication.currentAssessment.assessmentWorkflowId) {
         await this.workflow.deleteApplicationAssessment(
-          result.overriddenApplication.assessmentWorkflowId,
+          result.overriddenApplication.currentAssessment.assessmentWorkflowId,
         );
       }
 
@@ -339,7 +339,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       ApplicationStatus.enrollment
     ) {
       await this.workflow.sendConfirmCOEMessage(
-        disbursementSchedule.application.assessmentWorkflowId,
+        disbursementSchedule.studentAssessment.assessmentWorkflowId,
       );
     }
   }
@@ -391,10 +391,10 @@ export class ConfirmationOfEnrollmentController extends BaseController {
     if (
       disbursementSchedule.application.applicationStatus ===
         ApplicationStatus.enrollment &&
-      disbursementSchedule.application.assessmentWorkflowId
+      disbursementSchedule.studentAssessment.assessmentWorkflowId
     ) {
       await this.workflow.deleteApplicationAssessment(
-        disbursementSchedule.application.assessmentWorkflowId,
+        disbursementSchedule.studentAssessment.assessmentWorkflowId,
       );
     }
   }

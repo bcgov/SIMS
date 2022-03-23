@@ -170,14 +170,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
      * corresponding workflow and creates a new Application with same Application Number and
      * Program Year as that of the Overwritten Application and with newly submitted payload.
      */
-    // * Updating existing Application status to override
-    // * and updating the ApplicationStatusUpdatedOn.
-    application.applicationStatus = ApplicationStatus.overwritten;
-    application.applicationStatusUpdatedOn = getUTCNow();
 
-    //* Creating New Application with same Application Number and Program Year as
-    //* that of the Overwritten Application and with newly submitted payload with
-    //* application status submitted.
+    // Updating existing Application status to override
+    // and updating the ApplicationStatusUpdatedOn.
+    application.applicationStatus = ApplicationStatus.overwritten;
+    application.applicationStatusUpdatedOn = now;
+
+    // Creating New Application with same Application Number and Program Year as
+    // that of the Overwritten Application and with newly submitted payload with
+    // application status submitted.
 
     const newApplication = new Application();
     newApplication.applicationNumber = application.applicationNumber;
@@ -186,7 +187,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.submitted;
-    newApplication.applicationStatusUpdatedOn = getUTCNow();
+    newApplication.applicationStatusUpdatedOn = now;
     newApplication.student = { id: application.studentId } as Student;
     newApplication.studentFiles = await this.getSyncedApplicationFiles(
       studentId,
@@ -197,10 +198,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     application.studentAssessments = [originalAssessment];
     application.currentAssessment = originalAssessment;
     await this.repo.save([application, newApplication]);
-    //* Deleting the existing workflow
-    await this.workflow.deleteApplicationAssessment(
-      application.assessmentWorkflowId,
-    );
+    // Deleting the existing workflow, if there is one.
+    if (application.currentAssessment.assessmentWorkflowId) {
+      await this.workflow.deleteApplicationAssessment(
+        application.currentAssessment.assessmentWorkflowId,
+      );
+    }
+
     return { application, createdAssessment: originalAssessment };
   }
 
@@ -439,6 +443,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationNumber",
         "application.pirDeniedOtherDesc",
         "currentAssessment.id",
+        "currentAssessment.assessmentWorkflowId",
         "offering.id",
         "offering.offeringIntensity",
         "offering.studyStartDate",
@@ -600,8 +605,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.programYearPrefix",
         "studentFiles",
         "studentFile.uniqueFileName",
+        "currentAssessment.id",
+        "currentAssessment.assessmentWorkflowId",
       ])
       .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
       .where("application.student.id = :studentId", { studentId })
@@ -643,7 +651,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
-      .select(["application.id", "currentAssessment.id"])
+      .select([
+        "application.id",
+        "currentAssessment.id",
+        "currentAssessment.assessmentWorkflowId",
+      ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.location.id = :locationId", { locationId })
@@ -817,7 +829,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         location: { id: locationId },
         pirStatus: Not(ProgramInfoStatus.notRequired),
       },
-      { relations: ["studentFiles"] },
+      { relations: ["studentFiles", "currentAssessment"] },
     );
 
     if (!appToOverride) {
@@ -902,11 +914,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
     pirDeniedReasonId: number,
     otherReasonDesc?: string,
   ): Promise<Application> {
-    const application = await this.repo.findOne({
-      id: applicationId,
-      location: { id: locationId },
-      pirStatus: ProgramInfoStatus.required,
-    });
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .select(["application.id", "currentAssessment.assessmentWorkflowId"])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus != :applicationStatus", {
+        applicationStatus: ApplicationStatus.overwritten,
+      })
+      .andWhere("application.pirStatus = :pirStatus", {
+        pirStatus: ProgramInfoStatus.required,
+      })
+      .getOne();
+
     if (!application) {
       throw new CustomNamedError(
         "Not able to find an application that requires a PIR to be completed.",

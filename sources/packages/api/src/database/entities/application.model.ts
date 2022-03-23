@@ -109,12 +109,6 @@ export class Application extends RecordDataModel {
   })
   pirStatus: ProgramInfoStatus;
 
-  @Column({
-    name: "assessment_workflow_id",
-    type: "uuid",
-  })
-  assessmentWorkflowId: string;
-
   @RelationId((application: Application) => application.studentFiles)
   studentFilesIds: number[];
 
