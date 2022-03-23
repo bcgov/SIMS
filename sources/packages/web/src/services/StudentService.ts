@@ -135,8 +135,8 @@ export class StudentService {
    * Get all student documents uploaded by student uploader.
    * @return StudentUploadFileDto[] list of student documents
    */
-  async getStudentFiles(): Promise<StudentUploadFileDto[]> {
-    return ApiClient.Students.getStudentFiles();
+  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDto[]> {
+    return ApiClient.Students.getStudentFiles(studentId);
   }
 
   /**

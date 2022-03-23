@@ -6,7 +6,7 @@
           <v-col class="category-header-medium color-blue">File Uploads</v-col>
         </v-row>
         <DataTable
-          :value="studentRestrictions"
+          :value="studentFileUploads"
           :paginator="true"
           :rows="DEFAULT_PAGE_LIMIT"
           :rowsPerPageOptions="PAGINATION_LIST"
@@ -21,7 +21,10 @@
 </template>
 
 <script lang="ts">
+import { onMounted, ref } from "vue";
+import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import { StudentService } from "@/services/StudentService";
 
 export default {
   components: {
@@ -34,7 +37,16 @@ export default {
     },
   },
   setup(props: any) {
-    return {};
+    const studentFileUploads = ref();
+    const loadStudentFileUploads = async () => {
+      studentFileUploads.value = await StudentService.shared.getStudentFiles(
+        props.studentId,
+      );
+    };
+    onMounted(async () => {
+      await loadStudentFileUploads();
+    });
+    return { studentFileUploads, DEFAULT_PAGE_LIMIT, PAGINATION_LIST };
   },
 };
 </script>

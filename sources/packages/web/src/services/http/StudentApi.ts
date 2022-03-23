@@ -169,7 +169,18 @@ export class StudentApi extends HttpBaseClient {
    * Get all student documents uploaded by student uploader.
    * @return StudentUploadFileDto[] list of student documents
    */
-  async getStudentFiles(): Promise<StudentUploadFileDto[]> {
-    return this.getCallTyped<StudentUploadFileDto[]>("students/documents");
+  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDto[]> {
+    try {
+      let queryString = "";
+      if (studentId) {
+        queryString += `?studentId=${studentId}`;
+      }
+      return this.getCallTyped<StudentUploadFileDto[]>(
+        `students/documents${queryString}`,
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }

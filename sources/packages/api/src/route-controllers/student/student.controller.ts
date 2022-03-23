@@ -636,23 +636,30 @@ export class StudentController extends BaseController {
    * by student uploader
    * @returns list of student documents
    */
-  @AllowAuthorizedParty(AuthorizedParties.student)
+  @AllowAuthorizedParty(AuthorizedParties.student, AuthorizedParties.aest)
   @Get("documents")
   async getStudentFiles(
+    @Query("studentId") studentId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<StudentUploadFileDto[]> {
-    const existingStudent = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    if (!existingStudent) {
-      throw new NotFoundException("Student Not found");
+    if (!studentId) {
+      const existingStudent = await this.studentService.getStudentByUserId(
+        userToken.userId,
+      );
+      if (!existingStudent) {
+        throw new NotFoundException("Student Not found");
+      }
+      studentId = existingStudent.id;
     }
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      existingStudent.id,
+      studentId,
     );
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
       uniqueFileName: studentDocument.uniqueFileName,
+      metadata: studentDocument?.metadata,
+      groupName: studentDocument.groupName,
+      updatedAt: studentDocument.updatedAt,
     }));
   }
 }
