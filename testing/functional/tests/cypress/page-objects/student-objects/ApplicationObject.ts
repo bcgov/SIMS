@@ -29,7 +29,6 @@ export default class ApplicationObject {
   }
 
   selectStudyYearDropdown() {
-    cy.intercept("GET", "**/options-list").as("optionListSelectStudy");
     cy.fixture("newApplicationForm").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
       cy.wait(2000);
