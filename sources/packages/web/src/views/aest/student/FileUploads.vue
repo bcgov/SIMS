@@ -2,9 +2,12 @@
   <v-card class="mt-4">
     <div class="mx-5 py-4">
       <content-group>
-        <v-row class="m-2">
-          <v-col class="category-header-medium color-blue">File Uploads</v-col>
-        </v-row>
+        <body-header
+          title="File Uploads"
+          :recordsCount="studentFileUploads?.length"
+          class="m-1"
+        >
+        </body-header>
         <DataTable
           :value="studentFileUploads"
           :paginator="true"
@@ -61,10 +64,12 @@ import {
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters, useFileUtils } from "@/composables";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 
 export default {
   components: {
     ContentGroup,
+    BodyHeader,
   },
   props: {
     studentId: {
