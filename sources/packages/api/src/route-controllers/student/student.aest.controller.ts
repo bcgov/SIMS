@@ -1,7 +1,7 @@
 import { Controller, Get, Injectable, Param } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { StudentFileService } from "src/services";
-import { ClientTypeBaseRoute } from "src/types";
+import { StudentFileService } from "../../services";
+import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";

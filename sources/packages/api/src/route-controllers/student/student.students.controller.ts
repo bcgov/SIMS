@@ -6,7 +6,7 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { StudentFileService, StudentService } from "../../services";
 import BaseController from "../BaseController";
 import { StudentUploadFileDTO } from "./models/student.dto";
-import { ClientTypeBaseRoute } from "src/types";
+import { ClientTypeBaseRoute } from "../../types";
 
 /**
  * Student controller for Student Client.
