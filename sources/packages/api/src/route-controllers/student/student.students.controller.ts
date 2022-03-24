@@ -25,8 +25,8 @@ export class StudentStudentsController extends BaseController {
 
   /**
    * This controller returns all student documents uploaded
-   * by student uploader
-   * @returns list of student documents
+   * by student uploader.
+   * @returns list of student documents.
    */
   @Get("documents")
   async getStudentFiles(

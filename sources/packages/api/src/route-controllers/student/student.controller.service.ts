@@ -11,9 +11,9 @@ export class StudentControllerService {
 
   /**
    * This method returns all student documents uploaded
-   * by student using the studentId
+   * by student using the studentId.
    * @param studentId
-   * @returns student files as StudentUploadFileDTO
+   * @returns student files as StudentUploadFileDTO.
    */
   async getStudentFiles(studentId: number): Promise<StudentUploadFileDTO[]> {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(

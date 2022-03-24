@@ -91,7 +91,7 @@ export interface StudentFileUploaderForm {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderDTO {
+export class StudentFileUploaderDTO {
   submittedForm: StudentFileUploaderForm;
   associatedFiles: string[];
 }
@@ -99,7 +99,7 @@ export interface StudentFileUploaderDTO {
 /**
  *  Student uploaded documents (i.e, FileOriginType.Student documents)
  */
-export interface StudentUploadFileDTO {
+export class StudentUploadFileDTO {
   fileName: string;
   uniqueFileName: string;
   metadata: StudentFileMetadataDTO;
