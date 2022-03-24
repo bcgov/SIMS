@@ -175,7 +175,7 @@ export class StudentApi extends HttpBaseClient {
       if (studentId) {
         queryString += `?studentId=${studentId}`;
       }
-      return this.getCallTyped<StudentUploadFileDto[]>(
+      return await this.getCallTyped<StudentUploadFileDto[]>(
         `students/documents${queryString}`,
       );
     } catch (error) {

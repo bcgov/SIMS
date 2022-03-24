@@ -53,11 +53,14 @@
 
 <script lang="ts">
 import { onMounted, ref } from "vue";
-import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  PAGINATION_LIST,
+  StudentUploadFileDto,
+} from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
 import { useFormatters, useFileUtils } from "@/composables";
-import { StudentUploadFileDto } from "@/types";
 
 export default {
   components: {
