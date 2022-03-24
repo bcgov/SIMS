@@ -23,12 +23,11 @@
             sortable="true"
           ></Column>
           <Column field="metadata" header="Application #">
-            <template #body="slotProps"
-              ><span v-if="slotProps.data.metadata">{{
-                `${slotProps.data.metadata.applicationNumber}`
-              }}</span
-              ><span v-else>----</span></template
-            ></Column
+            <template #body="slotProps">{{
+              slotProps.data.metadata?.applicationNumber
+                ? slotProps.data.metadata.applicationNumber
+                : "-"
+            }}</template></Column
           >
           <Column field="updatedAt" header="Date Submitted"
             ><template #body="slotProps">{{
