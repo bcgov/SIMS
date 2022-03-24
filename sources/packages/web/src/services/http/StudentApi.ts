@@ -173,8 +173,6 @@ export class StudentApi extends HttpBaseClient {
     const url = studentId
       ? `students/documents/${studentId}`
       : "students/documents";
-    return await this.getCallTyped<StudentUploadFileDTO[]>(
-      this.addClientRoot(url),
-    );
+    return this.getCallTyped<StudentUploadFileDTO[]>(this.addClientRoot(url));
   }
 }
