@@ -99,7 +99,7 @@ export default {
     };
 
     const hasAuthenticatedStudentAccount = computed(
-      () => isAuthenticated && hasStudentAccount,
+      () => isAuthenticated.value && hasStudentAccount.value,
     );
 
     const togleUserMenu = (event: any) => {
