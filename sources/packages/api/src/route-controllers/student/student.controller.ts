@@ -657,7 +657,7 @@ export class StudentController extends BaseController {
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
       uniqueFileName: studentDocument.uniqueFileName,
-      metadata: studentDocument?.metadata,
+      metadata: studentDocument.metadata,
       groupName: studentDocument.groupName,
       updatedAt: studentDocument.updatedAt,
     }));

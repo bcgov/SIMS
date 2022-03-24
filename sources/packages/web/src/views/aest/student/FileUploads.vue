@@ -36,7 +36,7 @@
             <template #body="slotProps">
               <div
                 class="file-label"
-                @click="formioUtils.downloadDocument(slotProps.data)"
+                @click="fileUtils.downloadDocument(slotProps.data)"
               >
                 <span class="mr-4">
                   <font-awesome-icon :icon="['far', 'file-alt']"
@@ -56,7 +56,7 @@ import { onMounted, ref } from "vue";
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters, useFormioUtils } from "@/composables";
+import { useFormatters, useFileUtils } from "@/composables";
 import { StudentUploadFileDto } from "@/types";
 
 export default {
@@ -72,7 +72,7 @@ export default {
   setup(props: any) {
     const studentFileUploads = ref([] as StudentUploadFileDto[]);
     const { dateOnlyLongString } = useFormatters();
-    const formioUtils = useFormioUtils();
+    const fileUtils = useFileUtils();
     const loadStudentFileUploads = async () => {
       studentFileUploads.value = await StudentService.shared.getStudentFiles(
         props.studentId,
@@ -83,7 +83,7 @@ export default {
     });
     return {
       studentFileUploads,
-      formioUtils,
+      fileUtils,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       dateOnlyLongString,

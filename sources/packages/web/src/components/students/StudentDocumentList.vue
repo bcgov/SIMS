@@ -9,7 +9,7 @@
       >
         <div
           class="file-label"
-          @click="formioUtils.downloadDocument(studentDocument)"
+          @click="fileUtils.downloadDocument(studentDocument)"
         >
           <span class="mr-4">
             <font-awesome-icon :icon="['far', 'file-alt']"
@@ -29,7 +29,7 @@ import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { StudentUploadFileDto } from "@/types";
-import { useFormioUtils } from "@/composables";
+import { useFileUtils } from "@/composables";
 
 export default {
   components: {
@@ -41,7 +41,7 @@ export default {
     },
   },
   setup(props: any) {
-    const formioUtils = useFormioUtils();
+    const fileUtils = useFileUtils();
     const studentDocuments = ref([] as StudentUploadFileDto[]);
     const getStudentDocuments = async () => {
       studentDocuments.value = await StudentService.shared.getStudentFiles();
@@ -55,7 +55,7 @@ export default {
         getStudentDocuments();
       },
     );
-    return { formioUtils, studentDocuments };
+    return { fileUtils, studentDocuments };
   },
 };
 </script>
