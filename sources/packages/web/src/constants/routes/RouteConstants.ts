@@ -22,6 +22,7 @@ export const StudentRoutesConst = {
   NOTIFICATIONS_SETTINGS: Symbol(),
   STUDENT_APPLICATION_SUMMARY: Symbol(),
   STUDENT_APPLICATION_DETAILS: Symbol(),
+  STUDENT_REQUEST_CHANGE: Symbol(),
 };
 
 /**

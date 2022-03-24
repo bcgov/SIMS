@@ -17,6 +17,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
+import { AssessmentHistoryStatus } from "../../route-controllers/assessment/models/assessment.dto";
 
 /**
  * Manages the student assessment related operations.
@@ -348,5 +349,44 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessment.noaApprovalStatus = AssessmentStatus.completed;
     assessment.application.applicationStatus = ApplicationStatus.enrollment;
     return this.repo.save(assessment);
+  }
+
+  /**
+   * todo: comment
+   */
+  async AssessmentHistorySummary(
+    applicationId: number,
+  ): Promise<StudentAssessment[]> {
+    return this.repo
+      .createQueryBuilder("assessment")
+      .select([
+        "assessment.submittedDate",
+        "assessment.triggerType",
+        "assessment.assessmentDate",
+      ])
+      .addSelect(
+        `CASE
+          WHEN 
+            assessment.assessmentWorkflowId IS NULL 
+            THEN 
+              '${AssessmentHistoryStatus.Submitted}'
+          WHEN 
+            assessment.assessmentWorkflowId IS NOT NULL 
+            AND 
+            assessment.assessmentData IS NULL 
+            THEN 
+              '${AssessmentHistoryStatus.InProgress}'
+          WHEN 
+            assessment.assessmentWorkflowId IS NOT NULL 
+            AND 
+            assessment.assessmentData IS NOT NULL 
+            THEN 
+              '${AssessmentHistoryStatus.Completed}'
+        END`,
+        "status",
+      )
+      .innerJoin("assessment.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .getRawMany();
   }
 }

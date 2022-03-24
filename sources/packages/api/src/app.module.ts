@@ -35,6 +35,9 @@ import {
   InstitutionRestrictionService,
   SINValidationService,
   DesignationAgreementLocationService,
+  StudentAppealService,
+  StudentAppealRequestsService,
+  StudentScholasticStandingsService,
   StudentAssessmentService,
 } from "./services";
 import {
@@ -166,6 +169,9 @@ import { AppSystemAccessModule } from "./app.system-access.module";
     SINValidationService,
     DesignationAgreementLocationService,
     StudentAssessmentService,
+    StudentScholasticStandingsService,
+    StudentAppealService,
+    StudentAppealRequestsService,
   ],
 })
 export class AppModule {}

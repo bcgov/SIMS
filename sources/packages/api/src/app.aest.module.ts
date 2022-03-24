@@ -19,6 +19,10 @@ import {
   InstitutionService,
   BCeIDService,
   UserService,
+  StudentAppealRequestsService,
+  StudentAppealService,
+  StudentScholasticStandingsService,
+  StudentAssessmentService,
 } from "./services";
 import {
   AESTSupportingUserController,
@@ -27,6 +31,7 @@ import {
   ApplicationAESTController,
   InstitutionAESTController,
   InstitutionControllerService,
+  AssessmentAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -39,6 +44,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     DesignationAgreementAESTController,
     ApplicationAESTController,
     InstitutionAESTController,
+    AssessmentAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -62,6 +68,10 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     UserService,
     InstitutionControllerService,
     ApplicationControllerService,
+    StudentAppealRequestsService,
+    StudentAppealService,
+    StudentScholasticStandingsService,
+    StudentAssessmentService,
   ],
 })
 export class AppAESTModule {}

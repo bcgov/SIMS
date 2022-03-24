@@ -16,6 +16,8 @@ import { SupportingUserApi } from "@/services/http/SupportingUserApi";
 import { NoteApi } from "@/services/http/NoteApi";
 import { RestrictionApi } from "@/services/http/RestrictionApi";
 import { DesignationAgreementApi } from "./DesignationAgreementApi";
+import { StudentAppealApi } from "./StudentAppealApi";
+import { StudentAssessmentApi } from "./StudentAssessmentApi";
 
 const ApiClient = {
   Configs: new ConfigApi(),
@@ -36,6 +38,8 @@ const ApiClient = {
   NoteApi: new NoteApi(),
   RestrictionApi: new RestrictionApi(),
   DesignationAgreement: new DesignationAgreementApi(),
+  StudentAppealApi: new StudentAppealApi(),
+  StudentAssessmentApi: new StudentAssessmentApi(),
 };
 
 export default ApiClient;
