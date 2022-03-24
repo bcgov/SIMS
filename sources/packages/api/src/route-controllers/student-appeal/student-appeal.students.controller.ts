@@ -5,6 +5,8 @@ import {
   Body,
   NotFoundException,
   UnprocessableEntityException,
+  BadRequestException,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import {
   StudentAppealService,
@@ -12,6 +14,7 @@ import {
   FormService,
 } from "../../services";
 import { StudentAppealDTO } from "./models/student-appeal.dto";
+import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -20,10 +23,12 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiUnprocessableEntityResponse,
+  ApiBadRequestResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
-import { INVALID_APPLICATION_NUMBER } from "../../constants";
+import { INVALID_APPLICATION_NUMBER, INVALID_FORM_DATA } from "../../constants";
+import { CustomNamedError } from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("appeal")
@@ -43,23 +48,26 @@ export class StudentAppealStudentsController extends BaseController {
    * @param payload student appeal with appeal requests.
    * @param userToken
    */
-  @ApiCreatedResponse({ description: "Student appeal created successfully" })
+  @ApiCreatedResponse({ description: "Student appeal created successfully." })
   @ApiNotFoundResponse({
     description:
-      "Application either not found or not eligible to request for change.",
+      "Application either not found or not eligible to request an appeal.",
   })
   @ApiUnprocessableEntityResponse({
     description: "There is an existing appeal for this student.",
+  })
+  @ApiBadRequestResponse({
+    description: "Not able to submit student appeal due to invalid request.",
   })
   @Post("application/:applicationId")
   async submitStudentAppeal(
     @Param("applicationId") applicationId: number,
     @Body() payload: StudentAppealDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<void> {
-    const application = this.applicationService.getApplicationToRequestChange(
-      undefined,
+  ): Promise<PrimaryIdentifierDTO> {
+    const application = this.applicationService.getApplicationToRequestAppeal(
       userToken.userId,
+      undefined,
       applicationId,
     );
     if (!application) {
@@ -77,18 +85,38 @@ export class StudentAppealStudentsController extends BaseController {
         "There is already a pending appeal for this student.",
       );
     }
-    const submissionResults = payload.studentAppealRequests.map(
-      (studentAppeal) =>
+    try {
+      const dryRunPromise = payload.studentAppealRequests.map((studentAppeal) =>
         this.formService.dryRunSubmission(
           studentAppeal.formName,
           studentAppeal.formData,
         ),
-    );
-    await Promise.all(submissionResults);
-    await this.studentAppealService.saveStudentAppeals(
+      );
+      const submissionResults = await Promise.all(dryRunPromise);
+      submissionResults.forEach((result) => {
+        if (!result.valid) {
+          throw new CustomNamedError(
+            "Not able to submit student appeal due to invalid request.",
+            INVALID_FORM_DATA,
+          );
+        }
+      });
+    } catch (error) {
+      if (error.name === INVALID_FORM_DATA) {
+        throw new BadRequestException(error.message);
+      }
+      throw new InternalServerErrorException(
+        "Dry run submission failed due to unknown reason.",
+      );
+    }
+
+    const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
       payload.studentAppealRequests,
     );
+    return {
+      id: studentAppeal.id,
+    };
   }
 }

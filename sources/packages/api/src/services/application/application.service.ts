@@ -1170,14 +1170,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * completed status.
    ** Application id is used to perform same lookup by id
    ** instead of application number.
-   * @param applicationNumber
    * @param userId
    * @param applicationId
+   * @param applicationNumber
    * @returns
    */
-  async getApplicationToRequestChange(
-    applicationNumber: string,
+  async getApplicationToRequestAppeal(
     userId: number,
+    applicationNumber?: string,
     applicationId?: number,
   ): Promise<Application> {
     const applicationQuery = this.repo
@@ -1193,7 +1193,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       applicationQuery.andWhere("application.id = :applicationId", {
         applicationId,
       });
-    } else {
+    }
+    if (applicationNumber) {
       applicationQuery.andWhere(
         "application.applicationNumber = :applicationNumber",
         {

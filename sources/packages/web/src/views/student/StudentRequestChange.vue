@@ -40,7 +40,9 @@
         ></student-appeal-form>
         <!-- action area -->
         <div class="mt-4">
-          <v-btn color="primary" outlined @click="backToRequest">Back</v-btn>
+          <v-btn color="primary" outlined @click="backToRequestForm"
+            >Back</v-btn
+          >
           <v-btn
             @click="submitAppeal"
             class="primary-btn-background float-right"
@@ -99,18 +101,20 @@ export default {
         appealFormNames.value = data.formNames;
       } catch (error) {
         let errorMessage = "An error happened while requesting a change.";
+        let errorLabel = "Unexpected error";
         if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
           errorMessage = error.response.data.message;
+          errorLabel = "Application not found";
         }
-        toast.error("Unexpected error", errorMessage);
+        toast.error(errorLabel, errorMessage);
       }
     };
 
-    const submitStudentRequest = async () => {
+    const submitStudentRequest = () => {
       return requestFormData.submit();
     };
 
-    const backToRequest = () => {
+    const backToRequestForm = () => {
       appealFormNames.value = [];
       appealForms = [];
     };
@@ -141,7 +145,7 @@ export default {
           "The request for change has been submitted successfully.",
         );
         //TODO: Redirect to appeal view page once it is developed.
-        backToRequest();
+        backToRequestForm();
       } catch (error) {
         let errorMessage = "An error happened while requesting a change.";
         if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
@@ -157,7 +161,7 @@ export default {
       submitStudentRequest,
       appealFormNames,
       showRequestForAppeal,
-      backToRequest,
+      backToRequestForm,
       appealFormLoaded,
       submitAppeal,
     };

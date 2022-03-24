@@ -1,7 +1,7 @@
 /**
  * Service model for student appeal.
  */
-export class StudentAppealRequestModel {
+export interface StudentAppealRequestModel {
   formName: string;
   formData: any;
 }

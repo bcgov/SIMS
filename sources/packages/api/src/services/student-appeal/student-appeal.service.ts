@@ -21,20 +21,21 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Save student appeals that are requested by the student
-   * @param applicationId
-   * @param userId
-   * @param studentAppealRequests
+   * Save student appeals that are requested by the student.
+   * @param applicationId Application to which an appeal is submitted.
+   * @param userId Student user who submits the appeal.
+   * @param studentAppealRequests Payload data.
    */
   async saveStudentAppeals(
     applicationId: number,
     userId: number,
     studentAppealRequests: StudentAppealRequestModel[],
-  ): Promise<void> {
+  ): Promise<StudentAppeal> {
     const studentAppeal = new StudentAppeal();
     const currentDateTime = new Date();
+    const creator = { id: userId } as User;
     studentAppeal.application = { id: applicationId } as Application;
-    studentAppeal.creator = { id: userId } as User;
+    studentAppeal.creator = creator;
     studentAppeal.submittedDate = currentDateTime;
     studentAppeal.appealRequests = studentAppealRequests.map(
       (appealRequest) =>
@@ -42,15 +43,15 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           submittedFormName: appealRequest.formName,
           submittedData: appealRequest.formData,
           appealStatus: StudentAppealStatus.Pending,
-          creator: { id: userId } as User,
+          creator: creator,
           createdAt: currentDateTime,
         } as StudentAppealRequest),
     );
-    this.repo.save(studentAppeal);
+    return this.repo.save(studentAppeal);
   }
 
   /**
-   * Find any pending appeal for a student if exists
+   * Find any pending appeal for a student if exists.
    * @param userId of student.
    * @returns exist status
    */

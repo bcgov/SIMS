@@ -2,6 +2,7 @@
   <formio :formName="formName" @loaded="formLoaded"></formio>
 </template>
 <script lang="ts">
+import { SetupContext } from "vue";
 import formio from "@/components/generic/formio.vue";
 
 export default {
@@ -13,7 +14,7 @@ export default {
       required: true,
     },
   },
-  setup(props: any, context: any) {
+  setup(props: any, context: SetupContext) {
     const formLoaded = (form: any) => {
       context.emit("appealFormLoaded", form);
     };

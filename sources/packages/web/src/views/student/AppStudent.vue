@@ -6,7 +6,7 @@
       <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
       <v-spacer></v-spacer
       ><v-btn
-        v-if="isStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
@@ -14,14 +14,14 @@
         >Applications</v-btn
       >
       <v-btn
-        v-if="isStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
         ><font-awesome-icon :icon="['fas', 'bell']" class="mr-2" />
         Notifications</v-btn
       >
       <v-btn
-        v-if="isStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_FILE_UPLOADER })
@@ -30,7 +30,7 @@
         Uploader</v-btn
       >
       <v-btn
-        v-if="isStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE })
@@ -39,7 +39,7 @@
         a Change</v-btn
       >
       <v-btn
-        v-if="isStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
         >Profile</v-btn
@@ -98,7 +98,7 @@ export default {
       }
     };
 
-    const isStudentAccount = computed(
+    const hasAuthenticatedStudentAccount = computed(
       () => isAuthenticated && hasStudentAccount,
     );
 
@@ -139,7 +139,7 @@ export default {
       userOptionsMenuRef,
       togleUserMenu,
       ClientIdType,
-      isStudentAccount,
+      hasAuthenticatedStudentAccount,
     };
   },
 };

@@ -39,7 +39,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
-  ApplicationPrimaryDTO,
+  ApplicationIdentifiersDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -637,14 +637,14 @@ export class ApplicationStudentsController extends BaseController {
       "Application either not found or not eligible to request for change.",
   })
   @Get(":applicationNumber/appeal")
-  async getApplicationToRequestChange(
+  async getApplicationToRequestAppeal(
     @Param("applicationNumber") applicationNumber: string,
     @UserToken() userToken: IUserToken,
-  ): Promise<ApplicationPrimaryDTO> {
+  ): Promise<ApplicationIdentifiersDTO> {
     const application =
-      await this.applicationService.getApplicationToRequestChange(
-        applicationNumber,
+      await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,
+        applicationNumber,
       );
     if (!application) {
       throw new NotFoundException(

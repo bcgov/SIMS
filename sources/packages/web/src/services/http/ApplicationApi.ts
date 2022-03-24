@@ -11,7 +11,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   DataTableSortOrder,
-  ApplicationPrimaryDTO,
+  ApplicationIdentifiersDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
@@ -217,8 +217,8 @@ export class ApplicationApi extends HttpBaseClient {
 
   public async getApplicationForRequestChange(
     applicationNumber: string,
-  ): Promise<ApplicationPrimaryDTO> {
-    return this.getCallTyped<ApplicationPrimaryDTO>(
+  ): Promise<ApplicationIdentifiersDTO> {
+    return this.getCallTyped<ApplicationIdentifiersDTO>(
       this.addClientRoot(`application/${applicationNumber}/appeal`),
     );
   }
