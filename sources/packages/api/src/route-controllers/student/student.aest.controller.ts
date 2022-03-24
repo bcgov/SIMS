@@ -5,7 +5,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
-import { AESTStudentFileDTO, StudentUploadFileDTO } from "./models/student.dto";
+import { AESTStudentFileDTO } from "./models/student.dto";
 
 /**
  * Student controller for AEST Client.
@@ -30,7 +30,7 @@ export class StudentAESTController extends BaseController {
   async getAESTStudentFiles(
     @Param("studentId") studentId: number,
   ): Promise<AESTStudentFileDTO[]> {
-    const studentDocuments = await this.fileService.getAESTStudentFiles(
+    const studentDocuments = await this.fileService.getStudentUploadedFiles(
       studentId,
     );
     return studentDocuments.map((studentDocument) => ({

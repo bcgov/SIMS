@@ -1,10 +1,4 @@
-import {
-  ArrayMinSize,
-  isNotEmpty,
-  IsNotEmpty,
-  IsOptional,
-} from "class-validator";
-import { extend } from "dayjs";
+import { ArrayMinSize, IsNotEmpty, IsOptional } from "class-validator";
 import { StudentPDStatus, StudentContact } from "../../../types";
 
 export class GetStudentContactDto {

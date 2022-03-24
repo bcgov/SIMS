@@ -120,23 +120,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.fileOrigin = :fileOrigin", {
         fileOrigin: FileOriginType.Student,
       })
-      .select(["studentFile.uniqueFileName", "studentFile.fileName"])
-      .getMany();
-  }
-
-  /**
-   * Gets a list of student files uploaded via student Uploader
-   * for AEST user.
-   * @param studentId student id.
-   * @returns student files.
-   */
-  async getAESTStudentFiles(studentId: number): Promise<StudentFile[]> {
-    return this.repo
-      .createQueryBuilder("studentFile")
-      .where("studentFile.student.id = :studentId", { studentId })
-      .andWhere("studentFile.fileOrigin = :fileOrigin", {
-        fileOrigin: FileOriginType.Student,
-      })
       .select([
         "studentFile.uniqueFileName",
         "studentFile.fileName",
