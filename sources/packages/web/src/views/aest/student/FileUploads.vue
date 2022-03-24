@@ -20,9 +20,12 @@
             sortable="true"
           ></Column>
           <Column field="metadata" header="Application #">
-            <template #body="slotProps">{{
-              `${slotProps.data.metadata?.applicationNumber}`
-            }}</template></Column
+            <template #body="slotProps"
+              ><span v-if="slotProps.data.metadata">{{
+                `${slotProps.data.metadata.applicationNumber}`
+              }}</span
+              ><span v-else>----</span></template
+            ></Column
           >
           <Column field="updatedAt" header="Date Submitted"
             ><template #body="slotProps">{{
@@ -33,7 +36,7 @@
             <template #body="slotProps">
               <div
                 class="file-label"
-                @click="downloadDocument(slotProps.data.studentDocument)"
+                @click="formioUtils.downloadDocument(slotProps.data)"
               >
                 <span class="mr-4">
                   <font-awesome-icon :icon="['far', 'file-alt']"
@@ -53,7 +56,7 @@ import { onMounted, ref } from "vue";
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useFormioUtils } from "@/composables";
 import { StudentUploadFileDto } from "@/types";
 
 export default {
@@ -69,29 +72,18 @@ export default {
   setup(props: any) {
     const studentFileUploads = ref([] as StudentUploadFileDto[]);
     const { dateOnlyLongString } = useFormatters();
+    const formioUtils = useFormioUtils();
     const loadStudentFileUploads = async () => {
       studentFileUploads.value = await StudentService.shared.getStudentFiles(
         props.studentId,
       );
-    };
-    const downloadDocument = async (studentDocument: StudentUploadFileDto) => {
-      const fileURL = await StudentService.shared.downloadStudentFile(
-        studentDocument.uniqueFileName,
-      );
-      const fileLink = document.createElement("a");
-      fileLink.href = fileURL;
-      fileLink.setAttribute("download", studentDocument.fileName);
-      document.body.appendChild(fileLink);
-      fileLink.click();
-      // After download, remove the element
-      fileLink.remove();
     };
     onMounted(async () => {
       await loadStudentFileUploads();
     });
     return {
       studentFileUploads,
-      downloadDocument,
+      formioUtils,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       dateOnlyLongString,
