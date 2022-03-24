@@ -6,13 +6,14 @@ import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { StudentFileService, StudentService } from "../../services";
 import BaseController from "../BaseController";
 import { StudentUploadFileDTO } from "./models/student.dto";
+import { ClientTypeBaseRoute } from "src/types";
 
 /**
  * Student controller for Student Client.
  */
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("students")
-@ApiTags("students")
+@ApiTags(`${ClientTypeBaseRoute.Student}-students`)
 @Injectable()
 export class StudentStudentsController extends BaseController {
   constructor(

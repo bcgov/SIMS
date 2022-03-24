@@ -1,6 +1,7 @@
 import { Controller, Get, Injectable, Param } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { StudentFileService } from "src/services";
+import { ClientTypeBaseRoute } from "src/types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -13,7 +14,7 @@ import { AESTStudentFileDTO } from "./models/student.dto";
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("students")
-@ApiTags("students")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-students`)
 @Injectable()
 export class StudentAESTController extends BaseController {
   constructor(private readonly fileService: StudentFileService) {
