@@ -20,7 +20,7 @@
 <script lang="ts">
 import formio from "@/components/generic/formio.vue";
 import { useFormioUtils, useToastMessage } from "@/composables";
-import { StudentFileUploaderForm, StudentFileUploaderDto } from "@/types";
+import { StudentFileUploaderForm, StudentFileUploaderDTO } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import StudentDocumentList from "@/components/students/StudentDocumentList.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
@@ -45,7 +45,7 @@ export default {
     ) => {
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        const payload: StudentFileUploaderDto = {
+        const payload: StudentFileUploaderDTO = {
           submittedForm,
           associatedFiles,
         };

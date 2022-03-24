@@ -6,8 +6,8 @@ import {
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
-  StudentFileUploaderDto,
-  StudentUploadFileDto,
+  StudentFileUploaderDTO,
+  StudentUploadFileDTO,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -157,9 +157,9 @@ export class StudentApi extends HttpBaseClient {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDto,
+    studentFilesPayload: StudentFileUploaderDTO,
   ): Promise<void> {
-    await this.patchCall<StudentFileUploaderDto>(
+    await this.patchCall<StudentFileUploaderDTO>(
       "students/upload-files",
       studentFilesPayload,
     );
@@ -167,20 +167,14 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDto[] list of student documents
+   * @return StudentUploadFileDTO[] list of student documents
    */
-  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDto[]> {
-    try {
-      let queryString = "";
-      if (studentId) {
-        queryString += `?studentId=${studentId}`;
-      }
-      return await this.getCallTyped<StudentUploadFileDto[]>(
-        `students/documents${queryString}`,
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDTO[]> {
+    const url = studentId
+      ? `students/documents/${studentId}`
+      : "students/documents";
+    return await this.getCallTyped<StudentUploadFileDTO[]>(
+      this.addClientRoot(url),
+    );
   }
 }

@@ -12,8 +12,8 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  StudentFileUploaderDto,
-  StudentUploadFileDto,
+  StudentFileUploaderDTO,
+  StudentUploadFileDTO,
 } from "@/types";
 
 export class StudentService {
@@ -126,16 +126,16 @@ export class StudentService {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDto,
+    studentFilesPayload: StudentFileUploaderDTO,
   ): Promise<void> {
     await ApiClient.Students.saveStudentFiles(studentFilesPayload);
   }
 
   /**
    * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDto[] list of student documents
+   * @return StudentUploadFileDTO[] list of student documents
    */
-  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDto[]> {
+  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDTO[]> {
     return ApiClient.Students.getStudentFiles(studentId);
   }
 

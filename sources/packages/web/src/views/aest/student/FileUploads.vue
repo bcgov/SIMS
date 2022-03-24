@@ -56,7 +56,7 @@ import { onMounted, ref } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  StudentUploadFileDto,
+  StudentUploadFileDTO,
 } from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { StudentService } from "@/services/StudentService";
@@ -73,7 +73,7 @@ export default {
     },
   },
   setup(props: any) {
-    const studentFileUploads = ref([] as StudentUploadFileDto[]);
+    const studentFileUploads = ref([] as StudentUploadFileDTO[]);
     const { dateOnlyLongString } = useFormatters();
     const fileUtils = useFileUtils();
     const loadStudentFileUploads = async () => {

@@ -22,14 +22,18 @@ import {
   DesignationAgreementLocationService,
   StudentAssessmentService,
 } from "./services";
-import { ApplicationStudentsController } from "./route-controllers";
+import {
+  ApplicationStudentsController,
+  StudentControllerService,
+  StudentStudentsController,
+} from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [ApplicationStudentsController],
+  controllers: [ApplicationStudentsController, StudentStudentsController],
   providers: [
     ApplicationService,
     FormService,
@@ -52,6 +56,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     DesignationAgreementLocationService,
     StudentAssessmentService,
     ApplicationControllerService,
+    StudentControllerService,
   ],
 })
 export class AppStudentsModule {}

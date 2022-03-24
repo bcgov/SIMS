@@ -28,7 +28,7 @@
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { StudentUploadFileDto } from "@/types";
+import { StudentUploadFileDTO } from "@/types";
 import { useFileUtils } from "@/composables";
 
 export default {
@@ -42,7 +42,7 @@ export default {
   },
   setup(props: any) {
     const fileUtils = useFileUtils();
-    const studentDocuments = ref([] as StudentUploadFileDto[]);
+    const studentDocuments = ref([] as StudentUploadFileDTO[]);
     const getStudentDocuments = async () => {
       studentDocuments.value = await StudentService.shared.getStudentFiles();
     };
