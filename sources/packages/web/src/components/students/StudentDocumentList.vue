@@ -7,7 +7,10 @@
         v-for="studentDocument in studentDocuments"
         :key="studentDocument"
       >
-        <div class="file-label" @click="downloadDocument(studentDocument)">
+        <div
+          class="file-label"
+          @click="fileUtils.downloadDocument(studentDocument)"
+        >
           <span class="mr-4">
             <font-awesome-icon :icon="['far', 'file-alt']"
           /></span>
@@ -25,7 +28,8 @@
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { StudentService } from "@/services/StudentService";
-import { StudentUploadFileDto } from "@/types";
+import { StudentUploadFileDTO } from "@/types";
+import { useFileUtils } from "@/composables";
 
 export default {
   components: {
@@ -37,22 +41,10 @@ export default {
     },
   },
   setup(props: any) {
-    const studentDocuments = ref([] as StudentUploadFileDto[]);
+    const fileUtils = useFileUtils();
+    const studentDocuments = ref([] as StudentUploadFileDTO[]);
     const getStudentDocuments = async () => {
       studentDocuments.value = await StudentService.shared.getStudentFiles();
-    };
-
-    const downloadDocument = async (studentDocument: StudentUploadFileDto) => {
-      const fileURL = await StudentService.shared.downloadStudentFile(
-        studentDocument.uniqueFileName,
-      );
-      const fileLink = document.createElement("a");
-      fileLink.href = fileURL;
-      fileLink.setAttribute("download", studentDocument.fileName);
-      document.body.appendChild(fileLink);
-      fileLink.click();
-      // After download, remove the element
-      fileLink.remove();
     };
 
     onMounted(getStudentDocuments);
@@ -63,7 +55,7 @@ export default {
         getStudentDocuments();
       },
     );
-    return { studentDocuments, downloadDocument };
+    return { fileUtils, studentDocuments };
   },
 };
 </script>

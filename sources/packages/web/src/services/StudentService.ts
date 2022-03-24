@@ -12,8 +12,9 @@ import {
   StudentApplicationFields,
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_NUMBER,
-  StudentFileUploaderDto,
-  StudentUploadFileDto,
+  StudentFileUploaderDTO,
+  StudentUploadFileDTO,
+  AESTStudentFileDTO,
 } from "@/types";
 
 export class StudentService {
@@ -126,17 +127,25 @@ export class StudentService {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDto,
+    studentFilesPayload: StudentFileUploaderDTO,
   ): Promise<void> {
     await ApiClient.Students.saveStudentFiles(studentFilesPayload);
   }
 
   /**
    * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDto[] list of student documents
+   * @return StudentUploadFileDTO[] list of student documents
    */
-  async getStudentFiles(): Promise<StudentUploadFileDto[]> {
+  async getStudentFiles(): Promise<StudentUploadFileDTO[]> {
     return ApiClient.Students.getStudentFiles();
+  }
+
+  /**
+   * Get all student documents for AEST user.
+   * @return AESTStudentFileDTO[] list of student documents
+   */
+  async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
+    return ApiClient.Students.getAESTStudentFiles(studentId);
   }
 
   /**
