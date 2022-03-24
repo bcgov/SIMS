@@ -29,7 +29,9 @@ export class StudentStudentsController extends BaseController {
    * @returns list of student documents.
    */
   @Get("documents")
-  @ApiNotFoundResponse({ description: "Student not found." })
+  @ApiNotFoundResponse({
+    description: "The user does not have a student account associated with.",
+  })
   async getStudentFiles(
     @UserToken() userToken: IUserToken,
   ): Promise<StudentUploadFileDTO[]> {

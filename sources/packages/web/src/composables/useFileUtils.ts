@@ -6,7 +6,7 @@ import { StudentUploadFileDTO } from "@/types";
  */
 export function useFileUtils() {
   /**
-   * Used to download the document or file uploaded, which has the StudentUploadFileDTO structure
+   * Used to download the document or file uploaded, which has the StudentUploadFileDTO structure.
    * @param studentDocument
    */
   const downloadDocument = async (studentDocument: StudentUploadFileDTO) => {

@@ -1,4 +1,9 @@
-import { ArrayMinSize, IsNotEmpty, IsOptional } from "class-validator";
+import {
+  ArrayMinSize,
+  IsDefined,
+  IsNotEmpty,
+  IsOptional,
+} from "class-validator";
 import { StudentPDStatus, StudentContact } from "../../../types";
 
 export class GetStudentContactDto {
@@ -95,6 +100,7 @@ export class StudentFileUploaderForm {
  *  Student uploader interface
  */
 export class StudentFileUploaderDTO {
+  @IsDefined()
   submittedForm: StudentFileUploaderForm;
   @ArrayMinSize(1)
   associatedFiles: string[];
