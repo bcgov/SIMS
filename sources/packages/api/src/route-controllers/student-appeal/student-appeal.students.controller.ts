@@ -86,11 +86,8 @@ export class StudentAppealStudentsController extends BaseController {
       );
     }
     try {
-      const dryRunPromise = payload.studentAppealRequests.map((studentAppeal) =>
-        this.formService.dryRunSubmission(
-          studentAppeal.formName,
-          studentAppeal.formData,
-        ),
+      const dryRunPromise = payload.studentAppealRequests.map((appeal) =>
+        this.formService.dryRunSubmission(appeal.formName, appeal.formData),
       );
       const submissionResults = await Promise.all(dryRunPromise);
       submissionResults.forEach((result) => {
