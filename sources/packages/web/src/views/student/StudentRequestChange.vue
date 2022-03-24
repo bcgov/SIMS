@@ -100,13 +100,13 @@ export default {
         applicationId = application.id;
         appealFormNames.value = data.formNames;
       } catch (error) {
-        let errorMessage = "An error happened while requesting a change.";
-        let errorLabel = "Unexpected error";
+        const errorMessage = "An error happened while requesting a change.";
+        const errorLabel = "Unexpected error";
         if (error.response.data?.errorType === INVALID_APPLICATION_NUMBER) {
-          errorMessage = error.response.data.message;
-          errorLabel = "Application not found";
+          toast.warn("Application not found", error.response.data.message);
+        } else {
+          toast.error(errorLabel, errorMessage);
         }
-        toast.error(errorLabel, errorMessage);
       }
     };
 

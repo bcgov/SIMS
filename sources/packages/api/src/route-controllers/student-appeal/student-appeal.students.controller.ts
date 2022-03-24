@@ -27,8 +27,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
-import { INVALID_APPLICATION_NUMBER, INVALID_FORM_DATA } from "../../constants";
-import { CustomNamedError } from "../../utilities";
+import { INVALID_APPLICATION_NUMBER } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("appeal")
@@ -85,28 +84,25 @@ export class StudentAppealStudentsController extends BaseController {
         "There is already a pending appeal for this student.",
       );
     }
+    let dryRunSubmissionResults = [];
     try {
       const dryRunPromise = payload.studentAppealRequests.map((appeal) =>
         this.formService.dryRunSubmission(appeal.formName, appeal.formData),
       );
-      const submissionResults = await Promise.all(dryRunPromise);
-      submissionResults.forEach((result) => {
-        if (!result.valid) {
-          throw new CustomNamedError(
-            "Not able to submit student appeal due to invalid request.",
-            INVALID_FORM_DATA,
-          );
-        }
-      });
+      dryRunSubmissionResults = await Promise.all(dryRunPromise);
     } catch (error) {
-      if (error.name === INVALID_FORM_DATA) {
-        throw new BadRequestException(error.message);
-      }
       throw new InternalServerErrorException(
         "Dry run submission failed due to unknown reason.",
       );
     }
-
+    const invalidRequest = dryRunSubmissionResults.some(
+      (result) => !result.valid,
+    );
+    if (invalidRequest) {
+      throw new BadRequestException(
+        "Not able to submit student appeal due to invalid request.",
+      );
+    }
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
