@@ -12,15 +12,15 @@ describe("Application Page", () => {
 
   before("Login", () => {
     cy.visit("/");
+    cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
     welcomeObject.virtualTestingButton().should("be.visible").click();
     welcomeObject.virtualTestingButtonText().should("be.visible");
     welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait(2000);
+    cy.wait("@waitCardSerialNumber");
     loginObject
       .cardSerialNumberInputText()
       .type(username)
       .should("have.value", username);
-    cy.wait(2000);
     loginObject.cardSerialNumberContinueButton().click();
     loginObject
       .passcodeInputText()
@@ -113,7 +113,7 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton();
+    applicationObject.nextSectionButton();
   });
 
   it("Check without selecting any mandatory fields in Program section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
@@ -122,8 +122,8 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click({ force: true });
     cy.wait(2000);
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     applicationObject.errorMsgTxtForSchoolAttending().should("be.visible");
     applicationObject.selectStudyYearDropdown();
   });
@@ -132,8 +132,8 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     cy.wait(2000);
     cy.go("back");
     applicationObject.verifyApplicationText().should("be.visible");
@@ -143,7 +143,7 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     cy.wait(2000);
     applicationObject.mySchoolIsNotListedCheckbox().check();
     applicationObject.checkboxAlertMessage().should("be.visible");
@@ -153,7 +153,7 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     cy.wait(2000);
     applicationObject.mySchoolIsNotListedCheckbox().check();
     applicationObject.uncheckAlertMessage().click();
@@ -164,7 +164,7 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     applicationObject.schoolIWillBeAttendingDropdown();
     applicationObject.howWillYouAttendProgramDropdown();
     applicationObject.inputStudentNumber();
@@ -174,7 +174,7 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     cy.wait(2000);
     applicationObject.incorrectStudentNumber().type("SDPLETW3543543FSFSD");
     applicationObject.incorrectStudentNumberText().should("be.visible");
@@ -184,7 +184,7 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     applicationObject.schoolIWillBeAttendingDropdown2();
     applicationObject.howWillYouAttendProgramDropdown2();
     applicationObject.programIWillBeAttendingDropdown2();
@@ -195,17 +195,19 @@ describe("Application Page", () => {
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
     applicationObject.schoolIWillBeAttendingDropdown2();
     applicationObject.howWillYouAttendProgramDropdown2();
     applicationObject.myStudyPeriodIsNotListedCheckbox();
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.programName().type(testData.programNameData);
-      applicationObject.programDescription().type(testData.programDescriptionData);
+      applicationObject
+        .programDescription()
+        .type(testData.programDescriptionData);
     });
     applicationObject.studyStartDate();
     applicationObject.studyEndDate();
     applicationObject.inputStudentNumber2();
-    applicationObject.NextSectionButton().click();
+    applicationObject.nextSectionButton().click();
   });
 });

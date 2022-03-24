@@ -83,11 +83,11 @@ export default class ApplicationObject {
     return cy.contains("Let’s get started on your application");
   }
 
-  NextSectionButton() {
+  nextSectionButton() {
     return cy.get(":nth-child(3) > .ml-auto > .v-btn");
   }
 
-  PreviousSectionButton() {
+  previousSectionButton() {
     return cy.contains("Previous section");
   }
 
@@ -99,11 +99,11 @@ export default class ApplicationObject {
     cy.get(".form-control.ui.fluid.selection.dropdown.is-invalid");
   }
 
-  WelcomeText() {
+  welcomeText() {
     return cy.contains("Let’s get started on your application");
   }
 
-  WelcomeButton() {
+  welcomeButton() {
     return cy.get(":nth-child(1) > .page-link");
   }
 
@@ -201,12 +201,12 @@ export default class ApplicationObject {
     return cy.get("#eoslne6-offeringnotListed");
   }
 
-  programName(){
+  programName() {
     return cy.get("#ek2u9li-programName");
   }
 
-  programDescription(){
-    return cy.get("e1w8o5a-programDescription")
+  programDescription() {
+    return cy.get("e1w8o5a-programDescription");
   }
 
   studyStartDate() {
@@ -265,11 +265,10 @@ export default class ApplicationObject {
   }
   //<EndRegion--------------------------Draft Status------------------------------------->
 
-  ProgramPageText() {
+  programPageText() {
     //Dropdown selection
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".fa").eq(0).click({ force: true });
-      cy.wait(1000);
       cy.get(".choices__input.choices__input--cloned")
         .click({ force: true })
         .type(testData.searchForYourSchool)

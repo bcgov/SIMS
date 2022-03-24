@@ -12,15 +12,15 @@ describe("Dashboard Page", () => {
 
   it("Verify that user successfully redirects to Dashboard Page.", () => {
     cy.visit("/");
+    cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
     welcomeObject.virtualTestingButton().should("be.visible").click();
     welcomeObject.virtualTestingButtonText().should("be.visible");
     welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait(2000);
+    cy.wait("@waitCardSerialNumber");
     loginObject
       .cardSerialNumberInputText()
       .type(username)
       .should("have.value", username);
-    cy.wait(2000);
     loginObject.cardSerialNumberContinueButton().click();
     loginObject
       .passcodeInputText()
@@ -50,30 +50,28 @@ describe("Dashboard Page", () => {
   });
 
   it("Verify that user able to successfully log out from browser", () => {
-    cy.wait(2000);
     dashboardObject.welcomeToStudentBC().should("be.visible").click();
   });
 
   it("Verify that clicking on back button doesn't logout the user once is user is logged in", () => {
-    cy.wait(2000);
     cy.visit("/");
     cy.reload();
+    cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
     welcomeObject.virtualTestingButton().should("be.visible").click();
     welcomeObject.virtualTestingButtonText().should("be.visible");
     welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait(2000);
+    cy.wait("@waitCardSerialNumber");
     loginObject
       .cardSerialNumberInputText()
       .type(username)
       .should("have.value", username);
-    cy.wait(2000);
     loginObject.cardSerialNumberContinueButton().click();
     loginObject
       .passcodeInputText()
       .type(password)
       .should("have.value", password);
     loginObject.passcodeContinueButton().click();
-    cy.wait(2000);
+    loginObject.verifyLoggedInText();
     cy.go("back");
     dashboardObject.enterYourPasscode().should("not.exist");
   });
