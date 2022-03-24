@@ -178,7 +178,7 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDTO[] list of student documents
+   * @return AESTStudentFileDTO[] list of student documents
    */
   async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
     return this.getCallTyped<AESTStudentFileDTO[]>(

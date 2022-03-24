@@ -142,7 +142,7 @@ export class StudentService {
 
   /**
    * Get all student documents for AEST user.
-   * @return StudentUploadFileDTO[] list of student documents
+   * @return AESTStudentFileDTO[] list of student documents
    */
   async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
     return ApiClient.Students.getAESTStudentFiles(studentId);
