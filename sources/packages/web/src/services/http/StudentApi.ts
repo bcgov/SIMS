@@ -8,6 +8,7 @@ import {
   StudentDetail,
   StudentFileUploaderDTO,
   StudentUploadFileDTO,
+  AESTStudentFileDTO,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -169,10 +170,19 @@ export class StudentApi extends HttpBaseClient {
    * Get all student documents uploaded by student uploader.
    * @return StudentUploadFileDTO[] list of student documents
    */
-  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDTO[]> {
-    const url = studentId
-      ? `students/${studentId}/documents`
-      : "students/documents";
-    return this.getCallTyped<StudentUploadFileDTO[]>(this.addClientRoot(url));
+  async getStudentFiles(): Promise<StudentUploadFileDTO[]> {
+    return this.getCallTyped<StudentUploadFileDTO[]>(
+      this.addClientRoot("students/documents"),
+    );
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return StudentUploadFileDTO[] list of student documents
+   */
+  async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
+    return this.getCallTyped<AESTStudentFileDTO[]>(
+      this.addClientRoot(`students/${studentId}/documents`),
+    );
   }
 }

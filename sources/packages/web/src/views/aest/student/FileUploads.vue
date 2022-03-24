@@ -77,7 +77,7 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const fileUtils = useFileUtils();
     const loadStudentFileUploads = async () => {
-      studentFileUploads.value = await StudentService.shared.getStudentFiles(
+      studentFileUploads.value = await StudentService.shared.getAESTStudentFiles(
         props.studentId,
       );
     };

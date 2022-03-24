@@ -107,16 +107,15 @@ export class StudentFileUploaderDTO {
 }
 
 /**
- *  Student uploaded documents (i.e, FileOriginType.Student documents)
+ *  Student uploaded documents (i.e, FileOriginType.Student documents).
  */
 export class StudentUploadFileDTO {
-  metadata: StudentFileMetadataDTO;
-  groupName: string;
-  updatedAt: Date;
+  fileName: string;
+  uniqueFileName: string;
 }
 
 /**
- *  AEST user to view student uploaded documents
+ *  AEST user to view student uploaded documents.
  */
 export class AESTStudentFileDTO extends StudentUploadFileDTO {
   metadata: StudentFileMetadataDTO;

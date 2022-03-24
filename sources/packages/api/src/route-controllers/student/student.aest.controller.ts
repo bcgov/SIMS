@@ -1,11 +1,11 @@
 import { Controller, Get, Injectable, Param } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { StudentFileService } from "src/services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
-import { StudentUploadFileDTO } from "./models/student.dto";
-import { StudentControllerService } from "./student.controller.service";
+import { AESTStudentFileDTO, StudentUploadFileDTO } from "./models/student.dto";
 
 /**
  * Student controller for AEST Client.
@@ -16,9 +16,7 @@ import { StudentControllerService } from "./student.controller.service";
 @ApiTags("students")
 @Injectable()
 export class StudentAESTController extends BaseController {
-  constructor(
-    private readonly studentControllerService: StudentControllerService,
-  ) {
+  constructor(private readonly fileService: StudentFileService) {
     super();
   }
 
@@ -29,9 +27,18 @@ export class StudentAESTController extends BaseController {
    * @returns list of student documents as StudentUploadFileDTO.
    */
   @Get(":studentId/documents")
-  async getStudentFiles(
+  async getAESTStudentFiles(
     @Param("studentId") studentId: number,
-  ): Promise<StudentUploadFileDTO[]> {
-    return this.studentControllerService.getStudentFiles(studentId);
+  ): Promise<AESTStudentFileDTO[]> {
+    const studentDocuments = await this.fileService.getAESTStudentFiles(
+      studentId,
+    );
+    return studentDocuments.map((studentDocument) => ({
+      fileName: studentDocument.fileName,
+      uniqueFileName: studentDocument.uniqueFileName,
+      metadata: studentDocument.metadata,
+      groupName: studentDocument.groupName,
+      updatedAt: studentDocument.updatedAt,
+    }));
   }
 }

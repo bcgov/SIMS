@@ -14,6 +14,7 @@ import {
   DEFAULT_PAGE_NUMBER,
   StudentFileUploaderDTO,
   StudentUploadFileDTO,
+  AESTStudentFileDTO,
 } from "@/types";
 
 export class StudentService {
@@ -135,8 +136,16 @@ export class StudentService {
    * Get all student documents uploaded by student uploader.
    * @return StudentUploadFileDTO[] list of student documents
    */
-  async getStudentFiles(studentId?: number): Promise<StudentUploadFileDTO[]> {
-    return ApiClient.Students.getStudentFiles(studentId);
+  async getStudentFiles(): Promise<StudentUploadFileDTO[]> {
+    return ApiClient.Students.getStudentFiles();
+  }
+
+  /**
+   * Get all student documents for AEST user.
+   * @return StudentUploadFileDTO[] list of student documents
+   */
+  async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
+    return ApiClient.Students.getAESTStudentFiles(studentId);
   }
 
   /**

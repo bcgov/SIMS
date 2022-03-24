@@ -24,7 +24,6 @@ import {
 } from "./services";
 import {
   ApplicationStudentsController,
-  StudentControllerService,
   StudentStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -56,7 +55,6 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     DesignationAgreementLocationService,
     StudentAssessmentService,
     ApplicationControllerService,
-    StudentControllerService,
   ],
 })
 export class AppStudentsModule {}

@@ -3,10 +3,9 @@ import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
-import { StudentService } from "../../services";
+import { StudentFileService, StudentService } from "../../services";
 import BaseController from "../BaseController";
 import { StudentUploadFileDTO } from "./models/student.dto";
-import { StudentControllerService } from "./student.controller.service";
 
 /**
  * Student controller for Student Client.
@@ -18,7 +17,7 @@ import { StudentControllerService } from "./student.controller.service";
 export class StudentStudentsController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
-    private readonly studentControllerService: StudentControllerService,
+    private readonly fileService: StudentFileService,
   ) {
     super();
   }
@@ -39,6 +38,12 @@ export class StudentStudentsController extends BaseController {
     if (!existingStudent) {
       throw new NotFoundException("Student Not found.");
     }
-    return this.studentControllerService.getStudentFiles(existingStudent.id);
+    const studentDocuments = await this.fileService.getStudentUploadedFiles(
+      existingStudent.id,
+    );
+    return studentDocuments.map((studentDocument) => ({
+      fileName: studentDocument.fileName,
+      uniqueFileName: studentDocument.uniqueFileName,
+    }));
   }
 }

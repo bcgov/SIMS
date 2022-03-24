@@ -32,4 +32,3 @@ export * from "./institution/institution.institutions.controller";
 export * from "./institution/institution.controller.service";
 export * from "./student/student.aest.controller";
 export * from "./student/student.students.controller";
-export * from "./student/student.controller.service";
