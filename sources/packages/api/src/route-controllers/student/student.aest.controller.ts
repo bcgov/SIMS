@@ -25,9 +25,10 @@ export class StudentAESTController extends BaseController {
   /**
    * This controller returns all student documents uploaded
    * by student uploader.
+   * @param studentId
    * @returns list of student documents as StudentUploadFileDTO.
    */
-  @Get("documents/:studentId")
+  @Get(":studentId/documents")
   async getStudentFiles(
     @Param("studentId") studentId: number,
   ): Promise<StudentUploadFileDTO[]> {

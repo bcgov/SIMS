@@ -1,3 +1,10 @@
+import {
+  ArrayMinSize,
+  isNotEmpty,
+  IsNotEmpty,
+  IsOptional,
+} from "class-validator";
+import { extend } from "dayjs";
 import { StudentPDStatus, StudentContact } from "../../../types";
 
 export class GetStudentContactDto {
@@ -83,8 +90,10 @@ export interface StudentDetailDTO {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderForm {
+export class StudentFileUploaderForm {
+  @IsNotEmpty()
   documentPurpose: string;
+  @IsOptional()
   applicationNumber?: string;
 }
 
@@ -93,6 +102,7 @@ export interface StudentFileUploaderForm {
  */
 export class StudentFileUploaderDTO {
   submittedForm: StudentFileUploaderForm;
+  @ArrayMinSize(1)
   associatedFiles: string[];
 }
 
@@ -100,13 +110,20 @@ export class StudentFileUploaderDTO {
  *  Student uploaded documents (i.e, FileOriginType.Student documents)
  */
 export class StudentUploadFileDTO {
-  fileName: string;
-  uniqueFileName: string;
   metadata: StudentFileMetadataDTO;
   groupName: string;
   updatedAt: Date;
 }
 
-export interface StudentFileMetadataDTO {
+/**
+ *  AEST user to view student uploaded documents
+ */
+export class AESTStudentFileDTO extends StudentUploadFileDTO {
+  metadata: StudentFileMetadataDTO;
+  groupName: string;
+  updatedAt: Date;
+}
+
+export class StudentFileMetadataDTO {
   applicationNumber?: string;
 }

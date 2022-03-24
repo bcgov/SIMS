@@ -1,5 +1,5 @@
 import { Controller, Get, Injectable, NotFoundException } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { IUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
@@ -29,6 +29,7 @@ export class StudentStudentsController extends BaseController {
    * @returns list of student documents.
    */
   @Get("documents")
+  @ApiNotFoundResponse({ description: "Student not found." })
   async getStudentFiles(
     @UserToken() userToken: IUserToken,
   ): Promise<StudentUploadFileDTO[]> {
@@ -36,7 +37,7 @@ export class StudentStudentsController extends BaseController {
       userToken.userId,
     );
     if (!existingStudent) {
-      throw new NotFoundException("Student Not found");
+      throw new NotFoundException("Student Not found.");
     }
     return this.studentControllerService.getStudentFiles(existingStudent.id);
   }

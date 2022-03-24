@@ -171,7 +171,7 @@ export class StudentApi extends HttpBaseClient {
    */
   async getStudentFiles(studentId?: number): Promise<StudentUploadFileDTO[]> {
     const url = studentId
-      ? `students/documents/${studentId}`
+      ? `students/${studentId}/documents`
       : "students/documents";
     return this.getCallTyped<StudentUploadFileDTO[]>(this.addClientRoot(url));
   }
