@@ -1,5 +1,5 @@
 {
-    "title": "Student Income Appeal",
+    "title": "Appeals - Student Income",
     "name": "studentIncomeAppeal",
     "path": "studentincomeappeal",
     "type": "form",
@@ -397,6 +397,6 @@
         }
     ],
     "created": "2022-03-19T01:39:53.697Z",
-    "modified": "2022-03-22T02:14:37.629Z",
+    "modified": "2022-03-24T03:50:44.724Z",
     "machineName": "studentIncomeAppeal"
 }

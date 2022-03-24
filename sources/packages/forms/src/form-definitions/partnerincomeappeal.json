@@ -1,5 +1,5 @@
 {
-    "title": "Partner Income Appeal",
+    "title": "Appeals - Partner Income",
     "name": "partnerIncomeAppeal",
     "path": "partnerincomeappeal",
     "type": "form",
@@ -328,7 +328,9 @@
             "allowMultipleMasks": false,
             "inputType": "hidden",
             "id": "em1y8gd",
-            "defaultValue": ""
+            "defaultValue": "",
+            "dataGridLabel": false,
+            "addons": []
         },
         {
             "label": "applicationStatus",
@@ -398,10 +400,11 @@
             "showWordCount": false,
             "allowMultipleMasks": false,
             "inputType": "hidden",
-            "id": "e6z1qd9"
+            "id": "e6z1qd9",
+            "addons": []
         }
     ],
     "created": "2022-03-21T20:00:50.690Z",
-    "modified": "2022-03-22T17:20:56.308Z",
+    "modified": "2022-03-24T03:50:02.166Z",
     "machineName": "partnerIncomeAppeal"
 }

@@ -125,13 +125,15 @@ export default {
 
     const submitAppeal = async () => {
       const studentAppealRequests = [] as StudentAppealRequestDTO[];
-      appealForms.forEach((form: any) => {
-        form.submit();
+      const formSubmitResponse = [];
+      for (const form of appealForms) {
+        formSubmitResponse.push(form.submit());
         studentAppealRequests.push({
           formName: form.form.path,
           formData: form.data,
         });
-      });
+      }
+      await Promise.all(formSubmitResponse);
       const studentAppeal = {
         studentAppealRequests: studentAppealRequests,
       } as StudentAppealDTO;

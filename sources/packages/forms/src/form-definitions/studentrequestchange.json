@@ -484,7 +484,7 @@
                     "validateOn": "change",
                     "validate": {
                         "required": true,
-                        "onlyAvailableItems": false,
+                        "onlyAvailableItems": true,
                         "customMessage": "",
                         "custom": "",
                         "customPrivate": false,
@@ -541,7 +541,7 @@
                         "include": "score",
                         "threshold": 0.3
                     },
-                    "id": "ezqelnr",
+                    "id": "e4h28m8",
                     "defaultValue": []
                 }
             ],
@@ -691,6 +691,6 @@
         }
     ],
     "created": "2022-03-18T22:58:22.442Z",
-    "modified": "2022-03-21T22:02:11.078Z",
+    "modified": "2022-03-23T18:32:11.499Z",
     "machineName": "studentRequestChange"
 }
