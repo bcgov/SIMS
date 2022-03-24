@@ -118,9 +118,7 @@ describe("Application Page", () => {
 
   it("Check without selecting any mandatory fields in Program section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
-    cy.wait(2000);
     applicationObject.draftApplication().click({ force: true });
-    cy.wait(2000);
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
     applicationObject.nextSectionButton().click();
@@ -134,7 +132,6 @@ describe("Application Page", () => {
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
     cy.go("back");
     applicationObject.verifyApplicationText().should("be.visible");
   });
@@ -144,7 +141,6 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
     applicationObject.mySchoolIsNotListedCheckbox().check();
     applicationObject.checkboxAlertMessage().should("be.visible");
   });
@@ -154,7 +150,6 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
     applicationObject.mySchoolIsNotListedCheckbox().check();
     applicationObject.uncheckAlertMessage().click();
     applicationObject.checkboxAlertMessage().should("not.exist");
@@ -165,8 +160,8 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    applicationObject.schoolIWillBeAttendingDropdown();
-    applicationObject.howWillYouAttendProgramDropdown();
+    applicationObject.schoolIWillBeAttendingDropdown2();
+    applicationObject.howWillYouAttendProgramDropdown2();
     applicationObject.inputStudentNumber();
   });
 
@@ -175,7 +170,6 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
     applicationObject.incorrectStudentNumber().type("SDPLETW3543543FSFSD");
     applicationObject.incorrectStudentNumberText().should("be.visible");
   });

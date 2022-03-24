@@ -29,15 +29,15 @@ export default class ApplicationObject {
   }
 
   selectStudyYearDropdown() {
+    cy.intercept("GET", "**/options-list").as("optionListSelectStudy");
     cy.fixture("newApplicationForm").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
-      cy.wait(1000);
+      cy.wait(2000);
       cy.get(".choices__input.choices__input--cloned")
         .click({ force: true })
         .type(testData.selectStudyYear)
         .type("{enter}");
     });
-    cy.wait(2000);
   }
 
   startApplicationStudyYearEnableButton() {
@@ -108,7 +108,7 @@ export default class ApplicationObject {
   }
 
   mySchoolIsNotListedCheckbox() {
-    return cy.get(".form-check-input");
+    return cy.get(".form-check-input", { timeout: 5000 });
   }
 
   checkboxAlertMessage() {
@@ -124,77 +124,73 @@ export default class ApplicationObject {
   schoolIWillBeAttendingDropdown() {
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(1).click({ force: true });
-      cy.wait(1000);
       cy.get(".choices__input.choices__input--cloned")
         .click({ force: true })
         .type(testData.schoolIWillBeAttending)
         .type("{enter}");
     });
-    cy.wait(2000);
   }
 
   schoolIWillBeAttendingDropdown2() {
     cy.fixture("draftApplicationData").then((testData) => {
-      cy.get(".form-group").eq(1).click({ force: true });
-      cy.wait(1000);
-      cy.get(".choices__input.choices__input--cloned")
+      cy.get(".form-group", { timeout: 3000 }).eq(1).click({ force: true });
+      cy.get(".choices__input.choices__input--cloned", { timeout: 3000 })
         .click({ force: true })
         .type(testData.schoolIWillBeAttending2)
         .type("{enter}");
     });
-    cy.wait(2000);
   }
 
   howWillYouAttendProgramDropdown() {
+    cy.intercept("GET", "**/options-list").as("optionListHowWillYou");
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(4).click({ force: true });
-      cy.wait(1000);
+      cy.wait("@optionListHowWillYou");
       cy.get(".choices__input.choices__input--cloned")
         .eq(1)
         .click({ force: true })
         .type(testData.howWillYouAttendProgram)
-        .type("{enter}");
+        .type("{enter}", { timeout: 2000 });
     });
-    cy.wait(2000);
   }
 
   howWillYouAttendProgramDropdown2() {
+    cy.intercept("GET", "**/options-list").as("optionListHowWillYou2");
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(4).click({ force: true });
-      cy.wait(1000);
+      cy.wait("@optionListHowWillYou2");
       cy.get(".choices__input.choices__input--cloned")
         .eq(1)
         .click({ force: true })
         .type(testData.howWillYouAttendProgram2)
-        .type("{enter}");
+        .type("{enter}", { timeout: 2000 });
     });
-    cy.wait(2000);
   }
 
   programIWillBeAttendingDropdown() {
+    cy.intercept("GET", "**/options-list").as("optionListProgramIWill");
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(6).click({ force: true });
-      cy.wait(1000);
+      cy.wait("@optionListProgramIWill");
       cy.get(".choices__input.choices__input--cloned")
         .eq(2)
         .click({ force: true })
         .type(testData.programIWillBeAttendingDropdown)
-        .type("{enter}");
+        .type("{enter}", { timeout: 2000 });
     });
-    cy.wait(2000);
   }
 
   programIWillBeAttendingDropdown2() {
+    cy.intercept("GET", "**/options-list").as("optionListProgramIWill2");
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get(".form-group").eq(6).click({ force: true });
-      cy.wait(1000);
+      cy.wait("@optionListProgramIWill2");
       cy.get(".choices__input.choices__input--cloned")
         .eq(2)
         .click({ force: true })
         .type(testData.programIWillBeAttendingDropdown2)
-        .type("{enter}");
+        .type("{enter}", { timeout: 2000 });
     });
-    cy.wait(2000);
   }
 
   myStudyPeriodIsNotListedCheckbox() {
@@ -215,7 +211,6 @@ export default class ApplicationObject {
         testData.studyStartDate
       );
     });
-    cy.wait(2000);
   }
 
   studyEndDate() {
@@ -224,21 +219,18 @@ export default class ApplicationObject {
         testData.studyEndDate
       );
     });
-    cy.wait(2000);
   }
 
   inputStudentNumber() {
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get("#ek8w4hn-studentNumber").type(testData.studentNumber);
     });
-    cy.wait(2000);
   }
 
   inputStudentNumber2() {
     cy.fixture("draftApplicationData").then((testData) => {
       cy.get("#ek8w4hn-studentNumber").type(testData.studentNumber2);
     });
-    cy.wait(2000);
   }
 
   incorrectStudentNumber() {
@@ -250,18 +242,18 @@ export default class ApplicationObject {
   }
 
   programOfferingDropdown() {
+    cy.intercept("GET", "**/options-list").as("programOffering");
     cy.fixture("draftApplicationData").then((testData) => {
       cy.xpath(
         "//div[@id='eb4inb']//div[@class='form-control ui fluid selection dropdown']"
       ).click({ force: true });
-      cy.wait(1000);
+      cy.wait("@programOffering");
       cy.get(".choices__input.choices__input--cloned")
         .eq(3)
         .click({ force: true })
         .type(testData.programOffering)
-        .type("{enter}");
+        .type("{enter}", { timeout: 2000 });
     });
-    cy.wait(2000);
   }
   //<EndRegion--------------------------Draft Status------------------------------------->
 
