@@ -25,7 +25,7 @@ export class StudentAESTController extends BaseController {
    * This controller returns all student documents uploaded
    * by student uploader.
    * @param studentId
-   * @returns list of student documents as StudentUploadFileDTO.
+   * @returns list of student documents as AESTStudentFileDTO.
    */
   @Get(":studentId/documents")
   async getAESTStudentFiles(
