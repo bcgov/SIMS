@@ -39,6 +39,7 @@ import {
   ApplicationStatusToBeUpdatedDto,
   ApplicationWithProgramYearDto,
   NOAApplicationDto,
+  ApplicationIdentifiersDTO,
 } from "./models/application.model";
 import {
   AllowAuthorizedParty,
@@ -64,6 +65,7 @@ import {
 import {
   INVALID_STUDY_DATES,
   OFFERING_START_DATE_ERROR,
+  INVALID_APPLICATION_NUMBER,
 } from "../../constants";
 import {
   ApiBadRequestResponse,
@@ -616,5 +618,44 @@ export class ApplicationStudentsController extends BaseController {
         );
       }
     }
+  }
+
+  /**
+   * Get application to request appeal.
+   ** Application eligible to be requested for
+   ** a change will be returned.
+   * @param applicationNumber
+   * @param userToken
+   * @returns application
+   */
+  @ApiOkResponse({
+    description: "Returns application which can be requested for change.",
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Application either not found or not eligible to request for change.",
+  })
+  @Get(":applicationNumber/appeal")
+  async getApplicationToRequestAppeal(
+    @Param("applicationNumber") applicationNumber: string,
+    @UserToken() userToken: IUserToken,
+  ): Promise<ApplicationIdentifiersDTO> {
+    const application =
+      await this.applicationService.getApplicationToRequestAppeal(
+        userToken.userId,
+        applicationNumber,
+      );
+    if (!application) {
+      throw new NotFoundException(
+        new ApiProcessError(
+          "Given application either does not exist or is not complete to request change.",
+          INVALID_APPLICATION_NUMBER,
+        ),
+      );
+    }
+    return {
+      id: application.id,
+      applicationNumber: application.applicationNumber,
+    };
   }
 }

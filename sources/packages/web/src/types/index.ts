@@ -32,3 +32,4 @@ export * from "@/types/contracts/DataTableContract";
 export * from "@/types/contracts/NoteContract";
 export * from "@/types/contracts/RestrictionContract";
 export * from "@/types/contracts/PaginationDto";
+export * from "@/types/contracts/student/StudentRequestChange";

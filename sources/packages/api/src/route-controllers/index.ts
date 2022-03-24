@@ -30,3 +30,4 @@ export * from "./assessment/assessment.system-access.controller";
 export * from "./institution/institution.aest.controller";
 export * from "./institution/institution.institutions.controller";
 export * from "./institution/institution.controller.service";
+export * from "./student-appeal/student-appeal.students.controller";

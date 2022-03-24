@@ -1205,4 +1205,44 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: ["id"],
     }));
   }
+
+  /**
+   * Retrieve application with application number in
+   * completed status.
+   ** Application id is used to perform same lookup by id
+   ** instead of application number.
+   * @param userId
+   * @param applicationId
+   * @param applicationNumber
+   * @returns
+   */
+  async getApplicationToRequestAppeal(
+    userId: number,
+    applicationNumber?: string,
+    applicationId?: number,
+  ): Promise<Application> {
+    const applicationQuery = this.repo
+      .createQueryBuilder("application")
+      .select(["application.id", "application.applicationNumber"])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("user.id = :userId", { userId })
+      .andWhere("application.applicationStatus = :completed", {
+        completed: ApplicationStatus.completed,
+      });
+    if (applicationId) {
+      applicationQuery.andWhere("application.id = :applicationId", {
+        applicationId,
+      });
+    }
+    if (applicationNumber) {
+      applicationQuery.andWhere(
+        "application.applicationNumber = :applicationNumber",
+        {
+          applicationNumber,
+        },
+      );
+    }
+    return applicationQuery.getOne();
+  }
 }
