@@ -122,3 +122,7 @@ SFAS_RECEIVE_FOLDER=
 
 #Bypass study period overlap and pending PIR validation
 BYPASS_APPLICATION_SUBMIT_VALIDATIONS=
+
+#cypress credentials
+FILE_NAME= cypress.env.json
+FILE_PATH= SIMS\testing\functional\tests\cypress.env.json

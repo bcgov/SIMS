@@ -9,6 +9,7 @@ export enum AppRoutes {
   StudentFileUploader = "file-uploader",
   StudentApplicationDetails = "application/:id",
   Assessment = "application/:applicationId/assessment",
+  RequestChange = "request-change",
   // Institution
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",

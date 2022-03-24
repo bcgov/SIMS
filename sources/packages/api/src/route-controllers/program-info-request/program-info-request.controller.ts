@@ -32,11 +32,13 @@ import {
   checkNotValidStudyPeriod,
   checkStudyStartDateWithinProgramYear,
   checkOfferingIntensityMismatch,
+  getISODateOnlyString,
 } from "../../utilities";
 import {
   EducationProgramOffering,
   ProgramInfoStatus,
   Application,
+  AssessmentTriggerType,
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
@@ -45,7 +47,11 @@ import {
   INVALID_STUDY_DATES,
   OFFERING_INTENSITY_MISMATCH,
 } from "../../constants";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -74,6 +80,13 @@ export class ProgramInfoRequestController extends BaseController {
    * @param applicationId
    * @returns program info request
    */
+  @ApiNotFoundResponse({
+    description:
+      "The application was not found under the provided location or the application is not expecting a Program Information Request (PIR) at this moment.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Student application is missing original assessment.",
+  })
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request/application/:applicationId")
   async getProgramInfoRequest(
@@ -97,6 +110,18 @@ export class ProgramInfoRequestController extends BaseController {
         "Program Information Request (PIR) not found.",
       );
     }
+    // Original assessment to be used as a reference.
+    // PIR process happens only during original assessment.
+    if (
+      application.currentAssessment.triggerType !==
+      AssessmentTriggerType.OriginalAssessment
+    ) {
+      throw new UnprocessableEntityException(
+        "Student application is missing original assessment.",
+      );
+    }
+    // Offering that belongs to the original assessment.
+    const offering = application.currentAssessment.offering;
     const result = {} as GetProgramInfoRequestDto;
     // Program Info Request specific data.
     result.institutionLocationName = application.location.name;
@@ -106,8 +131,8 @@ export class ProgramInfoRequestController extends BaseController {
     // If an offering is present, this value will be the program id associated
     // with the offering, otherwise the program id from PIR will be used.
     result.selectedProgram =
-      application.offering?.educationProgram.id ?? application.pirProgram?.id;
-    result.selectedOffering = application.offering?.id;
+      offering?.educationProgram.id ?? application.pirProgram?.id;
+    result.selectedOffering = offering?.id;
     result.pirStatus = application.pirStatus;
     // Load application dynamic data.
     result.studentCustomProgram = application.data.programName;
@@ -119,22 +144,21 @@ export class ProgramInfoRequestController extends BaseController {
       application.data.howWillYouBeAttendingTheProgram;
     result.programYearId = application.programYear.id;
     result.isActiveProgramYear = application.programYear.active;
-    if (application.offering) {
-      result.offeringName = application.offering.name;
-      result.studyStartDate = application.offering.studyStartDate;
-      result.studyEndDate = application.offering.studyEndDate;
-      result.actualTuitionCosts = application.offering.actualTuitionCosts;
-      result.programRelatedCosts = application.offering.programRelatedCosts;
-      result.mandatoryFees = application.offering.mandatoryFees;
-      result.exceptionalExpenses = application.offering.exceptionalExpenses;
+    if (offering) {
+      result.offeringName = offering.name;
+      result.studyStartDate = offering.studyStartDate;
+      result.studyEndDate = offering.studyEndDate;
+      result.actualTuitionCosts = offering.actualTuitionCosts;
+      result.programRelatedCosts = offering.programRelatedCosts;
+      result.mandatoryFees = offering.mandatoryFees;
+      result.exceptionalExpenses = offering.exceptionalExpenses;
       result.tuitionRemittanceRequestedAmount =
-        application.offering.tuitionRemittanceRequestedAmount;
-      result.offeringDelivered = application.offering.offeringDelivered;
-      result.lacksStudyBreaks = application.offering.lacksStudyBreaks;
-      result.tuitionRemittanceRequested =
-        application.offering.tuitionRemittanceRequested;
-      result.offeringType = application.offering.offeringType;
-      result.offeringIntensity = application.offering.offeringIntensity;
+        offering.tuitionRemittanceRequestedAmount;
+      result.offeringDelivered = offering.offeringDelivered;
+      result.lacksStudyBreaks = offering.lacksStudyBreaks;
+      result.tuitionRemittanceRequested = offering.tuitionRemittanceRequested;
+      result.offeringType = offering.offeringType;
+      result.offeringIntensity = offering.offeringIntensity;
     }
 
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
@@ -337,11 +361,12 @@ export class ProgramInfoRequestController extends BaseController {
       locationId,
     );
     return applications.map((eachApplication: Application) => {
+      const offering = eachApplication.currentAssessment?.offering;
       return {
-        applicationNumber: eachApplication.applicationNumber,
         applicationId: eachApplication.id,
-        studyStartPeriod: eachApplication.offering?.studyStartDate ?? "",
-        studyEndPeriod: eachApplication.offering?.studyEndDate ?? "",
+        applicationNumber: eachApplication.applicationNumber,
+        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
         pirStatus: eachApplication.pirStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };

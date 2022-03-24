@@ -55,8 +55,11 @@ import {
   faGraduationCap,
   faHome,
   faPenNib,
+  faBell,
+  faFileAlt as faFileAltSolid,
+  faHandPaper as faHandPaperSolid,
 } from "@fortawesome/free-solid-svg-icons";
-import { faFileAlt } from "@fortawesome/free-regular-svg-icons";
+import { faFileAlt, faHandPaper } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 library.add(
   faMapPin,
@@ -77,6 +80,10 @@ library.add(
   faFileAlt,
   faHome,
   faPenNib,
+  faBell,
+  faFileAltSolid,
+  faHandPaper,
+  faHandPaperSolid,
 );
 
 // Configure the UI validations rules globally available.

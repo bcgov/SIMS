@@ -117,7 +117,7 @@ export class ECertFullTimeRequestService {
     const addressInfo =
       disbursement.application.student.contactInfo.addresses[0];
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      disbursement.application.offering.educationProgram.cipCode,
+      disbursement.studentAssessment.offering.educationProgram.cipCode,
     );
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
@@ -136,15 +136,18 @@ export class ECertFullTimeRequestService {
       documentProducedDate: now,
       negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
       schoolAmount:
-        disbursement.application.offering.tuitionRemittanceRequestedAmount,
-      educationalStartDate: disbursement.application.offering.studyStartDate,
-      educationalEndDate: disbursement.application.offering.studyEndDate,
+        disbursement.studentAssessment.offering
+          .tuitionRemittanceRequestedAmount,
+      educationalStartDate:
+        disbursement.studentAssessment.offering.studyStartDate,
+      educationalEndDate: disbursement.studentAssessment.offering.studyEndDate,
       federalInstitutionCode: disbursement.application.location.institutionCode,
       weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
       fieldOfStudy,
-      yearOfStudy: disbursement.application.offering.yearOfStudy,
+      yearOfStudy: disbursement.studentAssessment.offering.yearOfStudy,
       completionYears:
-        disbursement.application.offering.educationProgram.completionYears,
+        disbursement.studentAssessment.offering.educationProgram
+          .completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
       dateOfBirth: disbursement.application.student.birthDate,
       lastName: disbursement.application.student.user.lastName,

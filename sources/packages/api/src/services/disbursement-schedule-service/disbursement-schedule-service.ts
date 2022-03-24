@@ -345,8 +345,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "user.lastName",
       ])
       .innerJoin("disbursementSchedule.application", "application")
-      .innerJoin("application.location", "location")
-      .innerJoin("application.offering", "offering")
+      .innerJoin("disbursementSchedule.studentAssessment", "assessment")
+      .innerJoin("assessment.offering", "offering")
+      .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("location.id = :locationId", { locationId })
@@ -412,50 +413,51 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
     return this.repo
-      .createQueryBuilder("coe")
+      .createQueryBuilder("disbursement")
       .select([
-        "coe.id",
-        "coe.disbursementDate",
-        "coe.coeStatus",
-        "coe.coeDeniedOtherDesc",
-        "coeApplication.applicationNumber",
-        "coeApplication.applicationStatus",
-        "coeApplication.id",
-        "coeApplication.pirStatus",
-        "coeLocation.name",
-        "coeLocation.id",
-        "applicationStudent.id",
-        "studentUser.firstName",
-        "studentUser.lastName",
-        "coeOffering.offeringIntensity",
-        "coeOffering.studyStartDate",
-        "coeOffering.studyEndDate",
-        "coeOffering.lacksStudyBreaks",
-        "coeOffering.actualTuitionCosts",
-        "coeOffering.programRelatedCosts",
-        "coeOffering.mandatoryFees",
-        "coeOffering.exceptionalExpenses",
-        "coeOffering.tuitionRemittanceRequested",
-        "coeOffering.tuitionRemittanceRequestedAmount",
-        "coeOffering.offeringDelivered",
-        "coeOffering.studyBreaks",
-        "coeProgram.name",
-        "coeProgram.description",
-        "deniedReason.id",
-        "deniedReason.reason",
+        "disbursement.id",
+        "disbursement.disbursementDate",
+        "disbursement.coeStatus",
+        "disbursement.coeDeniedOtherDesc",
+        "application.applicationNumber",
+        "application.applicationStatus",
+        "application.id",
+        "application.pirStatus",
+        "location.name",
+        "location.id",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "offering.offeringIntensity",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.lacksStudyBreaks",
+        "offering.actualTuitionCosts",
+        "offering.programRelatedCosts",
+        "offering.mandatoryFees",
+        "offering.exceptionalExpenses",
+        "offering.tuitionRemittanceRequested",
+        "offering.tuitionRemittanceRequestedAmount",
+        "offering.offeringDelivered",
+        "offering.studyBreaks",
+        "program.name",
+        "program.description",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
       ])
-      .innerJoin("coe.application", "coeApplication")
-      .innerJoin("coeApplication.location", "coeLocation")
-      .innerJoin("coeApplication.student", "applicationStudent")
-      .innerJoin("applicationStudent.user", "studentUser")
-      .innerJoin("coeApplication.offering", "coeOffering")
-      .innerJoin("coeOffering.educationProgram", "coeProgram")
-      .leftJoin("coe.coeDeniedReason", "deniedReason")
-      .where("coeLocation.id = :locationId", { locationId })
-      .andWhere("coeApplication.applicationStatus IN (:...status)", {
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("disbursement.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("assessment.offering", "offering")
+      .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("offering.educationProgram", "program")
+      .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
+      .where("location.id = :locationId", { locationId })
+      .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       })
-      .andWhere("coe.id = :disbursementScheduleId", {
+      .andWhere("disbursement.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
       .getOne();
@@ -540,28 +542,30 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     onlyPendingCOE?: boolean,
   ): Promise<DisbursementSchedule> {
     const firstCOEQuery = this.repo
-      .createQueryBuilder("outstandingCOE")
+      .createQueryBuilder("disbursement")
       .select([
-        "outstandingCOE.id",
-        "outstandingCOE.coeStatus",
-        "outstandingCOE.coeDeniedOtherDesc",
+        "disbursement.id",
+        "disbursement.coeStatus",
+        "disbursement.coeDeniedOtherDesc",
         "coeDeniedReason.id",
         "coeDeniedReason.reason",
+        "assessment.id",
         "application.id",
         "application.applicationStatus",
       ])
-      .innerJoin("outstandingCOE.application", "application")
-      .leftJoin("outstandingCOE.coeDeniedReason", "coeDeniedReason")
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("disbursement.application", "application")
+      .innerJoin("disbursement.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],
       });
     if (onlyPendingCOE) {
-      firstCOEQuery.andWhere("outstandingCOE.coeStatus = :required", {
+      firstCOEQuery.andWhere("disbursement.coeStatus = :required", {
         required: COEStatus.required,
       });
     }
-    firstCOEQuery.orderBy("outstandingCOE.disbursementDate").limit(1);
+    firstCOEQuery.orderBy("disbursement.disbursementDate").limit(1);
     return firstCOEQuery.getOne();
   }
 
