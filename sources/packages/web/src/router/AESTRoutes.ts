@@ -16,6 +16,7 @@ import Locations from "@/views/aest/institution/Locations.vue";
 import Users from "@/views/aest/institution/Users.vue";
 import Designation from "@/views/aest/institution/Designation.vue";
 import Restrictions from "@/views/aest/institution/Restrictions.vue";
+import FileUploads from "@/views/aest/student/FileUploads.vue";
 import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
 import StudentApplicationView from "@/views/aest/StudentApplicationView.vue";
@@ -111,6 +112,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_RESTRICTION,
             props: true,
             component: StudentRestrictions,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.FileUploads,
+            name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
+            props: true,
+            component: FileUploads,
             meta: {
               clientType: ClientIdType.AEST,
             },

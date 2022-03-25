@@ -145,15 +145,28 @@ export interface StudentFileUploaderForm {
 /**
  *  Student uploader interface
  */
-export interface StudentFileUploaderDto {
+export interface StudentFileUploaderDTO {
   submittedForm: StudentFileUploaderForm;
   associatedFiles: string[];
 }
 
 /**
- *  Student uploaded documents (i.e, FileOriginType.Student documents)
+ *  Student uploaded documents (i.e, FileOriginType.Student documents).
  */
-export interface StudentUploadFileDto {
+export interface StudentUploadFileDTO {
   fileName: string;
   uniqueFileName: string;
+}
+
+/**
+ *  AEST user to view student uploaded documents.
+ */
+export interface AESTStudentFileDTO extends StudentUploadFileDTO {
+  metadata: StudentFileMetadataDTO;
+  groupName: string;
+  updatedAt: Date;
+}
+
+export interface StudentFileMetadataDTO {
+  applicationNumber?: string;
 }

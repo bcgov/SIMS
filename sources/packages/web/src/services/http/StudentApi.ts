@@ -6,8 +6,9 @@ import {
   StudentRestrictionStatus,
   SearchStudentResp,
   StudentDetail,
-  StudentFileUploaderDto,
-  StudentUploadFileDto,
+  StudentFileUploaderDTO,
+  StudentUploadFileDTO,
+  AESTStudentFileDTO,
 } from "@/types/contracts/StudentContract";
 
 export class StudentApi extends HttpBaseClient {
@@ -157,9 +158,9 @@ export class StudentApi extends HttpBaseClient {
    * @param studentFilesPayload
    */
   async saveStudentFiles(
-    studentFilesPayload: StudentFileUploaderDto,
+    studentFilesPayload: StudentFileUploaderDTO,
   ): Promise<void> {
-    await this.patchCall<StudentFileUploaderDto>(
+    await this.patchCall<StudentFileUploaderDTO>(
       "students/upload-files",
       studentFilesPayload,
     );
@@ -167,9 +168,21 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Get all student documents uploaded by student uploader.
-   * @return StudentUploadFileDto[] list of student documents
+   * @return StudentUploadFileDTO[] list of student documents
    */
-  async getStudentFiles(): Promise<StudentUploadFileDto[]> {
-    return this.getCallTyped<StudentUploadFileDto[]>("students/documents");
+  async getStudentFiles(): Promise<StudentUploadFileDTO[]> {
+    return this.getCallTyped<StudentUploadFileDTO[]>(
+      this.addClientRoot("students/documents"),
+    );
+  }
+
+  /**
+   * Get all student documents uploaded by student uploader.
+   * @return AESTStudentFileDTO[] list of student documents
+   */
+  async getAESTStudentFiles(studentId: number): Promise<AESTStudentFileDTO[]> {
+    return this.getCallTyped<AESTStudentFileDTO[]>(
+      this.addClientRoot(`students/${studentId}/documents`),
+    );
   }
 }

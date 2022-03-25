@@ -91,6 +91,7 @@ export class StudentAppealStudentsController extends BaseController {
       );
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
     } catch (error) {
+      //TODO: Add a logger to log the error trace.
       throw new InternalServerErrorException(
         "Dry run submission failed due to unknown reason.",
       );

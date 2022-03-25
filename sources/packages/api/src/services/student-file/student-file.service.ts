@@ -120,7 +120,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.fileOrigin = :fileOrigin", {
         fileOrigin: FileOriginType.Student,
       })
-      .select(["studentFile.uniqueFileName", "studentFile.fileName"])
+      .select([
+        "studentFile.uniqueFileName",
+        "studentFile.fileName",
+        "studentFile.metadata",
+        "studentFile.groupName",
+        "studentFile.updatedAt",
+      ])
       .getMany();
   }
   @InjectLogger()

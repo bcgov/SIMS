@@ -34,8 +34,7 @@ import {
   SaveStudentDto,
   StudentRestrictionDTO,
   StudentDetailDTO,
-  StudentFileUploaderDto,
-  StudentUploadFileDto,
+  StudentFileUploaderDTO,
 } from "./models/student.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -595,7 +594,7 @@ export class StudentController extends BaseController {
   @Patch("upload-files")
   async saveStudentUploadedFiles(
     @UserToken() userToken: IUserToken,
-    @Body() payload: StudentFileUploaderDto,
+    @Body() payload: StudentFileUploaderDTO,
   ): Promise<void> {
     const existingStudent = await this.studentService.getStudentByUserId(
       userToken.userId,
@@ -629,30 +628,5 @@ export class StudentController extends BaseController {
       payload.associatedFiles,
       payload.submittedForm,
     );
-  }
-
-  /**
-   * This controller returns all student documents uploaded
-   * by student uploader
-   * @returns list of student documents
-   */
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("documents")
-  async getStudentFiles(
-    @UserToken() userToken: IUserToken,
-  ): Promise<StudentUploadFileDto[]> {
-    const existingStudent = await this.studentService.getStudentByUserId(
-      userToken.userId,
-    );
-    if (!existingStudent) {
-      throw new NotFoundException("Student Not found");
-    }
-    const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      existingStudent.id,
-    );
-    return studentDocuments.map((studentDocument) => ({
-      fileName: studentDocument.fileName,
-      uniqueFileName: studentDocument.uniqueFileName,
-    }));
   }
 }

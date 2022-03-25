@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: ${NAME}
@@ -85,7 +85,7 @@ objects:
 parameters:
   - name: NAME
     required: true
-  - name: PROJECT 
+  - name: PROJECT
     value: sims
   - name: SERVICE_NAME
     value: web
@@ -102,7 +102,7 @@ parameters:
   - name: PORT
     value: "7070"
   - name: IMAGE_STREAM_TAG
-    required: true  
+    required: true
   - name: BUILD_NAMESPACE
     required: true
   - name: IMAGE_REGISTRY

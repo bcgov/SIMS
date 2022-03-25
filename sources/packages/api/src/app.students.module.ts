@@ -27,6 +27,7 @@ import {
 } from "./services";
 import {
   ApplicationStudentsController,
+  StudentStudentsController,
   StudentAppealStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -35,7 +36,11 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
-  controllers: [ApplicationStudentsController, StudentAppealStudentsController],
+  controllers: [
+    ApplicationStudentsController,
+    StudentStudentsController,
+    StudentAppealStudentsController,
+  ],
   providers: [
     ApplicationService,
     FormService,
