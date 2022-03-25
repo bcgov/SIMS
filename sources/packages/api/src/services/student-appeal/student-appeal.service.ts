@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
-import { Brackets, Connection, SelectQueryBuilder } from "typeorm";
+import { Brackets, Connection } from "typeorm";
 
 import {
   Application,
@@ -78,10 +78,22 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Get all pending and declined appeal query string
-   * for an application
+   * Get all pending and declined student Appeals
+   * for an application.
+   * Here we have added different when statement
+   * in CASE to fetch the status of the appeals.
+   * * WHEN 1: is checking if at least one Pending
+   * * appeals request is there for an appeal,
+   * * then the status is considered as Pending.
+   * * WHEN 2: is checking if at least one Approved
+   * * appeals request is there for an appeal,
+   * * then the status is considered as Approved.
+   * * END: is else, if any of them is not falling
+   * * under above 2 case, then its considered as Declined.
+   * * andWhere will only take status Pending and
+   * * status that is not Declined.
    * @param applicationId application id .
-   * @returns StudentAppeal sql query string
+   * @returns StudentAppeal list.
    */
   async getPendingAndDeniedAppeals(
     applicationId: number,
@@ -92,10 +104,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .addSelect(
         `CASE
           WHEN EXISTS(${this.studentAppealRequests
-            .getExistsAppeals1(StudentAppealStatus.Pending)
+            .getExistsAppeals(StudentAppealStatus.Pending)
             .getSql()}) THEN '${StudentAppealStatus.Pending}'
           WHEN EXISTS(${this.studentAppealRequests
-            .getExistsAppeals1(StudentAppealStatus.Approved)
+            .getExistsAppeals(StudentAppealStatus.Approved)
             .getSql()}) THEN '${StudentAppealStatus.Approved}'
           ELSE '${StudentAppealStatus.Declined}'
         END`,
@@ -107,11 +119,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         new Brackets((qb) => {
           qb.where(
             ` EXISTS(${this.studentAppealRequests
-              .getExistsAppeals1(StudentAppealStatus.Pending)
+              .getExistsAppeals(StudentAppealStatus.Pending)
               .getSql()})`,
           ).orWhere(
             `NOT EXISTS(${this.studentAppealRequests
-              .getExistsAppeals1(StudentAppealStatus.Declined, false)
+              .getExistsAppeals(StudentAppealStatus.Declined, false)
               .getSql()})`,
           );
         }),

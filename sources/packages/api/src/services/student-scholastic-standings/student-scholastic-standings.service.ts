@@ -14,10 +14,10 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get all pending and declined scholastic standings query string
-   * for an application
-   * @param applicationId application id .
-   * @returns StudentScholasticStanding sql query string
+   * Get all pending and declined scholastic standings
+   * for an application.
+   * @param applicationId application id.
+   * @returns StudentScholasticStanding list.
    */
   getPendingAndDeniedScholasticStanding(
     applicationId: number,

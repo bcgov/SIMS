@@ -352,18 +352,28 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * todo: comment
+   * Get all assessments history summary.
+   * Here we have added different when statement
+   * in CASE to fetch the status of the assessment.
+   * * WHEN 1: if assessmentWorkflowId is null,
+   * * then status is Submitted.
+   * * WHEN 2: if assessmentWorkflowId is not null
+   * * and assessmentData is null, then status is
+   * * InProgress.
+   * * WHEN 3:if assessmentWorkflowId is not null
+   * * and assessmentData is not null, then status
+   * * is Completed.
+   * @param applicationId applicationId.
+   * @returns StudentAssessment list
    */
   async AssessmentHistorySummary(
     applicationId: number,
-  ): Promise<StudentAssessment[]> {
+  ): Promise<Partial<StudentAssessment>[]> {
     return this.repo
       .createQueryBuilder("assessment")
-      .select([
-        "assessment.submittedDate",
-        "assessment.triggerType",
-        "assessment.assessmentDate",
-      ])
+      .select("assessment.submittedDate", "submittedDate")
+      .addSelect("assessment.triggerType", "triggerType")
+      .addSelect("assessment.assessmentDate", "assessmentDate")
       .addSelect(
         `CASE
           WHEN 

@@ -1,6 +1,6 @@
-import { AssessmentTriggerType } from "./assessment-trigger.type";
-import { ScholasticStandingStatus } from "./scholastic-standing-status.type";
-import { StudentAppealStatus } from "./student-appeal-status.type";
+import { AssessmentTriggerType } from "./AssessmentTrigger";
+import { ScholasticStandingStatus } from "./ScholasticStandingStatus";
+import { StudentAppealStatus } from "./StudentAppealStatus";
 
 /**
  * Possible status for an Assessment, when the Application_status is in Assessment
@@ -24,11 +24,21 @@ export enum AssessmentStatus {
   declined = "Declined",
 }
 /**
- * todo
+ * Assessment History Status
  */
 export enum AssessmentHistoryStatus {
+  // When assessmentWorkflowId is null,
+  // then status is Submitted.
   Submitted = "Submitted",
+
+  // When assessmentWorkflowId is not null
+  // and assessmentData is null, then status is
+  // InProgress.
   InProgress = "In Progress",
+
+  // when assessmentWorkflowId is not null
+  // and assessmentData is not null, then status
+  // is Completed.
   Completed = "Completed",
 }
 

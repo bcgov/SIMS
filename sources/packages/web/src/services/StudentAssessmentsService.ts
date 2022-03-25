@@ -19,22 +19,26 @@ export class StudentAssessmentsService {
    * Get all request assessments for an student application,
    * i.e, this will fetch the combination of pending and denied
    * student appeal and scholastic standings for an application.
-   * @param applicationId, application number
-   * TODO: UPDATE RETURN COMMNET
-   * @returns
+   * @param applicationId, application number.
+   * @returns RequestAssessmentSummaryDTO list.
    */
   async getAssessmentRequest(
     applicationId: number,
-  ): Promise<RequestAssessmentSummaryDTO> {
+  ): Promise<RequestAssessmentSummaryDTO[]> {
     return ApiClient.StudentAssessmentApi.getAssessmentRequest(applicationId);
   }
   /**
-   * TODO: UPDATE
-   * @returns
+   * Get history of assessments for an application,
+   * i.e, this will have original assessment for the
+   * student application, and all approved student
+   * appeal and scholastic standings for the application
+   * which will have different assessment status.
+   * @param applicationId, application number.
+   * @returns AssessmentHistorySummaryDTO list.
    */
   async getAssessmentHistory(
     applicationId: number,
-  ): Promise<AssessmentHistorySummaryDTO> {
+  ): Promise<AssessmentHistorySummaryDTO[]> {
     return ApiClient.StudentAssessmentApi.getAssessmentHistory(applicationId);
   }
 }
