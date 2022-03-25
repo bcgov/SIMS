@@ -1,6 +1,6 @@
 <template>
   <header-navigator
-    title="Back to student applications"
+    title="Student applications"
     :routeLocation="{
       name: AESTRoutesConst.STUDENT_APPLICATIONS,
       params: { studentId },
