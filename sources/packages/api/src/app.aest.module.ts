@@ -31,6 +31,7 @@ import {
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
 import { ApplicationControllerService } from "./route-controllers/application/application.controller.service";
+import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -62,6 +63,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     UserService,
     InstitutionControllerService,
     ApplicationControllerService,
+    InstitutionLocationsControllerService,
   ],
 })
 export class AppAESTModule {}

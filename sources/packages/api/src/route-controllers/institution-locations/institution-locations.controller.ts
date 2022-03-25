@@ -11,6 +11,8 @@ import {
 } from "@nestjs/common";
 import BaseController from "../BaseController";
 import {
+  InstitutionService,
+  ApplicationService,
   InstitutionLocationService,
   FormService,
   DesignationAgreementLocationService,
@@ -24,7 +26,7 @@ import {
   IInstitutionUserToken,
   IUserToken,
 } from "../../auth/userToken.interface";
-import { InstitutionService, ApplicationService } from "../../services";
+
 import {
   HasLocationAccess,
   IsInstitutionAdmin,
@@ -44,11 +46,13 @@ import {
 import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import Helper from "../../helpers/utilfunctions";
+import { InstitutionLocationsControllerService } from "./institution-locations.controller.service";
 
 @Controller("institution/location")
 @ApiTags("institution")
 export class InstitutionLocationsController extends BaseController {
   constructor(
+    private readonly locationControllerService: InstitutionLocationsControllerService,
     private readonly designationAgreementLocationService: DesignationAgreementLocationService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
@@ -155,15 +159,13 @@ export class InstitutionLocationsController extends BaseController {
   async getAllInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
-    // get all institution locations.
-    const DesignationAgreementLocationData =
-      await this.designationAgreementLocationService.getAllDesignatedAgreementLocations(
+    // get all institution locations with designation statuses.
+    const institutionLocationsWithDesignationStatus =
+      await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
         userToken.authorizations.institutionId,
       );
 
-    return Helper.mapDesignationAgreementLocationToInstitutionLocationDTO(
-      DesignationAgreementLocationData,
-    );
+    return institutionLocationsWithDesignationStatus;
   }
 
   /**

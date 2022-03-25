@@ -7,6 +7,8 @@ import {
   InstitutionService,
   BCeIDService,
   UserService,
+  InstitutionLocationService,
+  DesignationAgreementLocationService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -16,6 +18,7 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
+import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -31,7 +34,10 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionService,
     BCeIDService,
     UserService,
+    InstitutionLocationService,
     InstitutionControllerService,
+    InstitutionLocationsControllerService,
+    DesignationAgreementLocationService,
   ],
 })
 export class AppInstitutionsModule {}

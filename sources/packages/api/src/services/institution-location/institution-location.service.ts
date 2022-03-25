@@ -217,4 +217,38 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .where("location.id = :locationId", { locationId })
       .getRawOne();
   }
+
+  /**
+   * Get an institution's locations with designation statuses.
+   * @param institutionId institution id
+   * @returns InstitutionLocation[]
+   */
+  async getInstitutionLocationsWithDesignationStatus(
+    institutionId: number,
+  ): Promise<LocationWithDesigationStatus[]> {
+    return this.repo
+      .createQueryBuilder("location")
+      .select([
+        "location.name",
+        "location.data",
+        "institution.institutionPrimaryContact",
+        "location.id",
+        "location.institutionCode",
+        "location.primaryContact",
+      ])
+      .leftJoin("location.institution", "institution")
+      .where("institution.id = :id", {
+        id: institutionId,
+      })
+      .addSelect(
+        `CASE
+          WHEN EXISTS(${this.designationAgreementLocationService
+            .getExistsDesignatedLocation()
+            .getSql()}) THEN true
+          ELSE false
+        END`,
+        "isDesignated",
+      )
+      .getRawMany();
+  }
 }

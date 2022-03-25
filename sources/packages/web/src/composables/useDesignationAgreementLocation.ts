@@ -1,14 +1,14 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
-import { DesignationAgreementStatus } from "@/types/contracts/DesignationAgreementContract";
+import { DesignationAgreementLocationStatus } from "@/types";
 
 export function useDesignationAgreementLocation() {
   const mapDesignationChipStatus = (
-    status: DesignationAgreementStatus,
+    status: DesignationAgreementLocationStatus,
   ): StatusChipTypes => {
     switch (status) {
-      case DesignationAgreementStatus.Designated:
+      case DesignationAgreementLocationStatus.Designated:
         return StatusChipTypes.Success;
-      case DesignationAgreementStatus.NotDesignated:
+      case DesignationAgreementLocationStatus.NotDesignated:
         return StatusChipTypes.Warning;
       default:
         return StatusChipTypes.Inactive;

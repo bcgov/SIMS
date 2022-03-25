@@ -5,7 +5,6 @@ import {
   DesignationAgreementLocation,
   DesignationAgreementStatus,
 } from "../../database/entities";
-import Helper from "src/helpers/utilfunctions";
 
 /**
  * Manages the operations needed for designation agreements location.
@@ -78,25 +77,5 @@ export class DesignationAgreementLocationService extends RecordDataModelService<
       .leftJoin("institutionLocation.institution", "institution")
       .where("institution.id = :institutionId", { institutionId })
       .getMany();
-  }
-
-  async getDesignationAgreementLocationStatus(
-    institutionId: number,
-  ): Promise<DesignationAgreementStatus> {
-    const designationAgreementLocations =
-      Helper.mapDesignationAgreementLocationToInstitutionLocationDTO(
-        await this.getAllDesignatedAgreementLocations(institutionId),
-      );
-
-    if (
-      designationAgreementLocations &&
-      designationAgreementLocations.length > 0
-    ) {
-      return designationAgreementLocations.filter(
-        (item) =>
-          item.designationStatus === DesignationAgreementStatus.Designated ||
-          item.designationStatus === DesignationAgreementStatus.NotDesignated,
-      )[0].designationStatus;
-    }
   }
 }

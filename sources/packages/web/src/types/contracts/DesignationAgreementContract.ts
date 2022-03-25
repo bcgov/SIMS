@@ -61,14 +61,6 @@ export enum DesignationAgreementStatus {
    * was declined by the Ministry.
    */
   Declined = "Declined",
-  /**
-   * The designation agreement status is designated
-   */
-  Designated = "Designated",
-  /**
-   * The designation agreement status is not designated
-   */
-  NotDesignated = "Not designated",
 }
 
 export interface UpdateDesignationLocationDto {

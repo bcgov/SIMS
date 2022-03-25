@@ -1,6 +1,5 @@
 import { InstitutionPrimaryContact } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
-import { DesignationAgreementStatus } from "../../../database/entities";
 
 export class GetInstitutionLocationDto {
   id: number;
@@ -46,7 +45,7 @@ export class InstitutionLocationsDetailsDto {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
-  designationStatus: DesignationAgreementStatus;
+  designationStatus: DesignationLocationAgreementStatus;
 }
 
 export interface UserLocationDto {
@@ -65,4 +64,15 @@ export interface InstitutionLocationsSummaryDto {
     city: string;
     postalCode: string;
   };
+}
+
+/**
+ * Possible status for a designation location agreement.
+ */
+export enum DesignationLocationAgreementStatus {
+  Designated = "Designated",
+  /**
+   * The designation agreement status is not designated
+   */
+  NotDesignated = "Not designated",
 }

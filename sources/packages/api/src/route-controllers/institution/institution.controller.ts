@@ -18,7 +18,6 @@ import {
   InstitutionLocationService,
   LEGAL_SIGNING_AUTHORITY_EXIST,
   LEGAL_SIGNING_AUTHORITY_MSG,
-  DesignationAgreementLocationService,
 } from "../../services";
 import {
   BasicInstitutionInfo,
@@ -58,6 +57,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   InstitutionLocationsSummaryDto,
   InstitutionLocationsDetailsDto,
+  DesignationLocationAgreementStatus,
 } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -74,14 +74,15 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
 } from "@nestjs/swagger";
-import Helper from "../../helpers/utilfunctions";
+
+import { InstitutionLocationsControllerService } from "../institution-locations/institution-locations.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 @ApiTags("institution")
 export class InstitutionController extends BaseController {
   constructor(
-    private readonly designationAgreementLocationService: DesignationAgreementLocationService,
+    private readonly locationControllerService: InstitutionLocationsControllerService,
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,
@@ -486,7 +487,7 @@ export class InstitutionController extends BaseController {
         institutionId,
       );
     const designationAgreementStatus =
-      await this.designationAgreementLocationService.getDesignationAgreementLocationStatus(
+      await this.locationControllerService.getInstitutionDesignationStatus(
         institutionId,
       );
     return {
@@ -514,13 +515,12 @@ export class InstitutionController extends BaseController {
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations.
-    const DesignationAgreementLocationData =
-      await this.designationAgreementLocationService.getAllDesignatedAgreementLocations(
+    // get all institution locations with designation statuses.
+    const institutionLocationsWithDesignationStatus =
+      await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
         institutionId,
       );
-    return Helper.mapDesignationAgreementLocationToInstitutionLocationDTO(
-      DesignationAgreementLocationData,
-    );
+    return institutionLocationsWithDesignationStatus;
   }
 
   /**
