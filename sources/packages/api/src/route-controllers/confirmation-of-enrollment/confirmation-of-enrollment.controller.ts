@@ -122,12 +122,15 @@ export class ConfirmationOfEnrollmentController extends BaseController {
         (disbursement: DisbursementSchedule) => {
           const offering = disbursement.studentAssessment.offering;
           return {
-            applicationNumber: disbursement.application.applicationNumber,
-            applicationId: disbursement.application.id,
+            applicationNumber:
+              disbursement.studentAssessment.application.applicationNumber,
+            applicationId: disbursement.studentAssessment.application.id,
             studyStartPeriod: getISODateOnlyString(offering.studyStartDate),
             studyEndPeriod: getISODateOnlyString(offering.studyEndDate),
             coeStatus: disbursement.coeStatus,
-            fullName: getUserFullName(disbursement.application.student.user),
+            fullName: getUserFullName(
+              disbursement.studentAssessment.application.student.user,
+            ),
             disbursementScheduleId: disbursement.id,
             disbursementDate: getISODateOnlyString(
               disbursement.disbursementDate,
@@ -166,8 +169,8 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       if (
         !firstCOEofApplication ||
         !(
-          firstCOEofApplication.application.applicationStatus ===
-            ApplicationStatus.enrollment &&
+          firstCOEofApplication.studentAssessment.application
+            .applicationStatus === ApplicationStatus.enrollment &&
           firstCOEofApplication.coeStatus === COEStatus.required
         )
       ) {
@@ -245,13 +248,15 @@ export class ConfirmationOfEnrollmentController extends BaseController {
         offering.tuitionRemittanceRequestedAmount,
       applicationOfferingStudyDelivered: offering.offeringDelivered,
       applicationStudentName: getUserFullName(
-        disbursementSchedule.application.student.user,
+        disbursementSchedule.studentAssessment.application.student.user,
       ),
-      applicationNumber: disbursementSchedule.application.applicationNumber,
+      applicationNumber:
+        disbursementSchedule.studentAssessment.application.applicationNumber,
       applicationLocationName: offering.institutionLocation.name,
-      applicationStatus: disbursementSchedule.application.applicationStatus,
+      applicationStatus:
+        disbursementSchedule.studentAssessment.application.applicationStatus,
       applicationCOEStatus: disbursementSchedule.coeStatus,
-      applicationId: disbursementSchedule.application.id,
+      applicationId: disbursementSchedule.studentAssessment.application.id,
       applicationWithinCOEWindow: this.applicationService.withinValidCOEWindow(
         disbursementSchedule.disbursementDate,
       ),
@@ -261,7 +266,8 @@ export class ConfirmationOfEnrollmentController extends BaseController {
         breakStartDate: dateString(studyBreak.breakStartDate),
         breakEndDate: dateString(studyBreak.breakEndDate),
       })),
-      applicationPIRStatus: disbursementSchedule.application.pirStatus,
+      applicationPIRStatus:
+        disbursementSchedule.studentAssessment.application.pirStatus,
       disbursementDate: getExtendedDateFormat(
         disbursementSchedule.disbursementDate,
       ),
@@ -310,7 +316,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
 
     const firstOutstandingDisbursement =
       await this.disbursementScheduleService.getFirstCOEOfApplication(
-        disbursementSchedule.application.id,
+        disbursementSchedule.studentAssessment.application.id,
         true,
       );
 
@@ -326,8 +332,8 @@ export class ConfirmationOfEnrollmentController extends BaseController {
     await this.disbursementScheduleService.updateDisbursementAndApplicationCOEApproval(
       disbursementScheduleId,
       userToken.userId,
-      disbursementSchedule.application.id,
-      disbursementSchedule.application.applicationStatus,
+      disbursementSchedule.studentAssessment.application.id,
+      disbursementSchedule.studentAssessment.application.applicationStatus,
     );
 
     /** Send COE confirmation message only for first COE.
@@ -335,7 +341,7 @@ export class ConfirmationOfEnrollmentController extends BaseController {
      ** In that case, COE confirmation message will not be sent for second COE.
      */
     if (
-      disbursementSchedule.application.applicationStatus ===
+      disbursementSchedule.studentAssessment.application.applicationStatus ===
       ApplicationStatus.enrollment
     ) {
       await this.workflow.sendConfirmCOEMessage(
@@ -382,14 +388,14 @@ export class ConfirmationOfEnrollmentController extends BaseController {
       );
     }
     await this.disbursementScheduleService.updateCOEToDeny(
-      disbursementSchedule.application.id,
+      disbursementSchedule.studentAssessment.application.id,
       userToken.userId,
       payload.coeDenyReasonId,
       payload.otherReasonDesc,
     );
 
     if (
-      disbursementSchedule.application.applicationStatus ===
+      disbursementSchedule.studentAssessment.application.applicationStatus ===
         ApplicationStatus.enrollment &&
       disbursementSchedule.studentAssessment.assessmentWorkflowId
     ) {

@@ -61,15 +61,6 @@ export class DisbursementSchedule extends RecordDataModel {
   })
   dateSent?: Date;
   /**
-   * Application associated with this disbursement.
-   */
-  @ManyToOne(() => Application, { eager: false, cascade: false })
-  @JoinColumn({
-    name: "application_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  application: Application;
-  /**
    * Values for this disbursement.
    */
   @OneToMany(

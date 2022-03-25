@@ -149,7 +149,8 @@ export class ApplicationControllerService {
       applicationEndDate: dateString(offering?.studyEndDate),
       applicationInstitutionName: applicationDetail?.location?.name,
       applicationPIRStatus: applicationDetail.pirStatus,
-      applicationAssessmentStatus: applicationDetail.assessmentStatus,
+      applicationAssessmentStatus:
+        applicationDetail.currentAssessment?.noaApprovalStatus,
       applicationFormName: applicationDetail.programYear.formName,
       applicationProgramYearID: applicationDetail.programYear.id,
       applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
