@@ -16,7 +16,7 @@ export class StudentAssessmentsService {
   }
 
   /**
-   * Get all request assessments for an student application,
+   * Get all requested assessments for an student application,
    * i.e, this will fetch the combination of pending and denied
    * student appeal and scholastic standings for an application.
    * @param applicationId, application number.

@@ -19,7 +19,7 @@ import {
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("assessment")
-@ApiTags(`${ClientTypeBaseRoute.Student}-application`)
+@ApiTags(`${ClientTypeBaseRoute.AEST}-assessment`)
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
@@ -30,7 +30,7 @@ export class AssessmentAESTController extends BaseController {
   }
 
   /**
-   * Controller to get all request assessments for an student
+   * Controller to get all requested assessments for an student
    * application, i.e, this will fetch the combination of
    * pending and denied student appeal and scholastic
    * standings for an application.
@@ -52,7 +52,7 @@ export class AssessmentAESTController extends BaseController {
         ),
       ]);
 
-    return [
+    const requestedAssessments = [
       ...studentAppealQuery.map((appeals) => ({
         ...appeals,
         triggerType: AssessmentTriggerType.StudentAppeal,
@@ -61,7 +61,12 @@ export class AssessmentAESTController extends BaseController {
         ...scholasticStanding,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
       })),
-    ] as RequestAssessmentSummaryDTO[];
+    ];
+
+    // sorting and returning
+    return requestedAssessments.sort((first, second) =>
+      first.status > second.status ? -1 : 1,
+    );
   }
 
   /**

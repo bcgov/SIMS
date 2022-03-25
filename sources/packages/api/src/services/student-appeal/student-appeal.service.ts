@@ -9,7 +9,10 @@ import {
   StudentAppealStatus,
   User,
 } from "../../database/entities";
-import { StudentAppealRequestModel } from "./student-appeal.model";
+import {
+  PendingAndDeniedAppeals,
+  StudentAppealRequestModel,
+} from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
 
 /**
@@ -85,9 +88,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * * WHEN 1: is checking if at least one Pending
    * * appeals request is there for an appeal,
    * * then the status is considered as Pending.
-   * * WHEN 2: is checking if at least one Approved
-   * * appeals request is there for an appeal,
-   * * then the status is considered as Approved.
    * * END: is else, if any of them is not falling
    * * under above 2 case, then its considered as Declined.
    * * andWhere will only take status Pending and
@@ -97,20 +97,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    */
   async getPendingAndDeniedAppeals(
     applicationId: number,
-  ): Promise<Partial<StudentAppeal>[]> {
+  ): Promise<PendingAndDeniedAppeals[]> {
     return this.repo
       .createQueryBuilder("studentAppeal")
       .select("studentAppeal.submittedDate", "submittedDate")
       .addSelect(
         `CASE
-          WHEN EXISTS(${this.studentAppealRequests
-            .getExistsAppeals(StudentAppealStatus.Pending)
-            .getSql()}) THEN '${StudentAppealStatus.Pending}'
-          WHEN EXISTS(${this.studentAppealRequests
-            .getExistsAppeals(StudentAppealStatus.Approved)
-            .getSql()}) THEN '${StudentAppealStatus.Approved}'
-          ELSE '${StudentAppealStatus.Declined}'
-        END`,
+      WHEN EXISTS(${this.studentAppealRequests
+        .getExistsAppeals(StudentAppealStatus.Pending)
+        .getSql()}) THEN '${StudentAppealStatus.Pending}'
+      ELSE '${StudentAppealStatus.Declined}'
+    END`,
         "status",
       )
       .innerJoin("studentAppeal.application", "application")

@@ -18,6 +18,7 @@ import {
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
 import { AssessmentHistoryStatus } from "../../route-controllers/assessment/models/assessment.dto";
+import { AssessmentHistory } from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -368,7 +369,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    */
   async AssessmentHistorySummary(
     applicationId: number,
-  ): Promise<Partial<StudentAssessment>[]> {
+  ): Promise<AssessmentHistory[]> {
     return this.repo
       .createQueryBuilder("assessment")
       .select("assessment.submittedDate", "submittedDate")
@@ -397,6 +398,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       )
       .innerJoin("assessment.application", "application")
       .where("application.id = :applicationId", { applicationId })
+      .orderBy("status", "DESC")
       .getRawMany();
   }
 }
