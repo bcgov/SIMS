@@ -62,19 +62,24 @@ export interface ApplicationFormData extends ApplicationData {
     name?: string;
   };
 }
+/**
+ * Application DTO with primary identifier(s)
+ */
+export class ApplicationIdentifiersDTO {
+  id: number;
+  applicationNumber: string;
+}
 
 /**
  * Base DTO for application
  */
-export interface GetApplicationBaseDTO {
+export class GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
   data: ApplicationFormData;
-  id: number;
   applicationStatus: ApplicationStatus;
-  applicationNumber: string;
   applicationFormName: string;
   applicationProgramYearID: number;
 }
-export interface GetApplicationDataDto extends GetApplicationBaseDTO {
+export class GetApplicationDataDto extends GetApplicationBaseDTO {
   /**
    * Application dynamic data.
    */

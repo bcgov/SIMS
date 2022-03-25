@@ -77,13 +77,19 @@ export interface ApplicationStatusToBeUpdatedDto {
 }
 
 /**
+ * DTO with primary identifiers of application.
+ */
+export interface ApplicationIdentifiersDTO {
+  id: number;
+  applicationNumber: string;
+}
+
+/**
  * Base DTO for application dynamic data
  */
-export interface GetApplicationBaseDTO {
+export interface GetApplicationBaseDTO extends ApplicationIdentifiersDTO {
   data: any;
-  id: number;
   applicationStatus: ApplicationStatus;
-  applicationNumber: string;
   applicationFormName: string;
   applicationProgramYearID: number;
 }
@@ -138,11 +144,9 @@ export interface StudentApplicationDetailsForTracking {
 /**
  * Interface for application summary
  */
-export interface ApplicationSummaryDTO {
-  applicationNumber: string;
+export interface ApplicationSummaryDTO extends ApplicationIdentifiersDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
-  id: number;
   applicationName: string;
   submitted: string;
   status: string;

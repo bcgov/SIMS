@@ -6,7 +6,7 @@
       <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
       <v-spacer></v-spacer
       ><v-btn
-        v-if="isAuthenticated && hasStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY })
@@ -14,21 +14,32 @@
         >Applications</v-btn
       >
       <v-btn
-        v-if="isAuthenticated && hasStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.NOTIFICATIONS })"
-        >Notifications</v-btn
+        ><font-awesome-icon :icon="['fas', 'bell']" class="mr-2" />
+        Notifications</v-btn
       >
       <v-btn
-        v-if="isAuthenticated && hasStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="
           $router.push({ name: StudentRoutesConst.STUDENT_FILE_UPLOADER })
         "
-        >File Uploader</v-btn
+        ><font-awesome-icon :icon="['fas', 'file-alt']" class="mr-2" />File
+        Uploader</v-btn
       >
       <v-btn
-        v-if="isAuthenticated && hasStudentAccount"
+        v-if="hasAuthenticatedStudentAccount"
+        text
+        @click="
+          $router.push({ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE })
+        "
+        ><font-awesome-icon :icon="['fas', 'hand-paper']" class="mr-2" />Request
+        a Change</v-btn
+      >
+      <v-btn
+        v-if="hasAuthenticatedStudentAccount"
         text
         @click="$router.push({ name: StudentRoutesConst.STUDENT_PROFILE_EDIT })"
         >Profile</v-btn
@@ -87,6 +98,10 @@ export default {
       }
     };
 
+    const hasAuthenticatedStudentAccount = computed(
+      () => isAuthenticated.value && hasStudentAccount.value,
+    );
+
     const togleUserMenu = (event: any) => {
       userOptionsMenuRef.value.toggle(event);
     };
@@ -124,7 +139,7 @@ export default {
       userOptionsMenuRef,
       togleUserMenu,
       ClientIdType,
-      hasStudentAccount,
+      hasAuthenticatedStudentAccount,
     };
   },
 };

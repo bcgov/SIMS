@@ -45,3 +45,4 @@ export * from "./sin-validation/sin-validation.service";
 export * from "./designation-agreement/designation-agreement-locations.service";
 export * from "./student-assessment/student-assessment.service";
 export * from "./student-assessment/student-assessment.constants";
+export * from "./student-appeal/student-appeal.service";

@@ -11,6 +11,7 @@ import StudentFileUploader from "@/views/student/StudentFileUploader.vue";
 import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
+import StudentRequestChange from "@/views/student/StudentRequestChange.vue";
 
 import {
   StudentRoutesConst,
@@ -133,6 +134,14 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
         component: StudentApplicationDetails,
         props: true,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.RequestChange,
+        name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+        component: StudentRequestChange,
         meta: {
           clientType: ClientIdType.Student,
         },
