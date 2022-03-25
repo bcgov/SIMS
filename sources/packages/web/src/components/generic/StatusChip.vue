@@ -6,7 +6,7 @@
         class="mr-1"
         :color="iconColor"
       />
-      <span class="text-uppercase">{{ label ?? status }}</span>
+      <span>{{ label ?? status }}</span>
     </template>
   </v-badge>
 </template>
