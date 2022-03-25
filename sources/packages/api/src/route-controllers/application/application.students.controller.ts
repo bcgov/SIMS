@@ -491,13 +491,11 @@ export class ApplicationStudentsController extends BaseController {
         `Application ${applicationId} associated with requested student does not exist.`,
       );
     }
-    // delete workflow if the payload status is cancelled
-    // workflow doest not exists for draft application
+    // Delete workflow if the payload status is cancelled.
+    // Workflow doest not exists for draft or submitted application, for instance.
     if (
-      payload &&
-      ApplicationStatus.cancelled === payload.applicationStatus &&
-      ApplicationStatus.draft !== studentApplication.applicationStatus &&
-      studentApplication.currentAssessment.assessmentWorkflowId
+      payload?.applicationStatus === ApplicationStatus.cancelled &&
+      studentApplication.currentAssessment?.assessmentWorkflowId
     ) {
       // Calling the API to stop assessment process
       await this.workflowService.deleteApplicationAssessment(
