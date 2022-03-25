@@ -57,7 +57,6 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   InstitutionLocationsSummaryDto,
   InstitutionLocationsDetailsDto,
-  DesignationLocationAgreementStatus,
 } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -514,13 +513,10 @@ export class InstitutionController extends BaseController {
   async getAllInstitutionLocationSummaryForAEST(
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
-    // get all institution locations.
     // get all institution locations with designation statuses.
-    const institutionLocationsWithDesignationStatus =
-      await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
-        institutionId,
-      );
-    return institutionLocationsWithDesignationStatus;
+    return await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
+      institutionId,
+    );
   }
 
   /**

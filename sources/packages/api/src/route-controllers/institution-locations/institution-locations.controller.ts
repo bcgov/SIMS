@@ -45,7 +45,6 @@ import {
 } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import Helper from "../../helpers/utilfunctions";
 import { InstitutionLocationsControllerService } from "./institution-locations.controller.service";
 
 @Controller("institution/location")
@@ -160,12 +159,9 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations with designation statuses.
-    const institutionLocationsWithDesignationStatus =
-      await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
-        userToken.authorizations.institutionId,
-      );
-
-    return institutionLocationsWithDesignationStatus;
+    return await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
+      userToken.authorizations.institutionId,
+    );
   }
 
   /**
