@@ -6,7 +6,7 @@
     <span class="heading-x-large mb-2">
       {{ institutionBasicDetail.operatingName }}
       <status-chip-designation-agreement-location
-        :status="institutionBasicDetail.designationAgreementStatus"
+        :status="institutionBasicDetail.designationAgreementLocationStatus"
       />
     </span>
   </div>

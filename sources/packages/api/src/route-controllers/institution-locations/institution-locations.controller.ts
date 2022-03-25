@@ -159,7 +159,7 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations with designation statuses.
-    return await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
+    return this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
       userToken.authorizations.institutionId,
     );
   }

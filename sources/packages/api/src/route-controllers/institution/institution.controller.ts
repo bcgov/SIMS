@@ -485,13 +485,13 @@ export class InstitutionController extends BaseController {
       await this.institutionService.getBasicInstitutionDetailById(
         institutionId,
       );
-    const designationAgreementStatus =
+    const designationAgreementLocationStatus =
       await this.locationControllerService.getInstitutionDesignationStatus(
         institutionId,
       );
     return {
       operatingName: institutionDetail.operatingName,
-      designationAgreementStatus: designationAgreementStatus,
+      designationAgreementLocationStatus: designationAgreementLocationStatus,
     };
   }
 
@@ -514,7 +514,7 @@ export class InstitutionController extends BaseController {
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations with designation statuses.
-    return await this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
+    return this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
       institutionId,
     );
   }

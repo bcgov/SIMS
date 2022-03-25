@@ -1,5 +1,8 @@
-import { Address, ApprovalStatus } from "..";
-import { DesignationAgreementLocationStatus } from "./DesignationAgreementLocationStatusContract";
+import {
+  Address,
+  ApprovalStatus,
+  DesignationAgreementLocationStatus,
+} from "..";
 
 export interface Institute {
   name: string;
@@ -8,7 +11,7 @@ export interface Institute {
 
 export interface BasicInstitutionInfo {
   operatingName: string;
-  designationAgreementStatus: DesignationAgreementLocationStatus;
+  designationAgreementLocationStatus: DesignationAgreementLocationStatus;
 }
 
 /**

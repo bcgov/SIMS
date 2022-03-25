@@ -128,7 +128,7 @@ export class InstitutionDetailDTO extends InstitutionProfileDTO {
 
 export interface BasicInstitutionInfo {
   operatingName: string;
-  designationAgreementStatus: DesignationLocationAgreementStatus;
+  designationAgreementLocationStatus: DesignationLocationAgreementStatus;
 }
 
 export interface InstitutionDetailDto {
