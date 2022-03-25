@@ -71,7 +71,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiOkResponse,
-  ApiNotFoundResponse,
 } from "@nestjs/swagger";
 
 import { InstitutionLocationsControllerService } from "../institution-locations/institution-locations.controller.service";
@@ -501,10 +500,7 @@ export class InstitutionController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
   @ApiOkResponse({
-    description: "Institution locations found.",
-  })
-  @ApiNotFoundResponse({
-    description: "Institution locations not found.",
+    description: "All Institution location with designation status' found.",
   })
   @Get("/:institutionId/location-summary")
   async getAllInstitutionLocationSummaryForAEST(
