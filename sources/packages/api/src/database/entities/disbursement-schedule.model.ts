@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Application, User, COEStatus, COEDeniedReason } from ".";
+import { User, COEStatus, COEDeniedReason } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { dateOnlyTransformer } from "../transformers/date-only.transformer";
 import { DisbursementValue } from "./disbursement-values.model";
