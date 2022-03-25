@@ -43,39 +43,4 @@ export class DesignationAgreementLocationService extends RecordDataModelService<
         "designationAgreementLocation.institutionLocation = location.id",
       );
   }
-
-  /**
-   * Service to get designation agreement locations and their designation statuses.
-   * @param institutionId
-   * @returns designation agreement locations and their designation statuses.
-   */
-  getAllDesignatedAgreementLocations(
-    institutionId: number,
-  ): Promise<DesignationAgreementLocation[]> {
-    return this.repo
-      .createQueryBuilder("designationAgreementLocation")
-      .select([
-        "designationAgreementLocation.approved",
-        "designationAgreement.designationStatus",
-        "designationAgreement.startDate",
-        "designationAgreement.endDate",
-        "institutionLocation.id",
-        "institutionLocation.name",
-        "institutionLocation.data",
-        "institutionLocation.primaryContact",
-        "institutionLocation.institutionCode",
-        "institution.institutionPrimaryContact",
-      ])
-      .leftJoin(
-        "designationAgreementLocation.designationAgreement",
-        "designationAgreement",
-      )
-      .leftJoin(
-        "designationAgreementLocation.institutionLocation",
-        "institutionLocation",
-      )
-      .leftJoin("institutionLocation.institution", "institution")
-      .where("institution.id = :institutionId", { institutionId })
-      .getMany();
-  }
 }
