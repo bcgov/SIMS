@@ -16,13 +16,13 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipDesignationAgreementLocation from "@/components/generic/StatusChipDesignationAgreementLocation.vue";
 import { BasicInstitutionInfo } from "@/types";
-import { useStore } from "vuex";
+
 export default {
   components: { StatusChipDesignationAgreementLocation },
   props: {
@@ -32,12 +32,7 @@ export default {
     },
   },
   setup(props: any) {
-    const store = useStore();
     const router = useRouter();
-
-    const institutionLocations = computed(
-      () => store.state.institution.institutionLocationsState,
-    );
 
     const institutionBasicDetail = ref({} as BasicInstitutionInfo);
     // TODO: replace all fa isons with fas as per figma with replace with vuetify3
@@ -124,7 +119,6 @@ export default {
       institutionBasicDetail,
       AESTRoutesConst,
       items,
-      institutionLocations,
     };
   },
 };

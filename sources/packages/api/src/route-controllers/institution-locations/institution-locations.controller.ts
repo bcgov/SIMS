@@ -140,7 +140,7 @@ export class InstitutionLocationsController extends BaseController {
     return updateResult.affected;
   }
   /**
-   * Controller method to get institution locations with designation status' for the given institution.
+   * Controller method to get institution locations with designation status for the given institution.
    * @param userToken
    * @returns An array of InstitutionLocationsDetailsDto.
    */

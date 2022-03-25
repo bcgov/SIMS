@@ -12,4 +12,4 @@ export * from "./useStudentStore";
 export * from "./useFormatters";
 export * from "./useDesignationAgreement";
 export * from "./useFileUtils";
-export * from "./useDesignationAgreementLocation";
+export * from "./useLocation";

@@ -4,7 +4,7 @@
 <script lang="ts">
 import { computed } from "vue";
 import StatusChip from "@/components/generic/StatusChip.vue";
-import { useDesignationAgreementLocation } from "@/composables";
+import { useLocation } from "@/composables";
 export default {
   components: { StatusChip },
   props: {
@@ -14,7 +14,7 @@ export default {
     },
   },
   setup(props: any) {
-    const { mapDesignationChipStatus } = useDesignationAgreementLocation();
+    const { mapDesignationChipStatus } = useLocation();
     const chipStatus = computed(() => mapDesignationChipStatus(props.status));
     return { chipStatus };
   },

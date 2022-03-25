@@ -1,7 +1,7 @@
 import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import { DesignationAgreementLocationStatus } from "@/types";
 
-export function useDesignationAgreementLocation() {
+export function useLocation() {
   const mapDesignationChipStatus = (
     status: DesignationAgreementLocationStatus,
   ): StatusChipTypes => {

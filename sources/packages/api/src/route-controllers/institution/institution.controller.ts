@@ -500,7 +500,7 @@ export class InstitutionController extends BaseController {
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
   @ApiOkResponse({
-    description: "All Institution location with designation status' found.",
+    description: "All Institution location with designation status found.",
   })
   @Get("/:institutionId/location-summary")
   async getAllInstitutionLocationSummaryForAEST(
