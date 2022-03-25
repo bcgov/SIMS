@@ -3,7 +3,6 @@ import {
   AssessmentHistorySummaryDTO,
   RequestAssessmentSummaryDTO,
 } from "@/types";
-import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
 
 /**
  * Http API client for Student Assessments.
