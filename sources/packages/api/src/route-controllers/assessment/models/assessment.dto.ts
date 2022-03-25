@@ -15,10 +15,3 @@ export class RequestAssessmentSummaryDTO {
   status: StudentAppealStatus | ScholasticStandingStatus;
   triggerType: AssessmentTriggerType;
 }
-
-export class AssessmentHistorySummaryDTO {
-  submittedDate: Date;
-  status: AssessmentHistoryStatus;
-  triggerType: AssessmentTriggerType;
-  assessmentDate: Date;
-}

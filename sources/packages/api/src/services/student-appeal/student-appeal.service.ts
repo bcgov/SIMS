@@ -85,13 +85,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * for an application.
    * Here we have added different when statement
    * in CASE to fetch the status of the appeals.
-   * * WHEN 1: is checking if at least one Pending
+   * * WHEN: is checking if at least one Pending
    * * appeals request is there for an appeal,
    * * then the status is considered as Pending.
-   * * END: is else, if any of them is not falling
-   * * under above 2 case, then its considered as Declined.
-   * * andWhere will only take status Pending and
-   * * status that is not Declined.
+   * * END: if any of them is not falling
+   * * under above case and applying  the andWhere
+   * * condition, we get Declined.
+   * * andWhere:  will only take Pending and
+   * * Declined status.
    * @param applicationId application id .
    * @returns StudentAppeal list.
    */

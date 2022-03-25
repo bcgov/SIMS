@@ -11,10 +11,8 @@ import {
   StudentScholasticStandingsService,
 } from "../../services";
 import { AssessmentTriggerType } from "../../database/entities";
-import {
-  AssessmentHistorySummaryDTO,
-  RequestAssessmentSummaryDTO,
-} from "./models/assessment.dto";
+import { RequestAssessmentSummaryDTO } from "./models/assessment.dto";
+import { AssessmentHistory } from "src/services/student-assessment/student-assessment.models";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -84,13 +82,9 @@ export class AssessmentAESTController extends BaseController {
   })
   async getAssessmentHistorySummary(
     @Param("applicationId") applicationId: number,
-  ): Promise<AssessmentHistorySummaryDTO[]> {
-    const assessmentHistory =
-      await this.studentAssessmentService.AssessmentHistorySummary(
-        applicationId,
-      );
-    return assessmentHistory.map(
-      (assessment) => assessment as AssessmentHistorySummaryDTO,
+  ): Promise<AssessmentHistory[]> {
+    return this.studentAssessmentService.AssessmentHistorySummary(
+      applicationId,
     );
   }
 }
