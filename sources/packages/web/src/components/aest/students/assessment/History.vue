@@ -34,9 +34,12 @@
               field="assessmentDate"
               header="Assessment date"
               sortable="true"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.assessmentDate)
-              }}</template></Column
+              ><template #body="slotProps">
+                <span v-if="slotProps.data.assessmentDate">{{
+                  dateOnlyLongString(slotProps.data.assessmentDate)
+                }}</span
+                ><span v-else>-</span></template
+              ></Column
             ><Column header="Assessment"></Column>
           </DataTable>
         </content-group>
