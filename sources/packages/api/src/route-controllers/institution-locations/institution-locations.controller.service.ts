@@ -13,7 +13,7 @@ export class InstitutionLocationsControllerService {
    * Retrieve institution locations and
    * their associated designated status'.
    * @param institutionId this value is passed only for client type Institution.
-   * @returns designation institution locations with designation status'.
+   * @returns designation institution locations with their status'.
    */
   async getInstitutionLocationsWithDesignationStatus(
     institutionId: number,
@@ -53,7 +53,7 @@ export class InstitutionLocationsControllerService {
   /**
    * Retrieve designation status of institution.
    * @param institutionId
-   * @returns designation status of the institution'.
+   * @returns designation status of an institution'.
    */
   async getInstitutionDesignationStatus(
     institutionId: number,

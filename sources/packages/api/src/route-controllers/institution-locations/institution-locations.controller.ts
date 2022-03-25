@@ -15,7 +15,6 @@ import {
   ApplicationService,
   InstitutionLocationService,
   FormService,
-  DesignationAgreementLocationService,
 } from "../../services";
 import {
   InstitutionLocationsDetailsDto,
@@ -44,7 +43,7 @@ import {
   getISODateOnlyString,
 } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { InstitutionLocationsControllerService } from "./institution-locations.controller.service";
 
 @Controller("institution/location")
@@ -52,7 +51,6 @@ import { InstitutionLocationsControllerService } from "./institution-locations.c
 export class InstitutionLocationsController extends BaseController {
   constructor(
     private readonly locationControllerService: InstitutionLocationsControllerService,
-    private readonly designationAgreementLocationService: DesignationAgreementLocationService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
@@ -142,15 +140,12 @@ export class InstitutionLocationsController extends BaseController {
     return updateResult.affected;
   }
   /**
-   * Controller method to get institution locations for the given institution.
+   * Controller method to get institution locations with designation status' for the given institution.
    * @param userToken
-   * @returns All the institution locations for the given institution.
+   * @returns An array of InstitutionLocationsDetailsDto.
    */
   @ApiOkResponse({
-    description: "Institution locations found.",
-  })
-  @ApiNotFoundResponse({
-    description: "Institution locations not found.",
+    description: "Institution locations with their designation status' found.",
   })
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
