@@ -29,7 +29,7 @@ import {
   createFakeMSFAANumber,
   createFakeStudent,
 } from "../../testHelpers/fake-entities";
-import { MAX_MFSAA_VALID_DAYS } from "../../utilities/system-configurations-constants";
+import { MAX_MSFAA_VALID_DAYS } from "../../utilities/system-configurations-constants";
 import * as dayjs from "dayjs";
 
 const createFakeApplicationInAssessment = (student: Student): Application => {
@@ -42,7 +42,7 @@ const createFakeApplicationInAssessment = (student: Student): Application => {
 
 const createDateInMSFAAValidPeriod = (increment: number): Date => {
   return dayjs()
-    .subtract(MAX_MFSAA_VALID_DAYS + increment, "days")
+    .subtract(MAX_MSFAA_VALID_DAYS + increment, "days")
     .toDate();
 };
 

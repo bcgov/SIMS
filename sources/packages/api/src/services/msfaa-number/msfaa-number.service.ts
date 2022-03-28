@@ -15,7 +15,7 @@ import {
   OfferingIntensity,
 } from "../../database/entities";
 import * as dayjs from "dayjs";
-import { MAX_MFSAA_VALID_DAYS } from "../../utilities";
+import { MAX_MSFAA_VALID_DAYS } from "../../utilities";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
 
 /**
@@ -79,6 +79,8 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
    * As per the current assumption, once the MSFAA is created on
    * ESDC it will not expire and can be reused.
    * @param studentId student id to filter.
+   * @param offeringIntensity MSFAA are generated individually for full-time/part-time
+   * applications. The offering intensity is used to differentiate between them.
    * @returns current valid MSFAA record.
    */
   async getCurrentValidMSFAANumber(
@@ -86,14 +88,14 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     offeringIntensity: OfferingIntensity,
   ): Promise<MSFAANumber> {
     const minimumValidDate = dayjs()
-      .subtract(MAX_MFSAA_VALID_DAYS, "days")
+      .subtract(MAX_MSFAA_VALID_DAYS, "days")
       .toDate();
     return this.repo
       .createQueryBuilder("msfaaNumber")
       .innerJoin("msfaaNumber.student", "students")
       .where("students.id = :studentId", { studentId })
       .andWhere("msfaaNumber.referenceApplication is not null")
-      .andWhere("msfaaNumber.offeringIntensity= :offeringIntensity", {
+      .andWhere("msfaaNumber.offeringIntensity = :offeringIntensity", {
         offeringIntensity,
       })
       .andWhere("msfaaNumber.cancelledDate is null")
@@ -122,13 +124,13 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
     return (
       !!startDate &&
       !!endDate &&
-      dayjs(endDate).diff(startDate, "days") < MAX_MFSAA_VALID_DAYS
+      dayjs(endDate).diff(startDate, "days") < MAX_MSFAA_VALID_DAYS
     );
   }
 
   /**
    * Fetches the MSFAA number records which are not sent for request.
-   * This can be retrived by checking for date_requested column as null
+   * This can be retrieved by checking for date_requested column as null
    * in the MSFAANumber table.
    * @returns the records of the MSFAANumber table.
    */

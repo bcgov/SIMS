@@ -57,7 +57,7 @@ export class Application extends RecordDataModel {
   /**
    * Student associated with this application.
    */
-  @OneToOne(() => Student, { eager: false, cascade: true })
+  @OneToOne(() => Student, { eager: false, cascade: false })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
