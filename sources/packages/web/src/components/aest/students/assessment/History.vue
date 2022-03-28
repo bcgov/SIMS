@@ -6,6 +6,7 @@
           title="History"
           class="m-1"
           subTitle="A history of assessments"
+          :recordsCount="assessmentHistory.length"
         >
         </body-header>
         <content-group class="mt-4">

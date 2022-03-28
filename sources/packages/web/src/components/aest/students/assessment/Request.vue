@@ -6,6 +6,7 @@
           title="Requests"
           class="m-1"
           subTitle="Requests for application changes that may require reassessments"
+          :recordsCount="requestedAssessment.length"
         >
         </body-header>
         <content-group class="mt-4">
