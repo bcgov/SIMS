@@ -131,10 +131,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           return newValue;
         },
       );
-      // TODO: Kept for backward compatibility. It will be removed in an upcoming PR.
-      newDisbursement.application = {
-        id: assessment.application.id,
-      } as Application;
       assessment.disbursementSchedules.push(newDisbursement);
     }
 
@@ -204,9 +200,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
         "disbursement.coeUpdatedAt",
+        "studentAssessment.id",
         "studentAssessment.assessmentData",
       ])
-      .innerJoin("disbursement.application", "application")
+      .innerJoin("disbursement.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
       .innerJoin("application.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
@@ -338,15 +336,16 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementSchedule.coeStatus",
         "application.applicationNumber",
         "application.id",
+        "studentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "student.id",
         "user.firstName",
         "user.lastName",
       ])
-      .innerJoin("disbursementSchedule.application", "application")
-      .innerJoin("disbursementSchedule.studentAssessment", "assessment")
-      .innerJoin("assessment.offering", "offering")
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("studentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
@@ -419,6 +418,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursement.disbursementDate",
         "disbursement.coeStatus",
         "disbursement.coeDeniedOtherDesc",
+        "studentAssessment.id",
         "application.applicationNumber",
         "application.applicationStatus",
         "application.id",
@@ -445,11 +445,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "coeDeniedReason.id",
         "coeDeniedReason.reason",
       ])
-      .innerJoin("disbursement.studentAssessment", "assessment")
-      .innerJoin("disbursement.application", "application")
+      .innerJoin("disbursement.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("assessment.offering", "offering")
+      .innerJoin("studentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("offering.educationProgram", "program")
       .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
@@ -480,9 +480,11 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementSchedule.disbursementDate",
         "application.id",
         "application.applicationStatus",
-        "application.assessmentWorkflowId",
+        "studentAssessment.id",
+        "studentAssessment.assessmentWorkflowId",
       ])
-      .innerJoin("disbursementSchedule.application", "application")
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
       .where("location.id = :locationId", { locationId })
       .andWhere("disbursementSchedule.id = :disbursementScheduleId", {
@@ -549,12 +551,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursement.coeDeniedOtherDesc",
         "coeDeniedReason.id",
         "coeDeniedReason.reason",
-        "assessment.id",
+        "studentAssessment.id",
         "application.id",
         "application.applicationStatus",
       ])
-      .innerJoin("disbursement.studentAssessment", "assessment")
-      .innerJoin("disbursement.application", "application")
+      .innerJoin("disbursement.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.application", "application")
       .innerJoin("disbursement.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.applicationStatus IN (:...status)", {
