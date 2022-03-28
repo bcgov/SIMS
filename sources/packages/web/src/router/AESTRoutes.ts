@@ -37,6 +37,7 @@ import AESTApplicationSideBar from "@/components/layouts/aest/AESTApplicationSid
 import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
 import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
+import AssessmentsSummary from "@/views/aest/AssessmentsSummary.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -160,6 +161,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
             props: true,
             component: SupportingUser,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.AssessmentSummary,
+            name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+            props: true,
+            component: AssessmentsSummary,
             meta: {
               clientType: ClientIdType.AEST,
             },

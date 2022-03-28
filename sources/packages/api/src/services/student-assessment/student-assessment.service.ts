@@ -17,6 +17,10 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
+import {
+  AssessmentHistory,
+  StudentAssessmentStatus,
+} from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -347,5 +351,56 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessment.noaApprovalStatus = AssessmentStatus.completed;
     assessment.application.applicationStatus = ApplicationStatus.enrollment;
     return this.repo.save(assessment);
+  }
+
+  /**
+   * Get all assessments history summary.
+   * Here we have added different when statement
+   * in CASE to fetch the status of the assessment.
+   * * WHEN 1: if assessmentWorkflowId is null,
+   * * then status is Submitted.
+   * * WHEN 2: if assessmentWorkflowId is not null
+   * * and assessmentData is null, then status is
+   * * InProgress.
+   * * WHEN 3:if assessmentWorkflowId is not null
+   * * and assessmentData is not null, then status
+   * * is Completed.
+   * @param applicationId applicationId.
+   * @returns AssessmentHistory list
+   */
+  async assessmentHistorySummary(
+    applicationId: number,
+  ): Promise<AssessmentHistory[]> {
+    return this.repo
+      .createQueryBuilder("assessment")
+      .select("assessment.submittedDate", "submittedDate")
+      .addSelect("assessment.triggerType", "triggerType")
+      .addSelect("assessment.assessmentDate", "assessmentDate")
+      .addSelect(
+        `CASE
+          WHEN 
+            assessment.assessmentWorkflowId IS NULL 
+            THEN 
+              '${StudentAssessmentStatus.Submitted}'
+          WHEN 
+            assessment.assessmentWorkflowId IS NOT NULL 
+            AND 
+            assessment.assessmentData IS NULL 
+            THEN 
+              '${StudentAssessmentStatus.InProgress}'
+          WHEN 
+            assessment.assessmentWorkflowId IS NOT NULL 
+            AND 
+            assessment.assessmentData IS NOT NULL 
+            THEN 
+              '${StudentAssessmentStatus.Completed}'
+        END`,
+        "status",
+      )
+      .innerJoin("assessment.application", "application")
+      .where("application.id = :applicationId", { applicationId })
+      .orderBy("status", "DESC")
+      .addOrderBy("assessment.submittedDate")
+      .getRawMany();
   }
 }

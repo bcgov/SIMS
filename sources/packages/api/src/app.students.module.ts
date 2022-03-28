@@ -22,6 +22,7 @@ import {
   DesignationAgreementLocationService,
   StudentAssessmentService,
   StudentAppealService,
+  StudentAppealRequestsService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -62,6 +63,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentAssessmentService,
     ApplicationControllerService,
     StudentAppealService,
+    StudentAppealRequestsService,
   ],
 })
 export class AppStudentsModule {}
