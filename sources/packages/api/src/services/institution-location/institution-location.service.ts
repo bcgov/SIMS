@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { Connection, UpdateResult } from "typeorm";
+import { Connection, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
@@ -218,7 +218,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     return this.buildLocationQuery(undefined, institutionId).getRawMany();
   }
 
-  private buildLocationQuery(locationId?: number, institutionId?: number) {
+  private buildLocationQuery(
+    locationId?: number,
+    institutionId?: number,
+  ): SelectQueryBuilder<InstitutionLocation> {
     const query = this.repo
       .createQueryBuilder("location")
       .select("location.name", "locationName")
