@@ -87,6 +87,7 @@ export const AESTRoutesConst = {
   INSTITUTION_NOTES: Symbol(),
   INSTITUTION_DETAILS: Symbol(),
   APPLICATION_DETAILS: Symbol(),
+  ASSESSMENTS_SUMMARY: Symbol(),
   SUPPORTING_USER_DETAILS: Symbol(),
   LOGIN: Symbol(),
   LOGIN_WITH_NOT_ALLOWED_USER: Symbol(),

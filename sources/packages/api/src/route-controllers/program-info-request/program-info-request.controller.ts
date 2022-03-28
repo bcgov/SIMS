@@ -25,6 +25,7 @@ import {
   PIR_REQUEST_NOT_FOUND_ERROR,
   FormService,
   PIRDeniedReasonService,
+  PIR_DENIED_REASON_NOT_FOUND_ERROR,
 } from "../../services";
 import {
   getUserFullName,
@@ -174,9 +175,12 @@ export class ProgramInfoRequestController extends BaseController {
    * PIR status as Declined in the student application table.
    * @param locationId location that is completing the PIR.
    * @param applicationId application id to be updated.
-   * @param payload contains the denied reason of the
-   * student application.
+   * @param payload contains the denied reason of the student application.
    */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to find an application that requires a PIR to be completed or 'Other' is selected as PIR reason but the reason was not provided.",
+  })
   @HasLocationAccess("locationId")
   @Patch(":locationId/program-info-request/application/:applicationId/deny")
   async denyProgramInfoRequest(
@@ -192,19 +196,19 @@ export class ProgramInfoRequestController extends BaseController {
           payload.pirDenyReasonId,
           payload.otherReasonDesc,
         );
-      if (application.assessmentWorkflowId) {
+      if (application.currentAssessment.assessmentWorkflowId) {
         await this.workflowService.deleteApplicationAssessment(
-          application.assessmentWorkflowId,
+          application.currentAssessment.assessmentWorkflowId,
         );
       }
     } catch (error) {
-      if (error.name === PIR_REQUEST_NOT_FOUND_ERROR) {
-        throw new UnprocessableEntityException(error.message);
+      switch (error.name) {
+        case PIR_REQUEST_NOT_FOUND_ERROR:
+        case PIR_DENIED_REASON_NOT_FOUND_ERROR:
+          throw new UnprocessableEntityException(error.message);
+        default:
+          throw error;
       }
-
-      throw new InternalServerErrorException(
-        "Error while denying a Program Information Request (PIR).",
-      );
     }
   }
 
@@ -324,7 +328,7 @@ export class ProgramInfoRequestController extends BaseController {
       if (updatedApplication) {
         // Send a message to allow the workflow to proceed.
         await this.workflowService.sendProgramInfoCompletedMessage(
-          updatedApplication.assessmentWorkflowId,
+          updatedApplication.currentAssessment.assessmentWorkflowId,
         );
       }
     } catch (error) {

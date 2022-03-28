@@ -11,5 +11,6 @@ export * from "./useAuthBCSC";
 export * from "./useStudentStore";
 export * from "./useFormatters";
 export * from "./useDesignationAgreement";
+export * from "./useAssessment";
 export * from "./useFileUtils";
 export * from "./useLocation";

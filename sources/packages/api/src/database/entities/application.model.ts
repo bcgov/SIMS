@@ -20,53 +20,79 @@ import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
 import { ProgramInfoStatus } from "./program-info-status.type";
 import { ApplicationStatus } from "./application-status.type";
-import { AssessmentStatus } from "./assessment-status.type";
 import { RecordDataModel } from "./record.model";
 import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
-import { DisbursementSchedule } from "./disbursement-schedule.model";
 import { StudentAssessment } from "./student-assessment.model";
 
 @Entity({ name: TableNames.Applications })
 export class Application extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
-
+  /**
+   * Dynamic data entered by the student while answering the
+   * questions to apply for a loan/grant. This is one of
+   * the main inputs to execute the assessment workflow.
+   */
   @Column({
     name: "data",
     type: "jsonb",
     nullable: false,
   })
   data: ApplicationData;
-
+  /**
+   * Application number generated once the application is submitted.
+   * Draft applications will not have this number associated until
+   * they are submitted.
+   */
   @Column({
     name: "application_number",
   })
   applicationNumber: string;
-
+  /**
+   * Student id associated with this application.
+   */
   @RelationId((application: Application) => application.student)
   studentId: number;
-
+  /**
+   * Student associated with this application.
+   */
   @OneToOne(() => Student, { eager: false, cascade: true })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
   })
   student: Student;
-
+  /**
+   * References the location id related to the application
+   * at the moment it was submitted by the student. See
+   * further comments on the location property.
+   */
   @RelationId((application: Application) => application.location)
   locationId: number;
-
+  /**
+   * References the location related to the application
+   * at the moment it was submitted by the student.
+   * For applications that do not have an offering
+   * defined yet (need a PIR) this is the way to figure
+   * out what location must be processing the PIR.
+   * Once the PIR is finished and an offering in present
+   * on the sims.student_assessments table the location
+   * should be retrieved directly from the offering id.
+   */
   @ManyToOne(() => InstitutionLocation, { eager: false, cascade: true })
   @JoinColumn({
     name: "location_id",
     referencedColumnName: ColumnNames.ID,
   })
   location: InstitutionLocation;
-
+  /**
+   * References the program related to the application
+   * at the moment it was submitted by the student.
+   * See further comments on the pirProgram property.
+   */
   @RelationId((application: Application) => application.pirProgram)
   pirProgramId?: number;
-
   /**
    * References the program related to the application
    * at the moment it was submitted by the student.
@@ -76,7 +102,7 @@ export class Application extends RecordDataModel {
    */
   @ManyToOne(() => EducationProgram, {
     eager: false,
-    cascade: true,
+    cascade: false,
   })
   @JoinColumn({
     name: "pir_education_program_id",
@@ -86,21 +112,23 @@ export class Application extends RecordDataModel {
 
   @RelationId((application: Application) => application.programYear)
   programYearId: number;
-
   /**
    * References the program year related to the application.
    * This will be populated only when an active program year application is Submitted
    */
   @ManyToOne(() => ProgramYear, {
     eager: false,
-    cascade: true,
+    cascade: false,
   })
   @JoinColumn({
     name: "program_year_id",
     referencedColumnName: ColumnNames.ID,
   })
   programYear: ProgramYear;
-
+  /**
+   * Defines if the applications needs a PIR and keeps
+   * the status of the PIR process.
+   */
   @Column({
     name: "pir_status",
     type: "enum",
@@ -108,16 +136,14 @@ export class Application extends RecordDataModel {
     enumName: "ProgramInfoStatus",
   })
   pirStatus: ProgramInfoStatus;
-
-  @Column({
-    name: "assessment_workflow_id",
-    type: "uuid",
-  })
-  assessmentWorkflowId: string;
-
+  /**
+   * List of all files ids currently associated with the application.
+   */
   @RelationId((application: Application) => application.studentFiles)
   studentFilesIds: number[];
-
+  /**
+   * List of all files currently associated with the application.
+   */
   @OneToMany(
     () => ApplicationStudentFile,
     (applicationStudentFile) => applicationStudentFile.application,
@@ -128,7 +154,9 @@ export class Application extends RecordDataModel {
     },
   )
   studentFiles: ApplicationStudentFile[];
-
+  /**
+   * Overall status of the application.
+   */
   @Column({
     name: "application_status",
     type: "enum",
@@ -136,24 +164,22 @@ export class Application extends RecordDataModel {
     enumName: "ApplicationStatus",
   })
   applicationStatus: ApplicationStatus;
-
-  @Column({
-    name: "assessment_status",
-    type: "enum",
-    enum: AssessmentStatus,
-    enumName: "AssessmentStatus",
-  })
-  assessmentStatus: AssessmentStatus;
-
+  /**
+   * Date and time that the status was updated.
+   */
   @Column({
     name: "application_status_updated_on",
     nullable: false,
   })
   applicationStatusUpdatedOn: Date;
-
+  /**
+   * Reason id why a Program Information Request (PIR) was denied.
+   */
   @RelationId((application: Application) => application.pirDeniedReasonId)
   pirDeniedId?: number;
-
+  /**
+   * Reason why a Program Information Request (PIR) was denied.
+   */
   @ManyToOne(() => PIRDeniedReason, {
     eager: false,
     cascade: false,
@@ -163,21 +189,23 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   pirDeniedReasonId?: PIRDeniedReason;
-
+  /**
+   * Other reason why a Program Information Request (PIR) was denied.
+   */
   @Column({
     name: "pir_denied_other_desc",
   })
   pirDeniedOtherDesc?: string;
-
   /**
    * Relationship status given by the student in the application.
+   * This will be the relationship considered to be used while
+   * generating e-Cert files.
    */
   @Column({
     name: "relationship_status",
     nullable: true,
   })
   relationshipStatus?: RelationshipStatus;
-
   /**
    * Student number given by the student in the application.
    */
@@ -186,10 +214,16 @@ export class Application extends RecordDataModel {
     nullable: true,
   })
   studentNumber?: string;
-
+  /**
+   * Id of the MSFAA (Master Student Financial Aid Agreement)
+   * numbers generated for a student.
+   */
   @RelationId((application: Application) => application.msfaaNumber)
   msfaaNumberId?: number;
-
+  /**
+   * MSFAA (Master Student Financial Aid Agreement)
+   * numbers generated for a student.
+   */
   @ManyToOne(() => MSFAANumber, {
     eager: false,
     cascade: true,
@@ -199,26 +233,6 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   msfaaNumber?: MSFAANumber;
-
-  /**
-   * Disbursement ids related to this application.
-   */
-  @RelationId((application: Application) => application.disbursementSchedules)
-  disbursementSchedulesIds?: number[];
-  /**
-   * Disbursements related to this application.
-   */
-  @OneToMany(
-    () => DisbursementSchedule,
-    (disbursementSchedule) => disbursementSchedule.application,
-    {
-      eager: false,
-      cascade: true,
-      onDelete: "CASCADE",
-      nullable: true,
-    },
-  )
-  disbursementSchedules?: DisbursementSchedule[];
   /**
    * All assessments related to this application.
    * The first assessment will be created upon submission, so

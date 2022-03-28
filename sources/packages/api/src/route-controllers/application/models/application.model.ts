@@ -90,7 +90,7 @@ export class GetApplicationDataDto extends GetApplicationBaseDTO {
   applicationInstitutionName: string;
   applicationPIRStatus: ProgramInfoStatus;
   applicationCOEStatus: COEStatus;
-  applicationAssessmentStatus: AssessmentStatus;
+  applicationAssessmentStatus?: AssessmentStatus;
   applicationPIRDeniedReason?: string;
   applicationCOEDeniedReason?: string;
   programYearStartDate: Date;
