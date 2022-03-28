@@ -5,8 +5,8 @@
     </div>
     <span class="heading-x-large mb-2">
       {{ institutionBasicDetail.operatingName }}
-      <status-chip-designation-agreement-location
-        :status="institutionBasicDetail.designationAgreementLocationStatus"
+      <status-chip-designation-agreement
+        :status="institutionBasicDetail.designationStatus"
       />
     </span>
   </div>
@@ -20,11 +20,11 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import StatusChipDesignationAgreementLocation from "@/components/generic/StatusChipDesignationAgreementLocation.vue";
+import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 import { BasicInstitutionInfo } from "@/types";
 
 export default {
-  components: { StatusChipDesignationAgreementLocation },
+  components: { StatusChipDesignationAgreement },
   props: {
     institutionId: {
       type: Number,

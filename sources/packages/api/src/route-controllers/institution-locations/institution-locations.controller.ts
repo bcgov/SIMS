@@ -25,7 +25,6 @@ import {
   IInstitutionUserToken,
   IUserToken,
 } from "../../auth/userToken.interface";
-
 import {
   HasLocationAccess,
   IsInstitutionAdmin,
@@ -145,7 +144,7 @@ export class InstitutionLocationsController extends BaseController {
    * @returns An array of InstitutionLocationsDetailsDto.
    */
   @ApiOkResponse({
-    description: "Institution locations with their designation status' found.",
+    description: "Institution locations with their designation status found.",
   })
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
@@ -154,7 +153,7 @@ export class InstitutionLocationsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     // get all institution locations with designation statuses.
-    return this.locationControllerService.getInstitutionLocationsWithDesignationStatus(
+    return this.locationControllerService.getInstitutionLocations(
       userToken.authorizations.institutionId,
     );
   }

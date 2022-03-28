@@ -1,7 +1,7 @@
 /**
  * Possible status for a designation agreement location.
  */
-export enum DesignationAgreementLocationStatus {
+export enum DesignationAgreementStatus {
   /**
    * The designation agreement status is designated
    */

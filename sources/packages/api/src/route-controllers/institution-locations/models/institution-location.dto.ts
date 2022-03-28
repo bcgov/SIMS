@@ -45,7 +45,7 @@ export class InstitutionLocationsDetailsDto {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
-  designationStatus: DesignationLocationAgreementStatus;
+  designationStatus: DesignationStatus;
 }
 
 export interface UserLocationDto {
@@ -69,7 +69,7 @@ export interface InstitutionLocationsSummaryDto {
 /**
  * Possible status for a designation location agreement.
  */
-export enum DesignationLocationAgreementStatus {
+export enum DesignationStatus {
   /**
    * The designation agreement status is designated
    */

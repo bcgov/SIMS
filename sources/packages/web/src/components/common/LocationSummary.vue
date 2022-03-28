@@ -28,9 +28,7 @@
         <span>
           <font-awesome-icon :icon="['fas', 'map-pin']" />
           <span class="category-header-medium mx-2">{{ item.name }}</span>
-          <status-chip-designation-agreement-location
-            :status="item.designationStatus"
-          />
+          <status-chip-designation-agreement :status="item.designationStatus" />
         </span>
       </v-col>
       <v-col cols="2" v-if="clientType === ClientIdType.Institution">
@@ -90,13 +88,13 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
 import { AuthService } from "@/services/AuthService";
-import StatusChipDesignationAgreementLocation from "@/components/generic/StatusChipDesignationAgreementLocation.vue";
+import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 
 export default {
   components: {
     ContentGroup,
     TitleValue,
-    StatusChipDesignationAgreementLocation,
+    StatusChipDesignationAgreement,
   },
   props: {
     institutionId: {

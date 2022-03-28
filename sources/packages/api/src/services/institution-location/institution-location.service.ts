@@ -5,7 +5,7 @@ import { Connection, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
-import { LocationWithDesigationStatus } from "./institution-location.models";
+import { LocationWithDesignationStatus } from "./institution-location.models";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
@@ -201,7 +201,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @param locationId location id
    * @returns InstitutionLocation
    */
-  async getLocation(locationId: number): Promise<LocationWithDesigationStatus> {
+  async getLocation(
+    locationId: number,
+  ): Promise<LocationWithDesignationStatus> {
     return this.repo
       .createQueryBuilder("location")
       .select("location.name", "locationName")
@@ -221,21 +223,18 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Get an institution's locations with designation statuses.
    * @param institutionId institution id
-   * @returns InstitutionLocation[]
+   * @returns Institution Locations with designation statuses.
    */
   async getInstitutionLocationsWithDesignationStatus(
     institutionId: number,
-  ): Promise<LocationWithDesigationStatus[]> {
+  ): Promise<LocationWithDesignationStatus[]> {
     return this.repo
       .createQueryBuilder("location")
-      .select([
-        "location.name",
-        "location.data",
-        "institution.institutionPrimaryContact",
-        "location.id",
-        "location.institutionCode",
-        "location.primaryContact",
-      ])
+      .addSelect("location.name", "locationName")
+      .addSelect("location.info", "locationAddress")
+      .addSelect("location.id", "id")
+      .addSelect("location.institution_code", "institutionCode")
+      .addSelect("location.primary_contact", "primaryContact")
       .innerJoin("location.institution", "institution")
       .where("institution.id = :id", {
         id: institutionId,

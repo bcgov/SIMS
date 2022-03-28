@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
+import { LocationWithDesignationStatus } from "../../services/institution-location/institution-location.models";
 import { InstitutionLocationService } from "../../services";
 import {
-  DesignationLocationAgreementStatus,
+  DesignationStatus,
   InstitutionLocationsDetailsDto,
 } from "./models/institution-location.dto";
 
@@ -13,41 +14,43 @@ export class InstitutionLocationsControllerService {
    * Retrieve institution locations and
    * their associated designated status'.
    * @param institutionId this value is passed only for client type Institution.
-   * @returns designation institution locations with their status'.
+   * @returns designation institution locations with their status.
    */
-  async getInstitutionLocationsWithDesignationStatus(
+  async getInstitutionLocations(
     institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     const institutionsWithDesignationStatus =
       await this.locationService.getInstitutionLocationsWithDesignationStatus(
         institutionId,
       );
-    return institutionsWithDesignationStatus.map((el: any) => {
-      return {
-        id: el.location_id,
-        name: el.location_name,
-        designationStatus: el.isDesignated
-          ? DesignationLocationAgreementStatus.Designated
-          : DesignationLocationAgreementStatus.NotDesignated,
-        data: {
-          address: {
-            addressLine1: el.location_info.address?.addressLine1,
-            addressLine2: el.location_info.address?.addressLine2,
-            province: el.location_info.address?.province,
-            country: el.location_info.address?.country,
-            city: el.location_info.address?.city,
-            postalCode: el.location_info.address?.postalCode,
+    return institutionsWithDesignationStatus.map(
+      (el: LocationWithDesignationStatus) => {
+        return {
+          id: el.id,
+          name: el.locationName,
+          designationStatus: el.isDesignated
+            ? DesignationStatus.Designated
+            : DesignationStatus.NotDesignated,
+          data: {
+            address: {
+              addressLine1: el.locationAddress?.address?.addressLine1,
+              addressLine2: el.locationAddress?.address?.addressLine2,
+              province: el.locationAddress?.address?.province,
+              country: el.locationAddress?.address?.country,
+              city: el.locationAddress?.address?.city,
+              postalCode: el.locationAddress?.address?.postalCode,
+            },
           },
-        },
-        primaryContact: {
-          primaryContactFirstName: el.location_primary_contact?.firstName,
-          primaryContactLastName: el.location_primary_contact?.lastName,
-          primaryContactEmail: el.location_primary_contact?.email,
-          primaryContactPhone: el.location_primary_contact?.phoneNumber,
-        },
-        institutionCode: el.location_institution_code,
-      } as InstitutionLocationsDetailsDto;
-    });
+          primaryContact: {
+            primaryContactFirstName: el.primaryContact?.firstName,
+            primaryContactLastName: el.primaryContact?.lastName,
+            primaryContactEmail: el.primaryContact?.email,
+            primaryContactPhone: el.primaryContact?.phoneNumber,
+          },
+          institutionCode: el.institutionCode,
+        } as InstitutionLocationsDetailsDto;
+      },
+    );
   }
 
   /**
@@ -57,15 +60,13 @@ export class InstitutionLocationsControllerService {
    */
   async getInstitutionDesignationStatus(
     institutionId: number,
-  ): Promise<DesignationLocationAgreementStatus> {
+  ): Promise<DesignationStatus> {
     const institutionLocationsWithDesignationStatus =
-      await this.getInstitutionLocationsWithDesignationStatus(institutionId);
-    return institutionLocationsWithDesignationStatus.filter(
-      (item) =>
-        item.designationStatus ===
-        DesignationLocationAgreementStatus.Designated,
-    ).length > 0
-      ? DesignationLocationAgreementStatus.Designated
-      : DesignationLocationAgreementStatus.NotDesignated;
+      await this.getInstitutionLocations(institutionId);
+    return institutionLocationsWithDesignationStatus.some(
+      (item) => item.designationStatus === DesignationStatus.Designated,
+    )
+      ? DesignationStatus.Designated
+      : DesignationStatus.NotDesignated;
   }
 }
