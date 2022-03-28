@@ -18,7 +18,6 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
-import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
 
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
@@ -36,7 +35,6 @@ import { InstitutionLocationsControllerService } from "./route-controllers/insti
     UserService,
     InstitutionLocationService,
     InstitutionControllerService,
-    InstitutionLocationsControllerService,
     DesignationAgreementLocationService,
   ],
 })
