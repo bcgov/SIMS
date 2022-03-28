@@ -1,26 +1,13 @@
+import {
+  InstitutionLocationInfo,
+  PrimaryContact,
+} from "../../database/entities";
+
 export interface LocationWithDesignationStatus {
-  id?: number;
+  id: number;
   locationName: string;
   isDesignated: boolean;
-  locationAddress?: AddressData;
+  locationAddress?: InstitutionLocationInfo;
   institutionCode?: string;
   primaryContact?: PrimaryContact;
-}
-interface PrimaryContact {
-  email: string;
-  lastName: string;
-  firstName: string;
-  phoneNumber: string;
-}
-
-interface AddressData {
-  address: LocationAddress;
-}
-interface LocationAddress {
-  city: string;
-  country: string;
-  province: string;
-  postalCode: string;
-  addressLine1: string;
-  addressLine2: string;
 }

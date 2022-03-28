@@ -20,9 +20,7 @@ export class InstitutionLocationsControllerService {
     institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
     const institutionsWithDesignationStatus =
-      await this.locationService.getInstitutionLocationsWithDesignationStatus(
-        institutionId,
-      );
+      await this.locationService.getLocations(institutionId);
     return institutionsWithDesignationStatus.map(
       (el: LocationWithDesignationStatus) => {
         return {

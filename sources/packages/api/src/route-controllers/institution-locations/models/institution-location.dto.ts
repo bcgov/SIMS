@@ -67,7 +67,7 @@ export interface InstitutionLocationsSummaryDto {
 }
 
 /**
- * Possible status for a designation location agreement.
+ * Possible status for a designation.
  */
 export enum DesignationStatus {
   /**

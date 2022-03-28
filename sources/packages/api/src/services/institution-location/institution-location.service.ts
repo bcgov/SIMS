@@ -199,55 +199,52 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Get institution location by location id.
    * @param locationId location id
-   * @returns InstitutionLocation
+   * @returns InstitutionLocation.
    */
   async getLocation(
     locationId: number,
   ): Promise<LocationWithDesignationStatus> {
-    return this.repo
-      .createQueryBuilder("location")
-      .select("location.name", "locationName")
-      .addSelect(
-        `CASE
-          WHEN EXISTS(${this.designationAgreementLocationService
-            .getExistsDesignatedLocation()
-            .getSql()}) THEN true
-          ELSE false
-        END`,
-        "isDesignated",
-      )
-      .where("location.id = :locationId", { locationId })
-      .getRawOne();
+    return this.buildLocationQuery(locationId, undefined).getRawOne();
   }
 
   /**
-   * Get an institution's locations with designation statuses.
-   * @param institutionId institution id
-   * @returns Institution Locations with designation statuses.
+   * Get institution locations by institution id.
+   * @param institutionId institutionId id
+   * @returns InstitutionLocations.
    */
-  async getInstitutionLocationsWithDesignationStatus(
+  async getLocations(
     institutionId: number,
   ): Promise<LocationWithDesignationStatus[]> {
-    return this.repo
+    return this.buildLocationQuery(undefined, institutionId).getRawMany();
+  }
+
+  private buildLocationQuery(locationId?: number, institutionId?: number) {
+    const query = this.repo
       .createQueryBuilder("location")
-      .addSelect("location.name", "locationName")
+      .select("location.name", "locationName")
       .addSelect("location.info", "locationAddress")
       .addSelect("location.id", "id")
-      .addSelect("location.institution_code", "institutionCode")
-      .addSelect("location.primary_contact", "primaryContact")
-      .innerJoin("location.institution", "institution")
-      .where("institution.id = :id", {
-        id: institutionId,
-      })
+      .addSelect("location.institutionCode", "institutionCode")
+      .addSelect("location.primaryContact", "primaryContact")
       .addSelect(
         `CASE
-          WHEN EXISTS(${this.designationAgreementLocationService
-            .getExistsDesignatedLocation()
-            .getSql()}) THEN true
-          ELSE false
-        END`,
+      WHEN EXISTS(${this.designationAgreementLocationService
+        .getExistsDesignatedLocation()
+        .getSql()}) THEN true
+      ELSE false
+    END`,
         "isDesignated",
-      )
-      .getRawMany();
+      );
+    if (locationId) {
+      return query.where("location.id = :locationId", { locationId });
+    }
+
+    if (institutionId) {
+      return query
+        .innerJoin("location.institution", "institution")
+        .where("institution.id = :id", {
+          id: institutionId,
+        });
+    }
   }
 }
