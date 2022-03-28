@@ -136,24 +136,32 @@ describe("Application Page", () => {
     applicationObject.verifyApplicationText().should("be.visible");
   });
 
-  it("Verify that user able to check the checkbox in Program section in application form.", () => {
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    applicationObject.mySchoolIsNotListedCheckbox().check();
-    applicationObject.checkboxAlertMessage().should("be.visible");
-  });
+  it(
+    "Verify that user able to check the checkbox in Program section in application form.",
+    { retries: 4 },
+    () => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.mySchoolIsNotListedCheckbox().check();
+      applicationObject.checkboxAlertMessage().should("be.visible");
+    }
+  );
 
-  it("Verify that user able to uncheck the checkbox in Program section in application form.", () => {
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    applicationObject.mySchoolIsNotListedCheckbox().check();
-    applicationObject.uncheckAlertMessage().click();
-    applicationObject.checkboxAlertMessage().should("not.exist");
-  });
+  it(
+    "Verify that user able to uncheck the checkbox in Program section in application form.",
+    { retries: 4 },
+    () => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.mySchoolIsNotListedCheckbox().check();
+      applicationObject.uncheckAlertMessage().click();
+      applicationObject.checkboxAlertMessage().should("not.exist");
+    }
+  );
 
   it("Verify that user able to edit all details in Program page in application form.", () => {
     applicationObject.applicationButton().should("be.visible").click();
@@ -170,6 +178,7 @@ describe("Application Page", () => {
     applicationObject.draftApplication().click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
+    cy.wait(1000);
     applicationObject.incorrectStudentNumber().type("SDPLETW3543543FSFSD");
     applicationObject.incorrectStudentNumberText().should("be.visible");
   });
@@ -185,23 +194,411 @@ describe("Application Page", () => {
     applicationObject.inputStudentNumber2();
   });
 
-  it.skip("Verify that user redirect to Personal Information page from Program page in application form.", () => {
-    applicationObject.applicationButton().should("be.visible").click();
-    applicationObject.draftApplication().click();
-    applicationObject.draftApplicationVerifyText().should("be.visible");
-    applicationObject.nextSectionButton().click();
-    applicationObject.schoolIWillBeAttendingDropdown2();
-    applicationObject.howWillYouAttendProgramDropdown2();
-    applicationObject.myStudyPeriodIsNotListedCheckbox();
+  it("Verify that user redirect to Personal Information page from Program page in application form.", () => {
     cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myProgramNotListedCheckbox().click({ force: true });
       applicationObject.programName().type(testData.programNameData);
       applicationObject
         .programDescription()
         .type(testData.programDescriptionData);
+      applicationObject.studyStartDate();
+      applicationObject.studyEndDate();
+      applicationObject.inputStudentNumber2();
+      applicationObject.nextSectionButton().click();
     });
-    applicationObject.studyStartDate();
-    applicationObject.studyEndDate();
-    applicationObject.inputStudentNumber2();
-    applicationObject.nextSectionButton().click();
+  });
+
+  it("Check without selecting any mandatory fields in Personal Information section if the user clicks Next Section button then the alert message is displayed or not in application form.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myProgramNotListedCheckbox().click({ force: true });
+      applicationObject.programName().type(testData.programNameData);
+      applicationObject
+        .programDescription()
+        .type(testData.programDescriptionData);
+      applicationObject.studyStartDate();
+      applicationObject.studyEndDate();
+      applicationObject.inputStudentNumber2();
+      applicationObject.nextSectionButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject
+        .pleaseFixErrorBeforeSubmittingText()
+        .should("be.visible");
+    });
+  });
+
+  it("Verify that all mandatory fields in the Personal information page have error messages displayed if they are not filled out.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myProgramNotListedCheckbox().click({ force: true });
+      applicationObject.programName().type(testData.programNameData);
+      applicationObject
+        .programDescription()
+        .type(testData.programDescriptionData);
+      applicationObject.studyStartDate();
+      applicationObject.studyEndDate();
+      applicationObject.inputStudentNumber2();
+      applicationObject.nextSectionButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject
+        .pleaseFixErrorBeforeSubmittingText()
+        .should("be.visible");
+      applicationObject.iConfirmMyStudentText().should("be.visible");
+      applicationObject.citizenshipStatusText().should("be.visible");
+      applicationObject.areYouResidentText().should("be.visible");
+      applicationObject.identifyAsIndigenousText().should("be.visible");
+      applicationObject.youthInContinuingText().should("be.visible");
+      applicationObject.outOfHighSchoolText().should("be.visible");
+      applicationObject.graduateOrLeaveHighSchoolText().should("be.visible");
+      applicationObject
+        .employmentInformationIsRequiredText()
+        .should("be.visible");
+      applicationObject.leftSchoolFirstDayOfClassText().should("be.visible");
+      applicationObject.trustedContactText().should("be.visible");
+    });
+  });
+
+  it("Verify that clicking on Student Profile redirects to student information.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myProgramNotListedCheckbox().click({ force: true });
+      applicationObject.programName().type(testData.programNameData);
+      applicationObject
+        .programDescription()
+        .type(testData.programDescriptionData);
+      applicationObject.studyStartDate();
+      applicationObject.studyEndDate();
+      applicationObject.inputStudentNumber2();
+      applicationObject.nextSectionButton().click();
+      applicationObject.studentProfileButton().click();
+      applicationObject.studentInformationText().should("be.visible");
+    });
+  });
+
+  it("Verify that redirects to Student Profile by clicking Student Profile button from Personal Information.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myProgramNotListedCheckbox().click({ force: true });
+      applicationObject.programName().type(testData.programNameData);
+      applicationObject
+        .programDescription()
+        .type(testData.programDescriptionData);
+      applicationObject.studyStartDate();
+      applicationObject.studyEndDate();
+      applicationObject.inputStudentNumber2();
+      applicationObject.nextSectionButton().click();
+      applicationObject.studentProfileButton().click();
+      applicationObject.studentInformationText().should("be.visible");
+    });
+  });
+
+  it.skip("Check that all fields on the Personal Information page are working.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+    });
+  });
+
+  it("Check that all fields on the Family Information page are working.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+    });
+  });
+
+  it("Check that previous button is working in family information page.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.previousSectionButton().click();
+      applicationObject.previousSectionButton().click();
+      applicationObject.previousSectionButton().click();
+      applicationObject.welcomeText().should("be.visible");
+    });
+  });
+
+  it("Verify that condition-based records are displaying or not in partner Information.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.yesSocialInsuranceNumber().click();
+      applicationObject.yesSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.noSocialInsuranceNumber().click();
+      applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
+    });
+  });
+
+  it("Verify that all mandatory fields in the Partner information page have error messages displayed if they are not filled out.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.yesSocialInsuranceNumber().click();
+      applicationObject.yesSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.noSocialInsuranceNumber().click();
+      applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      applicationObject
+        .pleaseFixErrorBeforeSubmittingText()
+        .should("be.visible");
+      applicationObject.financialInformationErrorMessage().should("be.visible");
+      applicationObject.partnerIncomeErrorMessage().should("be.visible");
+      applicationObject.partnerEmployedErrorMessage().should("be.visible");
+      applicationObject.financialInformationErrorMessage().should("be.visible");
+      applicationObject.partnerBeAtHomeErrorMessage().should("be.visible");
+      applicationObject.partnerBeLivingErrorMessage().should("be.visible");
+      applicationObject.partnerBeFullTimeErrorMessage().should("be.visible");
+      applicationObject.partnerReciveIncomeErrorMessage().should("be.visible");
+      applicationObject
+        .partnerEmploymentInsuranceErrorMessage()
+        .should("be.visible");
+      applicationObject
+        .partnerReceiptFederalErrorMessage()
+        .should("be.visible");
+      applicationObject
+        .partnerPayingCanadaStudentErrorMessage()
+        .should("be.visible");
+      applicationObject.duringStudyPeriodErrorMessage().should("be.visible");
+    });
+  });
+
+  it("Check that all fields on the Partner information page are working.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.personalInformationButton().click();
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.yesSocialInsuranceNumber().click();
+      applicationObject.yesSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.noSocialInsuranceNumber().click();
+      applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.iHaveBeenAuthorizedCheckbox().click();
+      applicationObject.partnerIncomeInputMessage().type("93");
+      applicationObject.partnerFullTimeRadioButton().click();
+      applicationObject.homeCaringRadioButton().click();
+      applicationObject.livingStudyPeriodRadioButton().click();
+      applicationObject.fullTimePostRadioButton().click();
+      applicationObject.receiveIncomeAssistanceRadioButton().click();
+      applicationObject.receiptEmploymentInsuranceRadioButton().click();
+      applicationObject.receiptFederalRadioButton().click();
+      applicationObject.payingCanadaStudentRadioButton().click();
+      applicationObject.partnerWillPayInputText().type("1200");
+      applicationObject.payingForChildSupportRadioButton().click();
+      applicationObject.payingForChildSupportInputText().type("1100");
+      applicationObject.eligibleDependRadioButton().click();
+      applicationObject.nextSectionButton().click();
+    });
+  });
+
+  it("Verify that all mandatory fields in the Financial information page have error messages displayed if they are not filled out.", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+      applicationObject.financialInformationButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject
+        .pleaseFixErrorBeforeSubmittingText()
+        .should("be.visible");
+      applicationObject.myTotalIncomeErrorMessage().should("be.visible");
+    });
   });
 });
