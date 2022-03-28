@@ -105,7 +105,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .addSelect(
         `CASE
       WHEN EXISTS(${this.studentAppealRequestsService
-        .getExistsAppeals(StudentAppealStatus.Pending)
+        .appealsByStatusQueryObject(StudentAppealStatus.Pending)
         .getSql()}) THEN '${StudentAppealStatus.Pending}'
       ELSE '${StudentAppealStatus.Declined}'
     END`,
@@ -117,11 +117,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         new Brackets((qb) => {
           qb.where(
             ` EXISTS(${this.studentAppealRequestsService
-              .getExistsAppeals(StudentAppealStatus.Pending)
+              .appealsByStatusQueryObject(StudentAppealStatus.Pending)
               .getSql()})`,
           ).orWhere(
             `NOT EXISTS(${this.studentAppealRequestsService
-              .getExistsAppeals(StudentAppealStatus.Declined, false)
+              .appealsByStatusQueryObject(StudentAppealStatus.Declined, false)
               .getSql()})`,
           );
         }),

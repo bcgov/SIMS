@@ -37,6 +37,9 @@ import configValidationRules from "./validators/ValidatorConfigUI";
 import Timeline from "primevue/timeline";
 import Tooltip from "primevue/tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
+import ContentGroup from "@/components/generic/ContentGroup.vue";
+
 import {
   faMapPin,
   faCheck,
@@ -124,6 +127,8 @@ AppConfigService.shared.init().then(() => {
     .component("TabPanel", TabPanel)
     .component("font-awesome-icon", FontAwesomeIcon)
     .component("Timeline", Timeline)
+    .component("BodyHeader", BodyHeader)
+    .component("ContentGroup", ContentGroup)
     .directive("tooltip", Tooltip)
     .mount("#app");
 });

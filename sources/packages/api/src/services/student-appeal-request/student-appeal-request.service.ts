@@ -25,19 +25,23 @@ export class StudentAppealRequestsService extends RecordDataModelService<Student
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
    */
-  getExistsAppeals(
+  appealsByStatusQueryObject(
     appealStatus: StudentAppealStatus,
     isEqual = true,
   ): SelectQueryBuilder<StudentAppealRequest> {
-    const query = this.repo
+    const queryObject = this.repo
       .createQueryBuilder("studentAppealRequest")
       .select("1")
       .andWhere("studentAppealRequest.studentAppeal = studentAppeal.id");
     if (isEqual) {
-      query.andWhere(`studentAppealRequest.appealStatus = '${appealStatus}'`);
+      queryObject.andWhere(
+        `studentAppealRequest.appealStatus = '${appealStatus}'`,
+      );
     } else {
-      query.andWhere(`studentAppealRequest.appealStatus != '${appealStatus}'`);
+      queryObject.andWhere(
+        `studentAppealRequest.appealStatus != '${appealStatus}'`,
+      );
     }
-    return query;
+    return queryObject;
   }
 }

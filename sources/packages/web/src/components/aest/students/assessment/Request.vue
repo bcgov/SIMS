@@ -2,10 +2,12 @@
   <v-container>
     <v-card>
       <v-container>
-        <body-header title="Requests" class="m-1"> </body-header>
-        <span
-          >Requests for application changes that may require reassessments</span
+        <body-header
+          title="Requests"
+          class="m-1"
+          subTitle="Requests for application changes that may require reassessments"
         >
+        </body-header>
         <content-group class="mt-4">
           <DataTable
             :value="requestedAssessment"
@@ -46,15 +48,11 @@ import {
 import { ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import BodyHeader from "@/components/generic/BodyHeader.vue";
 
 export default {
   components: {
-    ContentGroup,
     StatusChipRequestedAssessment,
-    BodyHeader,
   },
   props: {
     applicationId: {

@@ -4,8 +4,3 @@ export enum StatusChipTypes {
   Error = "error",
   Inactive = "inactive",
 }
-
-export enum RequestedAssessmentStatusChipTypes {
-  Pending = "Pending",
-  Declined = "Declined",
-}

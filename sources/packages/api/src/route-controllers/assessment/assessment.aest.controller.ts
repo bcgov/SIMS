@@ -61,7 +61,7 @@ export class AssessmentAESTController extends BaseController {
       })),
       ...studentScholasticStandings.map((scholasticStanding) => ({
         submittedDate: scholasticStanding.submittedDate,
-        status: scholasticStanding.status,
+        status: scholasticStanding.scholasticStandingStatus,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
       })),
     ];
