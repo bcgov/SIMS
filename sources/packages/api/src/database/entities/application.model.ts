@@ -190,7 +190,7 @@ export class Application extends RecordDataModel {
   })
   pirDeniedReasonId?: PIRDeniedReason;
   /**
-   * Custom reason why a Program Information Request (PIR) was denied.
+   * Other reason why a Program Information Request (PIR) was denied.
    */
   @Column({
     name: "pir_denied_other_desc",
