@@ -1,5 +1,10 @@
-import { StudentAssessmentStatus } from "src/route-controllers/assessment/models/assessment.dto";
 import { AssessmentTriggerType } from "../../database/entities";
+
+export enum StudentAssessmentStatus {
+  Submitted = "Submitted",
+  InProgress = "In Progress",
+  Completed = "Completed",
+}
 
 /**
  * Service model to fetch Assessment History.

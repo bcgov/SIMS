@@ -17,8 +17,10 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
-import { StudentAssessmentStatus } from "../../route-controllers/assessment/models/assessment.dto";
-import { AssessmentHistory } from "./student-assessment.models";
+import {
+  AssessmentHistory,
+  StudentAssessmentStatus,
+} from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -365,7 +367,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * * and assessmentData is not null, then status
    * * is Completed.
    * @param applicationId applicationId.
-   * @returns StudentAssessment list
+   * @returns AssessmentHistory list
    */
   async assessmentHistorySummary(
     applicationId: number,

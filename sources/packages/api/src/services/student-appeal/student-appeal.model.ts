@@ -7,6 +7,7 @@ export interface StudentAppealRequestModel {
   formName: string;
   formData: any;
 }
+
 /**
  * Service model to fetch Pending And Denied Appeals.
  */

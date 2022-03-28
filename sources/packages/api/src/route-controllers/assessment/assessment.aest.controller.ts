@@ -68,7 +68,7 @@ export class AssessmentAESTController extends BaseController {
 
     // submitted date sorting
     requestedAssessments = requestedAssessments.sort((first, second) =>
-      new Date(first.submittedDate) > new Date(second.submittedDate) ? 1 : -1,
+      first.submittedDate > second.submittedDate ? 1 : -1,
     );
     // sorting with status and returning
     return requestedAssessments.sort((first) =>
