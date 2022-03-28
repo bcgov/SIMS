@@ -367,7 +367,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param applicationId applicationId.
    * @returns StudentAssessment list
    */
-  async AssessmentHistorySummary(
+  async assessmentHistorySummary(
     applicationId: number,
   ): Promise<AssessmentHistory[]> {
     return this.repo
@@ -399,6 +399,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("assessment.application", "application")
       .where("application.id = :applicationId", { applicationId })
       .orderBy("status", "DESC")
+      .addOrderBy("assessment.submittedDate")
       .getRawMany();
   }
 }

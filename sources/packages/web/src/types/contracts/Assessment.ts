@@ -36,7 +36,7 @@ export enum AssessmentHistoryStatus {
   // InProgress.
   InProgress = "In Progress",
 
-  // when assessmentWorkflowId is not null
+  // When assessmentWorkflowId is not null
   // and assessmentData is not null, then status
   // is Completed.
   Completed = "Completed",

@@ -2,9 +2,7 @@
   <v-container>
     <v-card>
       <v-container>
-        <p class="category-header-large color-blue">
-          Requests
-        </p>
+        <body-header title="Requests" class="m-1"> </body-header>
         <span
           >Requests for application changes that may require reassessments</span
         >
@@ -50,11 +48,13 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { useFormatters } from "@/composables";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 
 export default {
   components: {
     ContentGroup,
     StatusChipRequestedAssessment,
+    BodyHeader,
   },
   props: {
     applicationId: {

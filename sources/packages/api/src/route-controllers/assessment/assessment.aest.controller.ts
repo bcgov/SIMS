@@ -10,9 +10,13 @@ import {
   StudentAssessmentService,
   StudentScholasticStandingsService,
 } from "../../services";
-import { AssessmentTriggerType } from "../../database/entities";
+import {
+  AssessmentTriggerType,
+  ScholasticStandingStatus,
+  StudentAppealStatus,
+} from "../../database/entities";
 import { RequestAssessmentSummaryDTO } from "./models/assessment.dto";
-import { AssessmentHistory } from "src/services/student-assessment/student-assessment.models";
+import { AssessmentHistory } from "../../services/student-assessment/student-assessment.models";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -28,7 +32,7 @@ export class AssessmentAESTController extends BaseController {
   }
 
   /**
-   * Controller to get all requested assessments for an student
+   * Method to get all requested assessments for a student
    * application, i.e, this will fetch the combination of
    * pending and denied student appeal and scholastic
    * standings for an application.
@@ -50,25 +54,34 @@ export class AssessmentAESTController extends BaseController {
         ),
       ]);
 
-    const requestedAssessments = [
+    let requestedAssessments = [
       ...studentAppealQuery.map((appeals) => ({
-        ...appeals,
+        submittedDate: appeals.submittedDate,
+        status: appeals.status,
         triggerType: AssessmentTriggerType.StudentAppeal,
       })),
       ...studentScholasticStandingsQuery.map((scholasticStanding) => ({
-        ...scholasticStanding,
+        submittedDate: scholasticStanding.submittedDate,
+        status: scholasticStanding.status,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
       })),
     ];
 
-    // sorting and returning
-    return requestedAssessments.sort((first, second) =>
-      first.status > second.status ? -1 : 1,
+    // submitted date sorting
+    requestedAssessments = requestedAssessments.sort((first, second) =>
+      new Date(first.submittedDate) > new Date(second.submittedDate) ? 1 : -1,
+    );
+    // sorting with status and returning
+    return requestedAssessments.sort((first) =>
+      first.status === StudentAppealStatus.Pending ||
+      first.status === ScholasticStandingStatus.Pending
+        ? -1
+        : 1,
     );
   }
 
   /**
-   * Controller to get history of assessments for an application,
+   * Method to get history of assessments for an application,
    * i.e, this will have original assessment for the
    * student application, and all approved student
    * appeal and scholastic standings for the application
@@ -83,7 +96,7 @@ export class AssessmentAESTController extends BaseController {
   async getAssessmentHistorySummary(
     @Param("applicationId") applicationId: number,
   ): Promise<AssessmentHistory[]> {
-    return this.studentAssessmentService.AssessmentHistorySummary(
+    return this.studentAssessmentService.assessmentHistorySummary(
       applicationId,
     );
   }

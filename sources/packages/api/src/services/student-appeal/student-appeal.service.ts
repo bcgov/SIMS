@@ -22,7 +22,7 @@ import { StudentAppealRequestsService } from "../student-appeal-request/student-
 export class StudentAppealService extends RecordDataModelService<StudentAppeal> {
   constructor(
     connection: Connection,
-    private readonly studentAppealRequests: StudentAppealRequestsService,
+    private readonly studentAppealRequestsService: StudentAppealRequestsService,
   ) {
     super(connection.getRepository(StudentAppeal));
   }
@@ -104,7 +104,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .select("studentAppeal.submittedDate", "submittedDate")
       .addSelect(
         `CASE
-      WHEN EXISTS(${this.studentAppealRequests
+      WHEN EXISTS(${this.studentAppealRequestsService
         .getExistsAppeals(StudentAppealStatus.Pending)
         .getSql()}) THEN '${StudentAppealStatus.Pending}'
       ELSE '${StudentAppealStatus.Declined}'
@@ -116,11 +116,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .andWhere(
         new Brackets((qb) => {
           qb.where(
-            ` EXISTS(${this.studentAppealRequests
+            ` EXISTS(${this.studentAppealRequestsService
               .getExistsAppeals(StudentAppealStatus.Pending)
               .getSql()})`,
           ).orWhere(
-            `NOT EXISTS(${this.studentAppealRequests
+            `NOT EXISTS(${this.studentAppealRequestsService
               .getExistsAppeals(StudentAppealStatus.Declined, false)
               .getSql()})`,
           );

@@ -11,11 +11,9 @@ export function useAssessment() {
   ): StatusChipTypes => {
     switch (status) {
       case StudentAppealStatus.Pending:
-        return StatusChipTypes.Warning;
       case ScholasticStandingStatus.Pending:
         return StatusChipTypes.Warning;
       case StudentAppealStatus.Declined:
-        return StatusChipTypes.Error;
       case ScholasticStandingStatus.Declined:
         return StatusChipTypes.Error;
       default:

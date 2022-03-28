@@ -2,9 +2,7 @@
   <v-container>
     <v-card>
       <v-container>
-        <p class="category-header-large color-blue">
-          History
-        </p>
+        <body-header title="History" class="m-1"> </body-header>
         <span>A history of assessments</span>
         <content-group class="mt-4">
           <DataTable
@@ -58,11 +56,13 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { useFormatters } from "@/composables";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
+import BodyHeader from "@/components/generic/BodyHeader.vue";
 
 export default {
   components: {
     ContentGroup,
     StatusChipAssessmentHistory,
+    BodyHeader,
   },
   props: {
     applicationId: {
