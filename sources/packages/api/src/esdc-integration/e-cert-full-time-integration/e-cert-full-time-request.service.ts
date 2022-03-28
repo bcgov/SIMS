@@ -114,8 +114,8 @@ export class ECertFullTimeRequestService {
    */
   private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
-    const addressInfo =
-      disbursement.application.student.contactInfo.addresses[0];
+    const [addressInfo] =
+      disbursement.studentAssessment.application.student.contactInfo.addresses;
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
       disbursement.studentAssessment.offering.educationProgram.cipCode,
     );
@@ -128,9 +128,10 @@ export class ECertFullTimeRequestService {
         } as Award),
     );
 
+    const application = disbursement.studentAssessment.application;
     return {
-      sin: disbursement.application.student.sin,
-      applicationNumber: disbursement.application.applicationNumber,
+      sin: application.student.sin,
+      applicationNumber: application.applicationNumber,
       documentNumber: disbursement.documentNumber,
       disbursementDate: disbursement.disbursementDate,
       documentProducedDate: now,
@@ -141,7 +142,7 @@ export class ECertFullTimeRequestService {
       educationalStartDate:
         disbursement.studentAssessment.offering.studyStartDate,
       educationalEndDate: disbursement.studentAssessment.offering.studyEndDate,
-      federalInstitutionCode: disbursement.application.location.institutionCode,
+      federalInstitutionCode: application.location.institutionCode,
       weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
       fieldOfStudy,
       yearOfStudy: disbursement.studentAssessment.offering.yearOfStudy,
@@ -149,17 +150,17 @@ export class ECertFullTimeRequestService {
         disbursement.studentAssessment.offering.educationProgram
           .completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
-      dateOfBirth: disbursement.application.student.birthDate,
-      lastName: disbursement.application.student.user.lastName,
-      firstName: disbursement.application.student.user.firstName,
+      dateOfBirth: application.student.birthDate,
+      lastName: application.student.user.lastName,
+      firstName: application.student.user.firstName,
       addressLine1: addressInfo.addressLine1,
       addressLine2: addressInfo.addressLine2,
       city: addressInfo.city,
       country: addressInfo.country,
-      email: disbursement.application.student.user.email,
-      gender: disbursement.application.student.gender,
-      maritalStatus: disbursement.application.relationshipStatus,
-      studentNumber: disbursement.application.studentNumber,
+      email: application.student.user.email,
+      gender: application.student.gender,
+      maritalStatus: application.relationshipStatus,
+      studentNumber: application.studentNumber,
       awards,
     } as ECertRecord;
   }

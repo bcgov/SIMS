@@ -120,7 +120,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("assessment.disbursementSchedules", "disbursementSchedule")
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
       .where("assessment.id = :assessmentId", { assessmentId })
       .orderBy("disbursementSchedule.disbursementDate");
 
