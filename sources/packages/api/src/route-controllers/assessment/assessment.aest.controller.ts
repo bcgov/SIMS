@@ -46,21 +46,20 @@ export class AssessmentAESTController extends BaseController {
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
   ): Promise<RequestAssessmentSummaryDTO[]> {
-    const [studentAppealQuery, studentScholasticStandingsQuery] =
-      await Promise.all([
-        this.studentAppealService.getPendingAndDeniedAppeals(applicationId),
-        this.studentScholasticStandingsService.getPendingAndDeniedScholasticStanding(
-          applicationId,
-        ),
-      ]);
+    const [studentAppeal, studentScholasticStandings] = await Promise.all([
+      this.studentAppealService.getPendingAndDeniedAppeals(applicationId),
+      this.studentScholasticStandingsService.getPendingAndDeniedScholasticStanding(
+        applicationId,
+      ),
+    ]);
 
     let requestedAssessments = [
-      ...studentAppealQuery.map((appeals) => ({
+      ...studentAppeal.map((appeals) => ({
         submittedDate: appeals.submittedDate,
         status: appeals.status,
         triggerType: AssessmentTriggerType.StudentAppeal,
       })),
-      ...studentScholasticStandingsQuery.map((scholasticStanding) => ({
+      ...studentScholasticStandings.map((scholasticStanding) => ({
         submittedDate: scholasticStanding.submittedDate,
         status: scholasticStanding.status,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,

@@ -1,4 +1,4 @@
-import { AssessmentHistoryStatus } from "src/route-controllers/assessment/models/assessment.dto";
+import { StudentAssessmentStatus } from "src/route-controllers/assessment/models/assessment.dto";
 import { AssessmentTriggerType } from "../../database/entities";
 
 /**
@@ -8,5 +8,5 @@ export interface AssessmentHistory {
   submittedDate: Date;
   triggerType: AssessmentTriggerType;
   assessmentDate: Date;
-  status: AssessmentHistoryStatus;
+  status: StudentAssessmentStatus;
 }

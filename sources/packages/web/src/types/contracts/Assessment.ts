@@ -26,7 +26,7 @@ export enum AssessmentStatus {
 /**
  * Assessment History Status
  */
-export enum AssessmentHistoryStatus {
+export enum StudentAssessmentStatus {
   // When assessmentWorkflowId is null,
   // then status is Submitted.
   Submitted = "Submitted",
@@ -50,7 +50,7 @@ export interface RequestAssessmentSummaryDTO {
 
 export interface AssessmentHistorySummaryDTO {
   submittedDate: Date;
-  status: AssessmentHistoryStatus;
+  status: StudentAssessmentStatus;
   triggerType: AssessmentTriggerType;
   assessmentDate: Date;
 }

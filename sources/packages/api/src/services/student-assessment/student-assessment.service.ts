@@ -17,7 +17,7 @@ import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
-import { AssessmentHistoryStatus } from "../../route-controllers/assessment/models/assessment.dto";
+import { StudentAssessmentStatus } from "../../route-controllers/assessment/models/assessment.dto";
 import { AssessmentHistory } from "./student-assessment.models";
 
 /**
@@ -380,19 +380,19 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           WHEN 
             assessment.assessmentWorkflowId IS NULL 
             THEN 
-              '${AssessmentHistoryStatus.Submitted}'
+              '${StudentAssessmentStatus.Submitted}'
           WHEN 
             assessment.assessmentWorkflowId IS NOT NULL 
             AND 
             assessment.assessmentData IS NULL 
             THEN 
-              '${AssessmentHistoryStatus.InProgress}'
+              '${StudentAssessmentStatus.InProgress}'
           WHEN 
             assessment.assessmentWorkflowId IS NOT NULL 
             AND 
             assessment.assessmentData IS NOT NULL 
             THEN 
-              '${AssessmentHistoryStatus.Completed}'
+              '${StudentAssessmentStatus.Completed}'
         END`,
         "status",
       )

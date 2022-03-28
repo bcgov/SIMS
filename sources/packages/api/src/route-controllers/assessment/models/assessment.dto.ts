@@ -4,7 +4,7 @@ import {
   StudentAppealStatus,
 } from "../../../database/entities";
 
-export enum AssessmentHistoryStatus {
+export enum StudentAssessmentStatus {
   Submitted = "Submitted",
   InProgress = "In Progress",
   Completed = "Completed",

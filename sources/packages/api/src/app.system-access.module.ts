@@ -9,9 +9,6 @@ import {
   StudentRestrictionService,
   WorkflowActionsService,
   WorkflowService,
-  StudentAppealService,
-  StudentAppealRequestsService,
-  StudentScholasticStandingsService,
 } from "./services";
 import { AssessmentSystemAccessController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -29,9 +26,6 @@ import { LoggerModule } from "./logger/logger.module";
     DisbursementScheduleService,
     SequenceControlService,
     StudentRestrictionService,
-    StudentAppealService,
-    StudentScholasticStandingsService,
-    StudentAppealRequestsService,
   ],
 })
 export class AppSystemAccessModule {}

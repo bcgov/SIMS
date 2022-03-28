@@ -2,7 +2,7 @@ import { StatusChipTypes } from "@/components/generic/StatusChip.models";
 import {
   ScholasticStandingStatus,
   StudentAppealStatus,
-  AssessmentHistoryStatus,
+  StudentAssessmentStatus,
 } from "@/types";
 
 export function useAssessment() {
@@ -22,14 +22,14 @@ export function useAssessment() {
   };
 
   const mapAssessmentHistoryChipStatus = (
-    status: AssessmentHistoryStatus,
+    status: StudentAssessmentStatus,
   ): StatusChipTypes => {
     switch (status) {
-      case AssessmentHistoryStatus.Submitted:
+      case StudentAssessmentStatus.Submitted:
         return StatusChipTypes.Inactive;
-      case AssessmentHistoryStatus.InProgress:
+      case StudentAssessmentStatus.InProgress:
         return StatusChipTypes.Warning;
-      case AssessmentHistoryStatus.Completed:
+      case StudentAssessmentStatus.Completed:
         return StatusChipTypes.Success;
       default:
         return StatusChipTypes.Inactive;

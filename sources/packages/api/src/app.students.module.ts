@@ -21,7 +21,6 @@ import {
   StudentRestrictionService,
   DesignationAgreementLocationService,
   StudentAssessmentService,
-  StudentScholasticStandingsService,
   StudentAppealService,
   StudentAppealRequestsService,
 } from "./services";
@@ -65,7 +64,6 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     ApplicationControllerService,
     StudentAppealService,
     StudentAppealRequestsService,
-    StudentScholasticStandingsService,
   ],
 })
 export class AppStudentsModule {}

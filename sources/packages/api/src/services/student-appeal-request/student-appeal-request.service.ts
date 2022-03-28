@@ -16,10 +16,10 @@ export class StudentAppealRequestsService extends RecordDataModelService<Student
    * 'not exists' where clause.
    * @param appealStatus student request status that to be searched for.
    * @param isEqual, this flag decides how the passed status should checked,
-   * eg, if isEqual is true, then the logic will check if the passed status
-   * is equal to appealStatus.
-   * if isEqual is false, then the logic will check if the passed status
-   * is not equal to appealStatus.
+   * eg, if isEqual is true, then the logic will check if the passed appealStatus
+   * is equal to appealStatus of the selected row..
+   * if isEqual is false, then the logic will check if the passed appealStatus
+   * is not equal to appealStatus of the selected row.
    * by default isEqual is true.
    * @returns 'select' query that could be used in an 'exists' or
    * 'not exists'.
