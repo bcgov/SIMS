@@ -79,7 +79,7 @@ export default {
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
 
-    let formInstance: any;
+    const formInstance = ref();
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const formioComponentLoader = useFormioComponentLoader();
@@ -92,18 +92,18 @@ export default {
     };
 
     const loadFormDependencies = async () => {
-      if (!props.isReadOnly && !!formInstance) {
+      if (!props.isReadOnly && !!formInstance.value) {
         await formioDataLoader.loadLocations(
-          formInstance,
+          formInstance.value,
           LOCATIONS_DROPDOWN_KEY,
         );
-        const selectedLocationId = getSelectedId(formInstance);
+        const selectedLocationId = getSelectedId(formInstance.value);
 
         if (selectedLocationId) {
           // when isReadOnly.value is true, then consider
           // both active and inactive program year.
           await formioDataLoader.loadProgramsForLocation(
-            formInstance,
+            formInstance.value,
             +selectedLocationId,
             PROGRAMS_DROPDOWN_KEY,
             props.programYearId,
@@ -111,23 +111,23 @@ export default {
           );
         }
         const selectedProgramId = formioUtils.getComponentValueByKey(
-          formInstance,
+          formInstance.value,
           PROGRAMS_DROPDOWN_KEY,
         );
         const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-          formInstance,
+          formInstance.value,
           OFFERING_INTENSITY_KEY,
         );
         if (selectedProgramId && selectedIntensity) {
           await formioComponentLoader.loadProgramDesc(
-            formInstance,
+            formInstance.value,
             selectedProgramId,
             SELECTED_PROGRAM_DESC_KEY,
           );
           // when isReadOnly.value is true, then consider
           // both active and inactive program year.
           await formioDataLoader.loadOfferingsForLocation(
-            formInstance,
+            formInstance.value,
             selectedProgramId,
             selectedLocationId,
             OFFERINGS_DROPDOWN_KEY,
@@ -143,36 +143,39 @@ export default {
       // perform the parent specific logic inside parent on
       // form is loaded
       context.emit("formLoadedCallback", form);
-      formInstance = form;
+      formInstance.value = form;
       // Disable internal submit button.
-      formioUtils.disableWizardButtons(formInstance);
-      formInstance.options.buttonSettings.showSubmit = false;
+      formioUtils.disableWizardButtons(formInstance.value);
+      formInstance.value.options.buttonSettings.showSubmit = false;
       // Handle the navigation using the breadcrumbs.
-      formInstance.on("wizardPageSelected", (page: any, index: number) => {
-        isFirstPage.value = index === 0;
-        isLastPage.value = formInstance.isLastPage();
-        // Event to set isInFirstPage, current page and isInLastPage to parent
-        context.emit(
-          "pageChanged",
-          isFirstPage.value,
-          formInstance.page,
-          isLastPage.value,
-        );
-      });
+      formInstance.value.on(
+        "wizardPageSelected",
+        (page: any, index: number) => {
+          isFirstPage.value = index === 0;
+          isLastPage.value = formInstance.value.isLastPage();
+          // Event to set isInFirstPage, current page and isInLastPage to parent
+          context.emit(
+            "pageChanged",
+            isFirstPage.value,
+            formInstance.value.page,
+            isLastPage.value,
+          );
+        },
+      );
       // Handle the navigation using next/prev buttons.
       const prevNextNavigation = (navigation: WizardNavigationEvent) => {
         isFirstPage.value = navigation.page === 0;
-        isLastPage.value = formInstance.isLastPage();
+        isLastPage.value = formInstance.value.isLastPage();
         // Event to set isInFirstPage, current page and isInLastPage to parent
         context.emit(
           "pageChanged",
           isFirstPage.value,
-          formInstance.page,
+          formInstance.value.page,
           isLastPage.value,
         );
       };
-      formInstance.on("prevPage", prevNextNavigation);
-      formInstance.on("nextPage", prevNextNavigation);
+      formInstance.value.on("prevPage", prevNextNavigation);
+      formInstance.value.on("nextPage", prevNextNavigation);
       loadFormDependencies();
     };
 
@@ -263,11 +266,11 @@ export default {
     };
 
     const wizardGoPrevious = () => {
-      formInstance.prevPage();
+      formInstance.value.prevPage();
     };
 
     const wizardGoNext = () => {
-      formInstance.nextPage();
+      formInstance.value.nextPage();
     };
 
     const submitted = (args: any, form: any) => {
