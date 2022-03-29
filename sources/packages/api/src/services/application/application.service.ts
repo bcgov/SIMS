@@ -971,16 +971,26 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * existing one instead.
    * @param applicationId application id to receive an MSFAA.
    */
-  async associateMSFAANumber(
-    applicationId: number,
-    offeringIntensity: OfferingIntensity,
-  ): Promise<Application> {
-    const application = await this.repo.findOne(applicationId, {
-      relations: ["offering"],
-    });
+  async associateMSFAANumber(applicationId: number): Promise<Application> {
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationStatus",
+        "student.id",
+        "currentAssessment.id",
+        "offering.id",
+        "offering.offeringIntensity",
+      ])
+      .innerJoin("application.student", "student")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
+      .where("application.id =:applicationId", { applicationId })
+      .getOne();
+
     if (!application) {
       throw new CustomNamedError(
-        "Student Application not found.",
+        "Student Application not found or one of its associations is missing.",
         APPLICATION_NOT_FOUND,
       );
     }
@@ -997,8 +1007,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Checks if there is an MSFAA that could be considered valid.
     const existingValidMSFAANumber =
       await this.msfaaNumberService.getCurrentValidMSFAANumber(
-        application.studentId,
-        offeringIntensity,
+        application.student.id,
+        application.currentAssessment.offering.offeringIntensity,
       );
     if (existingValidMSFAANumber) {
       // Reuse the MSFAA that is still valid and avoid creating a new one.
@@ -1007,7 +1017,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       // Get previously completed and signed application for the student
       // to determine if an existing MSFAA is still valid.
       const previousSignedApplication =
-        await this.getPreviouslySignedApplication(application.studentId);
+        await this.getPreviouslySignedApplication(
+          application.student.id,
+          application.currentAssessment.offering.offeringIntensity,
+        );
 
       let hasValidMSFAANumber = false;
       if (previousSignedApplication) {
@@ -1028,9 +1041,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       } else {
         // Create a new MSFAA number case the previous one is no longer valid.
         const newMSFAANumber = await this.msfaaNumberService.createMSFAANumber(
-          application.studentId,
+          application.student.id,
           applicationId,
-          offeringIntensity,
+          application.currentAssessment.offering.offeringIntensity,
         );
         msfaaNumberId = newMSFAANumber.id;
       }
@@ -1045,12 +1058,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Gets the application that has an MSFAA signed date.
    * @param studentId student id to filter the applications.
+   * @param offeringIntensity MSFAA are generated individually for full-time/part-time
+   * applications. The offering intensity is used to differentiate between them.
    * @returns previous signed application if exists, otherwise null.
    */
   async getPreviouslySignedApplication(
     studentId: number,
+    offeringIntensity: OfferingIntensity,
   ): Promise<Application> {
-    // TODO: Need to check for offering intensity? It seems to be a gap.
     return this.repo
       .createQueryBuilder("applications")
       .select(["applications.id", "msfaaNumbers.id", "offerings.studyEndDate"])
@@ -1066,6 +1081,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("students.id = :studentId", { studentId })
       .andWhere("msfaaNumbers.dateSigned is not null")
+      .andWhere("msfaaNumbers.offeringIntensity = :offeringIntensity", {
+        offeringIntensity,
+      })
       .orderBy("offerings.studyEndDate", "DESC")
       .limit(1)
       .getOne();
