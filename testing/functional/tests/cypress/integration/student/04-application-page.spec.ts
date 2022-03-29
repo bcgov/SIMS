@@ -768,13 +768,6 @@ describe("Application Page", () => {
         applicationObject.weeklyTransportationCostsInputText().type("200");
         applicationObject.nextSectionButton().click();
         applicationObject.declarationFormCheckbox().click();
-        applicationObject.submitApplicationButton().click();
-        applicationObject.applicationSavedSuccessfully().should("be.visible");
-        cy.xpath(
-          "(//*[name()='svg'][@class='svg-inline--fa fa-trash fa-w-14'])"
-        ).click();
-        cy.wait(1000);
-        cy.xpath("//button[normalize-space()='Cancel Application']").click();
       });
     }
   );
@@ -786,7 +779,5 @@ describe("Application Page", () => {
       .startApplicationStudyYearDisableButton()
       .should("be.visible");
     applicationObject.selectStudyYearDropdown();
-    cy.wait(2000);
-    cy.get("#e0t5c9o > .btn").click();
   });
 });
