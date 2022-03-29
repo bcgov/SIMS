@@ -206,14 +206,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
-      .innerJoin("application.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.msfaaNumber", "msfaaNumber")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .where("disbursement.dateSent is null")
       .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
         disbursementMinDate,
