@@ -53,7 +53,7 @@ export class AssessmentAESTController extends BaseController {
       ),
     ]);
 
-    let requestedAssessments = [
+    const requestedAssessments = [
       ...studentAppeal.map((appeals) => ({
         submittedDate: appeals.submittedDate,
         status: appeals.status,
@@ -66,17 +66,29 @@ export class AssessmentAESTController extends BaseController {
       })),
     ];
 
-    // submitted date sorting
-    requestedAssessments = requestedAssessments.sort((first, second) =>
-      first.submittedDate > second.submittedDate ? 1 : -1,
-    );
-    // sorting with status and returning
-    return requestedAssessments.sort((first) =>
-      first.status === StudentAppealStatus.Pending ||
-      first.status === ScholasticStandingStatus.Pending
-        ? -1
-        : 1,
-    );
+    // status and submitted date sorting
+    return requestedAssessments.sort((first, second) => {
+      if (
+        first.status === StudentAppealStatus.Pending &&
+        second.status === StudentAppealStatus.Pending &&
+        first.submittedDate > second.submittedDate
+      ) {
+        return -1;
+      } else if (
+        first.status === StudentAppealStatus.Pending &&
+        second.status === StudentAppealStatus.Declined
+      ) {
+        return -1;
+      } else if (
+        first.status === StudentAppealStatus.Declined &&
+        second.status === StudentAppealStatus.Declined &&
+        first.submittedDate > second.submittedDate
+      ) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
   }
 
   /**
