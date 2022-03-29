@@ -155,7 +155,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get all records that must be part of the e-Cert files and that were not sent yet.
-   * Considerer any record that is scheduled in upcoming days or in the past.
+   * Consider any record that is scheduled in upcoming days or in the past.
    * Check if the student has a valid SIN.
    * Consider only completed Student Applications with signed MSFAA date.
    * Check if there are restrictions applied to the student account that would
