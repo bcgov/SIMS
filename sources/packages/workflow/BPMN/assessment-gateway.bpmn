@@ -200,11 +200,12 @@ function createVariablesFromPayload(payload) {
     var fieldName = fieldNames[i];
     var fieldValue = null;
     if (payload.hasProp(fieldName)) {
-      if (payload.prop(fieldName).isArray()){
-        fieldValue = payload.prop(fieldName);
+      var fieldProp = payload.prop(fieldName);
+      if (fieldProp.isArray() || fieldProp.isObject()){
+        fieldValue = fieldProp;
       }
       else{
-       fieldValue = payload.prop(fieldName).value();
+       fieldValue = fieldProp.value();
       }
       connector.setVariable(fieldName, fieldValue);
     }
@@ -212,6 +213,7 @@ function createVariablesFromPayload(payload) {
 }
 
 var output = S(connector.getVariable("response"));
+createVariablesFromPayload(output);
 createVariablesFromPayload(output.prop("data"));
 createVariablesFromPayload(output.prop("programYear"));</camunda:script>
             </camunda:outputParameter>
@@ -476,10 +478,6 @@ createVariablesFromPayload(output.prop("student"));</camunda:script>
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="payload">{
-  "status": "Completed",
-  "offeringIntensity": "${offeringIntensity}"
-}</camunda:inputParameter>
             <camunda:inputParameter name="url">${simsApiUrl}/system-access/application/${applicationId}/msfaa-number</camunda:inputParameter>
             <camunda:inputParameter name="method">PATCH</camunda:inputParameter>
             <camunda:inputParameter name="headers">
