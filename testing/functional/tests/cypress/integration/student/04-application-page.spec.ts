@@ -274,8 +274,8 @@ describe("Application Page", () => {
     });
   });
 
-  it("Verify that clicking on Student Profile redirects to student information.", () => {
-    cy.fixture("draftApplicationData").then((testData) => {
+  it("Check that by clicking on Student Profile redirects to student information.", () => {
+    cy.fixture("draftApplicationData").then((testDataForInfo) => {
       applicationObject.applicationButton().should("be.visible").click();
       applicationObject.draftApplication().click();
       applicationObject.draftApplicationVerifyText().should("be.visible");
@@ -283,10 +283,10 @@ describe("Application Page", () => {
       applicationObject.schoolIWillBeAttendingDropdown2();
       applicationObject.howWillYouAttendProgramDropdown2();
       applicationObject.myProgramNotListedCheckbox().click({ force: true });
-      applicationObject.programName().type(testData.programNameData);
+      applicationObject.programName().type(testDataForInfo.programNameData);
       applicationObject
         .programDescription()
-        .type(testData.programDescriptionData);
+        .type(testDataForInfo.programDescriptionData);
       applicationObject.studyStartDate();
       applicationObject.studyEndDate();
       applicationObject.inputStudentNumber2();
