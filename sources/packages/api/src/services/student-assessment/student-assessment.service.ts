@@ -46,6 +46,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .createQueryBuilder("assessment")
       .select([
         "assessment.id",
+        "assessment.triggerType",
         "application.data",
         "programYear.programYear",
         "programYear.startDate",

@@ -6,3 +6,4 @@ export * from "./student-fake";
 export * from "./user-fake";
 export * from "./education-program-offering-fake";
 export * from "./msfaa-number-fake";
+export * from "./student-assessment-fake";

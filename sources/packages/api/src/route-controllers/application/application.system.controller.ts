@@ -24,10 +24,14 @@ import {
   CreateSupportingUsersDto,
   CreateIncomeVerificationDto,
   CRAVerificationIncomeDetailsDto,
-  UpdateOfferingIntensity,
 } from "./models/application.system.model";
 import { IConfig } from "../../types";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
 /**
@@ -78,20 +82,24 @@ export class ApplicationSystemController extends BaseController {
   /**
    * Associates an MSFAA number to the application checking
    * whatever is needed to create a new MSFAA or use an
-   * existing one instead.
+   * existing one instead. The MSFAA are individually associated
+   * considering the offering intensity full-time/part-time.
    * @param applicationId application id to receive an MSFAA.
-   * @param payload Offering Intensity of the student
    */
+  @ApiOkResponse({
+    description: "The application was successfully associated with an MSFAA.",
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Student Application is not in the expected status. Applications status must the 'assessment' in order to have an MSFAA associated.",
+  })
+  @ApiUnprocessableEntityResponse({})
   @Patch(":applicationId/msfaa-number")
   async associateMSFAANumber(
     @Param("applicationId") applicationId: number,
-    @Body() payload: UpdateOfferingIntensity,
   ): Promise<void> {
     try {
-      await this.applicationService.associateMSFAANumber(
-        applicationId,
-        payload.offeringIntensity,
-      );
+      await this.applicationService.associateMSFAANumber(applicationId);
     } catch (error) {
       switch (error.name) {
         case APPLICATION_NOT_FOUND:
