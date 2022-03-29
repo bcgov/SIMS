@@ -601,7 +601,147 @@ export default class ApplicationObject {
     return cy.contains("Will you have merit-based");
   }
 
-  voluntaryContributions() {
+  voluntaryContributionsErrorMessage() {
     return cy.contains("Will you receive voluntary contributions");
+  }
+
+  govtFundingErrorMessage() {
+    return cy.contains("Will you have government funding");
+  }
+
+  nonGovtFundingErrorMessage() {
+    return cy.contains("Will you have non-government");
+  }
+
+  bcIncomeAssistanceErrorMessage() {
+    return cy.contains("Will you have B.C. income");
+  }
+
+  parentIsRequiredErrorMessage() {
+    return cy.contains("Living with your parent/guardian is required");
+  }
+
+  relocateCityErrorMessage() {
+    return cy.contains("If you must relocate");
+  }
+
+  additionalTransportationErrorMessage() {
+    return cy.contains("Do you want to be assessed");
+  }
+
+  totalIncomeInputText() {
+    return cy.get("#ei8r8ok-taxReturnIncome");
+  }
+
+  iGiveCanadianRevenueCheckbox() {
+    return cy.get(".field-required > span");
+  }
+
+  yearEstimatedIncomeRadioButton() {
+    return cy.get("#ertj9j-yes");
+  }
+
+  currentYearIncomeInputText() {
+    return cy.get("#et21m-myTotalCurrentYearIncomeIs");
+  }
+
+  reasonForDecreaseIncomeRadioButton() {
+    return cy.get("#exv0gvk-covid19");
+  }
+
+  exceptionalExpensesRadioButton() {
+    return cy.get("#ei4im4yg-no");
+  }
+
+  childDaycareRadioButton() {
+    return cy.get("#e8w2qkf-yes");
+  }
+
+  childDaycareInputText() {
+    return cy.get("#en2sgy-daycareCosts11YearsOrUnder");
+  }
+
+  classHoursDisabledRadioButton() {
+    return cy.get("#eypvl6-yes");
+  }
+
+  classHoursDisabledInputText() {
+    return cy.get("#edo521o-daycareCosts12YearsOrOver");
+  }
+
+  payingChildSupportRadioButton() {
+    return cy.get("#e7imaej-no");
+  }
+
+  meritBasedRadioButtonRadioButton() {
+    return cy.get("#etjg8d-yes");
+  }
+
+  meritBasedInputText() {
+    return cy.get("#eddiwrq-scholarshipsreceviedCosts");
+  }
+
+  receiveVoluntaryRadioButton() {
+    return cy.get("#ev4lfm9-no");
+  }
+
+  govtFundingRadioButton() {
+    return cy.get("#e8py819-yes");
+  }
+
+  govtFundingInputText() {
+    return cy.get("#erupwha-governmentFundingCosts");
+  }
+
+  nonGovtFundingRadioButton() {
+    return cy.get("#enc682b-no");
+  }
+
+  bcIncomeAssistanceRadioButton() {
+    return cy.get("#eh01dc9-no");
+  }
+
+  homePaidByOurParentsRadioButton() {
+    return cy.get("#eqk9lg-no");
+  }
+
+  relocateToDifferentCityRadioButton() {
+    return cy.get("#enc09bj-yes");
+  }
+
+  oneReturnTripInputText() {
+    return cy.get("#ea21r2t-returntriphomeCost");
+  }
+
+  additionalTransportationCostsRadioButton() {
+    return cy.get("#ei6wo9e-yes");
+  }
+
+  describeSituationRadioButton() {
+    return cy.get("#epi97n-special");
+  }
+
+  weeklyTransportationCostsInputText() {
+    return cy.get("#e5q38z2-transportationcostsEstimate");
+  }
+
+  confirmSubmissionButton() {
+    return cy.contains("Confirm submission");
+  }
+
+  submitApplicationButton() {
+    return cy.contains("Submit application");
+  }
+
+  declarationErrorMessage() {
+    return cy.contains("I give StudentAid BC consent to verify the data");
+  }
+
+  declarationFormCheckbox() {
+    return cy.get(".field-required > span");
+  }
+
+  applicationSavedSuccessfully() {
+    return cy.contains("Application saved!");
   }
 }

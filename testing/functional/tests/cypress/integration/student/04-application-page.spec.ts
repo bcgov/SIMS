@@ -318,7 +318,7 @@ describe("Application Page", () => {
     });
   });
 
-  it.skip("Check that all fields on the Personal Information page are working.", () => {
+  it("Check that all fields on the Personal Information page are working.", () => {
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.applicationButton().should("be.visible").click();
       applicationObject.draftApplication().click();
@@ -536,6 +536,7 @@ describe("Application Page", () => {
       applicationObject.draftApplicationVerifyText().should("be.visible");
       applicationObject.nextSectionButton().click();
       cy.wait(2000);
+
       applicationObject.personalInformationButton().click();
       applicationObject.iConfirmMyStudentAidCheckbox().click();
       applicationObject.citizenStatusRadioButton().click();
@@ -587,6 +588,35 @@ describe("Application Page", () => {
   });
 
   it("Verify that all mandatory fields in the Financial information page have error messages displayed if they are not filled out.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.nextSectionButton().click();
+    cy.wait(2000);
+    applicationObject.financialInformationButton().click();
+    applicationObject.nextSectionButton().click();
+    applicationObject.pleaseFixErrorBeforeSubmittingText().should("be.visible");
+    applicationObject.myTotalIncomeErrorMessage().should("be.visible");
+
+    applicationObject.canadianRevenueErrorMessage().should("be.visible");
+    applicationObject.estimatedIncomeErrorMessage().should("be.visible");
+    applicationObject.exceptionalExpensesErrorMessage().should("be.visible");
+    applicationObject.daycareErrorMessage().should("be.visible");
+    applicationObject.dayCareCostsErrorMessage().should("be.visible");
+    applicationObject.childSupportErrorMessage().should("be.visible");
+    applicationObject.meritBasedErrorMessage().should("be.visible");
+    applicationObject.voluntaryContributionsErrorMessage().should("be.visible");
+    applicationObject.govtFundingErrorMessage().should("be.visible");
+    applicationObject.nonGovtFundingErrorMessage().should("be.visible");
+    applicationObject.bcIncomeAssistanceErrorMessage().should("be.visible");
+    applicationObject.parentIsRequiredErrorMessage().should("be.visible");
+    applicationObject.relocateCityErrorMessage().should("be.visible");
+    applicationObject
+      .additionalTransportationErrorMessage()
+      .should("be.visible");
+  });
+
+  it("Check that all fields on the Partner information page are working.", () => {
     cy.fixture("draftApplicationData").then((testData) => {
       applicationObject.applicationButton().should("be.visible").click();
       applicationObject.draftApplication().click();
@@ -594,11 +624,160 @@ describe("Application Page", () => {
       applicationObject.nextSectionButton().click();
       cy.wait(2000);
       applicationObject.financialInformationButton().click();
+      applicationObject.totalIncomeInputText().type("4500");
+
+      applicationObject.iGiveCanadianRevenueCheckbox().click();
+      applicationObject.yearEstimatedIncomeRadioButton().click();
+      applicationObject.currentYearIncomeInputText().type("32000");
+      applicationObject.reasonForDecreaseIncomeRadioButton().click();
+      applicationObject.exceptionalExpensesRadioButton().click();
+      applicationObject.childDaycareRadioButton().click();
+      applicationObject.childDaycareInputText().type("3450");
+      applicationObject.classHoursDisabledRadioButton().click();
+      applicationObject.classHoursDisabledInputText().type("200");
+      applicationObject.payingChildSupportRadioButton().click();
+      applicationObject.meritBasedRadioButtonRadioButton().click();
+      applicationObject.meritBasedInputText().type("150");
+      applicationObject.receiveVoluntaryRadioButton().click();
+      applicationObject.govtFundingRadioButton().click();
+      applicationObject.govtFundingInputText().type("2500");
+      applicationObject.nonGovtFundingRadioButton().click();
+      applicationObject.bcIncomeAssistanceRadioButton().click();
+      applicationObject.homePaidByOurParentsRadioButton().click();
+      applicationObject.relocateToDifferentCityRadioButton().click();
+      applicationObject.oneReturnTripInputText().type("70");
+      applicationObject.additionalTransportationCostsRadioButton().click();
+      applicationObject.describeSituationRadioButton().click();
+      applicationObject.weeklyTransportationCostsInputText().type("200");
       applicationObject.nextSectionButton().click();
-      applicationObject
-        .pleaseFixErrorBeforeSubmittingText()
-        .should("be.visible");
-      applicationObject.myTotalIncomeErrorMessage().should("be.visible");
     });
+  });
+
+  it("Verify that without filling declaration form click on Submit application button & page have error messages displayed.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.draftApplication().click();
+    applicationObject.draftApplicationVerifyText().should("be.visible");
+    applicationObject.nextSectionButton().click();
+    cy.wait(2000);
+    applicationObject.confirmSubmissionButton().click();
+    applicationObject.submitApplicationButton().click();
+    applicationObject.declarationErrorMessage().should("be.visible");
+  });
+
+  it.only("Verify that user is able to complete all forms in the application & submit it successfully", () => {
+    cy.fixture("draftApplicationData").then((testData) => {
+      applicationObject.applicationButton().should("be.visible").click();
+      applicationObject.draftApplication().click();
+      applicationObject.draftApplicationVerifyText().should("be.visible");
+      applicationObject.nextSectionButton().click();
+      cy.wait(2000);
+
+      applicationObject.schoolIWillBeAttendingDropdown2();
+      applicationObject.howWillYouAttendProgramDropdown2();
+      applicationObject.myProgramNotListedCheckbox().click({ force: true });
+      applicationObject.programName().type(testData.programNameData);
+      applicationObject
+        .programDescription()
+        .type(testData.programDescriptionData);
+      applicationObject.studyStartDate();
+      applicationObject.studyEndDate();
+      applicationObject.inputStudentNumber2();
+      applicationObject.nextSectionButton().click();
+
+      applicationObject.iConfirmMyStudentAidCheckbox().click();
+      applicationObject.citizenStatusRadioButton().click();
+      applicationObject.residentOfBCRadioButton().click();
+      applicationObject.residenceNoneOfTheAboveRadioButton().click();
+      applicationObject
+        .explainSituationInputField()
+        .type("I applied but haven't received confirmation yet.");
+      applicationObject.indigenousPersonRadioButton().click();
+      applicationObject.aboriginalRadioButton().click();
+      applicationObject.legalGuardianRadioButton().click();
+      applicationObject.courseStudyStartDateRadioButton().click();
+      applicationObject.whenDidYouGraduateInputText().type("2023-12-01");
+      applicationObject.workingFullTimeRadioButton().click();
+      applicationObject.fullTimeLaborForceRadioButton().click();
+      applicationObject.allowTrustContactRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.marriedRadioButton().click();
+      applicationObject.dateOfMarriage().type("2023-12-01");
+      applicationObject.dependRadioButton().click();
+      applicationObject.fullNameText().type("Jason Holder");
+      applicationObject.dateOfBirth().type("2003-07-01");
+      applicationObject.attendingPostSecondarySchoolRadioButton().click();
+      applicationObject.declaredOnTaxesRadioButton().click();
+      applicationObject.addAnotherDependantButton().click();
+      applicationObject.secondCloseButton().click();
+      applicationObject.doYouHaveDependentSupportRadioButton().click();
+      applicationObject.nextSectionButton().click();
+      applicationObject.yesSocialInsuranceNumber().click();
+      applicationObject.yesSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.noSocialInsuranceNumber().click();
+      applicationObject.noSocialInsuranceNumberMessage().should("be.visible");
+      applicationObject.iHaveBeenAuthorizedCheckbox().click();
+      applicationObject.partnerIncomeInputMessage().type("93");
+      applicationObject.partnerFullTimeRadioButton().click();
+      applicationObject.homeCaringRadioButton().click();
+      applicationObject.livingStudyPeriodRadioButton().click();
+      applicationObject.fullTimePostRadioButton().click();
+      applicationObject.receiveIncomeAssistanceRadioButton().click();
+      applicationObject.receiptEmploymentInsuranceRadioButton().click();
+      applicationObject.receiptFederalRadioButton().click();
+      applicationObject.payingCanadaStudentRadioButton().click();
+      applicationObject.partnerWillPayInputText().type("1200");
+      applicationObject.payingForChildSupportRadioButton().click();
+      applicationObject.payingForChildSupportInputText().type("1100");
+      applicationObject.eligibleDependRadioButton().click();
+      applicationObject.nextSectionButton().click();
+
+      applicationObject.totalIncomeInputText().type("4500");
+
+      applicationObject.iGiveCanadianRevenueCheckbox().click();
+      applicationObject.yearEstimatedIncomeRadioButton().click();
+      applicationObject.currentYearIncomeInputText().type("32000");
+      applicationObject.reasonForDecreaseIncomeRadioButton().click();
+      applicationObject.exceptionalExpensesRadioButton().click();
+      applicationObject.childDaycareRadioButton().click();
+      applicationObject.childDaycareInputText().type("3450");
+      applicationObject.classHoursDisabledRadioButton().click();
+      applicationObject.classHoursDisabledInputText().type("200");
+      applicationObject.payingChildSupportRadioButton().click();
+      applicationObject.meritBasedRadioButtonRadioButton().click();
+      applicationObject.meritBasedInputText().type("150");
+      applicationObject.receiveVoluntaryRadioButton().click();
+      applicationObject.govtFundingRadioButton().click();
+      applicationObject.govtFundingInputText().type("2500");
+      applicationObject.nonGovtFundingRadioButton().click();
+      applicationObject.bcIncomeAssistanceRadioButton().click();
+      applicationObject.homePaidByOurParentsRadioButton().click();
+      applicationObject.relocateToDifferentCityRadioButton().click();
+      applicationObject.oneReturnTripInputText().type("70");
+      applicationObject.additionalTransportationCostsRadioButton().click();
+      applicationObject.describeSituationRadioButton().click();
+      applicationObject.weeklyTransportationCostsInputText().type("200");
+      applicationObject.nextSectionButton().click();
+      applicationObject.declarationFormCheckbox().click();
+      applicationObject.submitApplicationButton().click();
+      applicationObject.applicationSavedSuccessfully().should("be.visible");
+      cy.xpath(
+        "(//*[name()='svg'][@class='svg-inline--fa fa-trash fa-w-14'])"
+      ).click();
+      cy.wait(1000);
+      cy.xpath("//button[normalize-space()='Cancel Application']").click();
+    });
+  });
+
+  it.only("Check Draft status form is getting create or not", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.startNewApplicationButton().should("be.visible").click();
+    applicationObject
+      .startApplicationStudyYearDisableButton()
+      .should("be.visible");
+    applicationObject.selectStudyYearDropdown();
+    //StartApplicationButton
+    cy.wait(2000);
+    cy.get("#e0t5c9o > .btn").click();
+    cy.contains("Draft");
   });
 });
