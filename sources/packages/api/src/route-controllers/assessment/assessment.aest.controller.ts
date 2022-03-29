@@ -69,25 +69,32 @@ export class AssessmentAESTController extends BaseController {
     // status and submitted date sorting
     return requestedAssessments.sort((first, second) => {
       if (
-        first.status === StudentAppealStatus.Pending &&
-        second.status === StudentAppealStatus.Pending &&
+        ((first.status === StudentAppealStatus.Pending &&
+          second.status === StudentAppealStatus.Pending) ||
+          (first.status === ScholasticStandingStatus.Pending &&
+            second.status === ScholasticStandingStatus.Pending)) &&
         first.submittedDate > second.submittedDate
       ) {
         return -1;
-      } else if (
-        first.status === StudentAppealStatus.Pending &&
-        second.status === StudentAppealStatus.Declined
-      ) {
-        return -1;
-      } else if (
-        first.status === StudentAppealStatus.Declined &&
-        second.status === StudentAppealStatus.Declined &&
-        first.submittedDate > second.submittedDate
-      ) {
-        return -1;
-      } else {
-        return 1;
       }
+      if (
+        (first.status === StudentAppealStatus.Pending &&
+          second.status === StudentAppealStatus.Declined) ||
+        (first.status === ScholasticStandingStatus.Pending &&
+          second.status === ScholasticStandingStatus.Declined)
+      ) {
+        return -1;
+      }
+      if (
+        ((first.status === StudentAppealStatus.Declined &&
+          second.status === StudentAppealStatus.Declined) ||
+          (first.status === ScholasticStandingStatus.Declined &&
+            second.status === ScholasticStandingStatus.Declined)) &&
+        first.submittedDate > second.submittedDate
+      ) {
+        return -1;
+      }
+      return 1;
     });
   }
 
