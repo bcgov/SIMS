@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
-import { Connection, UpdateResult } from "typeorm";
+import { Connection, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
 import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
-import { LocationWithDesigationStatus } from "./institution-location.models";
+import { LocationWithDesignationStatus } from "./institution-location.models";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
@@ -199,22 +199,55 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Get institution location by location id.
    * @param locationId location id
-   * @returns InstitutionLocation
+   * @returns InstitutionLocation.
    */
-  async getLocation(locationId: number): Promise<LocationWithDesigationStatus> {
-    return this.repo
+  async getLocation(
+    locationId: number,
+  ): Promise<LocationWithDesignationStatus> {
+    return this.buildLocationQuery(locationId, undefined).getRawOne();
+  }
+
+  /**
+   * Get institution locations by institution id.
+   * @param institutionId institutionId id
+   * @returns InstitutionLocations.
+   */
+  async getLocations(
+    institutionId: number,
+  ): Promise<LocationWithDesignationStatus[]> {
+    return this.buildLocationQuery(undefined, institutionId).getRawMany();
+  }
+
+  private buildLocationQuery(
+    locationId?: number,
+    institutionId?: number,
+  ): SelectQueryBuilder<InstitutionLocation> {
+    const query = this.repo
       .createQueryBuilder("location")
       .select("location.name", "locationName")
+      .addSelect("location.info", "locationAddress")
+      .addSelect("location.id", "id")
+      .addSelect("location.institutionCode", "institutionCode")
+      .addSelect("location.primaryContact", "primaryContact")
       .addSelect(
         `CASE
-          WHEN EXISTS(${this.designationAgreementLocationService
-            .getExistsDesignatedLocation()
-            .getSql()}) THEN true
-          ELSE false
-        END`,
+      WHEN EXISTS(${this.designationAgreementLocationService
+        .getExistsDesignatedLocation()
+        .getSql()}) THEN true
+      ELSE false
+    END`,
         "isDesignated",
-      )
-      .where("location.id = :locationId", { locationId })
-      .getRawOne();
+      );
+    if (locationId) {
+      return query.where("location.id = :locationId", { locationId });
+    }
+
+    if (institutionId) {
+      return query
+        .innerJoin("location.institution", "institution")
+        .where("institution.id = :id", {
+          id: institutionId,
+        });
+    }
   }
 }

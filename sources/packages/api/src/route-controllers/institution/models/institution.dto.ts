@@ -9,6 +9,8 @@ import { PartialType } from "@nestjs/mapped-types";
 import { BCeIDDetailsDto } from "../../../route-controllers/user/models/bceid-account.dto";
 import { Type } from "class-transformer";
 
+import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
+
 /**
  * DTO object for institution creation.
  */
@@ -126,6 +128,7 @@ export class InstitutionDetailDTO extends InstitutionProfileDTO {
 
 export interface BasicInstitutionInfo {
   operatingName: string;
+  designationStatus: DesignationStatus;
 }
 
 export interface InstitutionDetailDto {

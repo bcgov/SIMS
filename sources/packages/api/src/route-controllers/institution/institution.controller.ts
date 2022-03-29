@@ -66,13 +66,21 @@ import {
   InstitutionUser,
 } from "../../database/entities";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiOkResponse,
+} from "@nestjs/swagger";
+
+import { InstitutionLocationsControllerService } from "../institution-locations/institution-locations.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 @ApiTags("institution")
 export class InstitutionController extends BaseController {
   constructor(
+    private readonly locationControllerService: InstitutionLocationsControllerService,
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,
@@ -462,6 +470,7 @@ export class InstitutionController extends BaseController {
    * @param institutionId
    * @returns BasicInstitutionInfo
    */
+  @ApiOkResponse({ description: "Basic Institution info found." })
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
   @Get("/:institutionId/basic-details")
@@ -472,8 +481,13 @@ export class InstitutionController extends BaseController {
       await this.institutionService.getBasicInstitutionDetailById(
         institutionId,
       );
+    const designationStatus =
+      await this.locationControllerService.getInstitutionDesignationStatus(
+        institutionId,
+      );
     return {
       operatingName: institutionDetail.operatingName,
+      designationStatus: designationStatus,
     };
   }
 
@@ -485,54 +499,16 @@ export class InstitutionController extends BaseController {
    */
   @AllowAuthorizedParty(AuthorizedParties.aest)
   @Groups(UserGroups.AESTUser)
+  @ApiOkResponse({
+    description: "All Institution location with designation status found.",
+  })
   @Get("/:institutionId/location-summary")
   async getAllInstitutionLocationSummaryForAEST(
     @Param("institutionId") institutionId: number,
   ): Promise<InstitutionLocationsDetailsDto[]> {
-    // get all institution locations.
-    const InstitutionLocationData =
-      await this.locationService.getAllInstitutionLocations(institutionId);
-    return InstitutionLocationData.map(
-      (institutionLocation: InstitutionLocation) => {
-        return {
-          id: institutionLocation.id,
-          name: institutionLocation.name,
-          data: {
-            address: {
-              addressLine1: institutionLocation.data.address?.addressLine1,
-              addressLine2: institutionLocation.data.address?.addressLine2,
-              province: institutionLocation.data.address?.province,
-              country: institutionLocation.data.address?.country,
-              city: institutionLocation.data.address?.city,
-              postalCode: institutionLocation.data.address?.postalCode,
-            },
-          },
-          primaryContact: {
-            primaryContactFirstName:
-              institutionLocation.primaryContact.firstName,
-            primaryContactLastName: institutionLocation.primaryContact.lastName,
-            primaryContactEmail: institutionLocation.primaryContact.email,
-            primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-          },
-          institution: {
-            institutionPrimaryContact: {
-              primaryContactEmail:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactEmail,
-              primaryContactFirstName:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactFirstName,
-              primaryContactLastName:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactLastName,
-              primaryContactPhone:
-                institutionLocation.institution.institutionPrimaryContact
-                  .primaryContactPhone,
-            },
-          },
-          institutionCode: institutionLocation.institutionCode,
-        } as InstitutionLocationsDetailsDto;
-      },
+    // get all institution locations with designation statuses.
+    return this.locationControllerService.getInstitutionLocations(
+      institutionId,
     );
   }
 

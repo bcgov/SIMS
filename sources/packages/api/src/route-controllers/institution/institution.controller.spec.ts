@@ -10,6 +10,7 @@ import {
 } from "../../services";
 import { InstitutionController } from "./institution.controller";
 import { DatabaseModule } from "../../database/database.module";
+import { InstitutionLocationsControllerService } from "../institution-locations/institution-locations.controller.service";
 
 describe("InstitutionController", () => {
   let controller: InstitutionController;
@@ -24,6 +25,7 @@ describe("InstitutionController", () => {
         ConfigService,
         InstitutionLocationService,
         DesignationAgreementLocationService,
+        InstitutionLocationsControllerService,
       ],
       controllers: [InstitutionController],
     }).compile();

@@ -1,4 +1,5 @@
 import { Address } from "@/types";
+import { DesignationAgreementStatus } from "../DesignationAgreementContract";
 
 export interface InstitutionPrimaryContact {
   primaryContactEmail: string;
@@ -40,4 +41,5 @@ export interface InstitutionLocationsDetails {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
+  designationStatus: DesignationAgreementStatus;
 }

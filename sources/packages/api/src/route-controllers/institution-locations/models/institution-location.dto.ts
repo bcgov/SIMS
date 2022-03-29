@@ -27,7 +27,7 @@ export interface InstitutionLocationTypeDto {
 /**
  * Interface which defines the contract of how institution location data is passed to Vue component
  */
-export interface InstitutionLocationsDetailsDto {
+export class InstitutionLocationsDetailsDto {
   id: number;
   name: string;
   data: {
@@ -45,6 +45,7 @@ export interface InstitutionLocationsDetailsDto {
     institutionPrimaryContact: InstitutionPrimaryContact;
   };
   institutionCode: string;
+  designationStatus: DesignationStatus;
 }
 
 export interface UserLocationDto {
@@ -63,4 +64,18 @@ export interface InstitutionLocationsSummaryDto {
     city: string;
     postalCode: string;
   };
+}
+
+/**
+ * Possible status for a designation.
+ */
+export enum DesignationStatus {
+  /**
+   * The designation agreement status is designated
+   */
+  Designated = "Designated",
+  /**
+   * The designation agreement status is not designated
+   */
+  NotDesignated = "Not designated",
 }

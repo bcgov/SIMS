@@ -7,6 +7,8 @@ import {
   InstitutionService,
   BCeIDService,
   UserService,
+  InstitutionLocationService,
+  DesignationAgreementLocationService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -31,7 +33,9 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionService,
     BCeIDService,
     UserService,
+    InstitutionLocationService,
     InstitutionControllerService,
+    DesignationAgreementLocationService,
   ],
 })
 export class AppInstitutionsModule {}

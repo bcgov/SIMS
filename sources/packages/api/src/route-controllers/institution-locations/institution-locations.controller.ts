@@ -10,7 +10,12 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import BaseController from "../BaseController";
-import { InstitutionLocationService, FormService } from "../../services";
+import {
+  InstitutionService,
+  ApplicationService,
+  InstitutionLocationService,
+  FormService,
+} from "../../services";
 import {
   InstitutionLocationsDetailsDto,
   InstitutionLocationTypeDto,
@@ -20,7 +25,6 @@ import {
   IInstitutionUserToken,
   IUserToken,
 } from "../../auth/userToken.interface";
-import { InstitutionService, ApplicationService } from "../../services";
 import {
   HasLocationAccess,
   IsInstitutionAdmin,
@@ -38,12 +42,14 @@ import {
   getISODateOnlyString,
 } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { InstitutionLocationsControllerService } from "./institution-locations.controller.service";
 
 @Controller("institution/location")
 @ApiTags("institution")
 export class InstitutionLocationsController extends BaseController {
   constructor(
+    private readonly locationControllerService: InstitutionLocationsControllerService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
@@ -133,56 +139,23 @@ export class InstitutionLocationsController extends BaseController {
     return updateResult.affected;
   }
   /**
-   * Controller method to get institution locations for the given institution.
+   * Controller method to get institution locations with designation status for the given institution.
    * @param userToken
-   * @returns All the institution locations for the given institution.
+   * @returns An array of InstitutionLocationsDetailsDto.
    */
+  @ApiOkResponse({
+    description: "Institution locations with their designation status found.",
+  })
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationsDetailsDto[]> {
-    // get all institution locations.
-    const InstitutionLocationData =
-      await this.locationService.getAllInstitutionLocations(
-        userToken.authorizations.institutionId,
-      );
-    return InstitutionLocationData.map((el: InstitutionLocation) => {
-      return {
-        id: el.id,
-        name: el.name,
-        data: {
-          address: {
-            addressLine1: el.data.address?.addressLine1,
-            addressLine2: el.data.address?.addressLine2,
-            province: el.data.address?.province,
-            country: el.data.address?.country,
-            city: el.data.address?.city,
-            postalCode: el.data.address?.postalCode,
-          },
-        },
-        primaryContact: {
-          primaryContactFirstName: el.primaryContact.firstName,
-          primaryContactLastName: el.primaryContact.lastName,
-          primaryContactEmail: el.primaryContact.email,
-          primaryContactPhone: el.primaryContact.phoneNumber,
-        },
-        institution: {
-          institutionPrimaryContact: {
-            primaryContactEmail:
-              el.institution.institutionPrimaryContact.primaryContactEmail,
-            primaryContactFirstName:
-              el.institution.institutionPrimaryContact.primaryContactFirstName,
-            primaryContactLastName:
-              el.institution.institutionPrimaryContact.primaryContactLastName,
-            primaryContactPhone:
-              el.institution.institutionPrimaryContact.primaryContactPhone,
-          },
-        },
-        institutionCode: el.institutionCode,
-      } as InstitutionLocationsDetailsDto;
-    });
+    // get all institution locations with designation statuses.
+    return this.locationControllerService.getInstitutionLocations(
+      userToken.authorizations.institutionId,
+    );
   }
 
   /**

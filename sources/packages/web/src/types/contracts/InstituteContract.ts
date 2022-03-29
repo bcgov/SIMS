@@ -1,4 +1,4 @@
-import { Address, ApprovalStatus } from "..";
+import { Address, ApprovalStatus, DesignationAgreementStatus } from "..";
 
 export interface Institute {
   name: string;
@@ -7,6 +7,7 @@ export interface Institute {
 
 export interface BasicInstitutionInfo {
   operatingName: string;
+  designationStatus: DesignationAgreementStatus;
 }
 
 /**

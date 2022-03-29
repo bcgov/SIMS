@@ -73,6 +73,7 @@ import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
+import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
 
 @Module({
   imports: [
@@ -166,6 +167,7 @@ import { AppSystemAccessModule } from "./app.system-access.module";
     SINValidationService,
     DesignationAgreementLocationService,
     StudentAssessmentService,
+    InstitutionLocationsControllerService,
   ],
 })
 export class AppModule {}
