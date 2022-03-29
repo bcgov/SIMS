@@ -74,6 +74,7 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
+import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-time-integration/e-cert-part-time-integration.module";
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { InstitutionLocationsControllerService } from "./route-controllers/insti
     MSFAAIntegrationModule,
     SFASIntegrationModule,
     ECertFullTimeIntegrationModule,
+    ECertPartTimeIntegrationModule,
     FedRestrictionIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,
