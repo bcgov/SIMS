@@ -19,15 +19,16 @@ import {
   Application,
   ApplicationStatus,
   MSFAANumber,
-  OfferingIntensity,
   RelationshipStatus,
   Student,
 } from "../../database/entities";
 import { createMockedJwtService } from "../../testHelpers/mocked-providers/jwt-service-mock";
 import { createFakeApplication } from "../../testHelpers/fake-entities/application-fake";
 import {
+  createFakeEducationProgramOffering,
   createFakeMSFAANumber,
   createFakeStudent,
+  createFakeStudentAssessment,
 } from "../../testHelpers/fake-entities";
 import { MAX_MSFAA_VALID_DAYS } from "../../utilities/system-configurations-constants";
 import * as dayjs from "dayjs";
@@ -88,10 +89,7 @@ describe.skip("ApplicationService", () => {
       const testApplication = await applicationRepository.save(fakeApplication);
 
       try {
-        await applicationService.associateMSFAANumber(
-          testApplication.id,
-          OfferingIntensity.fullTime,
-        );
+        await applicationService.associateMSFAANumber(testApplication.id);
       } catch (error) {
         expect(error.name === INVALID_OPERATION_IN_THE_CURRENT_STATUS);
       } finally {
@@ -115,7 +113,6 @@ describe.skip("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
-          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
@@ -140,7 +137,6 @@ describe.skip("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
-          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
@@ -176,7 +172,6 @@ describe.skip("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
-          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).not.toBe(testMSFAANumber.id);
@@ -219,7 +214,6 @@ describe.skip("ApplicationService", () => {
       try {
         const savedApplication = await applicationService.associateMSFAANumber(
           testApplication.id,
-          OfferingIntensity.fullTime,
         );
         expect(savedApplication.msfaaNumber).toBeTruthy();
         expect(savedApplication.msfaaNumber.id).toBe(testMSFAANumber.id);
@@ -243,24 +237,31 @@ describe.skip("ApplicationService", () => {
       // Date to be assigned to the offering end date of the record to be retrieved.
       const expectedEndDate = new Date();
       expectedEndDate.setHours(0, 0, 0, 0);
+      // Create assessment
+      const originalAssessment = createFakeStudentAssessment();
+      originalAssessment.offering = createFakeEducationProgramOffering();
       // Create fake application that must be returned.
       const fakeApplication = createFakeApplicationInAssessment(testStudent);
+      fakeApplication.studentAssessments = [originalAssessment];
+      fakeApplication.currentAssessment = originalAssessment;
       fakeApplication.msfaaNumber = testMSFAANumber;
       fakeApplication.applicationStatus = ApplicationStatus.completed;
       const testApplication = await applicationRepository.save(fakeApplication);
       // Create a fake application with an offering end data older than the previous one.
       // While querying the database the testApplication must be retrieve instead of this one.
       const olderFakeApplication = createFakeApplication();
-      olderFakeApplication.student = testStudent;
       olderFakeApplication.msfaaNumber = testMSFAANumber;
       olderFakeApplication.applicationStatus = ApplicationStatus.completed;
       // Save older fake application.
-      await applicationRepository.save(olderFakeApplication);
+      const olderApplication = await applicationRepository.save(
+        olderFakeApplication,
+      );
 
       try {
         const previouslySignedApplication =
           await applicationService.getPreviouslySignedApplication(
             testStudent.id,
+            olderApplication.currentAssessment.offering.offeringIntensity,
           );
         expect(previouslySignedApplication).toBeTruthy();
         expect(previouslySignedApplication.id).toBe(testApplication.id);
