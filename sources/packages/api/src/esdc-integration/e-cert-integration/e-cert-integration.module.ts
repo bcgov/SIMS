@@ -8,20 +8,23 @@ import {
   StudentRestrictionService,
   DisbursementScheduleErrorsService,
 } from "../../services";
-import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration.service";
-import { ECertPartTimeRequestService } from "./e-cert-part-time-request.service";
+import { ECertIntegrationService } from "./e-cert-integration.service";
+import { ECertRequestService } from "./e-cert-request.service";
+import { ECertResponseService } from "./e-cert-response.service";
+
 @Module({
   imports: [AuthModule],
   providers: [
     SshService,
-    ECertPartTimeIntegrationService,
-    ECertPartTimeRequestService,
+    ECertIntegrationService,
+    ECertRequestService,
     SequenceControlService,
     DisbursementScheduleService,
     StudentRestrictionService,
     ConfigService,
+    ECertResponseService,
     DisbursementScheduleErrorsService,
   ],
-  exports: [ECertPartTimeIntegrationService, ECertPartTimeRequestService],
+  exports: [ECertIntegrationService, ECertRequestService, ECertResponseService],
 })
-export class ECertPartTimeIntegrationModule {}
+export class ECertIntegrationModule {}

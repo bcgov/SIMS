@@ -3,9 +3,8 @@ import { InjectLogger } from "../../common";
 import { LoggerService } from "../../logger/logger.service";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ECertFullTimeRequestService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-request.service";
-import { ECertPartTimeRequestService } from "../../esdc-integration/e-cert-part-time-integration/e-cert-part-time-request.service";
-import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
+import { ECertRequestService } from "../../esdc-integration/e-cert-integration/e-cert-request.service";
+import { ECertResponseService } from "../../esdc-integration/e-cert-integration/e-cert-response.service";
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
@@ -15,9 +14,8 @@ import BaseController from "../BaseController";
 @ApiTags("system-access")
 export class ECertIntegrationController extends BaseController {
   constructor(
-    private readonly eCertFullTimeRequestService: ECertFullTimeRequestService,
-    private readonly eCertFullTimeResponseService: ECertFullTimeResponseService,
-    private readonly eCertPartTimeRequestService: ECertPartTimeRequestService,
+    private readonly eCertRequestService: ECertRequestService,
+    private readonly eCertResponseService: ECertResponseService,
   ) {
     super();
   }
@@ -31,8 +29,7 @@ export class ECertIntegrationController extends BaseController {
   @Post("process-full-time")
   async processFullTimeECertFile(): Promise<ESDCFileResultDTO> {
     this.logger.log("Sending Full-Time E-Cert File...");
-    const uploadFullTimeResult =
-      await this.eCertFullTimeRequestService.generateECert();
+    const uploadFullTimeResult = await this.eCertRequestService.generateECert();
     this.logger.log("E-Cert Full-Time file sent.");
     return {
       generatedFile: uploadFullTimeResult.generatedFile,
@@ -49,8 +46,7 @@ export class ECertIntegrationController extends BaseController {
   @Post("process-part-time")
   async processPartTimeECertFile(): Promise<ESDCFileResultDTO> {
     this.logger.log("Sending Part-Time E-Cert File...");
-    const uploadPartTimeResult =
-      await this.eCertPartTimeRequestService.generateECert();
+    const uploadPartTimeResult = await this.eCertRequestService.generateECert();
     this.logger.log("E-Cert Part-Time file sent.");
     return {
       generatedFile: uploadPartTimeResult.generatedFile,
@@ -64,7 +60,7 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-responses")
   async processResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertFullTimeResponseService.processResponses();
+    const results = await this.eCertResponseService.processResponses();
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

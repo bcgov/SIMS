@@ -5,7 +5,7 @@ import {
   NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
-} from "../models/e-cert-part-time-integration.model";
+} from "../models/e-cert-integration.model";
 
 /**
  * Footer of an E-Cert file.

@@ -11,19 +11,19 @@ import {
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
-import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
+import { ECertIntegrationService } from "./e-cert-integration.service";
 import {
   Award,
   ECertRecord,
   ECertUploadResult,
-} from "./models/e-cert-full-time-integration.model";
+} from "./models/e-cert-integration.model";
 
 const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
 
 @Injectable()
-export class ECertFullTimeRequestService {
+export class ECertRequestService {
   constructor(
-    private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
+    private readonly ecertIntegrationService: ECertIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly sequenceService: SequenceControlService,
   ) {}
