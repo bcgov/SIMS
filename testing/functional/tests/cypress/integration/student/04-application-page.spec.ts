@@ -781,7 +781,7 @@ describe("Application Page", () => {
     applicationObject.selectStudyYearDropdown();
   });
 
-  it.only(
+  it(
     "Verify that all fields are working in file upload section",
     { retries: 2 },
     () => {
@@ -796,7 +796,6 @@ describe("Application Page", () => {
         .applicationNumberInputTextFileUpload()
         .type("843098423");
       //cy.get('.fileSelector').attachFile(path);
-      cy.get('input[type="file"]').invoke("show");
       //cy.get('input[type="file"]').attachFile(path).trigger("input");
     }
   );
@@ -838,5 +837,17 @@ describe("Application Page", () => {
     applicationObject.applyForPDStatusButton().click();
     applicationObject.applyForPDMessage().should("be.visible");
     applicationObject.yesForApplyPDButton().click();
+  });
+
+  it("Verify that financial aid application redirects to correct page or not.", () => {
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.financialApplicationButton().click();
+    applicationObject.applicationsOptionButton().click();
+    applicationObject.viewButton().click();
+    applicationObject.welcomeText().should("be.visible");
+    applicationObject.applicationButton().should("be.visible").click();
+    applicationObject.financialApplicationButton().click();
+    applicationObject.continueButtonInFinancialAid().click();
+    applicationObject.welcomeText().should("be.visible");
   });
 });

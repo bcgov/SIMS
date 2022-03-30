@@ -833,4 +833,20 @@ export default class ApplicationObject {
   yesForApplyPDButton() {
     return cy.contains("Yes");
   }
+
+  financialApplicationButton() {
+    return cy.contains("Financial Aid Application").eq(0);
+  }
+
+  applicationsOptionButton() {
+    return cy.contains("Application Options");
+  }
+
+  viewButton() {
+    return cy.get(":nth-child(3) > .p-menuitem-link");
+  }
+
+  continueButtonInFinancialAid() {
+    return cy.get("#e6p3z3r > .btn");
+  }
 }
