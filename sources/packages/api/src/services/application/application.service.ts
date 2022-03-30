@@ -1158,7 +1158,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.id",
-        "application.assessmentWorkflowId",
         "programYear.parentFormName",
         "programYear.partnerFormName",
         "programYear.startDate",
