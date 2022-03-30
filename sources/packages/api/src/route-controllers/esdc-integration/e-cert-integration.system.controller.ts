@@ -8,11 +8,10 @@ import { ECertPartTimeRequestService } from "../../esdc-integration/e-cert-part-
 import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
 import {
   ESDCFileResponseDTO,
-  ESDCRequestFileResultDTO,
+  ESDCFileResultDTO,
 } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { OfferingIntensity } from "src/database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
@@ -28,35 +27,40 @@ export class ECertIntegrationController extends BaseController {
 
   /**
    * Process disbursements available to be sent to ESDC.
-   * Considerer any record that is scheduled in upcoming days or in the past.
+   * Consider any record that is scheduled in upcoming days or in the past.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  @Post("process")
-  async processFullTimeECertFile(): Promise<ESDCRequestFileResultDTO[]> {
-    this.logger.log("Sending E-Cert File...");
+  @Post("process-full-time")
+  async processFullTimeECertFile(): Promise<ESDCFileResultDTO> {
+    this.logger.log("Sending Full-Time E-Cert File...");
     const uploadFullTimeResult =
       await this.eCertFullTimeRequestService.generateECert();
+    this.logger.log("E-Cert Full-Time file sent.");
+    return 
+      {
+        generatedFile: uploadFullTimeResult.generatedFile,
+        uploadedRecords: uploadFullTimeResult.uploadedRecords,
+      };
+  }
+
+  /**
+   * Process disbursements available to be sent to ESDC.
+   * Consider any record that is scheduled in upcoming days or in the past.
+   * @returns result of the file upload with the file generated and the
+   * amount of records added to the file.
+   */
+  @Post("process-part-time")
+  async processPartTimeECertFile(): Promise<ESDCFileResultDTO> {
+    this.logger.log("Sending Part-Time E-Cert File...");
     const uploadPartTimeResult =
       await this.eCertPartTimeRequestService.generateECert();
-    // Wait for both queries to finish.
-    const [fullTimeResponse, partTimeResponse] = await Promise.all([
-      uploadFullTimeResult,
-      uploadPartTimeResult,
-    ]);
-    this.logger.log("E-Cert file sent.");
-    return [
+    this.logger.log("E-Cert Part-Time file sent.");
+    return 
       {
-        offeringIntensity: OfferingIntensity.fullTime,
-        generatedFile: fullTimeResponse.generatedFile,
-        uploadedRecords: fullTimeResponse.uploadedRecords,
-      },
-      {
-        offeringIntensity: OfferingIntensity.partTime,
-        generatedFile: partTimeResponse.generatedFile,
-        uploadedRecords: partTimeResponse.uploadedRecords,
-      },
-    ];
+        generatedFile: uploadPartTimeResult.generatedFile,
+        uploadedRecords: uploadPartTimeResult.uploadedRecords,
+      };
   }
 
   /**
