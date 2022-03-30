@@ -9,7 +9,7 @@
     "esModuleInterop": true, 
     "emitDecoratorMetadata": true,                
     "experimentalDecorators": true,
-    "types": ["cypress","node","cypress-xpath"],
+    "types": ["cypress","node","cypress-xpath", "cypress-file-upload"],
     "outDir": "tsConvertedFiles",
     
   },

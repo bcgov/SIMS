@@ -780,4 +780,63 @@ describe("Application Page", () => {
       .should("be.visible");
     applicationObject.selectStudyYearDropdown();
   });
+
+  it.only(
+    "Verify that all fields are working in file upload section",
+    { retries: 2 },
+    () => {
+      const path = "images/data.png";
+      applicationObject.fileUploader().click();
+      applicationObject.documentDropdown().click();
+      applicationObject
+        .documentDropdownType()
+        .type("Application")
+        .type("{enter}");
+      applicationObject
+        .applicationNumberInputTextFileUpload()
+        .type("843098423");
+      //cy.get('.fileSelector').attachFile(path);
+      cy.get('input[type="file"]').invoke("show");
+      cy.get('input[type="file"]').attachFile(path).trigger("input");
+    }
+  );
+
+  it("Verify that profile pages have proper error validation with error messages.", () => {
+    applicationObject.profileSection().click();
+    applicationObject.phoneNumberInputText().clear();
+    applicationObject.addressLineInputText().clear();
+    applicationObject.cityInputText().clear();
+    applicationObject.provinceInputText().clear();
+    applicationObject.countryInputText().clear();
+    applicationObject.zipCodeInputText().clear();
+    applicationObject.saveProfileButton().click();
+    applicationObject.phoneErrorMessage().should("be.visible");
+    applicationObject.addressErrorMessage().should("be.visible");
+    applicationObject.cityErrorMessage().should("be.visible");
+    applicationObject.provinceErrorMessage().should("be.visible");
+    applicationObject.countryErrorMessage().should("be.visible");
+    applicationObject.zipErrorMessage().should("be.visible");
+  });
+
+  it("Verify that all fields are working properly in profile page .", () => {
+    applicationObject.profileSection().click();
+    applicationObject.phoneNumberInputText().clear().type("42328722932");
+    applicationObject
+      .addressLineInputText()
+      .clear()
+      .type("Oreo site, New Jersey, US");
+    applicationObject.cityInputText().clear().type("New Jersey");
+    applicationObject.provinceInputText().clear().type("065756");
+    applicationObject.countryInputText().clear().type("USA");
+    applicationObject.zipCodeInputText().clear().type("E934536");
+    applicationObject.saveProfileButton().click();
+    applicationObject.studentUpdatedText().should("be.visible");
+  });
+
+  it("Verify that user able to apply for PD status in profile page .", () => {
+    applicationObject.profileSection().click();
+    applicationObject.applyForPDStatusButton().click();
+    applicationObject.applyForPDMessage().should("be.visible");
+    applicationObject.yesForApplyPDButton().click();
+  });
 });
