@@ -256,7 +256,7 @@ export class Application extends RecordDataModel {
    */
   @ManyToOne(() => StudentAssessment, {
     eager: false,
-    cascade: false,
+    cascade: ["update"],
     nullable: true,
   })
   @JoinColumn({

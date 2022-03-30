@@ -16,8 +16,13 @@ import {
   GetProgramInfoRequestDto,
   GetPIRDeniedReasonDto,
 } from "./models/program-info-request.dto";
-import { HasLocationAccess, AllowAuthorizedParty } from "../../auth/decorators";
+import {
+  HasLocationAccess,
+  AllowAuthorizedParty,
+  UserToken,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
   EducationProgramOfferingService,
@@ -229,6 +234,7 @@ export class ProgramInfoRequestController extends BaseController {
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
     @Body() payload: CompleteProgramInfoRequestDto,
+    @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
       const submissionResult = await this.formService.dryRunSubmission(
@@ -323,6 +329,7 @@ export class ProgramInfoRequestController extends BaseController {
           applicationId,
           locationId,
           offeringToCompletePIR,
+          userToken.userId,
         );
 
       if (updatedApplication) {
