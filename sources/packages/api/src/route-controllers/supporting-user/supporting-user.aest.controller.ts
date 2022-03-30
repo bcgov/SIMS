@@ -1,35 +1,36 @@
 import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
-import { ApplicationService, SupportingUserService } from "../../services";
+import { SupportingUserService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  ApplicationSupportingUsersDTO,
-  SupportingUserFormData,
+  ApplicationSupportingUsersOutDTO,
+  SupportingUserFormDataOutDTO,
 } from "./models/supporting-user.dto";
 import { getSupportingUserForm } from "../../utilities";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("supporting-user")
-@ApiTags("supporting-user")
-export class AESTSupportingUserController {
-  constructor(
-    private readonly supportingUserService: SupportingUserService,
-    private readonly applicationService: ApplicationService,
-  ) {}
+@ApiTags(`${ClientTypeBaseRoute.AEST}-supporting-user`)
+export class SupportingUserAESTController {
+  constructor(private readonly supportingUserService: SupportingUserService) {}
   /**
    * Get the list of supporting users respective to
    * an application id for AEST user.
    * @param applicationId application id.
    * @return list of supporting users of an
-   * application, i.e ApplicationSupportingUsersDTO
+   * application, i.e ApplicationSupportingUsersOutDTO
    */
   @Get("application/:applicationId")
+  @ApiOkResponse({
+    description: "SupportingUser found for the application.",
+  })
   async getSupportingUsersOfAnApplication(
     @Param("applicationId") applicationId: number,
-  ): Promise<ApplicationSupportingUsersDTO[]> {
+  ): Promise<ApplicationSupportingUsersOutDTO[]> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
@@ -39,7 +40,7 @@ export class AESTSupportingUserController {
         ({
           supportingUserId: supportingUser.id,
           supportingUserType: supportingUser.supportingUserType,
-        } as ApplicationSupportingUsersDTO),
+        } as ApplicationSupportingUsersOutDTO),
     );
   }
 
@@ -50,9 +51,16 @@ export class AESTSupportingUserController {
    * @returns supporting user form data and details.
    */
   @Get(":supportingUserId")
+  @ApiOkResponse({
+    description: "SupportingUser form name and data found.",
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Supporting user  details not found or Supporting user has not submitted the form",
+  })
   async getSupportingUserFormDetails(
     @Param("supportingUserId") supportingUserId: number,
-  ): Promise<SupportingUserFormData> {
+  ): Promise<SupportingUserFormDataOutDTO> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersDetails(
         supportingUserId,
