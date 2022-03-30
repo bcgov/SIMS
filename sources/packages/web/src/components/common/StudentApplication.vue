@@ -13,7 +13,7 @@
       <v-btn
         color="primary"
         v-show="!isFirstPage"
-        outlined
+        variant="outlined"
         @click="wizardGoPrevious"
         >Previous section</v-btn
       >
@@ -113,10 +113,11 @@ export default {
           formInstance,
           PROGRAMS_DROPDOWN_KEY,
         );
-        const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-          formInstance,
-          OFFERING_INTENSITY_KEY,
-        );
+        const selectedIntensity: OfferingIntensity =
+          formioUtils.getComponentValueByKey(
+            formInstance,
+            OFFERING_INTENSITY_KEY,
+          );
         if (selectedProgramId && selectedIntensity) {
           await formioComponentLoader.loadProgramDesc(
             formInstance,
@@ -177,14 +178,10 @@ export default {
     };
 
     const getOfferingDetails = async (form: any, locationId: number) => {
-      const selectedIntensity: OfferingIntensity = formioUtils.getComponentValueByKey(
-        form,
-        OFFERING_INTENSITY_KEY,
-      );
-      const educationProgramIdFromForm: number = formioUtils.getComponentValueByKey(
-        form,
-        PROGRAMS_DROPDOWN_KEY,
-      );
+      const selectedIntensity: OfferingIntensity =
+        formioUtils.getComponentValueByKey(form, OFFERING_INTENSITY_KEY);
+      const educationProgramIdFromForm: number =
+        formioUtils.getComponentValueByKey(form, PROGRAMS_DROPDOWN_KEY);
       if (educationProgramIdFromForm && selectedIntensity) {
         // when isReadOnly.value is true, then consider
         // both active and inactive program year.

@@ -11,7 +11,9 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        Cancel
+      </v-btn>
       <v-btn
         @click="addRestriction()"
         class="float-right primary-btn-background"
@@ -55,8 +57,9 @@ export default {
     const formLoaded = async (form: any) => {
       formData.value = form;
       const dropdown = formioUtils.getComponent(form, CATEGORY_KEY);
-      const categories = await RestrictionService.shared.getRestrictionCategories();
-      const options = [];
+      const categories =
+        await RestrictionService.shared.getRestrictionCategories();
+      const options = [{}];
       /** Restriction category Designation is exclusively for Institution. Rest of them are for Student. */
       if (props.entityType === RestrictionEntityType.Student) {
         for (const category of categories) {
@@ -78,10 +81,8 @@ export default {
 
     const formChanged = async (form: any, event: any) => {
       if (event.changed?.component.key === CATEGORY_KEY) {
-        const selectedRestrictionCategory: string = formioUtils.getComponentValueByKey(
-          form,
-          CATEGORY_KEY,
-        );
+        const selectedRestrictionCategory: string =
+          formioUtils.getComponentValueByKey(form, CATEGORY_KEY);
         formioDataLoader.loadRestrictionReasons(
           form,
           "restrictionId",

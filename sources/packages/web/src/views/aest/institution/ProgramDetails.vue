@@ -11,7 +11,7 @@
       <template #buttons>
         <div v-if="isPendingProgram">
           <v-btn
-            outlined
+            variant="outlined"
             :color="COLOR_BLUE"
             class="mr-2"
             @click="declineProgram"
@@ -85,9 +85,10 @@ export default {
     const toast = useToastMessage();
 
     const getEducationProgramAndOffering = async () => {
-      educationProgram.value = await EducationProgramService.shared.getEducationProgramForAEST(
-        props.programId,
-      );
+      educationProgram.value =
+        await EducationProgramService.shared.getEducationProgramForAEST(
+          props.programId,
+        );
     };
 
     const isPendingProgram = computed(

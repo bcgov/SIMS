@@ -62,7 +62,9 @@
       </Column>
       <Column>
         <template #body="slotProps">
-          <v-btn outlined @click="goToViewInstitution(slotProps.data.id)"
+          <v-btn
+            variant="outlined"
+            @click="goToViewInstitution(slotProps.data.id)"
             >View</v-btn
           >
         </template>

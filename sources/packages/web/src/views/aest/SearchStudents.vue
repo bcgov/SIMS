@@ -11,17 +11,17 @@
         ><InputText
           type="text"
           v-model="appNumber"
-          @keyup.enter="searchStudents()"/></v-col
+          @keyup.enter="searchStudents()" /></v-col
       ><v-col
         ><InputText
           type="text"
           v-model="firstName"
-          @keyup.enter="searchStudents()"/></v-col
+          @keyup.enter="searchStudents()" /></v-col
       ><v-col
         ><InputText
           type="text"
           v-model="lastName"
-          @keyup.enter="searchStudents()"/></v-col
+          @keyup.enter="searchStudents()" /></v-col
       ><v-col
         ><v-btn
           :disabled="!appNumber && !firstName && !lastName"
@@ -64,7 +64,7 @@
       </Column>
       <Column>
         <template #body="slotProps">
-          <v-btn outlined @click="goToViewStudent(slotProps.data.id)"
+          <v-btn variant="outlined" @click="goToViewStudent(slotProps.data.id)"
             >View</v-btn
           >
         </template>

@@ -43,7 +43,7 @@
                 <v-btn
                   plain
                   color="primary"
-                  outlined
+                  variant="outlined"
                   @click="goToApplicationView(slotProps.data.applicationId)"
                   >Report a Change</v-btn
                 >
@@ -90,14 +90,15 @@ export default {
     };
 
     const updateSummaryList = async (locationId: number) => {
-      applications.value = await InstitutionService.shared.getActiveApplicationsSummary(
-        locationId,
-      );
+      applications.value =
+        await InstitutionService.shared.getActiveApplicationsSummary(
+          locationId,
+        );
     };
 
     watch(
       () => props.locationId,
-      async currValue => {
+      async (currValue) => {
         //update the list
         await updateSummaryList(currValue);
       },

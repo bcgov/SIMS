@@ -12,7 +12,9 @@
       </p>
     </template>
     <template v-slot:footer>
-      <v-btn outlined color="primary" @click="requestPD(false)">No</v-btn>
+      <v-btn variant="outlined" color="primary" @click="requestPD(false)"
+        >No</v-btn
+      >
       <v-btn color="primary" @click="requestPD(true)">Yes</v-btn>
     </template>
   </ModalDialogBase>
