@@ -785,7 +785,6 @@ describe("Application Page", () => {
     "Verify that all fields are working in file upload section",
     { retries: 2 },
     () => {
-      const path = "images/data.png";
       applicationObject.fileUploader().click();
       applicationObject.documentDropdown().click();
       applicationObject
@@ -795,8 +794,6 @@ describe("Application Page", () => {
       applicationObject
         .applicationNumberInputTextFileUpload()
         .type("843098423");
-      //cy.get('.fileSelector').attachFile(path);
-      //cy.get('input[type="file"]').attachFile(path).trigger("input");
     }
   );
 
