@@ -8,7 +8,7 @@
     @submitted="submitted"
     @customEvent="customEvent"
   ></formio>
-  <v-row v-if="!!formInstance">
+  <v-row v-if="showNav">
     <v-col md="6">
       <v-btn
         color="primary"
@@ -78,14 +78,13 @@ export default {
     const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
-
     let formInstance: any;
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const formioComponentLoader = useFormioComponentLoader();
-
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
+    const showNav = ref(false);
 
     const getSelectedId = (form: any) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
@@ -139,6 +138,7 @@ export default {
       }
     };
     const formLoaded = async (form: any) => {
+      showNav.value = true;
       // Emit formLoadedCallback event to the parent, so that parent can
       // perform the parent specific logic inside parent on
       // form is loaded
@@ -293,7 +293,7 @@ export default {
       isLastPage,
       submitted,
       customEvent,
-      formInstance,
+      showNav,
     };
   },
 };

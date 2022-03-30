@@ -558,7 +558,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       ])
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
-      .innerJoin("disbursement.coeDeniedReason", "coeDeniedReason")
+      .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
       .where("application.id = :applicationId", { applicationId })
       .andWhere("application.applicationStatus IN (:...status)", {
         status: [ApplicationStatus.enrollment, ApplicationStatus.completed],

@@ -401,7 +401,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("assessment.application", "application")
       .where("application.id = :applicationId", { applicationId })
       .orderBy("status", "DESC")
-      .addOrderBy("assessment.submittedDate")
+      .addOrderBy("assessment.submittedDate", "DESC")
       .getRawMany();
   }
 }
