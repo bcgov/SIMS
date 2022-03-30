@@ -66,7 +66,7 @@ import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
-import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
+import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
@@ -74,8 +74,6 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
-import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-time-integration/e-cert-part-time-integration.module";
-
 @Module({
   imports: [
     LoggerModule,
@@ -84,8 +82,7 @@ import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-t
     CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,
-    ECertFullTimeIntegrationModule,
-    ECertPartTimeIntegrationModule,
+    ECertIntegrationModule,
     FedRestrictionIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,
