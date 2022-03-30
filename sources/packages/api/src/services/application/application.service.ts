@@ -1154,7 +1154,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     lastName: string,
     birthDate: Date,
   ): Promise<Application> {
-    console.log(applicationNumber, lastName, birthDate);
     return this.repo
       .createQueryBuilder("application")
       .select([

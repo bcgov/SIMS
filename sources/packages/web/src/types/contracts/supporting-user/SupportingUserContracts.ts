@@ -37,7 +37,7 @@ export enum SupportingUserType {
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export interface ApplicationIdentifierInDTO {
+export interface ApplicationIdentifierOutDTO {
   applicationNumber: string;
   studentsDateOfBirth: Date;
   studentsLastName: string;
@@ -48,7 +48,8 @@ export interface ApplicationIdentifierInDTO {
  * The validation of the entire model will (and
  * must) be done by the Form.IO dry run.
  */
-export interface UpdateSupportingUserInDTO extends ApplicationIdentifierInDTO {
+export interface UpdateSupportingUserOutDTO
+  extends ApplicationIdentifierOutDTO {
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -60,17 +61,17 @@ export interface UpdateSupportingUserInDTO extends ApplicationIdentifierInDTO {
   supportingData: any;
 }
 
-export interface GetApplicationOutDTO {
+export interface GetApplicationInDTO {
   programYearStartDate: Date;
   formName: string;
 }
 
-export interface ApplicationSupportingUsersOutDTO {
+export interface ApplicationSupportingUsersInDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
 
-export interface SupportingUserFormDataOutDTO {
+export interface SupportingUserFormDataInDTO {
   formName: string;
   supportingData: any;
   contactInfo: ContactInformation;
