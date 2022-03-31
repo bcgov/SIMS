@@ -1,4 +1,4 @@
-import { ContactInformation } from "@/types";
+import { ContactInformation, SupportingUserType } from "@/types";
 
 /**
  * Information used to uniquely identify a Student Application.
