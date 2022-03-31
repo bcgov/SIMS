@@ -1,10 +1,10 @@
+import { SupportingUserType } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationApiOutDTO,
   ApplicationIdentifierApiInDTO,
   ApplicationSupportingUsersApiOutDTO,
   SupportingUserFormDataApiOutDTO,
-  SupportingUserType,
   UpdateSupportingUserApiInDTO,
 } from "./dto/SupportingUser.dto";
 

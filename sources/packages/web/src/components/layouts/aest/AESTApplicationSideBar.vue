@@ -53,9 +53,8 @@
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuModel } from "@/types";
+import { MenuModel, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
-import { SupportingUserType } from "@/services/http/dto/SupportingUser.dto";
 
 export interface StudentApplicationMenu {
   studentApplication: MenuModel;

@@ -7,11 +7,10 @@ import {
   SupportingUserRoutesConst,
   SharedRouteConst,
 } from "@/constants/routes/RouteConstants";
-import { AppRoutes, AuthStatus } from "@/types";
+import { AppRoutes, AuthStatus, SupportingUserType } from "@/types";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
-import { SupportingUserType } from "@/services/http/dto/SupportingUser.dto";
 
 export const supportingUsersRoutes: Array<RouteRecordRaw> = [
   {
