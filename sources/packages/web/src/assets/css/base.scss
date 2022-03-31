@@ -207,6 +207,8 @@ ul.no-bullets {
   background-color: #8692a4;
 }
 
+//TODO: This style has been temporarily used to fix the alignment and responsiveness issue
+//TODO: as an outcome of Vuetify beta upgrade.
 .v-dialog .v-overlay__content {
   max-height: none !important;
   max-width: none !important;
