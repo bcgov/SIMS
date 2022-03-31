@@ -41,7 +41,6 @@
             <Column field="applicationId" header="">
               <template #body="slotProps">
                 <v-btn
-                  plain
                   color="primary"
                   variant="outlined"
                   @click="goToViewApplication(slotProps.data.applicationId)"

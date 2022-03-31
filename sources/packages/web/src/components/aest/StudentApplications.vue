@@ -25,7 +25,7 @@
       <template #body="slotProps">
         <v-btn
           v-if="clientType === ClientIdType.Student"
-          plain
+          variant="plain"
           @click="$emit('goToApplication', slotProps.data.id)"
           color="primary"
           v-tooltip="'Click To View this Application'"
@@ -72,7 +72,7 @@
               :disabled="
                 hasRestriction || sinValidStatus !== SINStatusEnum.VALID
               "
-              plain
+              variant="plain"
             >
               <font-awesome-icon
                 :icon="['fas', 'pen']"
@@ -91,7 +91,7 @@
               :disabled="
                 hasRestriction || sinValidStatus !== SINStatusEnum.VALID
               "
-              plain
+              variant="plain"
             >
               <font-awesome-icon
                 :icon="['fas', 'trash']"

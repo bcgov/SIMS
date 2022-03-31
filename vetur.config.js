@@ -3,9 +3,10 @@
 module.exports = {
   settings: {
     "vetur.useWorkspaceDependencies": true,
-    "vetur.experimental.templateInterpolationService": true
+    "vetur.experimental.templateInterpolationService": true,
+    "vetur.validation.interpolation": false,
   },
   projects: [
-    './sources/packages/web', // shorthand for only root.
-  ]
-}
+    "./sources/packages/web", // shorthand for only root.
+  ],
+};

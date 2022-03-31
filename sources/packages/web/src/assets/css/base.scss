@@ -206,3 +206,8 @@ ul.no-bullets {
   height: $line-height-header-sm;
   background-color: #8692a4;
 }
+
+.v-dialog .v-overlay__content {
+  max-height: none !important;
+  max-width: none !important;
+}
