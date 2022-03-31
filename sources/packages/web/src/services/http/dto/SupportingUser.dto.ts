@@ -1,21 +1,6 @@
 import { ContactInformation } from "@/types";
 
 /**
- * Types of users that provides supporting information
- * for the Student Application.
- */
-export enum SupportingUserType {
-  /**
-   * Parent of a student submitting an application.
-   */
-  Parent = "Parent",
-  /**
-   * Partner of a student submitting an application.
-   */
-  Partner = "Partner",
-}
-
-/**
  * Information used to uniquely identify a Student Application.
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
