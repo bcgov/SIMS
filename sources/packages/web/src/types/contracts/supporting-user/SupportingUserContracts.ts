@@ -1,7 +1,4 @@
 // Expected possible errors returned by the API while submitting supporting data.
-
-import { ContactInformation } from "@/types";
-
 // Not possible to find a Student Application with the data provided by the supporting user.
 export const STUDENT_APPLICATION_NOT_FOUND = "STUDENT_APPLICATION_NOT_FOUND";
 // The same user currently authenticated already provided supporting data for the
@@ -30,54 +27,4 @@ export enum SupportingUserType {
    * Partner of a student submitting an application.
    */
   Partner = "Partner",
-}
-
-/**
- * Information used to uniquely identify a Student Application.
- * The application must be search using at least 3 criteria as
- * per defined by the Ministry policies.
- */
-export interface ApplicationIdentifierDTO {
-  applicationNumber: string;
-  studentsDateOfBirth: Date;
-  studentsLastName: string;
-}
-
-/**
- * Data required to update a supporting user.
- * The validation of the entire model will (and
- * must) be done by the Form.IO dry run.
- */
-export interface UpdateSupportingUserDTO extends ApplicationIdentifierDTO {
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  country: string;
-  phone: string;
-  postalCode: string;
-  provinceState: string;
-  sin: string;
-  supportingData: any;
-}
-
-export interface GetApplicationDTO {
-  programYearStartDate: Date;
-  formName: string;
-}
-
-export interface ApplicationSupportingUsersDTO {
-  supportingUserId: number;
-  supportingUserType: SupportingUserType;
-}
-
-export interface SupportingUserFormData {
-  formName: string;
-  supportingData: any;
-  contactInfo: ContactInformation;
-  sin: string;
-  birthDate: Date;
-  gender: string;
-  email: string;
-  firstName: string;
-  lastName: string;
 }
