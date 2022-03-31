@@ -1,12 +1,12 @@
 import ApiClient from "./http/ApiClient";
+import { SupportingUserType } from "@/types";
 import {
+  ApplicationApiOutDTO,
   ApplicationIdentifierApiInDTO,
   ApplicationSupportingUsersApiOutDTO,
-  ApplicationApiOutDTO,
   SupportingUserFormDataApiOutDTO,
-  SupportingUserType,
   UpdateSupportingUserApiInDTO,
-} from "@/types";
+} from "./http/dto/SupportingUser.dto.ts";
 
 export class SupportingUsersService {
   // Share Instance

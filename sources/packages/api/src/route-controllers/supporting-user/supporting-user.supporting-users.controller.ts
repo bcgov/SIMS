@@ -41,7 +41,6 @@ import {
 import { getDateOnly, getSupportingUserForm } from "../../utilities";
 import {
   ApiBadRequestResponse,
-  ApiOkResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -73,14 +72,10 @@ export class SupportingUserSupportingUsersController extends BaseController {
    */
   @Post(":supportingUserType/application")
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({
-    description: "SupportingUser application information found.",
-    type: ApplicationApiOutDTO,
-  })
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to find a Student Application with the requested data " +
-      "or The user searching for applications to provide data must be " +
+      "or the user searching for applications to provide data must be " +
       "different from the user associated with the student application.",
   })
   async getApplicationDetails(
@@ -134,14 +129,11 @@ export class SupportingUserSupportingUsersController extends BaseController {
    * @param payload data used for validation and to execute the update.
    */
   @Patch(":supportingUserType")
-  @ApiOkResponse({
-    description: "SupportingUser application information found.",
-  })
   @ApiUnprocessableEntityResponse({
     description:
       "Student Application not found to update the supporting data or " +
-      "The user currently authenticated is the same user that submitted " +
-      "the application or Supporting user already submitted the information.",
+      "the user currently authenticated is the same user that submitted " +
+      "the application or supporting user already submitted the information.",
   })
   @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(

@@ -8,7 +8,7 @@ import {
   SupportingUserFormDataApiOutDTO,
 } from "./models/supporting-user.dto";
 import { getSupportingUserForm } from "../../utilities";
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -25,11 +25,6 @@ export class SupportingUserAESTController {
    * application, i.e ApplicationSupportingUsersApiOutDTO
    */
   @Get("application/:applicationId")
-  @ApiOkResponse({
-    description: "SupportingUser found for the application.",
-    type: ApplicationSupportingUsersApiOutDTO,
-    isArray: true,
-  })
   async getSupportingUsersOfAnApplication(
     @Param("applicationId") applicationId: number,
   ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
@@ -53,10 +48,6 @@ export class SupportingUserAESTController {
    * @returns supporting user form data and details.
    */
   @Get(":supportingUserId")
-  @ApiOkResponse({
-    description: "SupportingUser form name and data found.",
-    type: SupportingUserFormDataApiOutDTO,
-  })
   @ApiNotFoundResponse({
     description:
       "Supporting user  details not found or Supporting user has not submitted the form",

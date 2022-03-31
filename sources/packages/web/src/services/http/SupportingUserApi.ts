@@ -1,12 +1,12 @@
+import { SupportingUserType } from "@/types";
+import HttpBaseClient from "./common/HttpBaseClient";
 import {
+  ApplicationApiOutDTO,
   ApplicationIdentifierApiInDTO,
   ApplicationSupportingUsersApiOutDTO,
-  ApplicationApiOutDTO,
   SupportingUserFormDataApiOutDTO,
-  SupportingUserType,
   UpdateSupportingUserApiInDTO,
-} from "@/types";
-import HttpBaseClient from "./common/HttpBaseClient";
+} from "./dto/SupportingUser.dto.ts";
 
 export class SupportingUserApi extends HttpBaseClient {
   public async getApplicationDetails(
