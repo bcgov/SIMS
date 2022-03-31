@@ -34,13 +34,15 @@ export class ECertRequestService {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateECert(): Promise<ECertUploadResult> {
+  async generateECert(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ECertUploadResult> {
     this.logger.log(
       `Retrieving Full-Time disbursements to generate the e-Cert file...`,
     );
     const disbursements =
       await this.disbursementScheduleService.getECertInformationToBeSent(
-        OfferingIntensity.fullTime,
+        offeringIntensity,
       );
     if (!disbursements.length) {
       return {
