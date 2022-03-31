@@ -21,9 +21,9 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  ApplicationIdentifierInDTO,
-  GetApplicationOutDTO,
-  UpdateSupportingUserInDTO,
+  ApplicationIdentifierApiInDTO,
+  ApplicationApiOutDTO,
+  UpdateSupportingUserApiInDTO,
 } from "./models/supporting-user.dto";
 import { SupportingUserType } from "../../database/entities";
 import {
@@ -75,16 +75,19 @@ export class SupportingUserSupportingUsersController extends BaseController {
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     description: "SupportingUser application information found.",
+    type: ApplicationApiOutDTO,
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Not able to find a Student Application with the requested data or The user searching for applications to provide data must be different from the user associated with the student application.",
+      "Not able to find a Student Application with the requested data " +
+      "or The user searching for applications to provide data must be " +
+      "different from the user associated with the student application.",
   })
   async getApplicationDetails(
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType") supportingUserType: SupportingUserType,
-    @Body() payload: ApplicationIdentifierInDTO,
-  ): Promise<GetApplicationOutDTO> {
+    @Body() payload: ApplicationIdentifierApiInDTO,
+  ): Promise<ApplicationApiOutDTO> {
     const application =
       await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
@@ -106,7 +109,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
     if (application.student.user.userName === userToken.userName) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "The user searching for applications to provide data must be different from the user associated with the student application.",
+          "The user searching for applications to provide data " +
+            "must be different from the user associated with the student application.",
           SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
         ),
       );
@@ -135,15 +139,15 @@ export class SupportingUserSupportingUsersController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      " Student Application not found to update the supporting data or\
-       The user currently authenticated is the same user that submitted \
-       the application or Supporting user already submitted the information ",
+      "Student Application not found to update the supporting data or " +
+      "The user currently authenticated is the same user that submitted " +
+      "the application or Supporting user already submitted the information.",
   })
   @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType") supportingUserType: SupportingUserType,
-    @Body() payload: UpdateSupportingUserInDTO,
+    @Body() payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.

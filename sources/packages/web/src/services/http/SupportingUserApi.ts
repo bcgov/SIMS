@@ -1,18 +1,18 @@
 import {
-  ApplicationIdentifierOutDTO,
-  ApplicationSupportingUsersInDTO,
-  GetApplicationInDTO,
-  SupportingUserFormDataInDTO,
+  ApplicationIdentifierApiInDTO,
+  ApplicationSupportingUsersApiOutDTO,
+  ApplicationApiOutDTO,
+  SupportingUserFormDataApiOutDTO,
   SupportingUserType,
-  UpdateSupportingUserOutDTO,
+  UpdateSupportingUserApiInDTO,
 } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class SupportingUserApi extends HttpBaseClient {
   public async getApplicationDetails(
     supportingUserType: SupportingUserType,
-    payload: ApplicationIdentifierOutDTO,
-  ): Promise<GetApplicationInDTO> {
+    payload: ApplicationIdentifierApiInDTO,
+  ): Promise<ApplicationApiOutDTO> {
     try {
       const response = await this.apiClient.post(
         this.addClientRoot(`supporting-user/${supportingUserType}/application`),
@@ -32,7 +32,7 @@ export class SupportingUserApi extends HttpBaseClient {
 
   public async updateSupportingInformation(
     supportingUserType: SupportingUserType,
-    payload: UpdateSupportingUserOutDTO,
+    payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
@@ -52,16 +52,16 @@ export class SupportingUserApi extends HttpBaseClient {
 
   async getSupportingUsersForSideBar(
     applicationId: number,
-  ): Promise<ApplicationSupportingUsersInDTO[]> {
-    return this.getCallTyped<ApplicationSupportingUsersInDTO[]>(
+  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
+    return this.getCallTyped<ApplicationSupportingUsersApiOutDTO[]>(
       this.addClientRoot(`supporting-user/application/${applicationId}`),
     );
   }
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataInDTO> {
-    return this.getCallTyped<SupportingUserFormDataInDTO>(
+  ): Promise<SupportingUserFormDataApiOutDTO> {
+    return this.getCallTyped<SupportingUserFormDataApiOutDTO>(
       this.addClientRoot(`supporting-user/${supportingUserId}`),
     );
   }

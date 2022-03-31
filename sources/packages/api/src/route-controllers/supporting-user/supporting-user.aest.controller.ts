@@ -4,8 +4,8 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  ApplicationSupportingUsersOutDTO,
-  SupportingUserFormDataOutDTO,
+  ApplicationSupportingUsersApiOutDTO,
+  SupportingUserFormDataApiOutDTO,
 } from "./models/supporting-user.dto";
 import { getSupportingUserForm } from "../../utilities";
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
@@ -22,15 +22,17 @@ export class SupportingUserAESTController {
    * an application id for AEST user.
    * @param applicationId application id.
    * @return list of supporting users of an
-   * application, i.e ApplicationSupportingUsersOutDTO
+   * application, i.e ApplicationSupportingUsersApiOutDTO
    */
   @Get("application/:applicationId")
   @ApiOkResponse({
     description: "SupportingUser found for the application.",
+    type: ApplicationSupportingUsersApiOutDTO,
+    isArray: true,
   })
   async getSupportingUsersOfAnApplication(
     @Param("applicationId") applicationId: number,
-  ): Promise<ApplicationSupportingUsersOutDTO[]> {
+  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
@@ -40,7 +42,7 @@ export class SupportingUserAESTController {
         ({
           supportingUserId: supportingUser.id,
           supportingUserType: supportingUser.supportingUserType,
-        } as ApplicationSupportingUsersOutDTO),
+        } as ApplicationSupportingUsersApiOutDTO),
     );
   }
 
@@ -53,6 +55,7 @@ export class SupportingUserAESTController {
   @Get(":supportingUserId")
   @ApiOkResponse({
     description: "SupportingUser form name and data found.",
+    type: SupportingUserFormDataApiOutDTO,
   })
   @ApiNotFoundResponse({
     description:
@@ -60,7 +63,7 @@ export class SupportingUserAESTController {
   })
   async getSupportingUserFormDetails(
     @Param("supportingUserId") supportingUserId: number,
-  ): Promise<SupportingUserFormDataOutDTO> {
+  ): Promise<SupportingUserFormDataApiOutDTO> {
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUsersDetails(
         supportingUserId,

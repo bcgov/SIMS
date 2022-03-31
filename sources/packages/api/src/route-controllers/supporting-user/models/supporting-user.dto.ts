@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
+import { ApiProperty, ApiResponse } from "@nestjs/swagger";
+import {
+  Allow,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+} from "class-validator";
 import { SupportingUserType } from "../../../database/entities";
 import { ContactInfo } from "../../../types";
 
@@ -7,7 +13,7 @@ import { ContactInfo } from "../../../types";
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export class ApplicationIdentifierInDTO {
+export class ApplicationIdentifierApiInDTO {
   @IsNotEmpty()
   applicationNumber: string;
   @IsNotEmpty()
@@ -21,7 +27,7 @@ export class ApplicationIdentifierInDTO {
  * The validation of the entire model will (and
  * must) be done by the Form.IO dry run.
  */
-export class UpdateSupportingUserInDTO {
+export class UpdateSupportingUserApiInDTO {
   @IsNotEmpty()
   applicationNumber: string;
   @IsNotEmpty()
@@ -48,17 +54,16 @@ export class UpdateSupportingUserInDTO {
   supportingData: any;
 }
 
-export class GetApplicationOutDTO {
+export class ApplicationApiOutDTO {
   programYearStartDate: Date;
   formName: string;
 }
 
-export class ApplicationSupportingUsersOutDTO {
+export class ApplicationSupportingUsersApiOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
-
-export class SupportingUserFormDataOutDTO {
+export class SupportingUserFormDataApiOutDTO {
   formName: string;
   supportingData: any;
   contactInfo: ContactInfo;

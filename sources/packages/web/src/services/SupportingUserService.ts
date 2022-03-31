@@ -1,11 +1,11 @@
 import ApiClient from "./http/ApiClient";
 import {
-  ApplicationIdentifierOutDTO,
-  ApplicationSupportingUsersInDTO,
-  GetApplicationInDTO,
-  SupportingUserFormDataInDTO,
+  ApplicationIdentifierApiInDTO,
+  ApplicationSupportingUsersApiOutDTO,
+  ApplicationApiOutDTO,
+  SupportingUserFormDataApiOutDTO,
   SupportingUserType,
-  UpdateSupportingUserOutDTO,
+  UpdateSupportingUserApiInDTO,
 } from "@/types";
 
 export class SupportingUsersService {
@@ -18,8 +18,8 @@ export class SupportingUsersService {
 
   public async getApplicationDetails(
     supportingUserType: SupportingUserType,
-    payload: ApplicationIdentifierOutDTO,
-  ): Promise<GetApplicationInDTO> {
+    payload: ApplicationIdentifierApiInDTO,
+  ): Promise<ApplicationApiOutDTO> {
     return ApiClient.SupportingUserApi.getApplicationDetails(
       supportingUserType,
       payload,
@@ -28,7 +28,7 @@ export class SupportingUsersService {
 
   async updateSupportingInformation(
     supportingUserType: SupportingUserType,
-    payload: UpdateSupportingUserOutDTO,
+    payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     await ApiClient.SupportingUserApi.updateSupportingInformation(
       supportingUserType,
@@ -38,7 +38,7 @@ export class SupportingUsersService {
 
   async getSupportingUsersForSideBar(
     applicationId: number,
-  ): Promise<ApplicationSupportingUsersInDTO[]> {
+  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
     return ApiClient.SupportingUserApi.getSupportingUsersForSideBar(
       applicationId,
     );
@@ -46,7 +46,7 @@ export class SupportingUsersService {
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataInDTO> {
+  ): Promise<SupportingUserFormDataApiOutDTO> {
     return ApiClient.SupportingUserApi.getSupportingUserData(supportingUserId);
   }
 }
