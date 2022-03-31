@@ -25,7 +25,7 @@ import {
   StudentAssessmentService,
 } from "./services";
 import {
-  AESTSupportingUserController,
+  SupportingUserAESTController,
   DesignationAgreementAESTController,
   DesignationAgreementControllerService,
   ApplicationAESTController,
@@ -41,7 +41,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
 @Module({
   imports: [LoggerModule, DatabaseModule, AuthModule],
   controllers: [
-    AESTSupportingUserController,
+    SupportingUserAESTController,
     DesignationAgreementAESTController,
     ApplicationAESTController,
     InstitutionAESTController,

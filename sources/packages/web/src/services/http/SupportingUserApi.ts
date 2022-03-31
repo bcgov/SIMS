@@ -1,21 +1,21 @@
-import {
-  ApplicationIdentifierDTO,
-  ApplicationSupportingUsersDTO,
-  GetApplicationDTO,
-  SupportingUserFormData,
-  SupportingUserType,
-  UpdateSupportingUserDTO,
-} from "@/types";
+import { SupportingUserType } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
+import {
+  ApplicationApiOutDTO,
+  ApplicationIdentifierApiInDTO,
+  ApplicationSupportingUsersApiOutDTO,
+  SupportingUserFormDataApiOutDTO,
+  UpdateSupportingUserApiInDTO,
+} from "./dto/SupportingUser.dto";
 
 export class SupportingUserApi extends HttpBaseClient {
   public async getApplicationDetails(
     supportingUserType: SupportingUserType,
-    payload: ApplicationIdentifierDTO,
-  ): Promise<GetApplicationDTO> {
+    payload: ApplicationIdentifierApiInDTO,
+  ): Promise<ApplicationApiOutDTO> {
     try {
       const response = await this.apiClient.post(
-        `supporting-user/${supportingUserType}/application`,
+        this.addClientRoot(`supporting-user/${supportingUserType}/application`),
         payload,
         this.addAuthHeader(),
       );
@@ -32,11 +32,11 @@ export class SupportingUserApi extends HttpBaseClient {
 
   public async updateSupportingInformation(
     supportingUserType: SupportingUserType,
-    payload: UpdateSupportingUserDTO,
+    payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     try {
       await this.apiClient.patch(
-        `supporting-user/${supportingUserType}`,
+        this.addClientRoot(`supporting-user/${supportingUserType}`),
         payload,
         this.addAuthHeader(),
       );
@@ -52,16 +52,16 @@ export class SupportingUserApi extends HttpBaseClient {
 
   async getSupportingUsersForSideBar(
     applicationId: number,
-  ): Promise<ApplicationSupportingUsersDTO[]> {
-    return this.getCallTyped<ApplicationSupportingUsersDTO[]>(
+  ): Promise<ApplicationSupportingUsersApiOutDTO[]> {
+    return this.getCallTyped<ApplicationSupportingUsersApiOutDTO[]>(
       this.addClientRoot(`supporting-user/application/${applicationId}`),
     );
   }
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormData> {
-    return this.getCallTyped<SupportingUserFormData>(
+  ): Promise<SupportingUserFormDataApiOutDTO> {
+    return this.getCallTyped<SupportingUserFormDataApiOutDTO>(
       this.addClientRoot(`supporting-user/${supportingUserId}`),
     );
   }

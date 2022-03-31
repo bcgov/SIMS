@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsNotEmptyObject, IsOptional } from "class-validator";
 import { SupportingUserType } from "../../../database/entities";
 import { ContactInfo } from "../../../types";
 
@@ -7,7 +7,7 @@ import { ContactInfo } from "../../../types";
  * The application must be search using at least 3 criteria as
  * per defined by the Ministry policies.
  */
-export class ApplicationIdentifierDTO {
+export class ApplicationIdentifierApiInDTO {
   @IsNotEmpty()
   applicationNumber: string;
   @IsNotEmpty()
@@ -21,32 +21,44 @@ export class ApplicationIdentifierDTO {
  * The validation of the entire model will (and
  * must) be done by the Form.IO dry run.
  */
-export interface UpdateSupportingUserDTO {
+export class UpdateSupportingUserApiInDTO {
+  @IsNotEmpty()
   applicationNumber: string;
+  @IsNotEmpty()
   addressLine1: string;
+  @IsOptional()
   addressLine2: string;
+  @IsNotEmpty()
   city: string;
+  @IsNotEmpty()
   country: string;
+  @IsNotEmpty()
   phone: string;
+  @IsNotEmpty()
   postalCode: string;
+  @IsNotEmpty()
   provinceState: string;
+  @IsNotEmpty()
   sin: string;
+  @IsNotEmpty()
   studentsDateOfBirth: string;
+  @IsNotEmpty()
   studentsLastName: string;
+  @IsNotEmptyObject()
   supportingData: any;
 }
 
-export interface GetApplicationDTO {
+export class ApplicationApiOutDTO {
   programYearStartDate: Date;
   formName: string;
 }
 
-export interface ApplicationSupportingUsersDTO {
+export class ApplicationSupportingUsersApiOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
 
-export interface SupportingUserFormData {
+export class SupportingUserFormDataApiOutDTO {
   formName: string;
   supportingData: any;
   contactInfo: ContactInfo;
