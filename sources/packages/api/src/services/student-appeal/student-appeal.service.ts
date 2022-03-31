@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Brackets, Connection } from "typeorm";
-
 import {
   Application,
   StudentAppeal,
@@ -12,8 +11,10 @@ import {
 import {
   PendingAndDeniedAppeals,
   StudentAppealRequestModel,
+  StudentAppealWithStatus,
 } from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
+import { mapFromRawAndEntities } from "../../utilities";
 
 /**
  * Service layer for Student appeals.
@@ -129,8 +130,15 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .getRawMany();
   }
 
-  async getAppealAndRequestsById(appealId: number): Promise<StudentAppeal> {
-    return this.repo
+  /**
+   * Get the student appeal and its requests.
+   * @param appealId appeal if to be retrieved.
+   * @returns student appeal and its requests.
+   */
+  async getAppealAndRequestsById(
+    appealId: number,
+  ): Promise<StudentAppealWithStatus> {
+    const queryResult = await this.repo
       .createQueryBuilder("studentAppeal")
       .select([
         "studentAppeal.id",
@@ -144,10 +152,34 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "user.lastName",
         "note.description",
       ])
+      .addSelect(this.buildStatusSelect(), "status")
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
-      .leftJoin("studentAppeal.assessedBy", "user")
-      .leftJoin("studentAppeal.note", "note")
+      .leftJoin("appealRequest.assessedBy", "user")
+      .leftJoin("appealRequest.note", "note")
       .where("studentAppeal.id = :appealId", { appealId })
-      .getOne();
+      .getRawAndEntities();
+
+    const [appealWithStatus] = mapFromRawAndEntities<StudentAppealWithStatus>(
+      queryResult,
+      "status",
+    );
+    return appealWithStatus;
+  }
+
+  /**
+   * Builds the conditions to define the status of a student appeal
+   * based on the statuses of its appeal requests.
+   * @returns SQL select to be used in a query to return the appeal status.
+   */
+  private buildStatusSelect(): string {
+    return `CASE
+      WHEN EXISTS(${this.studentAppealRequestsService
+        .appealsByStatusQueryObject(StudentAppealStatus.Pending)
+        .getSql()}) THEN '${StudentAppealStatus.Pending}'
+      WHEN EXISTS(${this.studentAppealRequestsService
+        .appealsByStatusQueryObject(StudentAppealStatus.Approved)
+        .getSql()}) THEN '${StudentAppealStatus.Approved}'
+      ELSE '${StudentAppealStatus.Declined}'
+    END`;
   }
 }

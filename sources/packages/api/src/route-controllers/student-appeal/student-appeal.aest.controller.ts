@@ -1,47 +1,46 @@
-import {
-  Controller,
-  Param,
-  Body,
-  NotFoundException,
-  UnprocessableEntityException,
-  BadRequestException,
-  InternalServerErrorException,
-  Get,
-  Type,
-} from "@nestjs/common";
-import {
-  ApplicationService,
-  FormService,
-  StudentAppealService,
-} from "../../services";
-import { StudentAppealDTO } from "./models/student-appeal.dto";
-import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
+import { Controller, Param, Get, NotFoundException } from "@nestjs/common";
+import { StudentAppealService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
-import { IUserToken } from "../../auth/userToken.interface";
-import { ApiProduces, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
-import { INVALID_APPLICATION_NUMBER } from "../../constants";
+import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "src/auth/user-groups.enum";
+import { StudentAppealApiOutDTO } from "./models/student-appeal.dto";
+import { getUserFullName } from "src/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("appeal")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-appeal`)
 export class StudentAppealAESTController extends BaseController {
-  constructor(
-    private readonly studentAppealService: StudentAppealService,
-    private readonly applicationService: ApplicationService,
-    private readonly formService: FormService,
-  ) {
+  constructor(private readonly studentAppealService: StudentAppealService) {
     super();
   }
 
   @Get(":appealId/requests")
-  async getStudentAppeal(@Param("appealId") appealId: number): Promise<any> {
+  async getStudentAppealWithRequests(
+    @Param("appealId") appealId: number,
+  ): Promise<StudentAppealApiOutDTO> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(appealId);
-    return studentAppeal;
+    if (!studentAppeal) {
+      throw new NotFoundException("Not able to find the student appeal.");
+    }
+
+    return {
+      id: studentAppeal.id,
+      submittedDate: studentAppeal.submittedDate,
+      status: studentAppeal.status,
+      appealRequests: studentAppeal.appealRequests.map((appealRequest) => ({
+        id: appealRequest.id,
+        appealStatus: appealRequest.appealStatus,
+        submittedData: appealRequest.submittedData,
+        submittedFormName: appealRequest.submittedFormName,
+        assessedDate: appealRequest.assessedDate,
+        noteDescription: appealRequest.note?.description,
+        assessedByUserName: getUserFullName(appealRequest.assessedBy),
+      })),
+    };
   }
 }
