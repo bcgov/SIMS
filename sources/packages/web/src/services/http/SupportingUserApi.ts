@@ -6,7 +6,7 @@ import {
   ApplicationSupportingUsersApiOutDTO,
   SupportingUserFormDataApiOutDTO,
   UpdateSupportingUserApiInDTO,
-} from "./dto/SupportingUser.dto.ts";
+} from "./dto/SupportingUser.dto";
 
 export class SupportingUserApi extends HttpBaseClient {
   public async getApplicationDetails(

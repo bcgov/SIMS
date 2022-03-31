@@ -32,13 +32,10 @@ export class SupportingUserAESTController {
       await this.supportingUserService.getSupportingUsersByApplicationId(
         applicationId,
       );
-    return supportingUserForApplication.map(
-      (supportingUser) =>
-        ({
-          supportingUserId: supportingUser.id,
-          supportingUserType: supportingUser.supportingUserType,
-        } as ApplicationSupportingUsersApiOutDTO),
-    );
+    return supportingUserForApplication.map((supportingUser) => ({
+      supportingUserId: supportingUser.id,
+      supportingUserType: supportingUser.supportingUserType,
+    }));
   }
 
   /**
@@ -50,7 +47,7 @@ export class SupportingUserAESTController {
   @Get(":supportingUserId")
   @ApiNotFoundResponse({
     description:
-      "Supporting user  details not found or Supporting user has not submitted the form",
+      "Supporting user details not found or Supporting user has not submitted the form",
   })
   async getSupportingUserFormDetails(
     @Param("supportingUserId") supportingUserId: number,

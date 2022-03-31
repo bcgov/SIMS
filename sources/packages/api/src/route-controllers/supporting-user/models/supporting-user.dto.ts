@@ -57,6 +57,7 @@ export class ApplicationSupportingUsersApiOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
+
 export class SupportingUserFormDataApiOutDTO {
   formName: string;
   supportingData: any;

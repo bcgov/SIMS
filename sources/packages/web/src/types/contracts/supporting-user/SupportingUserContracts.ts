@@ -13,18 +13,3 @@ export const SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA =
 // data for his own application.
 export const SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION =
   "SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION";
-
-/**
- * Types of users that provides supporting information
- * for the Student Application.
- */
-export enum SupportingUserType {
-  /**
-   * Parent of a student submitting an application.
-   */
-  Parent = "Parent",
-  /**
-   * Partner of a student submitting an application.
-   */
-  Partner = "Partner",
-}

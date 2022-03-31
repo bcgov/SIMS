@@ -1,4 +1,19 @@
-import { ContactInformation, SupportingUserType } from "@/types";
+import { ContactInformation } from "@/types";
+
+/**
+ * Types of users that provides supporting information
+ * for the Student Application.
+ */
+export enum SupportingUserType {
+  /**
+   * Parent of a student submitting an application.
+   */
+  Parent = "Parent",
+  /**
+   * Partner of a student submitting an application.
+   */
+  Partner = "Partner",
+}
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -12,9 +27,7 @@ export interface ApplicationIdentifierApiInDTO {
 }
 
 /**
- * Data required to update a supporting user.
- * The validation of the entire model will (and
- * must) be done by the Form.IO dry run.
+ * Data send to api to update a supporting user.
  */
 export interface UpdateSupportingUserApiInDTO
   extends ApplicationIdentifierApiInDTO {
