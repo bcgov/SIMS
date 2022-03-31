@@ -104,11 +104,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .select("studentAppeal.submittedDate", "submittedDate")
       .addSelect(
         `CASE
-      WHEN EXISTS(${this.studentAppealRequestsService
-        .appealsByStatusQueryObject(StudentAppealStatus.Pending)
-        .getSql()}) THEN '${StudentAppealStatus.Pending}'
-      ELSE '${StudentAppealStatus.Declined}'
-    END`,
+            WHEN EXISTS(${this.studentAppealRequestsService
+              .appealsByStatusQueryObject(StudentAppealStatus.Pending)
+              .getSql()}) THEN '${StudentAppealStatus.Pending}'
+            ELSE '${StudentAppealStatus.Declined}'
+        END`,
         "status",
       )
       .innerJoin("studentAppeal.application", "application")
@@ -127,5 +127,27 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         }),
       )
       .getRawMany();
+  }
+
+  async getAppealAndRequestsById(appealId: number): Promise<StudentAppeal> {
+    return this.repo
+      .createQueryBuilder("studentAppeal")
+      .select([
+        "studentAppeal.id",
+        "studentAppeal.submittedDate",
+        "appealRequest.id",
+        "appealRequest.submittedData",
+        "appealRequest.submittedFormName",
+        "appealRequest.appealStatus",
+        "appealRequest.assessedDate",
+        "user.firstName",
+        "user.lastName",
+        "note.description",
+      ])
+      .innerJoin("studentAppeal.appealRequests", "appealRequest")
+      .leftJoin("studentAppeal.assessedBy", "user")
+      .leftJoin("studentAppeal.note", "note")
+      .where("studentAppeal.id = :appealId", { appealId })
+      .getOne();
   }
 }
