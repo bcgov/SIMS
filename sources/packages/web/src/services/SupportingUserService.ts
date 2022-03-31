@@ -1,10 +1,10 @@
 import ApiClient from "./http/ApiClient";
-import { SupportingUserType } from "@/types";
 import {
   ApplicationApiOutDTO,
   ApplicationIdentifierApiInDTO,
   ApplicationSupportingUsersApiOutDTO,
   SupportingUserFormDataApiOutDTO,
+  SupportingUserType,
   UpdateSupportingUserApiInDTO,
 } from "./http/dto/SupportingUser.dto";
 
