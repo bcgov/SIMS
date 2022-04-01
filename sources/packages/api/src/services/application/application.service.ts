@@ -642,12 +642,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id to be updated.
    * @param locationId location that is setting the offering.
    * @param offering offering to be set in the assessment.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
    * @returns updated application.
    */
   async setOfferingForProgramInfoRequest(
     applicationId: number,
     locationId: number,
     offering: EducationProgramOffering,
+    auditUserId: number,
   ): Promise<Application> {
     const application = await this.repo
       .createQueryBuilder("application")
@@ -673,9 +676,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         PIR_REQUEST_NOT_FOUND_ERROR,
       );
     }
-
+    const auditUser = { id: auditUserId } as User;
     application.currentAssessment.offering = offering;
+    application.currentAssessment.modifier = auditUser;
     application.pirStatus = ProgramInfoStatus.completed;
+    application.modifier = auditUser;
     return this.repo.save(application);
   }
 
@@ -1153,7 +1158,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.id",
-        "application.assessmentWorkflowId",
         "programYear.parentFormName",
         "programYear.partnerFormName",
         "programYear.startDate",

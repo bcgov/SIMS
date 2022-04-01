@@ -5,7 +5,7 @@ import {
   NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
-} from "../models/e-cert-part-time-integration.model";
+} from "../models/e-cert-integration.model";
 
 /**
  * Footer of an E-Cert file.
@@ -29,10 +29,10 @@ export class ECertFileFooter implements FixedFormatFileLine {
 
   public static createFromLine(line: string): ECertFileFooter {
     const footer = new ECertFileFooter();
-    footer.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
+    footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records rejected
-    footer.recordCount = parseInt(line.substr(52, 9));
-    footer.totalSINHash = parseInt(line.substr(61, 15));
+    footer.recordCount = parseInt(line.substring(52, 61));
+    footer.totalSINHash = parseInt(line.substring(61, 76));
     return footer;
   }
 }

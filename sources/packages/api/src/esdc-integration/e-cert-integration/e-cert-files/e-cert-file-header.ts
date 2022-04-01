@@ -7,7 +7,7 @@ import {
   RecordTypeCodes,
   SPACE_FILLER,
   TIME_FORMAT,
-} from "../models/e-cert-full-time-integration.model";
+} from "../models/e-cert-integration.model";
 
 const ORIGINATOR_CODE = "BC";
 
@@ -35,8 +35,11 @@ export class ECertFileHeader implements FixedFormatFileLine {
 
   public static createFromLine(line: string): ECertFileHeader {
     const header = new ECertFileHeader();
-    header.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
-    header.processDate = getDateOnlyFromFormat(line.substr(47, 8), DATE_FORMAT);
+    header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
+    header.processDate = getDateOnlyFromFormat(
+      line.substring(47, 55),
+      DATE_FORMAT,
+    );
     return header;
   }
 }

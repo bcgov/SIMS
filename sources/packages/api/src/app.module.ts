@@ -53,7 +53,6 @@ import {
   ProgramInfoRequestController,
   ConfirmationOfEnrollmentController,
   InstitutionTypeController,
-  SupportingUserController,
   MSFAAIntegrationController,
   SFASIntegrationController,
   ECertIntegrationController,
@@ -66,7 +65,7 @@ import { LoggerModule } from "./logger/logger.module";
 import { CraIntegrationModule } from "./cra-integration/cra-integration.module";
 import { MSFAAIntegrationModule } from "./esdc-integration/msfaa-integration/msfaa-integration.module";
 import { SFASIntegrationModule } from "./sfas-integration/sfas-integration.module";
-import { ECertFullTimeIntegrationModule } from "./esdc-integration/e-cert-full-time-integration/e-cert-full-time-integration.module";
+import { ECertIntegrationModule } from "./esdc-integration/e-cert-integration/e-cert-integration.module";
 import { FedRestrictionIntegrationModule } from "./esdc-integration/fed-restriction-integration/fed-restriction-integration.module";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
@@ -74,7 +73,7 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
-import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-time-integration/e-cert-part-time-integration.module";
+import { AppSupportingUsersModule } from "./app.supporting-users.module";
 
 @Module({
   imports: [
@@ -84,13 +83,13 @@ import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-t
     CraIntegrationModule,
     MSFAAIntegrationModule,
     SFASIntegrationModule,
-    ECertFullTimeIntegrationModule,
-    ECertPartTimeIntegrationModule,
+    ECertIntegrationModule,
     FedRestrictionIntegrationModule,
     AppAESTModule,
     AppInstitutionsModule,
     AppStudentsModule,
     AppSystemAccessModule,
+    AppSupportingUsersModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
@@ -103,6 +102,10 @@ import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-t
       {
         path: ClientTypeBaseRoute.Student,
         module: AppStudentsModule,
+      },
+      {
+        path: ClientTypeBaseRoute.SupportingUser,
+        module: AppSupportingUsersModule,
       },
       {
         path: ClientTypeBaseRoute.SystemAccess,
@@ -127,7 +130,6 @@ import { ECertPartTimeIntegrationModule } from "./esdc-integration/e-cert-part-t
     ProgramInfoRequestController,
     ConfirmationOfEnrollmentController,
     InstitutionTypeController,
-    SupportingUserController,
     MSFAAIntegrationController,
     SFASIntegrationController,
     ECertIntegrationController,

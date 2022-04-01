@@ -11,19 +11,19 @@ import {
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
-import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
+import { ECertIntegrationService } from "./e-cert-integration.service";
 import {
   Award,
   ECertRecord,
   ECertUploadResult,
-} from "./models/e-cert-full-time-integration.model";
+} from "./models/e-cert-integration.model";
 
 const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
 
 @Injectable()
-export class ECertFullTimeRequestService {
+export class ECertRequestService {
   constructor(
-    private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
+    private readonly ecertIntegrationService: ECertIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly sequenceService: SequenceControlService,
   ) {}
@@ -34,13 +34,15 @@ export class ECertFullTimeRequestService {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateECert(): Promise<ECertUploadResult> {
+  async generateECert(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ECertUploadResult> {
     this.logger.log(
-      `Retrieving Full-Time disbursements to generate the e-Cert file...`,
+      `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
     const disbursements =
       await this.disbursementScheduleService.getECertInformationToBeSent(
-        OfferingIntensity.fullTime,
+        offeringIntensity,
       );
     if (!disbursements.length) {
       return {
@@ -49,7 +51,7 @@ export class ECertFullTimeRequestService {
       };
     }
     this.logger.log(
-      `Found ${disbursements.length} Full-Time disbursements schedules.`,
+      `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
       return this.createECertRecord(disbursement);
@@ -66,7 +68,9 @@ export class ECertFullTimeRequestService {
       ECERT_SENT_FILE_SEQUENCE_GROUP,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log("Creating  Full-Time e-Cert file content...");
+          this.logger.log(
+            `Creating  ${offeringIntensity} e-Cert file content...`,
+          );
           const fileContent = this.ecertIntegrationService.createRequestContent(
             disbursementRecords,
             nextSequenceNumber,
@@ -88,7 +92,7 @@ export class ECertFullTimeRequestService {
             disbursementScheduleRepo,
           );
 
-          this.logger.log("Uploading Full-Time content...");
+          this.logger.log(`Uploading ${offeringIntensity} content...`);
           await this.ecertIntegrationService.uploadContent(
             fileContent,
             fileInfo.filePath,
@@ -100,7 +104,7 @@ export class ECertFullTimeRequestService {
           };
         } catch (error) {
           this.logger.error(
-            `Error while uploading content for Full-Time e-Cert file: ${error}`,
+            `Error while uploading content for ${offeringIntensity} e-Cert file: ${error}`,
           );
           throw error;
         }
