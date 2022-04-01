@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
@@ -42,7 +42,11 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
+  PIR_OR_DATE_OVERLAP_ERROR,
+  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
 } from "../../utilities";
+import { SFASApplicationService } from "../sfas/sfas-application.service";
+import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -66,6 +70,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   constructor(
     connection: Connection,
+    private readonly sfasApplicationService: SFASApplicationService,
+    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
     private readonly workflow: WorkflowActionsService,
@@ -1287,5 +1293,73 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
     return applicationQuery.getOne();
+  }
+
+  /**
+   * Validation for application overlapping dates or Pending PIR.
+   * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
+   * @param applicationId
+   * @param lastName
+   * @param userId
+   * @param sin
+   * @param birthDate
+   * @param studyStartDate
+   * @param studyEndDate
+   * @param bypassApplicationSubmitValidations
+   */
+  async validateOverlappingDatesAndPIR(
+    applicationId: number,
+    lastName: string,
+    userId: number,
+    sin: string,
+    birthDate: Date,
+    studyStartDate: Date,
+    studyEndDate: Date,
+    bypassApplicationSubmitValidations: boolean,
+  ): Promise<void> {
+    if (!bypassApplicationSubmitValidations) {
+      const existingOverlapApplication = this.validatePIRAndDateOverlap(
+        userId,
+        new Date(studyStartDate),
+        new Date(studyEndDate),
+        applicationId,
+      );
+
+      const existingSFASFTApplication =
+        this.sfasApplicationService.validateDateOverlap(
+          sin,
+          birthDate,
+          lastName,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+        );
+
+      const existingSFASPTApplication =
+        this.sfasPartTimeApplicationsService.validateDateOverlap(
+          sin,
+          birthDate,
+          lastName,
+          new Date(studyStartDate),
+          new Date(studyEndDate),
+        );
+      const [
+        applicationResponse,
+        sfasFTApplicationResponse,
+        sfasPTApplicationResponse,
+      ] = await Promise.all([
+        existingOverlapApplication,
+        existingSFASFTApplication,
+        existingSFASPTApplication,
+      ]);
+      if (
+        !!applicationResponse ||
+        !!sfasFTApplicationResponse ||
+        !!sfasPTApplicationResponse
+      ) {
+        throw new UnprocessableEntityException(
+          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
+        );
+      }
+    }
   }
 }

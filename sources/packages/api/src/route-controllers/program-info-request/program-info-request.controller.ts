@@ -31,6 +31,7 @@ import {
   FormService,
   PIRDeniedReasonService,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
+  ConfigService,
 } from "../../services";
 import {
   getUserFullName,
@@ -59,12 +60,15 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { IConfig } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
 @ApiTags("institution")
 export class ProgramInfoRequestController extends BaseController {
+  private readonly config: IConfig;
   constructor(
+    private readonly configService: ConfigService,
     private readonly applicationService: ApplicationService,
     private readonly workflowService: WorkflowActionsService,
     private readonly offeringService: EducationProgramOfferingService,
@@ -72,6 +76,7 @@ export class ProgramInfoRequestController extends BaseController {
     private readonly formService: FormService,
   ) {
     super();
+    this.config = this.configService.getConfig();
   }
 
   /**
@@ -323,6 +328,17 @@ export class ProgramInfoRequestController extends BaseController {
           submissionResult.data.data,
         );
       }
+
+      await this.applicationService.validateOverlappingDatesAndPIR(
+        applicationId,
+        application.student.user.lastName,
+        application.student.user.id,
+        application.student.sin,
+        application.student.birthDate,
+        payload.studyStartDate,
+        payload.studyEndDate,
+        this.config.bypassApplicationSubmitValidations,
+      );
 
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(

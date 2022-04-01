@@ -51,7 +51,6 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApplicationStatus,
-  Student,
   AssessmentTriggerType,
 } from "../../database/entities";
 import {
@@ -59,8 +58,6 @@ import {
   getUserFullName,
   checkStudyStartDateWithinProgramYear,
   checkNotValidStudyPeriod,
-  PIR_OR_DATE_OVERLAP_ERROR,
-  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
 } from "../../utilities";
 import {
   INVALID_STUDY_DATES,
@@ -214,13 +211,17 @@ export class ApplicationStudentsController extends BaseController {
       userToken.userId,
     );
 
-    await this.validateOverlappingDatesAndPIR(
+    await this.applicationService.validateOverlappingDatesAndPIR(
       applicationId,
-      userToken,
-      student,
+      student.user.lastName,
+      userToken.userId,
+      student.sin,
+      student.birthDate,
       studyStartDate,
       studyEndDate,
+      this.config.bypassApplicationSubmitValidations,
     );
+
     try {
       const { createdAssessment } =
         await this.applicationService.submitApplication(
@@ -553,69 +554,6 @@ export class ApplicationStudentsController extends BaseController {
       formName: applicationProgramYear.programYear.formName,
       active: applicationProgramYear.programYear.active,
     } as ApplicationWithProgramYearDto;
-  }
-
-  /**
-   * Validation for application overlapping dates or Pending PIR.
-   * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
-   * @param applicationId
-   * @param userToken
-   * @param student
-   * @param studyStartDate
-   * @param studyEndDate
-   */
-  private async validateOverlappingDatesAndPIR(
-    applicationId: number,
-    userToken: IUserToken,
-    student: Student,
-    studyStartDate: Date,
-    studyEndDate: Date,
-  ): Promise<void> {
-    if (!this.config.bypassApplicationSubmitValidations) {
-      const existingOverlapApplication =
-        this.applicationService.validatePIRAndDateOverlap(
-          userToken.userId,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
-          applicationId,
-        );
-
-      const existingSFASFTApplication =
-        this.sfasApplicationService.validateDateOverlap(
-          student.sin,
-          student.birthDate,
-          userToken.lastName,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
-        );
-
-      const existingSFASPTApplication =
-        this.sfasPartTimeApplicationsService.validateDateOverlap(
-          student.sin,
-          student.birthDate,
-          userToken.lastName,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
-        );
-      const [
-        applicationResponse,
-        sfasFTApplicationResponse,
-        sfasPTApplicationResponse,
-      ] = await Promise.all([
-        existingOverlapApplication,
-        existingSFASFTApplication,
-        existingSFASPTApplication,
-      ]);
-      if (
-        !!applicationResponse ||
-        !!sfasFTApplicationResponse ||
-        !!sfasPTApplicationResponse
-      ) {
-        throw new UnprocessableEntityException(
-          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
-        );
-      }
-    }
   }
 
   /**
