@@ -53,7 +53,6 @@ import {
   ProgramInfoRequestController,
   ConfirmationOfEnrollmentController,
   InstitutionTypeController,
-  SupportingUserController,
   MSFAAIntegrationController,
   SFASIntegrationController,
   ECertIntegrationController,
@@ -74,6 +73,7 @@ import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
 import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
+import { AppSupportingUsersModule } from "./app.supporting-users.module";
 
 @Module({
   imports: [
@@ -89,6 +89,7 @@ import { InstitutionLocationsControllerService } from "./route-controllers/insti
     AppInstitutionsModule,
     AppStudentsModule,
     AppSystemAccessModule,
+    AppSupportingUsersModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
@@ -101,6 +102,10 @@ import { InstitutionLocationsControllerService } from "./route-controllers/insti
       {
         path: ClientTypeBaseRoute.Student,
         module: AppStudentsModule,
+      },
+      {
+        path: ClientTypeBaseRoute.SupportingUser,
+        module: AppSupportingUsersModule,
       },
       {
         path: ClientTypeBaseRoute.SystemAccess,
@@ -125,7 +130,6 @@ import { InstitutionLocationsControllerService } from "./route-controllers/insti
     ProgramInfoRequestController,
     ConfirmationOfEnrollmentController,
     InstitutionTypeController,
-    SupportingUserController,
     MSFAAIntegrationController,
     SFASIntegrationController,
     ECertIntegrationController,
