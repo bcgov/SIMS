@@ -34,15 +34,13 @@ export class ECertFullTimeRequestService {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateECert(
-    offeringIntensity: OfferingIntensity,
-  ): Promise<ECertUploadResult> {
+  async generateECert(): Promise<ECertUploadResult> {
     this.logger.log(
-      `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
+      `Retrieving Full-Time disbursements to generate the e-Cert file...`,
     );
     const disbursements =
       await this.disbursementScheduleService.getECertInformationToBeSent(
-        offeringIntensity,
+        OfferingIntensity.fullTime,
       );
     if (!disbursements.length) {
       return {
@@ -51,7 +49,7 @@ export class ECertFullTimeRequestService {
       };
     }
     this.logger.log(
-      `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
+      `Found ${disbursements.length} Full-Time disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
       return this.createECertRecord(disbursement);
@@ -68,9 +66,7 @@ export class ECertFullTimeRequestService {
       ECERT_SENT_FILE_SEQUENCE_GROUP,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log(
-            `Creating  ${offeringIntensity} e-Cert file content...`,
-          );
+          this.logger.log(`Creating  Full-Time e-Cert file content...`);
           const fileContent = this.ecertIntegrationService.createRequestContent(
             disbursementRecords,
             nextSequenceNumber,
@@ -92,7 +88,7 @@ export class ECertFullTimeRequestService {
             disbursementScheduleRepo,
           );
 
-          this.logger.log(`Uploading ${offeringIntensity} content...`);
+          this.logger.log(`Uploading Full-Time content...`);
           await this.ecertIntegrationService.uploadContent(
             fileContent,
             fileInfo.filePath,
@@ -104,7 +100,7 @@ export class ECertFullTimeRequestService {
           };
         } catch (error) {
           this.logger.error(
-            `Error while uploading content for ${offeringIntensity} e-Cert file: ${error}`,
+            `Error while uploading content for Full-Time e-Cert file: ${error}`,
           );
           throw error;
         }

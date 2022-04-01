@@ -9,7 +9,6 @@ import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { OfferingIntensity } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
