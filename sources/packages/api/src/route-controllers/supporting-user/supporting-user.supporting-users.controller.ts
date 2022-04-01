@@ -21,12 +21,17 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  ApplicationIdentifierDTO,
-  GetApplicationDTO,
-  UpdateSupportingUserDTO,
+  ApplicationIdentifierApiInDTO,
+  ApplicationApiOutDTO,
+  UpdateSupportingUserApiInDTO,
 } from "./models/supporting-user.dto";
 import { SupportingUserType } from "../../database/entities";
-import { AddressInfo, ApiProcessError, ContactInfo } from "../../types";
+import {
+  AddressInfo,
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  ContactInfo,
+} from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -34,13 +39,17 @@ import {
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
 import { getDateOnly, getSupportingUserForm } from "../../utilities";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
-@ApiTags("supporting-user")
-export class SupportingUserController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.SupportingUser}-supporting-user`)
+export class SupportingUserSupportingUsersController extends BaseController {
   constructor(
     private readonly supportingUserService: SupportingUserService,
     private readonly applicationService: ApplicationService,
@@ -63,11 +72,17 @@ export class SupportingUserController extends BaseController {
    */
   @Post(":supportingUserType/application")
   @HttpCode(HttpStatus.OK)
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to find a Student Application with the requested data " +
+      "or the user searching for applications to provide data must be " +
+      "different from the user associated with the student application.",
+  })
   async getApplicationDetails(
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType") supportingUserType: SupportingUserType,
-    @Body() payload: ApplicationIdentifierDTO,
-  ): Promise<GetApplicationDTO> {
+    @Body() payload: ApplicationIdentifierApiInDTO,
+  ): Promise<ApplicationApiOutDTO> {
     const application =
       await this.applicationService.getApplicationForSupportingUser(
         payload.applicationNumber,
@@ -89,7 +104,8 @@ export class SupportingUserController extends BaseController {
     if (application.student.user.userName === userToken.userName) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "The user searching for applications to provide data must be different from the user associated with the student application.",
+          "The user searching for applications to provide data " +
+            "must be different from the user associated with the student application.",
           SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
         ),
       );
@@ -110,14 +126,20 @@ export class SupportingUserController extends BaseController {
    * @param userToken authentication information.
    * @param supportingUserType type of the supporting user providing
    * the supporting data (e.g. parent/partner).
-   * @param applicationNumber application number to be searched.
    * @param payload data used for validation and to execute the update.
    */
   @Patch(":supportingUserType")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Student Application not found to update the supporting data or " +
+      "the user currently authenticated is the same user that submitted " +
+      "the application or supporting user already submitted the information.",
+  })
+  @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(
     @UserToken() userToken: IUserToken,
     @Param("supportingUserType") supportingUserType: SupportingUserType,
-    @Body() payload: UpdateSupportingUserDTO,
+    @Body() payload: UpdateSupportingUserApiInDTO,
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.
