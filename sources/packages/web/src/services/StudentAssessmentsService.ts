@@ -1,7 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   AssessmentHistorySummaryDTO,
-  RequestAssessmentSummaryDTO,
+  RequestAssessmentSummaryApiOutDTO,
 } from "@/types";
 
 /**
@@ -20,11 +20,11 @@ export class StudentAssessmentsService {
    * i.e, this will fetch the combination of pending and denied
    * student appeal and scholastic standings for an application.
    * @param applicationId, application number.
-   * @returns RequestAssessmentSummaryDTO list.
+   * @returns RequestAssessmentSummaryApiOutDTO list.
    */
   async getAssessmentRequest(
     applicationId: number,
-  ): Promise<RequestAssessmentSummaryDTO[]> {
+  ): Promise<RequestAssessmentSummaryApiOutDTO[]> {
     return ApiClient.StudentAssessmentApi.getAssessmentRequest(applicationId);
   }
   /**

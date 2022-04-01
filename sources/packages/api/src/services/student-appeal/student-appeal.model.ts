@@ -12,6 +12,7 @@ export interface StudentAppealRequestModel {
  * Service model to fetch Pending And Denied Appeals.
  */
 export interface PendingAndDeniedAppeals {
+  id: number;
   submittedDate: Date;
   status: StudentAppealStatus;
 }

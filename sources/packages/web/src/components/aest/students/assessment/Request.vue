@@ -27,8 +27,17 @@
               ><template #body="slotProps">{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
-            ><Column field="triggerType" header="Type" sortable="true"></Column
-            ><Column header="Request form"></Column
+            ><Column field="triggerType" header="Type" sortable="true"></Column>
+            <Column header="Request form" sortable="false"
+              ><template #body="slotProps"
+                ><v-btn
+                  @click="viewRequest(slotProps.data.triggerType, 1)"
+                  class="primary"
+                  text
+                  >View request</v-btn
+                ></template
+              ></Column
+            >
             ><Column field="status" header="Status" sortable="true">
               <template #body="slotProps"
                 ><status-chip-requested-assessment
@@ -44,12 +53,15 @@
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  RequestAssessmentSummaryDTO,
+  RequestAssessmentSummaryApiOutDTO,
 } from "@/types";
 import { ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import { AssessmentTriggerType } from "@/types/contracts/AssessmentTrigger";
+import { useRouter } from "vue-router";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
   components: {
@@ -63,18 +75,38 @@ export default {
   },
   setup(props: any) {
     const { dateOnlyLongString } = useFormatters();
+    const router = useRouter();
 
-    const requestedAssessment = ref([] as RequestAssessmentSummaryDTO[]);
+    const requestedAssessment = ref([] as RequestAssessmentSummaryApiOutDTO[]);
     onMounted(async () => {
       requestedAssessment.value = await StudentAssessmentsService.shared.getAssessmentRequest(
         props.applicationId,
       );
     });
+
+    const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
+      switch (triggerType) {
+        case AssessmentTriggerType.StudentAppeal:
+          router.push({
+            name: AESTRoutesConst.STUDENT_REQUEST_CHANGE_APPROVAL,
+            params: { appealId: id },
+          });
+          break;
+        case AssessmentTriggerType.ScholasticStandingChange:
+          // TODO: Redirect to ScholasticStandingChange approval.
+          break;
+        default:
+          console.error("Invalid request type.");
+          break;
+      }
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       requestedAssessment,
       dateOnlyLongString,
+      viewRequest,
     };
   },
 };

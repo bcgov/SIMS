@@ -4,7 +4,8 @@ import {
   StudentAppealStatus,
 } from "../../../database/entities";
 
-export class RequestAssessmentSummaryDTO {
+export class RequestAssessmentSummaryApiOutDTO {
+  id: number;
   submittedDate: Date;
   status: StudentAppealStatus | ScholasticStandingStatus;
   triggerType: AssessmentTriggerType;

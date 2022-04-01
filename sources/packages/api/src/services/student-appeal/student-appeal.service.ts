@@ -102,7 +102,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   ): Promise<PendingAndDeniedAppeals[]> {
     return this.repo
       .createQueryBuilder("studentAppeal")
-      .select("studentAppeal.submittedDate", "submittedDate")
+      .select(["studentAppeal.id", "studentAppeal.submittedDate"])
       .addSelect(
         `CASE
             WHEN EXISTS(${this.studentAppealRequestsService
