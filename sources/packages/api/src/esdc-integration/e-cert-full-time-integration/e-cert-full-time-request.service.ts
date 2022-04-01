@@ -36,7 +36,7 @@ export class ECertFullTimeRequestService {
    */
   async generateECert(): Promise<ECertUploadResult> {
     this.logger.log(
-      `Retrieving Full-Time disbursements to generate the e-Cert file...`,
+      "Retrieving Full-Time disbursements to generate the e-Cert file...",
     );
     const disbursements =
       await this.disbursementScheduleService.getECertInformationToBeSent(
@@ -66,7 +66,7 @@ export class ECertFullTimeRequestService {
       ECERT_SENT_FILE_SEQUENCE_GROUP,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log(`Creating  Full-Time e-Cert file content...`);
+          this.logger.log("Creating  Full-Time e-Cert file content...");
           const fileContent = this.ecertIntegrationService.createRequestContent(
             disbursementRecords,
             nextSequenceNumber,
@@ -88,7 +88,7 @@ export class ECertFullTimeRequestService {
             disbursementScheduleRepo,
           );
 
-          this.logger.log(`Uploading Full-Time content...`);
+          this.logger.log("Uploading Full-Time content...");
           await this.ecertIntegrationService.uploadContent(
             fileContent,
             fileInfo.filePath,

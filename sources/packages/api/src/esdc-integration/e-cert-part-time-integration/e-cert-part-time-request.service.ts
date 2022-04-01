@@ -36,7 +36,7 @@ export class ECertPartTimeRequestService {
    */
   async generateECert(): Promise<ECertUploadResult> {
     this.logger.log(
-      `Retrieving Part-Time disbursements to generate the e-Cert file...`,
+      "Retrieving Part-Time disbursements to generate the e-Cert file...",
     );
     const disbursements =
       await this.disbursementScheduleService.getECertInformationToBeSent(
