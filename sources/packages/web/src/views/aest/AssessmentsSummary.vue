@@ -7,7 +7,7 @@
     }"
     subTitle="Assessment"
   />
-  <RequestAssessment :applicationId="applicationId" />
+  <RequestAssessment :applicationId="applicationId" :studentId="studentId" />
   <HistoryAssessment :applicationId="applicationId" />
 </template>
 <script lang="ts">

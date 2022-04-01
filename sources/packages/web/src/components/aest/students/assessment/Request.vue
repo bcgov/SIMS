@@ -31,7 +31,9 @@
             <Column header="Request form" sortable="false"
               ><template #body="slotProps"
                 ><v-btn
-                  @click="viewRequest(slotProps.data.triggerType, 1)"
+                  @click="
+                    viewRequest(slotProps.data.triggerType, slotProps.data.id)
+                  "
                   class="primary"
                   text
                   >View request</v-btn
@@ -68,6 +70,10 @@ export default {
     StatusChipRequestedAssessment,
   },
   props: {
+    studentId: {
+      type: Number,
+      required: true,
+    },
     applicationId: {
       type: Number,
       required: true,
@@ -85,11 +91,17 @@ export default {
     });
 
     const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
+      console.log(triggerType);
+      console.log(id);
       switch (triggerType) {
         case AssessmentTriggerType.StudentAppeal:
           router.push({
             name: AESTRoutesConst.STUDENT_REQUEST_CHANGE_APPROVAL,
-            params: { appealId: id },
+            params: {
+              studentId: props.studentId,
+              applicationId: props.applicationId,
+              appealId: id,
+            },
           });
           break;
         case AssessmentTriggerType.ScholasticStandingChange:

@@ -1,5 +1,6 @@
 import ApiClient from "@/services/http/ApiClient";
 import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
+import { StudentAppealApiOutDTO } from "./http/dto/StudentAppeal.dto";
 
 /**
  * Client service layer for Student Appeal.
@@ -20,5 +21,11 @@ export class StudentAppealService {
       applicationId,
       studentAppeal,
     );
+  }
+
+  async getStudentAppealWithRequests(
+    appealId: number,
+  ): Promise<StudentAppealApiOutDTO> {
+    return ApiClient.StudentAppealApi.getStudentAppealWithRequests(appealId);
   }
 }

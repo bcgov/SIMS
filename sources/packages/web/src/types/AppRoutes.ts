@@ -52,7 +52,7 @@ export enum AppRoutes {
   PendingDesignations = "institution/designation/pending",
   DesignationAESTView = "institution/designation/:designationId/institution/:institutionId?",
   AssessmentSummary = "assessment-summary",
-  RequestChangeApproval = "request-change/:appealId/",
+  RequestChangeApproval = "request-change/:appealId",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",

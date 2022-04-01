@@ -5,9 +5,9 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { UserGroups } from "src/auth/user-groups.enum";
+import { UserGroups } from "../../auth/user-groups.enum";
 import { StudentAppealApiOutDTO } from "./models/student-appeal.dto";
-import { getUserFullName } from "src/utilities";
+import { getUserFullName } from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
