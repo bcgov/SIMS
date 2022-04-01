@@ -6,10 +6,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ECertFullTimeRequestService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-request.service";
 import { ECertPartTimeRequestService } from "../../esdc-integration/e-cert-part-time-integration/e-cert-part-time-request.service";
 import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
-import {
-  ESDCFileResponseDTO,
-  ESDCFileResultDTO,
-} from "./models/esdc-model";
+import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 
