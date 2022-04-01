@@ -16,8 +16,9 @@ import { OfferingIntensity } from "../../database/entities";
 @ApiTags("system-access")
 export class ECertIntegrationController extends BaseController {
   constructor(
-    private readonly eCertRequestService: ECertRequestService,
-    private readonly eCertResponseService: ECertResponseService,
+    private readonly eCertFullTimeRequestService: ECertFullTimeRequestService,
+    private readonly eCertFullTimeResponseService: ECertFullTimeResponseService,
+    private readonly eCertPartTimeRequestService: ECertPartTimeRequestService,
   ) {
     super();
   }
@@ -30,11 +31,10 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-full-time")
   async processFullTimeECertFile(): Promise<ESDCFileResultDTO> {
-    this.logger.log("Sending Full Time E-Cert File...");
-    const uploadFullTimeResult = await this.eCertRequestService.generateECert(
-      OfferingIntensity.fullTime,
-    );
-    this.logger.log("E-Cert Full Time file sent.");
+    this.logger.log("Sending Full-Time E-Cert File...");
+    const uploadFullTimeResult =
+      await this.eCertFullTimeRequestService.generateECert();
+    this.logger.log("E-Cert Full-Time file sent.");
     return {
       generatedFile: uploadFullTimeResult.generatedFile,
       uploadedRecords: uploadFullTimeResult.uploadedRecords,
@@ -49,11 +49,10 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-part-time")
   async processPartTimeECertFile(): Promise<ESDCFileResultDTO> {
-    this.logger.log("Sending Part Time E-Cert File...");
-    const uploadPartTimeResult = await this.eCertRequestService.generateECert(
-      OfferingIntensity.partTime,
-    );
-    this.logger.log("E-Cert Part Time file sent.");
+    this.logger.log("Sending Part-Time E-Cert File...");
+    const uploadPartTimeResult =
+      await this.eCertPartTimeRequestService.generateECert();
+    this.logger.log("E-Cert Part-Time file sent.");
     return {
       generatedFile: uploadPartTimeResult.generatedFile,
       uploadedRecords: uploadPartTimeResult.uploadedRecords,
@@ -66,7 +65,7 @@ export class ECertIntegrationController extends BaseController {
    */
   @Post("process-responses")
   async processResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertResponseService.processResponses();
+    const results = await this.eCertFullTimeResponseService.processResponses();
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

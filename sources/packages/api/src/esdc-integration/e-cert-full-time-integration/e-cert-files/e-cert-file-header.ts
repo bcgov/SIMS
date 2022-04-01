@@ -7,7 +7,7 @@ import {
   RecordTypeCodes,
   SPACE_FILLER,
   TIME_FORMAT,
-} from "../models/e-cert-integration.model";
+} from "../models/e-cert-full-time-integration.model";
 
 const ORIGINATOR_CODE = "BC";
 

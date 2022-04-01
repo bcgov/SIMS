@@ -5,20 +5,20 @@ import {
   DisbursementScheduleService,
   ConfigService,
 } from "../../services";
-import { ProcessSftpResponseResult } from "./models/e-cert-integration.model";
-import { ECertIntegrationService } from "./e-cert-integration.service";
+import { ProcessSftpResponseResult } from "./models/e-cert-full-time-integration.model";
+import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import { getUTCNow } from "../../utilities";
 import { ESDCIntegrationConfig } from "../../types";
 
 @Injectable()
-export class ECertResponseService {
+export class ECertFullTimeResponseService {
   private readonly esdcConfig: ESDCIntegrationConfig;
 
   constructor(
     config: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly eCertService: ECertIntegrationService,
+    private readonly eCertFullTimeService: ECertFullTimeIntegrationService,
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
   ) {
     this.esdcConfig = config.getConfig().ESDCIntegration;
@@ -29,7 +29,7 @@ export class ECertResponseService {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(): Promise<ProcessSftpResponseResult[]> {
-    const filePaths = await this.eCertService.getResponseFilesFullPath(
+    const filePaths = await this.eCertFullTimeService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       new RegExp(
         `^${this.esdcConfig.environmentCode}EDU.PBC.CERTSFB.*\\.DAT`,
@@ -57,7 +57,9 @@ export class ECertResponseService {
     let responseFile: ECertResponseRecord[];
 
     try {
-      responseFile = await this.eCertService.downloadResponseFile(filePath);
+      responseFile = await this.eCertFullTimeService.downloadResponseFile(
+        filePath,
+      );
     } catch (error) {
       this.logger.error(error);
       result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
@@ -85,7 +87,7 @@ export class ECertResponseService {
     try {
       if (result.errorsSummary.length === 0) {
         // if there is an error in the file do not delete the file
-        await this.eCertService.deleteFile(filePath);
+        await this.eCertFullTimeService.deleteFile(filePath);
       }
     } catch (error) {
       // Log the error but allow the process to continue.

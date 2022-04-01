@@ -6,7 +6,7 @@ import {
   NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
-} from "../models/e-cert-integration.model";
+} from "../models/e-cert-full-time-integration.model";
 
 /**
  * Number of possible awards available to be provided (code and amount).
