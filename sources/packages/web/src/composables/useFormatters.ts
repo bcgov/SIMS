@@ -31,7 +31,7 @@ export function useFormatters() {
    * @param date string or date to be converted.
    * @returns string representation (e.g. Aug 05 2021).
    */
-  const dateOnlyLongString = (date: string | Date): string => {
+  const dateOnlyLongString = (date?: string | Date): string => {
     if (date) {
       return dayjs(date).format("MMM D, YYYY");
     }

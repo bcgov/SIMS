@@ -9,50 +9,68 @@
     </div>
     <full-page-container>
       <body-header title="Student change"></body-header>
-
       <content-group
-        v-for="appealRequest in studentAppeal.appealRequests"
-        :key="appealRequest.submittedFormName"
+        v-for="appealRequest in studentAppealRequests"
+        :key="appealRequest.formName"
         class="mb-4"
       >
-        <formio :formName="appealRequest.submittedFormName"></formio>
-        <div class="m-4" />
-        <formio formName="staffapprovalappeal"></formio>
+        <formio
+          :formName="appealRequest.formName"
+          :data="appealRequest.data"
+          :readOnly="true"
+          @loaded="formLoaded"
+        ></formio>
+        <formio
+          formName="staffApprovalAppeal"
+          :data="appealRequest.approval"
+          :key="appealRequest.id"
+          :scoped="true"
+          @loaded="formLoaded"
+        ></formio>
       </content-group>
-
-      <student-appeal-form
-        v-for="formName in appealFormNames"
-        :key="formName"
-        :formName="formName"
-      ></student-appeal-form>
       <div class="mt-4">
         <v-btn color="primary" outlined @click="gotToAssessmentsSummary"
           >Cancel</v-btn
         >
-        <v-btn class="primary-btn-background">Complete student request</v-btn>
+        <v-btn class="primary-btn-background" @click="completeRequest"
+          >Complete student request</v-btn
+        >
       </div>
     </full-page-container>
   </v-container>
 </template>
 <script lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
-import StudentAppealForm from "@/components/common/StudentAppealForm.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import { StudentAppealApiOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 import Formio from "@/components/generic/formio.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import { StudentAppealStatus } from "@/types";
+import { useFormatters } from "@/composables";
+
+export interface StudentAppealApproval {
+  appealStatus?: StudentAppealStatus;
+  noteDescription?: string;
+  string?: Date;
+  assessedByUserName?: string;
+}
+
+export interface StudentAppealRequest {
+  id?: number;
+  data: any;
+  formName: string;
+  approval?: StudentAppealApproval;
+}
 
 export default {
   components: {
     HeaderNavigator,
     FullPageContainer,
     BodyHeader,
-    StudentAppealForm,
     Formio,
     ContentGroup,
   },
@@ -72,13 +90,55 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    let requestFormData: any = undefined;
-    const appealFormNames = ref([] as string[]);
-    let appealForms: any = [];
-    const studentAppeal = ref({} as StudentAppealApiOutDTO);
-    const showRequestForAppeal = computed(
-      () => appealFormNames.value.length === 0,
-    );
+    const { dateOnlyLongString } = useFormatters();
+    const appealForms: any = [];
+    const studentAppealRequests = ref([] as StudentAppealRequest[]);
+
+    onMounted(async () => {
+      const appeal = await StudentAppealService.shared.getStudentAppealWithRequests(
+        props.appealId,
+      );
+      studentAppealRequests.value = appeal.appealRequests.map(request => ({
+        id: request.id,
+        data: request.submittedData,
+        formName: request.submittedFormName,
+        approval: {
+          appealStatus: request.appealStatus,
+          assessedDate: dateOnlyLongString(request.assessedDate),
+          assessedByUserName: request.assessedByUserName,
+          noteDescription: request.noteDescription,
+        },
+      }));
+      console.log(studentAppealRequests.value);
+    });
+
+    const formLoaded = (form: any) => {
+      appealForms.push(form);
+    };
+
+    const allFormsValid = (): boolean => {
+      let isValid = true;
+      appealForms.forEach((form: any) => {
+        if (!form.options.readOnly) {
+          if (!form.checkValidity(undefined, true, undefined, false)) {
+            isValid = false;
+          }
+        }
+      });
+      return isValid;
+    };
+
+    const completeRequest = () => {
+      if (!allFormsValid()) {
+        return;
+      }
+
+      studentAppealRequests.value.forEach(appealRequest => {
+        console.log(appealRequest.approval);
+      });
+
+      // TODO: Save!
+    };
 
     const assessmentsSummaryRoute = {
       name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
@@ -92,27 +152,13 @@ export default {
       router.push(assessmentsSummaryRoute);
     };
 
-    onMounted(async () => {
-      studentAppeal.value = await StudentAppealService.shared.getStudentAppealWithRequests(
-        props.appealId,
-      );
-    });
-
-    const formLoaded = (form: any) => {
-      requestFormData = form;
-    };
-
-    appealForms = [];
-    console.log(appealForms);
-
     return {
       formLoaded,
-      appealFormNames,
-      showRequestForAppeal,
       AESTRoutesConst,
       gotToAssessmentsSummary,
       assessmentsSummaryRoute,
-      studentAppeal,
+      studentAppealRequests,
+      completeRequest,
     };
   },
 };

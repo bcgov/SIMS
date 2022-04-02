@@ -10,6 +10,7 @@ import { SetupContext } from "vue";
 import ApiClient from "../../services/http/ApiClient";
 import FormUploadService from "../../services/FormUploadService";
 import { FormIOCustomEvent } from "@/types";
+import { v4 as uuid } from "uuid";
 
 export default {
   emits: ["submitted", "loaded", "changed", "customEvent", "render"],
@@ -23,6 +24,11 @@ export default {
     },
     readOnly: {
       type: Boolean,
+    },
+    scoped: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
   },
   setup(props: any, context: SetupContext) {
@@ -77,6 +83,22 @@ export default {
           // No action needed. In case of failure it will load the form from the server
           // in the same way as it is the first time load.
         }
+      }
+
+      // In a scenario where the same form definition must be rendered twice on the same page
+      // the form can be defined as 'scoped' to have its elements IDs uniquely identified
+      // to avoid issues with HTML features that rely on the unique IDs.
+      if (props.scoped) {
+        const uniqueId = uuid();
+        const createUniqueIDs = (parentComponent: any) => {
+          if (parentComponent.components) {
+            parentComponent.components.forEach((childComponent: any) => {
+              childComponent.id = `${childComponent.id}${uniqueId}`;
+              createUniqueIDs(childComponent);
+            });
+          }
+        };
+        createUniqueIDs(formDefinition.data);
       }
 
       form = await Formio.createForm(

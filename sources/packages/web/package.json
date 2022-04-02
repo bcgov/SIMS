@@ -29,6 +29,7 @@
     "primeicons": "^4.1.0",
     "primevue": "^3.8.2",
     "roboto-fontface": "*",
+    "uuid": "^8.3.2",
     "vee-validate": "^4.1.12",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "^4.5.11",
