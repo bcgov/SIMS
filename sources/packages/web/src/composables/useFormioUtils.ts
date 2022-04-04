@@ -143,6 +143,22 @@ export function useFormioUtils() {
     checkbox.redraw();
   };
 
+  /**
+   * Check the validity of all forms returning false if any form is not valid
+   * and changing the visual of the invalid components on the UI.
+   * @param forms forms to have the validation executed.
+   * @returns false if any form is not valid.
+   */
+  const checkFormioValidity = (forms: any[]) => {
+    let isValid = true;
+    forms.forEach((form: any) => {
+      if (!form.checkValidity(undefined, true, undefined, false)) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  };
+
   return {
     getComponent,
     redrawComponent,
@@ -155,5 +171,6 @@ export function useFormioUtils() {
     setComponentValue,
     setRadioOptions,
     resetCheckBox,
+    checkFormioValidity,
   };
 }

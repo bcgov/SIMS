@@ -9,33 +9,21 @@
     </div>
     <full-page-container>
       <body-header title="Student change"></body-header>
-      <content-group
-        v-for="appealRequest in studentAppealRequests"
-        :key="appealRequest.formName"
-        class="mb-4"
+      <student-request-change-form-approval
+        :studentAppealRequests="studentAppealRequests"
+        @submitted="submitted"
       >
-        <formio
-          :formName="appealRequest.formName"
-          :data="appealRequest.data"
-          :readOnly="true"
-          @loaded="formLoaded"
-        ></formio>
-        <formio
-          formName="staffApprovalAppeal"
-          :data="appealRequest.approval"
-          :key="appealRequest.id"
-          :scoped="true"
-          @loaded="formLoaded"
-        ></formio>
-      </content-group>
-      <div class="mt-4">
-        <v-btn color="primary" outlined @click="gotToAssessmentsSummary"
-          >Cancel</v-btn
-        >
-        <v-btn class="primary-btn-background" @click="completeRequest"
-          >Complete student request</v-btn
-        >
-      </div>
+        <template #approval-actions="{ submit }">
+          <div class="mt-4">
+            <v-btn color="primary" outlined @click="gotToAssessmentsSummary"
+              >Cancel</v-btn
+            >
+            <v-btn class="primary-btn-background" @click="submit"
+              >Complete student request</v-btn
+            >
+          </div>
+        </template>
+      </student-request-change-form-approval>
     </full-page-container>
   </v-container>
 </template>
@@ -47,32 +35,16 @@ import BodyHeader from "@/components/generic/BodyHeader.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import Formio from "@/components/generic/formio.vue";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
-import { StudentAppealStatus } from "@/types";
 import { useFormatters } from "@/composables";
-
-export interface StudentAppealApproval {
-  appealStatus?: StudentAppealStatus;
-  noteDescription?: string;
-  string?: Date;
-  assessedByUserName?: string;
-}
-
-export interface StudentAppealRequest {
-  id?: number;
-  data: any;
-  formName: string;
-  approval?: StudentAppealApproval;
-}
+import { StudentAppealRequest } from "@/components/common/StudentRequestChange/StudentRequestChange.models";
+import StudentRequestChangeFormApproval from "@/components/common/StudentRequestChange/StudentRequestChangeFormApproval.vue";
 
 export default {
   components: {
     HeaderNavigator,
     FullPageContainer,
     BodyHeader,
-    Formio,
-    ContentGroup,
+    StudentRequestChangeFormApproval,
   },
   props: {
     studentId: {
@@ -91,7 +63,6 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const appealForms: any = [];
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
 
     onMounted(async () => {
@@ -107,38 +78,10 @@ export default {
           assessedDate: dateOnlyLongString(request.assessedDate),
           assessedByUserName: request.assessedByUserName,
           noteDescription: request.noteDescription,
+          showAudit: false,
         },
       }));
-      console.log(studentAppealRequests.value);
     });
-
-    const formLoaded = (form: any) => {
-      appealForms.push(form);
-    };
-
-    const allFormsValid = (): boolean => {
-      let isValid = true;
-      appealForms.forEach((form: any) => {
-        if (!form.options.readOnly) {
-          if (!form.checkValidity(undefined, true, undefined, false)) {
-            isValid = false;
-          }
-        }
-      });
-      return isValid;
-    };
-
-    const completeRequest = () => {
-      if (!allFormsValid()) {
-        return;
-      }
-
-      studentAppealRequests.value.forEach(appealRequest => {
-        console.log(appealRequest.approval);
-      });
-
-      // TODO: Save!
-    };
 
     const assessmentsSummaryRoute = {
       name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
@@ -152,13 +95,16 @@ export default {
       router.push(assessmentsSummaryRoute);
     };
 
+    const submitted = () => {
+      console.log("submitted");
+    };
+
     return {
-      formLoaded,
       AESTRoutesConst,
       gotToAssessmentsSummary,
       assessmentsSummaryRoute,
       studentAppealRequests,
-      completeRequest,
+      submitted,
     };
   },
 };
