@@ -6,6 +6,8 @@ import {
   FormService,
   MSFAANumberService,
   SequenceControlService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
   StudentFileService,
   SupportingUserService,
   UserService,
@@ -31,6 +33,8 @@ import { LoggerModule } from "./logger/logger.module";
     MSFAANumberService,
     ConfigService,
     WorkflowService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
   ],
 })
 export class AppSupportingUsersModule {}

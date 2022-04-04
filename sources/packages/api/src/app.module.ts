@@ -36,6 +36,8 @@ import {
   SINValidationService,
   DesignationAgreementLocationService,
   StudentAssessmentService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "./services";
 import {
   UserController,
@@ -172,6 +174,8 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     DesignationAgreementLocationService,
     StudentAssessmentService,
     InstitutionLocationsControllerService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
   ],
 })
 export class AppModule {}
