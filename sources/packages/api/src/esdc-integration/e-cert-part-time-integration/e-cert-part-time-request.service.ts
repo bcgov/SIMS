@@ -121,7 +121,8 @@ export class ECertPartTimeRequestService {
     const [addressInfo] =
       disbursement.studentAssessment.application.student.contactInfo.addresses;
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      disbursement.studentAssessment.offering.educationProgram.cipCode,
+      disbursement.studentAssessment.application.currentAssessment.offering
+        .educationProgram.cipCode,
     );
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
@@ -141,18 +142,23 @@ export class ECertPartTimeRequestService {
       documentProducedDate: now,
       negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
       schoolAmount:
-        disbursement.studentAssessment.offering
+        disbursement.studentAssessment.application.currentAssessment.offering
           .tuitionRemittanceRequestedAmount,
       educationalStartDate:
-        disbursement.studentAssessment.offering.studyStartDate,
-      educationalEndDate: disbursement.studentAssessment.offering.studyEndDate,
+        disbursement.studentAssessment.application.currentAssessment.offering
+          .studyStartDate,
+      educationalEndDate:
+        disbursement.studentAssessment.application.currentAssessment.offering
+          .studyEndDate,
       federalInstitutionCode: application.location.institutionCode,
       weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
       fieldOfStudy,
-      yearOfStudy: disbursement.studentAssessment.offering.yearOfStudy,
+      yearOfStudy:
+        disbursement.studentAssessment.application.currentAssessment.offering
+          .yearOfStudy,
       completionYears:
-        disbursement.studentAssessment.offering.educationProgram
-          .completionYears,
+        disbursement.studentAssessment.application.currentAssessment.offering
+          .educationProgram.completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
       dateOfBirth: application.student.birthDate,
       lastName: application.student.user.lastName,

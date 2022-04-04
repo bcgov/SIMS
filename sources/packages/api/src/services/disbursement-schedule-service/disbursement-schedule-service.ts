@@ -180,6 +180,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "application.data",
         "application.relationshipStatus",
         "application.studentNumber",
+        "currentAssessment.id",
+        "currentAssessment.assessmentData",
         "offering.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -201,7 +203,6 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementValue.valueAmount",
         "disbursement.coeUpdatedAt",
         "studentAssessment.id",
-        "studentAssessment.assessmentData",
       ])
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
