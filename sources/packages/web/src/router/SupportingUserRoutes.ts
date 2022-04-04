@@ -86,7 +86,7 @@ export const supportingUsersRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });

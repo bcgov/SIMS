@@ -83,9 +83,10 @@ export default {
         }
       }
       if (isAESTUser.value) {
-        const programDetails = await EducationProgramService.shared.getEducationProgramForAEST(
-          props.programId,
-        );
+        const programDetails =
+          await EducationProgramService.shared.getEducationProgramForAEST(
+            props.programId,
+          );
         institutionId.value = programDetails.institutionId;
         initialData.value = {
           ...programDetails,

@@ -57,9 +57,10 @@ export default {
     const selectedForm = ref();
 
     onMounted(async () => {
-      applicationDetail.value = await ApplicationService.shared.getApplicationDetail(
-        props.applicationId,
-      );
+      applicationDetail.value =
+        await ApplicationService.shared.getApplicationDetail(
+          props.applicationId,
+        );
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
         ...applicationDetail.value.data,

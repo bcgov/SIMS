@@ -66,9 +66,7 @@ export class InstitutionApi extends HttpBaseClient {
     await this.apiClient.delete(`institution/user/${id}`, this.addAuthHeader());
   }
 
-  public async getUserTypeAndRoles(): Promise<
-    InstitutionUserTypeAndRoleResponseDto
-  > {
+  public async getUserTypeAndRoles(): Promise<InstitutionUserTypeAndRoleResponseDto> {
     try {
       const resp = await this.apiClient.get(
         "institution/user-types-roles",

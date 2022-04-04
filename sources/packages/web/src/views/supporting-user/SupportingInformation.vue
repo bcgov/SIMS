@@ -142,10 +142,11 @@ export default {
       }
 
       try {
-        const searchResult = await SupportingUsersService.shared.getApplicationDetails(
-          props.supportingUserType,
-          getIdentifiedApplication(),
-        );
+        const searchResult =
+          await SupportingUsersService.shared.getApplicationDetails(
+            props.supportingUserType,
+            getIdentifiedApplication(),
+          );
         setInitialData(searchResult.programYearStartDate);
         formName.value = searchResult.formName;
       } catch (error) {

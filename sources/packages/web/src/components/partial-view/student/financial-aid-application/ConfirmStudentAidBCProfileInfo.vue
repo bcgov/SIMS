@@ -5,7 +5,7 @@
     This information was provided by you when you first signed in to your
     account as well as shared by your BC Services Card login.
     <div></div>
-    <div class="p-fluid  p-grid p-extra">
+    <div class="p-fluid p-grid p-extra">
       <div class="p-field p-col-4">
         <label for="fullName" class="label-extra">Full Name</label>
         <div class="p-col text-extra">
@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-    <div class="p-fluid  p-grid ">
+    <div class="p-fluid p-grid">
       <div class="p-field p-col-4">
         <label for="dateOfBirth" class="label-extra">Date of Birth</label>
         <div class="p-col text-extra">
@@ -22,7 +22,7 @@
       </div>
       <div class="p-field p-col-4">
         <label for="gender" class="label-extra">Gender</label>
-        <div class=" p-col text-extra">{{ studentInfo.gender }}</div>
+        <div class="p-col text-extra">{{ studentInfo.gender }}</div>
       </div>
     </div>
     <h4 class="p-mb-5">
@@ -78,7 +78,8 @@ export default {
 
     onMounted(async () => {
       //Get the student info from api call
-      const studentInfoFrmService = await StudentService.shared.getStudentInfo();
+      const studentInfoFrmService =
+        await StudentService.shared.getStudentInfo();
       studentInfo.value = studentInfoFrmService;
       studentContact.value = studentInfoFrmService.contact;
     });

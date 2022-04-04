@@ -5,7 +5,8 @@ import { getSQLFileData } from "../../utilities";
 const DIR = "InstitutionUsers";
 
 export class UpdateInstititionUserRemoveGuidCol1621612824539
-  implements MigrationInterface {
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     /**
      * Just reverting changes of last migration UpdateInstitutionUser1621518770465 which is adding guid column

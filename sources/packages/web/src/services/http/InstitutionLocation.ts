@@ -84,7 +84,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
   ): Promise<void> {
     await this.apiClient
       .post("institution/user", createInstitutionUserDto, this.addAuthHeader())
-      .catch(error => {
+      .catch((error) => {
         this.handleCustomError(error);
       });
   }
@@ -120,7 +120,7 @@ export class InstitutionLocationApi extends HttpBaseClient {
         updateInstitutionUserDto,
         this.addAuthHeader(),
       )
-      .catch(error => {
+      .catch((error) => {
         this.handleCustomError(error);
       });
   }

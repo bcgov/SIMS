@@ -80,14 +80,14 @@ export function useFormioUtils() {
 
   // Search for components of a specifi type.
   const getComponentsOfType = (form: any, type: string): any[] => {
-    return recursiveSearch(form, component => component.type === type);
+    return recursiveSearch(form, (component) => component.type === type);
   };
 
   // Get all unique file names from all file components.
   const getAssociatedFiles = (form: any): string[] => {
     const fileComponents = getComponentsOfType(form, "file");
     const associatedFiles: string[] = [];
-    fileComponents.forEach(fileComponent => {
+    fileComponents.forEach((fileComponent) => {
       const fileComponentValue = fileComponent.getValue();
       if (fileComponentValue) {
         fileComponentValue.forEach((file: any) => {

@@ -11,7 +11,7 @@ export function useModalDialog<T>() {
 
   const showModal = async (): Promise<T> => {
     showDialog.value = true;
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       promise = resolve;
     });
   };

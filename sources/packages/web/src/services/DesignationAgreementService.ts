@@ -60,10 +60,11 @@ export class DesignationAgreementService {
     /**Filtering the locations which are either approved or denied(already approved location) only.
      * locationsDesignations will have value only when approval is done.
      */
-    designation.locationsDesignations = designation.locationsDesignations?.filter(
-      location =>
-        location.existingDesignationLocation || location.approved === true,
-    );
+    designation.locationsDesignations =
+      designation.locationsDesignations?.filter(
+        (location) =>
+          location.existingDesignationLocation || location.approved === true,
+      );
     await ApiClient.DesignationAgreement.updateDesignationAgreement(
       designationId,
       designation,

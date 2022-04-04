@@ -2,7 +2,8 @@ import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../../utilities";
 
 export class UpdateApplicationsAddAssessment1626994719103
-  implements MigrationInterface {
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData("Add-col-assessment.sql", "Applications"),

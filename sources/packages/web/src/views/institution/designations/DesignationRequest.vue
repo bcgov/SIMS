@@ -43,11 +43,8 @@ export default {
     const toastMessage = useToastMessage();
     const formatter = useFormatters();
     const { institutionState } = useInstitutionState();
-    const {
-      userFullName,
-      userEmail,
-      isLegalSigningAuthority,
-    } = useInstitutionAuth();
+    const { userFullName, userEmail, isLegalSigningAuthority } =
+      useInstitutionAuth();
 
     const designationModel = reactive({} as DesignationModel);
     designationModel.institutionName =
@@ -65,9 +62,10 @@ export default {
     }
 
     onMounted(async () => {
-      const locations = await InstitutionService.shared.getAllInstitutionLocations();
+      const locations =
+        await InstitutionService.shared.getAllInstitutionLocations();
       designationModel.locations = locations.map(
-        location =>
+        (location) =>
           ({
             locationId: location.id,
             locationName: location.name,
