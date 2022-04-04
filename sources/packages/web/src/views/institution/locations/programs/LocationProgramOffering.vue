@@ -71,11 +71,12 @@ export default {
           props.programId,
         );
         if (props.offeringId) {
-          const programOffering = await EducationProgramOfferingService.shared.getProgramOffering(
-            props.locationId,
-            props.programId,
-            props.offeringId,
-          );
+          const programOffering =
+            await EducationProgramOfferingService.shared.getProgramOffering(
+              props.locationId,
+              props.programId,
+              props.offeringId,
+            );
           initialData.value = {
             ...programOffering,
             ...programDetails,
@@ -88,9 +89,10 @@ export default {
       }
       if (isAESTUser.value) {
         if (props.offeringId) {
-          const programOffering = await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
-            props.offeringId,
-          );
+          const programOffering =
+            await EducationProgramOfferingService.shared.getProgramOfferingForAEST(
+              props.offeringId,
+            );
           initialData.value = {
             ...programOffering,
           };
@@ -112,9 +114,10 @@ export default {
           },
         });
       } else if (isAESTUser.value) {
-        const programDetails = await EducationProgramService.shared.getEducationProgramForAEST(
-          props.programId,
-        );
+        const programDetails =
+          await EducationProgramService.shared.getEducationProgramForAEST(
+            props.programId,
+          );
         if (programDetails.institutionId) {
           //view program mode
           router.push({

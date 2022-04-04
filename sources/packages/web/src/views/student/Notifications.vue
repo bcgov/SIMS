@@ -19,7 +19,8 @@ export default {
     const hasRestriction = ref(false);
     const restrictionMessage = ref("");
     onMounted(async () => {
-      const studentRestriction = await StudentService.shared.getStudentRestriction();
+      const studentRestriction =
+        await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
     });

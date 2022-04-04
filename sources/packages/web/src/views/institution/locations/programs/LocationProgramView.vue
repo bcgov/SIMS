@@ -43,9 +43,10 @@ export default {
   setup(props: any) {
     const educationProgram = ref({} as EducationProgramData);
     const getEducationProgramAndOffering = async () => {
-      educationProgram.value = await EducationProgramService.shared.getEducationProgram(
-        props.programId,
-      );
+      educationProgram.value =
+        await EducationProgramService.shared.getEducationProgram(
+          props.programId,
+        );
     };
 
     onMounted(getEducationProgramAndOffering);

@@ -58,9 +58,10 @@ export default {
       }
     };
     onMounted(async () => {
-      initialData.value = await InstitutionService.shared.getInstitutionLocation(
-        props.locationId,
-      );
+      initialData.value =
+        await InstitutionService.shared.getInstitutionLocation(
+          props.locationId,
+        );
     });
     return {
       initialData,

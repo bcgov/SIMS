@@ -124,7 +124,7 @@ export class ApplicationApi extends HttpBaseClient {
         payload,
         this.addAuthHeader(),
       )
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           this.handleRequestError(error.response.data?.message);
           throw error.response.data?.message;
