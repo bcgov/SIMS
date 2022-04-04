@@ -30,14 +30,13 @@ import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../database/entities";
-import { ECertResponseRecord } from "../e-cert-part-time-integration/e-cert-files/e-cert-response-record";
 
 /**
  * Manages the file content generation and methods to
  * upload/download the files to SFTP.
  */
 @Injectable()
-export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<ECertResponseRecord> {
+export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
   private readonly esdcConfig: ESDCIntegrationConfig;
 
   constructor(
@@ -216,7 +215,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<ECertRe
    * This method will be implemented during the response processing of the PartTime - Ecert file
    * @param remoteFilePath
    */
-  downloadResponseFile(remoteFilePath: string): Promise<ECertResponseRecord> {
-    throw new Error("Method not implemented.");
+  downloadResponseFile(remoteFilePath: string): Promise<void> {
+    throw new Error("Method not implemented");
   }
 }
