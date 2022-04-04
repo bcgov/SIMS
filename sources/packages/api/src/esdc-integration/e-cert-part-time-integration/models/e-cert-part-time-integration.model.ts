@@ -6,7 +6,7 @@ import {
 export const DATE_FORMAT = "YYYYMMDD";
 export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
-export const ECERT_SENT_TITLE = "ENTITLEMENT";
+export const ECERT_SENT_TITLE = "Entitlement File";
 export const TIME_FORMAT = "HHmm";
 
 export type Award = Pick<
@@ -50,9 +50,9 @@ export interface ECertRecord {
  * files sent to ESDC.
  */
 export enum RecordTypeCodes {
-  ECertHeader = "100",
-  ECertRecord = "200",
-  ECertFooter = "999",
+  ECertHeader = "01",
+  ECertRecord = "02",
+  ECertFooter = "99",
 }
 
 /**
