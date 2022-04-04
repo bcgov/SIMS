@@ -1,7 +1,6 @@
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../utilities/string-builder";
 import {
-  ECERT_SENT_TITLE,
   NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
@@ -14,25 +13,24 @@ import {
  */
 export class ECertFileFooter implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
-  totalSINHash: number;
+  totalAmountDisbursed: number;
   recordCount: number;
 
   public getFixedFormat(): string {
     const footer = new StringBuilder();
     footer.append(this.recordTypeCode);
-    footer.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
     footer.appendWithStartFiller(this.recordCount, 9, NUMBER_FILLER);
-    footer.appendWithStartFiller(this.totalSINHash, 15, NUMBER_FILLER);
-    footer.repeatAppend(SPACE_FILLER, 733); //Trailing spaces
+    footer.appendWithStartFiller(this.totalAmountDisbursed, 15, NUMBER_FILLER);
+    footer.repeatAppend(SPACE_FILLER, 730); //Trailing spaces
     return footer.toString();
   }
 
   public static createFromLine(line: string): ECertFileFooter {
     const footer = new ECertFileFooter();
-    footer.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
-    // Here total record count is the total records rejected
-    footer.recordCount = parseInt(line.substr(52, 9));
-    footer.totalSINHash = parseInt(line.substr(61, 15));
+    footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
+    // Here total record count is the total records
+    footer.recordCount = parseInt(line.substring(2, 11));
+    footer.totalAmountDisbursed = parseInt(line.substring(11, 26));
     return footer;
   }
 }
