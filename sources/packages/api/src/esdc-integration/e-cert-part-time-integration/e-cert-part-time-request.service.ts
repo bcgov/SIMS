@@ -118,11 +118,10 @@ export class ECertPartTimeRequestService {
    */
   private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
-    const [addressInfo] =
-      disbursement.studentAssessment.application.student.contactInfo.addresses;
+    const application = disbursement.studentAssessment.application;
+    const [addressInfo] = application.student.contactInfo.addresses;
     const fieldOfStudy = getFieldOfStudyFromCIPCode(
-      disbursement.studentAssessment.application.currentAssessment.offering
-        .educationProgram.cipCode,
+      application.currentAssessment.offering.educationProgram.cipCode,
     );
     const awards = disbursement.disbursementValues.map(
       (disbursementValue) =>
@@ -133,7 +132,6 @@ export class ECertPartTimeRequestService {
         } as Award),
     );
 
-    const application = disbursement.studentAssessment.application;
     return {
       sin: application.student.sin,
       applicationNumber: application.applicationNumber,
@@ -142,23 +140,16 @@ export class ECertPartTimeRequestService {
       documentProducedDate: now,
       negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
       schoolAmount:
-        disbursement.studentAssessment.application.currentAssessment.offering
-          .tuitionRemittanceRequestedAmount,
+        application.currentAssessment.offering.tuitionRemittanceRequestedAmount,
       educationalStartDate:
-        disbursement.studentAssessment.application.currentAssessment.offering
-          .studyStartDate,
-      educationalEndDate:
-        disbursement.studentAssessment.application.currentAssessment.offering
-          .studyEndDate,
+        application.currentAssessment.offering.studyStartDate,
+      educationalEndDate: application.currentAssessment.offering.studyEndDate,
       federalInstitutionCode: application.location.institutionCode,
-      weeksOfStudy: disbursement.studentAssessment.assessmentData.weeks,
+      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
       fieldOfStudy,
-      yearOfStudy:
-        disbursement.studentAssessment.application.currentAssessment.offering
-          .yearOfStudy,
+      yearOfStudy: application.currentAssessment.offering.yearOfStudy,
       completionYears:
-        disbursement.studentAssessment.application.currentAssessment.offering
-          .educationProgram.completionYears,
+        application.currentAssessment.offering.educationProgram.completionYears,
       enrollmentConfirmationDate: disbursement.coeUpdatedAt,
       dateOfBirth: application.student.birthDate,
       lastName: application.student.user.lastName,
