@@ -99,7 +99,8 @@ export default {
     );
 
     const getStudentDetails = async () => {
-      const studentRestriction = await StudentService.shared.getStudentRestriction();
+      const studentRestriction =
+        await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
       if (props.editMode) {

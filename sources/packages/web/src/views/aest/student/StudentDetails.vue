@@ -1,8 +1,6 @@
 <template>
   <div class="mb-2">
-    <div class="muted-heading-text">
-      Student Details
-    </div>
+    <div class="muted-heading-text">Student Details</div>
     <span class="heading-x-large mb-2">
       {{ studentDetails.firstName }} {{ studentDetails.lastName }}
       <designation-and-restriction-status-badge

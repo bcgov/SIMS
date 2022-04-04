@@ -119,16 +119,16 @@ export class InstitutionService {
   mapUserRolesAndLocation(
     response: InstitutionUserResDto[],
   ): InstitutionUserViewModel[] {
-    return response.map(institutionUser => {
+    return response.map((institutionUser) => {
       const roleArray = institutionUser.authorizations
-        .map(auth => auth.authType.role || "")
-        .filter(institutionUserRole => institutionUserRole !== "");
+        .map((auth) => auth.authType.role || "")
+        .filter((institutionUserRole) => institutionUserRole !== "");
       const role = roleArray.length > 0 ? roleArray.join(" ") : "-";
       const locationArray = institutionUser.authorizations
-        .map(auth => auth.location?.name || "")
-        .filter(loc => loc !== "");
+        .map((auth) => auth.location?.name || "")
+        .filter((loc) => loc !== "");
       const userType = institutionUser.authorizations.map(
-        auth => auth.authType.type,
+        (auth) => auth.authType.type,
       );
       const location = userType.includes("admin")
         ? ["All"]
@@ -183,9 +183,8 @@ export class InstitutionService {
           : FieldSortOrder.ASC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
-    const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(
-      URL,
-    );
+    const response: InstitutionUserAndCount =
+      await ApiClient.Institution.institutionSummary(URL);
     return {
       users: this.mapUserRolesAndLocation(response.users),
       totalUsers: response.totalUsers,
@@ -410,9 +409,8 @@ export class InstitutionService {
           : FieldSortOrder.ASC;
       URL = `${URL}&sortField=${sortField}&sortOrder=${sortDBOrder}`;
     }
-    const response: InstitutionUserAndCount = await ApiClient.Institution.institutionSummary(
-      URL,
-    );
+    const response: InstitutionUserAndCount =
+      await ApiClient.Institution.institutionSummary(URL);
     return {
       users: this.mapUserRolesAndLocation(response.users),
       totalUsers: response.totalUsers,

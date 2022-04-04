@@ -115,9 +115,10 @@ export default {
       });
     };
     onMounted(async () => {
-      const supportingUsers = await SupportingUsersService.shared.getSupportingUsersForSideBar(
-        props.applicationId,
-      );
+      const supportingUsers =
+        await SupportingUsersService.shared.getSupportingUsersForSideBar(
+          props.applicationId,
+        );
       supportingUsers.forEach((supportingUser, index) => {
         if (supportingUser.supportingUserType === SupportingUserType.Parent) {
           relatedParentPartners.value.push({

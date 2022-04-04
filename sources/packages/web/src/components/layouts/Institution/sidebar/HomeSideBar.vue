@@ -116,8 +116,7 @@ export default {
                     icon: "mdi-account-tie-outline",
                     command: () => {
                       router.push({
-                        name:
-                          InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
+                        name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
                         params: {
                           locationId: data.id,
                           locationName: data.name,
@@ -130,8 +129,7 @@ export default {
                     icon: "mdi-account-tie-outline",
                     command: () => {
                       router.push({
-                        name:
-                          InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
+                        name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
                         params: {
                           locationId: data.id,
                           locationName: data.name,

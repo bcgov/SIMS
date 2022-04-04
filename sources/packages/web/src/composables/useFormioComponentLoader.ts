@@ -15,9 +15,10 @@ export function useFormioComponentLoader() {
     offeringId: number,
     fieldId: string,
   ) => {
-    const valueToBeLoaded = await EducationProgramOfferingService.shared.getProgramOfferingDetails(
-      offeringId,
-    );
+    const valueToBeLoaded =
+      await EducationProgramOfferingService.shared.getProgramOfferingDetails(
+        offeringId,
+      );
     formioUtils.setComponentValue(
       form,
       fieldId,
@@ -31,9 +32,10 @@ export function useFormioComponentLoader() {
     programId: number,
     fieldId: string,
   ) => {
-    const valueToBeLoaded = await EducationProgramService.shared.getStudentEducationProgram(
-      programId,
-    );
+    const valueToBeLoaded =
+      await EducationProgramService.shared.getStudentEducationProgram(
+        programId,
+      );
     formioUtils.setComponentValue(form, fieldId, valueToBeLoaded);
   };
 
