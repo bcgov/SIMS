@@ -1,8 +1,6 @@
 <template>
   <div class="mb-2">
-    <div class="muted-heading-text">
-      Institution Details
-    </div>
+    <div class="muted-heading-text">Institution Details</div>
     <span class="heading-x-large mb-2">
       {{ institutionBasicDetail.operatingName }}
       <status-chip-designation-agreement
@@ -111,9 +109,10 @@ export default {
     ]);
 
     onMounted(async () => {
-      institutionBasicDetail.value = await InstitutionService.shared.getBasicInstitutionInfoById(
-        props.institutionId,
-      );
+      institutionBasicDetail.value =
+        await InstitutionService.shared.getBasicInstitutionInfoById(
+          props.institutionId,
+        );
     });
     return {
       institutionBasicDetail,

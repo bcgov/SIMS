@@ -24,7 +24,7 @@ export class UserAuthorizationService {
       Admin users has access to the requested page*/
       if (allowedTypeList && isInstitutionAdmin) {
         return allowedTypeList.some(
-          type => type === InstitutionUserTypes.admin,
+          (type) => type === InstitutionUserTypes.admin,
         );
       }
 
@@ -36,7 +36,7 @@ export class UserAuthorizationService {
         );
       }
 
-      return allowedTypeList.some(type => {
+      return allowedTypeList.some((type) => {
         /* Check if user a location Manager and the 
             location Manager has access to the requested page
           */
@@ -68,7 +68,7 @@ export class UserAuthorizationService {
     return (
       allowedUserType === userType &&
       institutionUserTypes.some(
-        authDetails => authDetails?.userType === userType,
+        (authDetails) => authDetails?.userType === userType,
       )
     );
   }
@@ -84,7 +84,7 @@ export class UserAuthorizationService {
       return (
         allowedUserType === userType &&
         institutionUserTypes.some(
-          authDetails =>
+          (authDetails) =>
             authDetails?.userType === userType &&
             authDetails?.locationId === Number(locationId),
         )
@@ -104,7 +104,7 @@ export class UserAuthorizationService {
         store.getters["institution/myInstitutionLocations"];
 
       return adminAllowedLocations.some(
-        locationDetails => locationDetails?.id === Number(locationId),
+        (locationDetails) => locationDetails?.id === Number(locationId),
       );
     }
     return false;
@@ -115,7 +115,7 @@ export class UserAuthorizationService {
     checkAllowedLocationUserTypes?: string[],
     urlParamsLocationId?: string,
   ) {
-    return checkAllowedLocationUserTypes?.some(type => {
+    return checkAllowedLocationUserTypes?.some((type) => {
       /* Check if user a location Manager and the 
           location Manager has access to the requested page and  
           check location Manager has access to the locationId 

@@ -45,9 +45,10 @@ export default {
     };
 
     onMounted(async () => {
-      designations.value = await DesignationAgreementService.shared.getDesignationsAgreements(
-        props.institutionId,
-      );
+      designations.value =
+        await DesignationAgreementService.shared.getDesignationsAgreements(
+          props.institutionId,
+        );
     });
 
     return {

@@ -54,7 +54,8 @@ export default {
 
     // Hooks
     onMounted(async () => {
-      institutionProfileModel.value = await InstitutionService.shared.getDetail();
+      institutionProfileModel.value =
+        await InstitutionService.shared.getDetail();
     });
 
     return {

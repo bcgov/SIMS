@@ -33,12 +33,10 @@ describe.skip("Test institution user and auth model", () => {
     typeAndRoleRepo = connection.getRepository<InstitutionUserTypeAndRole>(
       InstitutionUserTypeAndRole,
     );
-    userAuthRepo = connection.getRepository<InstitutionUserAuth>(
-      InstitutionUserAuth,
-    );
-    institutionUserRepo = connection.getRepository<InstitutionUser>(
-      InstitutionUser,
-    );
+    userAuthRepo =
+      connection.getRepository<InstitutionUserAuth>(InstitutionUserAuth);
+    institutionUserRepo =
+      connection.getRepository<InstitutionUser>(InstitutionUser);
     userRepo = connection.getRepository(User);
     institutionRepo = connection.getRepository(Institution);
     locationRepo = connection.getRepository(InstitutionLocation);

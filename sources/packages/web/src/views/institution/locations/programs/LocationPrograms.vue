@@ -76,7 +76,9 @@
             ></Column>
             <Column>
               <template #body="slotProps">
-                <v-btn outlined @click="goToViewProgram(slotProps.data.id)"
+                <v-btn
+                  variant="outlined"
+                  @click="goToViewProgram(slotProps.data.id)"
                   >View</v-btn
                 >
               </template>
@@ -139,14 +141,15 @@ export default {
       sortOrder?: DataTableSortOrder,
     ) => {
       loading.value = true;
-      programAndCount.value = await EducationProgramService.shared.getLocationProgramsSummary(
-        props.locationId,
-        page,
-        pageCount,
-        searchBox.value,
-        sortField,
-        sortOrder,
-      );
+      programAndCount.value =
+        await EducationProgramService.shared.getLocationProgramsSummary(
+          props.locationId,
+          page,
+          pageCount,
+          searchBox.value,
+          sortField,
+          sortOrder,
+        );
       loading.value = false;
     };
 
@@ -162,9 +165,10 @@ export default {
       );
     };
     const loadProgramDetails = async () => {
-      locationDetails.value = await InstitutionService.shared.getInstitutionLocation(
-        props.locationId,
-      );
+      locationDetails.value =
+        await InstitutionService.shared.getInstitutionLocation(
+          props.locationId,
+        );
     };
     // search program table
     const searchProgramTable = async () => {

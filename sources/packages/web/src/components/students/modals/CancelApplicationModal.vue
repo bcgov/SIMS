@@ -19,7 +19,7 @@
     </p>
     <template #footer>
       <v-btn
-        outlined
+        variant="outlined"
         class="float-left"
         color="primary"
         @click="updateShowCancelApplicationModal()"

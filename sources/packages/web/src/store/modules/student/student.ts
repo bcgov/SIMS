@@ -1,5 +1,6 @@
 import { SINStatusEnum } from "@/types/contracts/StudentContract";
 
+type storeCommit = (name: string, data: any) => void;
 export class StudentProfile {
   name?: string;
   age?: string;
@@ -62,18 +63,18 @@ export const student = {
 
   actions: {
     setHasValidSIN(
-      { commit }: { commit: Function },
+      { commit }: { commit: storeCommit },
       sinValidStatus: SINValidStatus,
     ) {
       commit("SET_VALID_SIN", sinValidStatus);
     },
 
-    setStudentProfileData({ commit }: { commit: Function }, token: any) {
+    setStudentProfileData({ commit }: { commit: storeCommit }, token: any) {
       commit("SET_STUDENT_PROFILE_DATA", token.tokenParsed);
     },
 
     setHasStudentAccount(
-      { commit }: { commit: Function },
+      { commit }: { commit: storeCommit },
       hasStudentAccount: boolean,
     ) {
       commit("SET_HAS_STUDENT_ACCOUNT", hasStudentAccount);

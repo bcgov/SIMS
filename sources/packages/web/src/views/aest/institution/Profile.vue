@@ -124,9 +124,8 @@ export default {
     const institutionProfileDetail = ref({} as InstitutionDetailDTO);
     const router = useRouter();
     onMounted(async () => {
-      institutionProfileDetail.value = await InstitutionService.shared.getDetail(
-        props.institutionId,
-      );
+      institutionProfileDetail.value =
+        await InstitutionService.shared.getDetail(props.institutionId);
     });
 
     const editProfile = () => {

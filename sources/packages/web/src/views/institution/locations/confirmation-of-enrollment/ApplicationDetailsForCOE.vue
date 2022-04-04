@@ -96,10 +96,11 @@ export default {
     };
 
     const loadInitialData = async () => {
-      initialData.value = await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
-        props.disbursementScheduleId,
-        props.locationId,
-      );
+      initialData.value =
+        await ConfirmationOfEnrollmentService.shared.getApplicationForCOE(
+          props.disbursementScheduleId,
+          props.locationId,
+        );
     };
 
     const editProgramInformation = async () => {

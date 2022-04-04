@@ -142,7 +142,8 @@ export class BCeIDService {
           return {
             guid: account.guid.value,
             userId: account.userId.value,
-            displayName: `${account.individualIdentity?.name?.firstname.value} ${account.individualIdentity?.name?.surname.value}`.trim(),
+            displayName:
+              `${account.individualIdentity?.name?.firstname.value} ${account.individualIdentity?.name?.surname.value}`.trim(),
             firstname: account.individualIdentity?.name?.firstname.value,
             surname: account.individualIdentity?.name?.surname.value,
             email: account.contact?.email.value,

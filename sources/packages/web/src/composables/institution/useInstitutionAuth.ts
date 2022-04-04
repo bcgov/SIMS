@@ -19,7 +19,7 @@ export function useInstitutionAuth() {
   const userAuth = computed(() => authorizations);
   const isLegalSigningAuthority = computed(() =>
     authorizations.some(
-      auth => auth.userRole === InstitutionUserRoles.legalSigningAuthority,
+      (auth) => auth.userRole === InstitutionUserRoles.legalSigningAuthority,
     ),
   );
 

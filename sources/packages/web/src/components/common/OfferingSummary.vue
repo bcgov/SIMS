@@ -15,12 +15,10 @@
         v-if="isInstitutionUser"
         class="ml-2"
         @click="goToAddNewOffering()"
-        outlined
+        variant="outlined"
         color="#2965C5"
       >
-        <v-icon size="25" left>
-          mdi-open-in-new
-        </v-icon>
+        <v-icon size="25" left> mdi-open-in-new </v-icon>
         Add Study Period
       </v-btn>
     </div>
@@ -62,7 +60,7 @@
     <Column>
       <template #body="slotProps">
         <v-btn
-          outlined
+          variant="outlined"
           @click="offeringButtonAction(slotProps.data.id)"
           color="#2965C5"
         >
@@ -179,25 +177,27 @@ export default {
     ) => {
       loading.value = true;
       if (isInstitutionUser.value) {
-        offeringsAndCount.value = await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
-          props.locationId,
-          props.programId,
-          page,
-          pageCount,
-          searchBox.value,
-          sortField,
-          sortOrder,
-        );
+        offeringsAndCount.value =
+          await EducationProgramOfferingService.shared.getAllEducationProgramOffering(
+            props.locationId,
+            props.programId,
+            page,
+            pageCount,
+            searchBox.value,
+            sortField,
+            sortOrder,
+          );
       } else if (isAESTUser.value) {
-        offeringsAndCount.value = await EducationProgramOfferingService.shared.getOfferingSummaryForAEST(
-          props.locationId,
-          props.programId,
-          page,
-          pageCount,
-          searchBox.value,
-          sortField,
-          sortOrder,
-        );
+        offeringsAndCount.value =
+          await EducationProgramOfferingService.shared.getOfferingSummaryForAEST(
+            props.locationId,
+            props.programId,
+            page,
+            pageCount,
+            searchBox.value,
+            sortField,
+            sortOrder,
+          );
       }
       loading.value = false;
     };

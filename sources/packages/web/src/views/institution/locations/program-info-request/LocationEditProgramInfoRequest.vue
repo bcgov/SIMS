@@ -85,10 +85,11 @@ export default {
     };
 
     const formLoaded = async (form: any) => {
-      programRequestData.value = await ProgramInfoRequestService.shared.getProgramInfoRequest(
-        props.locationId,
-        props.applicationId,
-      );
+      programRequestData.value =
+        await ProgramInfoRequestService.shared.getProgramInfoRequest(
+          props.locationId,
+          props.applicationId,
+        );
       initialData.value = {
         ...programRequestData.value,
         studentStudyStartDate: dateString(
@@ -182,7 +183,7 @@ export default {
           OFFERING_START_DATE_ERROR,
           INVALID_STUDY_DATES,
           OFFERING_INTENSITY_MISMATCH,
-        ].forEach(customError => {
+        ].forEach((customError) => {
           if (error.includes(customError)) {
             errorMsg = error.replace(customError, "").trim();
           }

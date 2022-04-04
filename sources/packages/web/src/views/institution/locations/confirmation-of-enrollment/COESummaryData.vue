@@ -62,7 +62,7 @@
         <template #body="slotProps">
           <v-btn
             :color="COLOR_BLUE"
-            outlined
+            variant="outlined"
             @click="goToViewApplication(slotProps.data.disbursementScheduleId)"
             >view</v-btn
           >
@@ -137,17 +137,18 @@ export default {
     };
 
     const updateSummaryList = async (locationId: number) => {
-      const disbursementAndCount = await ConfirmationOfEnrollmentService.shared.getCOESummary(
-        locationId,
-        props.enrollmentPeriod,
-        {
-          page: page.value,
-          pageLimit: pageLimit.value,
-          sortField: sortField.value,
-          sortOrder: sortOrder.value,
-          searchCriteria: searchCriteria.value,
-        },
-      );
+      const disbursementAndCount =
+        await ConfirmationOfEnrollmentService.shared.getCOESummary(
+          locationId,
+          props.enrollmentPeriod,
+          {
+            page: page.value,
+            pageLimit: pageLimit.value,
+            sortField: sortField.value,
+            sortOrder: sortOrder.value,
+            searchCriteria: searchCriteria.value,
+          },
+        );
       disbursements.value = disbursementAndCount;
     };
 
@@ -173,7 +174,7 @@ export default {
 
     watch(
       () => props.locationId,
-      async currValue => {
+      async (currValue) => {
         //update the list
         await updateSummaryList(currValue);
       },

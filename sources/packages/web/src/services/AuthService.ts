@@ -101,7 +101,8 @@ export class AuthService {
               "student/setStudentProfileData",
               this.keycloak,
             );
-            const hasStudentAccount = await StudentService.shared.checkStudent();
+            const hasStudentAccount =
+              await StudentService.shared.checkStudent();
             await store.dispatch(
               "student/setHasStudentAccount",
               hasStudentAccount,
@@ -127,9 +128,8 @@ export class AuthService {
             const authHeader = HttpBaseClient.createAuthHeader(
               this.keycloak.token,
             );
-            const bceIdAccountDetails = await UserService.shared.getBCeIDAccountDetails(
-              authHeader,
-            );
+            const bceIdAccountDetails =
+              await UserService.shared.getBCeIDAccountDetails(authHeader);
             isForbiddenUser = await this.navigateForInstitution(
               authHeader,
               bceIdAccountDetails,

@@ -46,9 +46,10 @@ export default {
     const modelLoaded = ref(false);
 
     onMounted(async () => {
-      const designation = await DesignationAgreementService.shared.getDesignationAgreement(
-        props.designationAgreementId,
-      );
+      const designation =
+        await DesignationAgreementService.shared.getDesignationAgreement(
+          props.designationAgreementId,
+        );
 
       designationModel.institutionName = designation.institutionName;
       designationModel.institutionType = designation.institutionType;
@@ -60,7 +61,7 @@ export default {
       );
       designationModel.dynamicData = designation.submittedData;
       designationModel.locations = designation.locationsDesignations.map(
-        location => ({
+        (location) => ({
           locationId: location.locationId,
           locationName: location.locationName,
           requestForDesignation: location.requested,

@@ -62,7 +62,7 @@ export default {
 
     const goToRequestDesignation = () => {
       const hasPendingDesignation = designations.value.some(
-        designation =>
+        (designation) =>
           designation.designationStatus === DesignationAgreementStatus.Pending,
       );
       if (!hasPendingDesignation) {
@@ -85,7 +85,8 @@ export default {
     };
 
     onMounted(async () => {
-      designations.value = await DesignationAgreementService.shared.getDesignationsAgreements();
+      designations.value =
+        await DesignationAgreementService.shared.getDesignationsAgreements();
     });
 
     return {

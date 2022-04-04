@@ -9,7 +9,7 @@
     ></program-status-chip>
     <v-btn
       class="float-right"
-      outlined
+      variant="outlined"
       @click="programButtonAction()"
       :color="COLOR_BLUE"
     >
@@ -29,14 +29,14 @@
           v-if="
             educationProgram.programIntensity ===
               ProgramIntensity.fullTimePartTime ||
-              educationProgram.programIntensity === ProgramIntensity.fullTime
+            educationProgram.programIntensity === ProgramIntensity.fullTime
           "
           >Full Time</span
         >
         <br /><span
           v-if="
             educationProgram.programIntensity ===
-              ProgramIntensity.fullTimePartTime
+            ProgramIntensity.fullTimePartTime
           "
           >Part Time
         </span>

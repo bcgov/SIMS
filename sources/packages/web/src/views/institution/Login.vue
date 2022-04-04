@@ -2,7 +2,7 @@
   <v-card elevation="2" class="mx-auto mt-15" max-width="690px" outlined>
     <v-card-header>
       <v-card-header-text>
-        <v-card-title class="my-6 bold-text" style="font-size: 27px;"
+        <v-card-title class="my-6 bold-text" style="font-size: 27px"
           >Welcome to StudentAid BC</v-card-title
         >
         <v-card-subtitle>Welcome text goes here…</v-card-subtitle>
@@ -13,18 +13,16 @@
       buttons below to start your sign in/sign up with your Business
       BCeID.</v-card-text
     >
-    <v-card-actions>
-      <v-row justify="center" class="m-3">
-        <v-btn color="primary" @click="login">
-          <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
-          Login with BCeID
-        </v-btn>
-        <v-btn color="primary" @click="login">
-          <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
-          Sign Up with BCeID
-        </v-btn>
-      </v-row>
-    </v-card-actions>
+    <v-row justify="center" class="m-3">
+      <v-btn class="mr-2" color="primary" @click="login">
+        <v-icon size="25" class="mr-2">mdi-account-outline</v-icon>
+        Login with BCeID
+      </v-btn>
+      <v-btn color="primary" @click="login">
+        <v-icon size="25" class="mr-2">mdi-account-star-outline</v-icon>
+        Sign Up with BCeID
+      </v-btn>
+    </v-row>
     <Message severity="error" class="mx-2" v-if="showBasicBCeIDMessage">
       No such Business account has been found with BCeID. Please login with your
       Business BCeId

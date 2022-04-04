@@ -15,7 +15,9 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        Cancel
+      </v-btn>
       <v-btn
         color="danger"
         depressed

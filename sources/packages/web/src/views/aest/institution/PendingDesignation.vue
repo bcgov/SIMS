@@ -49,7 +49,7 @@
           <Column>
             <template #body="slotProps">
               <v-btn
-                outlined
+                variant="outlined"
                 :color="COLOR_BLUE"
                 @click="goToViewDesignation(slotProps.data.designationId)"
               >
@@ -114,16 +114,18 @@ export default {
     };
 
     onMounted(async () => {
-      designations.value = await DesignationAgreementService.shared.getDesignationByStatus(
-        DesignationAgreementStatus.Pending,
-      );
+      designations.value =
+        await DesignationAgreementService.shared.getDesignationByStatus(
+          DesignationAgreementStatus.Pending,
+        );
     });
 
     const searchDesignations = async () => {
-      designations.value = await DesignationAgreementService.shared.getDesignationByStatus(
-        DesignationAgreementStatus.Pending,
-        searchCriteria.value,
-      );
+      designations.value =
+        await DesignationAgreementService.shared.getDesignationByStatus(
+          DesignationAgreementStatus.Pending,
+          searchCriteria.value,
+        );
     };
 
     return {

@@ -5,4 +5,4 @@ import { SetMetadata } from "@nestjs/common";
  */
 export const CHECK_SIN_VALIDATION_KEY = "check-sin-status";
 export const CheckSinValidation = () =>
-    SetMetadata(CHECK_SIN_VALIDATION_KEY, true);
+  SetMetadata(CHECK_SIN_VALIDATION_KEY, true);

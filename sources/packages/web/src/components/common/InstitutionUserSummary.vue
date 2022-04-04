@@ -109,7 +109,10 @@
         v-if="clientType === ClientIdType.Institution"
         ><template #body="slotProps">
           <span v-if="slotProps.data.userName !== parsedToken?.userName">
-            <v-btn @click="editInstitutionUser(slotProps.data.userName)" plain>
+            <v-btn
+              @click="editInstitutionUser(slotProps.data.userName)"
+              variant="plain"
+            >
               <font-awesome-icon
                 :icon="['fas', 'pen']"
                 v-if="slotProps.data.isActive"
@@ -212,23 +215,25 @@ export default {
       loading.value = true;
       switch (clientType.value) {
         case ClientIdType.Institution:
-          usersListAndCount.value = await InstitutionService.shared.institutionSummary(
-            page,
-            pageCount,
-            searchBox.value,
-            sortField,
-            sortOrder,
-          );
+          usersListAndCount.value =
+            await InstitutionService.shared.institutionSummary(
+              page,
+              pageCount,
+              searchBox.value,
+              sortField,
+              sortOrder,
+            );
           break;
         case ClientIdType.AEST:
-          usersListAndCount.value = await InstitutionService.shared.institutionSummaryForAEST(
-            props.institutionId,
-            page,
-            pageCount,
-            searchBox.value,
-            sortField,
-            sortOrder,
-          );
+          usersListAndCount.value =
+            await InstitutionService.shared.institutionSummaryForAEST(
+              props.institutionId,
+              page,
+              pageCount,
+              searchBox.value,
+              sortField,
+              sortOrder,
+            );
           break;
       }
       loading.value = false;
@@ -298,14 +303,16 @@ export default {
 
       if (clientType.value === ClientIdType.Institution) {
         // Get User type and Role
-        userRoleType.value = await InstitutionService.shared.getUserTypeAndRoles();
+        userRoleType.value =
+          await InstitutionService.shared.getUserTypeAndRoles();
         userType.value = userRoleType.value?.userTypes
           ? userRoleType.value.userTypes.map((el: string) =>
               el !== "admin" ? { name: el, code: el } : null,
             )
           : [];
 
-        adminRoles.value = await InstitutionService.shared.getGetAdminRoleOptions();
+        adminRoles.value =
+          await InstitutionService.shared.getGetAdminRoleOptions();
       }
     });
     return {
