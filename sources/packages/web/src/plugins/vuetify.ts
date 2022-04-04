@@ -8,4 +8,14 @@ export default createVuetify({
   components,
   directives,
   default: {},
+  theme: {
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          primary: "#2965c5",
+        },
+      },
+    },
+  },
 });

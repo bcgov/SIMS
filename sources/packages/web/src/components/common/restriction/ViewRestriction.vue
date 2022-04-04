@@ -11,11 +11,13 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        Cancel
+      </v-btn>
       <v-btn
         v-if="
           restrictionData.isActive &&
-            restrictionData.restrictionType === RestrictionType.Provincial
+          restrictionData.restrictionType === RestrictionType.Provincial
         "
         @click="resolveRestriction()"
         class="float-right primary-btn-background"

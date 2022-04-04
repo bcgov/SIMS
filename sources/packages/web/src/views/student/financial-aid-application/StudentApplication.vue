@@ -14,7 +14,9 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> Close </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        Close
+      </v-btn>
     </template>
   </ModalDialogBase>
   <v-sheet elevation="1" class="mx-auto">
@@ -67,20 +69,18 @@ export default {
           form,
           PROGRAM_YEAR_DROPDOWN_KEY,
         );
-        const createDraftResult = await ApplicationService.shared.createApplicationDraft(
-          {
+        const createDraftResult =
+          await ApplicationService.shared.createApplicationDraft({
             programYearId: programYearId,
             data: {},
             associatedFiles: [],
-          },
-        );
+          });
         if (createDraftResult.draftAlreadyExists) {
           showDialog.value = true;
           return;
         }
-        const programYear = await ProgramYearService.shared.getActiveProgramYear(
-          programYearId,
-        );
+        const programYear =
+          await ProgramYearService.shared.getActiveProgramYear(programYearId);
         if (
           programYear &&
           programYear.formName &&

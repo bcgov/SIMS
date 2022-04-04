@@ -16,7 +16,9 @@
       </div>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        Cancel
+      </v-btn>
       <v-btn
         @click="submitDesignation()"
         class="float-right primary-btn-background"

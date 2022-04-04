@@ -12,7 +12,7 @@
       ></formio>
     </template>
     <template v-slot:footer>
-      <v-btn outlined :color="COLOR_BLUE" @click="dialogClosed">
+      <v-btn variant="outlined" :color="COLOR_BLUE" @click="dialogClosed">
         Cancel
       </v-btn>
       <v-btn class="primary-btn-background" @click="approveProgram">

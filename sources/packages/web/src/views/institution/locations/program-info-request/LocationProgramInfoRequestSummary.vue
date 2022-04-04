@@ -41,9 +41,8 @@
             <Column field="applicationId" header="">
               <template #body="slotProps">
                 <v-btn
-                  plain
                   color="primary"
-                  outlined
+                  variant="outlined"
                   @click="goToViewApplication(slotProps.data.applicationId)"
                   >view</v-btn
                 >
@@ -97,7 +96,7 @@ export default {
 
     watch(
       () => props.locationId,
-      async currValue => {
+      async (currValue) => {
         //update the list
         await updateSummaryList(currValue);
       },

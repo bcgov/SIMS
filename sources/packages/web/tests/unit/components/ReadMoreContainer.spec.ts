@@ -8,9 +8,10 @@ describe("ReadMoreContainer.vue", () => {
   it("Should not display expanded text on initial state", () => {
     // Arrange
     const collapsedText = "Collapsed Text";
+    const expandedText = "Expanded Text";
     // Act
     const wrapper = mount(ReadMoreContainer, {
-      props: { collapsedText },
+      props: { collapsedText, expandedText },
     });
     // Assert
     expect(wrapper.find(extendedContentSelector).isVisible()).toBe(false);
@@ -20,9 +21,10 @@ describe("ReadMoreContainer.vue", () => {
   it("Should display expanded content when 'Read More' is clicked", async () => {
     // Arrange
     const expandedText = "Expanded Text";
+    const collapsedText = "Collapsed Text";
     // Act
     const wrapper = mount(ReadMoreContainer, {
-      props: { expandedText },
+      props: { expandedText, collapsedText },
     });
     await wrapper.find(toggleButtonSelector).trigger("click");
     // Assert
@@ -33,10 +35,11 @@ describe("ReadMoreContainer.vue", () => {
   it("Should return to initial state if toggle button is clicked twice", async () => {
     // Arrange
     const collapsedText = "Collapsed Text";
+    const expandedText = "Expanded Text";
     // Act
     // Act
     const wrapper = mount(ReadMoreContainer, {
-      props: { collapsedText },
+      props: { collapsedText, expandedText },
     });
     const toggleButton = wrapper.find(toggleButtonSelector);
     await toggleButton.trigger("click");

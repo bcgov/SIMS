@@ -2,7 +2,7 @@
   <IdleTimeChecker :clientIdType="ClientIdType.Student">
     <!-- Adding overflow:visible to allow the use of the Prime Vue
   floating menu while Veutify component is not ready.  -->
-    <v-app-bar dense flat app style="overflow:visible">
+    <v-app-bar dense flat app style="overflow: visible">
       <BCLogo subtitle="Student Application" @click="logoClick"></BCLogo>
       <v-spacer></v-spacer
       ><v-btn
@@ -48,7 +48,7 @@
         v-if="isAuthenticated"
         class="mr-5"
         icon="mdi-account"
-        outlined
+        variant="outlined"
         elevation="1"
         color="grey"
         @click="togleUserMenu"

@@ -93,7 +93,9 @@
       </v-container>
     </v-sheet>
     <template #footer>
-      <v-btn color="primary" outlined @click="closeEditUser()"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="closeEditUser()">
+        Cancel
+      </v-btn>
       <v-btn color="primary" @click="submitEditUser()">
         Save Changes
         <v-icon size="25" right>mdi-account </v-icon>
@@ -165,7 +167,8 @@ export default {
     };
     const getAndSetAllLocations = async () => {
       institutionLocationList.value = [];
-      const allLocations = await InstitutionService.shared.getAllInstitutionLocations();
+      const allLocations =
+        await InstitutionService.shared.getAllInstitutionLocations();
       for (const eachLocation of allLocations) {
         let selectedLocation = false;
         let proceesedLocation = {};
@@ -197,9 +200,10 @@ export default {
     };
     const getInstitutionUserDetails = async () => {
       try {
-        userData.value = await InstitutionService.shared.getInstitutionLocationUserDetails(
-          props.institutionUserName,
-        );
+        userData.value =
+          await InstitutionService.shared.getInstitutionLocationUserDetails(
+            props.institutionUserName,
+          );
 
         const adminAuth = userData.value.authorizations?.find(
           (role: InstitutionAuth) => role.authType?.type === "admin",

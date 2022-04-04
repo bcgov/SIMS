@@ -101,7 +101,9 @@
       </v-container>
     </v-sheet>
     <template #footer>
-      <v-btn color="primary" outlined @click="closeAddUser()"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="closeAddUser()">
+        Cancel
+      </v-btn>
       <v-btn color="primary" @click="submitAddUser()">
         <v-icon size="25">mdi-account</v-icon>
         Add User
@@ -158,7 +160,8 @@ export default {
     const selectedAdminRole = ref({ name: "admin", code: "admin" } as UserAuth);
     const getInstitutionLocationList = async () => {
       //Get Institution Locations
-      institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
+      institutionLocationList.value =
+        await InstitutionService.shared.getAllInstitutionLocations();
     };
 
     const closeAddUser = async () => {
