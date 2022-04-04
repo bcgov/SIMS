@@ -32,7 +32,7 @@
         </span>
       </v-col>
       <v-col cols="2" v-if="clientType === ClientIdType.Institution">
-        <v-btn plain @click="getLocation(item.id)">
+        <v-btn variant="plain" @click="getLocation(item.id)">
           <font-awesome-icon :icon="['fas', 'cog']" class="mr-2" />
           Edit
         </v-btn>
@@ -121,12 +121,14 @@ export default {
     const getInstitutionLocationList = async () => {
       switch (clientType.value) {
         case ClientIdType.Institution:
-          institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocations();
+          institutionLocationList.value =
+            await InstitutionService.shared.getAllInstitutionLocations();
           break;
         case ClientIdType.AEST:
-          institutionLocationList.value = await InstitutionService.shared.getAllInstitutionLocationSummary(
-            props.institutionId,
-          );
+          institutionLocationList.value =
+            await InstitutionService.shared.getAllInstitutionLocationSummary(
+              props.institutionId,
+            );
           break;
       }
     };
@@ -137,7 +139,7 @@ export default {
         item.data.address.addressLine2,
         `${item.data.address.city} ${item.data.address.province}, ${item.data.address.postalCode}`,
         item.data.address.country,
-      ].filter(address => address);
+      ].filter((address) => address);
     };
 
     const primaryContactList = (item: InstitutionLocationsDetails) => {
@@ -145,7 +147,7 @@ export default {
         `${item.primaryContact.primaryContactFirstName} ${item.primaryContact.primaryContactLastName}`,
         item.primaryContact.primaryContactPhone,
         item.primaryContact.primaryContactEmail,
-      ].filter(contact => contact);
+      ].filter((contact) => contact);
     };
 
     onMounted(async () => {

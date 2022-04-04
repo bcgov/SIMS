@@ -1,8 +1,6 @@
 <template>
   <!-- This component is shared between ministry and student users -->
-  <p class="category-header-large color-blue">
-    Applications
-  </p>
+  <p class="category-header-large color-blue">Applications</p>
   <DataTable
     :value="applicationAndCount.applications"
     :lazy="true"
@@ -27,7 +25,7 @@
       <template #body="slotProps">
         <v-btn
           v-if="clientType === ClientIdType.Student"
-          plain
+          variant="plain"
           @click="$emit('goToApplication', slotProps.data.id)"
           color="primary"
           v-tooltip="'Click To View this Application'"
@@ -74,7 +72,7 @@
               :disabled="
                 hasRestriction || sinValidStatus !== SINStatusEnum.VALID
               "
-              plain
+              variant="plain"
             >
               <font-awesome-icon
                 :icon="['fas', 'pen']"
@@ -93,7 +91,7 @@
               :disabled="
                 hasRestriction || sinValidStatus !== SINStatusEnum.VALID
               "
-              plain
+              variant="plain"
             >
               <font-awesome-icon
                 :icon="['fas', 'trash']"
@@ -104,7 +102,9 @@
           </span>
         </span>
         <span v-if="clientType === ClientIdType.AEST">
-          <v-btn outlined @click="$emit('goToApplication', slotProps.data.id)"
+          <v-btn
+            variant="outlined"
+            @click="$emit('goToApplication', slotProps.data.id)"
             >View</v-btn
           >
         </span>
@@ -183,21 +183,23 @@ export default {
     ) => {
       switch (clientType.value) {
         case ClientIdType.Student:
-          applicationAndCount.value = await StudentService.shared.getAllStudentApplications(
-            page,
-            pageCount,
-            sortField,
-            sortOrder,
-          );
+          applicationAndCount.value =
+            await StudentService.shared.getAllStudentApplications(
+              page,
+              pageCount,
+              sortField,
+              sortOrder,
+            );
           break;
         case ClientIdType.AEST:
-          applicationAndCount.value = await ApplicationService.shared.getAllApplicationAndCount(
-            props.studentId,
-            page,
-            pageCount,
-            sortField,
-            sortOrder,
-          );
+          applicationAndCount.value =
+            await ApplicationService.shared.getAllApplicationAndCount(
+              props.studentId,
+              page,
+              pageCount,
+              sortField,
+              sortOrder,
+            );
           break;
       }
     };

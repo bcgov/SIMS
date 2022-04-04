@@ -62,7 +62,7 @@
             <template #body="slotProps">
               <v-btn
                 color="#2965c5"
-                outlined
+                variant="outlined"
                 @click="viewStudentRestriction(slotProps.data.restrictionId)"
                 >View</v-btn
               >
@@ -125,16 +125,16 @@ export default {
     const toast = useToastMessage();
 
     const loadStudentRestrictions = async () => {
-      studentRestrictions.value = await RestrictionService.shared.getStudentRestrictions(
-        props.studentId,
-      );
+      studentRestrictions.value =
+        await RestrictionService.shared.getStudentRestrictions(props.studentId);
     };
 
     const viewStudentRestriction = async (restrictionId: number) => {
-      studentRestriction.value = await RestrictionService.shared.getStudentRestrictionDetail(
-        props.studentId,
-        restrictionId,
-      );
+      studentRestriction.value =
+        await RestrictionService.shared.getStudentRestrictionDetail(
+          props.studentId,
+          restrictionId,
+        );
       studentRestriction.value.createdAt = dateOnlyLongString(
         studentRestriction.value.createdAt,
       );

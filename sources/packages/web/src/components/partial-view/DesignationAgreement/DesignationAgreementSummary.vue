@@ -32,7 +32,7 @@
         <Column>
           <template #body="slotProps">
             <v-btn
-              outlined
+              variant="outlined"
               :color="COLOR_BLUE"
               @click="goToViewDesignation(slotProps.data.designationId)"
             >
