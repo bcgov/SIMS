@@ -72,10 +72,6 @@ export default {
     StatusChipRequestedAssessment,
   },
   props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
     applicationId: {
       type: Number,
       required: true,
