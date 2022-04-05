@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { RecordDataModelService } from "../../database/data.model.service";
 import { Connection, In, Not, UpdateResult, Brackets } from "typeorm";
 import { LoggerService } from "../../logger/logger.service";
@@ -42,7 +42,6 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
-  PIR_OR_DATE_OVERLAP_ERROR,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
@@ -1358,8 +1357,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         !!sfasFTApplicationResponse ||
         !!sfasPTApplicationResponse
       ) {
-        throw new UnprocessableEntityException(
-          `${PIR_OR_DATE_OVERLAP_ERROR} ${PIR_OR_DATE_OVERLAP_ERROR_MESSAGE}`,
+        throw new CustomNamedError(
+          PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
     }
