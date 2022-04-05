@@ -43,7 +43,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-  PIR_OR_DATE_OVERLAP_ERROR,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
