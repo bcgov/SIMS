@@ -47,8 +47,6 @@ import {
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
-import { IConfig } from "../../types";
-import { ConfigService } from "../config/config.service";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -67,13 +65,12 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
-  private readonly config: IConfig;
   @InjectLogger()
   logger: LoggerService;
+  private bypassApplicationSubmitValidations: boolean;
 
   constructor(
     connection: Connection,
-    private readonly configService: ConfigService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
@@ -83,7 +80,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ) {
     super(connection.getRepository(Application));
     this.logger.log("[Created]");
-    this.config = this.configService.getConfig();
+  }
+
+  setBypassApplicationSubmitValidations(payload: boolean): void {
+    this.bypassApplicationSubmitValidations = payload;
   }
 
   /**
@@ -1321,7 +1321,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studyStartDate: Date,
     studyEndDate: Date,
   ): Promise<void> {
-    if (!this.config.bypassApplicationSubmitValidations) {
+    if (!this.bypassApplicationSubmitValidations) {
       const existingOverlapApplication = this.validatePIRAndDateOverlap(
         userId,
         new Date(studyStartDate),

@@ -22,12 +22,12 @@ import {
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
   EducationProgramOfferingService,
-  ConfigService,
   DisbursementScheduleService,
   StudentAssessmentService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
+  ConfigService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -70,12 +70,15 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
+import { IConfig } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
 @ApiTags(`${ClientTypeBaseRoute.Student}-application`)
 export class ApplicationStudentsController extends BaseController {
+  private readonly config: IConfig;
   constructor(
+    private readonly configService: ConfigService,
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly workflowService: WorkflowActionsService,
@@ -87,6 +90,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
+    this.config = this.configService.getConfig();
   }
 
   @Get(":id")
@@ -204,6 +208,9 @@ export class ApplicationStudentsController extends BaseController {
       userToken.userId,
     );
 
+    this.applicationService.setBypassApplicationSubmitValidations(
+      this.config.bypassApplicationSubmitValidations,
+    );
     await this.applicationService.validateOverlappingDatesAndPIR(
       applicationId,
       student.user.lastName,
