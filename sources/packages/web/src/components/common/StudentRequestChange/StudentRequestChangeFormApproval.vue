@@ -3,7 +3,7 @@
     :studentAppealRequests="studentAppealRequests"
     :readOnly="true"
   >
-    <template #sibling-form="{approval}">
+    <template #sibling-form="{ approval }">
       <formio
         formName="staffapprovalappeal"
         :data="approval"
@@ -51,7 +51,7 @@ export default {
     const submit = () => {
       if (checkFormioValidity(approvalForms)) {
         const approvals = approvalForms.map(
-          form =>
+          (form) =>
             ({
               id: form.data.id,
               appealStatus: form.data.appealStatus,

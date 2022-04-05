@@ -83,10 +83,11 @@ export default {
     );
 
     onMounted(async () => {
-      const appeal = await StudentAppealService.shared.getStudentAppealWithRequests(
-        props.appealId,
-      );
-      studentAppealRequests.value = appeal.appealRequests.map(request => ({
+      const appeal =
+        await StudentAppealService.shared.getStudentAppealWithRequests(
+          props.appealId,
+        );
+      studentAppealRequests.value = appeal.appealRequests.map((request) => ({
         id: request.id,
         data: request.submittedData,
         formName: request.submittedFormName,
