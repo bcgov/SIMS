@@ -1,5 +1,5 @@
 <template>
-  <student-request-change-form
+  <appeal-requests-form
     :studentAppealRequests="studentAppealRequests"
     :readOnly="true"
   >
@@ -12,7 +12,7 @@
         @loaded="approvalFormLoaded"
       ></formio>
     </template>
-  </student-request-change-form>
+  </appeal-requests-form>
   <slot name="approval-actions" :submit="submit"></slot>
 </template>
 
@@ -20,15 +20,15 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import Formio from "@/components/generic/formio.vue";
 import { SetupContext } from "vue";
-import StudentRequestChangeForm from "./StudentRequestChangeForm.vue";
+import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useFormioUtils } from "@/composables";
-import { StudentAppealApproval } from "./StudentRequestChange.models";
+import { StudentAppealApproval } from "@/types";
 
 export default {
   emits: ["submitted"],
   components: {
     Formio,
-    StudentRequestChangeForm,
+    AppealRequestsForm,
   },
   props: {
     studentAppealRequests: {

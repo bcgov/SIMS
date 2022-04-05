@@ -1,4 +1,4 @@
-import { StudentAppealStatus } from "@/types";
+import { StudentAppealStatus } from "./StudentAppealStatus";
 
 export enum AppealFormMode {
   Submission = "Submission",

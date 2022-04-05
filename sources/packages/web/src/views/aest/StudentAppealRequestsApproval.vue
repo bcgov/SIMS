@@ -15,22 +15,26 @@
           ></status-chip-requested-assessment>
         </template>
       </body-header>
-      <student-request-change-form-approval
+      <appeal-requests-approval-form
         :studentAppealRequests="studentAppealRequests"
         :readOnly="readOnly"
         @submitted="submitted"
       >
         <template #approval-actions="{ submit }" v-if="!readOnly">
-          <div class="mt-4">
-            <v-btn color="primary" outlined @click="gotToAssessmentsSummary"
+          <v-row justify="center" class="m-2">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              class="mr-2"
+              @click="gotToAssessmentsSummary"
               >Cancel</v-btn
             >
-            <v-btn class="primary-btn-background" @click="submit"
+            <v-btn color="primary" class="ml-2" @click="submit"
               >Complete student request</v-btn
-            >
-          </div>
+            ></v-row
+          >
         </template>
-      </student-request-change-form-approval>
+      </appeal-requests-approval-form>
     </full-page-container>
   </v-container>
 </template>
@@ -43,11 +47,8 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters } from "@/composables";
-import {
-  StudentAppealRequest,
-  StudentAppealApproval,
-} from "@/components/common/StudentRequestChange/StudentRequestChange.models";
-import StudentRequestChangeFormApproval from "@/components/common/StudentRequestChange/StudentRequestChangeFormApproval.vue";
+import { StudentAppealRequest, StudentAppealApproval } from "@/types";
+import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import { StudentAppealStatus } from "@/types";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 
@@ -56,7 +57,7 @@ export default {
     HeaderNavigator,
     FullPageContainer,
     BodyHeader,
-    StudentRequestChangeFormApproval,
+    AppealRequestsApprovalForm,
     StatusChipRequestedAssessment,
   },
   props: {

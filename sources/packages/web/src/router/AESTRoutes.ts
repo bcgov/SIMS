@@ -38,7 +38,7 @@ import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
 import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
 import AssessmentsSummary from "@/views/aest/AssessmentsSummary.vue";
-import StudentRequestChangesView from "@/views/aest/StudentAppeals/StudentRequestChangesView.vue";
+import StudentAppealRequestsApproval from "@/views/aest/StudentAppealRequestsApproval.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -176,10 +176,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
-            path: AppRoutes.RequestChangeApproval,
-            name: AESTRoutesConst.STUDENT_REQUEST_CHANGE_APPROVAL,
+            path: AppRoutes.StudentAppealRequestsApproval,
+            name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
             props: true,
-            component: StudentRequestChangesView,
+            component: StudentAppealRequestsApproval,
             meta: {
               clientType: ClientIdType.AEST,
             },

@@ -34,9 +34,12 @@
                   @click="
                     viewRequest(slotProps.data.triggerType, slotProps.data.id)
                   "
-                  class="primary"
-                  text
-                  >View request</v-btn
+                  color="primary"
+                  variant="text"
+                  class="text-decoration-underline"
+                >
+                  <font-awesome-icon :icon="['fas', 'file-alt']" class="mr-2" />
+                  View request</v-btn
                 ></template
               ></Column
             >
@@ -95,7 +98,7 @@ export default {
       switch (triggerType) {
         case AssessmentTriggerType.StudentAppeal:
           router.push({
-            name: AESTRoutesConst.STUDENT_REQUEST_CHANGE_APPROVAL,
+            name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
             params: {
               studentId: props.studentId,
               applicationId: props.applicationId,
