@@ -258,7 +258,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           STUDENT_APPEAL_INVALID_OPERATION,
         );
       }
-      // Update the student appeal after all validations passed,
+      // Update the student appeal after all validations passed.
       appealRequest.modifier = auditUser;
       appealRequest.assessedBy = auditUser;
       appealRequest.assessedDate = auditDate;

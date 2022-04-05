@@ -92,8 +92,6 @@ export default {
     });
 
     const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
-      console.log(triggerType);
-      console.log(id);
       switch (triggerType) {
         case AssessmentTriggerType.StudentAppeal:
           router.push({
@@ -107,9 +105,6 @@ export default {
           break;
         case AssessmentTriggerType.ScholasticStandingChange:
           // TODO: Redirect to ScholasticStandingChange approval.
-          break;
-        default:
-          console.error("Invalid request type.");
           break;
       }
     };
