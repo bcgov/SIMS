@@ -3,7 +3,7 @@
     :studentAppealRequests="studentAppealRequests"
     :readOnly="true"
   >
-    <template #sibling-form="{ approval }">
+    <template #approval-form="{ approval }">
       <formio
         formName="staffapprovalappeal"
         :data="approval"

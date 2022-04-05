@@ -97,6 +97,9 @@ export class StudentAppealAESTController extends BaseController {
         userToken.userId,
       );
 
+      // The appeal approval will create a student assessment to be processed only
+      // if at least one request was approved, hence sometimes an appeal will not result
+      // is an assessment creation if all requests are declined.
       if (savedAppeal.studentAssessment) {
         await this.workflowActionsService.startApplicationAssessment(
           savedAppeal.application.data.workflowName,

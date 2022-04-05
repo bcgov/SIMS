@@ -60,15 +60,14 @@ import {
   PAGINATION_LIST,
   RequestAssessmentSummaryApiOutDTO,
 } from "@/types";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import { AssessmentTriggerType } from "@/types/contracts/AssessmentTrigger";
-import { useRouter } from "vue-router";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default {
+  emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -82,9 +81,8 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
-    const router = useRouter();
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryApiOutDTO[]);
     onMounted(async () => {
@@ -97,17 +95,10 @@ export default {
     const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
       switch (triggerType) {
         case AssessmentTriggerType.StudentAppeal:
-          router.push({
-            name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
-            params: {
-              studentId: props.studentId,
-              applicationId: props.applicationId,
-              appealId: id,
-            },
-          });
+          context.emit("viewStudentAppeal", id);
           break;
         case AssessmentTriggerType.ScholasticStandingChange:
-          // TODO: Redirect to ScholasticStandingChange approval.
+          context.emit("viewScholasticStandingChange", id);
           break;
       }
     };

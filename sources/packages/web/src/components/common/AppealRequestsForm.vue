@@ -10,7 +10,7 @@
       :readOnly="readOnly"
       @loaded="appealFormLoaded"
     ></formio>
-    <slot name="sibling-form" :approval="appealRequest.approval"></slot>
+    <slot name="approval-form" :approval="appealRequest.approval"></slot>
   </content-group>
   <div class="mt-4">
     <slot name="actions" :submit="submit"></slot>
