@@ -27,6 +27,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
+  APPLICATION_DATE_OVERLAP_ERROR,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -203,17 +204,16 @@ export class ApplicationStudentsController extends BaseController {
       userToken.userId,
     );
 
-    await this.applicationService.validateOverlappingDatesAndPIR(
-      applicationId,
-      student.user.lastName,
-      userToken.userId,
-      student.sin,
-      student.birthDate,
-      studyStartDate,
-      studyEndDate,
-    );
-
     try {
+      await this.applicationService.validateOverlappingDatesAndPIR(
+        applicationId,
+        student.user.lastName,
+        userToken.userId,
+        student.sin,
+        student.birthDate,
+        studyStartDate,
+        studyEndDate,
+      );
       const { createdAssessment } =
         await this.applicationService.submitApplication(
           applicationId,
@@ -230,6 +230,7 @@ export class ApplicationStudentsController extends BaseController {
           throw new NotFoundException(error.message);
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        case APPLICATION_DATE_OVERLAP_ERROR:
         case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           throw new UnprocessableEntityException(error.message);
         default:
