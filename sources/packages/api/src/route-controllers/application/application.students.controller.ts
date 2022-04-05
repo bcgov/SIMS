@@ -46,7 +46,7 @@ import {
   CheckSinValidation,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
@@ -70,7 +70,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationControllerService } from "./application.controller.service";
-import { IConfig } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("application")
