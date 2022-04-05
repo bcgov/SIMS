@@ -46,7 +46,7 @@ import {
   CheckSinValidation,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
@@ -75,7 +75,6 @@ import { ApplicationControllerService } from "./application.controller.service";
 @Controller("application")
 @ApiTags(`${ClientTypeBaseRoute.Student}-application`)
 export class ApplicationStudentsController extends BaseController {
-  private readonly config: IConfig;
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
@@ -83,13 +82,11 @@ export class ApplicationStudentsController extends BaseController {
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly configService: ConfigService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly assessmentService: StudentAssessmentService,
     private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
-    this.config = this.configService.getConfig();
   }
 
   @Get(":id")
@@ -215,7 +212,6 @@ export class ApplicationStudentsController extends BaseController {
       student.birthDate,
       studyStartDate,
       studyEndDate,
-      this.config.bypassApplicationSubmitValidations,
     );
 
     try {
