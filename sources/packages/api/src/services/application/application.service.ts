@@ -47,6 +47,8 @@ import {
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
+import { ConfigService } from "../config/config.service";
+import { IConfig } from "../../types";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -67,10 +69,10 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
   logger: LoggerService;
-  private bypassApplicationSubmitValidations: boolean;
-
+  private readonly config: IConfig;
   constructor(
     connection: Connection,
+    private readonly configService: ConfigService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
@@ -79,11 +81,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly msfaaNumberService: MSFAANumberService,
   ) {
     super(connection.getRepository(Application));
+    this.config = this.configService.getConfig();
     this.logger.log("[Created]");
-  }
-
-  setBypassApplicationSubmitValidations(payload: boolean): void {
-    this.bypassApplicationSubmitValidations = payload;
   }
 
   /**
@@ -1320,11 +1319,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studyStartDate: Date,
     studyEndDate: Date,
   ): Promise<void> {
-    if (!this.bypassApplicationSubmitValidations) {
+    if (!this.config.bypassApplicationSubmitValidations) {
       const existingOverlapApplication = this.validatePIRAndDateOverlap(
         userId,
-        new Date(studyStartDate),
-        new Date(studyEndDate),
+        studyStartDate,
+        studyEndDate,
         applicationId,
       );
 
@@ -1333,8 +1332,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
           sin,
           birthDate,
           lastName,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
+          studyStartDate,
+          studyEndDate,
         );
 
       const existingSFASPTApplication =
@@ -1342,8 +1341,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
           sin,
           birthDate,
           lastName,
-          new Date(studyStartDate),
-          new Date(studyEndDate),
+          studyStartDate,
+          studyEndDate,
         );
       const [
         applicationResponse,

@@ -27,7 +27,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
-  ConfigService,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -46,7 +45,7 @@ import {
   CheckSinValidation,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiProcessError, ClientTypeBaseRoute, IConfig } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
@@ -75,9 +74,7 @@ import { ApplicationControllerService } from "./application.controller.service";
 @Controller("application")
 @ApiTags(`${ClientTypeBaseRoute.Student}-application`)
 export class ApplicationStudentsController extends BaseController {
-  private readonly config: IConfig;
   constructor(
-    private readonly configService: ConfigService,
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly workflowService: WorkflowActionsService,
@@ -89,7 +86,6 @@ export class ApplicationStudentsController extends BaseController {
     private readonly applicationControllerService: ApplicationControllerService,
   ) {
     super();
-    this.config = this.configService.getConfig();
   }
 
   @Get(":id")
@@ -207,9 +203,6 @@ export class ApplicationStudentsController extends BaseController {
       userToken.userId,
     );
 
-    this.applicationService.setBypassApplicationSubmitValidations(
-      this.config.bypassApplicationSubmitValidations,
-    );
     await this.applicationService.validateOverlappingDatesAndPIR(
       applicationId,
       student.user.lastName,
