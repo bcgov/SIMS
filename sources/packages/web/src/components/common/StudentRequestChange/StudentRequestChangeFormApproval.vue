@@ -22,6 +22,7 @@ import Formio from "@/components/generic/formio.vue";
 import { SetupContext } from "vue";
 import StudentRequestChangeForm from "./StudentRequestChangeForm.vue";
 import { useFormioUtils } from "@/composables";
+import { StudentAppealApproval } from "./StudentRequestChange.models";
 
 export default {
   emits: ["submitted"],
@@ -49,7 +50,15 @@ export default {
 
     const submit = () => {
       if (checkFormioValidity(approvalForms)) {
-        context.emit("submitted");
+        const approvals = approvalForms.map(
+          form =>
+            ({
+              id: form.data.id,
+              appealStatus: form.data.appealStatus,
+              noteDescription: form.data.noteDescription,
+            } as StudentAppealApproval),
+        );
+        context.emit("submitted", approvals);
       }
     };
 

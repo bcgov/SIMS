@@ -27,3 +27,9 @@ export class StudentAppealWithStatus extends StudentAppeal {
    */
   status: StudentAppealStatus;
 }
+
+export interface StudentAppealRequestApproval {
+  id: number;
+  appealStatus: StudentAppealStatus;
+  noteDescription: string;
+}

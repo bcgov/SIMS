@@ -3,18 +3,27 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { Brackets, Connection } from "typeorm";
 import {
   Application,
+  AssessmentTriggerType,
+  Note,
+  NoteType,
   StudentAppeal,
   StudentAppealRequest,
   StudentAppealStatus,
+  StudentAssessment,
   User,
 } from "../../database/entities";
 import {
   PendingAndDeniedAppeals,
+  StudentAppealRequestApproval,
   StudentAppealRequestModel,
   StudentAppealWithStatus,
 } from "./student-appeal.model";
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
-import { mapFromRawAndEntities } from "../../utilities";
+import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
+import {
+  STUDENT_APPEAL_INVALID_OPERATION,
+  STUDENT_APPEAL_NOT_FOUND,
+} from "./constants";
 
 /**
  * Service layer for Student appeals.
@@ -182,5 +191,107 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         .getSql()}) THEN '${StudentAppealStatus.Approved}'
       ELSE '${StudentAppealStatus.Declined}'
     END`;
+  }
+
+  /**
+   * Update all student appeals requests at once.
+   * @param appealId appeal if to be retrieved.
+   * @param auditUserId user that should be considered the one that is
+   * causing the changes.
+   */
+  async approveRequests(
+    appealId: number,
+    approvals: StudentAppealRequestApproval[],
+    auditUserId: number,
+  ): Promise<StudentAppeal> {
+    const appealToUpdate = await this.repo
+      .createQueryBuilder("studentAppeal")
+      .select([
+        "studentAppeal.id",
+        "appealRequest.id",
+        "appealRequest.appealStatus",
+        "studentAssessment.id",
+        "application.id",
+        "application.data",
+      ])
+      .innerJoin("studentAppeal.appealRequests", "appealRequest")
+      .innerJoin("studentAppeal.application", "application")
+      .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
+      .where("studentAppeal.id = :appealId", { appealId })
+      .getOne();
+
+    if (!appealToUpdate) {
+      throw new CustomNamedError(
+        "Not able to find the appeal.",
+        STUDENT_APPEAL_NOT_FOUND,
+      );
+    }
+
+    if (appealToUpdate.studentAssessment) {
+      throw new CustomNamedError(
+        "An assessment was already created to this student appeal.",
+        STUDENT_APPEAL_INVALID_OPERATION,
+      );
+    }
+
+    const auditUser = { id: auditUserId } as User;
+    const auditDate = new Date();
+
+    // If a students appel has, for instance, 3 requests, all must be updated at once.
+    // This counter checks if all the requests were updated as expected.
+    let updatedRecords = 0;
+    appealToUpdate.appealRequests.forEach((appealRequest) => {
+      // Verify if the appeal request to be updated is in the right state.
+      if (appealRequest.appealStatus !== StudentAppealStatus.Pending) {
+        throw new CustomNamedError(
+          `Only '${StudentAppealStatus.Pending} appeals requests can be '${StudentAppealStatus.Approved}' or '${StudentAppealStatus.Declined}'.`,
+          STUDENT_APPEAL_INVALID_OPERATION,
+        );
+      }
+      // Finds the appeal request to be updated.
+      const approvedDeclinedRequest = approvals.find(
+        (approval) => approval.id === appealRequest.id,
+      );
+      if (!approvedDeclinedRequest) {
+        throw new CustomNamedError(
+          "Not able to find the appeal request or it does not belong to the appeal.",
+          STUDENT_APPEAL_INVALID_OPERATION,
+        );
+      }
+      // Update the student appeal after all validations passed,
+      appealRequest.modifier = auditUser;
+      appealRequest.assessedBy = auditUser;
+      appealRequest.assessedDate = auditDate;
+      appealRequest.appealStatus = approvedDeclinedRequest.appealStatus;
+      appealRequest.note = {
+        noteType: NoteType.General,
+        description: approvedDeclinedRequest.noteDescription,
+      } as Note;
+      updatedRecords++;
+    });
+    // Validates if all appeal request are updated. All must be updated at once.
+    if (approvals.length !== updatedRecords) {
+      throw new CustomNamedError(
+        "The appeal requests must be updated all at once. The appeals requests received does not represents the entire set of records that must be updated.",
+        STUDENT_APPEAL_INVALID_OPERATION,
+      );
+    }
+    // Check is at least one appeal was approved and a assessment is needed.
+    if (
+      appealToUpdate.appealRequests.some(
+        (request) => request.appealStatus === StudentAppealStatus.Approved,
+      )
+    ) {
+      // Create the new assessment to be processed.
+      appealToUpdate.studentAssessment = {
+        application: { id: appealToUpdate.application.id } as Application,
+        triggerType: AssessmentTriggerType.StudentAppeal,
+        creator: auditUser,
+        submittedBy: auditUser,
+        submittedDate: auditDate,
+      } as StudentAssessment;
+    }
+
+    return this.repo.save(appealToUpdate);
   }
 }

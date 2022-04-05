@@ -16,3 +16,13 @@ export interface StudentAppealApiOutDTO {
   status: StudentAppealStatus;
   appealRequests: StudentAppealRequestApiOutDTO[];
 }
+
+export interface StudentAppealRequestApiInDTO {
+  id: number;
+  appealStatus: StudentAppealStatus;
+  noteDescription: string;
+}
+
+export interface StudentAppealApprovalApiInDTO {
+  requests: StudentAppealRequestApiInDTO[];
+}

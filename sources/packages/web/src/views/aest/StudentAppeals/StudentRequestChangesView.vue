@@ -36,7 +36,10 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters } from "@/composables";
-import { StudentAppealRequest } from "@/components/common/StudentRequestChange/StudentRequestChange.models";
+import {
+  StudentAppealRequest,
+  StudentAppealApproval,
+} from "@/components/common/StudentRequestChange/StudentRequestChange.models";
 import StudentRequestChangeFormApproval from "@/components/common/StudentRequestChange/StudentRequestChangeFormApproval.vue";
 
 export default {
@@ -74,10 +77,11 @@ export default {
         data: request.submittedData,
         formName: request.submittedFormName,
         approval: {
+          id: request.id,
           appealStatus: request.appealStatus,
           assessedDate: dateOnlyLongString(request.assessedDate),
           assessedByUserName: request.assessedByUserName,
-          noteDescription: request.noteDescription,
+          noteDescription: request.noteDescription ?? "",
           showAudit: false,
         },
       }));
@@ -95,8 +99,11 @@ export default {
       router.push(assessmentsSummaryRoute);
     };
 
-    const submitted = () => {
-      console.log("submitted");
+    const submitted = async (approvals: StudentAppealApproval[]) => {
+      await StudentAppealService.shared.approveStudentAppealRequests(
+        props.appealId,
+        approvals,
+      );
     };
 
     return {

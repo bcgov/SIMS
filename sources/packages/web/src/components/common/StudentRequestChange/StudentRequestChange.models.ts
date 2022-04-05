@@ -7,7 +7,8 @@ export enum AppealFormMode {
 }
 
 export interface StudentAppealApproval {
-  appealStatus?: StudentAppealStatus;
+  id: number;
+  appealStatus: StudentAppealStatus;
   noteDescription?: string;
   string?: Date;
   assessedByUserName?: string;
