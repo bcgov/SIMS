@@ -1310,7 +1310,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param birthDate
    * @param studyStartDate
    * @param studyEndDate
-   * @param bypassApplicationSubmitValidations
    */
   async validateOverlappingDatesAndPIR(
     applicationId: number,
