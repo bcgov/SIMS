@@ -11,9 +11,10 @@
       <body-header title="Student change"></body-header>
       <student-request-change-form-approval
         :studentAppealRequests="studentAppealRequests"
+        :readOnly="readOnly"
         @submitted="submitted"
       >
-        <template #approval-actions="{ submit }">
+        <template #approval-actions="{ submit }" v-if="!readOnly">
           <div class="mt-4">
             <v-btn color="primary" outlined @click="gotToAssessmentsSummary"
               >Cancel</v-btn
@@ -41,6 +42,7 @@ import {
   StudentAppealApproval,
 } from "@/components/common/StudentRequestChange/StudentRequestChange.models";
 import StudentRequestChangeFormApproval from "@/components/common/StudentRequestChange/StudentRequestChangeFormApproval.vue";
+import { StudentAppealStatus } from "@/types";
 
 export default {
   components: {
@@ -67,6 +69,7 @@ export default {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
+    const readOnly = ref(true);
 
     onMounted(async () => {
       const appeal = await StudentAppealService.shared.getStudentAppealWithRequests(
@@ -85,6 +88,7 @@ export default {
           showAudit: false,
         },
       }));
+      readOnly.value = appeal.status !== StudentAppealStatus.Pending;
     });
 
     const assessmentsSummaryRoute = {
@@ -112,6 +116,7 @@ export default {
       assessmentsSummaryRoute,
       studentAppealRequests,
       submitted,
+      readOnly,
     };
   },
 };
