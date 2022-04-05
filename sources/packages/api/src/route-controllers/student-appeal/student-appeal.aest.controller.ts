@@ -10,7 +10,7 @@ import {
 import { StudentAppealService, WorkflowActionsService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -24,6 +24,7 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "../../services/student-appeal/constants";
+import { StudentAppealStatus } from "../../database/entities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,6 +38,11 @@ export class StudentAppealAESTController extends BaseController {
     super();
   }
 
+  /**
+   * Get the student appeal and its requests.
+   * @param appealId appeal id to be retrieved.
+   * @returns the student appeal and its requests.
+   */
   @Get(":appealId/requests")
   async getStudentAppealWithRequests(
     @Param("appealId") appealId: number,
@@ -63,7 +69,22 @@ export class StudentAppealAESTController extends BaseController {
     };
   }
 
+  /**
+   * Update all student appeals requests at once.
+   * All the appeals requests must be present with the respective
+   * approved or declined status.
+   * @param appealId appeal id to be approved/declined.
+   * @param payload appeal requests to be approved/declined.
+   * @param userToken user authentication token.
+   */
   @Patch(":appealId/requests")
+  @ApiUnprocessableEntityResponse({
+    description:
+      `It is not possible to process the appeal approval because one of the following conditions: ` +
+      `the appeal is not in the '${StudentAppealStatus.Pending}' status; ` +
+      `the appeal is already associated with an assessment workflow; ` +
+      `some appeal request is already in a state different than '${StudentAppealStatus.Pending}'.`,
+  })
   async approveStudentAppealRequests(
     @Param("appealId") appealId: number,
     @Body() payload: StudentAppealApprovalApiInDTO,

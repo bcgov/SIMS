@@ -46,7 +46,7 @@ import BodyHeader from "@/components/generic/BodyHeader.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useToastMessage } from "@/composables";
 import { StudentAppealRequest, StudentAppealApproval } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import { StudentAppealStatus } from "@/types";
@@ -76,6 +76,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
+    const toast = useToastMessage();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
@@ -117,20 +118,31 @@ export default {
     };
 
     const submitted = async (approvals: StudentAppealApproval[]) => {
-      await StudentAppealService.shared.approveStudentAppealRequests(
-        props.appealId,
-        approvals,
-      );
+      try {
+        await StudentAppealService.shared.approveStudentAppealRequests(
+          props.appealId,
+          approvals,
+        );
+        toast.success(
+          "Student request completed",
+          "The request was completed with success.",
+        );
+        gotToAssessmentsSummary();
+      } catch (error) {
+        toast.error(
+          "Unexpected error",
+          "An unexpected error happened during the approval.",
+        );
+      }
     };
 
     return {
-      AESTRoutesConst,
       gotToAssessmentsSummary,
       assessmentsSummaryRoute,
       studentAppealRequests,
       submitted,
-      readOnly,
       appealStatus,
+      readOnly,
     };
   },
 };
