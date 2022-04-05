@@ -43,7 +43,7 @@
             ><Column field="status" header="Status" sortable="true">
               <template #body="slotProps"
                 ><status-chip-requested-assessment
-                  :status="slotProps.data.status"/></template
+                  :status="slotProps.data.status" /></template
             ></Column>
           </DataTable>
         </content-group>
@@ -85,9 +85,10 @@ export default {
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryApiOutDTO[]);
     onMounted(async () => {
-      requestedAssessment.value = await StudentAssessmentsService.shared.getAssessmentRequest(
-        props.applicationId,
-      );
+      requestedAssessment.value =
+        await StudentAssessmentsService.shared.getAssessmentRequest(
+          props.applicationId,
+        );
     });
 
     const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {

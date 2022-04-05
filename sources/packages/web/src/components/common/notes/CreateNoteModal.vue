@@ -10,7 +10,9 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> Cancel </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        Cancel
+      </v-btn>
       <v-btn @click="addNewNote()" class="float-right primary-btn-background">
         Add note
       </v-btn>
@@ -48,7 +50,7 @@ export default {
     const formLoaded = async (form: any) => {
       formData.value = form;
       const dropdown = formioUtils.getComponent(form, "noteType");
-      const options = [];
+      const options = [{}];
       if (props.entityType === NoteEntityType.Institution) {
         for (const noteType in InstitutionNoteType) {
           options.push({ label: noteType, value: noteType });

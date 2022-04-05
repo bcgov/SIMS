@@ -42,9 +42,8 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     authHeader are only needed for initial stores, 
     since during the first initializing token are not ready yet
     */
-    const resultComment = await InstitutionService.shared.getMyInstitutionDetails(
-      authHeader,
-    );
+    const resultComment =
+      await InstitutionService.shared.getMyInstitutionDetails(authHeader);
     context.commit("setMyDetailsState", resultComment?.user);
     context.commit("setMyAuthorizationState", resultComment?.authorizations);
   },
@@ -57,9 +56,10 @@ export const actions: ActionTree<InstitutionLocationState, RootState> = {
     authHeader are only needed for initial stores, 
     since during the first initializing token are not ready yet
     */
-    const resultComment = await InstitutionService.shared.getMyInstitutionLocationsDetails(
-      authHeader,
-    );
+    const resultComment =
+      await InstitutionService.shared.getMyInstitutionLocationsDetails(
+        authHeader,
+      );
     context.commit("setMyInstitutionLocationsDetailsState", resultComment);
   },
 };

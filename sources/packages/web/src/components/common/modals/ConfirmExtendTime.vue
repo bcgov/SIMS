@@ -16,7 +16,9 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-btn color="primary" outlined @click="dialogClosed"> No </v-btn>
+      <v-btn color="primary" variant="outlined" @click="dialogClosed">
+        No
+      </v-btn>
       <v-btn color="warning" depressed class="text-white" @click="extendTime">
         <v-icon left size="25"> mdi-clock </v-icon>
         Yes

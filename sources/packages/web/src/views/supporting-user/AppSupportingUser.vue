@@ -1,6 +1,6 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.SupportingUsers">
-    <v-app-bar dense flat app style="overflow:visible">
+    <v-app-bar dense flat app style="overflow: visible">
       <BCLogo
         subtitle="Supporting Information for Student Applications"
         @click="goToDashboard"
@@ -13,7 +13,7 @@
         v-if="isAuthenticated"
         class="mr-5"
         icon="mdi-account"
-        outlined
+        variant="outlined"
         elevation="1"
         color="grey"
         @click="togleUserMenu"

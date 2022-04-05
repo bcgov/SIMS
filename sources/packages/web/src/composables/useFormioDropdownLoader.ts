@@ -22,7 +22,7 @@ export function useFormioDropdownLoader() {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getComponent(form, dropdownName);
     const optionsItems = await loadMethod;
-    dropdown.component.data.values = optionsItems.map(item => ({
+    dropdown.component.data.values = optionsItems.map((item) => ({
       value: item.id,
       label: item.description,
     }));

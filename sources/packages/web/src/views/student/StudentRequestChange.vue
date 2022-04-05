@@ -40,7 +40,7 @@
         ></student-appeal-form>
         <!-- action area -->
         <div class="mt-4">
-          <v-btn color="primary" outlined @click="backToRequestForm"
+          <v-btn color="primary" variant="outlined" @click="backToRequestForm"
             >Back</v-btn
           >
           <v-btn
@@ -94,9 +94,10 @@ export default {
 
     const submitRequest = async (data: StudentRequest) => {
       try {
-        const application = await ApplicationService.shared.getApplicationForRequestChange(
-          data.applicationNumber,
-        );
+        const application =
+          await ApplicationService.shared.getApplicationForRequestChange(
+            data.applicationNumber,
+          );
         applicationId = application.id;
         appealFormNames.value = data.formNames;
       } catch (error) {
@@ -125,7 +126,7 @@ export default {
 
     const submitAppeal = async () => {
       const studentAppealRequests = [] as StudentAppealRequestDTO[];
-      const formSubmitResponse = [];
+      const formSubmitResponse = [{}];
       for (const form of appealForms) {
         formSubmitResponse.push(form.submit());
         studentAppealRequests.push({

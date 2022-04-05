@@ -32,7 +32,7 @@
             ><Column field="status" header="Status" sortable="true"
               ><template #body="slotProps"
                 ><status-chip-assessment-history
-                  :status="slotProps.data.status"/></template></Column
+                  :status="slotProps.data.status" /></template></Column
             ><Column
               field="assessmentDate"
               header="Assessment date"
@@ -75,9 +75,10 @@ export default {
     const { dateOnlyLongString } = useFormatters();
     const assessmentHistory = ref([] as AssessmentHistorySummaryDTO[]);
     onMounted(async () => {
-      assessmentHistory.value = await StudentAssessmentsService.shared.getAssessmentHistory(
-        props.applicationId,
-      );
+      assessmentHistory.value =
+        await StudentAssessmentsService.shared.getAssessmentHistory(
+          props.applicationId,
+        );
     });
     return {
       DEFAULT_PAGE_LIMIT,

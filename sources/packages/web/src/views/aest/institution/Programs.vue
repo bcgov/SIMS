@@ -76,7 +76,7 @@
           <Column>
             <template #body="slotProps">
               <v-btn
-                outlined
+                variant="outlined"
                 @click="
                   goToViewProgramDetail(
                     slotProps.data.programId,
@@ -138,14 +138,15 @@ export default {
       try {
         loading.value = true;
         searchProgramName.value = programName;
-        institutionProgramsSummary.value = await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
-          institutionId,
-          rowsPerPage,
-          page,
-          programName,
-          sortColumn,
-          sortOrder,
-        );
+        institutionProgramsSummary.value =
+          await InstitutionService.shared.getPaginatedAESTInstitutionProgramsSummary(
+            institutionId,
+            rowsPerPage,
+            page,
+            programName,
+            sortColumn,
+            sortOrder,
+          );
       } finally {
         loading.value = false;
       }

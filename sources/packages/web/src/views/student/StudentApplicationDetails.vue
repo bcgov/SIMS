@@ -224,9 +224,8 @@ export default {
       }
     };
     const getApplicationDetails = async (applicationId: number) => {
-      applicationDetails.value = await ApplicationService.shared.getApplicationData(
-        applicationId,
-      );
+      applicationDetails.value =
+        await ApplicationService.shared.getApplicationData(applicationId);
       loadMenu();
     };
     watch(
@@ -237,7 +236,8 @@ export default {
       },
     );
     onMounted(async () => {
-      const studentRestriction = await StudentService.shared.getStudentRestriction();
+      const studentRestriction =
+        await StudentService.shared.getStudentRestriction();
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
       await getApplicationDetails(props.id);

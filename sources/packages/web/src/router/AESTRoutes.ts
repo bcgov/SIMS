@@ -382,7 +382,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
           throw e;
         });

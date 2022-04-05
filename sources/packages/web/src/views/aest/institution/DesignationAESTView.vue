@@ -9,7 +9,7 @@
         <v-btn
           v-if="showActionButtons"
           color="primary"
-          outlined
+          variant="outlined"
           @click="updateDesignation(DesignationAgreementStatus.Declined)"
           >Decline</v-btn
         >
@@ -108,9 +108,10 @@ export default {
     const modelLoaded = ref(false);
 
     const loadDesignation = async () => {
-      designationAgreement.value = await DesignationAgreementService.shared.getDesignationAgreement(
-        props.designationId,
-      );
+      designationAgreement.value =
+        await DesignationAgreementService.shared.getDesignationAgreement(
+          props.designationId,
+        );
 
       designationFormModel.institutionName =
         designationAgreement.value.institutionName;
@@ -125,8 +126,8 @@ export default {
       );
       designationFormModel.dynamicData =
         designationAgreement.value.submittedData;
-      designationFormModel.locations = designationAgreement.value.locationsDesignations.map(
-        location => ({
+      designationFormModel.locations =
+        designationAgreement.value.locationsDesignations.map((location) => ({
           locationId: location.locationId,
           locationName: location.locationName,
           requestForDesignation: location.requested,
@@ -135,8 +136,7 @@ export default {
             ...location.locationData.address,
             provinceState: location.locationData.address.province,
           }),
-        }),
-      );
+        }));
       modelLoaded.value = true;
     };
     onMounted(async () => {
@@ -151,17 +151,18 @@ export default {
         /*If the update action is Approval, build the designation location array for form
           by merging the institution locations list with designation locations list
         */
-        const institutionLocations = await InstitutionService.shared.getAllInstitutionLocationSummary(
-          designationAgreement.value.institutionId,
-        );
+        const institutionLocations =
+          await InstitutionService.shared.getAllInstitutionLocationSummary(
+            designationAgreement.value.institutionId,
+          );
         //On re-approval of same designation start date and end date should be preloaded.
         updateDesignationModel.value.startDate =
           designationAgreement.value.startDate;
         updateDesignationModel.value.endDate =
           designationAgreement.value.endDate;
 
-        updateDesignationModel.value.locationsDesignations = institutionLocations?.map(
-          institutionLocation => {
+        updateDesignationModel.value.locationsDesignations =
+          institutionLocations?.map((institutionLocation) => {
             const designationLocation = {} as UpdateDesignationLocationDto;
             designationLocation.locationId = institutionLocation.id;
             designationLocation.locationName = institutionLocation.name;
@@ -171,17 +172,17 @@ export default {
                 provinceState: institutionLocation.data.address.province,
               },
             );
-            const existingDesignationLocation = designationAgreement.value.locationsDesignations.find(
-              item => item.locationId === institutionLocation.id,
-            );
+            const existingDesignationLocation =
+              designationAgreement.value.locationsDesignations.find(
+                (item) => item.locationId === institutionLocation.id,
+              );
             if (existingDesignationLocation) {
               designationLocation.approved =
                 existingDesignationLocation.approved !== false;
               designationLocation.existingDesignationLocation = true;
             }
             return designationLocation;
-          },
-        );
+          });
       }
       const response = await approveDenyDesignationModal.value.showModal();
       //Update designation only on a submit action.

@@ -1,6 +1,6 @@
 <template>
   <IdleTimeChecker :clientIdType="ClientIdType.AEST">
-    <v-app-bar dense flat app style="overflow:visible">
+    <v-app-bar dense flat app style="overflow: visible">
       <BCLogo
         subtitle="Ministry of Advanced Education and Skills Training"
       ></BCLogo>
@@ -9,7 +9,7 @@
         v-if="isAuthenticated"
         class="mr-5"
         icon="mdi-account"
-        outlined
+        variant="outlined"
         elevation="1"
         color="grey"
         @click="togleUserMenu"

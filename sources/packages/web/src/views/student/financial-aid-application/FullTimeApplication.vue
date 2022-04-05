@@ -29,7 +29,7 @@
             &nbsp;&nbsp;
             <ProgressSpinner
               style="width: 30px; height: 25px"
-              strokeWidth="10"/></span
+              strokeWidth="10" /></span
         ></v-btn>
       </v-col>
     </v-row>
@@ -116,10 +116,8 @@ export default {
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast
-      const programYearDetails = await ApplicationService.shared.getApplicationWithPY(
-        props.id,
-        true,
-      );
+      const programYearDetails =
+        await ApplicationService.shared.getApplicationWithPY(props.id, true);
       if (!programYearDetails.active) {
         isReadOnly.value = true;
         toast.error(
@@ -132,15 +130,12 @@ export default {
     onMounted(async () => {
       await checkProgramYear();
       //Get the student information, application information and student restriction.
-      const [
-        studentInfo,
-        applicationData,
-        studentRestriction,
-      ] = await Promise.all([
-        StudentService.shared.getStudentInfo(),
-        ApplicationService.shared.getApplicationData(props.id),
-        StudentService.shared.getStudentRestriction(),
-      ]);
+      const [studentInfo, applicationData, studentRestriction] =
+        await Promise.all([
+          StudentService.shared.getStudentInfo(),
+          ApplicationService.shared.getApplicationData(props.id),
+          StudentService.shared.getStudentRestriction(),
+        ]);
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.
@@ -185,9 +180,8 @@ export default {
     const saveDraft = async () => {
       savingDraft.value = true;
       try {
-        const associatedFiles = formioUtils.getAssociatedFiles(
-          applicationWizard,
-        );
+        const associatedFiles =
+          formioUtils.getAssociatedFiles(applicationWizard);
         await ApplicationService.shared.saveApplicationDraft(props.id, {
           programYearId: props.programYearId,
           data: applicationWizard.submission.data,
@@ -225,7 +219,7 @@ export default {
           INVALID_STUDY_DATES,
           OFFERING_START_DATE_ERROR,
           PIR_OR_DATE_OVERLAP_ERROR,
-        ].forEach(customError => {
+        ].forEach((customError) => {
           if (error.includes(customError)) {
             errorMsg = error.replace(customError, "").trim();
           }
