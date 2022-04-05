@@ -8,7 +8,13 @@
       />
     </div>
     <full-page-container>
-      <body-header title="Student change"></body-header>
+      <body-header title="Student change">
+        <template #status-chip>
+          <status-chip-requested-assessment
+            :status="appealStatus"
+          ></status-chip-requested-assessment>
+        </template>
+      </body-header>
       <student-request-change-form-approval
         :studentAppealRequests="studentAppealRequests"
         :readOnly="readOnly"
@@ -29,7 +35,7 @@
   </v-container>
 </template>
 <script lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
@@ -43,6 +49,7 @@ import {
 } from "@/components/common/StudentRequestChange/StudentRequestChange.models";
 import StudentRequestChangeFormApproval from "@/components/common/StudentRequestChange/StudentRequestChangeFormApproval.vue";
 import { StudentAppealStatus } from "@/types";
+import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 
 export default {
   components: {
@@ -50,6 +57,7 @@ export default {
     FullPageContainer,
     BodyHeader,
     StudentRequestChangeFormApproval,
+    StatusChipRequestedAssessment,
   },
   props: {
     studentId: {
@@ -69,7 +77,10 @@ export default {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const studentAppealRequests = ref([] as StudentAppealRequest[]);
-    const readOnly = ref(true);
+    const appealStatus = ref(StudentAppealStatus.Pending);
+    const readOnly = computed(
+      () => appealStatus.value !== StudentAppealStatus.Pending,
+    );
 
     onMounted(async () => {
       const appeal = await StudentAppealService.shared.getStudentAppealWithRequests(
@@ -88,7 +99,7 @@ export default {
           showAudit: false,
         },
       }));
-      readOnly.value = appeal.status !== StudentAppealStatus.Pending;
+      appealStatus.value = appeal.status;
     });
 
     const assessmentsSummaryRoute = {
@@ -117,6 +128,7 @@ export default {
       studentAppealRequests,
       submitted,
       readOnly,
+      appealStatus,
     };
   },
 };
