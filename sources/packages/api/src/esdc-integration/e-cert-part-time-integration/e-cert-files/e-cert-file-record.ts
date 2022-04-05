@@ -2,16 +2,10 @@ import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base
 import { StringBuilder } from "../../../utilities/string-builder";
 import {
   DATE_FORMAT,
-  Award,
   NUMBER_FILLER,
   RecordTypeCodes,
   SPACE_FILLER,
 } from "../models/e-cert-part-time-integration.model";
-
-/**
- * Number of possible awards available to be provided (code and amount).
- */
-const AWARD_SLOTS = 10;
 
 /**
  * Record of an Entitlement E-Cert file.
@@ -25,14 +19,6 @@ export class ECertFileRecord implements FixedFormatFileLine {
    */
   sin: string;
   /**
-   * Student Application number.
-   */
-  applicationNumber: string;
-  /**
-   * Unique number assigned to this entitlement record.
-   */
-  documentNumber: number;
-  /**
    * Date when the funds on this document (e-Cert) can be released.
    */
   disbursementDate: Date;
@@ -41,36 +27,10 @@ export class ECertFileRecord implements FixedFormatFileLine {
    */
   documentProducedDate: Date;
   /**
-   * The maximum date that this document is valid to.
-   */
-  negotiatedExpiryDate: Date;
-  /**
    * Total dollar amount of all funding types on this document (e-Cert).
    * ! Must be rounded, only integer, no decimals.
    */
   disbursementAmount: number;
-  /**
-   * Dollar amount that should be sent to the student. This represents the total
-   * amount of BCSL/grants and CSL/grants that should go to the student on this document.
-   * ! Must be rounded, only integer, no decimals.
-   */
-  studentAmount: number;
-  /**
-   * Dollar amount that should be sent to the school. This represents the total amount of
-   * BCSL/grants and CSL/grants that should go to the student on this document.
-   * ! Must be rounded, only integer, no decimals.
-   */
-  schoolAmount: number;
-  /**
-   * Federal loan dollar amount to be disbursed.
-   * ! Must be rounded, only integer, no decimals.
-   */
-  cslAwardAmount: number;
-  /**
-   * Provincial loan dollar amount to be disbursed.
-   * ! Must be rounded, only integer, no decimals.
-   */
-  bcslAwardAmount: number;
   /**
    * Date that studies commence. Generally derived from last application. The first day of classes.
    * Also known as the Period of Study Commencement Date (PSCD).
@@ -97,10 +57,6 @@ export class ECertFileRecord implements FixedFormatFileLine {
    * Student's Year of study.
    */
   yearOfStudy: number;
-  /**
-   * Total years in the program.
-   */
-  totalYearsOfStudy: number;
   /**
    * Date that the school confirmed enrolment.
    */
@@ -130,10 +86,6 @@ export class ECertFileRecord implements FixedFormatFileLine {
    */
   city: string;
   /**
-   * Student country Name.
-   */
-  countryName: string;
-  /**
    * Student email address.
    */
   emailAddress: string;
@@ -154,79 +106,88 @@ export class ECertFileRecord implements FixedFormatFileLine {
    */
   totalGrantAmount: number;
   /**
-   * Federal grants list (maximum 10) where 6 to 10 are not expecting data.
-   * ! All values must be rounded, only integers, no decimals.
+   * Certificate number, the generated sequence number for the file.
    */
-  grantAwards: Award[];
+  certNumber: number;
+  /**
+   * Total of all BC grant awards on this Entitlement Record.
+   */
+  totalBCSGAmount: number;
+  /**
+   * Total of all BC grant awards on this Entitlement Record.
+   */
+  totalCSGP_PTAmount: number;
+  /**
+   * Total of all BC grant awards on this Entitlement Record.
+   */
+  totalCSGP_PDAmount: number;
+  /**
+   * Total of all BC grant awards on this Entitlement Record.
+   */
+  totalCSGP_PTDEPAmount: number;
 
   public getFixedFormat(): string {
     const record = new StringBuilder();
     record.append(this.recordType);
-    record.append(this.sin, 9);
-    record.appendWithStartFiller(this.applicationNumber, 19, NUMBER_FILLER);
-    record.appendWithStartFiller(this.documentNumber, 8, NUMBER_FILLER);
-    record.appendDate(this.disbursementDate, DATE_FORMAT);
-    record.appendDate(this.documentProducedDate, DATE_FORMAT);
-    record.appendDate(this.negotiatedExpiryDate, DATE_FORMAT);
-    record.appendWithStartFiller(this.disbursementAmount, 6, NUMBER_FILLER);
-    record.appendWithStartFiller(this.studentAmount, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.schoolAmount, 8, NUMBER_FILLER);
-    record.appendWithStartFiller(this.cslAwardAmount, 6, NUMBER_FILLER);
-    record.appendWithStartFiller(this.bcslAwardAmount, 6, NUMBER_FILLER);
-    record.appendDate(this.educationalStartDate, DATE_FORMAT);
-    record.appendDate(this.educationalEndDate, DATE_FORMAT);
-    record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
-    record.appendWithStartFiller(this.weeksOfStudy, 2, NUMBER_FILLER);
-    record.appendWithStartFiller(this.fieldOfStudy, 2, NUMBER_FILLER);
-    record.append(this.yearOfStudy.toString(), 1);
-    record.append(this.totalYearsOfStudy.toString(), 1);
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Cancel Date, optional, not provided.
-    record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.
-    record.repeatAppend(SPACE_FILLER, 2); // Provincial field of study code, optional, not provided.
-    record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
-    // The below information indicates if e-cert or paper certificate is sent (E=E-cert; P=Paper).
-    // Paper is no longer used, the data options existed in the past to support a transition period
-    // and has not been removed from the files. We only send electronic files now.
-    record.append("E"); // Indicates if e-cert or paper certificate E=E-cert; P=Paper.
-    record.appendDate(this.dateOfBirth, DATE_FORMAT);
     record.appendWithEndFiller(this.lastName, 25, SPACE_FILLER);
     record.appendWithEndFiller(this.firstName || "", 15, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 3); // Initials, optional, not provided.
+    record.append(this.sin, 9);
+    record.append(this.gender, 1);
+    record.appendDate(this.dateOfBirth, DATE_FORMAT);
+    record.appendWithEndFiller(this.maritalStatus, 4, SPACE_FILLER);
     record.appendWithEndFiller(this.addressLine1, 40, SPACE_FILLER);
     record.appendWithEndFiller(this.addressLine2 || "", 40, SPACE_FILLER);
+    record.repeatAppend(SPACE_FILLER, 40); // AddressLine 3, optional, not provided.
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 4); // Province, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 16); // Postal code, optional, not provided.
-    record.appendWithEndFiller(this.countryName, 20, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 20); // Phone Number, optional, not provided.
-    record.appendWithEndFiller(this.emailAddress, 70, SPACE_FILLER);
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 1, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address Line 2, optional, not provided.
+    record.append("BC  ", 4); //TODO Province, is hardcoded to "BC  ".
+    record.append("CAN "); // TODO Country, is hardcoded to "CAN ".
+    record.repeatAppend(SPACE_FILLER, 16); //TODO Postal code, Filled with space as not provided.
+    record.repeatAppend(SPACE_FILLER, 16); // Telephone, optional, not provided.
+    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 1, optional, not provided.
+    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 2, optional, not provided.
+    record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 3, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 25); // Alternate City, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 4); // Alternate Province, optional, not provided.
+    record.repeatAppend(SPACE_FILLER, 4); // Alternate Country, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Alternate Postal Code, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 20); // Alternate Country Name, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 20); // Alternate Phone Number, optional, not provided.
-    record.append(this.gender, 1);
-    record.append(this.maritalStatus, 1);
+    record.repeatAppend(SPACE_FILLER, 16); // Alternate Telephone, optional, not provided.
     record.appendWithEndFiller(this.studentNumber || "", 12, SPACE_FILLER);
-    record.append("E"); // Student’s language preference E= English, F= French.
-    record.appendWithStartFiller(this.totalGrantAmount, 6, NUMBER_FILLER);
-    // Add the list of awards codes and values that always fill the same amount
-    // of slots defined on GRANT_AWARD_SLOTS. When there values available
-    for (let i = 0; i < AWARD_SLOTS; i++) {
-      const award = this.grantAwards.shift();
-      if (award) {
-        record.appendWithEndFiller(award.valueCode, 4, SPACE_FILLER);
-        record.appendWithStartFiller(award.valueAmount, 6, NUMBER_FILLER);
-      } else {
-        record.repeatAppend(SPACE_FILLER, 10); // Empty data for code(length=4)+amount(length=6) = 10 empty spaces.
-      }
-    }
-
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Address Last Update Date, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, DATE_FORMAT.length); // Borrower Alternate Address Last Update, optional, not provided.
-    record.repeatAppend(SPACE_FILLER, 69); // Trailing space
+    record.appendDate(this.disbursementDate, DATE_FORMAT);
+    record.appendWithStartFiller(this.disbursementAmount, 9, NUMBER_FILLER);
+    record.appendWithStartFiller(this.certNumber, 7, NUMBER_FILLER);
+    record.appendDate(this.educationalStartDate, DATE_FORMAT);
+    record.appendDate(this.educationalEndDate, DATE_FORMAT);
+    record.appendWithEndFiller(this.federalInstitutionCode, 4, SPACE_FILLER);
+    record.appendWithStartFiller(this.fieldOfStudy, 4, NUMBER_FILLER);
+    record.append(this.yearOfStudy.toString(), 1);
+    record.appendWithStartFiller(this.weeksOfStudy, 3, NUMBER_FILLER);
+    record.appendDate(this.documentProducedDate, DATE_FORMAT);
+    record.repeatAppend(SPACE_FILLER, 8); // TODO Cancel Date, E-cert cancellation date.
+    record.repeatAppend(SPACE_FILLER, 9); //CAG PD Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 9); //CAG LI Amt, N/A.
+    record.appendWithStartFiller(this.totalGrantAmount, 5, NUMBER_FILLER); //Sum of all CSGP grants + BC Provincial Part-time grants from this certificate.
+    record.appendWithStartFiller(this.totalCSGP_PTAmount, 5, NUMBER_FILLER); //Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
+    record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, N/A.
+    record.appendWithStartFiller(this.totalCSGP_PDAmount, 5, NUMBER_FILLER); //Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
+    record.appendWithStartFiller(this.totalCSGP_PTDEPAmount, 5, NUMBER_FILLER); //Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
+    record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, N/A.
+    record.appendWithStartFiller(this.totalBCSGAmount, 5, NUMBER_FILLER); // BC Part-time grant amount 1
+    record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
+    record.repeatAppend(SPACE_FILLER, 10); // Space Filler.
+    record.repeatAppend(SPACE_FILLER, 8); // CSGP MP Date, N/A.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PT Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP MI Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PD Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PTDEP Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PDSE Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 20); // Space Filler.
+    record.appendWithEndFiller(this.emailAddress, 75, SPACE_FILLER);
+    record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.
+    record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
+    record.repeatAppend(SPACE_FILLER, 7); // EI Remittance Amt, optional, not provided.
+    record.appendWithStartFiller(50, 2, NUMBER_FILLER); // TODO Course Load Percentage, also hardcoded in assessment-gateway workflow.
+    record.repeatAppend(SPACE_FILLER, 25); // Space Filler.
     return record.toString();
   }
 }

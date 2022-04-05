@@ -8,6 +8,9 @@ export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
 export const ECERT_SENT_TITLE = "Entitlement File";
 export const TIME_FORMAT = "HHmm";
+export const CSGD = "CSGD";
+export const CSGP = "CSGP";
+export const CSGPT = "CSGPT";
 
 export type Award = Pick<
   DisbursementValue,

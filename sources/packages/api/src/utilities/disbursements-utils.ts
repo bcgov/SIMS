@@ -18,6 +18,21 @@ export function getDisbursementValuesByType(
 }
 
 /**
+ * Extract from the list of awards (disbursement values)
+ * the specific types.
+ * @param awards list of awards (disbursement values).
+ * @param valueCode valueCode to be extracted.
+ * @returns list of awards of the specified types.
+ */
+export function getDisbursementAmountByValueCode(
+  awards: Award[],
+  valueCode: string,
+): number {
+  return +awards.find((award) => award.valueCode.includes(valueCode))
+    .valueAmount;
+}
+
+/**
  * Get the sum of the awards (disbursement values)
  * for the specific types.
  * @param awards list of awards (disbursement values).

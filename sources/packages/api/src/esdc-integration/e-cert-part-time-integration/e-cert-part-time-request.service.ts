@@ -18,7 +18,7 @@ import {
   ECertUploadResult,
 } from "./models/e-cert-part-time-integration.model";
 
-const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
+const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 
 @Injectable()
 export class ECertPartTimeRequestService {

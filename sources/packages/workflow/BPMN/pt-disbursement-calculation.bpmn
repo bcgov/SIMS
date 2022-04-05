@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_08hvmk9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_08hvmk9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
   <bpmn:process id="pt-disbursement-calculation" name="Part Time Disbursement Calculation" isExecutable="true">
     <bpmn:startEvent id="Event_00zpz0m">
       <bpmn:outgoing>Flow_05xex8s</bpmn:outgoing>
@@ -11,6 +11,7 @@
       <bpmn:incoming>Flow_0eahf2m</bpmn:incoming>
       <bpmn:incoming>Flow_0jye2kc</bpmn:incoming>
       <bpmn:incoming>Flow_08pt6uk</bpmn:incoming>
+      <bpmn:incoming>Flow_180myxs</bpmn:incoming>
       <bpmn:outgoing>Flow_1g1h7be</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:parallelGateway id="pt-disbursement-split">
@@ -21,6 +22,7 @@
       <bpmn:outgoing>Flow_13u518c</bpmn:outgoing>
       <bpmn:outgoing>Flow_0tdbdhh</bpmn:outgoing>
       <bpmn:outgoing>Flow_0imib5p</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jswhpy</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:endEvent id="Event_1gmn0nq">
       <bpmn:incoming>Flow_1g1h7be</bpmn:incoming>
@@ -35,7 +37,7 @@ var CSLPPayload = {
   valueCode: "CSLP",
   valueType: "Canada Loan",
   valueAmount: parseFloat(cslptGrant)
-    ? Math.round(parseFloat(cslptGrant) * 100) / 100
+    ? parseFloat(cslptGrant).toFixed(2)
     : 0,
 };
 
@@ -54,9 +56,9 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     valueType: "Canada Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
-    CSGPPayload["valueAmount"] = parseFloat(csgppdGrant) ?  Math.round((parseFloat(csgppdGrant) / 2) * 100) / 100 : 0;
+    CSGPPayload["valueAmount"] = parseFloat(csgppdGrant) ? (parseFloat(csgppdGrant) / 2).toFixed(2) : 0;
   } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
-    CSGPPayload["valueAmount"] = parseFloat(csgppdGrant) ? Math.round(parseFloat(csgppdGrant) * 100) / 100 : 0;
+    CSGPPayload["valueAmount"] = parseFloat(csgppdGrant) ? parseFloat(csgppdGrant).toFixed(2) : 0;
   }
 
 execution.setVariable("CSGPPayload", CSGPPayload);</bpmn:script>
@@ -74,9 +76,9 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     valueType: "Canada Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
-    CSGDPayload["valueAmount"] = parseFloat(csgptdepGrant) ?  Math.round((parseFloat(csgptdepGrant) / 2) * 100) / 100 : 0;
+    CSGDPayload["valueAmount"] = parseFloat(csgptdepGrant) ? (parseFloat(csgptdepGrant) / 2).toFixed(2) : 0;
   } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
-    CSGDPayload["valueAmount"] = parseFloat(csgptdepGrant) ? Math.round(parseFloat(csgptdepGrant) * 100) / 100 : 0;
+    CSGDPayload["valueAmount"] = parseFloat(csgptdepGrant) ? parseFloat(csgptdepGrant).toFixed(2) : 0;
   }
 
 execution.setVariable("CSGDPayload", CSGDPayload);</bpmn:script>
@@ -94,9 +96,9 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     valueType: "Canada Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
-    CSPTPayload["valueAmount"] = parseFloat(csgptGrant) ?  Math.round((parseFloat(csgptGrant) / 2) * 100) / 100 : 0;
+    CSPTPayload["valueAmount"] = parseFloat(csgptGrant) ? (parseFloat(csgptGrant) / 2).toFixed(2) : 0;
   } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
-    CSPTPayload["valueAmount"] = parseFloat(csgptGrant) ? Math.round(parseFloat(csgptGrant) * 100) / 100 : 0;
+    CSPTPayload["valueAmount"] = parseFloat(csgptGrant) ? parseFloat(csgptGrant).toFixed(2) : 0;
   }
 
 execution.setVariable("CSPTPayload", CSPTPayload);</bpmn:script>
@@ -114,9 +116,9 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     valueType: "BC Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
-    BCAGPayload["valueAmount"] = parseFloat(bcagptGrant) ?  Math.round((parseFloat(bcagptGrant) / 2) * 100) / 100 : 0;
+    BCAGPayload["valueAmount"] = parseFloat(bcagptGrant) ? (parseFloat(bcagptGrant) / 2).toFixed(2) : 0;
   } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
-    BCAGPayload["valueAmount"] = parseFloat(bcagptGrant) ? Math.round(parseFloat(bcagptGrant) * 100) / 100 : 0;
+    BCAGPayload["valueAmount"] = parseFloat(bcagptGrant) ? parseFloat(bcagptGrant).toFixed(2) : 0;
   }
 
 execution.setVariable("BCAGPayload", BCAGPayload);</bpmn:script>
@@ -134,9 +136,9 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     valueType: "BC Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
-    SBSDPayload["valueAmount"] = parseFloat(sbsdGrant) ?  Math.round((parseFloat(sbsdGrant) / 2) * 100) / 100 : 0;
+    SBSDPayload["valueAmount"] = parseFloat(sbsdGrant) ? (parseFloat(sbsdGrant) / 2).toFixed(2) : 0;
   } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
-    SBSDPayload["valueAmount"] = parseFloat(sbsdGrant) ? Math.round(parseFloat(sbsdGrant) * 100) / 100 : 0;
+    SBSDPayload["valueAmount"] = parseFloat(sbsdGrant) ? parseFloat(sbsdGrant).toFixed(2) : 0;
   }
 
 execution.setVariable("SBSDPayload", SBSDPayload);</bpmn:script>
@@ -155,6 +157,29 @@ execution.setVariable("SBSDPayload", SBSDPayload);</bpmn:script>
     <bpmn:sequenceFlow id="Flow_13u518c" sourceRef="pt-disbursement-split" targetRef="CSG-PTPayload" />
     <bpmn:sequenceFlow id="Flow_0tdbdhh" sourceRef="pt-disbursement-split" targetRef="BCAG-PTPayload" />
     <bpmn:sequenceFlow id="Flow_0imib5p" sourceRef="pt-disbursement-split" targetRef="SBSDPayload" />
+    <bpmn:scriptTask id="Activity_0ye9hqh" name="Prepare BCSG-PT Payload" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1jswhpy</bpmn:incoming>
+      <bpmn:outgoing>Flow_180myxs</bpmn:outgoing>
+      <bpmn:script>// Prepare BCSG-PT
+//BCSG-PT is 100% for one Disbursement date and 50% for each date, if 2
+var sbsdGrant = execution.getVariable("SBSDGrant");
+var bcagptGrant = execution.getVariable("BCAGPTGrant");
+var firstDisbursementDate = execution.getVariable("firstDisbursementDate");
+var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
+  var BCSGPayload = {
+    valueCode: "BCSG-PT",
+    valueType: "BC Total Grant",
+  };
+  if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
+    BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? (parseFloat(sbsdGrant + bcagptGrant) / 2).toFixed(2) : 0;
+  } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
+    BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? parseFloat(sbsdGrant + bcagptGrant).toFixed(2) : 0;
+  }
+
+execution.setVariable("BCSGPayload", BCSGPayload);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1jswhpy" sourceRef="pt-disbursement-split" targetRef="Activity_0ye9hqh" />
+    <bpmn:sequenceFlow id="Flow_180myxs" sourceRef="Activity_0ye9hqh" targetRef="pt-disbursement-join" />
     <bpmn:group id="FederalAwardsDisbursement" categoryValueRef="CategoryValue_0rrq3kw" />
     <bpmn:group id="ProvincialAwardsDisbursement" categoryValueRef="CategoryValue_04s5aw5" />
   </bpmn:process>
@@ -234,6 +259,19 @@ execution.setVariable("SBSDPayload", SBSDPayload);</bpmn:script>
         <di:waypoint x="610" y="118" />
         <di:waypoint x="610" y="165" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jswhpy_di" bpmnElement="Flow_1jswhpy">
+        <di:waypoint x="635" y="190" />
+        <di:waypoint x="960" y="190" />
+        <di:waypoint x="960" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_180myxs_di" bpmnElement="Flow_180myxs">
+        <di:waypoint x="960" y="315" />
+        <di:waypoint x="960" y="360" />
+        <di:waypoint x="635" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_00zpz0m_di" bpmnElement="Event_00zpz0m">
+        <dc:Bounds x="592" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_09t6163_di" bpmnElement="pt-disbursement-join">
         <dc:Bounds x="585" y="335" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -261,8 +299,8 @@ execution.setVariable("SBSDPayload", SBSDPayload);</bpmn:script>
       <bpmndi:BPMNShape id="Activity_10hvy41_di" bpmnElement="SBSDPayload">
         <dc:Bounds x="760" y="230" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00zpz0m_di" bpmnElement="Event_00zpz0m">
-        <dc:Bounds x="592" y="82" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_0ye9hqh_di" bpmnElement="Activity_0ye9hqh">
+        <dc:Bounds x="910" y="235" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_0wwh8lj_di" bpmnElement="FederalAwardsDisbursement">
         <dc:Bounds x="160" y="215" width="450" height="120" />
