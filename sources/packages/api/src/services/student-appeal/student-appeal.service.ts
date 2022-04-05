@@ -276,7 +276,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         STUDENT_APPEAL_INVALID_OPERATION,
       );
     }
-    // Check is at least one appeal was approved and a assessment is needed.
+    // Check is at least one appeal was approved and an assessment is needed.
     if (
       appealToUpdate.appealRequests.some(
         (request) => request.appealStatus === StudentAppealStatus.Approved,

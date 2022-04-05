@@ -47,9 +47,12 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters, useToastMessage } from "@/composables";
-import { StudentAppealRequest, StudentAppealApproval } from "@/types";
+import {
+  StudentAppealRequest,
+  StudentAppealApproval,
+  StudentAppealStatus,
+} from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
-import { StudentAppealStatus } from "@/types";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 
 export default {
