@@ -22,7 +22,7 @@ export interface PendingAndDeniedAppeals {
  */
 export class StudentAppealWithStatus extends StudentAppeal {
   /**
-   * Appeal status defined based in the individual status of
+   * Appeal status defined based on the individual status of
    * each student appeal request record.
    */
   status: StudentAppealStatus;

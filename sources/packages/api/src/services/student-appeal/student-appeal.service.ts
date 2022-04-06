@@ -207,13 +207,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     approvals: StudentAppealRequestApproval[],
     auditUserId: number,
   ): Promise<StudentAppeal> {
+    const appealRequestsIDs = approvals.map((approval) => approval.id);
     const appealToUpdate = await this.repo
       .createQueryBuilder("studentAppeal")
       .select([
         "studentAppeal.id",
-        "appealRequest.id",
-        "appealRequest.appealStatus",
         "studentAssessment.id",
+        "appealRequest.id",
         "application.id",
         "application.data",
       ])
@@ -221,11 +221,21 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .innerJoin("studentAppeal.application", "application")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
+      // Ensures that the provided appeal requests IDs belongs to the appeal.
+      .andWhere("appealRequest.id IN (:...requestIDs)", {
+        requestIDs: appealRequestsIDs,
+      })
+      // Ensures that all appeal requests are on pending status.
+      .andWhere(
+        `NOT EXISTS(${this.studentAppealRequestsService
+          .appealsByStatusQueryObject(StudentAppealStatus.Pending, false)
+          .getSql()})`,
+      )
       .getOne();
 
     if (!appealToUpdate) {
       throw new CustomNamedError(
-        "Not able to find the appeal.",
+        `Not able to find the appeal or the appeal has requests different from '${StudentAppealStatus.Pending}'.`,
         STUDENT_APPEAL_NOT_FOUND,
       );
     }
@@ -237,48 +247,34 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       );
     }
 
-    const auditUser = { id: auditUserId } as User;
-    const auditDate = new Date();
-
     // If a students appel has, for instance, 3 requests, all must be updated at once.
-    // This counter checks if all the requests were updated as expected.
-    let updatedRecords = 0;
-    appealToUpdate.appealRequests.forEach((appealRequest) => {
-      // Verify if the appeal request to be updated is in the right state.
-      if (appealRequest.appealStatus !== StudentAppealStatus.Pending) {
-        throw new CustomNamedError(
-          `Only '${StudentAppealStatus.Pending} appeals requests can be '${StudentAppealStatus.Approved}' or '${StudentAppealStatus.Declined}'.`,
-          STUDENT_APPEAL_INVALID_OPERATION,
-        );
-      }
-      // Finds the appeal request to be updated.
-      const approvedDeclinedRequest = approvals.find(
-        (approval) => approval.id === appealRequest.id,
-      );
-      if (!approvedDeclinedRequest) {
-        throw new CustomNamedError(
-          "Not able to find the appeal request or it does not belong to the appeal.",
-          STUDENT_APPEAL_INVALID_OPERATION,
-        );
-      }
-      // Update the student appeal after all validations passed.
-      appealRequest.modifier = auditUser;
-      appealRequest.assessedBy = auditUser;
-      appealRequest.assessedDate = auditDate;
-      appealRequest.appealStatus = approvedDeclinedRequest.appealStatus;
-      appealRequest.note = {
-        noteType: NoteType.General,
-        description: approvedDeclinedRequest.noteDescription,
-      } as Note;
-      updatedRecords++;
-    });
-    // Validates if all appeal request are updated. All must be updated at once.
-    if (approvals.length !== updatedRecords) {
+    // The query already ensured that only pending requests will be selected and that
+    // the student appeal also has nothing different then pending requests.
+    if (approvals.length !== appealToUpdate.appealRequests.length) {
       throw new CustomNamedError(
         "The appeal requests must be updated all at once. The appeals requests received does not represents the entire set of records that must be updated.",
         STUDENT_APPEAL_INVALID_OPERATION,
       );
     }
+
+    const auditUser = { id: auditUserId } as User;
+    const auditDate = new Date();
+
+    appealToUpdate.appealRequests = approvals.map(
+      (approval) =>
+        ({
+          id: approval.id,
+          appealStatus: approval.appealStatus,
+          note: {
+            noteType: NoteType.General,
+            description: approval.noteDescription,
+          } as Note,
+          modifier: auditUser,
+          assessedBy: auditUser,
+          assessedDate: auditDate,
+        } as StudentAppealRequest),
+    );
+
     // Check is at least one appeal was approved and an assessment is needed.
     if (
       appealToUpdate.appealRequests.some(

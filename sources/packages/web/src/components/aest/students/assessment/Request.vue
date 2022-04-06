@@ -38,7 +38,7 @@
                   variant="text"
                   class="text-decoration-underline"
                 >
-                  <font-awesome-icon :icon="['fas', 'file-alt']" class="mr-2" />
+                  <font-awesome-icon :icon="['far', 'file-alt']" class="mr-2" />
                   View request</v-btn
                 ></template
               ></Column

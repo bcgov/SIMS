@@ -10,7 +10,7 @@ export interface StudentAppealApproval {
   id: number;
   appealStatus: StudentAppealStatus;
   noteDescription: string;
-  string?: Date;
+  assessedDate?: string;
   assessedByUserName?: string;
   showAudit: boolean;
 }
