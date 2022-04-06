@@ -10,7 +10,11 @@ import {
 import { StudentAppealService, WorkflowActionsService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
-import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -44,6 +48,9 @@ export class StudentAppealAESTController extends BaseController {
    * @returns the student appeal and its requests.
    */
   @Get(":appealId/requests")
+  @ApiNotFoundResponse({
+    description: "Not able to find the student appeal.",
+  })
   async getStudentAppealWithRequests(
     @Param("appealId") appealId: number,
   ): Promise<StudentAppealApiOutDTO> {
@@ -78,6 +85,9 @@ export class StudentAppealAESTController extends BaseController {
    * @param userToken user authentication token.
    */
   @Patch(":appealId/requests")
+  @ApiNotFoundResponse({
+    description: `Not able to find the appeal or the appeal has requests different from '${StudentAppealStatus.Pending}'.`,
+  })
   @ApiUnprocessableEntityResponse({
     description:
       `It is not possible to process the appeal approval because one of the following conditions: ` +
