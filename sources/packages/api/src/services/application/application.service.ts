@@ -72,7 +72,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   private readonly config: IConfig;
   constructor(
     connection: Connection,
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly sfasApplicationService: SFASApplicationService,
     private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
@@ -81,7 +81,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly msfaaNumberService: MSFAANumberService,
   ) {
     super(connection.getRepository(Application));
-    this.config = this.configService.getConfig();
+    this.config = configService.getConfig();
     this.logger.log("[Created]");
   }
 
