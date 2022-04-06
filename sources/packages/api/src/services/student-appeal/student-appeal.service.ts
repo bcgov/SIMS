@@ -196,6 +196,9 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   /**
    * Update all student appeals requests at once.
    * @param appealId appeal if to be retrieved.
+   * @param approvals all appeal requests that must be updated with
+   * an approved/declined status. All requests that belongs to the
+   * appeal must be provided.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    */

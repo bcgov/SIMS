@@ -40,11 +40,6 @@ export class AssessmentAESTController extends BaseController {
    * @returns RequestAssessmentSummaryApiOutDTO list.
    */
   @Get("application/:applicationId/requests")
-  @ApiOkResponse({
-    description: "Requested assessment for the application found.",
-    type: RequestAssessmentSummaryApiOutDTO,
-    isArray: true,
-  })
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
   ): Promise<RequestAssessmentSummaryApiOutDTO[]> {
