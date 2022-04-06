@@ -17,16 +17,16 @@ import {
 } from "../../utilities";
 import {
   Award,
-  ECertRecord,
+  ECertFTRecord,
   RecordTypeCodes,
 } from "./models/e-cert-full-time-integration.model";
 import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
-import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
-import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
-import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
+import { ECertFTFileHeader } from "./e-cert-files/e-cert-file-header";
+import { ECertFTFileFooter } from "./e-cert-files/e-cert-file-footer";
+import { ECertFTFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../database/entities";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import {
@@ -61,12 +61,12 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
    * @returns complete ECert content to be sent.
    */
   createRequestContent(
-    ecertRecords: ECertRecord[],
+    ecertRecords: ECertFTRecord[],
     fileSequence: number,
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
-    const header = new ECertFileHeader();
+    const header = new ECertFTFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertHeader;
     header.processDate = new Date();
     header.sequence = fileSequence;
@@ -111,7 +111,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
         DisbursementValueType.BCTotalGrant,
       ]);
 
-      const record = new ECertFileRecord();
+      const record = new ECertFTFileRecord();
       record.recordType = RecordTypeCodes.ECertRecord;
       record.sin = ecertRecord.sin;
       record.applicationNumber = ecertRecord.applicationNumber;
@@ -163,7 +163,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
       (hash, record) => hash + +record.sin,
       0,
     );
-    const footer = new ECertFileFooter();
+    const footer = new ECertFTFileFooter();
     footer.recordTypeCode = RecordTypeCodes.ECertFooter;
     footer.totalSINHash = totalSINHash;
     footer.recordCount = fileRecords.length;
@@ -231,7 +231,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
      * Read the first line to check if the header code is the expected one.
      * and remove header.
      */
-    const header = ECertFileHeader.createFromLine(fileLines.shift());
+    const header = ECertFTFileHeader.createFromLine(fileLines.shift());
     if (header.recordTypeCode !== RecordTypeCodes.ECertHeader) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
@@ -246,7 +246,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
      * Read the last line to check if the trailer code is the expected one
      * and remove trailer line.
      */
-    const trailer = ECertFileFooter.createFromLine(fileLines.pop());
+    const trailer = ECertFTFileFooter.createFromLine(fileLines.pop());
     if (trailer.recordTypeCode !== RecordTypeCodes.ECertFooter) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,

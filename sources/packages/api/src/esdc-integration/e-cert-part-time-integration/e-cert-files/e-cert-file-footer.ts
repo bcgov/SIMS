@@ -11,7 +11,7 @@ import {
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFileFooter implements FixedFormatFileLine {
+export class ECertPTFileFooter implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   totalAmountDisbursed: number;
   recordCount: number;
@@ -25,8 +25,8 @@ export class ECertFileFooter implements FixedFormatFileLine {
     return footer.toString();
   }
 
-  public static createFromLine(line: string): ECertFileFooter {
-    const footer = new ECertFileFooter();
+  public static createFromLine(line: string): ECertPTFileFooter {
+    const footer = new ECertPTFileFooter();
     footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     // Here total record count is the total records
     footer.recordCount = parseInt(line.substring(2, 11));

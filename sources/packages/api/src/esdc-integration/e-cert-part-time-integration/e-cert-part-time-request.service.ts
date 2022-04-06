@@ -14,7 +14,7 @@ import {
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration.service";
 import {
   Award,
-  ECertRecord,
+  ECertPTRecord,
   ECertUploadResult,
 } from "./models/e-cert-part-time-integration.model";
 
@@ -116,7 +116,7 @@ export class ECertPartTimeRequestService {
    * generate the record.
    * @returns e-Cert record.
    */
-  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  private createECertRecord(disbursement: DisbursementSchedule): ECertPTRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const [addressInfo] = application.student.contactInfo.addresses;
@@ -163,7 +163,7 @@ export class ECertPartTimeRequestService {
       maritalStatus: application.relationshipStatus,
       studentNumber: application.studentNumber,
       awards,
-    } as ECertRecord;
+    } as ECertPTRecord;
   }
 
   @InjectLogger()

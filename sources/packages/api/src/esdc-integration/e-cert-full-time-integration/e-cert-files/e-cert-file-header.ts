@@ -18,7 +18,7 @@ const ORIGINATOR_CODE = "BC";
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFileHeader implements FixedFormatFileLine {
+export class ECertFTFileHeader implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   processDate: Date;
   sequence: number;
@@ -35,8 +35,8 @@ export class ECertFileHeader implements FixedFormatFileLine {
     return header.toString();
   }
 
-  public static createFromLine(line: string): ECertFileHeader {
-    const header = new ECertFileHeader();
+  public static createFromLine(line: string): ECertFTFileHeader {
+    const header = new ECertFTFileHeader();
     header.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     header.processDate = getDateOnlyFromFormat(
       line.substring(47, 55),

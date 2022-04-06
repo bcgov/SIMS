@@ -10,7 +10,7 @@ export type Award = Pick<
   "valueType" | "valueCode" | "valueAmount"
 >;
 
-export interface ECertRecord {
+export interface ECertFTRecord {
   sin: string;
   applicationNumber: string;
   documentNumber: number;

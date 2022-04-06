@@ -13,7 +13,7 @@ export type Award = Pick<
   "valueType" | "valueCode" | "valueAmount"
 >;
 
-export interface ECertRecord {
+export interface ECertPTRecord {
   sin: string;
   disbursementDate: Date;
   documentProducedDate: Date;

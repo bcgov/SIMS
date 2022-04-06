@@ -15,7 +15,7 @@ import {
 } from "../../utilities";
 import {
   Award,
-  ECertRecord,
+  ECertPTRecord,
   RecordTypeCodes,
   CSGD,
   CSGP,
@@ -29,9 +29,9 @@ import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
-import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
-import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
-import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
+import { ECertPTFileHeader } from "./e-cert-files/e-cert-file-header";
+import { ECertPTFileFooter } from "./e-cert-files/e-cert-file-footer";
+import { ECertPTFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../database/entities";
 
 /**
@@ -59,12 +59,12 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
    * @returns complete ECert content to be sent.
    */
   createRequestContent(
-    ecertRecords: ECertRecord[],
+    ecertRecords: ECertPTRecord[],
     fileSequence: number,
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
-    const header = new ECertFileHeader();
+    const header = new ECertPTFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertHeader;
     header.processDate = new Date();
     fileLines.push(header);
@@ -106,7 +106,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
         DisbursementValueType.BCTotalGrant,
       ]);
 
-      const record = new ECertFileRecord();
+      const record = new ECertPTFileRecord();
       record.recordType = RecordTypeCodes.ECertRecord;
       record.sin = ecertRecord.sin;
       record.certNumber = fileSequence;
@@ -147,7 +147,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
       (hash, record) => hash + +record.disbursementAmount,
       0,
     );
-    const footer = new ECertFileFooter();
+    const footer = new ECertPTFileFooter();
     footer.recordTypeCode = RecordTypeCodes.ECertFooter;
     footer.totalAmountDisbursed = totalAmountDisbursed;
     footer.recordCount = fileRecords.length;

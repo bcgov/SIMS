@@ -14,7 +14,7 @@ import {
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import {
   Award,
-  ECertRecord,
+  ECertFTRecord,
   ECertUploadResult,
 } from "./models/e-cert-full-time-integration.model";
 
@@ -116,7 +116,7 @@ export class ECertFullTimeRequestService {
    * generate the record.
    * @returns e-Cert record.
    */
-  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  private createECertRecord(disbursement: DisbursementSchedule): ECertFTRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const [addressInfo] = application.student.contactInfo.addresses;
@@ -163,7 +163,7 @@ export class ECertFullTimeRequestService {
       maritalStatus: application.relationshipStatus,
       studentNumber: application.studentNumber,
       awards,
-    } as ECertRecord;
+    } as ECertFTRecord;
   }
 
   @InjectLogger()
