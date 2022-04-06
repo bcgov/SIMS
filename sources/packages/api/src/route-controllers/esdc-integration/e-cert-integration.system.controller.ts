@@ -32,7 +32,7 @@ export class ECertIntegrationController extends BaseController {
   async processFullTimeECertFile(): Promise<ESDCFileResultDTO> {
     this.logger.log("Sending Full-Time E-Cert File...");
     const uploadFullTimeResult =
-      await this.eCertFullTimeRequestService.generateECert();
+      await this.eCertFullTimeRequestService.generateFTECert();
     this.logger.log("E-Cert Full-Time file sent.");
     return {
       generatedFile: uploadFullTimeResult.generatedFile,
@@ -50,7 +50,7 @@ export class ECertIntegrationController extends BaseController {
   async processPartTimeECertFile(): Promise<ESDCFileResultDTO> {
     this.logger.log("Sending Part-Time E-Cert File...");
     const uploadPartTimeResult =
-      await this.eCertPartTimeRequestService.generateECert();
+      await this.eCertPartTimeRequestService.generatePTECert();
     this.logger.log("E-Cert Part-Time file sent.");
     return {
       generatedFile: uploadPartTimeResult.generatedFile,

@@ -6,7 +6,6 @@ import {
 } from "../../services";
 import { ESDCIntegrationConfig } from "../../types";
 import {
-  getDayOfTheYear,
   getDisbursementAmountByValueCode,
   getGenderCode,
   getPTMaritalStatusCode,
@@ -21,12 +20,6 @@ import {
   CSGP,
   CSGPT,
 } from "./models/e-cert-part-time-integration.model";
-import {
-  NUMBER_FILLER,
-  CreateRequestFileNameResult,
-} from "../models/esdc-integration.model";
-import { StringBuilder } from "../../utilities/string-builder";
-import { EntityManager } from "typeorm";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
 import { ECertPTFileHeader } from "./e-cert-files/e-cert-file-header";
@@ -154,50 +147,6 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
     fileLines.push(footer);
 
     return fileLines;
-  }
-
-  /**
-   * Define the e-Cert file name that must be uploaded.
-   * It must follow a pattern like 'PPBC.EDU.ECERTS.Dyyyyjjj.001.DAT'.
-   * @param entityManager allows the sequential number to be part of
-   * the transaction that is used to create sequential number and execute
-   * DB changes.
-   * @returns fileName and part remote file path that the file must be uploaded.
-   */
-  async createRequestFileName(
-    entityManager?: EntityManager,
-  ): Promise<CreateRequestFileNameResult> {
-    const fileNameArray = new StringBuilder();
-    const now = new Date();
-    const dayOfTheYear = getDayOfTheYear(now)
-      .toString()
-      .padStart(3, NUMBER_FILLER);
-    fileNameArray.append(
-      `${
-        this.esdcConfig.environmentCode
-      }PBC.EDU.PTCERTS.D${now.getFullYear()}${dayOfTheYear}`,
-    );
-    let fileNameSequence: number;
-    await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
-      fileNameArray.toString(),
-      entityManager,
-      async (nextSequenceNumber: number) => {
-        fileNameSequence = nextSequenceNumber;
-      },
-    );
-    fileNameArray.append(".");
-    fileNameArray.appendWithStartFiller(
-      fileNameSequence.toString(),
-      3,
-      NUMBER_FILLER,
-    );
-    fileNameArray.append(".DAT");
-    const fileName = fileNameArray.toString();
-    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
-    return {
-      fileName,
-      filePath,
-    } as CreateRequestFileNameResult;
   }
 
   /**

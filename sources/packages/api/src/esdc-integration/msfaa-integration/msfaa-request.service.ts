@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { MSFAANumber } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTCNow } from "../../utilities";
+import { getUTCNow, createRequestFileName } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { MSFAANumberService, SequenceControlService } from "../../services";
 import {
@@ -78,9 +78,10 @@ export class MSFAARequestService {
           );
           // Create the request filename with the file path for the MSFAA Request
           // sent File.
-          const fileInfo = await this.msfaaService.createRequestFileName(
-            offeringIntensity,
+          const fileInfo = await createRequestFileName(
+            "PBC.EDU.MSFA.SENT.",
             entityManager,
+            offeringIntensity,
           );
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(

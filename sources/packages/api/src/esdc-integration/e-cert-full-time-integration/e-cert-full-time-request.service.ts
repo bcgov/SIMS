@@ -5,7 +5,12 @@ import {
   OfferingIntensity,
 } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
-import { getFieldOfStudyFromCIPCode, getUTCNow } from "../../utilities";
+import {
+  getFieldOfStudyFromCIPCode,
+  getUTCNow,
+  createRequestFileName,
+  getDayOfTheYear,
+} from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
   DisbursementScheduleService,
@@ -34,7 +39,7 @@ export class ECertFullTimeRequestService {
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  async generateECert(): Promise<ECertUploadResult> {
+  async generateFTECert(): Promise<ECertUploadResult> {
     this.logger.log(
       "Retrieving Full-Time disbursements to generate the e-Cert file...",
     );
@@ -52,7 +57,7 @@ export class ECertFullTimeRequestService {
       `Found ${disbursements.length} Full-Time disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return this.createECertRecord(disbursement);
+      return this.createFTECertRecord(disbursement);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -62,6 +67,8 @@ export class ECertFullTimeRequestService {
 
     //Create records and create the unique file sequence number
     let uploadResult: ECertUploadResult;
+    const now = new Date();
+    const dayOfTheYear = getDayOfTheYear(now);
     await this.sequenceService.consumeNextSequence(
       ECERT_SENT_FILE_SEQUENCE_GROUP,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
@@ -72,10 +79,10 @@ export class ECertFullTimeRequestService {
             nextSequenceNumber,
           );
           // Create the request filename with the file path for the e-Cert File.
-          const fileInfo =
-            await this.ecertIntegrationService.createRequestFileName(
-              entityManager,
-            );
+          const fileInfo = await createRequestFileName(
+            `PBC.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
+            entityManager,
+          );
 
           // Creates the repository based on the entity manager that
           // holds the transaction already created to manage the
@@ -116,7 +123,9 @@ export class ECertFullTimeRequestService {
    * generate the record.
    * @returns e-Cert record.
    */
-  private createECertRecord(disbursement: DisbursementSchedule): ECertFTRecord {
+  private createFTECertRecord(
+    disbursement: DisbursementSchedule,
+  ): ECertFTRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const [addressInfo] = application.student.contactInfo.addresses;
