@@ -7,7 +7,7 @@ import {
   Body,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { StudentAppealService, WorkflowActionsService } from "../../services";
+import { StudentAppealService, StudentAssessmentService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import {
@@ -37,7 +37,7 @@ import { StudentAppealStatus } from "../../database/entities";
 export class StudentAppealAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
-    private readonly workflowActionsService: WorkflowActionsService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -111,9 +111,7 @@ export class StudentAppealAESTController extends BaseController {
       // if at least one request was approved, hence sometimes an appeal will not result
       // is an assessment creation if all requests are declined.
       if (savedAppeal.studentAssessment) {
-        await this.workflowActionsService.startApplicationAssessment(
-          savedAppeal.application.data.workflowName,
-          savedAppeal.application.id,
+        await this.studentAssessmentService.startAssessment(
           savedAppeal.studentAssessment.id,
         );
       }

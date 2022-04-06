@@ -32,10 +32,9 @@ export class StudentAppealApi extends HttpBaseClient {
     appealId: number,
     approvals: StudentAppealRequestApiInDTO[],
   ): Promise<void> {
-    const payload = { requests: approvals } as StudentAppealApprovalApiInDTO;
-    return this.patchCall(
+    return this.patchCall<StudentAppealApprovalApiInDTO>(
       this.addClientRoot(`appeal/${appealId}/requests`),
-      payload,
+      { requests: approvals },
     );
   }
 }
