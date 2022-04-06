@@ -18,6 +18,8 @@ import {
   FormService,
   SFASIndividualService,
   SINValidationService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "../../services";
 import { StudentController } from "./student.controller";
 import { DatabaseModule } from "../../database/database.module";
@@ -50,6 +52,8 @@ describe("StudentController", () => {
         StudentRestrictionService,
         SFASIndividualService,
         SINValidationService,
+        SFASApplicationService,
+        SFASPartTimeApplicationsService,
       ],
       controllers: [StudentController],
     }).compile();

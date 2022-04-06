@@ -18,6 +18,8 @@ import {
   FormService,
   SFASIndividualService,
   SINValidationService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "..";
 import { KeycloakConfig } from "../../auth/keycloakConfig";
 import { KeycloakService } from "../auth/keycloak/keycloak.service";
@@ -70,6 +72,8 @@ describe("Test ATBC Controller", () => {
         StudentRestrictionService,
         SFASIndividualService,
         SINValidationService,
+        SFASApplicationService,
+        SFASPartTimeApplicationsService,
       ],
     }).compile();
     userService = await moduleFixture.get(UserService);

@@ -23,6 +23,8 @@ import {
   StudentAppealService,
   StudentScholasticStandingsService,
   StudentAssessmentService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -74,6 +76,8 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentAppealService,
     StudentScholasticStandingsService,
     StudentAssessmentService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
   ],
 })
 export class AppAESTModule {}

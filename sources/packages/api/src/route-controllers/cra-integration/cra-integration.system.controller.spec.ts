@@ -14,6 +14,8 @@ import {
   WorkflowActionsService,
   WorkflowService,
   SINValidationService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "../../services";
 import { DatabaseModule } from "../../database/database.module";
 import { CRAIntegrationController } from "./cra-integration.system.controller";
@@ -42,6 +44,8 @@ describe("CRAIntegrationController", () => {
         createMockedJwtService(),
         SFASIndividualService,
         SINValidationService,
+        SFASApplicationService,
+        SFASPartTimeApplicationsService,
       ],
       controllers: [CRAIntegrationController],
     })
