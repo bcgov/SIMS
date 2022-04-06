@@ -3,7 +3,7 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
-import { InstitutionLocationTypeDto } from "../../route-controllers/institution-locations/models/institution-location.dto";
+import { InstitutionLocationModel } from "./institution-location.models";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
 import { LocationWithDesignationStatus } from "./institution-location.models";
 @Injectable()
@@ -62,7 +62,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async updateLocation(
     locationId: number,
     institutionId: number,
-    data: InstitutionLocationTypeDto,
+    data: InstitutionLocationModel,
   ): Promise<UpdateResult> {
     const institution = { id: institutionId };
     const updateLocation = {

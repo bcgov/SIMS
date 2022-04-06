@@ -34,3 +34,5 @@ export * from "./student/student.aest.controller";
 export * from "./student/student.students.controller";
 export * from "./student-appeal/student-appeal.students.controller";
 export * from "./assessment/assessment.aest.controller";
+export * from "./institution-locations/institution-location.controller.service";
+export * from "./institution-locations/institution-location.institutions.controller";

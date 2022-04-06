@@ -73,14 +73,14 @@ import {
   ApiOkResponse,
 } from "@nestjs/swagger";
 
-import { InstitutionLocationsControllerService } from "../institution-locations/institution-locations.controller.service";
+import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution")
 @ApiTags("institution")
 export class InstitutionController extends BaseController {
   constructor(
-    private readonly locationControllerService: InstitutionLocationsControllerService,
+    private readonly locationControllerService: InstitutionLocationControllerService,
     private readonly userService: UserService,
     private readonly institutionService: InstitutionService,
     private readonly accountService: BCeIDService,

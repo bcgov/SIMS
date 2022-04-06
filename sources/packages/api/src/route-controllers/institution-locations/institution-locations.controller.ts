@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Patch,
   Param,
   Body,
@@ -18,7 +17,8 @@ import {
 } from "../../services";
 import {
   InstitutionLocationsDetailsDto,
-  InstitutionLocationTypeDto,
+  InstitutionLocationInDto,
+  InstitutionLocationOutDto,
 } from "./models/institution-location.dto";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import {
@@ -43,13 +43,13 @@ import {
 } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { InstitutionLocationsControllerService } from "./institution-locations.controller.service";
+import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 
 @Controller("institution/location")
 @ApiTags("institution")
 export class InstitutionLocationsController extends BaseController {
   constructor(
-    private readonly locationControllerService: InstitutionLocationsControllerService,
+    private readonly locationControllerService: InstitutionLocationControllerService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
@@ -60,48 +60,10 @@ export class InstitutionLocationsController extends BaseController {
 
   @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
-  @Post()
-  async create(
-    @Body() payload: InstitutionLocationTypeDto,
-    @UserToken() userToken: IUserToken,
-  ): Promise<number> {
-    // Validate the location data that will be saved to SIMS DB.
-    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
-      "institutionlocation",
-      payload,
-    );
-
-    if (!dryRunSubmissionResult.valid) {
-      throw new UnprocessableEntityException(
-        "Not able to create the institution location due to an invalid request.",
-      );
-    }
-
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find an institution associated with the current user name.",
-      );
-    }
-
-    // If the data is valid the location is saved to SIMS DB.
-    const createdInstitutionLocation =
-      await this.locationService.createLocation(
-        institutionDetails.id,
-        dryRunSubmissionResult.data,
-      );
-
-    return createdInstitutionLocation.id;
-  }
-
-  @AllowAuthorizedParty(AuthorizedParties.institution)
-  @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationTypeDto,
+    @Body() payload: InstitutionLocationInDto,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
     // Validate the location data that will be saved to SIMS DB.
@@ -211,7 +173,7 @@ export class InstitutionLocationsController extends BaseController {
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<InstitutionLocationTypeDto> {
+  ): Promise<InstitutionLocationOutDto> {
     //To retrieve institution id
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
@@ -240,7 +202,7 @@ export class InstitutionLocationsController extends BaseController {
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-    } as InstitutionLocationTypeDto;
+    } as InstitutionLocationOutDto;
   }
 
   /**

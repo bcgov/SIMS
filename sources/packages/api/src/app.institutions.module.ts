@@ -9,12 +9,20 @@ import {
   UserService,
   InstitutionLocationService,
   DesignationAgreementLocationService,
+  ApplicationService,
+  SequenceControlService,
+  StudentFileService,
+  WorkflowActionsService,
+  MSFAANumberService,
+  WorkflowService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
   DesignationAgreementControllerService,
   InstitutionInstitutionsController,
   InstitutionControllerService,
+  InstitutionLocationInstitutionsController,
+  InstitutionLocationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -24,6 +32,7 @@ import { LoggerModule } from "./logger/logger.module";
   controllers: [
     DesignationAgreementInstitutionsController,
     InstitutionInstitutionsController,
+    InstitutionLocationInstitutionsController,
   ],
   providers: [
     FormService,
@@ -36,6 +45,13 @@ import { LoggerModule } from "./logger/logger.module";
     InstitutionLocationService,
     InstitutionControllerService,
     DesignationAgreementLocationService,
+    InstitutionLocationControllerService,
+    ApplicationService,
+    SequenceControlService,
+    StudentFileService,
+    WorkflowActionsService,
+    MSFAANumberService,
+    WorkflowService,
   ],
 })
 export class AppInstitutionsModule {}

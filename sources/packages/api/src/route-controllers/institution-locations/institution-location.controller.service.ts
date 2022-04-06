@@ -7,7 +7,7 @@ import {
 } from "./models/institution-location.dto";
 
 @Injectable()
-export class InstitutionLocationsControllerService {
+export class InstitutionLocationControllerService {
   constructor(private readonly locationService: InstitutionLocationService) {}
 
   /**
