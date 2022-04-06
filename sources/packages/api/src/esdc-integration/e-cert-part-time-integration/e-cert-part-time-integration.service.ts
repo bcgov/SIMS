@@ -15,14 +15,16 @@ import {
 } from "../../utilities";
 import {
   Award,
-  CreateRequestFileNameResult,
   ECertRecord,
-  NUMBER_FILLER,
   RecordTypeCodes,
   CSGD,
   CSGP,
   CSGPT,
 } from "./models/e-cert-part-time-integration.model";
+import {
+  NUMBER_FILLER,
+  CreateRequestFileNameResult,
+} from "../models/esdc-integration.model";
 import { StringBuilder } from "../../utilities/string-builder";
 import { EntityManager } from "typeorm";
 import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
@@ -173,7 +175,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
     fileNameArray.append(
       `${
         this.esdcConfig.environmentCode
-      }PBC.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
+      }PBC.EDU.PTCERTS.D${now.getFullYear()}${dayOfTheYear}`,
     );
     let fileNameSequence: number;
     await this.sequenceService.consumeNextSequenceWithExistingEntityManager(

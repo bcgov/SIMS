@@ -17,9 +17,7 @@ import {
 } from "../../utilities";
 import {
   Award,
-  CreateRequestFileNameResult,
   ECertRecord,
-  NUMBER_FILLER,
   RecordTypeCodes,
 } from "./models/e-cert-full-time-integration.model";
 import { StringBuilder } from "../../utilities/string-builder";
@@ -31,6 +29,10 @@ import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../database/entities";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
+import {
+  CreateRequestFileNameResult,
+  NUMBER_FILLER,
+} from "../models/esdc-integration.model";
 
 /**
  * Manages the file content generation and methods to

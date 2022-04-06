@@ -1,10 +1,8 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { MSFAANumberService } from "../../services";
-import {
-  MSFAASFTPResponseFile,
-  ProcessSftpResponseResult,
-} from "./models/msfaa-integration.model";
+import { ProcessSftpResponseResult } from "../models/esdc-integration.model";
+import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";

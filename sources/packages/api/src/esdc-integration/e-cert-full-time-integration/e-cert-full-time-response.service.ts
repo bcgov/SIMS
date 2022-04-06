@@ -5,7 +5,7 @@ import {
   DisbursementScheduleService,
   ConfigService,
 } from "../../services";
-import { ProcessSftpResponseResult } from "./models/e-cert-full-time-integration.model";
+import { ProcessSftpResponseResult } from "../models/esdc-integration.model";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import { getUTCNow } from "../../utilities";

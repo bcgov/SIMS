@@ -1,11 +1,11 @@
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../utilities/string-builder";
+import { RecordTypeCodes } from "../models/e-cert-part-time-integration.model";
 import {
-  DATE_FORMAT,
-  NUMBER_FILLER,
-  RecordTypeCodes,
   SPACE_FILLER,
-} from "../models/e-cert-part-time-integration.model";
+  NUMBER_FILLER,
+  DATE_FORMAT,
+} from "../../models/esdc-integration.model";
 
 /**
  * Record of an Entitlement E-Cert file.
@@ -164,23 +164,23 @@ export class ECertFileRecord implements FixedFormatFileLine {
     record.appendWithStartFiller(this.weeksOfStudy, 3, NUMBER_FILLER);
     record.appendDate(this.documentProducedDate, DATE_FORMAT);
     record.repeatAppend(SPACE_FILLER, 8); // TODO Cancel Date, E-cert cancellation date.
-    record.repeatAppend(SPACE_FILLER, 9); //CAG PD Amt, N/A.
-    record.repeatAppend(SPACE_FILLER, 9); //CAG LI Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 9); //CAG PD Amt, No longer used.
+    record.repeatAppend(SPACE_FILLER, 9); //CAG LI Amt, No longer used.
     record.appendWithStartFiller(this.totalGrantAmount, 5, NUMBER_FILLER); //Sum of all CSGP grants + BC Provincial Part-time grants from this certificate.
     record.appendWithStartFiller(this.totalCSGP_PTAmount, 5, NUMBER_FILLER); //Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
-    record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, N/A.
+    record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
     record.appendWithStartFiller(this.totalCSGP_PDAmount, 5, NUMBER_FILLER); //Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
     record.appendWithStartFiller(this.totalCSGP_PTDEPAmount, 5, NUMBER_FILLER); //Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
-    record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, N/A.
+    record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
     record.appendWithStartFiller(this.totalBCSGAmount, 5, NUMBER_FILLER); // BC Part-time grant amount 1
     record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
     record.repeatAppend(SPACE_FILLER, 10); // Space Filler.
-    record.repeatAppend(SPACE_FILLER, 8); // CSGP MP Date, N/A.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PT Amt, N/A.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP MI Amt, N/A.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PD Amt, N/A.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PTDEP Amt, N/A.
-    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PDSE Amt, N/A.
+    record.repeatAppend(SPACE_FILLER, 8); // CSGP MP Date, No longer used.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PT Amt, No longer used.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP MI Amt, No longer used.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PD Amt, No longer used.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PTDEP Amt, No longer used.
+    record.repeatAppend(SPACE_FILLER, 5); // CSGP MP PDSE Amt, No longer used.
     record.repeatAppend(SPACE_FILLER, 20); // Space Filler.
     record.appendWithEndFiller(this.emailAddress, 75, SPACE_FILLER);
     record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.

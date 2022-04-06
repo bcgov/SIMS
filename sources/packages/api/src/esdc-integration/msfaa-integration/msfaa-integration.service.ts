@@ -3,7 +3,6 @@ import { InjectLogger } from "../../common";
 import { OfferingIntensity } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
 import {
-  DATE_FORMAT,
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
@@ -33,6 +32,7 @@ import { EntityManager } from "typeorm";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
+import { DATE_FORMAT } from "../models/esdc-integration.model";
 
 /**
  * Manages the creation of the content files that needs to be sent
