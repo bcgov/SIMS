@@ -42,7 +42,7 @@ export enum StudentAssessmentStatus {
   Completed = "Completed",
 }
 
-export interface RequestAssessmentSummaryDTO {
+export interface RequestAssessmentSummaryApiOutDTO {
   submittedDate: Date;
   status: StudentAppealStatus | ScholasticStandingStatus;
   triggerType: AssessmentTriggerType;

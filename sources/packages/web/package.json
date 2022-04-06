@@ -31,6 +31,7 @@
     "roboto-fontface": "*",
     "s-vuex-class": "^0.4.1",
     "ts-jest": "^27.1.4",
+    "uuid": "^8.3.2",
     "vee-validate": "^4.5.10",
     "vue": "^3.2.31",
     "vue-class-component": "^8.0.0-0",
