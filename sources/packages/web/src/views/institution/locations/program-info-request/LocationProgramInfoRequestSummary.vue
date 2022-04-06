@@ -1,7 +1,7 @@
 <template>
   <div class="p-m-4">
     <HeaderNavigator
-      :title="locationName"
+      :title="locationDetails?.locationName"
       subTitle="Program Information Requests"
     />
 
@@ -63,6 +63,7 @@ import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService"
 import { PIRSummaryDTO, ProgramInfoStatus } from "@/types";
 import { useFormatters } from "@/composables";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
+import { InstitutionService } from "@/services/InstitutionService";
 
 export default {
   components: { HeaderNavigator },
@@ -71,21 +72,25 @@ export default {
       type: Number,
       required: true,
     },
-    locationName: {
-      type: String,
-      required: true,
-    },
   },
   setup(props: any) {
     const router = useRouter();
     const { dateString } = useFormatters();
     const applications = ref([] as PIRSummaryDTO[]);
+    const locationDetails = ref();
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
         params: { locationId: props.locationId, applicationId },
       });
+    };
+
+    const loadProgramDetails = async () => {
+      locationDetails.value =
+        await InstitutionService.shared.getInstitutionLocation(
+          props.locationId,
+        );
     };
 
     const updateSummaryList = async (locationId: number) => {
@@ -103,7 +108,10 @@ export default {
     );
 
     onMounted(async () => {
-      await updateSummaryList(props.locationId);
+      await Promise.all([
+        updateSummaryList(props.locationId),
+        loadProgramDetails(),
+      ]);
     });
 
     const getPirStatusColorClass = (status: string) => {
@@ -126,6 +134,7 @@ export default {
       dateString,
       goToViewApplication,
       getPirStatusColorClass,
+      locationDetails,
     };
   },
 };

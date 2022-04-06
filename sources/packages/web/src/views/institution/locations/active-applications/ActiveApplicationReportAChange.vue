@@ -51,7 +51,6 @@ export default {
           name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
           params: {
             locationId: props.locationId,
-            locationName: initialData.value?.applicationLocationName,
           },
         });
       }
