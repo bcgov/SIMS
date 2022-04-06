@@ -5,7 +5,7 @@ import {
   DisbursementScheduleService,
   ConfigService,
 } from "../../services";
-import { ProcessSftpResponseResult } from "../models/esdc-integration.model";
+import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import { getUTCNow } from "../../utilities";
@@ -28,7 +28,7 @@ export class ECertFullTimeResponseService {
    * Download all files from E-Cert Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  async processResponses(): Promise<ProcessSftpResponseResult[]> {
+  async processResponses(): Promise<ProcessSFTPResponseResult[]> {
     const filePaths = await this.eCertFullTimeService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       new RegExp(
@@ -36,7 +36,7 @@ export class ECertFullTimeResponseService {
         "i",
       ),
     );
-    const processFiles: ProcessSftpResponseResult[] = [];
+    const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(await this.processFile(filePath));
     }
@@ -50,8 +50,8 @@ export class ECertFullTimeResponseService {
    */
   private async processFile(
     filePath: string,
-  ): Promise<ProcessSftpResponseResult> {
-    const result = new ProcessSftpResponseResult();
+  ): Promise<ProcessSFTPResponseResult> {
+    const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
     let responseFile: ECertResponseRecord[];

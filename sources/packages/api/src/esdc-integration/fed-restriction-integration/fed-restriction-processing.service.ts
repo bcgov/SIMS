@@ -13,7 +13,7 @@ import { Connection, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "../../database/entities";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
-import { ProcessSftpResponseResult } from "../models/esdc-integration.model";
+import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -43,7 +43,7 @@ export class FedRestrictionProcessingService {
    * 3 - If the restriction is present on federal data and it is also
    * present and active on student data, update the updated_at only.
    */
-  async process(): Promise<ProcessSftpResponseResult> {
+  async process(): Promise<ProcessSFTPResponseResult> {
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}CSLS.PBC.RESTR.LIST.D[\w]*\.[0-9]*`,
@@ -54,7 +54,7 @@ export class FedRestrictionProcessingService {
       fileSearch,
     );
 
-    let result: ProcessSftpResponseResult;
+    let result: ProcessSFTPResponseResult;
     if (filePaths.length > 0) {
       // Process only the most updated file.
       result = await this.processAllRestrictions(
@@ -73,7 +73,7 @@ export class FedRestrictionProcessingService {
         }
       }
     } else {
-      result = new ProcessSftpResponseResult();
+      result = new ProcessSFTPResponseResult();
       result.processSummary.push(
         "No files found to be processed at this time.",
       );
@@ -84,8 +84,8 @@ export class FedRestrictionProcessingService {
 
   private async processAllRestrictions(
     remoteFilePath: string,
-  ): Promise<ProcessSftpResponseResult> {
-    const result = new ProcessSftpResponseResult();
+  ): Promise<ProcessSFTPResponseResult> {
+    const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${remoteFilePath}.`);
 
     let downloadResult: FedRestrictionFileRecord[];

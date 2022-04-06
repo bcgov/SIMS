@@ -1,7 +1,7 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { MSFAANumberService } from "../../services";
-import { ProcessSftpResponseResult } from "../models/esdc-integration.model";
+import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { MSFAASFTPResponseFile } from "./models/msfaa-integration.model";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
@@ -17,9 +17,9 @@ export class MSFAAResponseService {
    * Download all files from MSFAA Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  async processResponses(): Promise<ProcessSftpResponseResult[]> {
+  async processResponses(): Promise<ProcessSFTPResponseResult[]> {
     const filePaths = await this.msfaaService.getResponseFilesFullPath();
-    const processFiles: ProcessSftpResponseResult[] = [];
+    const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(await this.processFile(filePath));
     }
@@ -33,8 +33,8 @@ export class MSFAAResponseService {
    */
   private async processFile(
     filePath: string,
-  ): Promise<ProcessSftpResponseResult> {
-    const result = new ProcessSftpResponseResult();
+  ): Promise<ProcessSFTPResponseResult> {
+    const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
     let responseFile: MSFAASFTPResponseFile;
