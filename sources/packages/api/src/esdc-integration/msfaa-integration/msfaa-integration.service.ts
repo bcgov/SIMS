@@ -5,11 +5,7 @@ import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
-import {
-  ConfigService,
-  SequenceControlService,
-  SshService,
-} from "../../services";
+import { ConfigService, SshService } from "../../services";
 import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
 import {
   getGenderCode,
