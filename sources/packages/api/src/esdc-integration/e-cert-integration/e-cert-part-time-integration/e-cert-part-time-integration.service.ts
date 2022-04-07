@@ -16,9 +16,9 @@ import {
 } from "./models/e-cert-part-time-integration.model";
 import { SFTPIntegrationBase } from "../../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { ECertPTFileHeader } from "./e-cert-files/e-cert-file-header";
-import { ECertPTFileFooter } from "./e-cert-files/e-cert-file-footer";
-import { ECertPTFileRecord } from "./e-cert-files/e-cert-file-record";
+import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
+import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
+import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../../database/entities";
 import { Award, ECertRecord } from "../e-cert-integration-model";
 
@@ -48,7 +48,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
-    const header = new ECertPTFileHeader();
+    const header = new ECertPartTimeFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertHeader;
     header.processDate = new Date();
     fileLines.push(header);
@@ -90,7 +90,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
         DisbursementValueType.BCTotalGrant,
       ]);
 
-      const record = new ECertPTFileRecord();
+      const record = new ECertPartTimeFileRecord();
       record.recordType = RecordTypeCodes.ECertRecord;
       record.sin = ecertRecord.sin;
       record.certNumber = fileSequence;
@@ -131,7 +131,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
       (hash, record) => hash + +record.disbursementAmount,
       0,
     );
-    const footer = new ECertPTFileFooter();
+    const footer = new ECertPartTimeFileFooter();
     footer.recordTypeCode = RecordTypeCodes.ECertFooter;
     footer.totalAmountDisbursed = totalAmountDisbursed;
     footer.recordCount = fileRecords.length;

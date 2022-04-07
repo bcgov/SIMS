@@ -12,7 +12,7 @@ import {
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertPTFileRecord implements FixedFormatFileLine {
+export class ECertPartTimeFileRecord implements FixedFormatFileLine {
   recordType: RecordTypeCodes;
   /**
    * Social insurance number of student.
@@ -94,7 +94,7 @@ export class ECertPTFileRecord implements FixedFormatFileLine {
    */
   gender: string;
   /**
-   * Borrower marital status S= Single, M = Married, O = Other.
+   * Borrower marital status SI= Single, MA= Married, SP= Other.
    */
   maritalStatus: string;
   /**

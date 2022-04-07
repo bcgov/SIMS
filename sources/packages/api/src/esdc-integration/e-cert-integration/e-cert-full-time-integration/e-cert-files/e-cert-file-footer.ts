@@ -14,7 +14,7 @@ import {
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFTFileFooter implements FixedFormatFileLine {
+export class ECertFullTimeFileFooter implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   totalSINHash: number;
   recordCount: number;
@@ -29,8 +29,8 @@ export class ECertFTFileFooter implements FixedFormatFileLine {
     return footer.toString();
   }
 
-  public static createFromLine(line: string): ECertFTFileFooter {
-    const footer = new ECertFTFileFooter();
+  public static createFromLine(line: string): ECertFullTimeFileFooter {
+    const footer = new ECertFullTimeFileFooter();
     footer.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     // Here total record count is the total records rejected.
     footer.recordCount = parseInt(line.substring(52, 61));

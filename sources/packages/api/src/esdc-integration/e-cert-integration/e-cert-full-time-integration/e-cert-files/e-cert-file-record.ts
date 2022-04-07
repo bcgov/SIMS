@@ -18,7 +18,7 @@ const AWARD_SLOTS = 10;
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFTFileRecord implements FixedFormatFileLine {
+export class ECertFullTimeFileRecord implements FixedFormatFileLine {
   recordType: RecordTypeCodes;
   /**
    * Social insurance number of student.
