@@ -5,12 +5,13 @@ import {
   NUMBER_FILLER,
 } from "./models/esdc-integration.model";
 import { StringBuilder } from "../utilities/string-builder";
-import { SequenceControlService } from "../services";
+import { ConfigService } from "../services";
 import { ESDCIntegrationConfig } from "../types";
-
 export abstract class ESDCFileHandler {
   private readonly esdcConfig: ESDCIntegrationConfig;
-  constructor(readonly sequenceService: SequenceControlService) {}
+  constructor(config: ConfigService) {
+    this.esdcConfig = config.getConfig().ESDCIntegration;
+  }
   /**
    * Expected file name of the request file.
    * @param filenameCode different files has different filename codes, to be created.

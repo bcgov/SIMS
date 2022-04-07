@@ -5,6 +5,7 @@ import {
 } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
 import {
+  ConfigService,
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
@@ -14,17 +15,20 @@ import { ESDCFileHandler } from "../esdc-file-handler";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertFullTimeRequestService } from "./e-cert-full-time-integration/e-cert-full-time-request.service";
 import { ECertUploadResult } from "./e-cert-full-time-integration/models/e-cert-full-time-integration.model";
+import { Injectable } from "@nestjs/common";
 
 const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
 
+@Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
   constructor(
-    sequenceService: SequenceControlService,
+    configService: ConfigService,
+    private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
     private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertFullTimeRequestService: ECertFullTimeRequestService,
   ) {
-    super(sequenceService);
+    super(configService);
   }
   /**
    * Get all Full-Time/ Part-Time disbursements available to be sent to ESDC.
