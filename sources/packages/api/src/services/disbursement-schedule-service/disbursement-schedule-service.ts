@@ -207,7 +207,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
-      .innerJoin("application.currentAssessment", "currentAssessment") // ! This is to fetch the current assessment of the application, even though we have multiple reassessments
+      .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
