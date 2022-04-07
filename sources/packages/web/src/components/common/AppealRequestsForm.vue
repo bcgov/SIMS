@@ -49,13 +49,12 @@ export default {
     };
 
     const submit = () => {
-      console.log(appealForms);
       if (checkFormioValidity(appealForms)) {
         const formsData = appealForms.map(
-          (form) =>
+          (appealForm) =>
             ({
-              formName: form.name,
-              data: form.data,
+              formName: appealForm.form.name,
+              data: appealForm.data,
             } as StudentAppealRequest),
         );
         context.emit("submitted", formsData);

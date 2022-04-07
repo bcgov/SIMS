@@ -124,11 +124,12 @@ export default {
       appealRequestsForms.value = [];
     };
 
-    const submitAppeal = async (studentAppealRequests: any[]) => {
+    const submitAppeal = async (appealRequests: StudentAppealRequest[]) => {
       try {
-        await StudentAppealService.shared.submitStudentAppeal(applicationId, {
-          studentAppealRequests,
-        });
+        await StudentAppealService.shared.submitStudentAppeal(
+          applicationId,
+          appealRequests,
+        );
         toast.success(
           "Request submitted",
           "The request for change has been submitted successfully.",

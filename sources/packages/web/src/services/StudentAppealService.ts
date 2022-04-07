@@ -1,7 +1,8 @@
 import ApiClient from "@/services/http/ApiClient";
+import { StudentAppealRequest } from "@/types";
 import {
-  StudentAppealApiInDTO,
   StudentAppealApiOutDTO,
+  StudentAppealRequestApiInDTO,
   StudentAppealRequestApprovalApiInDTO,
 } from "./http/dto/StudentAppeal.dto";
 
@@ -18,12 +19,18 @@ export class StudentAppealService {
 
   async submitStudentAppeal(
     applicationId: number,
-    studentAppeal: StudentAppealApiInDTO,
+    appealRequests: StudentAppealRequest[],
   ): Promise<void> {
-    await ApiClient.StudentAppealApi.submitStudentAppeal(
-      applicationId,
-      studentAppeal,
+    const studentAppealRequests = appealRequests.map(
+      (request) =>
+        ({
+          formName: request.formName,
+          formData: request.data,
+        } as StudentAppealRequestApiInDTO),
     );
+    await ApiClient.StudentAppealApi.submitStudentAppeal(applicationId, {
+      studentAppealRequests,
+    });
   }
 
   async getStudentAppealWithRequests(
