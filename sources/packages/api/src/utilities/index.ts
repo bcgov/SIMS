@@ -20,4 +20,3 @@ export * from "./institution-utils";
 export * from "./vaildation-error-utils";
 export * from "./database";
 export * from "./pagination-utils";
-export * from "./file-handler-utils";

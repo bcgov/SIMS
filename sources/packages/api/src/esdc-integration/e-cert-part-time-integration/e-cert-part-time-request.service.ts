@@ -6,13 +6,13 @@ import {
 } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
 import {
-  createRequestFileName,
   getDayOfTheYear,
   getFieldOfStudyFromCIPCode,
   getUTCNow,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
+  ConfigService,
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
@@ -22,16 +22,20 @@ import {
   ECertPTRecord,
   ECertUploadResult,
 } from "./models/e-cert-part-time-integration.model";
+import { ESDCFileHandler } from "../esdc-file-handler";
 
 const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 
 @Injectable()
-export class ECertPartTimeRequestService {
+export class ECertPartTimeRequestService extends ESDCFileHandler {
   constructor(
+    config: ConfigService,
+    sequenceService: SequenceControlService,
     private readonly ecertIntegrationService: ECertPartTimeIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly sequenceService: SequenceControlService,
-  ) {}
+  ) {
+    super(config, sequenceService);
+  }
 
   /**
    * Get all Part-Time disbursements available to be sent to ESDC.
@@ -79,9 +83,9 @@ export class ECertPartTimeRequestService {
             nextSequenceNumber,
           );
           // Create the request filename with the file path for the e-Cert File.
-          const fileInfo = await createRequestFileName(
+          const fileInfo = await this.createRequestFileName(
             `PBC.EDU.PTCERTS.D${now.getFullYear()}${dayOfTheYear}`,
-            entityManager,
+            nextSequenceNumber,
           );
 
           // Creates the repository based on the entity manager that

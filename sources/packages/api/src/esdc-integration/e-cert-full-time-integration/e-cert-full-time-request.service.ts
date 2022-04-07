@@ -8,11 +8,11 @@ import { LoggerService } from "../../logger/logger.service";
 import {
   getFieldOfStudyFromCIPCode,
   getUTCNow,
-  createRequestFileName,
   getDayOfTheYear,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
+  ConfigService,
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
@@ -22,16 +22,20 @@ import {
   ECertFTRecord,
   ECertUploadResult,
 } from "./models/e-cert-full-time-integration.model";
+import { ESDCFileHandler } from "../esdc-file-handler";
 
 const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
 
 @Injectable()
-export class ECertFullTimeRequestService {
+export class ECertFullTimeRequestService extends ESDCFileHandler {
   constructor(
+    config: ConfigService,
+    sequenceService: SequenceControlService,
     private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly sequenceService: SequenceControlService,
-  ) {}
+  ) {
+    super(config, sequenceService);
+  }
 
   /**
    * Get all Full-Time disbursements available to be sent to ESDC.
@@ -79,9 +83,9 @@ export class ECertFullTimeRequestService {
             nextSequenceNumber,
           );
           // Create the request filename with the file path for the e-Cert File.
-          const fileInfo = await createRequestFileName(
+          const fileInfo = await this.createRequestFileName(
             `PBC.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
-            entityManager,
+            nextSequenceNumber,
           );
 
           // Creates the repository based on the entity manager that

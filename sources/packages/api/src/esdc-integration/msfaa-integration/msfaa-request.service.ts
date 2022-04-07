@@ -2,23 +2,31 @@ import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
 import { MSFAANumber } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
-import { getUTCNow, createRequestFileName } from "../../utilities";
+import { getUTCNow } from "../../utilities";
 import { EntityManager } from "typeorm";
-import { MSFAANumberService, SequenceControlService } from "../../services";
+import {
+  ConfigService,
+  MSFAANumberService,
+  SequenceControlService,
+} from "../../services";
 import {
   MSFAARecord,
   MSFAAUploadResult,
 } from "./models/msfaa-integration.model";
 import { MSFAAIntegrationService } from "./msfaa-integration.service";
 import { OfferingIntensity } from "../../database/entities/offering-intensity.type";
+import { ESDCFileHandler } from "../esdc-file-handler";
 
 @Injectable()
-export class MSFAARequestService {
+export class MSFAARequestService extends ESDCFileHandler {
   constructor(
+    config: ConfigService,
+    sequenceService: SequenceControlService,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
-    private readonly sequenceService: SequenceControlService,
-  ) {}
+  ) {
+    super(config, sequenceService);
+  }
 
   /**
    * 1. Fetches the MSFAA records which are not sent for request.
@@ -78,9 +86,9 @@ export class MSFAARequestService {
           );
           // Create the request filename with the file path for the MSFAA Request
           // sent File.
-          const fileInfo = await createRequestFileName(
+          const fileInfo = await this.createRequestFileName(
             "PBC.EDU.MSFA.SENT.",
-            entityManager,
+            nextSequenceNumber,
             offeringIntensity,
           );
           this.logger.log("Uploading content...");

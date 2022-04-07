@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  ConfigService,
-  SequenceControlService,
-  SshService,
-} from "../../services";
+import { ConfigService, SshService } from "../../services";
 import { ESDCIntegrationConfig } from "../../types";
 import {
   getDisbursementAmountByValueCode,
@@ -35,11 +31,7 @@ import { DisbursementValueType } from "../../database/entities";
 export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
   private readonly esdcConfig: ESDCIntegrationConfig;
 
-  constructor(
-    config: ConfigService,
-    sshService: SshService,
-    private readonly sequenceService: SequenceControlService,
-  ) {
+  constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
     this.esdcConfig = config.getConfig().ESDCIntegration;
   }
