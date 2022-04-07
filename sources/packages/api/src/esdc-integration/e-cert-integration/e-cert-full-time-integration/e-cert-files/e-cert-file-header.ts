@@ -31,7 +31,7 @@ export class ECertFTFileHeader implements FixedFormatFileLine {
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
     header.appendWithStartFiller(this.sequence.toString(), 6, NUMBER_FILLER);
-    header.repeatAppend(SPACE_FILLER, 735); // Trailing space
+    header.repeatAppend(SPACE_FILLER, 735); // Trailing space.
     return header.toString();
   }
 

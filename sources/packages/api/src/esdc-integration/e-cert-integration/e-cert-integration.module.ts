@@ -10,10 +10,8 @@ import {
 } from "../../services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
-import { ECertFullTimeRequestService } from "./e-cert-full-time-integration/e-cert-full-time-request.service";
 import { ECertFullTimeResponseService } from "./e-cert-full-time-integration/e-cert-full-time-response.service";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
-import { ECertPartTimeRequestService } from "./e-cert-part-time-integration/e-cert-part-time-request.service";
 
 @Module({
   imports: [AuthModule],
@@ -21,8 +19,6 @@ import { ECertPartTimeRequestService } from "./e-cert-part-time-integration/e-ce
     SshService,
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
-    ECertFullTimeRequestService,
-    ECertPartTimeRequestService,
     SequenceControlService,
     DisbursementScheduleService,
     StudentRestrictionService,
@@ -34,8 +30,6 @@ import { ECertPartTimeRequestService } from "./e-cert-part-time-integration/e-ce
   exports: [
     ECertFullTimeIntegrationService,
     ECertPartTimeIntegrationService,
-    ECertFullTimeRequestService,
-    ECertPartTimeRequestService,
     ECertFullTimeResponseService,
     ECertFileHandler,
   ],

@@ -1,41 +1,7 @@
-import {
-  DisbursementValue,
-  RelationshipStatus,
-} from "../../../../database/entities";
-
 export const ECERT_SENT_TITLE = "Entitlement File";
 export const CSGD = "CSGD";
 export const CSGP = "CSGP";
 export const CSGPT = "CSGPT";
-
-export type Award = Pick<
-  DisbursementValue,
-  "valueType" | "valueCode" | "valueAmount"
->;
-
-export interface ECertPTRecord {
-  sin: string;
-  disbursementDate: Date;
-  documentProducedDate: Date;
-  educationalStartDate: Date;
-  educationalEndDate: Date;
-  federalInstitutionCode: string;
-  weeksOfStudy: number;
-  fieldOfStudy: number;
-  yearOfStudy: number;
-  enrollmentConfirmationDate: Date;
-  dateOfBirth: Date;
-  lastName: string;
-  firstName: string;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  email: string;
-  gender: string;
-  maritalStatus: RelationshipStatus;
-  studentNumber: string;
-  awards: Award[];
-}
 
 /**
  * Codes used to start all the lines of the e-Cert

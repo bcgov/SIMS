@@ -21,14 +21,14 @@ export class ECertPTFileFooter implements FixedFormatFileLine {
     footer.append(this.recordTypeCode);
     footer.appendWithStartFiller(this.recordCount, 9, NUMBER_FILLER);
     footer.appendWithStartFiller(this.totalAmountDisbursed, 15, NUMBER_FILLER);
-    footer.repeatAppend(SPACE_FILLER, 730); //Trailing spaces
+    footer.repeatAppend(SPACE_FILLER, 730); //Trailing spaces.
     return footer.toString();
   }
 
   public static createFromLine(line: string): ECertPTFileFooter {
     const footer = new ECertPTFileFooter();
     footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
-    // Here total record count is the total records
+    // Here total record count is the total records.
     footer.recordCount = parseInt(line.substring(2, 11));
     footer.totalAmountDisbursed = parseInt(line.substring(11, 26));
     return footer;

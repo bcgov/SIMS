@@ -9,8 +9,6 @@ import {
   round,
 } from "../../../utilities";
 import {
-  Award,
-  ECertPTRecord,
   RecordTypeCodes,
   CSGD,
   CSGP,
@@ -22,6 +20,7 @@ import { ECertPTFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPTFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPTFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../../database/entities";
+import { Award, ECertRecord } from "../e-cert-integration-model";
 
 /**
  * Manages the file content generation and methods to
@@ -44,7 +43,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
    * @returns complete ECert content to be sent.
    */
   createRequestContent(
-    ecertRecords: ECertPTRecord[],
+    ecertRecords: ECertRecord[],
     fileSequence: number,
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
@@ -142,7 +141,7 @@ export class ECertPartTimeIntegrationService extends SFTPIntegrationBase<void> {
   }
 
   /**
-   * This method will be implemented during the response processing of the PartTime - Ecert file
+   * This method will be implemented during the response processing of the PartTime - ECert file
    * @param remoteFilePath
    */
   downloadResponseFile(remoteFilePath: string): Promise<void> {

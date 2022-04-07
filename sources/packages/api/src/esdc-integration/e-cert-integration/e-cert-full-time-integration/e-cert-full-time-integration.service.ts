@@ -10,11 +10,7 @@ import {
   getTotalYearsOfStudy,
   round,
 } from "../../../utilities";
-import {
-  Award,
-  ECertFTRecord,
-  RecordTypeCodes,
-} from "./models/e-cert-full-time-integration.model";
+import { RecordTypeCodes } from "./models/e-cert-full-time-integration.model";
 import { SFTPIntegrationBase } from "../../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertFTFileHeader } from "./e-cert-files/e-cert-file-header";
@@ -22,6 +18,7 @@ import { ECertFTFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFTFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../../database/entities";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
+import { Award, ECertRecord } from "../e-cert-integration-model";
 
 /**
  * Manages the file content generation and methods to
@@ -46,7 +43,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
    * @returns complete ECert content to be sent.
    */
   createRequestContent(
-    ecertRecords: ECertFTRecord[],
+    ecertRecords: ECertRecord[],
     fileSequence: number,
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];

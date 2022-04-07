@@ -12,6 +12,8 @@ import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-inte
 
 const ECERT_FULL_TIME_FILE_CODE = "PBC.EDU.ECERTS.D";
 const ECERT_PART_TIME_FILE_CODE = "PBC.EDU.PTCERTS.D";
+const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
+const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
 @ApiTags("system-access")
@@ -35,6 +37,7 @@ export class ECertIntegrationController extends BaseController {
     const uploadFullTimeResult = await this.eCertFileHandler.generateECert(
       OfferingIntensity.fullTime,
       ECERT_FULL_TIME_FILE_CODE,
+      ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP,
     );
     this.logger.log("E-Cert Full-Time file sent.");
     return {
@@ -55,6 +58,7 @@ export class ECertIntegrationController extends BaseController {
     const uploadPartTimeResult = await this.eCertFileHandler.generateECert(
       OfferingIntensity.partTime,
       ECERT_PART_TIME_FILE_CODE,
+      ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
     );
     this.logger.log("E-Cert Part-Time file sent.");
     return {

@@ -29,7 +29,7 @@ export class ECertPTFileHeader implements FixedFormatFileLine {
     header.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
-    header.repeatAppend(SPACE_FILLER, 698); // Trailing space
+    header.repeatAppend(SPACE_FILLER, 698); // Trailing space.
     return header.toString();
   }
 

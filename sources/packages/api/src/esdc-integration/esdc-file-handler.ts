@@ -15,7 +15,7 @@ export abstract class ESDCFileHandler {
   /**
    * Expected file name of the request file.
    * @param filenameCode different files has different filename codes, to be created.
-   * @param OfferingIntensity offering intensity of the application
+   * @param offeringIntensity offering intensity of the application
    *  where file is requested.
    * @param nextSequenceNumber
    * @returns Full file path of the file to be saved on the SFTP.
@@ -27,7 +27,7 @@ export abstract class ESDCFileHandler {
   ): Promise<CreateRequestFileNameResult> {
     const fileNameArray = new StringBuilder();
     fileNameArray.append(`${this.esdcConfig.environmentCode}${filenameCode}`);
-    if (offeringIntensity && OfferingIntensity.partTime === offeringIntensity) {
+    if (offeringIntensity === OfferingIntensity.partTime) {
       fileNameArray.append("PT.");
     }
     fileNameArray.appendDate(new Date(), DATE_FORMAT);

@@ -13,7 +13,7 @@ export function getMaritalStatusCode(
 }
 
 /**
- * Gets the Part-Time marital status code conversion for the MSFAA request file
+ * Gets the Part-Time marital status code conversion for the MSFAA request file.
  */
 export function getPTMaritalStatusCode(
   maritalStatus: RelationshipStatus,

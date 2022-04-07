@@ -9,19 +9,17 @@ import {
   DisbursementScheduleErrorsService,
 } from "../../../services";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration.service";
-import { ECertPartTimeRequestService } from "./e-cert-part-time-request.service";
 @Module({
   imports: [AuthModule],
   providers: [
     SshService,
     ECertPartTimeIntegrationService,
-    ECertPartTimeRequestService,
     SequenceControlService,
     DisbursementScheduleService,
     StudentRestrictionService,
     ConfigService,
     DisbursementScheduleErrorsService,
   ],
-  exports: [ECertPartTimeIntegrationService, ECertPartTimeRequestService],
+  exports: [ECertPartTimeIntegrationService],
 })
 export class ECertPartTimeIntegrationModule {}

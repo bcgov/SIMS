@@ -140,8 +140,8 @@ export class ECertPTFileRecord implements FixedFormatFileLine {
     record.appendWithEndFiller(this.addressLine2 || "", 40, SPACE_FILLER);
     record.repeatAppend(SPACE_FILLER, 40); // AddressLine 3, optional, not provided.
     record.appendWithEndFiller(this.city, 25, SPACE_FILLER);
-    record.append("BC  ", 4); //TODO Province, is hardcoded to "BC  ".
-    record.append("CAN "); // TODO Country, is hardcoded to "CAN ".
+    record.appendWithEndFiller("BC", 4, SPACE_FILLER); //TODO Province, is hardcoded to "BC  ".
+    record.appendWithEndFiller("CAN", 4, SPACE_FILLER); // TODO Country, is hardcoded to "CAN ".
     record.repeatAppend(SPACE_FILLER, 16); //TODO Postal code, Filled with space as not provided.
     record.repeatAppend(SPACE_FILLER, 16); // Telephone, optional, not provided.
     record.repeatAppend(SPACE_FILLER, 40); // Alternate Address 1, optional, not provided.

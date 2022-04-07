@@ -1,5 +1,5 @@
+import { Award } from "src/esdc-integration/e-cert-integration/e-cert-integration-model";
 import { DisbursementValueType } from "../database/entities";
-import { Award } from "../esdc-integration/e-cert-integration/e-cert-full-time-integration/models/e-cert-full-time-integration.model";
 
 const FIELD_OF_STUDY_LENGTH = 2;
 
@@ -18,11 +18,11 @@ export function getDisbursementValuesByType(
 }
 
 /**
- * Extract from the list of awards (disbursement values)
+ * Extract from the award amount
  * the specific types.
  * @param awards list of awards (disbursement values).
  * @param valueCode valueCode to be extracted.
- * @returns list of awards of the specified types.
+ * @returns award amount of the specified types.
  */
 export function getDisbursementAmountByValueCode(
   awards: Award[],

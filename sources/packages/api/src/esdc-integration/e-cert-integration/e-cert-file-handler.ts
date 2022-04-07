@@ -9,15 +9,15 @@ import {
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
-import { getDayOfTheYear, getUTCNow } from "../../utilities";
+import { getDayOfTheYear, getFieldOfStudyFromCIPCode } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
-import { ECertFullTimeRequestService } from "./e-cert-full-time-integration/e-cert-full-time-request.service";
 import { ECertUploadResult } from "./e-cert-full-time-integration/models/e-cert-full-time-integration.model";
 import { Injectable } from "@nestjs/common";
-
-const ECERT_SENT_FILE_SEQUENCE_GROUP = "ECERT_SENT_FILE";
+import { Award, ECertRecord } from "./e-cert-integration-model";
+import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
+import { FixedFormatFileLine } from "src/services/ssh/sftp-integration-base.models";
 
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
@@ -25,20 +25,24 @@ export class ECertFileHandler extends ESDCFileHandler {
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly ecertIntegrationService: ECertFullTimeIntegrationService,
-    private readonly eCertFullTimeRequestService: ECertFullTimeRequestService,
+    private readonly ecertFullTimeIntegrationService: ECertFullTimeIntegrationService,
+    private readonly ecertPartTimeIntegrationService: ECertPartTimeIntegrationService,
   ) {
     super(configService);
   }
   /**
    * Get all Full-Time/ Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
+   * @param offeringIntensity disbursement offering intensity.
+   * @param fileCode File code applicable for Part-Time or Full-Time.
+   * @param sequenceGroup Sequence group application for Part-Time or Full-Time.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
   async generateECert(
     offeringIntensity: OfferingIntensity,
     fileCode: string,
+    sequenceGroup: string,
   ): Promise<ECertUploadResult> {
     this.logger.log(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
@@ -57,7 +61,7 @@ export class ECertFileHandler extends ESDCFileHandler {
       `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
     );
     const disbursementRecords = disbursements.map((disbursement) => {
-      return this.eCertFullTimeRequestService.createFTECertRecord(disbursement);
+      return this.createECertRecord(disbursement);
     });
 
     // Fetches the disbursements ids, for further update in the DB.
@@ -65,21 +69,31 @@ export class ECertFileHandler extends ESDCFileHandler {
       (disbursement) => disbursement.id,
     );
 
-    //Create records and create the unique file sequence number
+    //Create records and create the unique file sequence number.
     let uploadResult: ECertUploadResult;
     const now = new Date();
+    let fileContent: FixedFormatFileLine[];
     const dayOfTheYear = getDayOfTheYear(now);
     await this.sequenceService.consumeNextSequence(
-      ECERT_SENT_FILE_SEQUENCE_GROUP,
+      sequenceGroup,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
           this.logger.log(
             `Creating  ${offeringIntensity} e-Cert file content...`,
           );
-          const fileContent = this.ecertIntegrationService.createRequestContent(
-            disbursementRecords,
-            nextSequenceNumber,
-          );
+          if (offeringIntensity === OfferingIntensity.partTime) {
+            fileContent =
+              this.ecertPartTimeIntegrationService.createRequestContent(
+                disbursementRecords,
+                nextSequenceNumber,
+              );
+          } else {
+            fileContent =
+              this.ecertFullTimeIntegrationService.createRequestContent(
+                disbursementRecords,
+                nextSequenceNumber,
+              );
+          }
           // Create the request filename with the file path for the e-Cert File.
           const fileInfo = await this.createRequestFileName(
             `${fileCode}${now.getFullYear()}${dayOfTheYear}`,
@@ -91,17 +105,24 @@ export class ECertFileHandler extends ESDCFileHandler {
           // sequence number.
           const disbursementScheduleRepo =
             entityManager.getRepository(DisbursementSchedule);
-          this.disbursementScheduleService.updateRecordsInSentFile(
+          await this.disbursementScheduleService.updateRecordsInSentFile(
             disbursementIds,
-            getUTCNow(),
+            now,
             disbursementScheduleRepo,
           );
 
           this.logger.log(`Uploading ${offeringIntensity} content...`);
-          await this.ecertIntegrationService.uploadContent(
-            fileContent,
-            fileInfo.filePath,
-          );
+          if (offeringIntensity === OfferingIntensity.partTime) {
+            await this.ecertPartTimeIntegrationService.uploadContent(
+              fileContent,
+              fileInfo.filePath,
+            );
+          } else {
+            await this.ecertFullTimeIntegrationService.uploadContent(
+              fileContent,
+              fileInfo.filePath,
+            );
+          }
 
           uploadResult = {
             generatedFile: fileInfo.filePath,
@@ -116,6 +137,63 @@ export class ECertFileHandler extends ESDCFileHandler {
       },
     );
     return uploadResult;
+  }
+
+  /**
+   * Create the e-Cert record with the information needed to generate the
+   * entire record to be sent to ESDC.
+   * @param disbursement disbursement that contains all information to
+   * generate the record.
+   * @returns e-Cert record.
+   */
+  createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+    const now = new Date();
+    const application = disbursement.studentAssessment.application;
+    const [addressInfo] = application.student.contactInfo.addresses;
+    const fieldOfStudy = getFieldOfStudyFromCIPCode(
+      application.currentAssessment.offering.educationProgram.cipCode,
+    );
+    const awards = disbursement.disbursementValues.map(
+      (disbursementValue) =>
+        ({
+          valueType: disbursementValue.valueType,
+          valueCode: disbursementValue.valueCode,
+          valueAmount: disbursementValue.valueAmount,
+        } as Award),
+    );
+
+    return {
+      sin: application.student.sin,
+      applicationNumber: application.applicationNumber,
+      documentNumber: disbursement.documentNumber,
+      disbursementDate: disbursement.disbursementDate,
+      documentProducedDate: now,
+      negotiatedExpiryDate: disbursement.negotiatedExpiryDate,
+      schoolAmount:
+        application.currentAssessment.offering.tuitionRemittanceRequestedAmount,
+      educationalStartDate:
+        application.currentAssessment.offering.studyStartDate,
+      educationalEndDate: application.currentAssessment.offering.studyEndDate,
+      federalInstitutionCode: application.location.institutionCode,
+      weeksOfStudy: application.currentAssessment.assessmentData.weeks,
+      fieldOfStudy,
+      yearOfStudy: application.currentAssessment.offering.yearOfStudy,
+      completionYears:
+        application.currentAssessment.offering.educationProgram.completionYears,
+      enrollmentConfirmationDate: disbursement.coeUpdatedAt,
+      dateOfBirth: application.student.birthDate,
+      lastName: application.student.user.lastName,
+      firstName: application.student.user.firstName,
+      addressLine1: addressInfo.addressLine1,
+      addressLine2: addressInfo.addressLine2,
+      city: addressInfo.city,
+      country: addressInfo.country,
+      email: application.student.user.email,
+      gender: application.student.gender,
+      maritalStatus: application.relationshipStatus,
+      studentNumber: application.studentNumber,
+      awards,
+    } as ECertRecord;
   }
 
   @InjectLogger()
