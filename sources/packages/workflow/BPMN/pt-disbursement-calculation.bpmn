@@ -171,9 +171,9 @@ var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
     valueType: "BC Total Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {
-    BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? (parseFloat(sbsdGrant + bcagptGrant) / 2).toFixed(2) : 0;
+    BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? Math.round((parseFloat(sbsdGrant + bcagptGrant) / 2) * 100) / 100 : 0;
   } else if (firstDisbursementDate &amp;&amp; !secondDisbursementDate) {
-    BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? parseFloat(sbsdGrant + bcagptGrant).toFixed(2) : 0;
+    BCSGPayload["valueAmount"] = parseFloat(sbsdGrant + bcagptGrant) ? Math.round((parseFloat(sbsdGrant + bcagptGrant)) * 100) / 100 : 0;
   }
 
 execution.setVariable("BCSGPayload", BCSGPayload);</bpmn:script>
@@ -191,6 +191,16 @@ execution.setVariable("BCSGPayload", BCSGPayload);</bpmn:script>
   </bpmn:category>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="pt-disbursement-calculation">
+      <bpmndi:BPMNEdge id="Flow_16x3fbf_di" bpmnElement="Flow_16x3fbf">
+        <di:waypoint x="960" y="310" />
+        <di:waypoint x="960" y="360" />
+        <di:waypoint x="635" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ba1h8f_di" bpmnElement="Flow_0ba1h8f">
+        <di:waypoint x="635" y="190" />
+        <di:waypoint x="960" y="190" />
+        <di:waypoint x="960" y="230" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0imib5p_di" bpmnElement="Flow_0imib5p">
         <di:waypoint x="635" y="190" />
         <di:waypoint x="810" y="190" />
@@ -258,16 +268,6 @@ execution.setVariable("BCSGPayload", BCSGPayload);</bpmn:script>
       <bpmndi:BPMNEdge id="Flow_05xex8s_di" bpmnElement="Flow_05xex8s">
         <di:waypoint x="610" y="118" />
         <di:waypoint x="610" y="165" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ba1h8f_di" bpmnElement="Flow_0ba1h8f">
-        <di:waypoint x="635" y="190" />
-        <di:waypoint x="960" y="190" />
-        <di:waypoint x="960" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16x3fbf_di" bpmnElement="Flow_16x3fbf">
-        <di:waypoint x="960" y="310" />
-        <di:waypoint x="960" y="360" />
-        <di:waypoint x="635" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_00zpz0m_di" bpmnElement="Event_00zpz0m">
         <dc:Bounds x="592" y="82" width="36" height="36" />

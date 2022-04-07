@@ -15,7 +15,7 @@ export function getMaritalStatusCode(
 /**
  * Gets the Part-Time marital status code conversion for the MSFAA request file.
  */
-export function getPTMaritalStatusCode(
+export function getPartTimeMaritalStatusCode(
   maritalStatus: RelationshipStatus,
 ): string {
   if (maritalStatus === RelationshipStatus.Married) {

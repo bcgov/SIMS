@@ -12,12 +12,10 @@ import {
 import { getDayOfTheYear, getFieldOfStudyFromCIPCode } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
-import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertUploadResult } from "./e-cert-full-time-integration/models/e-cert-full-time-integration.model";
 import { Injectable } from "@nestjs/common";
 import { Award, ECertRecord } from "./e-cert-integration-model";
-import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
-import { FixedFormatFileLine } from "src/services/ssh/sftp-integration-base.models";
+import { ECertIntegrationService } from "./e-cert-integration.service";
 
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
@@ -25,8 +23,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
-    private readonly ecertFullTimeIntegrationService: ECertFullTimeIntegrationService,
-    private readonly ecertPartTimeIntegrationService: ECertPartTimeIntegrationService,
   ) {
     super(configService);
   }
@@ -41,6 +37,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * amount of records added to the file.
    */
   async generateECert(
+    eCertIntegrationService: ECertIntegrationService<any>,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
     sequenceGroup: string,
@@ -73,7 +70,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     //Create records and create the unique file sequence number.
     let uploadResult: ECertUploadResult;
     const now = new Date();
-    let fileContent: FixedFormatFileLine[];
     const dayOfTheYear = getDayOfTheYear(now);
     await this.sequenceService.consumeNextSequence(
       sequenceGroup,
@@ -82,19 +78,11 @@ export class ECertFileHandler extends ESDCFileHandler {
           this.logger.log(
             `Creating  ${offeringIntensity} e-Cert file content...`,
           );
-          if (offeringIntensity === OfferingIntensity.partTime) {
-            fileContent =
-              this.ecertPartTimeIntegrationService.createRequestContent(
-                disbursementRecords,
-                nextSequenceNumber,
-              );
-          } else {
-            fileContent =
-              this.ecertFullTimeIntegrationService.createRequestContent(
-                disbursementRecords,
-                nextSequenceNumber,
-              );
-          }
+          const fileContent = eCertIntegrationService.createRequestContent(
+            disbursementRecords,
+            nextSequenceNumber,
+          );
+
           // Create the request filename with the file path for the e-Cert File.
           const fileInfo = await this.createRequestFileName(
             `${fileCode}${now.getFullYear()}${dayOfTheYear}`,
@@ -113,17 +101,10 @@ export class ECertFileHandler extends ESDCFileHandler {
           );
 
           this.logger.log(`Uploading ${offeringIntensity} content...`);
-          if (offeringIntensity === OfferingIntensity.partTime) {
-            await this.ecertPartTimeIntegrationService.uploadContent(
-              fileContent,
-              fileInfo.filePath,
-            );
-          } else {
-            await this.ecertFullTimeIntegrationService.uploadContent(
-              fileContent,
-              fileInfo.filePath,
-            );
-          }
+          await eCertIntegrationService.uploadContent(
+            fileContent,
+            fileInfo.filePath,
+          );
 
           uploadResult = {
             generatedFile: fileInfo.filePath,
@@ -165,6 +146,7 @@ export class ECertFileHandler extends ESDCFileHandler {
 
     return {
       sin: application.student.sin,
+      courseLoad: 50,
       applicationNumber: application.applicationNumber,
       documentNumber: disbursement.documentNumber,
       disbursementDate: disbursement.disbursementDate,

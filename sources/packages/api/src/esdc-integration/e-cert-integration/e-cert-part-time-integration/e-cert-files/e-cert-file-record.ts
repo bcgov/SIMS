@@ -116,15 +116,20 @@ export class ECertPartTimeFileRecord implements FixedFormatFileLine {
   /**
    * Total of all BC grant awards on this Entitlement Record.
    */
-  totalCSGP_PTAmount: number;
+  totalCSGPPTAmount: number;
   /**
    * Total of all BC grant awards on this Entitlement Record.
    */
-  totalCSGP_PDAmount: number;
+  totalCSGPPDAmount: number;
   /**
    * Total of all BC grant awards on this Entitlement Record.
    */
-  totalCSGP_PTDEPAmount: number;
+  totalCSGPPTDEPAmount: number;
+  /**
+   *
+   * CourseLoad for the PartTime course.
+   */
+  courseLoad: number;
 
   public getFixedFormat(): string {
     const record = new StringBuilder();
@@ -167,10 +172,10 @@ export class ECertPartTimeFileRecord implements FixedFormatFileLine {
     record.repeatAppend(SPACE_FILLER, 9); //CAG PD Amt, No longer used.
     record.repeatAppend(SPACE_FILLER, 9); //CAG LI Amt, No longer used.
     record.appendWithStartFiller(this.totalGrantAmount, 5, NUMBER_FILLER); //Sum of all CSGP grants + BC Provincial Part-time grants from this certificate.
-    record.appendWithStartFiller(this.totalCSGP_PTAmount, 5, NUMBER_FILLER); //Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
+    record.appendWithStartFiller(this.totalCSGPPTAmount, 5, NUMBER_FILLER); //Amount of Grant for Part-time Studies (CSGP-PT) at the study start.
     record.repeatAppend(NUMBER_FILLER, 5); // CSGP NBD MI Amt, No longer used.
-    record.appendWithStartFiller(this.totalCSGP_PDAmount, 5, NUMBER_FILLER); //Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
-    record.appendWithStartFiller(this.totalCSGP_PTDEPAmount, 5, NUMBER_FILLER); //Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
+    record.appendWithStartFiller(this.totalCSGPPDAmount, 5, NUMBER_FILLER); //Amount of Grant for Students with Permanent Disabilities (CSGP-PD) at the study start.
+    record.appendWithStartFiller(this.totalCSGPPTDEPAmount, 5, NUMBER_FILLER); //Amount Grant for Part-time Students with Dependants (CSGP-PTDEP) at the study start.
     record.repeatAppend(NUMBER_FILLER, 5); // Amount of Grant for Services and Equipment for Students with Permanent Disabilities (CSGP-PDSE) at the study start, No longer used.
     record.appendWithStartFiller(this.totalBCSGAmount, 5, NUMBER_FILLER); // BC Part-time grant amount 1
     record.repeatAppend(NUMBER_FILLER, 5); // BC Part-time grant amount 2 - Reserved for future use
@@ -186,7 +191,7 @@ export class ECertPartTimeFileRecord implements FixedFormatFileLine {
     record.append("P"); // 'P' for part-time. Full time is done by another integration to another system.
     record.appendDate(this.enrollmentConfirmationDate, DATE_FORMAT);
     record.repeatAppend(SPACE_FILLER, 7); // EI Remittance Amt, optional, not provided.
-    record.appendWithStartFiller(50, 2, NUMBER_FILLER); // TODO Course Load Percentage, also hardcoded in assessment-gateway workflow.
+    record.appendWithStartFiller(this.courseLoad, 2, NUMBER_FILLER);
     record.repeatAppend(SPACE_FILLER, 25); // Space Filler.
     return record.toString();
   }

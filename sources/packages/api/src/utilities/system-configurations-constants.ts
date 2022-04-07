@@ -45,3 +45,10 @@ export const FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT = 500;
  */
 export const FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION =
   "Unidentified federal restriction";
+
+/**
+ * These constants are used to specify the filename code
+ * created for Full-Time/ Part-Time files while ECert request file is generated.
+ */
+export const ECERT_FULL_TIME_FILE_CODE = "PBC.EDU.ECERTS.D";
+export const ECERT_PART_TIME_FILE_CODE = "PBC.EDU.PTCERTS.D";

@@ -10,7 +10,6 @@ import {
   round,
 } from "../../../utilities";
 import { RecordTypeCodes } from "./models/e-cert-full-time-integration.model";
-import { SFTPIntegrationBase } from "../../../services/ssh/sftp-integration-base";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
@@ -18,13 +17,14 @@ import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../../database/entities";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import { Award, ECertRecord } from "../e-cert-integration-model";
+import { ECertIntegrationService } from "../e-cert-integration.service";
 
 /**
  * Manages the file content generation and methods to
  * upload/download the files to SFTP.
  */
 @Injectable()
-export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
+export class ECertFullTimeIntegrationService extends ECertIntegrationService<
   ECertResponseRecord[]
 > {
   constructor(config: ConfigService, sshService: SshService) {
