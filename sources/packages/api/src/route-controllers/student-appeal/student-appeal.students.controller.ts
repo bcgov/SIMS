@@ -13,14 +13,13 @@ import {
   FormService,
   StudentAppealService,
 } from "../../services";
-import { StudentAppealDTO } from "./models/student-appeal.dto";
+import { StudentAppealApiInDTO } from "./models/student-appeal.dto";
 import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   ApiTags,
-  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiUnprocessableEntityResponse,
   ApiBadRequestResponse,
@@ -47,7 +46,6 @@ export class StudentAppealStudentsController extends BaseController {
    * @param payload student appeal with appeal requests.
    * @param userToken
    */
-  @ApiCreatedResponse({ description: "Student appeal created successfully." })
   @ApiNotFoundResponse({
     description:
       "Application either not found or not eligible to request an appeal.",
@@ -61,7 +59,7 @@ export class StudentAppealStudentsController extends BaseController {
   @Post("application/:applicationId")
   async submitStudentAppeal(
     @Param("applicationId") applicationId: number,
-    @Body() payload: StudentAppealDTO,
+    @Body() payload: StudentAppealApiInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierDTO> {
     const application = this.applicationService.getApplicationToRequestAppeal(

@@ -22,6 +22,7 @@ import Formio from "@/components/generic/formio.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { SetupContext } from "vue";
 import { useFormioUtils } from "@/composables";
+import { StudentAppealRequest } from "@/types";
 
 export default {
   emits: ["submitted"],
@@ -48,8 +49,16 @@ export default {
     };
 
     const submit = () => {
+      console.log(appealForms);
       if (checkFormioValidity(appealForms)) {
-        context.emit("submitted");
+        const formsData = appealForms.map(
+          (form) =>
+            ({
+              formName: form.name,
+              data: form.data,
+            } as StudentAppealRequest),
+        );
+        context.emit("submitted", formsData);
       }
     };
 

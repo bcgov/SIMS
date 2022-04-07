@@ -1,12 +1,9 @@
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
-  IsArray,
   IsDefined,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
   IsPositive,
   ValidateNested,
 } from "class-validator";
@@ -14,7 +11,7 @@ import { StudentAppealStatus } from "../../../database/entities";
 /**
  * DTO for student appeal request.
  */
-export class StudentAppealRequestDTO {
+export class StudentAppealRequestApiInDTO {
   @IsNotEmpty()
   formName: string;
   @IsDefined()
@@ -24,15 +21,11 @@ export class StudentAppealRequestDTO {
 /**
  * DTO for student appeal.
  */
-export class StudentAppealDTO {
-  @IsOptional()
-  @IsNumber()
-  applicationId?: number;
-  @IsArray()
+export class StudentAppealApiInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestDTO)
-  studentAppealRequests: StudentAppealRequestDTO[];
+  @Type(() => StudentAppealRequestApiInDTO)
+  studentAppealRequests: StudentAppealRequestApiInDTO[];
 }
 
 export class StudentAppealRequestApiOutDTO {
@@ -52,7 +45,7 @@ export class StudentAppealApiOutDTO {
   appealRequests: StudentAppealRequestApiOutDTO[];
 }
 
-export class StudentAppealRequestApiInDTO {
+export class StudentAppealRequestApprovalApiInDTO {
   @IsPositive()
   id: number;
   @IsEnum(StudentAppealStatus)
@@ -65,5 +58,5 @@ export class StudentAppealApprovalApiInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => StudentAppealRequestApiInDTO)
-  requests: StudentAppealRequestApiInDTO[];
+  requests: StudentAppealRequestApprovalApiInDTO[];
 }
