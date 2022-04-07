@@ -41,11 +41,7 @@ export class MSFAAIntegrationService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
-  constructor(
-    config: ConfigService,
-    private readonly sequenceService: SequenceControlService,
-    private readonly sshService: SshService,
-  ) {
+  constructor(config: ConfigService, private readonly sshService: SshService) {
     this.esdcConfig = config.getConfig().ESDCIntegration;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
