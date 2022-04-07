@@ -55,16 +55,13 @@
   </v-container>
 </template>
 <script lang="ts">
-import {
-  DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  RequestAssessmentSummaryApiOutDTO,
-} from "@/types";
+import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import { AssessmentTriggerType } from "@/types/contracts/AssessmentTrigger";
+import { RequestAssessmentSummaryApiOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
   emits: ["viewStudentAppeal", "viewScholasticStandingChange"],

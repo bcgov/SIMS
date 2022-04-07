@@ -1,8 +1,8 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  AssessmentHistorySummaryDTO,
+  AssessmentHistorySummaryApiOutDTO,
   RequestAssessmentSummaryApiOutDTO,
-} from "@/types";
+} from "./http/dto/Assessment.dto";
 
 /**
  * Client service layer for Student Assessments.
@@ -38,7 +38,7 @@ export class StudentAssessmentsService {
    */
   async getAssessmentHistory(
     applicationId: number,
-  ): Promise<AssessmentHistorySummaryDTO[]> {
+  ): Promise<AssessmentHistorySummaryApiOutDTO[]> {
     return ApiClient.StudentAssessmentApi.getAssessmentHistory(applicationId);
   }
 }

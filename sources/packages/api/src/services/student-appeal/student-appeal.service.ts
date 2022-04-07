@@ -210,8 +210,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const appealRequestsIDs = approvals.map((approval) => approval.id);
     const appealToUpdate = await this.repo
       .createQueryBuilder("studentAppeal")
-      .select(["studentAppeal.id", "studentAssessment.id", "appealRequest.id"])
+      .select([
+        "studentAppeal.id",
+        "studentAssessment.id",
+        "appealRequest.id",
+        "application.id",
+      ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
+      .innerJoin("studentAppeal.application", "application")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
       // Ensures that the provided appeal requests IDs belongs to the appeal.

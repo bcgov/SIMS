@@ -11,7 +11,7 @@ import {
   StudentAssessment,
 } from "../../database/entities";
 import { Connection, IsNull, UpdateResult } from "typeorm";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { WorkflowActionsService } from "..";
 import {
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -372,11 +372,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async assessmentHistorySummary(
     applicationId: number,
   ): Promise<AssessmentHistory[]> {
-    return this.repo
+    const queryResult = await this.repo
       .createQueryBuilder("assessment")
-      .select("assessment.submittedDate", "submittedDate")
-      .addSelect("assessment.triggerType", "triggerType")
-      .addSelect("assessment.assessmentDate", "assessmentDate")
+      .select([
+        "assessment.id",
+        "assessment.submittedDate",
+        "assessment.triggerType",
+        "assessment.assessmentDate",
+        "studentAppeal.id",
+        "studentScholasticStanding.id",
+      ])
       .addSelect(
         `CASE
           WHEN 
@@ -399,9 +404,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "status",
       )
       .innerJoin("assessment.application", "application")
+      .leftJoin("assessment.studentAppeal", "studentAppeal")
+      .leftJoin(
+        "assessment.studentScholasticStanding",
+        "studentScholasticStanding",
+      )
       .where("application.id = :applicationId", { applicationId })
       .orderBy("status", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
-      .getRawMany();
+      .getRawAndEntities();
+
+    return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
   }
 }

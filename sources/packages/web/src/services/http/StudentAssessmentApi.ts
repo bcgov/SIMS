@@ -1,8 +1,8 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  AssessmentHistorySummaryDTO,
+  AssessmentHistorySummaryApiOutDTO,
   RequestAssessmentSummaryApiOutDTO,
-} from "@/types";
+} from "./dto/Assessment.dto";
 
 /**
  * Http API client for Student Assessments.
@@ -33,8 +33,8 @@ export class StudentAssessmentApi extends HttpBaseClient {
    */
   public async getAssessmentHistory(
     applicationId: number,
-  ): Promise<AssessmentHistorySummaryDTO[]> {
-    return this.getCallTyped<AssessmentHistorySummaryDTO[]>(
+  ): Promise<AssessmentHistorySummaryApiOutDTO[]> {
+    return this.getCallTyped<AssessmentHistorySummaryApiOutDTO[]>(
       this.addClientRoot(`assessment/application/${applicationId}/history`),
     );
   }

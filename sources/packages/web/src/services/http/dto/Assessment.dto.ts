@@ -1,11 +1,11 @@
-import { StudentAssessmentStatus } from "src/services/student-assessment/student-assessment.models";
 import {
   AssessmentTriggerType,
   ScholasticStandingStatus,
   StudentAppealStatus,
-} from "../../../database/entities";
+  StudentAssessmentStatus,
+} from "@/types";
 
-export class RequestAssessmentSummaryApiOutDTO {
+export interface RequestAssessmentSummaryApiOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus | ScholasticStandingStatus;
