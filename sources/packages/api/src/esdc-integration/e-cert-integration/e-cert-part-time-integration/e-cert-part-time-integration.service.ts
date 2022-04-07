@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { ConfigService, SshService } from "../../services";
-import { ESDCIntegrationConfig } from "../../types";
+import { ConfigService, SshService } from "../../../services";
+import { ESDCIntegrationConfig } from "../../../types";
 import {
   getDisbursementAmountByValueCode,
   getGenderCode,
   getPTMaritalStatusCode,
   getTotalDisbursementAmount,
   round,
-} from "../../utilities";
+} from "../../../utilities";
 import {
   Award,
   ECertPTRecord,
@@ -16,12 +16,12 @@ import {
   CSGP,
   CSGPT,
 } from "./models/e-cert-part-time-integration.model";
-import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
+import { SFTPIntegrationBase } from "../../../services/ssh/sftp-integration-base";
+import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertPTFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPTFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPTFileRecord } from "./e-cert-files/e-cert-file-record";
-import { DisbursementValueType } from "../../database/entities";
+import { DisbursementValueType } from "../../../database/entities";
 
 /**
  * Manages the file content generation and methods to

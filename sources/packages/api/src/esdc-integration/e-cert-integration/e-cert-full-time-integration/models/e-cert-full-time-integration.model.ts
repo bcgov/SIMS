@@ -1,7 +1,7 @@
 import {
   DisbursementValue,
   RelationshipStatus,
-} from "../../../database/entities";
+} from "../../../../database/entities";
 
 export const ECERT_SENT_TITLE = "ENTITLEMENT";
 

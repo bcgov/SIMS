@@ -5,7 +5,7 @@ import { LoggerService } from "../../logger/logger.service";
 import { getUTCNow } from "../../utilities";
 import { EntityManager } from "typeorm";
 import {
-  ConfigService,
+  DisbursementScheduleService,
   MSFAANumberService,
   SequenceControlService,
 } from "../../services";
@@ -20,12 +20,11 @@ import { ESDCFileHandler } from "../esdc-file-handler";
 @Injectable()
 export class MSFAARequestService extends ESDCFileHandler {
   constructor(
-    config: ConfigService,
     sequenceService: SequenceControlService,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
   ) {
-    super(config, sequenceService);
+    super(sequenceService);
   }
 
   /**

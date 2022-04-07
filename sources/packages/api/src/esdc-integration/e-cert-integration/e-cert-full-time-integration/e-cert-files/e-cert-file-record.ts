@@ -1,5 +1,5 @@
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "../../../utilities/string-builder";
+import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
+import { StringBuilder } from "../../../../utilities/string-builder";
 import {
   Award,
   RecordTypeCodes,
@@ -8,7 +8,7 @@ import {
   DATE_FORMAT,
   SPACE_FILLER,
   NUMBER_FILLER,
-} from "../../models/esdc-integration.model";
+} from "../../../models/esdc-integration.model";
 
 /**
  * Number of possible awards available to be provided (code and amount).

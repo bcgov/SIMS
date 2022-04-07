@@ -1,5 +1,5 @@
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "../../../utilities/string-builder";
+import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
+import { StringBuilder } from "../../../../utilities/string-builder";
 import {
   ECERT_SENT_TITLE,
   RecordTypeCodes,
@@ -7,7 +7,7 @@ import {
 import {
   SPACE_FILLER,
   NUMBER_FILLER,
-} from "../../models/esdc-integration.model";
+} from "../../../models/esdc-integration.model";
 
 /**
  * Footer of an E-Cert file.

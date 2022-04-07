@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AuthModule } from "../../auth/auth.module";
+import { AuthModule } from "../../../auth/auth.module";
 import {
   ConfigService,
   DisbursementScheduleService,
@@ -7,7 +7,7 @@ import {
   SshService,
   StudentRestrictionService,
   DisbursementScheduleErrorsService,
-} from "../../services";
+} from "../../../services";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration.service";
 import { ECertPartTimeRequestService } from "./e-cert-part-time-request.service";
 @Module({

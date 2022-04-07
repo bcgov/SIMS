@@ -4,25 +4,19 @@ import {
   DATE_FORMAT,
   NUMBER_FILLER,
 } from "./models/esdc-integration.model";
-import { EntityManager } from "typeorm";
 import { StringBuilder } from "../utilities/string-builder";
-import { ConfigService, SequenceControlService } from "../services";
-import { ESDCIntegrationConfig } from "src/types";
+import { SequenceControlService } from "../services";
+import { ESDCIntegrationConfig } from "../types";
+
 export abstract class ESDCFileHandler {
   private readonly esdcConfig: ESDCIntegrationConfig;
-
-  constructor(
-    config: ConfigService,
-    readonly sequenceService: SequenceControlService,
-  ) {
-    this.esdcConfig = config.getConfig().ESDCIntegration;
-  }
+  constructor(readonly sequenceService: SequenceControlService) {}
   /**
    * Expected file name of the request file.
    * @param filenameCode different files has different filename codes, to be created.
    * @param OfferingIntensity offering intensity of the application
    *  where file is requested.
-   * @param entityManager
+   * @param nextSequenceNumber
    * @returns Full file path of the file to be saved on the SFTP.
    */
   async createRequestFileName(
