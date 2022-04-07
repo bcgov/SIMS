@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService, SshService } from "../../../services";
-import { ESDCIntegrationConfig } from "../../../types";
 import {
   combineDecimalPlaces,
   getDisbursementValuesByType,
