@@ -128,7 +128,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * generate the record.
    * @returns e-Cert record.
    */
-  createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
+  private createECertRecord(disbursement: DisbursementSchedule): ECertRecord {
     const now = new Date();
     const application = disbursement.studentAssessment.application;
     const [addressInfo] = application.student.contactInfo.addresses;

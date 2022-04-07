@@ -32,7 +32,7 @@ export class ECertIntegrationController extends BaseController {
   }
 
   /**
-   * Process disbursements available to be sent to ESDC.
+   * Process Full-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
@@ -54,7 +54,7 @@ export class ECertIntegrationController extends BaseController {
   }
 
   /**
-   * Process disbursements available to be sent to ESDC.
+   * Process Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
