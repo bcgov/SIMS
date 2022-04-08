@@ -7,19 +7,23 @@ export enum NoteType {
    */
   General = "General",
   /**
-   * Note type Restriction.
+   * Note type Application.
    */
-  Restriction = "Restriction",
-  /**
-   * Note type System.
-   */
-  System = "System Actions",
+  Application = "Application",
   /**
    * Note type Program.
    */
   Program = "Program",
   /**
+   * Note type Restriction.
+   */
+  Restriction = "Restriction",
+  /**
    * Note type Designation.
    */
   Designation = "Designation",
+  /**
+   * Note type System.
+   */
+  System = "System Actions",
 }

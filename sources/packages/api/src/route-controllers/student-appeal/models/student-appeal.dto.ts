@@ -57,6 +57,6 @@ export class StudentAppealRequestApprovalApiInDTO {
 export class StudentAppealApprovalApiInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestApiInDTO)
+  @Type(() => StudentAppealRequestApprovalApiInDTO)
   requests: StudentAppealRequestApprovalApiInDTO[];
 }
