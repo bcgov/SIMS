@@ -104,20 +104,11 @@ export class StudentAppealAESTController extends BaseController {
     @Body() payload: StudentAppealApprovalApiInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    const hasIncompleteAssessment =
-      await this.studentAssessmentService.hasIncompleteAssessment(
+    try {
+      await this.studentAssessmentService.assertAllAssessmentsCompleted(
         userToken.userId,
       );
-    if (hasIncompleteAssessment) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "There is already an assessment waiting to be completed. Another assessment cannot be initiated at this time.",
-          ASSESSMENT_ALREADY_IN_PROGRESS,
-        ),
-      );
-    }
 
-    try {
       const savedAppeal = await this.studentAppealService.approveRequests(
         appealId,
         payload.requests,
@@ -139,6 +130,10 @@ export class StudentAppealAESTController extends BaseController {
             throw new NotFoundException(error.message);
           case STUDENT_APPEAL_INVALID_OPERATION:
             throw new UnprocessableEntityException(error.message);
+          case ASSESSMENT_ALREADY_IN_PROGRESS:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;

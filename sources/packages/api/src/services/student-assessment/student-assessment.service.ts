@@ -418,6 +418,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
   }
 
+  /**
+   * Checks if some student assessment is still being processed.
+   * Only one student assessment can be processed at a given time because
+   * any assessment can generate Over Awards and they must be taken into
+   * the consideration every time.
+   * * Alongside with the check, the DB has an index to prevent that a new
+   * * assessment record is created when there is already one with the
+   * * assessment data not populated (submitted/pending).
+   * @param userId user id to check the assessments.
+   * @returns true if there is an assessment that is not finalized yet.
+   */
   async hasIncompleteAssessment(userId: number): Promise<boolean> {
     const queryResult = await this.repo
       .createQueryBuilder("assessment")
@@ -429,7 +440,22 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .andWhere("assessment.assessmentData IS NULL")
       .limit(1)
       .getRawOne();
-
     return !!queryResult;
+  }
+
+  /**
+   * Validate if the student has any student assessment that it is not
+   * finished yet (submitted/pending). If there is a student assessment
+   * already being processed, throws an exception.
+   * @param userId user id to check the assessments.
+   */
+  async assertAllAssessmentsCompleted(userId: number) {
+    const hasIncompleteAssessment = await this.hasIncompleteAssessment(userId);
+    if (hasIncompleteAssessment) {
+      throw new CustomNamedError(
+        "There is already an assessment waiting to be completed. Another assessment cannot be initiated at this time.",
+        ASSESSMENT_ALREADY_IN_PROGRESS,
+      );
+    }
   }
 }
