@@ -1,4 +1,3 @@
-import { OfferingIntensity } from "../database/entities";
 import {
   CreateRequestFileNameResult,
   DATE_FORMAT,
