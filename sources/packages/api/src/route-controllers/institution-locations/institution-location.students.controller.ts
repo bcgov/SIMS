@@ -4,8 +4,8 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { InstitutionLocationService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { OptionItem } from "../../types";
 import BaseController from "../BaseController";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 /**
  * Institution location controller for Students client.
@@ -24,7 +24,7 @@ export class InstitutionLocationStudentsController extends BaseController {
    * @returns key/value pair list of all locations.
    */
   @Get("options-list")
-  async getOptionsList(): Promise<OptionItem[]> {
+  async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
     const locations = await this.locationService.getDesignatedLocations();
     return locations.map((location) => ({
       id: location.id,

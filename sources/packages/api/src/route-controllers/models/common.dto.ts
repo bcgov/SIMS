@@ -67,3 +67,12 @@ export class AddressInfoOutDTO {
   country: string;
   postalCode: string;
 }
+
+/**
+ * Common DTO returned by data lookup APIs.
+ ** Data lookup APIs are used to populate values in form.
+ */
+export interface OptionItemAPIOutDTO {
+  id: number;
+  description: string;
+}
