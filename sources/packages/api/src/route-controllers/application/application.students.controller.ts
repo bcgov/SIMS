@@ -189,7 +189,10 @@ export class ApplicationStudentsController extends BaseController {
       );
       if (notValidDates) {
         throw new UnprocessableEntityException(
-          `${INVALID_STUDY_DATES} ${notValidDates}`,
+          new ApiProcessError(
+            `${INVALID_STUDY_DATES} ${notValidDates}`,
+            APPLICATION_DATE_OVERLAP_ERROR,
+          ),
         );
       }
     }
