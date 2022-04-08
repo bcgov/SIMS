@@ -1,0 +1,1 @@
+DROP INDEX sims.student_assessments_only_one_assessment_data_null;

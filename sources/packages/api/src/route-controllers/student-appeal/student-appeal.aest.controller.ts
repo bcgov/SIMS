@@ -7,7 +7,11 @@ import {
   Body,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { StudentAppealService, StudentAssessmentService } from "../../services";
+import {
+  ASSESSMENT_ALREADY_IN_PROGRESS,
+  StudentAppealService,
+  StudentAssessmentService,
+} from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import {
@@ -16,13 +20,13 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   StudentAppealApiOutDTO,
   StudentAppealApprovalApiInDTO,
 } from "./models/student-appeal.dto";
-import { getUserFullName } from "../../utilities";
+import { CustomNamedError, getUserFullName } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
@@ -100,6 +104,19 @@ export class StudentAppealAESTController extends BaseController {
     @Body() payload: StudentAppealApprovalApiInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
+    const hasIncompleteAssessment =
+      await this.studentAssessmentService.hasIncompleteAssessment(
+        userToken.userId,
+      );
+    if (hasIncompleteAssessment) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "There is already an assessment waiting to be completed. Another assessment cannot be initiated at this time.",
+          ASSESSMENT_ALREADY_IN_PROGRESS,
+        ),
+      );
+    }
+
     try {
       const savedAppeal = await this.studentAppealService.approveRequests(
         appealId,
@@ -115,15 +132,16 @@ export class StudentAppealAESTController extends BaseController {
           savedAppeal.studentAssessment.id,
         );
       }
-    } catch (error) {
-      switch (error.name) {
-        case STUDENT_APPEAL_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case STUDENT_APPEAL_INVALID_OPERATION:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_APPEAL_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDENT_APPEAL_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
+      throw error;
     }
   }
 }

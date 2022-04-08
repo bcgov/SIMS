@@ -10,10 +10,11 @@ import {
   ProgramInfoStatus,
   StudentAssessment,
 } from "../../database/entities";
-import { Connection, IsNull, UpdateResult } from "typeorm";
+import { Connection, EntityManager, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { WorkflowActionsService } from "..";
 import {
+  ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
@@ -415,5 +416,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .getRawAndEntities();
 
     return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
+  }
+
+  async hasIncompleteAssessment(userId: number): Promise<boolean> {
+    const queryResult = await this.repo
+      .createQueryBuilder("assessment")
+      .select("1")
+      .innerJoin("assessment.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("user.id = :userId", { userId })
+      .andWhere("assessment.assessmentData IS NULL")
+      .limit(1)
+      .getRawOne();
+
+    return !!queryResult;
   }
 }

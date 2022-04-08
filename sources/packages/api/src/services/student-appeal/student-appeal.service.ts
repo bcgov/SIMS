@@ -25,6 +25,7 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
+import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 
 /**
  * Service layer for Student appeals.
@@ -34,6 +35,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   constructor(
     private readonly connection: Connection,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super(connection.getRepository(StudentAppeal));
   }
