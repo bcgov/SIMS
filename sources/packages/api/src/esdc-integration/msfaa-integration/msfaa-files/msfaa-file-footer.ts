@@ -2,9 +2,9 @@ import { StringBuilder } from "../../../utilities/string-builder";
 import {
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
-  SPACE_FILLER,
   RecordTypeCodes,
 } from "../models/msfaa-integration.model";
+import { SPACE_FILLER } from "../../models/esdc-integration.model";
 
 /**
  * Footer of a MSFAA request/response file.

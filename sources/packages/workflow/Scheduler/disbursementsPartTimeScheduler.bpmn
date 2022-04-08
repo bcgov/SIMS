@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0henw76" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1">
-  <bpmn:process id="disbursements-scheduler" name="Disbursements Scheduler" isExecutable="true">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0henw76" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="disbursements-pt-scheduler" name="Disbursements Part Time Scheduler" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Run Every Day at 23PM-PST / 7AM-UTC">
       <bpmn:outgoing>Flow_13cbskt</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_01md2hl">
@@ -58,7 +58,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
               </camunda:map>
             </camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">${simsApiUrl}/system-access/e-cert/process</camunda:inputParameter>
+            <camunda:inputParameter name="url">${simsApiUrl}/system-access/e-cert/process-part-time</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
@@ -72,7 +72,7 @@ execution.setVariable('simsApiUrl', system.getenv('SIMS_API_BASE_URL'));
     <bpmn:sequenceFlow id="Flow_1gu217v" sourceRef="Activity_1a5hafq" targetRef="Event_0743mx9" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="disbursements-scheduler">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="disbursements-pt-scheduler">
       <bpmndi:BPMNEdge id="Flow_1gu217v_di" bpmnElement="Flow_1gu217v">
         <di:waypoint x="580" y="117" />
         <di:waypoint x="642" y="117" />

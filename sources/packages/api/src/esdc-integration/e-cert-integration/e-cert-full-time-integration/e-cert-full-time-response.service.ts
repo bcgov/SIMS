@@ -1,15 +1,14 @@
 import { Injectable, LoggerService } from "@nestjs/common";
-import { InjectLogger } from "../../common";
+import { InjectLogger } from "../../../common";
 import {
   DisbursementScheduleErrorsService,
   DisbursementScheduleService,
   ConfigService,
-} from "../../services";
-import { ProcessSftpResponseResult } from "./models/e-cert-full-time-integration.model";
+} from "../../../services";
+import { ProcessSFTPResponseResult } from "../../models/esdc-integration.model";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration.service";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
-import { getUTCNow } from "../../utilities";
-import { ESDCIntegrationConfig } from "../../types";
+import { ESDCIntegrationConfig } from "../../../types";
 
 @Injectable()
 export class ECertFullTimeResponseService {
@@ -28,7 +27,7 @@ export class ECertFullTimeResponseService {
    * Download all files from E-Cert Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  async processResponses(): Promise<ProcessSftpResponseResult[]> {
+  async processResponses(): Promise<ProcessSFTPResponseResult[]> {
     const filePaths = await this.eCertFullTimeService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       new RegExp(
@@ -36,7 +35,7 @@ export class ECertFullTimeResponseService {
         "i",
       ),
     );
-    const processFiles: ProcessSftpResponseResult[] = [];
+    const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(await this.processFile(filePath));
     }
@@ -50,8 +49,8 @@ export class ECertFullTimeResponseService {
    */
   private async processFile(
     filePath: string,
-  ): Promise<ProcessSftpResponseResult> {
-    const result = new ProcessSftpResponseResult();
+  ): Promise<ProcessSFTPResponseResult> {
+    const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
     let responseFile: ECertResponseRecord[];
@@ -110,7 +109,6 @@ export class ECertFullTimeResponseService {
   private async processErrorCodeRecords(
     feedbackRecord: ECertResponseRecord,
   ): Promise<void> {
-    const now = getUTCNow();
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
         feedbackRecord.documentNumber,
@@ -125,7 +123,7 @@ export class ECertFullTimeResponseService {
           feedbackRecord.errorCode4,
           feedbackRecord.errorCode5,
         ].filter((error) => error),
-        now,
+        new Date(),
       );
     } else {
       throw new Error(

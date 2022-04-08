@@ -1,5 +1,5 @@
 import { getDateOnlyFromFormat } from "../../../utilities";
-import { DATE_FORMAT } from "../fed-restriction-integration.models";
+import { DATE_FORMAT } from "../../models/esdc-integration.model";
 
 /**
  * Federal restriction record that contains the restriction code and restriction reason

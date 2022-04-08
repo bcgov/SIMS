@@ -1,13 +1,14 @@
-import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
+import { StringBuilder, getDateOnlyFromFormat } from "../../../../utilities";
+import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import {
-  DATE_FORMAT,
   ECERT_SENT_TITLE,
-  NUMBER_FILLER,
   RecordTypeCodes,
+} from "../models/e-cert-part-time-integration.model";
+import {
   SPACE_FILLER,
   TIME_FORMAT,
-} from "../models/e-cert-full-time-integration.model";
+  DATE_FORMAT,
+} from "../../../models/esdc-integration.model";
 
 const ORIGINATOR_CODE = "BC";
 
@@ -16,7 +17,7 @@ const ORIGINATOR_CODE = "BC";
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFileHeader implements FixedFormatFileLine {
+export class ECertPartTimeFileHeader implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   processDate: Date;
   sequence: number;
@@ -28,15 +29,17 @@ export class ECertFileHeader implements FixedFormatFileLine {
     header.appendWithEndFiller(ECERT_SENT_TITLE, 40, SPACE_FILLER);
     header.appendDate(this.processDate, DATE_FORMAT);
     header.appendDate(this.processDate, TIME_FORMAT);
-    header.appendWithStartFiller(this.sequence.toString(), 6, NUMBER_FILLER);
-    header.repeatAppend(SPACE_FILLER, 735); // Trailing space
+    header.repeatAppend(SPACE_FILLER, 698); // Trailing space.
     return header.toString();
   }
 
-  public static createFromLine(line: string): ECertFileHeader {
-    const header = new ECertFileHeader();
-    header.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
-    header.processDate = getDateOnlyFromFormat(line.substr(47, 8), DATE_FORMAT);
+  public static createFromLine(line: string): ECertPartTimeFileHeader {
+    const header = new ECertPartTimeFileHeader();
+    header.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
+    header.processDate = getDateOnlyFromFormat(
+      line.substring(47, 55),
+      DATE_FORMAT,
+    );
     return header;
   }
 }
