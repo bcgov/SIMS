@@ -6,6 +6,9 @@ import {
   InstitutionLocationAPIOutDTO,
 } from "./models/institution-location.dto";
 
+/**
+ * Controller service for institution location.
+ */
 @Injectable()
 export class InstitutionLocationControllerService {
   constructor(private readonly locationService: InstitutionLocationService) {}

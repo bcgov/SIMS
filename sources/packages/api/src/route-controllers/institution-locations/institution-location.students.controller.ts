@@ -7,6 +7,9 @@ import { ClientTypeBaseRoute } from "../../types";
 import { OptionItem } from "../../types";
 import BaseController from "../BaseController";
 
+/**
+ * Institution location controller for Students client.
+ */
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("institution/location")
 @ApiTags(`${ClientTypeBaseRoute.Student}-institution`)

@@ -2,17 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   Get,
   NotFoundException,
   Param,
   Patch,
   Post,
-  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiBadRequestResponse,
-  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
 } from "@nestjs/swagger";
@@ -23,10 +20,7 @@ import {
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import {
-  IInstitutionUserToken,
-  IUserToken,
-} from "../../auth/userToken.interface";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
   FormService,
@@ -69,17 +63,19 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     super();
   }
 
+  /**
+   * Create an Institution location.
+   * @param payload
+   * @returns Primary identifier of created location.
+   */
   @ApiBadRequestResponse({
     description: "Invalid request to create an institution location.",
-  })
-  @ApiForbiddenResponse({
-    description: "User does not belong to institution to create a location.",
   })
   @IsInstitutionAdmin()
   @Post()
   async create(
     @Body() payload: InstitutionLocationAPIInDTO,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
@@ -93,31 +89,25 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
 
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    if (!institutionDetails) {
-      throw new ForbiddenException(
-        "Not able to find an institution associated with the current user name.",
-      );
-    }
-
     // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionLocation =
       await this.locationService.createLocation(
-        institutionDetails.id,
+        userToken.authorizations.institutionId,
         dryRunSubmissionResult.data,
       );
 
     return { id: createdInstitutionLocation.id };
   }
 
+  /**
+   * Update an institution location.
+   * @param locationId
+   * @param payload
+   */
   @ApiBadRequestResponse({
     description: "Invalid request to update the institution location.",
   })
-  @ApiForbiddenResponse({
-    description: "User does not belong to the given location's institution.",
-  })
+  @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
@@ -137,24 +127,10 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
     }
 
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (
-      !institutionDetails ||
-      institutionDetails.id !== requestedLoc.institution.id
-    ) {
-      throw new ForbiddenException(
-        "User does not belong to the given location's institution.",
-      );
-    }
     // If the data is valid the location is updated to SIMS DB.
     const updateResult = await this.locationService.updateLocation(
       locationId,
-      institutionDetails.id,
+      userToken.authorizations.institutionId,
       dryRunSubmissionResult.data.data,
     );
     return updateResult.affected;
@@ -213,20 +189,12 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @Get(":locationId")
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find the Location associated.",
-      );
-    }
     // get all institution locations.
     const institutionLocation =
       await this.locationService.getInstitutionLocation(
-        institutionDetails.id,
+        userToken.authorizations.institutionId,
         locationId,
       );
 
