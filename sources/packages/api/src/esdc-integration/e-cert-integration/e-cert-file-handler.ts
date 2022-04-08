@@ -9,22 +9,61 @@ import {
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
-import { getDayOfTheYear, getFieldOfStudyFromCIPCode } from "../../utilities";
+import {
+  ECERT_FULL_TIME_FILE_CODE,
+  ECERT_PART_TIME_FILE_CODE,
+  getDayOfTheYear,
+  getFieldOfStudyFromCIPCode,
+} from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import { ECertUploadResult } from "./e-cert-full-time-integration/models/e-cert-full-time-integration.model";
 import { Injectable } from "@nestjs/common";
 import { Award, ECertRecord } from "./e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert-integration.service";
+import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
+import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
 
+const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
+const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
+    private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
   ) {
     super(configService);
+  }
+
+  /**
+   * Method to call the Full-time disbursements available to be sent to ESDC.
+   * @returns result of the file upload with the file generated and the
+   * amount of records added to the file.
+   */
+  async generateFullTimeECert(): Promise<ECertUploadResult> {
+    return this.generateECert(
+      this.eCertFullTimeIntegrationService,
+      OfferingIntensity.fullTime,
+      ECERT_FULL_TIME_FILE_CODE,
+      ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP,
+    );
+  }
+
+  /**
+   * Method to call the Part-time disbursements available to be sent to ESDC.
+   * @returns result of the file upload with the file generated and the
+   * amount of records added to the file.
+   */
+  async generatePartTimeECert(): Promise<ECertUploadResult> {
+    return this.generateECert(
+      this.eCertPartTimeIntegrationService,
+      OfferingIntensity.partTime,
+      ECERT_PART_TIME_FILE_CODE,
+      ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
+    );
   }
 
   /**
