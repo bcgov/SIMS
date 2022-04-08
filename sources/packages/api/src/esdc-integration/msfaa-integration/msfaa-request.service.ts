@@ -37,9 +37,12 @@ export class MSFAARequestService extends ESDCFileHandler {
    *      sent File.
    * 5. Upload the content to the zoneB SFTP server.
    * 6. Update the MSFAA records, that are sent in the request sent file.
+   * @param fileCode File code applicable for Part-Time or Full-Time.
+   * @param offeringIntensity offering intensity.
    * @returns Processing MSFAA request result.
    */
   async processMSFAARequest(
+    fileCode: string,
     offeringIntensity: OfferingIntensity,
   ): Promise<MSFAAUploadResult> {
     this.logger.log(`Retrieving pending ${offeringIntensity} MSFAA request...`);
@@ -87,9 +90,8 @@ export class MSFAARequestService extends ESDCFileHandler {
           // Create the request filename with the file path for the MSFAA Request
           // sent File.
           const fileInfo = await this.createRequestFileName(
-            "PBC.EDU.MSFA.SENT.",
+            fileCode,
             nextSequenceNumber,
-            offeringIntensity,
           );
           this.logger.log("Uploading content...");
           uploadResult = await this.msfaaService.uploadContent(

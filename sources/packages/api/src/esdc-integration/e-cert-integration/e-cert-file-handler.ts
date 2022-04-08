@@ -30,6 +30,7 @@ export class ECertFileHandler extends ESDCFileHandler {
   /**
    * Get all Full-Time/ Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
+   * @param eCertIntegrationService
    * @param offeringIntensity disbursement offering intensity.
    * @param fileCode File code applicable for Part-Time or Full-Time.
    * @param sequenceGroup Sequence group application for Part-Time or Full-Time.
