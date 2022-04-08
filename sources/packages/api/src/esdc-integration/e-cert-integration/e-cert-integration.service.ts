@@ -17,14 +17,15 @@ export abstract class ECertIntegrationService<
     fileSequence: number,
   ): FixedFormatFileLine[] {
     throw new Error(
-      `Method not implemented , ${ecertRecords} && ${fileSequence} not declared`,
+      `Method not implemented , ${ecertRecords} && ${fileSequence} not declared.`,
     );
   }
+
   /**
    * This method will be implemented in the extended class and is used to for response processing of ECert file.
    * @param remoteFilePath
    */
   downloadResponseFile(remoteFilePath: string): Promise<DownloadType> {
-    throw new Error(`Method not implemented , ${remoteFilePath} not declared`);
+    throw new Error(`Method not implemented , ${remoteFilePath} not declared.`);
   }
 }

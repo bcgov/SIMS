@@ -23,6 +23,7 @@ import { Award, ECertRecord } from "./e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert-integration.service";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
+import { ECertResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
@@ -77,7 +78,9 @@ export class ECertFileHandler extends ESDCFileHandler {
    * amount of records added to the file.
    */
   async generateECert(
-    eCertIntegrationService: ECertIntegrationService<any>,
+    eCertIntegrationService: ECertIntegrationService<
+      ECertResponseRecord[] | void
+    >,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
     sequenceGroup: string,

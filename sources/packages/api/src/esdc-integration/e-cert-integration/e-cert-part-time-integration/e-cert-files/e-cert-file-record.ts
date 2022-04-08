@@ -126,7 +126,6 @@ export class ECertPartTimeFileRecord implements FixedFormatFileLine {
    */
   totalCSGPPTDEPAmount: number;
   /**
-   *
    * CourseLoad for the PartTime course.
    */
   courseLoad: number;
