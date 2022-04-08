@@ -37,7 +37,7 @@ import {
   OFFERING_START_DATE_ERROR,
   INVALID_STUDY_DATES,
   OFFERING_INTENSITY_MISMATCH,
-  APPLICATION_DATE_OVERLAP_ERROR,
+  PIR_OR_DATE_OVERLAP_ERROR,
 } from "@/constants";
 
 export default {
@@ -183,13 +183,13 @@ export default {
           OFFERING_START_DATE_ERROR,
           INVALID_STUDY_DATES,
           OFFERING_INTENSITY_MISMATCH,
-          APPLICATION_DATE_OVERLAP_ERROR,
+          PIR_OR_DATE_OVERLAP_ERROR,
         ].some(
           (errorCode: string) => errorCode === error.response.data?.errorType,
         );
 
         if (isCustomError) {
-          errorLabel = "Application Overlap";
+          errorLabel = "Invalid submission";
           errorMsg = error.response.data?.message;
         }
         toast.error(errorLabel, errorMsg);

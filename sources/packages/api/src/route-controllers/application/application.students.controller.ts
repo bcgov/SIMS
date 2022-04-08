@@ -27,7 +27,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
-  APPLICATION_DATE_OVERLAP_ERROR,
 } from "../../services";
 import { IUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -54,14 +53,9 @@ import {
 import {
   dateString,
   getUserFullName,
-  checkStudyStartDateWithinProgramYear,
-  checkNotValidStudyPeriod,
+  PIR_OR_DATE_OVERLAP_ERROR,
 } from "../../utilities";
-import {
-  INVALID_STUDY_DATES,
-  OFFERING_START_DATE_ERROR,
-  INVALID_APPLICATION_NUMBER,
-} from "../../constants";
+import { INVALID_APPLICATION_NUMBER } from "../../constants";
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
@@ -181,26 +175,6 @@ export class ApplicationStudentsController extends BaseController {
       // then study start date taken from offering
       studyStartDate = offering.studyStartDate;
       studyEndDate = offering.studyEndDate;
-    } else {
-      // when selectedOffering is not selected
-      const notValidDates = checkNotValidStudyPeriod(
-        payload.data.studystartDate,
-        payload.data.studyendDate,
-      );
-      if (notValidDates) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            `${INVALID_STUDY_DATES} ${notValidDates}`,
-            APPLICATION_DATE_OVERLAP_ERROR,
-          ),
-        );
-      }
-    }
-
-    if (!checkStudyStartDateWithinProgramYear(studyStartDate, programYear)) {
-      throw new UnprocessableEntityException(
-        `${OFFERING_START_DATE_ERROR} study start date should be within the program year of the students application`,
-      );
     }
 
     const student = await this.studentService.getStudentByUserId(
@@ -233,7 +207,7 @@ export class ApplicationStudentsController extends BaseController {
           throw new NotFoundException(error.message);
         case APPLICATION_NOT_VALID:
         case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-        case APPLICATION_DATE_OVERLAP_ERROR:
+        case PIR_OR_DATE_OVERLAP_ERROR:
         case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
           throw new UnprocessableEntityException(error.message);
         default:

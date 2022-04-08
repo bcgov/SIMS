@@ -70,7 +70,6 @@ import {
   OFFERING_START_DATE_ERROR,
   INVALID_STUDY_DATES,
   PIR_OR_DATE_OVERLAP_ERROR,
-  APPLICATION_DATE_OVERLAP_ERROR,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
@@ -226,12 +225,11 @@ export default {
           INVALID_STUDY_DATES,
           OFFERING_START_DATE_ERROR,
           PIR_OR_DATE_OVERLAP_ERROR,
-          APPLICATION_DATE_OVERLAP_ERROR,
         ].some(
           (errorCode: string) => errorCode === error.response.data?.errorType,
         );
         if (isCustomError) {
-          errorLabel = "Application Overlap";
+          errorLabel = "Invalid submission";
           errorMsg = error.response.data?.message;
         }
 

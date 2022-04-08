@@ -31,15 +31,11 @@ import {
   FormService,
   PIRDeniedReasonService,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
-  APPLICATION_DATE_OVERLAP_ERROR,
 } from "../../services";
 import {
   getUserFullName,
-  CustomNamedError,
-  checkNotValidStudyPeriod,
-  checkStudyStartDateWithinProgramYear,
-  checkOfferingIntensityMismatch,
   getISODateOnlyString,
+  PIR_OR_DATE_OVERLAP_ERROR,
 } from "../../utilities";
 import {
   EducationProgramOffering,
@@ -255,41 +251,6 @@ export class ProgramInfoRequestController extends BaseController {
       if (!application) {
         throw new BadRequestException("Application not found.");
       }
-      // studyStartDate from payload is set as studyStartDate
-      let studyStartDate = payload.studyStartDate;
-      let selectedOfferingIntensity = payload.offeringIntensity;
-      if (payload.selectedOffering) {
-        const offering = await this.offeringService.getOfferingById(
-          payload.selectedOffering,
-        );
-        // if studyStartDate is not in payload
-        // then selectedOffering will be there in payload,
-        // then study start date taken from offering
-        studyStartDate = offering.studyStartDate;
-        selectedOfferingIntensity = offering.offeringIntensity;
-      }
-      if (
-        !checkOfferingIntensityMismatch(
-          application.data.howWillYouBeAttendingTheProgram,
-          selectedOfferingIntensity,
-        )
-      ) {
-        throw new CustomNamedError(
-          "Offering Intensity does not match the students intensity",
-          OFFERING_INTENSITY_MISMATCH,
-        );
-      }
-      if (
-        !checkStudyStartDateWithinProgramYear(
-          studyStartDate,
-          application.programYear,
-        )
-      ) {
-        throw new CustomNamedError(
-          "study start date should be within the program year of the students application",
-          OFFERING_START_DATE_ERROR,
-        );
-      }
 
       let offeringToCompletePIR: EducationProgramOffering;
       if (payload.selectedOffering) {
@@ -308,22 +269,6 @@ export class ProgramInfoRequestController extends BaseController {
         offeringToCompletePIR = {
           id: payload.selectedOffering,
         } as EducationProgramOffering;
-      } else {
-        // check valid study period
-        const notValidDates = checkNotValidStudyPeriod(
-          payload.studyStartDate,
-          payload.studyEndDate,
-        );
-        if (notValidDates) {
-          throw new CustomNamedError(notValidDates, INVALID_STUDY_DATES);
-        }
-        // Offering does not exists and it is going to be created and
-        // associated with the application to complete the PIR.
-        offeringToCompletePIR = this.offeringService.populateProgramOffering(
-          locationId,
-          payload.selectedProgram,
-          submissionResult.data.data,
-        );
       }
 
       await this.applicationService.validateOverlappingDatesAndPIR(
@@ -353,18 +298,13 @@ export class ProgramInfoRequestController extends BaseController {
     } catch (error) {
       if (
         [
-          APPLICATION_DATE_OVERLAP_ERROR,
+          PIR_OR_DATE_OVERLAP_ERROR,
           PIR_REQUEST_NOT_FOUND_ERROR,
-          OFFERING_START_DATE_ERROR,
-          INVALID_STUDY_DATES,
           OFFERING_INTENSITY_MISMATCH,
         ].includes(error.name)
       ) {
         throw new UnprocessableEntityException(
-          new ApiProcessError(
-            `${error.name} ${error.message}`,
-            APPLICATION_DATE_OVERLAP_ERROR,
-          ),
+          new ApiProcessError(error.message, error.name),
         );
       }
       throw new InternalServerErrorException(

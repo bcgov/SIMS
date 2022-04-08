@@ -43,6 +43,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
+  PIR_OR_DATE_OVERLAP_ERROR,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
@@ -63,7 +64,6 @@ export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
 export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
   "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
-export const APPLICATION_DATE_OVERLAP_ERROR = "APPLICATION_DATE_OVERLAP_ERROR";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -1360,7 +1360,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ) {
         throw new CustomNamedError(
           PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-          APPLICATION_DATE_OVERLAP_ERROR,
+          PIR_OR_DATE_OVERLAP_ERROR,
         );
       }
     }
