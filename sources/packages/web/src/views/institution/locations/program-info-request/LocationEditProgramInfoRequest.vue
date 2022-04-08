@@ -37,6 +37,7 @@ import {
   OFFERING_START_DATE_ERROR,
   INVALID_STUDY_DATES,
   OFFERING_INTENSITY_MISMATCH,
+  APPLICATION_DATE_OVERLAP_ERROR,
 } from "@/constants";
 
 export default {
@@ -85,11 +86,10 @@ export default {
     };
 
     const formLoaded = async (form: any) => {
-      programRequestData.value =
-        await ProgramInfoRequestService.shared.getProgramInfoRequest(
-          props.locationId,
-          props.applicationId,
-        );
+      programRequestData.value = await ProgramInfoRequestService.shared.getProgramInfoRequest(
+        props.locationId,
+        props.applicationId,
+      );
       initialData.value = {
         ...programRequestData.value,
         studentStudyStartDate: dateString(
@@ -176,18 +176,22 @@ export default {
           },
         });
       } catch (error) {
-        const errorLabel = "Unexpected error!";
+        let errorLabel = "Unexpected error!";
         let errorMsg =
           "An error happened while saving the Program Information Request.";
-        [
+        const isCustomError = [
           OFFERING_START_DATE_ERROR,
           INVALID_STUDY_DATES,
           OFFERING_INTENSITY_MISMATCH,
-        ].forEach((customError) => {
-          if (error.includes(customError)) {
-            errorMsg = error.replace(customError, "").trim();
-          }
-        });
+          APPLICATION_DATE_OVERLAP_ERROR,
+        ].some(
+          (errorCode: string) => errorCode === error.response.data?.errorType,
+        );
+
+        if (isCustomError) {
+          errorLabel = "Application Overlap";
+          errorMsg = error.response.data?.message;
+        }
         toast.error(errorLabel, errorMsg);
       }
     };

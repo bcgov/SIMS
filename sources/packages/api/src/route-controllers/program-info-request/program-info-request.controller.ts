@@ -60,6 +60,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
+import { ApiProcessError } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
@@ -360,7 +361,10 @@ export class ProgramInfoRequestController extends BaseController {
         ].includes(error.name)
       ) {
         throw new UnprocessableEntityException(
-          `${error.name} ${error.message}`,
+          new ApiProcessError(
+            `${error.name} ${error.message}`,
+            APPLICATION_DATE_OVERLAP_ERROR,
+          ),
         );
       }
       throw new InternalServerErrorException(
