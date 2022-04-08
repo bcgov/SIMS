@@ -172,15 +172,6 @@ export interface ApplicationDataDto {
   student: ApplicationStudentDetails;
 }
 
-export interface ActiveApplicationSummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationId: number;
-  applicationStatus: string;
-  fullName: string;
-}
-
 export interface PIRSummaryDTO {
   applicationNumber: string;
   studyStartPeriod: string;
@@ -209,19 +200,6 @@ export interface ApplicationWithProgramYearDto {
   formName: string;
   programYearId: number;
   active: boolean;
-}
-
-export interface ActiveApplicationDataDto {
-  applicationProgramName: string;
-  applicationProgramDescription: string;
-  applicationOfferingName: string;
-  applicationOfferingIntensity: string;
-  applicationOfferingStartDate: string;
-  applicationOfferingEndDate: string;
-  applicationStudentName: string;
-  applicationNumber: string;
-  applicationLocationName: string;
-  applicationStatus: string;
 }
 
 /**

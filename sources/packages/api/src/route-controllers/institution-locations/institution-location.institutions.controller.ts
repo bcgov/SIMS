@@ -1,17 +1,32 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
+  HasLocationAccess,
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import { IUserToken } from "../../auth/userToken.interface";
+import {
+  IInstitutionUserToken,
+  IUserToken,
+} from "../../auth/userToken.interface";
 import {
   ApplicationService,
   FormService,
@@ -19,10 +34,24 @@ import {
   InstitutionService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
+import {
+  dateString,
+  getISODateOnlyString,
+  getUserFullName,
+} from "../../utilities";
+import {
+  ActiveApplicationDataAPIOutDTO,
+  ActiveApplicationSummaryAPIOutDTO,
+} from "../application/models/application.dto";
 import BaseController from "../BaseController";
-import { InstitutionLocationControllerService } from "./institution-location.controller.service";
-import { InstitutionLocationInDto } from "./models/institution-location.dto";
 import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
+import { InstitutionLocationControllerService } from "./institution-location.controller.service";
+import {
+  InstitutionLocationAPIInDTO,
+  InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIOutDTO,
+} from "./models/institution-location.dto";
+
 /**
  * Institution location controller for institutions Client.
  */
@@ -40,10 +69,16 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     super();
   }
 
+  @ApiBadRequestResponse({
+    description: "Invalid request to create an institution location.",
+  })
+  @ApiForbiddenResponse({
+    description: "User does not belong to institution to create a location.",
+  })
   @IsInstitutionAdmin()
   @Post()
   async create(
-    @Body() payload: InstitutionLocationInDto,
+    @Body() payload: InstitutionLocationAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierDTO> {
     // Validate the location data that will be saved to SIMS DB.
@@ -53,7 +88,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     );
 
     if (!dryRunSubmissionResult.valid) {
-      throw new UnprocessableEntityException(
+      throw new BadRequestException(
         "Not able to create the institution location due to an invalid request.",
       );
     }
@@ -62,7 +97,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     const institutionDetails =
       await this.institutionService.getInstituteByUserName(userToken.userName);
     if (!institutionDetails) {
-      throw new UnprocessableEntityException(
+      throw new ForbiddenException(
         "Not able to find an institution associated with the current user name.",
       );
     }
@@ -75,5 +110,175 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       );
 
     return { id: createdInstitutionLocation.id };
+  }
+
+  @ApiBadRequestResponse({
+    description: "Invalid request to update the institution location.",
+  })
+  @ApiForbiddenResponse({
+    description: "User does not belong to the given location's institution.",
+  })
+  @IsInstitutionAdmin()
+  @Patch(":locationId")
+  async update(
+    @Param("locationId") locationId: number,
+    @Body() payload: InstitutionLocationAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<number> {
+    // Validate the location data that will be saved to SIMS DB.
+    const dryRunSubmissionResult = await this.formService.dryRunSubmission(
+      "institutionlocation",
+      payload,
+    );
+
+    if (!dryRunSubmissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create the institution location due to an invalid request.",
+      );
+    }
+
+    //To retrieve institution id
+    const institutionDetails =
+      await this.institutionService.getInstituteByUserName(userToken.userName);
+    const requestedLoc = await this.locationService.getInstitutionLocationById(
+      locationId,
+    );
+    if (
+      !institutionDetails ||
+      institutionDetails.id !== requestedLoc.institution.id
+    ) {
+      throw new ForbiddenException(
+        "User does not belong to the given location's institution.",
+      );
+    }
+    // If the data is valid the location is updated to SIMS DB.
+    const updateResult = await this.locationService.updateLocation(
+      locationId,
+      institutionDetails.id,
+      dryRunSubmissionResult.data.data,
+    );
+    return updateResult.affected;
+  }
+
+  /**
+   * Controller method to get institution locations with designation status for the given institution.
+   * @param userToken
+   * @returns An array of InstitutionLocationsDetailsDto.
+   */
+  @IsInstitutionAdmin()
+  @Get()
+  async getAllInstitutionLocations(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
+    // get all institution locations with designation statuses.
+    return this.locationControllerService.getInstitutionLocations(
+      userToken.authorizations.institutionId,
+    );
+  }
+
+  /**
+   * Get all active application of a location in an institution
+   * with application_status is completed.
+   * @param locationId location id.
+   * @returns Student active application list of an institution location.
+   */
+  @HasLocationAccess("locationId")
+  @Get(":locationId/active-applications")
+  async getActiveApplications(
+    @Param("locationId") locationId: number,
+  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
+    const applications = await this.applicationService.getActiveApplications(
+      locationId,
+    );
+    return applications.map((eachApplication) => {
+      const offering = eachApplication.currentAssessment?.offering;
+      return {
+        applicationNumber: eachApplication.applicationNumber,
+        applicationId: eachApplication.id,
+        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
+        applicationStatus: eachApplication.applicationStatus,
+        fullName: getUserFullName(eachApplication.student.user),
+      };
+    }) as ActiveApplicationSummaryAPIOutDTO[];
+  }
+
+  /**
+   * Controller method to retrieve institution location by id.
+   * @param locationId
+   * @param userToken
+   * @returns institution location.
+   */
+  @HasLocationAccess("locationId")
+  @Get(":locationId")
+  async getInstitutionLocation(
+    @Param("locationId") locationId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
+    //To retrieve institution id
+    const institutionDetails =
+      await this.institutionService.getInstituteByUserName(userToken.userName);
+    if (!institutionDetails) {
+      throw new UnprocessableEntityException(
+        "Not able to find the Location associated.",
+      );
+    }
+    // get all institution locations.
+    const institutionLocation =
+      await this.locationService.getInstitutionLocation(
+        institutionDetails.id,
+        locationId,
+      );
+
+    return {
+      addressLine1: institutionLocation.data.address.addressLine1,
+      addressLine2: institutionLocation.data.address.addressLine2,
+      city: institutionLocation.data.address.city,
+      country: institutionLocation.data.address.country,
+      locationName: institutionLocation.name,
+      postalCode: institutionLocation.data.address.postalCode,
+      provinceState: institutionLocation.data.address.province,
+      institutionCode: institutionLocation.institutionCode,
+      primaryContactFirstName: institutionLocation.primaryContact.firstName,
+      primaryContactLastName: institutionLocation.primaryContact.lastName,
+      primaryContactEmail: institutionLocation.primaryContact.email,
+      primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
+    } as InstitutionLocationFormAPIOutDTO;
+  }
+
+  /**
+   * Get active application details.
+   * @param applicationId application id.
+   * @returns application Details
+   */
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @HasLocationAccess("locationId")
+  @Get(":locationId/active-application/:applicationId")
+  async getActiveApplication(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+  ): Promise<ActiveApplicationDataAPIOutDTO> {
+    const application = await this.applicationService.getActiveApplication(
+      applicationId,
+      locationId,
+    );
+    if (!application) {
+      throw new NotFoundException(
+        `Application id ${applicationId} was not found.`,
+      );
+    }
+    const offering = application.currentAssessment.offering;
+    return {
+      applicationStatus: application.applicationStatus,
+      applicationNumber: application.applicationNumber,
+      applicationOfferingIntensity: offering.offeringIntensity,
+      applicationOfferingStartDate: dateString(offering.studyStartDate),
+      applicationOfferingEndDate: dateString(offering.studyEndDate),
+      applicationLocationName: offering.institutionLocation.name,
+      applicationStudentName: getUserFullName(application.student.user),
+      applicationOfferingName: offering.name,
+      applicationProgramDescription: offering.educationProgram.description,
+      applicationProgramName: offering.educationProgram.name,
+    };
   }
 }

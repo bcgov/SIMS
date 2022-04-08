@@ -3,7 +3,7 @@ import { LocationWithDesignationStatus } from "../../services/institution-locati
 import { InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
-  InstitutionLocationsDetailsDto,
+  InstitutionLocationAPIOutDTO,
 } from "./models/institution-location.dto";
 
 @Injectable()
@@ -18,7 +18,7 @@ export class InstitutionLocationControllerService {
    */
   async getInstitutionLocations(
     institutionId: number,
-  ): Promise<InstitutionLocationsDetailsDto[]> {
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
     const institutionsWithDesignationStatus =
       await this.locationService.getLocations(institutionId);
     return institutionsWithDesignationStatus.map(
@@ -46,7 +46,7 @@ export class InstitutionLocationControllerService {
             primaryContactPhone: el.primaryContact?.phoneNumber,
           },
           institutionCode: el.institutionCode,
-        } as InstitutionLocationsDetailsDto;
+        } as InstitutionLocationAPIOutDTO;
       },
     );
   }

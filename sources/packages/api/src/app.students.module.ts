@@ -28,6 +28,7 @@ import {
   ApplicationStudentsController,
   StudentStudentsController,
   StudentAppealStudentsController,
+  InstitutionLocationStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -39,6 +40,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     ApplicationStudentsController,
     StudentStudentsController,
     StudentAppealStudentsController,
+    InstitutionLocationStudentsController,
   ],
   providers: [
     ApplicationService,

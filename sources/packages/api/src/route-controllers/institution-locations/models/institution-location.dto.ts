@@ -1,6 +1,7 @@
+import { Allow } from "class-validator";
 import { InstitutionPrimaryContact } from "../../../types";
 import { InstitutionLocationInfo } from "../../../database/entities/institution-location.model";
-import { Allow } from "class-validator";
+import { AddressInfoOutDTO } from "../../models/common.dto";
 
 export class GetInstitutionLocationDto {
   id: number;
@@ -12,7 +13,7 @@ export class GetInstitutionLocationDto {
  ** Class validators are not used for DTO validation
  ** because of dry-run validation.
  */
-export class InstitutionLocationInDto {
+export class InstitutionLocationAPIInDTO {
   @Allow()
   addressLine1: string;
   @Allow()
@@ -42,7 +43,7 @@ export class InstitutionLocationInDto {
 /**
  * Response/Output DTO for institution location.
  */
-export class InstitutionLocationOutDto {
+export class InstitutionLocationFormAPIOutDTO {
   addressLine1: string;
   addressLine2?: string;
   city: string;
@@ -60,18 +61,11 @@ export class InstitutionLocationOutDto {
 /**
  * Interface which defines the contract of how institution location data is passed to Vue component
  */
-export class InstitutionLocationsDetailsDto {
+export class InstitutionLocationAPIOutDTO {
   id: number;
   name: string;
   data: {
-    address: {
-      addressLine1: string;
-      addressLine2?: string;
-      province: string;
-      country: string;
-      city: string;
-      postalCode: string;
-    };
+    address: AddressInfoOutDTO;
   };
   primaryContact: InstitutionPrimaryContact;
   institution: {
