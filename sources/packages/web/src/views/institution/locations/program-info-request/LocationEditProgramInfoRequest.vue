@@ -33,12 +33,7 @@ import {
   FormIOCustomEventTypes,
   GetProgramInfoRequestDto,
 } from "@/types";
-import {
-  OFFERING_START_DATE_ERROR,
-  INVALID_STUDY_DATES,
-  OFFERING_INTENSITY_MISMATCH,
-  PIR_OR_DATE_OVERLAP_ERROR,
-} from "@/constants";
+import { PIR_OR_DATE_OVERLAP_ERROR } from "@/constants";
 
 export default {
   components: { formio },
@@ -179,16 +174,7 @@ export default {
         let errorLabel = "Unexpected error!";
         let errorMsg =
           "An error happened while saving the Program Information Request.";
-        const isCustomError = [
-          OFFERING_START_DATE_ERROR,
-          INVALID_STUDY_DATES,
-          OFFERING_INTENSITY_MISMATCH,
-          PIR_OR_DATE_OVERLAP_ERROR,
-        ].some(
-          (errorCode: string) => errorCode === error.response.data?.errorType,
-        );
-
-        if (isCustomError) {
+        if (error.response.data?.errorType === PIR_OR_DATE_OVERLAP_ERROR) {
           errorLabel = "Invalid submission";
           errorMsg = error.response.data?.message;
         }
