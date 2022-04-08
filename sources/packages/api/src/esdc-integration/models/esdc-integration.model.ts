@@ -10,7 +10,7 @@ export interface CreateRequestFileNameResult {
 
 /**
  * Represents the output of the processing of
- * one E-Cert response file from the SFTP
+ * one E-Cert response file from the SFTP.
  */
 export class ProcessSFTPResponseResult {
   /**
