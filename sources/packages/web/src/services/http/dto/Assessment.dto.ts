@@ -5,6 +5,8 @@ import {
   StudentAssessmentStatus,
 } from "@/types";
 
+export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
+
 export interface RequestAssessmentSummaryApiOutDTO {
   id: number;
   submittedDate: Date;

@@ -10,7 +10,6 @@
   <RequestAssessment
     :applicationId="applicationId"
     @viewStudentAppeal="goToStudentAppeal"
-    @viewScholasticStandingChange="goToScholasticStanding"
   />
   <HistoryAssessment
     :applicationId="applicationId"
@@ -54,18 +53,9 @@ export default {
       });
     };
 
-    const goToScholasticStanding = (scholasticStandingId: number) => {
-      // TODO: Navigate to the Scholastic Standing (Upcoming ticket).
-      // Adding a console.log to avoid ESLint warning. To be removed when implemented.
-      console.log(
-        `Will navigate to scholasticStandingId ${scholasticStandingId}`,
-      );
-    };
-
     return {
       AESTRoutesConst,
       goToStudentAppeal,
-      goToScholasticStanding,
     };
   },
 };

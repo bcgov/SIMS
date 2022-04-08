@@ -38,3 +38,4 @@ export * from "@/types/contracts/ScholasticStandingStatus";
 export * from "@/types/contracts/StudentAppealStatus";
 export * from "@/types/contracts/StudentAppealContract";
 export * from "@/types/contracts/AssessmentTrigger";
+export * from "@/types/contracts/ApiProcessError";

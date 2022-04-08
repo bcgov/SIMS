@@ -25,8 +25,13 @@ import {
   ApiBadRequestResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute, ApiProcessError } from "../../types";
+import {
+  ClientTypeBaseRoute,
+  ApiProcessError,
+  DryRunSubmissionResult,
+} from "../../types";
 import { INVALID_APPLICATION_NUMBER } from "../../constants";
+import { StudentAppealRequestModel } from "src/services/student-appeal/student-appeal.model";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @Controller("appeal")
@@ -82,7 +87,7 @@ export class StudentAppealStudentsController extends BaseController {
         "There is already a pending appeal for this student.",
       );
     }
-    let dryRunSubmissionResults = [];
+    let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
     try {
       const dryRunPromise = payload.studentAppealRequests.map((appeal) =>
         this.formService.dryRunSubmission(appeal.formName, appeal.formData),
@@ -102,10 +107,20 @@ export class StudentAppealStudentsController extends BaseController {
         "Not able to submit student appeal due to invalid request.",
       );
     }
+
+    // Generate the data to be persisted based on the result of the dry run submission.
+    const appealRequests = dryRunSubmissionResults.map(
+      (result) =>
+        ({
+          formName: result.formName,
+          formData: result.data.data,
+        } as StudentAppealRequestModel),
+    );
+
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       applicationId,
       userToken.userId,
-      payload.studentAppealRequests,
+      appealRequests,
     );
     return {
       id: studentAppeal.id,

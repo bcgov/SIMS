@@ -29,11 +29,9 @@
               }}</template></Column
             ><Column field="triggerType" header="Type" sortable="true"></Column>
             <Column header="Request form" sortable="false"
-              ><template #body="slotProps"
+              ><template #body="{ data }"
                 ><v-btn
-                  @click="
-                    viewRequest(slotProps.data.triggerType, slotProps.data.id)
-                  "
+                  @click="viewRequest(data.id)"
                   color="primary"
                   variant="text"
                   class="text-decoration-underline"
@@ -60,11 +58,10 @@ import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import { AssessmentTriggerType } from "@/types/contracts/AssessmentTrigger";
 import { RequestAssessmentSummaryApiOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
-  emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
+  emits: ["viewStudentAppeal"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -85,15 +82,8 @@ export default {
         );
     });
 
-    const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
-      switch (triggerType) {
-        case AssessmentTriggerType.StudentAppeal:
-          context.emit("viewStudentAppeal", id);
-          break;
-        case AssessmentTriggerType.ScholasticStandingChange:
-          context.emit("viewScholasticStandingChange", id);
-          break;
-      }
+    const viewRequest = (id: number) => {
+      context.emit("viewStudentAppeal", id);
     };
 
     return {
