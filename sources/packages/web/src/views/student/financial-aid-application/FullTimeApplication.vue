@@ -66,11 +66,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import {
-  OFFERING_START_DATE_ERROR,
-  INVALID_STUDY_DATES,
-  PIR_OR_DATE_OVERLAP_ERROR,
-} from "@/constants";
+import { PIR_OR_DATE_OVERLAP_ERROR } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default {
@@ -221,14 +217,7 @@ export default {
       } catch (error) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
-        const isCustomError = [
-          INVALID_STUDY_DATES,
-          OFFERING_START_DATE_ERROR,
-          PIR_OR_DATE_OVERLAP_ERROR,
-        ].some(
-          (errorCode: string) => errorCode === error.response.data?.errorType,
-        );
-        if (isCustomError) {
+        if (error.response.data?.errorType === PIR_OR_DATE_OVERLAP_ERROR) {
           errorLabel = "Invalid submission";
           errorMsg = error.response.data?.message;
         }
