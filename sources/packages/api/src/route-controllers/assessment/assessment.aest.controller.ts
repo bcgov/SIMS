@@ -15,7 +15,7 @@ import {
   ScholasticStandingStatus,
   StudentAppealStatus,
 } from "../../database/entities";
-import { RequestAssessmentSummaryDTO } from "./models/assessment.dto";
+import { RequestAssessmentSummaryApiOutDTO } from "./models/assessment.dto";
 import { AssessmentHistory } from "../../services/student-assessment/student-assessment.models";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -37,15 +37,12 @@ export class AssessmentAESTController extends BaseController {
    * pending and denied student appeal and scholastic
    * standings for an application.
    * @param applicationId, application number.
-   * @returns RequestAssessmentSummaryDTO list.
+   * @returns RequestAssessmentSummaryApiOutDTO list.
    */
   @Get("application/:applicationId/requests")
-  @ApiOkResponse({
-    description: "Requested assessment for the application found.",
-  })
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
-  ): Promise<RequestAssessmentSummaryDTO[]> {
+  ): Promise<RequestAssessmentSummaryApiOutDTO[]> {
     const [studentAppeal, studentScholasticStandings] = await Promise.all([
       this.studentAppealService.getPendingAndDeniedAppeals(applicationId),
       this.studentScholasticStandingsService.getPendingAndDeniedScholasticStanding(
@@ -55,11 +52,13 @@ export class AssessmentAESTController extends BaseController {
 
     const requestedAssessments = [
       ...studentAppeal.map((appeals) => ({
+        id: appeals.id,
         submittedDate: appeals.submittedDate,
         status: appeals.status,
         triggerType: AssessmentTriggerType.StudentAppeal,
       })),
       ...studentScholasticStandings.map((scholasticStanding) => ({
+        id: scholasticStanding.id,
         submittedDate: scholasticStanding.submittedDate,
         status: scholasticStanding.scholasticStandingStatus,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,

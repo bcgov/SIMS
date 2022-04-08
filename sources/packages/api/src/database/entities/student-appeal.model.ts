@@ -4,10 +4,11 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { Application } from ".";
+import { Application, StudentAssessment } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { StudentAppealRequest } from "./student-appeal-requests.model";
@@ -62,4 +63,19 @@ export class StudentAppeal extends RecordDataModel {
     },
   )
   appealRequests: StudentAppealRequest[];
+  /**
+   * Student assessment associated with this student appeal.
+   * Created only upon Ministry approval of at least one of
+   * the appeal requests.
+   */
+  @OneToOne(
+    () => StudentAssessment,
+    (studentAssessment) => studentAssessment.studentAppeal,
+    {
+      eager: false,
+      cascade: ["insert", "update"],
+      nullable: true,
+    },
+  )
+  studentAssessment?: StudentAssessment;
 }

@@ -2,7 +2,7 @@ import { RecordTypeCodes } from "../models/e-cert-full-time-integration.model";
 
 export class ECertResponseRecordIdentification {
   constructor(line: string, lineNumber: number) {
-    this.recordTypeCode = line.substr(0, 3) as RecordTypeCodes;
+    this.recordTypeCode = line.substring(0, 3) as RecordTypeCodes;
     this.line = line;
     this.lineNumber = lineNumber;
   }

@@ -1,6 +1,14 @@
 import { ObjectLiteral, QueryRunner, Repository } from "typeorm";
 
 /**
+ * Result type of a Typeorm query when the method getRawAndEntities is used.
+ */
+export interface RawAndEntities {
+  entities: any[];
+  raw: any[];
+}
+
+/**
  * Configures a session timeout specific for transactions that are idles
  * for more time than expected. It is going to take effect only in
  * Postgres Activities defined with the status 'idle in transaction'
@@ -41,4 +49,33 @@ export async function getRawCount(
     parameter,
   );
   return result[0].count;
+}
+
+/**
+ * Map additional properties retrieved during a SQL select operation
+ * that does not belong to the database entity model itself.
+ * Using the Typeorm method getRawAndEntities we can have access to
+ * the entity model created and the raw SQL result that will contain
+ * the additional properties.
+ * @param rawAndEntities entity models retrieved and the raw data used
+ * to create them.
+ * @param propertyNames properties that need to be mapped from the raw
+ * data into a property in a usually extended entity model.
+ * @returns extended entity model with the additional properties mapped.
+ */
+export function mapFromRawAndEntities<TResult>(
+  rawAndEntities: RawAndEntities,
+  ...propertyNames: string[]
+): TResult[] | null {
+  if (!rawAndEntities.entities) {
+    return null;
+  }
+  return rawAndEntities.entities.map((value, index: number) => {
+    const resultObject = value as TResult;
+    propertyNames.forEach((property: string) => {
+      resultObject[property] = rawAndEntities.raw[index][property];
+    });
+
+    return resultObject;
+  });
 }

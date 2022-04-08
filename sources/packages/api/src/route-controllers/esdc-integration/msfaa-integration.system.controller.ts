@@ -12,7 +12,10 @@ import { MSFAARequestService } from "../../esdc-integration/msfaa-integration/ms
 import { MSFAAResponseService } from "../../esdc-integration/msfaa-integration/msfaa-response.service";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-
+import {
+  MSFAA_FULL_TIME_FILE_CODE,
+  MSFAA_PART_TIME_FILE_CODE,
+} from "../../utilities";
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/msfaa-integration")
 @ApiTags("system-access")
@@ -36,9 +39,11 @@ export class MSFAAIntegrationController extends BaseController {
   async processMSFAARequest(): Promise<MSFAARequestResultDto[]> {
     this.logger.log("Sending MSFAA request File...");
     const uploadFullTimeResult = this.msfaaRequestService.processMSFAARequest(
+      MSFAA_FULL_TIME_FILE_CODE,
       OfferingIntensity.fullTime,
     );
     const uploadPartTimeResult = this.msfaaRequestService.processMSFAARequest(
+      MSFAA_PART_TIME_FILE_CODE,
       OfferingIntensity.partTime,
     );
     // Wait for both queries to finish.

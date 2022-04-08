@@ -31,6 +31,7 @@ import {
   FormService,
   PIRDeniedReasonService,
   PIR_DENIED_REASON_NOT_FOUND_ERROR,
+  APPLICATION_DATE_OVERLAP_ERROR,
 } from "../../services";
 import {
   getUserFullName,
@@ -324,6 +325,16 @@ export class ProgramInfoRequestController extends BaseController {
         );
       }
 
+      await this.applicationService.validateOverlappingDatesAndPIR(
+        applicationId,
+        application.student.user.lastName,
+        application.student.user.id,
+        application.student.sin,
+        application.student.birthDate,
+        payload.studyStartDate,
+        payload.studyEndDate,
+      );
+
       const updatedApplication =
         await this.applicationService.setOfferingForProgramInfoRequest(
           applicationId,
@@ -341,6 +352,7 @@ export class ProgramInfoRequestController extends BaseController {
     } catch (error) {
       if (
         [
+          APPLICATION_DATE_OVERLAP_ERROR,
           PIR_REQUEST_NOT_FOUND_ERROR,
           OFFERING_START_DATE_ERROR,
           INVALID_STUDY_DATES,

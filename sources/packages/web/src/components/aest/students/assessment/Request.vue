@@ -27,8 +27,22 @@
               ><template #body="slotProps">{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
-            ><Column field="triggerType" header="Type" sortable="true"></Column
-            ><Column header="Request form"></Column
+            ><Column field="triggerType" header="Type" sortable="true"></Column>
+            <Column header="Request form" sortable="false"
+              ><template #body="slotProps"
+                ><v-btn
+                  @click="
+                    viewRequest(slotProps.data.triggerType, slotProps.data.id)
+                  "
+                  color="primary"
+                  variant="text"
+                  class="text-decoration-underline"
+                >
+                  <font-awesome-icon :icon="['far', 'file-alt']" class="mr-2" />
+                  View request</v-btn
+                ></template
+              ></Column
+            >
             ><Column field="status" header="Status" sortable="true">
               <template #body="slotProps"
                 ><status-chip-requested-assessment
@@ -44,14 +58,16 @@
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  RequestAssessmentSummaryDTO,
+  RequestAssessmentSummaryApiOutDTO,
 } from "@/types";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import { AssessmentTriggerType } from "@/types/contracts/AssessmentTrigger";
 
 export default {
+  emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -61,21 +77,34 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
 
-    const requestedAssessment = ref([] as RequestAssessmentSummaryDTO[]);
+    const requestedAssessment = ref([] as RequestAssessmentSummaryApiOutDTO[]);
     onMounted(async () => {
       requestedAssessment.value =
         await StudentAssessmentsService.shared.getAssessmentRequest(
           props.applicationId,
         );
     });
+
+    const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
+      switch (triggerType) {
+        case AssessmentTriggerType.StudentAppeal:
+          context.emit("viewStudentAppeal", id);
+          break;
+        case AssessmentTriggerType.ScholasticStandingChange:
+          context.emit("viewScholasticStandingChange", id);
+          break;
+      }
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       requestedAssessment,
       dateOnlyLongString,
+      viewRequest,
     };
   },
 };

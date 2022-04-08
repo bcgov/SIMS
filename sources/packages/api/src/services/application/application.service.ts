@@ -42,7 +42,12 @@ import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
+  PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
 } from "../../utilities";
+import { SFASApplicationService } from "../sfas/sfas-application.service";
+import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
+import { ConfigService } from "../config/config.service";
+import { IConfig } from "../../types";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -58,20 +63,25 @@ export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
 export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
   "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
+export const APPLICATION_DATE_OVERLAP_ERROR = "APPLICATION_DATE_OVERLAP_ERROR";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   @InjectLogger()
   logger: LoggerService;
-
+  private readonly config: IConfig;
   constructor(
     connection: Connection,
+    configService: ConfigService,
+    private readonly sfasApplicationService: SFASApplicationService,
+    private readonly sfasPartTimeApplicationsService: SFASPartTimeApplicationsService,
     private readonly sequenceService: SequenceControlService,
     private readonly fileService: StudentFileService,
     private readonly workflow: WorkflowActionsService,
     private readonly msfaaNumberService: MSFAANumberService,
   ) {
     super(connection.getRepository(Application));
+    this.config = configService.getConfig();
     this.logger.log("[Created]");
   }
 
@@ -1287,5 +1297,72 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
     return applicationQuery.getOne();
+  }
+
+  /**
+   * Validation for application overlapping dates or Pending PIR.
+   * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
+   * @param applicationId
+   * @param lastName
+   * @param userId
+   * @param sin
+   * @param birthDate
+   * @param studyStartDate
+   * @param studyEndDate
+   */
+  async validateOverlappingDatesAndPIR(
+    applicationId: number,
+    lastName: string,
+    userId: number,
+    sin: string,
+    birthDate: Date,
+    studyStartDate: Date,
+    studyEndDate: Date,
+  ): Promise<void> {
+    if (!this.config.bypassApplicationSubmitValidations) {
+      const existingOverlapApplication = this.validatePIRAndDateOverlap(
+        userId,
+        studyStartDate,
+        studyEndDate,
+        applicationId,
+      );
+
+      const existingSFASFTApplication =
+        this.sfasApplicationService.validateDateOverlap(
+          sin,
+          birthDate,
+          lastName,
+          studyStartDate,
+          studyEndDate,
+        );
+
+      const existingSFASPTApplication =
+        this.sfasPartTimeApplicationsService.validateDateOverlap(
+          sin,
+          birthDate,
+          lastName,
+          studyStartDate,
+          studyEndDate,
+        );
+      const [
+        applicationResponse,
+        sfasFTApplicationResponse,
+        sfasPTApplicationResponse,
+      ] = await Promise.all([
+        existingOverlapApplication,
+        existingSFASFTApplication,
+        existingSFASPTApplication,
+      ]);
+      if (
+        !!applicationResponse ||
+        !!sfasFTApplicationResponse ||
+        !!sfasPTApplicationResponse
+      ) {
+        throw new CustomNamedError(
+          PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
+          APPLICATION_DATE_OVERLAP_ERROR,
+        );
+      }
+    }
   }
 }

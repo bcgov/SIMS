@@ -13,7 +13,7 @@ import { Connection, InsertResult } from "typeorm";
 import { FederalRestriction, Restriction } from "../../database/entities";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "../../utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
-import { ProcessSFTPResponseResult } from "./fed-restriction-integration.models";
+import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 
 /**
  * Manages the process to import the entire snapshot of federal

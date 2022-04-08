@@ -1,5 +1,5 @@
 import { getDateOnlyFromFormat } from "../../../utilities";
-import { DATE_FORMAT } from "../models/msfaa-integration.model";
+import { DATE_FORMAT } from "../../models/esdc-integration.model";
 import { MSFAAResponseRecordIdentification } from "./msfaa-response-record-identification";
 
 /**
