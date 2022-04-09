@@ -72,7 +72,7 @@ export class AddressInfoOutDTO {
  * Common DTO returned by data lookup APIs.
  ** Data lookup APIs are used to populate values in form.
  */
-export interface OptionItemAPIOutDTO {
+export class OptionItemAPIOutDTO {
   id: number;
   description: string;
 }

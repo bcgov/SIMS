@@ -118,19 +118,13 @@ export default {
       });
     };
     const institutionLocationList = ref([] as InstitutionLocationsDetails[]);
+
+    //The institutionId is passed for ministry API
     const getInstitutionLocationList = async () => {
-      switch (clientType.value) {
-        case ClientIdType.Institution:
-          institutionLocationList.value =
-            await InstitutionService.shared.getAllInstitutionLocations();
-          break;
-        case ClientIdType.AEST:
-          institutionLocationList.value =
-            await InstitutionService.shared.getAllInstitutionLocationSummary(
-              props.institutionId,
-            );
-          break;
-      }
+      institutionLocationList.value =
+        await InstitutionService.shared.getAllInstitutionLocations(
+          props.institutionId,
+        );
     };
 
     const addressList1 = (item: InstitutionLocationsDetails) => {

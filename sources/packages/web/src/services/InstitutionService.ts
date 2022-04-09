@@ -112,8 +112,10 @@ export class InstitutionService {
     );
   }
 
-  public async getAllInstitutionLocations() {
-    return await ApiClient.InstitutionLocation.allInstitutionLocationsApi();
+  public async getAllInstitutionLocations(institutionId?: number) {
+    return await ApiClient.InstitutionLocation.allInstitutionLocationsApi(
+      institutionId,
+    );
   }
 
   mapUserRolesAndLocation(

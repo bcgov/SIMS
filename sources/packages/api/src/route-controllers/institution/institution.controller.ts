@@ -54,10 +54,7 @@ import {
   Groups,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import {
-  InstitutionLocationsSummaryDto,
-  InstitutionLocationAPIOutDTO,
-} from "../institution-locations/models/institution-location.dto";
+import { InstitutionLocationsSummaryDto } from "../institution-locations/models/institution-location.dto";
 import { Authorizations } from "../../services/institution-user-auth/institution-user-auth.models";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -489,27 +486,6 @@ export class InstitutionController extends BaseController {
       operatingName: institutionDetail.operatingName,
       designationStatus: designationStatus,
     };
-  }
-
-  /**
-   * Controller method to get all institution locations with the
-   * given institutionId for  ministry user.
-   * @param institutionId institution id
-   * @returns All the institution locations for the given institution.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.aest)
-  @Groups(UserGroups.AESTUser)
-  @ApiOkResponse({
-    description: "All Institution location with designation status found.",
-  })
-  @Get("/:institutionId/location-summary")
-  async getAllInstitutionLocationSummaryForAEST(
-    @Param("institutionId") institutionId: number,
-  ): Promise<InstitutionLocationAPIOutDTO[]> {
-    // get all institution locations with designation statuses.
-    return this.locationControllerService.getInstitutionLocations(
-      institutionId,
-    );
   }
 
   /**

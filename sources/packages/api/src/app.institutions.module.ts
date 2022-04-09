@@ -15,6 +15,8 @@ import {
   WorkflowActionsService,
   MSFAANumberService,
   WorkflowService,
+  SFASApplicationService,
+  SFASPartTimeApplicationsService,
 } from "./services";
 import {
   DesignationAgreementInstitutionsController,
@@ -52,6 +54,8 @@ import { LoggerModule } from "./logger/logger.module";
     WorkflowActionsService,
     MSFAANumberService,
     WorkflowService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
   ],
 })
 export class AppInstitutionsModule {}

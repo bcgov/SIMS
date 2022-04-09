@@ -123,16 +123,11 @@ export class InstitutionApi extends HttpBaseClient {
   public async getActiveApplicationsSummary(
     locationId: number,
   ): Promise<ApplicationSummaryDTO[]> {
-    try {
-      const response = await this.apiClient.get(
+    return this.getCallTyped<ApplicationSummaryDTO[]>(
+      this.addClientRoot(
         `institution/location/${locationId}/active-applications`,
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+      ),
+    );
   }
 
   public async searchInstitutions(

@@ -12,66 +12,39 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocation,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "institution/location",
-        createInstitutionLocationDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.postCall<InstitutionLocation>(
+      this.addClientRoot("institution/location"),
+      createInstitutionLocationDto,
+    );
   }
 
   public async updateInstitutionLocation(
     locationId: number,
     updateInstitutionLocationDto: InstitutionLocation,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        `institution/location/${locationId}`,
-        updateInstitutionLocationDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.patchCall<InstitutionLocation>(
+      this.addClientRoot(`institution/location/${locationId}`),
+      updateInstitutionLocationDto,
+    );
   }
 
   public async getInstitutionLocation(
     locationId: number,
   ): Promise<InstitutionLocationsDetails> {
-    let data: InstitutionLocationsDetails;
-    try {
-      const res = await this.apiClient.get(
-        `institution/location/${locationId}`,
-        this.addAuthHeader(),
-      );
-      data = res?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-    return data;
+    return this.getCallTyped<InstitutionLocationsDetails>(
+      this.addClientRoot(`institution/location/${locationId}`),
+    );
   }
 
-  public async allInstitutionLocationsApi(): Promise<
-    InstitutionLocationsDetails[]
-  > {
-    let data: InstitutionLocationsDetails[] = [];
-    try {
-      const res = await this.apiClient.get(
-        "institution/location",
-        this.addAuthHeader(),
-      );
-      data = res?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-    return data;
+  public async allInstitutionLocationsApi(
+    institutionId?: number,
+  ): Promise<InstitutionLocationsDetails[]> {
+    const url = institutionId
+      ? `institution/location/${institutionId}`
+      : "institution/location";
+    return this.getCallTyped<InstitutionLocationsDetails[]>(
+      this.addClientRoot(url),
+    );
   }
   /**
    * This client expects custom error message in one or more
@@ -157,32 +130,20 @@ export class InstitutionLocationApi extends HttpBaseClient {
   }
 
   public async getOptionsList(): Promise<OptionItemDto[]> {
-    try {
-      const response = await this.apiClient.get(
-        "institution/location/options-list",
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.getCallTyped<OptionItemDto[]>(
+      this.addClientRoot("institution/location/options-list"),
+    );
   }
 
   public async getActiveApplication(
     applicationId: number,
     locationId: number,
   ): Promise<ApplicationDetails> {
-    try {
-      const response = await this.apiClient.get(
+    return this.getCallTyped<ApplicationDetails>(
+      this.addClientRoot(
         `institution/location/${locationId}/active-application/${applicationId}`,
-        this.addAuthHeader(),
-      );
-      return response.data as ApplicationDetails;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+      ),
+    );
   }
 
   /**

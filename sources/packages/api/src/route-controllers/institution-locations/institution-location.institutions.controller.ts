@@ -41,7 +41,7 @@ import BaseController from "../BaseController";
 import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
-  InstitutionLocationAPIInDTO,
+  InstitutionLocationFormAPIInDTO,
   InstitutionLocationAPIOutDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
@@ -74,7 +74,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @IsInstitutionAdmin()
   @Post()
   async create(
-    @Body() payload: InstitutionLocationAPIInDTO,
+    @Body() payload: InstitutionLocationFormAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierDTO> {
     // Validate the location data that will be saved to SIMS DB.
@@ -112,7 +112,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationAPIInDTO,
+    @Body() payload: InstitutionLocationFormAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<number> {
     // Validate the location data that will be saved to SIMS DB.
