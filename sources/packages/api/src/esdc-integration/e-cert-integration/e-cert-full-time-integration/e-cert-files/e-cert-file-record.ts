@@ -1,12 +1,12 @@
-import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
-import { StringBuilder } from "../../../utilities/string-builder";
+import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
+import { StringBuilder } from "../../../../utilities/string-builder";
+import { RecordTypeCodes } from "../models/e-cert-full-time-integration.model";
 import {
   DATE_FORMAT,
-  Award,
-  NUMBER_FILLER,
-  RecordTypeCodes,
   SPACE_FILLER,
-} from "../models/e-cert-full-time-integration.model";
+  NUMBER_FILLER,
+} from "../../../models/esdc-integration.model";
+import { Award } from "../../e-cert-integration-model";
 
 /**
  * Number of possible awards available to be provided (code and amount).
@@ -18,7 +18,7 @@ const AWARD_SLOTS = 10;
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertFileRecord implements FixedFormatFileLine {
+export class ECertFullTimeFileRecord implements FixedFormatFileLine {
   recordType: RecordTypeCodes;
   /**
    * Social insurance number of student.

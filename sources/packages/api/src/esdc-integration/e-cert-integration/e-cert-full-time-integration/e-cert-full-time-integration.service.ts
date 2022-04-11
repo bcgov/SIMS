@@ -1,54 +1,34 @@
 import { Injectable } from "@nestjs/common";
-import {
-  ConfigService,
-  SequenceControlService,
-  SshService,
-} from "../../services";
-import { ESDCIntegrationConfig } from "../../types";
+import { ConfigService, SshService } from "../../../services";
 import {
   combineDecimalPlaces,
-  getDayOfTheYear,
   getDisbursementValuesByType,
   getGenderCode,
   getMaritalStatusCode,
   getTotalDisbursementAmount,
   getTotalYearsOfStudy,
   round,
-} from "../../utilities";
-import {
-  Award,
-  CreateRequestFileNameResult,
-  ECertRecord,
-  NUMBER_FILLER,
-  RecordTypeCodes,
-} from "./models/e-cert-full-time-integration.model";
-import { StringBuilder } from "../../utilities/string-builder";
-import { EntityManager } from "typeorm";
-import { SFTPIntegrationBase } from "../../services/ssh/sftp-integration-base";
-import { FixedFormatFileLine } from "../../services/ssh/sftp-integration-base.models";
-import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
-import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
-import { ECertFileRecord } from "./e-cert-files/e-cert-file-record";
-import { DisbursementValueType } from "../../database/entities";
+} from "../../../utilities";
+import { RecordTypeCodes } from "./models/e-cert-full-time-integration.model";
+import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
+import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
+import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
+import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
+import { DisbursementValueType } from "../../../database/entities";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
+import { Award, ECertRecord } from "../e-cert-integration-model";
+import { ECertIntegrationService } from "../e-cert-integration.service";
 
 /**
  * Manages the file content generation and methods to
  * upload/download the files to SFTP.
  */
 @Injectable()
-export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
+export class ECertFullTimeIntegrationService extends ECertIntegrationService<
   ECertResponseRecord[]
 > {
-  private readonly esdcConfig: ESDCIntegrationConfig;
-
-  constructor(
-    config: ConfigService,
-    sshService: SshService,
-    private readonly sequenceService: SequenceControlService,
-  ) {
+  constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
-    this.esdcConfig = config.getConfig().ESDCIntegration;
   }
 
   /**
@@ -64,7 +44,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
   ): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
-    const header = new ECertFileHeader();
+    const header = new ECertFullTimeFileHeader();
     header.recordTypeCode = RecordTypeCodes.ECertHeader;
     header.processDate = new Date();
     header.sequence = fileSequence;
@@ -109,7 +89,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
         DisbursementValueType.BCTotalGrant,
       ]);
 
-      const record = new ECertFileRecord();
+      const record = new ECertFullTimeFileRecord();
       record.recordType = RecordTypeCodes.ECertRecord;
       record.sin = ecertRecord.sin;
       record.applicationNumber = ecertRecord.applicationNumber;
@@ -161,57 +141,13 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
       (hash, record) => hash + +record.sin,
       0,
     );
-    const footer = new ECertFileFooter();
+    const footer = new ECertFullTimeFileFooter();
     footer.recordTypeCode = RecordTypeCodes.ECertFooter;
     footer.totalSINHash = totalSINHash;
     footer.recordCount = fileRecords.length;
     fileLines.push(footer);
 
     return fileLines;
-  }
-
-  /**
-   * Define the e-Cert file name that must be uploaded.
-   * It must follow a pattern like 'PPBC.EDU.ECERTS.Dyyyyjjj.001.DAT'.
-   * @param entityManager allows the sequential number to be part of
-   * the transaction that is used to create sequential number and execute
-   * DB changes.
-   * @returns fileName and full remote file path that the file must be uploaded.
-   */
-  async createRequestFileName(
-    entityManager?: EntityManager,
-  ): Promise<CreateRequestFileNameResult> {
-    const fileNameArray = new StringBuilder();
-    const now = new Date();
-    const dayOfTheYear = getDayOfTheYear(now)
-      .toString()
-      .padStart(3, NUMBER_FILLER);
-    fileNameArray.append(
-      `${
-        this.esdcConfig.environmentCode
-      }PBC.EDU.ECERTS.D${now.getFullYear()}${dayOfTheYear}`,
-    );
-    let fileNameSequence: number;
-    await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
-      fileNameArray.toString(),
-      entityManager,
-      async (nextSequenceNumber: number) => {
-        fileNameSequence = nextSequenceNumber;
-      },
-    );
-    fileNameArray.append(".");
-    fileNameArray.appendWithStartFiller(
-      fileNameSequence.toString(),
-      3,
-      NUMBER_FILLER,
-    );
-    fileNameArray.append(".DAT");
-    const fileName = fileNameArray.toString();
-    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
-    return {
-      fileName,
-      filePath,
-    } as CreateRequestFileNameResult;
   }
 
   // Generate Record
@@ -229,7 +165,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
      * Read the first line to check if the header code is the expected one.
      * and remove header.
      */
-    const header = ECertFileHeader.createFromLine(fileLines.shift());
+    const header = ECertFullTimeFileHeader.createFromLine(fileLines.shift());
     if (header.recordTypeCode !== RecordTypeCodes.ECertHeader) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
@@ -244,7 +180,7 @@ export class ECertFullTimeIntegrationService extends SFTPIntegrationBase<
      * Read the last line to check if the trailer code is the expected one
      * and remove trailer line.
      */
-    const trailer = ECertFileFooter.createFromLine(fileLines.pop());
+    const trailer = ECertFullTimeFileFooter.createFromLine(fileLines.pop());
     if (trailer.recordTypeCode !== RecordTypeCodes.ECertFooter) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,

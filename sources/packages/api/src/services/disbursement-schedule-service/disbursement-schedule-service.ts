@@ -155,7 +155,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
 
   /**
    * Get all records that must be part of the e-Cert files and that were not sent yet.
-   * Considerer any record that is scheduled in upcoming days or in the past.
+   * Consider any record that is scheduled in upcoming days or in the past.
    * Check if the student has a valid SIN.
    * Consider only completed Student Applications with signed MSFAA date.
    * Check if there are restrictions applied to the student account that would
@@ -180,6 +180,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "application.data",
         "application.relationshipStatus",
         "application.studentNumber",
+        "currentAssessment.id",
+        "currentAssessment.assessmentData",
         "offering.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -201,19 +203,18 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "disbursementValue.valueAmount",
         "disbursement.coeUpdatedAt",
         "studentAssessment.id",
-        "studentAssessment.assessmentData",
       ])
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.location", "location")
-      .innerJoin("application.offering", "offering")
+      .innerJoin("application.currentAssessment", "currentAssessment") // * This is to fetch the current assessment of the application, even though we have multiple reassessments
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("application.student", "student") // ! The student alias here is also used in sub query 'getExistsBlockRestrictionQuery'.
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.msfaaNumber", "msfaaNumber")
       .innerJoin("disbursement.disbursementValues", "disbursementValue")
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .where("disbursement.dateSent is null")
       .andWhere("disbursement.disbursementDate <= :disbursementMinDate", {
         disbursementMinDate,
