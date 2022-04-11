@@ -1,10 +1,12 @@
 {
+  "_id": "6238d9726e4630df40e6a726",
   "title": "Appeals - Partner Income",
-  "display": "form",
-  "type": "form",
   "name": "partnerIncomeAppeal",
   "path": "partnerincomeappeal",
+  "type": "form",
+  "display": "form",
   "tags": ["common"],
+  "owner": "dheepak.ramanathan@gov.bc.ca",
   "components": [
     {
       "label": "New income for partner",
@@ -12,7 +14,12 @@
       "labelMargin": "",
       "tag": "p",
       "className": "",
-      "attrs": [{ "attr": "", "value": "" }],
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
       "content": "New Income",
       "refreshOnChange": false,
       "customClass": "category-header-medium primary-color",
@@ -21,7 +28,12 @@
       "key": "newIncome",
       "tags": [],
       "properties": {},
-      "conditional": { "show": null, "when": null, "eq": "", "json": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": "",
+        "json": ""
+      },
       "customConditional": "",
       "logic": [],
       "attributes": {},
@@ -94,7 +106,12 @@
       "tags": [],
       "properties": {},
       "customConditional": "",
-      "conditional": { "json": "", "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "json": "",
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "logic": [],
       "attributes": {},
       "overlay": {
@@ -160,7 +177,9 @@
           "tooltip": "",
           "prefix": "$",
           "suffix": "",
-          "widget": { "type": "input" },
+          "widget": {
+            "type": "input"
+          },
           "displayMask": "",
           "customClass": "",
           "tabindex": "",
@@ -289,7 +308,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -299,7 +320,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -356,7 +381,9 @@
       "tabindex": "",
       "disabled": false,
       "autofocus": false,
-      "widget": { "type": "input" },
+      "widget": {
+        "type": "input"
+      },
       "validateOn": "change",
       "validate": {
         "required": false,
@@ -366,7 +393,11 @@
         "multiple": false,
         "unique": false
       },
-      "conditional": { "show": null, "when": null, "eq": "" },
+      "conditional": {
+        "show": null,
+        "when": null,
+        "eq": ""
+      },
       "allowCalculateOverride": false,
       "showCharCount": false,
       "showWordCount": false,
@@ -375,5 +406,8 @@
       "inputType": "hidden",
       "id": "ex53sca"
     }
-  ]
+  ],
+  "created": "2022-03-21T20:00:50.690Z",
+  "modified": "2022-04-07T18:45:07.079Z",
+  "machineName": "partnerIncomeAppeal"
 }
