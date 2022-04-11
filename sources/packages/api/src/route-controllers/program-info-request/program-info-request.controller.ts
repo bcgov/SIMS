@@ -45,11 +45,7 @@ import {
 } from "../../database/entities";
 import { PIRSummaryDTO } from "../application/models/application.model";
 import { FormNames } from "../../services/form/constants";
-import {
-  OFFERING_START_DATE_ERROR,
-  INVALID_STUDY_DATES,
-  OFFERING_INTENSITY_MISMATCH,
-} from "../../constants";
+import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
 import {
   ApiNotFoundResponse,
   ApiTags,
