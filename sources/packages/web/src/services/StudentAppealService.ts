@@ -4,7 +4,7 @@ import {
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIInDTO,
   StudentAppealRequestApprovalAPIInDTO,
-} from "./http/dto/StudentAppeal.dto";
+} from "@/services/http/dto/StudentAppeal.dto";
 
 /**
  * Client service layer for Student Appeal.

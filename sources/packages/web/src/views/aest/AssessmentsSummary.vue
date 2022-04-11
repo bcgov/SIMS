@@ -14,7 +14,6 @@
   <HistoryAssessment
     :applicationId="applicationId"
     @viewStudentAppeal="goToStudentAppeal"
-    @viewScholasticStandingChange="goToScholasticStanding"
   />
 </template>
 <script lang="ts">
