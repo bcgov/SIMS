@@ -17,5 +17,6 @@
   "actualTuitions": "1200",
   "programRelatedCosts": "500",
   "mandatoryFees": "300",
-  "exceptionalExpenses": "200"
+  "exceptionalExpenses": "200",
+  "amountRequested": "1200"
 }

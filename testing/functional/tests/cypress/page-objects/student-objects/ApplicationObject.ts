@@ -194,7 +194,7 @@ export default class ApplicationObject {
   }
 
   myStudyPeriodIsNotListedCheckbox() {
-    return cy.get("#eoslne6-offeringnotListed");
+    return cy.get("#etvv9qs-programnotListed");
   }
 
   programName() {

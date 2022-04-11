@@ -149,7 +149,7 @@ describe("Location Program", () => {
     });
   });
 
-  it("Verify that user able to add study period", () => {
+  it.only("Verify that user able to add study period", () => {
     cy.fixture("instituteProgramData").then((testdata) => {
       dashboardInstituteObject.dashboardButton().click();
       dashboardInstituteObject.programsButton().eq(0).click();
@@ -169,7 +169,13 @@ describe("Location Program", () => {
         .type(testdata.yearOfStudy)
         .type("{enter}");
       locationProgramObject.displayThisToStudentCheckbox().click();
-      locationProgramObject.howWillThisBeOfferedCheckbox().click();
+      locationProgramObject.howWillThisBeOfferedRadioButton().click();
+      locationProgramObject.offeringBeDeliveredRadioButton().click();
+      locationProgramObject.workIntegratedComponentRadioButton().click();
+      locationProgramObject.studyStartDate().type(testdata.startDate);
+      locationProgramObject.studyEndDate().type(testdata.endDate);
+      locationProgramObject.breakStartDate().type(testdata.breakStart);
+      locationProgramObject.breakEndDate().type(testdata.breakEnd);
     });
   });
 });

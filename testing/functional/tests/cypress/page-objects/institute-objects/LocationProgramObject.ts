@@ -219,7 +219,65 @@ export default class LocationProgramObject {
     );
   }
 
-  howWillThisBeOfferedCheckbox() {
+  howWillThisBeOfferedRadioButton() {
     return cy.xpath("//input[@id='ev71tr-Part Time']");
+  }
+
+  offeringBeDeliveredRadioButton() {
+    return cy.get("#eqelas-onsite");
+  }
+
+  workIntegratedComponentRadioButton() {
+    return cy.get("#evhzrlx-no");
+  }
+
+  studyStartDate() {
+    return cy.get('#eryjb2i > [ref="element"] > .input-group > .input');
+  }
+
+  studyEndDate() {
+    return cy.get('#ebqtys > [ref="element"] > .input-group > .input');
+  }
+
+  breakStartDate() {
+    return cy.get(
+      '#e4xdqvr0000000000000000000000000000000000000 > [ref="element"] > .input-group > .input'
+    );
+  }
+
+  breakEndDate() {
+    return cy.get(
+      '#ex3qj3m0000000000000000000000000000000000000 > [ref="element"] > .input-group > .input'
+    );
+  }
+
+  actualTuitionInput() {
+    return cy.get("#e3iuupj-actualTuitionCosts");
+  }
+
+  programRelatedInput() {
+    return cy.get("#edg8oot-programRelatedCosts");
+  }
+
+  mandatoryFeesInput() {
+    return cy.get("#expot7k-mandatoryFees");
+  }
+
+  exceptionalExpensesInput() {
+    return cy.get("#e3mdxgr-exceptionalExpenses");
+  }
+
+  tuitionRemittanceRadioButton() {
+    return cy.get(
+      ":nth-child(1) > .form-check-label > #tuitionRemittanceRequested"
+    );
+  }
+
+  amountRequestedInput() {
+    return cy.get("#eim5ou-tuitionRemittanceRequestedAmount");
+  }
+
+  declarationFormForVerification() {
+    return cy.get(".field-required > .form-check-input");
   }
 }
