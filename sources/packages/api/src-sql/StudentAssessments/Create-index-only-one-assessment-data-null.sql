@@ -20,7 +20,7 @@ WHERE
             count(*) > 1
     );
 
--- Create the index
+-- Create the index.
 CREATE UNIQUE INDEX student_assessments_only_one_assessment_data_null ON sims.student_assessments (application_id, (assessment_data IS NULL))
 WHERE
     assessment_data IS NULL;

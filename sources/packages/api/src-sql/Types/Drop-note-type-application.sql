@@ -9,7 +9,6 @@ CREATE TYPE sims.note_types_to_rollback AS ENUM (
 );
 
 -- Update the dependent column to start using the new enum with the expected values.
--- Update the dependent column to start using the new enum with the expected values.
 ALTER TABLE
     sims.notes
 ALTER COLUMN

@@ -31,7 +31,7 @@
             <Column header="Request form" sortable="false"
               ><template #body="{ data }"
                 ><v-btn
-                  @click="viewRequest(data.id)"
+                  @click="$emit('viewStudentAppeal', data.id)"
                   color="primary"
                   variant="text"
                   class="text-decoration-underline"
@@ -54,7 +54,7 @@
 </template>
 <script lang="ts">
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
-import { ref, onMounted, SetupContext } from "vue";
+import { ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
@@ -71,7 +71,7 @@ export default {
       required: true,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props: any) {
     const { dateOnlyLongString } = useFormatters();
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
@@ -82,16 +82,11 @@ export default {
         );
     });
 
-    const viewRequest = (id: number) => {
-      context.emit("viewStudentAppeal", id);
-    };
-
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       requestedAssessment,
       dateOnlyLongString,
-      viewRequest,
     };
   },
 };
