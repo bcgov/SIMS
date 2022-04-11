@@ -5,11 +5,12 @@ describe("Login Page", () => {
   const welcomeObject = new WelcomeObject();
   const loginObject = new LoginObject();
 
+  const url = Cypress.env("studentURL");
   const username = Cypress.env("cardSerialNumber");
   const password = Cypress.env("passcode");
 
   beforeEach(() => {
-    cy.visit("/");
+    cy.visit(url);
   });
 
   it("Verify that user able to login with a valid username and valid password.", () => {

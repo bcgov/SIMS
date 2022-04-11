@@ -7,11 +7,12 @@ describe("Dashboard Page", () => {
   const loginObject = new LoginObject();
   const dashboardObject = new DashboardObject();
 
+  const url = Cypress.env("studentURL");
   const username = Cypress.env("cardSerialNumber");
   const password = Cypress.env("passcode");
 
   it("Verify that user successfully redirects to Dashboard Page.", () => {
-    cy.visit("/");
+    cy.visit(url);
     cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
     welcomeObject.virtualTestingButton().should("be.visible").click();
     welcomeObject.virtualTestingButtonText().should("be.visible");

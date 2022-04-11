@@ -1,0 +1,20 @@
+{
+  "institutionOperatingName": "ZYDUS",
+  "primaryPhoneNumber": "4002842943",
+  "primaryEmail": "adam@gmail.com",
+  "institutionWebsite": "https://www.institution-sims.com",
+  "institutionRegulation": "ICBC",
+  "firstNameInstitute": "Adam",
+  "lastNameInstitute": "Harvey",
+  "emailInstitute": "adam@gmail.com",
+  "phoneNumberInstitute": "24343244",
+  "firstNameAuthorized": "Steve",
+  "lastNameAuthorized": "Harvey",
+  "emailAuthorized": "steve@gmail.com",
+  "phoneNumberAuthorized": "980954309",
+  "addressInput": "101 Independence Avenue, S.E. Washington, D.C. 20559-6000",
+  "cityInput": "Washington",
+  "postalInput": "20559",
+  "provinceState": "Washington DC",
+  "countryInput": "USA"
+}
