@@ -19,7 +19,8 @@
         <div class="mt-4">
           <v-btn
             @click="submitStudentRequest"
-            class="primary-btn-background float-right"
+            color="primary"
+            class="float-right"
             >Next</v-btn
           >
         </div>
