@@ -1,11 +1,11 @@
 import LoginInstituteObject from "../../page-objects/institute-objects/LoginInstituteObject";
 import DashboardInstituteObject from "../../page-objects/institute-objects/DashboardInstituteObject";
-import InstituteManageLocationObject from "../../page-objects/institute-objects/ManageLocationObject";
+import ManageLocationObject from "../../page-objects/institute-objects/ManageLocationObject";
 
 describe("Manage Locations", () => {
   const loginInstituteObject = new LoginInstituteObject();
   const dashboardInstituteObject = new DashboardInstituteObject();
-  const instituteManageLocationObject = new InstituteManageLocationObject();
+  const instituteManageLocationObject = new ManageLocationObject();
 
   const url = Cypress.env("instituteURL");
   const username = Cypress.env("bceid");

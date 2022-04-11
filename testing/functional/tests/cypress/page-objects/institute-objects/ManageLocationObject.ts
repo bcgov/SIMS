@@ -1,4 +1,4 @@
-export default class InstituteManageLocationObject {
+export default class ManageLocationObject {
   manageLocationButton() {
     return cy.get(".v-list > :nth-child(2)");
   }
