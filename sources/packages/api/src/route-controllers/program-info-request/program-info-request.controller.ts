@@ -248,6 +248,20 @@ export class ProgramInfoRequestController extends BaseController {
         throw new BadRequestException("Application not found.");
       }
 
+      let selectedOfferingIntensity = payload.offeringIntensity;
+
+      if (payload.selectedOffering) {
+        const offering = await this.offeringService.getOfferingById(
+          payload.selectedOffering,
+        );
+        selectedOfferingIntensity = offering.offeringIntensity;
+      }
+
+      this.applicationService.checkOfferingIntensityMismatch(
+        application.data.howWillYouBeAttendingTheProgram,
+        selectedOfferingIntensity,
+      );
+
       let offeringToCompletePIR: EducationProgramOffering;
       if (payload.selectedOffering) {
         // Check if the offering belongs to the location.
