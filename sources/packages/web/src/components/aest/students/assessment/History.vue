@@ -73,7 +73,7 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentTriggerType } from "@/types";
-import { AssessmentHistorySummaryApiOutDTO } from "@/services/http/dto/Assessment.dto";
+import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
   emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
@@ -88,7 +88,7 @@ export default {
   },
   setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
-    const assessmentHistory = ref([] as AssessmentHistorySummaryApiOutDTO[]);
+    const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);
     onMounted(async () => {
       assessmentHistory.value =
         await StudentAssessmentsService.shared.getAssessmentHistory(
@@ -96,7 +96,7 @@ export default {
         );
     });
 
-    const viewRequest = (data: AssessmentHistorySummaryApiOutDTO) => {
+    const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
       switch (data.triggerType) {
         case AssessmentTriggerType.StudentAppeal:
           context.emit("viewStudentAppeal", data.studentAppealId);

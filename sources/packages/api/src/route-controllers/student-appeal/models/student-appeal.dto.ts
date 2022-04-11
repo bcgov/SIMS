@@ -11,7 +11,7 @@ import { StudentAppealStatus } from "../../../database/entities";
 /**
  * DTO for student appeal request.
  */
-export class StudentAppealRequestApiInDTO {
+export class StudentAppealRequestAPIInDTO {
   @IsNotEmpty()
   formName: string;
   @IsDefined()
@@ -21,14 +21,14 @@ export class StudentAppealRequestApiInDTO {
 /**
  * DTO for student appeal.
  */
-export class StudentAppealApiInDTO {
+export class StudentAppealAPIInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestApiInDTO)
-  studentAppealRequests: StudentAppealRequestApiInDTO[];
+  @Type(() => StudentAppealRequestAPIInDTO)
+  studentAppealRequests: StudentAppealRequestAPIInDTO[];
 }
 
-export class StudentAppealRequestApiOutDTO {
+export class StudentAppealRequestAPIOutDTO {
   id: number;
   submittedData: any;
   submittedFormName: string;
@@ -38,14 +38,14 @@ export class StudentAppealRequestApiOutDTO {
   noteDescription?: string;
 }
 
-export class StudentAppealApiOutDTO {
+export class StudentAppealAPIOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus;
-  appealRequests: StudentAppealRequestApiOutDTO[];
+  appealRequests: StudentAppealRequestAPIOutDTO[];
 }
 
-export class StudentAppealRequestApprovalApiInDTO {
+export class StudentAppealRequestApprovalAPIInDTO {
   @IsPositive()
   id: number;
   @IsEnum(StudentAppealStatus)
@@ -54,9 +54,9 @@ export class StudentAppealRequestApprovalApiInDTO {
   noteDescription: string;
 }
 
-export class StudentAppealApprovalApiInDTO {
+export class StudentAppealApprovalAPIInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestApprovalApiInDTO)
-  requests: StudentAppealRequestApprovalApiInDTO[];
+  @Type(() => StudentAppealRequestApprovalAPIInDTO)
+  requests: StudentAppealRequestApprovalAPIInDTO[];
 }

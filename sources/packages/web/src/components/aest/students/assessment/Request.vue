@@ -58,7 +58,7 @@ import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import { RequestAssessmentSummaryApiOutDTO } from "@/services/http/dto/Assessment.dto";
+import { RequestAssessmentSummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
   emits: ["viewStudentAppeal"],
@@ -74,7 +74,7 @@ export default {
   setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
 
-    const requestedAssessment = ref([] as RequestAssessmentSummaryApiOutDTO[]);
+    const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
     onMounted(async () => {
       requestedAssessment.value =
         await StudentAssessmentsService.shared.getAssessmentRequest(

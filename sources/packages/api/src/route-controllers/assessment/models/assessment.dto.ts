@@ -5,14 +5,14 @@ import {
   StudentAppealStatus,
 } from "../../../database/entities";
 
-export class RequestAssessmentSummaryApiOutDTO {
+export class RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus | ScholasticStandingStatus;
   triggerType: AssessmentTriggerType;
 }
 
-export interface AssessmentHistorySummaryApiOutDTO {
+export interface AssessmentHistorySummaryAPIOutDTO {
   assessmentId: number;
   submittedDate: Date;
   triggerType: AssessmentTriggerType;

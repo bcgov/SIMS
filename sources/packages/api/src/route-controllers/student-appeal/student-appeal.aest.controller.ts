@@ -23,8 +23,8 @@ import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  StudentAppealApiOutDTO,
-  StudentAppealApprovalApiInDTO,
+  StudentAppealAPIOutDTO,
+  StudentAppealApprovalAPIInDTO,
 } from "./models/student-appeal.dto";
 import { CustomNamedError, getUserFullName } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -57,7 +57,7 @@ export class StudentAppealAESTController extends BaseController {
   })
   async getStudentAppealWithRequests(
     @Param("appealId") appealId: number,
-  ): Promise<StudentAppealApiOutDTO> {
+  ): Promise<StudentAppealAPIOutDTO> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(appealId);
     if (!studentAppeal) {
@@ -101,7 +101,7 @@ export class StudentAppealAESTController extends BaseController {
   })
   async approveStudentAppealRequests(
     @Param("appealId") appealId: number,
-    @Body() payload: StudentAppealApprovalApiInDTO,
+    @Body() payload: StudentAppealApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {

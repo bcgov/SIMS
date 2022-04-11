@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -15,8 +15,8 @@ import {
   StudentAppealStatus,
 } from "../../database/entities";
 import {
-  AssessmentHistorySummaryApiOutDTO,
-  RequestAssessmentSummaryApiOutDTO,
+  AssessmentHistorySummaryAPIOutDTO,
+  RequestAssessmentSummaryAPIOutDTO,
 } from "./models/assessment.dto";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -39,12 +39,12 @@ export class AssessmentAESTController extends BaseController {
    * pending and denied student appeal and scholastic
    * standings for an application.
    * @param applicationId, application number.
-   * @returns RequestAssessmentSummaryApiOutDTO list.
+   * @returns assessment requests for a student application.
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
-  ): Promise<RequestAssessmentSummaryApiOutDTO[]> {
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const [studentAppeal, studentScholasticStandings] = await Promise.all([
       this.studentAppealService.getPendingAndDeniedAppeals(applicationId),
       this.studentScholasticStandingsService.getPendingAndDeniedScholasticStanding(
@@ -94,12 +94,12 @@ export class AssessmentAESTController extends BaseController {
    * appeal and scholastic standings for the application
    * which will have different assessment status.
    * @param applicationId, application number.
-   * @returns AssessmentHistoryApiOutDTO list.
+   * @returns summary of the assessment history for a student application.
    */
   @Get("application/:applicationId/history")
   async getAssessmentHistorySummary(
     @Param("applicationId") applicationId: number,
-  ): Promise<AssessmentHistorySummaryApiOutDTO[]> {
+  ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
     const assessments =
       await this.studentAssessmentService.assessmentHistorySummary(
         applicationId,

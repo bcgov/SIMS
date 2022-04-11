@@ -7,14 +7,14 @@ import {
 
 export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
 
-export interface RequestAssessmentSummaryApiOutDTO {
+export interface RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus | ScholasticStandingStatus;
   triggerType: AssessmentTriggerType;
 }
 
-export interface AssessmentHistorySummaryApiOutDTO {
+export interface AssessmentHistorySummaryAPIOutDTO {
   assessmentId: number;
   submittedDate: Date;
   triggerType: AssessmentTriggerType;
