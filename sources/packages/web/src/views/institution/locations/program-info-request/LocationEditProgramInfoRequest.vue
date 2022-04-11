@@ -84,10 +84,11 @@ export default {
     };
 
     const formLoaded = async (form: any) => {
-      programRequestData.value = await ProgramInfoRequestService.shared.getProgramInfoRequest(
-        props.locationId,
-        props.applicationId,
-      );
+      programRequestData.value =
+        await ProgramInfoRequestService.shared.getProgramInfoRequest(
+          props.locationId,
+          props.applicationId,
+        );
       initialData.value = {
         ...programRequestData.value,
         studentStudyStartDate: dateString(
@@ -178,14 +179,13 @@ export default {
         let errorMsg =
           "An error happened while saving the Program Information Request.";
         [PIR_OR_DATE_OVERLAP_ERROR, OFFERING_INTENSITY_MISMATCH].forEach(
-          customError => {
-            if (error.response.data?.errorType.includes(customError)) {
+          (customError) => {
+            if (error.errorType.includes(customError)) {
               errorLabel = "Invalid submission";
-              errorMsg = error.replace(customError, "").trim();
+              errorMsg = error.message;
             }
           },
         );
-
         toast.error(errorLabel, errorMsg);
       }
     };
