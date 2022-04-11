@@ -67,12 +67,15 @@
   </v-container>
 </template>
 <script lang="ts">
-import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  PAGINATION_LIST,
+  AssessmentTriggerType,
+} from "@/types";
 import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
-import { AssessmentTriggerType } from "@/types";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {

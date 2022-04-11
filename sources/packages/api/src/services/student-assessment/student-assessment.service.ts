@@ -10,7 +10,7 @@ import {
   ProgramInfoStatus,
   StudentAssessment,
 } from "../../database/entities";
-import { Connection, EntityManager, IsNull, UpdateResult } from "typeorm";
+import { Connection, IsNull, UpdateResult } from "typeorm";
 import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { WorkflowActionsService } from "..";
 import {
