@@ -29,11 +29,9 @@
               }}</template></Column
             ><Column field="triggerType" header="Type" sortable="true"></Column>
             <Column header="Request form" sortable="false"
-              ><template #body="slotProps"
+              ><template #body="{ data }"
                 ><v-btn
-                  @click="
-                    viewRequest(slotProps.data.triggerType, slotProps.data.id)
-                  "
+                  @click="$emit('viewStudentAppeal', data.id)"
                   color="primary"
                   variant="text"
                   class="text-decoration-underline"
@@ -55,19 +53,15 @@
   </v-container>
 </template>
 <script lang="ts">
-import {
-  DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  RequestAssessmentSummaryApiOutDTO,
-} from "@/types";
-import { ref, onMounted, SetupContext } from "vue";
+import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
+import { ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import { AssessmentTriggerType } from "@/types/contracts/AssessmentTrigger";
+import { RequestAssessmentSummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
-  emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
+  emits: ["viewStudentAppeal"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -77,10 +71,10 @@ export default {
       required: true,
     },
   },
-  setup(props: any, context: SetupContext) {
+  setup(props: any) {
     const { dateOnlyLongString } = useFormatters();
 
-    const requestedAssessment = ref([] as RequestAssessmentSummaryApiOutDTO[]);
+    const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
     onMounted(async () => {
       requestedAssessment.value =
         await StudentAssessmentsService.shared.getAssessmentRequest(
@@ -88,23 +82,11 @@ export default {
         );
     });
 
-    const viewRequest = (triggerType: AssessmentTriggerType, id: number) => {
-      switch (triggerType) {
-        case AssessmentTriggerType.StudentAppeal:
-          context.emit("viewStudentAppeal", id);
-          break;
-        case AssessmentTriggerType.ScholasticStandingChange:
-          context.emit("viewScholasticStandingChange", id);
-          break;
-      }
-    };
-
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       requestedAssessment,
       dateOnlyLongString,
-      viewRequest,
     };
   },
 };

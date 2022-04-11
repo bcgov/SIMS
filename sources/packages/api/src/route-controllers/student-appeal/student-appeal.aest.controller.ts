@@ -7,7 +7,11 @@ import {
   Body,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { StudentAppealService, WorkflowActionsService } from "../../services";
+import {
+  ASSESSMENT_ALREADY_IN_PROGRESS,
+  StudentAppealService,
+  StudentAssessmentService,
+} from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import {
@@ -16,13 +20,13 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
-  StudentAppealApiOutDTO,
-  StudentAppealApprovalApiInDTO,
+  StudentAppealAPIOutDTO,
+  StudentAppealApprovalAPIInDTO,
 } from "./models/student-appeal.dto";
-import { getUserFullName } from "../../utilities";
+import { CustomNamedError, getUserFullName } from "../../utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
@@ -37,7 +41,7 @@ import { StudentAppealStatus } from "../../database/entities";
 export class StudentAppealAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
-    private readonly workflowActionsService: WorkflowActionsService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -53,7 +57,7 @@ export class StudentAppealAESTController extends BaseController {
   })
   async getStudentAppealWithRequests(
     @Param("appealId") appealId: number,
-  ): Promise<StudentAppealApiOutDTO> {
+  ): Promise<StudentAppealAPIOutDTO> {
     const studentAppeal =
       await this.studentAppealService.getAppealAndRequestsById(appealId);
     if (!studentAppeal) {
@@ -97,10 +101,14 @@ export class StudentAppealAESTController extends BaseController {
   })
   async approveStudentAppealRequests(
     @Param("appealId") appealId: number,
-    @Body() payload: StudentAppealApprovalApiInDTO,
+    @Body() payload: StudentAppealApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
+      await this.studentAssessmentService.assertAllAssessmentsCompleted(
+        userToken.userId,
+      );
+
       const savedAppeal = await this.studentAppealService.approveRequests(
         appealId,
         payload.requests,
@@ -111,21 +119,24 @@ export class StudentAppealAESTController extends BaseController {
       // if at least one request was approved, hence sometimes an appeal will not result
       // is an assessment creation if all requests are declined.
       if (savedAppeal.studentAssessment) {
-        await this.workflowActionsService.startApplicationAssessment(
-          savedAppeal.application.data.workflowName,
-          savedAppeal.application.id,
+        await this.studentAssessmentService.startAssessment(
           savedAppeal.studentAssessment.id,
         );
       }
-    } catch (error) {
-      switch (error.name) {
-        case STUDENT_APPEAL_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case STUDENT_APPEAL_INVALID_OPERATION:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_APPEAL_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDENT_APPEAL_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+          case ASSESSMENT_ALREADY_IN_PROGRESS:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
       }
+      throw error;
     }
   }
 }

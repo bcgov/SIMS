@@ -1,6 +1,7 @@
 import "./assets/css/BCSans.scss";
 import "./assets/css/base.scss";
 import "./assets/css/formio-shared.scss";
+import "./assets/css/vuetify.scss";
 import "primevue/resources/themes/md-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";

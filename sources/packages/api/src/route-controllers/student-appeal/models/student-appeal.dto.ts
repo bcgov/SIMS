@@ -1,12 +1,9 @@
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
-  IsArray,
   IsDefined,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
   IsPositive,
   ValidateNested,
 } from "class-validator";
@@ -14,7 +11,7 @@ import { StudentAppealStatus } from "../../../database/entities";
 /**
  * DTO for student appeal request.
  */
-export class StudentAppealRequestDTO {
+export class StudentAppealRequestAPIInDTO {
   @IsNotEmpty()
   formName: string;
   @IsDefined()
@@ -24,18 +21,14 @@ export class StudentAppealRequestDTO {
 /**
  * DTO for student appeal.
  */
-export class StudentAppealDTO {
-  @IsOptional()
-  @IsNumber()
-  applicationId?: number;
-  @IsArray()
+export class StudentAppealAPIInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestDTO)
-  studentAppealRequests: StudentAppealRequestDTO[];
+  @Type(() => StudentAppealRequestAPIInDTO)
+  studentAppealRequests: StudentAppealRequestAPIInDTO[];
 }
 
-export class StudentAppealRequestApiOutDTO {
+export class StudentAppealRequestAPIOutDTO {
   id: number;
   submittedData: any;
   submittedFormName: string;
@@ -45,14 +38,14 @@ export class StudentAppealRequestApiOutDTO {
   noteDescription?: string;
 }
 
-export class StudentAppealApiOutDTO {
+export class StudentAppealAPIOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus;
-  appealRequests: StudentAppealRequestApiOutDTO[];
+  appealRequests: StudentAppealRequestAPIOutDTO[];
 }
 
-export class StudentAppealRequestApiInDTO {
+export class StudentAppealRequestApprovalAPIInDTO {
   @IsPositive()
   id: number;
   @IsEnum(StudentAppealStatus)
@@ -61,9 +54,9 @@ export class StudentAppealRequestApiInDTO {
   noteDescription: string;
 }
 
-export class StudentAppealApprovalApiInDTO {
+export class StudentAppealApprovalAPIInDTO {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestApiInDTO)
-  requests: StudentAppealRequestApiInDTO[];
+  @Type(() => StudentAppealRequestApprovalAPIInDTO)
+  requests: StudentAppealRequestApprovalAPIInDTO[];
 }

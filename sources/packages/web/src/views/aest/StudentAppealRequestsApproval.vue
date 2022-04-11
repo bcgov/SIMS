@@ -51,9 +51,11 @@ import {
   StudentAppealRequest,
   StudentAppealApproval,
   StudentAppealStatus,
+  ApiProcessError,
 } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 
 export default {
   components: {
@@ -131,7 +133,13 @@ export default {
           "The request was completed with success.",
         );
         gotToAssessmentsSummary();
-      } catch (error) {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
+            toast.warn("Not able to submit", error.message);
+            return;
+          }
+        }
         toast.error(
           "Unexpected error",
           "An unexpected error happened during the approval.",

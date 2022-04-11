@@ -11,7 +11,10 @@
     :applicationId="applicationId"
     @viewStudentAppeal="goToStudentAppeal"
   />
-  <HistoryAssessment :applicationId="applicationId" />
+  <HistoryAssessment
+    :applicationId="applicationId"
+    @viewStudentAppeal="goToStudentAppeal"
+  />
 </template>
 <script lang="ts">
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";

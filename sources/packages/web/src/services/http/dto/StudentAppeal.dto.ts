@@ -1,6 +1,15 @@
 import { StudentAppealStatus } from "@/types";
 
-export interface StudentAppealRequestApiOutDTO {
+export interface StudentAppealRequestAPIInDTO {
+  formName: string;
+  formData: any;
+}
+
+export interface StudentAppealAPIInDTO {
+  studentAppealRequests: StudentAppealRequestAPIInDTO[];
+}
+
+export interface StudentAppealRequestAPIOutDTO {
   id: number;
   submittedData: any;
   submittedFormName: string;
@@ -10,19 +19,19 @@ export interface StudentAppealRequestApiOutDTO {
   noteDescription?: string;
 }
 
-export interface StudentAppealApiOutDTO {
+export interface StudentAppealAPIOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus;
-  appealRequests: StudentAppealRequestApiOutDTO[];
+  appealRequests: StudentAppealRequestAPIOutDTO[];
 }
 
-export interface StudentAppealRequestApiInDTO {
+export interface StudentAppealRequestApprovalAPIInDTO {
   id: number;
   appealStatus: StudentAppealStatus;
   noteDescription: string;
 }
 
-export interface StudentAppealApprovalApiInDTO {
-  requests: StudentAppealRequestApiInDTO[];
+export interface StudentAppealApprovalAPIInDTO {
+  requests: StudentAppealRequestApprovalAPIInDTO[];
 }

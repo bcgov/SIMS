@@ -1,18 +1,20 @@
-import { StudentAssessmentStatus } from "src/services/student-assessment/student-assessment.models";
 import {
   AssessmentTriggerType,
   ScholasticStandingStatus,
   StudentAppealStatus,
-} from "../../../database/entities";
+  StudentAssessmentStatus,
+} from "@/types";
 
-export class RequestAssessmentSummaryAPIOutDTO {
+export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
+
+export interface RequestAssessmentSummaryAPIOutDTO {
   id: number;
   submittedDate: Date;
   status: StudentAppealStatus | ScholasticStandingStatus;
   triggerType: AssessmentTriggerType;
 }
 
-export class AssessmentHistorySummaryAPIOutDTO {
+export interface AssessmentHistorySummaryAPIOutDTO {
   assessmentId: number;
   submittedDate: Date;
   triggerType: AssessmentTriggerType;

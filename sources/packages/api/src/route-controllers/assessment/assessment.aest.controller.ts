@@ -3,7 +3,6 @@ import BaseController from "../BaseController";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   StudentAppealService,
@@ -15,8 +14,11 @@ import {
   ScholasticStandingStatus,
   StudentAppealStatus,
 } from "../../database/entities";
-import { RequestAssessmentSummaryApiOutDTO } from "./models/assessment.dto";
-import { AssessmentHistory } from "../../services/student-assessment/student-assessment.models";
+import {
+  AssessmentHistorySummaryAPIOutDTO,
+  RequestAssessmentSummaryAPIOutDTO,
+} from "./models/assessment.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -37,12 +39,12 @@ export class AssessmentAESTController extends BaseController {
    * pending and denied student appeal and scholastic
    * standings for an application.
    * @param applicationId, application number.
-   * @returns RequestAssessmentSummaryApiOutDTO list.
+   * @returns assessment requests for a student application.
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("applicationId") applicationId: number,
-  ): Promise<RequestAssessmentSummaryApiOutDTO[]> {
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const [studentAppeal, studentScholasticStandings] = await Promise.all([
       this.studentAppealService.getPendingAndDeniedAppeals(applicationId),
       this.studentScholasticStandingsService.getPendingAndDeniedScholasticStanding(
@@ -92,17 +94,25 @@ export class AssessmentAESTController extends BaseController {
    * appeal and scholastic standings for the application
    * which will have different assessment status.
    * @param applicationId, application number.
-   * @returns AssessmentHistorySummaryDTO list.
+   * @returns summary of the assessment history for a student application.
    */
   @Get("application/:applicationId/history")
-  @ApiOkResponse({
-    description: "assessments history found for the application.",
-  })
   async getAssessmentHistorySummary(
     @Param("applicationId") applicationId: number,
-  ): Promise<AssessmentHistory[]> {
-    return this.studentAssessmentService.assessmentHistorySummary(
-      applicationId,
-    );
+  ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
+    const assessments =
+      await this.studentAssessmentService.assessmentHistorySummary(
+        applicationId,
+      );
+
+    return assessments.map((assessment) => ({
+      assessmentId: assessment.id,
+      submittedDate: assessment.submittedDate,
+      triggerType: assessment.triggerType,
+      assessmentDate: assessment.assessmentDate,
+      status: assessment.status,
+      studentAppealId: assessment.studentAppeal?.id,
+      studentScholasticStandingId: assessment.studentScholasticStanding?.id,
+    }));
   }
 }
