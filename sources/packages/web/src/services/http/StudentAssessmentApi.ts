@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   AssessmentHistorySummaryAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-} from "./dto/Assessment.dto";
+} from "@/services/http/dto/Assessment.dto";
 
 /**
  * Http API client for Student Assessments.

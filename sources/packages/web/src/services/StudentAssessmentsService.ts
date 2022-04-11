@@ -2,7 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   AssessmentHistorySummaryAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-} from "./http/dto/Assessment.dto";
+} from "@/services/http/dto/Assessment.dto";
 
 /**
  * Client service layer for Student Assessments.
