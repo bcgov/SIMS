@@ -12,7 +12,7 @@ export class RequestAssessmentSummaryAPIOutDTO {
   triggerType: AssessmentTriggerType;
 }
 
-export interface AssessmentHistorySummaryAPIOutDTO {
+export class AssessmentHistorySummaryAPIOutDTO {
   assessmentId: number;
   submittedDate: Date;
   triggerType: AssessmentTriggerType;
