@@ -1,15 +1,12 @@
 {
-
   "scripts": {
-    
-    "cypress:runChrome" : "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
-    "testStudent" : "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
-    "testInstitute" : "cypress run --browser chrome --spec cypress/integration/institute/*.spec.ts",
-  
-    "Run cypress headless mode command" : " npm run cypress:runChrome ",
-    "Run cypress headed mode" : " npx cypress open "
+    "cypress:runChrome": "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
+    "testStudent": "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
+    "testInstitute": "cypress run --browser chrome --spec cypress/integration/institute/*.spec.ts",
+    "Run cypress headless mode command in student": "npm run testStudent",
+    "Run cypress headless mode command in institute": "npm run testInstitute",
+    "Run cypress headed mode": " npx cypress open "
   },
-
   "devDependencies": {
     "cypress": "^9.5.1",
     "cypress-mochawesome-reporter": "^2.3.0",
