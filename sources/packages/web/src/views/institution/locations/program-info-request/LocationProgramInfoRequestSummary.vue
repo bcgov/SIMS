@@ -86,7 +86,7 @@ export default {
       });
     };
 
-    const loadProgramDetails = async () => {
+    const loadLocationDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
@@ -102,15 +102,17 @@ export default {
     watch(
       () => props.locationId,
       async (currValue) => {
-        //update the list
-        await updateSummaryList(currValue);
+        await Promise.all([
+          updateSummaryList(currValue),
+          loadLocationDetails(),
+        ]);
       },
     );
 
     onMounted(async () => {
       await Promise.all([
         updateSummaryList(props.locationId),
-        loadProgramDetails(),
+        loadLocationDetails(),
       ]);
     });
 

@@ -40,6 +40,8 @@ import {
   getUserFullName,
   dateString,
   getISODateOnlyString,
+  deliveryMethod,
+  credentialTypeToDisplay,
 } from "../../utilities";
 import { InstitutionLocation, Application } from "../../database/entities";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
@@ -276,6 +278,22 @@ export class InstitutionLocationsController extends BaseController {
       applicationOfferingName: offering.name,
       applicationProgramDescription: offering.educationProgram.description,
       applicationProgramName: offering.educationProgram.name,
+      applicationProgramCredential: credentialTypeToDisplay(
+        offering.educationProgram.credentialType,
+      ),
+      applicationProgramDelivery: deliveryMethod(
+        offering.educationProgram.deliveredOnline,
+        offering.educationProgram.deliveredOnSite,
+      ),
+      applicationOfferingStudyDelivery: offering.offeringDelivered,
+      applicationOfferingStudyBreak: offering.studyBreaks.map((studyBreak) => ({
+        breakStartDate: dateString(studyBreak.breakStartDate),
+        breakEndDate: dateString(studyBreak.breakEndDate),
+      })),
+      applicationOfferingTuition: offering.actualTuitionCosts,
+      applicationOfferingProgramRelatedCosts: offering.programRelatedCosts,
+      applicationOfferingMandatoryFess: offering.mandatoryFees,
+      applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
     };
   }
 }

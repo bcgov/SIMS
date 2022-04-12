@@ -1,4 +1,5 @@
 import { IsObject, IsOptional, IsPositive } from "class-validator";
+import { StudyBreak } from "../../confirmation-of-enrollment/models/confirmation-of-enrollment.model";
 import {
   ApplicationStatus,
   ProgramInfoStatus,
@@ -222,6 +223,14 @@ export interface ActiveApplicationDataDto {
   applicationNumber: string;
   applicationLocationName: string;
   applicationStatus: string;
+  applicationProgramCredential: string;
+  applicationProgramDelivery: string;
+  applicationOfferingStudyDelivery: string;
+  applicationOfferingStudyBreak: StudyBreak[];
+  applicationOfferingTuition: number;
+  applicationOfferingProgramRelatedCosts: number;
+  applicationOfferingMandatoryFess: number;
+  applicationOfferingExceptionalExpenses: number;
 }
 
 /**

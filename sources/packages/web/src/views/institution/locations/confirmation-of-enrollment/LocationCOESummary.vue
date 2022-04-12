@@ -38,7 +38,7 @@ import COESummaryData from "@/views/institution/locations/confirmation-of-enroll
 import { EnrollmentPeriod } from "@/types";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import { InstitutionService } from "@/services/InstitutionService";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 export default {
   components: { COESummaryData, HeaderNavigator },
   props: {
@@ -50,7 +50,7 @@ export default {
   setup(props: any) {
     const locationDetails = ref();
 
-    const loadProgramDetails = async () => {
+    const loadLocationDetails = async () => {
       locationDetails.value =
         await InstitutionService.shared.getInstitutionLocation(
           props.locationId,
@@ -58,9 +58,15 @@ export default {
     };
 
     onMounted(async () => {
-      await loadProgramDetails();
+      await loadLocationDetails();
     });
 
+    watch(
+      () => props.locationId,
+      async () => {
+        await loadLocationDetails();
+      },
+    );
     return { EnrollmentPeriod, locationDetails };
   },
 };

@@ -56,7 +56,7 @@ export function getFieldOfStudyFromCIPCode(cipCode: string): number | null {
 export function round(decimalValue: number | string): number | null {
   const parsedDecimalValue = parseFloat(decimalValue.toString());
   if (isNaN(parsedDecimalValue)) {
-    return null;
+    return null; 
   }
   return Math.round(parsedDecimalValue);
 }
