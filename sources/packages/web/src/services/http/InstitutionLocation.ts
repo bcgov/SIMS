@@ -9,9 +9,9 @@ import {
   InstitutionLocationFormAPIOutDTO,
   InstitutionLocationAPIOutDTO,
   ActiveApplicationDataAPIOutDTO,
+  OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 
-import { OptionItemAPIOutDTO } from "@/services/http/dto";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,

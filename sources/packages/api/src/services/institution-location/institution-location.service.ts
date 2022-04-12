@@ -3,9 +3,11 @@ import { RecordDataModelService } from "../../database/data.model.service";
 import { InstitutionLocation } from "../../database/entities/institution-location.model";
 import { Connection, SelectQueryBuilder, UpdateResult } from "typeorm";
 import { ValidatedInstitutionLocation } from "../../types";
-import { InstitutionLocationModel } from "./institution-location.models";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
-import { LocationWithDesignationStatus } from "./institution-location.models";
+import {
+  LocationWithDesignationStatus,
+  InstitutionLocationModel,
+} from "./institution-location.models";
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(

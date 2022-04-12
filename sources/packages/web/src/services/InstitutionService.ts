@@ -113,17 +113,13 @@ export class InstitutionService {
   public async getInstitutionLocation(
     locationId: number,
   ): Promise<InstitutionLocationFormAPIOutDTO> {
-    return await ApiClient.InstitutionLocation.getInstitutionLocation(
-      locationId,
-    );
+    return ApiClient.InstitutionLocation.getInstitutionLocation(locationId);
   }
 
   public async getAllInstitutionLocations(
     institutionId?: number,
   ): Promise<InstitutionLocationAPIOutDTO[]> {
-    return await ApiClient.InstitutionLocation.allInstitutionLocations(
-      institutionId,
-    );
+    return ApiClient.InstitutionLocation.allInstitutionLocations(institutionId);
   }
 
   mapUserRolesAndLocation(
