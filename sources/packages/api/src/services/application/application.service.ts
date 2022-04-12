@@ -43,11 +43,13 @@ import {
   DEFAULT_PAGE_LIMIT,
   sortApplicationsColumnMap,
   PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
+  PIR_OR_DATE_OVERLAP_ERROR,
 } from "../../utilities";
 import { SFASApplicationService } from "../sfas/sfas-application.service";
 import { SFASPartTimeApplicationsService } from "../sfas/sfas-part-time-application.service";
 import { ConfigService } from "../config/config.service";
 import { IConfig } from "../../types";
+import { OFFERING_INTENSITY_MISMATCH } from "../../constants";
 
 export const PIR_REQUEST_NOT_FOUND_ERROR = "PIR_REQUEST_NOT_FOUND_ERROR";
 export const PIR_DENIED_REASON_NOT_FOUND_ERROR =
@@ -63,7 +65,6 @@ export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
 export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
   "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
-export const APPLICATION_DATE_OVERLAP_ERROR = "APPLICATION_DATE_OVERLAP_ERROR";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -1360,9 +1361,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ) {
         throw new CustomNamedError(
           PIR_OR_DATE_OVERLAP_ERROR_MESSAGE,
-          APPLICATION_DATE_OVERLAP_ERROR,
+          PIR_OR_DATE_OVERLAP_ERROR,
         );
       }
     }
+  }
+
+  /**
+   * check if selected offering intensity
+   * and intensity selected by student is same.
+   * @param studentOfferingIntensity studentOfferingIntensity.
+   * @param selectedOfferingIntensity selectedOfferingIntensity.
+   * throws error if selected offering intensity
+   * and intensity selected by student are not the same.
+   */
+  checkOfferingIntensityMismatch(
+    studentOfferingIntensity: OfferingIntensity,
+    selectedOfferingIntensity: OfferingIntensity,
+  ): void {
+    if (
+      studentOfferingIntensity &&
+      selectedOfferingIntensity &&
+      studentOfferingIntensity !== selectedOfferingIntensity
+    )
+      throw new CustomNamedError(
+        "Offering Intensity does not match the students intensity",
+        OFFERING_INTENSITY_MISMATCH,
+      );
   }
 }

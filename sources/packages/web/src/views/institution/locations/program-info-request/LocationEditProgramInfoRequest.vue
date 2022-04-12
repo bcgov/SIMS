@@ -34,8 +34,7 @@ import {
   GetProgramInfoRequestDto,
 } from "@/types";
 import {
-  OFFERING_START_DATE_ERROR,
-  INVALID_STUDY_DATES,
+  PIR_OR_DATE_OVERLAP_ERROR,
   OFFERING_INTENSITY_MISMATCH,
 } from "@/constants";
 
@@ -176,18 +175,17 @@ export default {
           },
         });
       } catch (error) {
-        const errorLabel = "Unexpected error!";
+        let errorLabel = "Unexpected error!";
         let errorMsg =
           "An error happened while saving the Program Information Request.";
-        [
-          OFFERING_START_DATE_ERROR,
-          INVALID_STUDY_DATES,
-          OFFERING_INTENSITY_MISMATCH,
-        ].forEach((customError) => {
-          if (error.includes(customError)) {
-            errorMsg = error.replace(customError, "").trim();
-          }
-        });
+        [PIR_OR_DATE_OVERLAP_ERROR, OFFERING_INTENSITY_MISMATCH].forEach(
+          (customError) => {
+            if (error.errorType.includes(customError)) {
+              errorLabel = "Invalid submission";
+              errorMsg = error.message;
+            }
+          },
+        );
         toast.error(errorLabel, errorMsg);
       }
     };
