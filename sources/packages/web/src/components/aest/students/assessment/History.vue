@@ -28,7 +28,23 @@
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
             ><Column field="triggerType" header="Type" sortable="true"></Column
-            ><Column header="Request form"></Column
+            ><Column header="Request form">
+              <template #body="{ data }">
+                <template v-if="canShowViewRequest(data.triggerType)">
+                  <v-btn
+                    @click="viewRequest(data)"
+                    color="primary"
+                    variant="text"
+                    class="text-decoration-underline"
+                  >
+                    <font-awesome-icon
+                      :icon="['far', 'file-alt']"
+                      class="mr-2"
+                    />
+                    View request</v-btn
+                  >
+                </template>
+              </template></Column
             ><Column field="status" header="Status" sortable="true"
               ><template #body="slotProps"
                 ><status-chip-assessment-history
@@ -54,14 +70,16 @@
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  AssessmentHistorySummaryDTO,
+  AssessmentTriggerType,
 } from "@/types";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, SetupContext } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
+import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
+  emits: ["viewStudentAppeal", "viewScholasticStandingChange"],
   components: {
     StatusChipAssessmentHistory,
   },
@@ -71,20 +89,43 @@ export default {
       required: true,
     },
   },
-  setup(props: any) {
+  setup(props: any, context: SetupContext) {
     const { dateOnlyLongString } = useFormatters();
-    const assessmentHistory = ref([] as AssessmentHistorySummaryDTO[]);
+    const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);
     onMounted(async () => {
       assessmentHistory.value =
         await StudentAssessmentsService.shared.getAssessmentHistory(
           props.applicationId,
         );
     });
+
+    const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
+      switch (data.triggerType) {
+        case AssessmentTriggerType.StudentAppeal:
+          context.emit("viewStudentAppeal", data.studentAppealId);
+          break;
+        case AssessmentTriggerType.ScholasticStandingChange:
+          context.emit(
+            "viewScholasticStandingChange",
+            data.studentScholasticStandingId,
+          );
+          break;
+      }
+    };
+
+    const canShowViewRequest = (triggerType: AssessmentTriggerType) =>
+      [
+        AssessmentTriggerType.StudentAppeal,
+        AssessmentTriggerType.ScholasticStandingChange,
+      ].includes(triggerType);
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       assessmentHistory,
       dateOnlyLongString,
+      viewRequest,
+      canShowViewRequest,
     };
   },
 };

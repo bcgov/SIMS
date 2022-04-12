@@ -19,7 +19,8 @@
         <div class="mt-4">
           <v-btn
             @click="submitStudentRequest"
-            class="primary-btn-background float-right"
+            color="primary"
+            class="float-right"
             >Next</v-btn
           >
         </div>
@@ -32,43 +33,47 @@
           title="Fill in the field(s) below"
           subTitle="StudentAid BC will review your application change after you submit the fields below."
         ></body-header>
-        <student-appeal-form
-          v-for="formName in appealFormNames"
-          :key="formName"
-          :formName="formName"
-          @appealFormLoaded="appealFormLoaded"
-        ></student-appeal-form>
-        <!-- action area -->
-        <div class="mt-4">
-          <v-btn color="primary" variant="outlined" @click="backToRequestForm"
-            >Back</v-btn
-          >
-          <v-btn
-            @click="submitAppeal"
-            class="primary-btn-background float-right"
-            >Submit</v-btn
-          >
-        </div>
+        <appeal-requests-form
+          :studentAppealRequests="appealRequestsForms"
+          @submitted="submitAppeal"
+        >
+          <template #actions="{ submit }">
+            <v-row justify="center" class="m-2">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                class="mr-2"
+                @click="backToRequestForm"
+                >Cancel</v-btn
+              >
+              <v-btn color="primary" class="ml-2" @click="submit"
+                >Submit</v-btn
+              ></v-row
+            >
+          </template>
+        </appeal-requests-form>
       </full-page-container>
     </div>
   </v-container>
 </template>
 <script lang="ts">
 import { computed, ref } from "vue";
-import {
-  StudentRequest,
-  StudentAppealRequestDTO,
-  StudentAppealDTO,
-} from "@/types";
+import { StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import formio from "@/components/generic/formio.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
-import StudentAppealForm from "@/components/common/StudentAppealForm.vue";
+import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useToastMessage } from "@/composables";
 const INVALID_APPLICATION_NUMBER = "INVALID_APPLICATION_NUMBER";
+
+// Model for student request change form.
+interface StudentRequestSelectedForms {
+  applicationNumber: string;
+  formNames: string[];
+}
 
 export default {
   components: {
@@ -76,30 +81,27 @@ export default {
     FullPageContainer,
     formio,
     BodyHeader,
-    StudentAppealForm,
+    AppealRequestsForm,
   },
   setup() {
     const toast = useToastMessage();
     let requestFormData: any = undefined;
+    const appealRequestsForms = ref([] as StudentAppealRequest[]);
     let applicationId: number;
-    const appealFormNames = ref([] as string[]);
-    let appealForms: any = [];
     const showRequestForAppeal = computed(
-      () => appealFormNames.value.length === 0,
+      () => appealRequestsForms.value.length === 0,
     );
 
-    const formLoaded = (form: any) => {
-      requestFormData = form;
-    };
-
-    const submitRequest = async (data: StudentRequest) => {
+    const submitRequest = async (data: StudentRequestSelectedForms) => {
       try {
         const application =
           await ApplicationService.shared.getApplicationForRequestChange(
             data.applicationNumber,
           );
         applicationId = application.id;
-        appealFormNames.value = data.formNames;
+        appealRequestsForms.value = data.formNames.map(
+          (formName) => ({ formName } as StudentAppealRequest),
+        );
       } catch (error) {
         const errorMessage = "An error happened while requesting a change.";
         const errorLabel = "Unexpected error";
@@ -115,33 +117,19 @@ export default {
       return requestFormData.submit();
     };
 
+    const formLoaded = (form: any) => {
+      requestFormData = form;
+    };
+
     const backToRequestForm = () => {
-      appealFormNames.value = [];
-      appealForms = [];
+      appealRequestsForms.value = [];
     };
 
-    const appealFormLoaded = (form: any) => {
-      appealForms.push(form);
-    };
-
-    const submitAppeal = async () => {
-      const studentAppealRequests = [] as StudentAppealRequestDTO[];
-      const formSubmitResponse = [{}];
-      for (const form of appealForms) {
-        formSubmitResponse.push(form.submit());
-        studentAppealRequests.push({
-          formName: form.form.path,
-          formData: form.data,
-        });
-      }
-      await Promise.all(formSubmitResponse);
-      const studentAppeal = {
-        studentAppealRequests: studentAppealRequests,
-      } as StudentAppealDTO;
+    const submitAppeal = async (appealRequests: StudentAppealRequest[]) => {
       try {
         await StudentAppealService.shared.submitStudentAppeal(
           applicationId,
-          studentAppeal,
+          appealRequests,
         );
         toast.success(
           "Request submitted",
@@ -159,13 +147,12 @@ export default {
     };
 
     return {
-      formLoaded,
       submitRequest,
+      formLoaded,
       submitStudentRequest,
-      appealFormNames,
+      appealRequestsForms,
       showRequestForAppeal,
       backToRequestForm,
-      appealFormLoaded,
       submitAppeal,
     };
   },

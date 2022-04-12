@@ -11,9 +11,10 @@ import {
   StudentAssessment,
 } from "../../database/entities";
 import { Connection, IsNull, UpdateResult } from "typeorm";
-import { CustomNamedError } from "../../utilities";
+import { CustomNamedError, mapFromRawAndEntities } from "../../utilities";
 import { WorkflowActionsService } from "..";
 import {
+  ASSESSMENT_ALREADY_IN_PROGRESS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
@@ -372,11 +373,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async assessmentHistorySummary(
     applicationId: number,
   ): Promise<AssessmentHistory[]> {
-    return this.repo
+    const queryResult = await this.repo
       .createQueryBuilder("assessment")
-      .select("assessment.submittedDate", "submittedDate")
-      .addSelect("assessment.triggerType", "triggerType")
-      .addSelect("assessment.assessmentDate", "assessmentDate")
+      .select([
+        "assessment.id",
+        "assessment.submittedDate",
+        "assessment.triggerType",
+        "assessment.assessmentDate",
+        "studentAppeal.id",
+        "studentScholasticStanding.id",
+      ])
       .addSelect(
         `CASE
           WHEN 
@@ -399,9 +405,57 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "status",
       )
       .innerJoin("assessment.application", "application")
+      .leftJoin("assessment.studentAppeal", "studentAppeal")
+      .leftJoin(
+        "assessment.studentScholasticStanding",
+        "studentScholasticStanding",
+      )
       .where("application.id = :applicationId", { applicationId })
       .orderBy("status", "DESC")
       .addOrderBy("assessment.submittedDate", "DESC")
-      .getRawMany();
+      .getRawAndEntities();
+
+    return mapFromRawAndEntities<AssessmentHistory>(queryResult, "status");
+  }
+
+  /**
+   * Checks if some student assessment is still being processed.
+   * Only one student assessment can be processed at a given time because
+   * any assessment can generate Over Awards and they must be taken into
+   * the consideration every time.
+   * * Alongside with the check, the DB has an index to prevent that a new
+   * * assessment record is created when there is already one with the
+   * * assessment data not populated (submitted/pending).
+   * @param userId user id to check the assessments.
+   * @returns true if there is an assessment that is not finalized yet.
+   */
+  async hasIncompleteAssessment(userId: number): Promise<boolean> {
+    const queryResult = await this.repo
+      .createQueryBuilder("assessment")
+      .select("1")
+      .innerJoin("assessment.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("user.id = :userId", { userId })
+      .andWhere("assessment.assessmentData IS NULL")
+      .limit(1)
+      .getRawOne();
+    return !!queryResult;
+  }
+
+  /**
+   * Validate if the student has any student assessment that it is not
+   * finished yet (submitted/pending). If there is a student assessment
+   * already being processed, throws an exception.
+   * @param userId user id to check the assessments.
+   */
+  async assertAllAssessmentsCompleted(userId: number) {
+    const hasIncompleteAssessment = await this.hasIncompleteAssessment(userId);
+    if (hasIncompleteAssessment) {
+      throw new CustomNamedError(
+        "There is already an assessment waiting to be completed. Another assessment cannot be initiated at this time.",
+        ASSESSMENT_ALREADY_IN_PROGRESS,
+      );
+    }
   }
 }

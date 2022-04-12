@@ -1,9 +1,9 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
 import {
-  StudentAppealApiOutDTO,
-  StudentAppealApprovalApiInDTO,
-  StudentAppealRequestApiInDTO,
+  StudentAppealAPIInDTO,
+  StudentAppealAPIOutDTO,
+  StudentAppealApprovalAPIInDTO,
+  StudentAppealRequestApprovalAPIInDTO,
 } from "./dto/StudentAppeal.dto";
 
 /**
@@ -12,9 +12,9 @@ import {
 export class StudentAppealApi extends HttpBaseClient {
   async submitStudentAppeal(
     applicationId: number,
-    studentAppeal: StudentAppealDTO,
+    studentAppeal: StudentAppealAPIInDTO,
   ): Promise<void> {
-    await this.postCall<StudentAppealDTO>(
+    await this.postCall<StudentAppealAPIInDTO>(
       this.addClientRoot(`appeal/application/${applicationId}`),
       studentAppeal,
     );
@@ -22,20 +22,19 @@ export class StudentAppealApi extends HttpBaseClient {
 
   async getStudentAppealWithRequests(
     appealId: number,
-  ): Promise<StudentAppealApiOutDTO> {
-    return this.getCallTyped<StudentAppealApiOutDTO>(
+  ): Promise<StudentAppealAPIOutDTO> {
+    return this.getCallTyped<StudentAppealAPIOutDTO>(
       this.addClientRoot(`appeal/${appealId}/requests`),
     );
   }
 
   async approveStudentAppealRequests(
     appealId: number,
-    approvals: StudentAppealRequestApiInDTO[],
+    approvals: StudentAppealRequestApprovalAPIInDTO[],
   ): Promise<void> {
-    const payload = { requests: approvals } as StudentAppealApprovalApiInDTO;
-    return this.patchCall(
+    return this.patchCall<StudentAppealApprovalAPIInDTO>(
       this.addClientRoot(`appeal/${appealId}/requests`),
-      payload,
+      { requests: approvals },
     );
   }
 }

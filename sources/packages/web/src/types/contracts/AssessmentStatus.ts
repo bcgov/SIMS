@@ -1,7 +1,3 @@
-import { AssessmentTriggerType } from "./AssessmentTrigger";
-import { ScholasticStandingStatus } from "./ScholasticStandingStatus";
-import { StudentAppealStatus } from "./StudentAppealStatus";
-
 /**
  * Possible status for an Assessment, when the Application_status is in Assessment
  */
@@ -23,6 +19,7 @@ export enum AssessmentStatus {
    */
   declined = "Declined",
 }
+
 /**
  * Assessment History Status
  */
@@ -40,17 +37,4 @@ export enum StudentAssessmentStatus {
   // and assessmentData is not null, then status
   // is Completed.
   Completed = "Completed",
-}
-
-export interface RequestAssessmentSummaryApiOutDTO {
-  submittedDate: Date;
-  status: StudentAppealStatus | ScholasticStandingStatus;
-  triggerType: AssessmentTriggerType;
-}
-
-export interface AssessmentHistorySummaryDTO {
-  submittedDate: Date;
-  status: StudentAssessmentStatus;
-  triggerType: AssessmentTriggerType;
-  assessmentDate: Date;
 }

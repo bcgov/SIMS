@@ -1,9 +1,10 @@
 import ApiClient from "@/services/http/ApiClient";
-import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
+import { StudentAppealRequest } from "@/types";
 import {
-  StudentAppealApiOutDTO,
-  StudentAppealRequestApiInDTO,
-} from "./http/dto/StudentAppeal.dto";
+  StudentAppealAPIOutDTO,
+  StudentAppealRequestAPIInDTO,
+  StudentAppealRequestApprovalAPIInDTO,
+} from "@/services/http/dto/StudentAppeal.dto";
 
 /**
  * Client service layer for Student Appeal.
@@ -18,23 +19,29 @@ export class StudentAppealService {
 
   async submitStudentAppeal(
     applicationId: number,
-    studentAppeal: StudentAppealDTO,
+    appealRequests: StudentAppealRequest[],
   ): Promise<void> {
-    await ApiClient.StudentAppealApi.submitStudentAppeal(
-      applicationId,
-      studentAppeal,
+    const studentAppealRequests = appealRequests.map(
+      (request) =>
+        ({
+          formName: request.formName,
+          formData: request.data,
+        } as StudentAppealRequestAPIInDTO),
     );
+    await ApiClient.StudentAppealApi.submitStudentAppeal(applicationId, {
+      studentAppealRequests,
+    });
   }
 
   async getStudentAppealWithRequests(
     appealId: number,
-  ): Promise<StudentAppealApiOutDTO> {
+  ): Promise<StudentAppealAPIOutDTO> {
     return ApiClient.StudentAppealApi.getStudentAppealWithRequests(appealId);
   }
 
   async approveStudentAppealRequests(
     appealId: number,
-    approvals: StudentAppealRequestApiInDTO[],
+    approvals: StudentAppealRequestApprovalAPIInDTO[],
   ): Promise<void> {
     await ApiClient.StudentAppealApi.approveStudentAppealRequests(
       appealId,

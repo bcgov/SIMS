@@ -92,7 +92,7 @@ var csgptGrant = execution.getVariable("CSGPTGrant");
 var firstDisbursementDate = execution.getVariable("firstDisbursementDate");
 var secondDisbursementDate = execution.getVariable("secondDisbursementDate");
   var CSPTPayload = {
-    valueCode: "CSPT",
+    valueCode: "CSGPT",
     valueType: "Canada Grant",
   };
   if (firstDisbursementDate &amp;&amp; secondDisbursementDate) {

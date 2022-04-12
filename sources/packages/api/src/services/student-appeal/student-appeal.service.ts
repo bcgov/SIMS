@@ -6,6 +6,7 @@ import {
   AssessmentTriggerType,
   Note,
   NoteType,
+  Student,
   StudentAppeal,
   StudentAppealRequest,
   StudentAppealStatus,
@@ -24,6 +25,7 @@ import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
 } from "./constants";
+import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 
 /**
  * Service layer for Student appeals.
@@ -31,8 +33,9 @@ import {
 @Injectable()
 export class StudentAppealService extends RecordDataModelService<StudentAppeal> {
   constructor(
-    connection: Connection,
+    private readonly connection: Connection,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super(connection.getRepository(StudentAppeal));
   }
@@ -215,10 +218,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "studentAssessment.id",
         "appealRequest.id",
         "application.id",
-        "application.data",
+        "student.id",
       ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
       .innerJoin("studentAppeal.application", "application")
+      .innerJoin("application.student", "student")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
       // Ensures that the provided appeal requests IDs belongs to the appeal.
@@ -260,37 +264,52 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const auditUser = { id: auditUserId } as User;
     const auditDate = new Date();
 
-    appealToUpdate.appealRequests = approvals.map(
-      (approval) =>
-        ({
+    return this.connection.transaction(async (transactionalEntityManager) => {
+      appealToUpdate.appealRequests = [];
+      for (const approval of approvals) {
+        // Create the new note.
+        const note = await transactionalEntityManager.getRepository(Note).save({
+          noteType: NoteType.Application,
+          description: approval.noteDescription,
+          creator: auditUser,
+        } as Note);
+        // Associate the new note with the student.
+        await transactionalEntityManager
+          .getRepository(Student)
+          .createQueryBuilder()
+          .relation(Student, "notes")
+          .of({ id: appealToUpdate.application.student.id } as Student)
+          .add(note);
+        // Update the appeal with the associated student note.
+        appealToUpdate.appealRequests.push({
           id: approval.id,
           appealStatus: approval.appealStatus,
-          note: {
-            noteType: NoteType.General,
-            description: approval.noteDescription,
-          } as Note,
+          note,
           modifier: auditUser,
           assessedBy: auditUser,
           assessedDate: auditDate,
-        } as StudentAppealRequest),
-    );
+        } as StudentAppealRequest);
+      }
 
-    // Check is at least one appeal was approved and an assessment is needed.
-    if (
-      appealToUpdate.appealRequests.some(
-        (request) => request.appealStatus === StudentAppealStatus.Approved,
-      )
-    ) {
-      // Create the new assessment to be processed.
-      appealToUpdate.studentAssessment = {
-        application: { id: appealToUpdate.application.id } as Application,
-        triggerType: AssessmentTriggerType.StudentAppeal,
-        creator: auditUser,
-        submittedBy: auditUser,
-        submittedDate: auditDate,
-      } as StudentAssessment;
-    }
+      // Check if at least one appeal was approved and an assessment is needed.
+      if (
+        appealToUpdate.appealRequests.some(
+          (request) => request.appealStatus === StudentAppealStatus.Approved,
+        )
+      ) {
+        // Create the new assessment to be processed.
+        appealToUpdate.studentAssessment = {
+          application: { id: appealToUpdate.application.id } as Application,
+          triggerType: AssessmentTriggerType.StudentAppeal,
+          creator: auditUser,
+          submittedBy: auditUser,
+          submittedDate: auditDate,
+        } as StudentAssessment;
+      }
 
-    return this.repo.save(appealToUpdate);
+      return transactionalEntityManager
+        .getRepository(StudentAppeal)
+        .save(appealToUpdate);
+    });
   }
 }

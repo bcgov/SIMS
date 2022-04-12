@@ -65,7 +65,7 @@ export class FormService {
    * @param formName Name of the form to be validated.
    * @param data Data to be validated/processed.
    * @returns Status indicating if the data being submitted is valid or not
-   * alongside with the data after formio procecessing.
+   * alongside with the data after formio processing.
    */
   async dryRunSubmission(
     formName: string,
@@ -74,12 +74,11 @@ export class FormService {
     try {
       const authHeader = await this.createAuthHeader();
       const submissionResponse = await axios.post(
-        `${this.config.formsUrl}/${formName}/submission?dryrun=1`,
+        `${this.config.formsUrl}/${formName}/submission?dryRun=1`,
         { data },
         authHeader,
       );
-
-      return { valid: true, data: submissionResponse.data };
+      return { valid: true, data: submissionResponse.data, formName };
     } catch (error) {
       if (error.response?.data) {
         this.logger.warn(
@@ -88,7 +87,7 @@ export class FormService {
         this.logger.warn(error.response.data);
       }
       if (error.response.status === HttpStatus.BAD_REQUEST) {
-        return { valid: false };
+        return { valid: false, formName };
       }
       throw error;
     }
