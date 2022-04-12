@@ -21,7 +21,7 @@ export interface InstitutionLocationFormAPIInDTO {
 
 export interface InstitutionLocationFormAPIOutDTO {
   addressLine1: string;
-  addressLine2: string;
+  addressLine2?: string;
   city: string;
   country: string;
   locationName: string;
