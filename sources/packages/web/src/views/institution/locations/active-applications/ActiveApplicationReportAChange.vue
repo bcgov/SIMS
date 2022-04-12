@@ -12,12 +12,9 @@ import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import formio from "@/components/generic/formio.vue";
 import { InstitutionService } from "@/services/InstitutionService";
-import {
-  FormIOCustomEvent,
-  FormIOCustomEventTypes,
-  ApplicationDetails,
-} from "@/types";
+import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -35,7 +32,7 @@ export default {
   },
   setup(props: any) {
     const router = useRouter();
-    const initialData = ref({} as ApplicationDetails);
+    const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
     const loadInitialData = async () => {
       initialData.value = await InstitutionService.shared.getActiveApplication(
         props.applicationId,

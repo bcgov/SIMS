@@ -89,6 +89,7 @@ import TitleValue from "@/components/generic/TitleValue.vue";
 import { InstitutionLocationsDetails } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
+import { InstitutionLocationAPIOutDTO } from "@/services/http/dto";
 
 export default {
   components: {
@@ -117,20 +118,14 @@ export default {
         },
       });
     };
-    const institutionLocationList = ref([] as InstitutionLocationsDetails[]);
+    const institutionLocationList = ref([] as InstitutionLocationAPIOutDTO[]);
+
+    //The institutionId is passed for ministry API
     const getInstitutionLocationList = async () => {
-      switch (clientType.value) {
-        case ClientIdType.Institution:
-          institutionLocationList.value =
-            await InstitutionService.shared.getAllInstitutionLocations();
-          break;
-        case ClientIdType.AEST:
-          institutionLocationList.value =
-            await InstitutionService.shared.getAllInstitutionLocationSummary(
-              props.institutionId,
-            );
-          break;
-      }
+      institutionLocationList.value =
+        await InstitutionService.shared.getAllInstitutionLocations(
+          props.institutionId,
+        );
     };
 
     const addressList1 = (item: InstitutionLocationsDetails) => {

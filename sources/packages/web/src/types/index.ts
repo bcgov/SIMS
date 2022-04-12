@@ -24,7 +24,6 @@ export * from "@/types/contracts/student/ApplicationContract";
 export * from "@/types/contracts/institution/ConfirmationOfEnrollment";
 export * from "@/types/formio";
 export * from "@/types/contracts/AssessmentStatus";
-export * from "@/types/contracts/institution/Application";
 export * from "@/types/contracts/Common";
 export * from "@/types/contracts/supporting-user/SupportingUserContracts";
 export * from "@/types/contracts/GeneralStatusForBadge";

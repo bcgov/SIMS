@@ -3,11 +3,14 @@ import { LocationWithDesignationStatus } from "../../services/institution-locati
 import { InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
-  InstitutionLocationsDetailsDto,
+  InstitutionLocationAPIOutDTO,
 } from "./models/institution-location.dto";
 
+/**
+ * Controller service for institution location.
+ */
 @Injectable()
-export class InstitutionLocationsControllerService {
+export class InstitutionLocationControllerService {
   constructor(private readonly locationService: InstitutionLocationService) {}
 
   /**
@@ -18,7 +21,7 @@ export class InstitutionLocationsControllerService {
    */
   async getInstitutionLocations(
     institutionId: number,
-  ): Promise<InstitutionLocationsDetailsDto[]> {
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
     const institutionsWithDesignationStatus =
       await this.locationService.getLocations(institutionId);
     return institutionsWithDesignationStatus.map(
@@ -46,7 +49,7 @@ export class InstitutionLocationsControllerService {
             primaryContactPhone: el.primaryContact?.phoneNumber,
           },
           institutionCode: el.institutionCode,
-        } as InstitutionLocationsDetailsDto;
+        };
       },
     );
   }

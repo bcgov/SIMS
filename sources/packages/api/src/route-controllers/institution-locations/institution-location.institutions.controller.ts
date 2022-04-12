@@ -1,70 +1,80 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
   Get,
-  Post,
-  Patch,
-  Param,
-  Body,
-  UnprocessableEntityException,
-  ForbiddenException,
   NotFoundException,
+  Param,
+  Patch,
+  Post,
 } from "@nestjs/common";
-import BaseController from "../BaseController";
 import {
-  InstitutionService,
-  ApplicationService,
-  InstitutionLocationService,
-  FormService,
-} from "../../services";
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+} from "@nestjs/swagger";
+import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-  InstitutionLocationsDetailsDto,
-  InstitutionLocationTypeDto,
-} from "./models/institution-location.dto";
-import { UserToken } from "../../auth/decorators/userToken.decorator";
-import {
-  IInstitutionUserToken,
-  IUserToken,
-} from "../../auth/userToken.interface";
-import {
+  AllowAuthorizedParty,
   HasLocationAccess,
   IsInstitutionAdmin,
-  AllowAuthorizedParty,
+  UserToken,
 } from "../../auth/decorators";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { OptionItem } from "../../types";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import {
-  ActiveApplicationSummaryDTO,
-  ActiveApplicationDataDto,
-} from "../application/models/application.model";
+  ApplicationService,
+  FormService,
+  InstitutionLocationService,
+} from "../../services";
+import { ClientTypeBaseRoute } from "../../types";
 import {
-  getUserFullName,
   dateString,
   getISODateOnlyString,
+  getUserFullName,
 } from "../../utilities";
-import { InstitutionLocation, Application } from "../../database/entities";
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { InstitutionLocationsControllerService } from "./institution-locations.controller.service";
+import {
+  ActiveApplicationDataAPIOutDTO,
+  ActiveApplicationSummaryAPIOutDTO,
+} from "./models/application.dto";
+import BaseController from "../BaseController";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { InstitutionLocationControllerService } from "./institution-location.controller.service";
+import {
+  InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIInDTO,
+  InstitutionLocationFormAPIOutDTO,
+} from "./models/institution-location.dto";
 
+/**
+ * Institution location controller for institutions Client.
+ */
+@AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-@ApiTags("institution")
-export class InstitutionLocationsController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.Institution}-institution/location`)
+export class InstitutionLocationInstitutionsController extends BaseController {
   constructor(
-    private readonly locationControllerService: InstitutionLocationsControllerService,
+    private readonly locationControllerService: InstitutionLocationControllerService,
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
-    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
+  /**
+   * Create an Institution location.
+   * @param payload
+   * @returns Primary identifier of created location.
+   */
+  @ApiBadRequestResponse({
+    description: "Invalid request to create an institution location.",
+  })
   @IsInstitutionAdmin()
   @Post()
   async create(
-    @Body() payload: InstitutionLocationTypeDto,
-    @UserToken() userToken: IUserToken,
-  ): Promise<number> {
+    @Body() payload: InstitutionLocationFormAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       "institutionlocation",
@@ -72,38 +82,38 @@ export class InstitutionLocationsController extends BaseController {
     );
 
     if (!dryRunSubmissionResult.valid) {
-      throw new UnprocessableEntityException(
+      throw new BadRequestException(
         "Not able to create the institution location due to an invalid request.",
-      );
-    }
-
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find an institution associated with the current user name.",
       );
     }
 
     // If the data is valid the location is saved to SIMS DB.
     const createdInstitutionLocation =
       await this.locationService.createLocation(
-        institutionDetails.id,
+        userToken.authorizations.institutionId,
         dryRunSubmissionResult.data,
       );
 
-    return createdInstitutionLocation.id;
+    return { id: createdInstitutionLocation.id };
   }
 
-  @AllowAuthorizedParty(AuthorizedParties.institution)
+  /**
+   * Update an institution location.
+   * @param locationId
+   * @param payload
+   * @returns number of updated rows.
+   */
+  @ApiBadRequestResponse({
+    description: "Invalid request to update the institution location.",
+  })
+  @HasLocationAccess("locationId")
   @IsInstitutionAdmin()
   @Patch(":locationId")
   async update(
     @Param("locationId") locationId: number,
-    @Body() payload: InstitutionLocationTypeDto,
+    @Body() payload: InstitutionLocationFormAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
+  ): Promise<void> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       "institutionlocation",
@@ -111,47 +121,29 @@ export class InstitutionLocationsController extends BaseController {
     );
 
     if (!dryRunSubmissionResult.valid) {
-      throw new UnprocessableEntityException(
+      throw new BadRequestException(
         "Not able to create the institution location due to an invalid request.",
       );
     }
 
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    const requestedLoc = await this.locationService.getInstitutionLocationById(
-      locationId,
-    );
-    if (institutionDetails.id !== requestedLoc.institution.id) {
-      throw new ForbiddenException();
-    }
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find an associated with the current user name.",
-      );
-    }
     // If the data is valid the location is updated to SIMS DB.
-    const updateResult = await this.locationService.updateLocation(
+    await this.locationService.updateLocation(
       locationId,
-      institutionDetails.id,
+      userToken.authorizations.institutionId,
       dryRunSubmissionResult.data.data,
     );
-    return updateResult.affected;
   }
+
   /**
    * Controller method to get institution locations with designation status for the given institution.
    * @param userToken
-   * @returns An array of InstitutionLocationsDetailsDto.
+   * @returns Details of all locations of an institution.
    */
-  @ApiOkResponse({
-    description: "Institution locations with their designation status found.",
-  })
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @IsInstitutionAdmin()
   @Get()
   async getAllInstitutionLocations(
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<InstitutionLocationsDetailsDto[]> {
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
     // get all institution locations with designation statuses.
     return this.locationControllerService.getInstitutionLocations(
       userToken.authorizations.institutionId,
@@ -168,11 +160,11 @@ export class InstitutionLocationsController extends BaseController {
   @Get(":locationId/active-applications")
   async getActiveApplications(
     @Param("locationId") locationId: number,
-  ): Promise<ActiveApplicationSummaryDTO[]> {
+  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
     const applications = await this.applicationService.getActiveApplications(
       locationId,
     );
-    return applications.map((eachApplication: Application) => {
+    return applications.map((eachApplication) => {
       const offering = eachApplication.currentAssessment?.offering;
       return {
         applicationNumber: eachApplication.applicationNumber,
@@ -182,48 +174,25 @@ export class InstitutionLocationsController extends BaseController {
         applicationStatus: eachApplication.applicationStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };
-    }) as ActiveApplicationSummaryDTO[];
+    });
   }
 
-  /**
-   * Get a key/value pair list of all locations
-   * from all institution available.
-   * @returns key/value pair list of all locations.
-   */
-  @AllowAuthorizedParty(AuthorizedParties.student)
-  @Get("options-list")
-  async getOptionsList(): Promise<OptionItem[]> {
-    const locations = await this.locationService.getDesignatedLocations();
-    return locations.map((location) => ({
-      id: location.id,
-      description: location.name,
-    }));
-  }
   /**
    * Controller method to retrieve institution location by id.
    * @param locationId
    * @param userToken
    * @returns institution location.
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
   @HasLocationAccess("locationId")
   @Get(":locationId")
   async getInstitutionLocation(
     @Param("locationId") locationId: number,
-    @UserToken() userToken: IUserToken,
-  ): Promise<InstitutionLocationTypeDto> {
-    //To retrieve institution id
-    const institutionDetails =
-      await this.institutionService.getInstituteByUserName(userToken.userName);
-    if (!institutionDetails) {
-      throw new UnprocessableEntityException(
-        "Not able to find the Location associated.",
-      );
-    }
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
     // get all institution locations.
-    const institutionLocation: InstitutionLocation =
+    const institutionLocation =
       await this.locationService.getInstitutionLocation(
-        institutionDetails.id,
+        userToken.authorizations.institutionId,
         locationId,
       );
 
@@ -240,21 +209,22 @@ export class InstitutionLocationsController extends BaseController {
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-    } as InstitutionLocationTypeDto;
+    };
   }
 
   /**
    * Get active application details.
-   * @param applicationId application id.
-   * @returns application Details
+   * @param applicationId active application of the location.
+   * @param locationId
+   * @returns active application Details
    */
-  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @ApiNotFoundResponse({ description: "Application not found." })
   @HasLocationAccess("locationId")
   @Get(":locationId/active-application/:applicationId")
   async getActiveApplication(
     @Param("locationId") locationId: number,
     @Param("applicationId") applicationId: number,
-  ): Promise<ActiveApplicationDataDto> {
+  ): Promise<ActiveApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getActiveApplication(
       applicationId,
       locationId,

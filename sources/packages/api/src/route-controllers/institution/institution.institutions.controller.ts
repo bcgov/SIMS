@@ -15,14 +15,14 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
+import { ClientTypeBaseRoute } from "../../types";
 
 /**
  * Institution controller for institutions Client.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@IsInstitutionAdmin()
 @Controller("institution")
-@ApiTags("institution")
+@ApiTags(`${ClientTypeBaseRoute.Institution}-institution`)
 export class InstitutionInstitutionsController extends BaseController {
   constructor(
     private readonly institutionService: InstitutionService,
@@ -35,6 +35,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * Get institution details of given institution.
    * @returns InstitutionDetailDTO
    */
+  @IsInstitutionAdmin()
   @Get()
   async getInstitutionDetail(
     @UserToken() token: IInstitutionUserToken,
@@ -48,6 +49,7 @@ export class InstitutionInstitutionsController extends BaseController {
    * Update institution profile details.
    * @param payload
    */
+  @IsInstitutionAdmin()
   @Patch()
   async update(
     @Body() payload: InstitutionContactDTO,

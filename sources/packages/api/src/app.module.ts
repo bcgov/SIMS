@@ -46,7 +46,6 @@ import {
   InstitutionController,
   ConfigController,
   DynamicFormController,
-  InstitutionLocationsController,
   CRAIntegrationController,
   EducationProgramController,
   EducationProgramOfferingController,
@@ -61,6 +60,7 @@ import {
   FedRestrictionsIntegrationController,
   NotesController,
   RestrictionController,
+  InstitutionLocationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -74,7 +74,6 @@ import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
 import { AppStudentsModule } from "./app.students.module";
 import { AppSystemAccessModule } from "./app.system-access.module";
-import { InstitutionLocationsControllerService } from "./route-controllers/institution-locations/institution-locations.controller.service";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 
 @Module({
@@ -123,7 +122,6 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     InstitutionController,
     ConfigController,
     DynamicFormController,
-    InstitutionLocationsController,
     CRAIntegrationController,
     EducationProgramController,
     EducationProgramOfferingController,
@@ -173,7 +171,7 @@ import { AppSupportingUsersModule } from "./app.supporting-users.module";
     SINValidationService,
     DesignationAgreementLocationService,
     StudentAssessmentService,
-    InstitutionLocationsControllerService,
+    InstitutionLocationControllerService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
   ],
