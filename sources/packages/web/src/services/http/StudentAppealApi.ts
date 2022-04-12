@@ -32,9 +32,13 @@ export class StudentAppealApi extends HttpBaseClient {
     appealId: number,
     approvals: StudentAppealRequestApprovalAPIInDTO[],
   ): Promise<void> {
-    return this.patchCall<StudentAppealApprovalAPIInDTO>(
-      this.addClientRoot(`appeal/${appealId}/requests`),
-      { requests: approvals },
-    );
+    try {
+      await this.patchCall<StudentAppealApprovalAPIInDTO>(
+        this.addClientRoot(`appeal/${appealId}/requests`),
+        { requests: approvals },
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 }
