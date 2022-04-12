@@ -4,7 +4,6 @@ export default class InstitutionCustomCommand {
   loginInstitution() {
     const loginInstituteObject = new LoginInstituteObject();
 
-    const url = Cypress.env("instituteURL");
     const username = Cypress.env("bceid");
     const password = Cypress.env("password");
 
