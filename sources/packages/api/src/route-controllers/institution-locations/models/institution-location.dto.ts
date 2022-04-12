@@ -57,7 +57,18 @@ export class InstitutionLocationFormAPIOutDTO {
   primaryContactPhone: string;
 }
 
-export class InstitutionPrimaryContactDTO {
+export class InstitutionPrimaryContactInDTO {
+  @Allow()
+  primaryContactFirstName: string;
+  @Allow()
+  primaryContactLastName: string;
+  @Allow()
+  primaryContactEmail: string;
+  @Allow()
+  primaryContactPhone: string;
+}
+
+export class InstitutionPrimaryContactOutDTO {
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
@@ -73,10 +84,7 @@ export class InstitutionLocationAPIOutDTO {
   data: {
     address: AddressInfoOutDTO;
   };
-  primaryContact: InstitutionPrimaryContactDTO;
-  institution: {
-    institutionPrimaryContact: InstitutionPrimaryContactDTO;
-  };
+  primaryContact: InstitutionPrimaryContactOutDTO;
   institutionCode: string;
   designationStatus: DesignationStatus;
 }

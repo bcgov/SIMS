@@ -14,7 +14,7 @@ import {
   StudentAppealService,
 } from "../../services";
 import { StudentAppealAPIInDTO } from "./models/student-appeal.dto";
-import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -66,7 +66,7 @@ export class StudentAppealStudentsController extends BaseController {
     @Param("applicationId") applicationId: number,
     @Body() payload: StudentAppealAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<PrimaryIdentifierDTO> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const application = this.applicationService.getApplicationToRequestAppeal(
       userToken.userId,
       undefined,

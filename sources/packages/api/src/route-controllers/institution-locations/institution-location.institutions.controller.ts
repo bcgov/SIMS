@@ -35,9 +35,9 @@ import {
 import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
-} from "../application/models/application.dto";
+} from "./models/application.dto";
 import BaseController from "../BaseController";
-import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
   InstitutionLocationAPIOutDTO,
@@ -50,7 +50,7 @@ import {
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("institution/location")
-@ApiTags(`${ClientTypeBaseRoute.Institution}-institution`)
+@ApiTags(`${ClientTypeBaseRoute.Institution}-institution/location`)
 export class InstitutionLocationInstitutionsController extends BaseController {
   constructor(
     private readonly locationControllerService: InstitutionLocationControllerService,
@@ -74,7 +74,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
   async create(
     @Body() payload: InstitutionLocationFormAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<PrimaryIdentifierDTO> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       "institutionlocation",
@@ -101,6 +101,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
    * Update an institution location.
    * @param locationId
    * @param payload
+   * @returns number of updated rows.
    */
   @ApiBadRequestResponse({
     description: "Invalid request to update the institution location.",
@@ -112,7 +113,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     @Param("locationId") locationId: number,
     @Body() payload: InstitutionLocationFormAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<number> {
+  ): Promise<void> {
     // Validate the location data that will be saved to SIMS DB.
     const dryRunSubmissionResult = await this.formService.dryRunSubmission(
       "institutionlocation",
@@ -126,18 +127,17 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     }
 
     // If the data is valid the location is updated to SIMS DB.
-    const updateResult = await this.locationService.updateLocation(
+    await this.locationService.updateLocation(
       locationId,
       userToken.authorizations.institutionId,
       dryRunSubmissionResult.data.data,
     );
-    return updateResult.affected;
   }
 
   /**
    * Controller method to get institution locations with designation status for the given institution.
    * @param userToken
-   * @returns An array of InstitutionLocationsDetailsDto.
+   * @returns Details of all locations of an institution.
    */
   @IsInstitutionAdmin()
   @Get()
@@ -174,7 +174,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
         applicationStatus: eachApplication.applicationStatus,
         fullName: getUserFullName(eachApplication.student.user),
       };
-    }) as ActiveApplicationSummaryAPIOutDTO[];
+    });
   }
 
   /**
@@ -209,13 +209,14 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,
       primaryContactPhone: institutionLocation.primaryContact.phoneNumber,
-    } as InstitutionLocationFormAPIOutDTO;
+    };
   }
 
   /**
    * Get active application details.
-   * @param applicationId application id.
-   * @returns application Details
+   * @param applicationId active application of the location.
+   * @param locationId
+   * @returns active application Details
    */
   @ApiNotFoundResponse({ description: "Application not found." })
   @HasLocationAccess("locationId")

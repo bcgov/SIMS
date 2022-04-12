@@ -1,3 +1,5 @@
+import { ApplicationStatus } from "../../../database/entities";
+
 export class ActiveApplicationDataAPIOutDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
@@ -8,7 +10,7 @@ export class ActiveApplicationDataAPIOutDTO {
   applicationStudentName: string;
   applicationNumber: string;
   applicationLocationName: string;
-  applicationStatus: string;
+  applicationStatus: ApplicationStatus;
 }
 
 export class ActiveApplicationSummaryAPIOutDTO {
@@ -16,6 +18,6 @@ export class ActiveApplicationSummaryAPIOutDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
-  applicationStatus: string;
+  applicationStatus: ApplicationStatus;
   fullName: string;
 }

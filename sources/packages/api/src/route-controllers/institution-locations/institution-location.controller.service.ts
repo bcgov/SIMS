@@ -49,7 +49,7 @@ export class InstitutionLocationControllerService {
             primaryContactPhone: el.primaryContact?.phoneNumber,
           },
           institutionCode: el.institutionCode,
-        } as InstitutionLocationAPIOutDTO;
+        };
       },
     );
   }

@@ -14,7 +14,7 @@ import { InstitutionLocationAPIOutDTO } from "./models/institution-location.dto"
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("institution/location")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-institution`)
+@ApiTags(`${ClientTypeBaseRoute.AEST}-institution/location`)
 export class InstitutionLocationAESTController extends BaseController {
   constructor(
     private readonly locationControllerService: InstitutionLocationControllerService,
@@ -25,7 +25,7 @@ export class InstitutionLocationAESTController extends BaseController {
   /**
    * Controller method to get institution locations with designation status for the given institution.
    * @param institutionId
-   * @returns An array of InstitutionLocationsDetailsDto.
+   * @returns Institution locations form.io for drop down.
    */
   @Get("/:institutionId")
   async getAllInstitutionLocations(

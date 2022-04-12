@@ -3,6 +3,6 @@
  ** This DTO can be returned on all the POST APIs returning the
  ** primary identifier of the resource created.
  */
-export class PrimaryIdentifierDTO {
+export class PrimaryIdentifierAPIOutDTO {
   id: number;
 }
