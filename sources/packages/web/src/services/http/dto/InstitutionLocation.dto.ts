@@ -41,9 +41,6 @@ export interface InstitutionLocationAPIOutDTO {
     address: AddressInfo;
   };
   primaryContact: InstitutionPrimaryContact;
-  institution: {
-    institutionPrimaryContact: InstitutionPrimaryContact;
-  };
   institutionCode: string;
   designationStatus: DesignationAgreementStatus;
 }
