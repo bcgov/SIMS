@@ -105,10 +105,6 @@ export class StudentAppealAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      await this.studentAssessmentService.assertAllAssessmentsCompleted(
-        userToken.userId,
-      );
-
       const savedAppeal = await this.studentAppealService.approveRequests(
         appealId,
         payload.requests,

@@ -219,10 +219,12 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "appealRequest.id",
         "application.id",
         "student.id",
+        "user.id",
       ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
       // Ensures that the provided appeal requests IDs belongs to the appeal.
@@ -260,6 +262,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         STUDENT_APPEAL_INVALID_OPERATION,
       );
     }
+
+    await this.studentAssessmentService.assertAllAssessmentsCompleted(
+      appealToUpdate.application.student.user.id,
+    );
 
     const auditUser = { id: auditUserId } as User;
     const auditDate = new Date();
