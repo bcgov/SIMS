@@ -112,15 +112,6 @@ export interface GetApplicationDataDto extends GetApplicationBaseDTO {
   programYearEndDate: Date;
 }
 
-export interface ApplicationSummaryDTO {
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-  applicationId: number;
-  coeStatus: string;
-  fullName: string;
-}
-
 export interface StudentApplicationDetails {
   applicationStatusUpdatedOn: string;
   applicationNumber: string;

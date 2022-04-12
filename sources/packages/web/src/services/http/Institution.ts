@@ -3,7 +3,6 @@ import {
   InstitutionDto,
   InstitutionUserAndAuthDetailsForStore,
   OptionItemDto,
-  ApplicationSummaryDTO,
   SearchInstitutionResp,
   BasicInstitutionInfo,
   InstitutionUserAndCount,
@@ -17,6 +16,7 @@ import {
   InstitutionContactDTO,
   InstitutionProfileDTO,
 } from "@/types";
+import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 
 export class InstitutionApi extends HttpBaseClient {
   public async createInstitution(
@@ -122,8 +122,8 @@ export class InstitutionApi extends HttpBaseClient {
 
   public async getActiveApplicationsSummary(
     locationId: number,
-  ): Promise<ApplicationSummaryDTO[]> {
-    return this.getCallTyped<ApplicationSummaryDTO[]>(
+  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
+    return this.getCallTyped<ActiveApplicationSummaryAPIOutDTO[]>(
       this.addClientRoot(
         `institution/location/${locationId}/active-applications`,
       ),

@@ -152,7 +152,7 @@ export default {
           by merging the institution locations list with designation locations list
         */
         const institutionLocations =
-          await InstitutionService.shared.getAllInstitutionLocationSummary(
+          await InstitutionService.shared.getAllInstitutionLocations(
             designationAgreement.value.institutionId,
           );
         //On re-approval of same designation start date and end date should be preloaded.

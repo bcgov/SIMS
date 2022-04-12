@@ -7,7 +7,6 @@ import {
 import {
   InstitutionDto,
   EducationProgram,
-  InstitutionLocation,
   InstitutionLocationsDetails,
   InstitutionUserAuthDetails,
   InstitutionUserResDto,
@@ -18,8 +17,6 @@ import {
   UserAuth,
   InstitutionUserWithUserType,
   OptionItemDto,
-  ApplicationSummaryDTO,
-  ApplicationDetails,
   DataTableSortOrder,
   UserFields,
   DEFAULT_PAGE_LIMIT,
@@ -33,6 +30,13 @@ import {
 } from "../types";
 import ApiClient from "./http/ApiClient";
 import { AuthService } from "./AuthService";
+import {
+  InstitutionLocationFormAPIInDTO,
+  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationAPIOutDTO,
+  ActiveApplicationDataAPIOutDTO,
+  ActiveApplicationSummaryAPIOutDTO,
+} from "@/services/http/dto";
 
 export class InstitutionService {
   // Share Instance
@@ -90,13 +94,15 @@ export class InstitutionService {
     return ApiClient.Institution.sync();
   }
 
-  public async createInstitutionLocation(data: InstitutionLocation) {
+  public async createInstitutionLocation(
+    data: InstitutionLocationFormAPIInDTO,
+  ) {
     await ApiClient.InstitutionLocation.createInstitutionLocation(data);
   }
 
   public async updateInstitutionLocation(
     locationId: number,
-    institutionLocation: InstitutionLocation,
+    institutionLocation: InstitutionLocationFormAPIInDTO,
   ) {
     await ApiClient.InstitutionLocation.updateInstitutionLocation(
       locationId,
@@ -106,14 +112,16 @@ export class InstitutionService {
 
   public async getInstitutionLocation(
     locationId: number,
-  ): Promise<InstitutionLocationsDetails> {
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
     return await ApiClient.InstitutionLocation.getInstitutionLocation(
       locationId,
     );
   }
 
-  public async getAllInstitutionLocations(institutionId?: number) {
-    return await ApiClient.InstitutionLocation.allInstitutionLocationsApi(
+  public async getAllInstitutionLocations(
+    institutionId?: number,
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
+    return await ApiClient.InstitutionLocation.allInstitutionLocations(
       institutionId,
     );
   }
@@ -329,14 +337,14 @@ export class InstitutionService {
 
   public async getActiveApplicationsSummary(
     locationId: number,
-  ): Promise<ApplicationSummaryDTO[]> {
+  ): Promise<ActiveApplicationSummaryAPIOutDTO[]> {
     return ApiClient.Institution.getActiveApplicationsSummary(locationId);
   }
 
   public async getActiveApplication(
     applicationId: number,
     locationId: number,
-  ): Promise<ApplicationDetails> {
+  ): Promise<ActiveApplicationDataAPIOutDTO> {
     return ApiClient.InstitutionLocation.getActiveApplication(
       applicationId,
       locationId,
@@ -365,18 +373,6 @@ export class InstitutionService {
     institutionId: number,
   ): Promise<BasicInstitutionInfo> {
     return ApiClient.Institution.getBasicInstitutionInfoById(institutionId);
-  }
-
-  /**
-   * Controller method to get institution locations for the given
-   * institutionId for  ministry user.
-   * @param institutionId institution id
-   * @returns All the institution locations for the given institution.
-   */
-  async getAllInstitutionLocationSummary(institutionId: number) {
-    return ApiClient.InstitutionLocation.getAllInstitutionLocationSummary(
-      institutionId,
-    );
   }
 
   /**

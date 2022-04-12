@@ -1,18 +1,22 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  InstitutionLocation,
-  InstitutionLocationsDetails,
   InstitutionUserDto,
   InstitutionLocationUserAuthDto,
   LocationStateForStore,
-  OptionItemDto,
-  ApplicationDetails,
 } from "../../types";
+import {
+  InstitutionLocationFormAPIInDTO,
+  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationAPIOutDTO,
+  ActiveApplicationDataAPIOutDTO,
+} from "@/services/http/dto";
+
+import { OptionItemAPIOutDTO } from "@/services/http/dto";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
-    createInstitutionLocationDto: InstitutionLocation,
+    createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    return this.postCall<InstitutionLocation>(
+    return this.postCall<InstitutionLocationFormAPIInDTO>(
       this.addClientRoot("institution/location"),
       createInstitutionLocationDto,
     );
@@ -20,9 +24,9 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async updateInstitutionLocation(
     locationId: number,
-    updateInstitutionLocationDto: InstitutionLocation,
+    updateInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    return this.patchCall<InstitutionLocation>(
+    return this.patchCall<InstitutionLocationFormAPIInDTO>(
       this.addClientRoot(`institution/location/${locationId}`),
       updateInstitutionLocationDto,
     );
@@ -30,19 +34,19 @@ export class InstitutionLocationApi extends HttpBaseClient {
 
   public async getInstitutionLocation(
     locationId: number,
-  ): Promise<InstitutionLocationsDetails> {
-    return this.getCallTyped<InstitutionLocationsDetails>(
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
+    return this.getCallTyped<InstitutionLocationFormAPIOutDTO>(
       this.addClientRoot(`institution/location/${locationId}`),
     );
   }
 
-  public async allInstitutionLocationsApi(
+  public async allInstitutionLocations(
     institutionId?: number,
-  ): Promise<InstitutionLocationsDetails[]> {
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
     const url = institutionId
       ? `institution/location/${institutionId}`
       : "institution/location";
-    return this.getCallTyped<InstitutionLocationsDetails[]>(
+    return this.getCallTyped<InstitutionLocationAPIOutDTO[]>(
       this.addClientRoot(url),
     );
   }
@@ -129,8 +133,8 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
-  public async getOptionsList(): Promise<OptionItemDto[]> {
-    return this.getCallTyped<OptionItemDto[]>(
+  public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
       this.addClientRoot("institution/location/options-list"),
     );
   }
@@ -138,26 +142,11 @@ export class InstitutionLocationApi extends HttpBaseClient {
   public async getActiveApplication(
     applicationId: number,
     locationId: number,
-  ): Promise<ApplicationDetails> {
-    return this.getCallTyped<ApplicationDetails>(
+  ): Promise<ActiveApplicationDataAPIOutDTO> {
+    return this.getCallTyped<ActiveApplicationDataAPIOutDTO>(
       this.addClientRoot(
         `institution/location/${locationId}/active-application/${applicationId}`,
       ),
     );
-  }
-
-  /**
-   * Controller method to get institution locations for the given
-   * institutionId for  ministry user.
-   * @param institutionId institution id
-   * @returns All the institution locations for the given institution.
-   */
-  public async getAllInstitutionLocationSummary(
-    institutionId: number,
-  ): Promise<InstitutionLocationsDetails[]> {
-    const response = await this.getCall(
-      `institution/${institutionId}/location-summary`,
-    );
-    return (response.data as InstitutionLocationsDetails[]) ?? [];
   }
 }

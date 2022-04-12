@@ -25,7 +25,6 @@ import {
   ApplicationService,
   FormService,
   InstitutionLocationService,
-  InstitutionService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import {
@@ -41,8 +40,8 @@ import BaseController from "../BaseController";
 import { PrimaryIdentifierDTO } from "../models/primary.identifier.dto";
 import { InstitutionLocationControllerService } from "./institution-location.controller.service";
 import {
-  InstitutionLocationFormAPIInDTO,
   InstitutionLocationAPIOutDTO,
+  InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
 } from "./models/institution-location.dto";
 
@@ -58,7 +57,6 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
-    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
