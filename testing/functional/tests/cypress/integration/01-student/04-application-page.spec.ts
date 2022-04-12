@@ -1,34 +1,15 @@
-import WelcomeObject from "../../page-objects/student-objects/WelcomeObject";
-import LoginObject from "../../page-objects/student-objects/LoginObject";
 import ApplicationObject from "../../page-objects/student-objects/ApplicationObject";
+import StudentCustomCommand from "../../custom-command/student/StudentCustomCommand";
 
 describe("Application Page", () => {
-  const welcomeObject = new WelcomeObject();
-  const loginObject = new LoginObject();
   const applicationObject = new ApplicationObject();
+  const studentCustomCommand = new StudentCustomCommand();
 
   const url = Cypress.env("studentURL");
-  const username = Cypress.env("cardSerialNumber");
-  const password = Cypress.env("passcode");
 
   before("Login", () => {
     cy.visit(url);
-    cy.intercept("PUT", "**/device").as("waitCardSerialNumber");
-    welcomeObject.virtualTestingButton().should("be.visible").click();
-    welcomeObject.virtualTestingButtonText().should("be.visible");
-    welcomeObject.virtualDeviceId().click({ force: true });
-    cy.wait("@waitCardSerialNumber");
-    loginObject
-      .cardSerialNumberInputText()
-      .type(username)
-      .should("have.value", username);
-    loginObject.cardSerialNumberContinueButton().click();
-    loginObject
-      .passcodeInputText()
-      .type(password)
-      .should("have.value", password);
-    loginObject.passcodeContinueButton().click();
-    loginObject.verifyLoggedInText();
+    studentCustomCommand.loginStudent();
   });
 
   it("Verify that user able to redirect to Application Page", () => {

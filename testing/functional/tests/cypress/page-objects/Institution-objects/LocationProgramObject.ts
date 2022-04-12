@@ -280,4 +280,20 @@ export default class LocationProgramObject {
   declarationFormForVerification() {
     return cy.get(".field-required > .form-check-input");
   }
+
+  submitButtonStudyPeriod() {
+    return cy.get("#e673e1 > .btn");
+  }
+
+  educationOfferingCreatedAssertion() {
+    return cy.contains("Education Offering created successfully!");
+  }
+
+  searchStudyPeriodInput() {
+    return cy.get(".float-right > .p-inputtext");
+  }
+
+  firstRecordAssertionStudyPeriod() {
+    return cy.get(".p-datatable-tbody > :nth-child(1) > :nth-child(1)");
+  }
 }

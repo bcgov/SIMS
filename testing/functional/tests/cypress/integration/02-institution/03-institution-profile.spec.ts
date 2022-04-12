@@ -1,53 +1,39 @@
-import LoginInstituteObject from "../../page-objects/institute-objects/LoginInstituteObject";
-import DashboardInstituteObject from "../../page-objects/institute-objects/DashboardInstituteObject";
-import InstitutionProfileObject from "../../page-objects/institute-objects/InstitutionProfileObject";
+import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
+import InstitutionProfileObject from "../../page-objects/Institution-objects/InstitutionProfileObject";
+import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 
-describe("Institute Profile", () => {
-  const loginInstituteObject = new LoginInstituteObject();
-  const dashboardInstituteObject = new DashboardInstituteObject();
+describe("Institution Profile", () => {
+  const dashboardInstitutionObject = new DashboardInstitutionObject();
   const institutionObject = new InstitutionProfileObject();
+  const institutionCustomCommand = new InstitutionCustomCommand();
 
   const url = Cypress.env("instituteURL");
-  const username = Cypress.env("bceid");
-  const password = Cypress.env("password");
 
   beforeEach(() => {
     cy.visit(url);
-    cy.intercept("GET", "**/bceid-account").as("bceidAccount");
-    loginInstituteObject.loginWithBCEID().should("be.visible").click();
-    loginInstituteObject.loginInWithBCEIDtext().should("be.visible");
-    loginInstituteObject
-      .bceidInputText()
-      .type(username)
-      .should("have.value", username);
-    loginInstituteObject
-      .passwordInputText()
-      .type(password)
-      .should("have.value", password);
-    loginInstituteObject.continueButton().click();
-    cy.wait("@bceidAccount");
+    institutionCustomCommand.loginInstitution();
   });
 
   it("Verify that user redirect to institute profile page", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionObject.institutionDetailsButton().click();
     institutionObject.institutionInformationText().should("be.visible");
   });
 
   it("Check that legal operating name text field should be disable or not", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionObject.institutionDetailsButton().click();
     institutionObject.legalOperatingNameInputText().should("be.disabled");
   });
 
   it("Clicking on the save button without filling out the required fields", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionObject.institutionDetailsButton().click();
     institutionObject.primaryEmailInputText().clear();
     cy.wait(2000);
@@ -58,9 +44,9 @@ describe("Institute Profile", () => {
     "Check that when user enter data only in non mandatory field and click on next section.",
     { retries: 4 },
     () => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.manageInstitutionButton().click();
-      dashboardInstituteObject.locationVerifyText().should("be.visible");
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.locationVerifyText().should("be.visible");
       institutionObject.institutionDetailsButton().click();
       cy.reload();
       institutionObject.primaryEmailInputText().clear();
@@ -73,9 +59,9 @@ describe("Institute Profile", () => {
 
   it("Check when user enter data only in mandatory field then able to save the details or not.", () => {
     cy.fixture("institutionProfileData").then((data) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.manageInstitutionButton().click();
-      dashboardInstituteObject.locationVerifyText().should("be.visible");
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.locationVerifyText().should("be.visible");
       institutionObject.institutionDetailsButton().click();
       cy.wait(1000);
       institutionObject

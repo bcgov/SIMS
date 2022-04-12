@@ -1,53 +1,37 @@
-import LoginInstituteObject from "../../page-objects/institute-objects/LoginInstituteObject";
-import DashboardInstituteObject from "../../page-objects/institute-objects/DashboardInstituteObject";
-import ManageUsersObject from "../../page-objects/institute-objects/ManageUsersObject";
-import LocationProgramObject from "../../page-objects/institute-objects/LocationProgramObject";
+import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
+import ManageUsersObject from "../../page-objects/Institution-objects/ManageUsersObject";
+import LocationProgramObject from "../../page-objects/Institution-objects/LocationProgramObject";
+import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 
 describe("Location Program", () => {
-  const loginInstituteObject = new LoginInstituteObject();
-  const dashboardInstituteObject = new DashboardInstituteObject();
+  const dashboardInstitutionObject = new DashboardInstitutionObject();
   const manageUsersObject = new ManageUsersObject();
   const locationProgramObject = new LocationProgramObject();
+  const institutionCustomCommand = new InstitutionCustomCommand();
 
   const url = Cypress.env("instituteURL");
-  const username = Cypress.env("bceid");
-  const password = Cypress.env("password");
 
   beforeEach(() => {
     cy.visit(url);
-    cy.intercept("GET", "**/bceid-account").as("bceidAccount");
-    loginInstituteObject.loginWithBCEID().should("be.visible").click();
-    loginInstituteObject.loginInWithBCEIDtext().should("be.visible");
-    loginInstituteObject
-      .bceidInputText()
-      .type(username)
-      .should("have.value", username);
-    loginInstituteObject
-      .passwordInputText()
-      .type(password)
-      .should("have.value", password);
-    loginInstituteObject.continueButton().click();
-    cy.wait("@bceidAccount");
+    institutionCustomCommand.loginInstitution();
   });
 
   it("Verify that user redirect to location program page", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.programsButton().eq(0).click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.programsButton().eq(0).click();
     cy.url().should("contain", "/location-programs");
   });
 
   it("Verify that search bar is working properly by searching incorrect word", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.programsButton().eq(0).click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.programsButton().eq(0).click();
     manageUsersObject.searchUserInputText().type("Dummy data");
     manageUsersObject.searchButton().click();
-    manageUsersObject.noRecordsFoundMessage().should("be.visible");
-    manageUsersObject.zeroUserContains().should("be.visible");
   });
 
   it("Verify that without filling mandatory fields, proper error message must be displayed", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.programsButton().eq(0).click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.programsButton().eq(0).click();
     locationProgramObject.createNewProgramButton().click();
     locationProgramObject.wait();
     locationProgramObject.submitButton().click();
@@ -76,8 +60,8 @@ describe("Location Program", () => {
   });
 
   it("Verify that CIP code accept numbers only", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.programsButton().eq(0).click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.programsButton().eq(0).click();
     cy.url().should("contain", "/location-programs");
     locationProgramObject.createNewProgramButton().click();
     locationProgramObject.wait();
@@ -89,8 +73,8 @@ describe("Location Program", () => {
 
   it("Check that user can able to add new program", () => {
     cy.fixture("instituteProgramData").then((testdata) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.programsButton().eq(0).click();
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       locationProgramObject.createNewProgramButton().click();
       locationProgramObject.wait();
@@ -140,8 +124,8 @@ describe("Location Program", () => {
 
   it("Verify that user able to edit created program", () => {
     cy.fixture("instituteProgramData").then((testdata) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.programsButton().eq(0).click();
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       locationProgramObject.wait();
       locationProgramObject.firstRowEditButton().click();
@@ -149,10 +133,10 @@ describe("Location Program", () => {
     });
   });
 
-  it.only("Verify that user able to add study period", () => {
+  it("Verify that user able to add study period", () => {
     cy.fixture("instituteProgramData").then((testdata) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.programsButton().eq(0).click();
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.programsButton().eq(0).click();
       cy.url().should("contain", "/location-programs");
       locationProgramObject.wait();
       locationProgramObject.firstRowEditButton().click();
@@ -176,6 +160,42 @@ describe("Location Program", () => {
       locationProgramObject.studyEndDate().type(testdata.endDate);
       locationProgramObject.breakStartDate().type(testdata.breakStart);
       locationProgramObject.breakEndDate().type(testdata.breakEnd);
+      locationProgramObject.actualTuitionInput().type(testdata.actualTuitions);
+      locationProgramObject
+        .programRelatedInput()
+        .type(testdata.programRelatedCosts);
+      locationProgramObject.mandatoryFeesInput().type(testdata.mandatoryFees);
+      locationProgramObject
+        .exceptionalExpensesInput()
+        .type(testdata.exceptionalExpenses);
+      locationProgramObject.tuitionRemittanceRadioButton().click();
+      locationProgramObject
+        .amountRequestedInput()
+        .type(testdata.amountRequested);
+      locationProgramObject.declarationFormForVerification().click();
+      locationProgramObject.submitButtonStudyPeriod().click();
+      locationProgramObject.wait();
+      locationProgramObject
+        .educationOfferingCreatedAssertion()
+        .should("be.visible");
+    });
+  });
+
+  it("Verify that search is working in study period offerings", () => {
+    cy.fixture("instituteProgramData").then((testdata) => {
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.programsButton().eq(0).click();
+      cy.url().should("contain", "/location-programs");
+      locationProgramObject.wait();
+      locationProgramObject.firstRowEditButton().click();
+      locationProgramObject.programNameAssertion(testdata.programName);
+      locationProgramObject
+        .searchStudyPeriodInput()
+        .type(testdata.studyPeriodName)
+        .type("{enter}");
+      locationProgramObject
+        .firstRecordAssertionStudyPeriod()
+        .should("be.visible");
     });
   });
 });

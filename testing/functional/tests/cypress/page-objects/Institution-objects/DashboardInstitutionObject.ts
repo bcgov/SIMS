@@ -1,4 +1,4 @@
-export default class DashboardInstituteObject {
+export default class DashboardInstitutionObject {
   loginWithBCEID() {
     return cy.contains("Login with BCeID");
   }

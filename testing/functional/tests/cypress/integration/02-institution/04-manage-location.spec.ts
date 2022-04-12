@@ -1,54 +1,40 @@
-import LoginInstituteObject from "../../page-objects/institute-objects/LoginInstituteObject";
-import DashboardInstituteObject from "../../page-objects/institute-objects/DashboardInstituteObject";
-import ManageLocationObject from "../../page-objects/institute-objects/ManageLocationObject";
+import DashboardInstitutionObject from "../../page-objects/Institution-objects/DashboardInstitutionObject";
+import ManageLocationObject from "../../page-objects/Institution-objects/ManageLocationObject";
+import InstitutionCustomCommand from "../../custom-command/institution/InstitutionCustomCommand";
 
 describe("Manage Locations", () => {
-  const loginInstituteObject = new LoginInstituteObject();
-  const dashboardInstituteObject = new DashboardInstituteObject();
+  const dashboardInstitutionObject = new DashboardInstitutionObject();
   const instituteManageLocationObject = new ManageLocationObject();
+  const institutionCustomCommand = new InstitutionCustomCommand();
 
   const url = Cypress.env("instituteURL");
-  const username = Cypress.env("bceid");
-  const password = Cypress.env("password");
 
   beforeEach(() => {
     cy.visit(url);
-    cy.intercept("GET", "**/bceid-account").as("bceidAccount");
-    loginInstituteObject.loginWithBCEID().should("be.visible").click();
-    loginInstituteObject.loginInWithBCEIDtext().should("be.visible");
-    loginInstituteObject
-      .bceidInputText()
-      .type(username)
-      .should("have.value", username);
-    loginInstituteObject
-      .passwordInputText()
-      .type(password)
-      .should("have.value", password);
-    loginInstituteObject.continueButton().click();
-    cy.wait("@bceidAccount");
+    institutionCustomCommand.loginInstitution();
   });
 
   it("Verify that user redirect to institute manage location page", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     instituteManageLocationObject.manageLocationButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
   });
 
   it("Verify that user redirect to edit page of institute manage location", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     instituteManageLocationObject.manageLocationButton().click();
-    dashboardInstituteObject.locationVerifyText().should("be.visible");
+    dashboardInstitutionObject.locationVerifyText().should("be.visible");
     instituteManageLocationObject.editLocationButton().click();
     cy.url().should("contain", "/edit-institution-location");
   });
 
   it("Verify that edit button is working or not", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
     instituteManageLocationObject.manageLocationButton().click();
     instituteManageLocationObject.editLocationButton().click();
     instituteManageLocationObject
@@ -57,8 +43,8 @@ describe("Manage Locations", () => {
   });
 
   it("Verify that by clicking on Start New Application button redirects to appropriate page or not", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
     instituteManageLocationObject.manageLocationButton().click();
     instituteManageLocationObject.addNewLocationButton().click();
     instituteManageLocationObject
@@ -67,8 +53,8 @@ describe("Manage Locations", () => {
   });
 
   it("Verify that without filling mandatory fields, submit button must be disabled", () => {
-    dashboardInstituteObject.dashboardButton().click();
-    dashboardInstituteObject.manageInstitutionButton().click();
+    dashboardInstitutionObject.dashboardButton().click();
+    dashboardInstitutionObject.manageInstitutionButton().click();
     instituteManageLocationObject.manageLocationButton().click();
     instituteManageLocationObject.editLocationButton().click();
     instituteManageLocationObject.submitButton().should("be.disabled");
@@ -76,8 +62,8 @@ describe("Manage Locations", () => {
 
   it("Verify that after filling all details, submit button must be enabled", () => {
     cy.fixture("instituteManageLocationData").then((data) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
       instituteManageLocationObject.manageLocationButton().click();
       instituteManageLocationObject.editLocationButton().click();
       cy.wait(2000);
@@ -118,8 +104,8 @@ describe("Manage Locations", () => {
 
   it("Verify that user have proper error messages when mandatory fields are not filled out", () => {
     cy.fixture("instituteManageLocationData").then((data) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
       instituteManageLocationObject.manageLocationButton().click();
       instituteManageLocationObject.editLocationButton().click();
       cy.wait(2000);
@@ -177,8 +163,8 @@ describe("Manage Locations", () => {
 
   it("Verify that submit button must be disabled if any input filled is erased", () => {
     cy.fixture("instituteManageLocationData").then((data) => {
-      dashboardInstituteObject.dashboardButton().click();
-      dashboardInstituteObject.manageInstitutionButton().click();
+      dashboardInstitutionObject.dashboardButton().click();
+      dashboardInstitutionObject.manageInstitutionButton().click();
       instituteManageLocationObject.manageLocationButton().click();
       instituteManageLocationObject.editLocationButton().click();
       cy.wait(2000);
