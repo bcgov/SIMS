@@ -102,11 +102,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * in parsed objects specific to the integration process.
    * @param remoteFilePath full remote file path with file name.
    */
-  abstract downloadResponseFile(
-    remoteFilePath: string,
-    eCertFileHeader?: ECertFileHeader,
-    eCertFileFooter?: ECertFileFooter,
-  ): Promise<DownloadType>;
+  abstract downloadResponseFile(remoteFilePath: string): Promise<DownloadType>;
 
   /**
    * Delete a file from SFTP.

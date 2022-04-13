@@ -29,6 +29,8 @@ import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
  */
 @Injectable()
 export class ECertPartTimeIntegrationService extends ECertIntegrationService {
+  private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader;
+  private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.getConfig().zoneBSFTP, sshService);
   }
@@ -136,5 +138,13 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     fileLines.push(footer);
 
     return fileLines;
+  }
+
+  downloadResponseFile(remoteFilePath: string): Promise<ECertResponseRecord[]> {
+    return this.downloadECertResponseFile(
+      remoteFilePath,
+      this.eCertPartTimeFileHeader,
+      this.eCertPartTimeFileFooter,
+    );
   }
 }

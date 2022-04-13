@@ -52,10 +52,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
-    private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader,
-    private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter,
-    private readonly eCertFullTimeFileHeader: ECertFullTimeFileHeader,
-    private readonly eCertFullTimeFileFooter: ECertFullTimeFileFooter,
   ) {
     super(configService);
   }
@@ -97,8 +93,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     return this.processResponses(
       this.eCertFullTimeIntegrationService,
       ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
-      this.eCertFullTimeFileHeader,
-      this.eCertFullTimeFileFooter,
     );
   }
 
@@ -111,8 +105,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     return this.processResponses(
       this.eCertPartTimeIntegrationService,
       ECERT_PART_TIME_FEEDBACK_FILE_CODE,
-      this.eCertPartTimeFileHeader,
-      this.eCertPartTimeFileFooter,
     );
   }
 
@@ -276,8 +268,6 @@ export class ECertFileHandler extends ESDCFileHandler {
   async processResponses(
     eCertIntegrationService: ECertIntegrationService,
     fileCode: string,
-    eCertFileHeader: ECertFileHeader,
-    eCertFileFooter: ECertFileFooter,
   ): Promise<ProcessSFTPResponseResult[]> {
     const filePaths = await eCertIntegrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
@@ -286,12 +276,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(
-        await this.processFile(
-          eCertIntegrationService,
-          filePath,
-          eCertFileHeader,
-          eCertFileFooter,
-        ),
+        await this.processFile(eCertIntegrationService, filePath),
       );
     }
     return processFiles;
@@ -305,8 +290,6 @@ export class ECertFileHandler extends ESDCFileHandler {
   private async processFile(
     eCertIntegrationService: ECertIntegrationService,
     filePath: string,
-    eCertFileHeader: ECertFileHeader,
-    eCertFileFooter: ECertFileFooter,
   ): Promise<ProcessSFTPResponseResult> {
     const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
@@ -316,8 +299,6 @@ export class ECertFileHandler extends ESDCFileHandler {
     try {
       responseFile = await eCertIntegrationService.downloadResponseFile(
         filePath,
-        eCertFileHeader,
-        eCertFileFooter,
       );
     } catch (error) {
       this.logger.error(error);
