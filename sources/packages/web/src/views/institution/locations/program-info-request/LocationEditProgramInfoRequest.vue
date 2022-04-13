@@ -181,9 +181,8 @@ export default {
           "An error happened while saving the Program Information Request.";
         if (error instanceof ApiProcessError) {
           if (
-            [PIR_OR_DATE_OVERLAP_ERROR, OFFERING_INTENSITY_MISMATCH].includes(
-              error.errorType,
-            )
+            error.errorType === PIR_OR_DATE_OVERLAP_ERROR ||
+            error.errorType === OFFERING_INTENSITY_MISMATCH
           ) {
             errorLabel = "Invalid submission";
             errorMsg = error.message;

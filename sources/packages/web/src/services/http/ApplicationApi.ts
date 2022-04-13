@@ -116,20 +116,17 @@ export class ApplicationApi extends HttpBaseClient {
     applicationId: number,
     payload: SaveStudentApplicationDto,
   ): Promise<void> {
-    // this.apiClient.patch is used to catch the errors
-    // this errors are displayed in client side in toast message
-    await this.apiClient
-      .patch(
+    try {
+      // this.apiClient.patch is used to catch the errors
+      // this errors are displayed in client side in toast message
+      await this.apiClient.patch(
         this.addClientRoot(`application/${applicationId}/submit`),
         payload,
         this.addAuthHeader(),
-      )
-      .catch((error) => {
-        if (error.response) {
-          this.handleRequestError(error.response.data?.message);
-          throw error.response.data?.message;
-        }
-      });
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 
   public async getApplicationWithPY(
