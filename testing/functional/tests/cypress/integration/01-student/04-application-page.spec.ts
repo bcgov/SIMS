@@ -300,11 +300,12 @@ describe("Application Page", () => {
   });
 
   it("Check that all fields on the Personal Information page are working.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
+    cy.wait("@programYear");
     applicationObject.personalInformationButton().click();
     applicationObject.iConfirmMyStudentAidCheckbox().click();
     applicationObject.citizenStatusRadioButton().click();
@@ -325,11 +326,12 @@ describe("Application Page", () => {
   });
 
   it("Check that all fields on the Family Information page are working.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
+    cy.wait("@programYear");
     applicationObject.personalInformationButton().click();
     applicationObject.iConfirmMyStudentAidCheckbox().click();
     applicationObject.citizenStatusRadioButton().click();
@@ -360,11 +362,12 @@ describe("Application Page", () => {
   });
 
   it("Check that previous button is working in family information page.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
+    cy.wait("@programYear");
     applicationObject.personalInformationButton().click();
     applicationObject.iConfirmMyStudentAidCheckbox().click();
     applicationObject.citizenStatusRadioButton().click();
@@ -399,11 +402,12 @@ describe("Application Page", () => {
   });
 
   it("Verify that condition-based records are displaying or not in partner Information.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
+    cy.wait("@programYear");
     applicationObject.personalInformationButton().click();
     applicationObject.iConfirmMyStudentAidCheckbox().click();
     applicationObject.citizenStatusRadioButton().click();
@@ -439,11 +443,12 @@ describe("Application Page", () => {
   });
 
   it("Verify that all mandatory fields in the Partner information page have error messages displayed if they are not filled out.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
+    cy.wait("@programYear");
     applicationObject.personalInformationButton().click();
     applicationObject.iConfirmMyStudentAidCheckbox().click();
     applicationObject.citizenStatusRadioButton().click();
@@ -497,12 +502,12 @@ describe("Application Page", () => {
   });
 
   it("Check that all fields on the Partner information page are working.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
-
+    cy.wait("@programYear");
     applicationObject.personalInformationButton().click();
     applicationObject.iConfirmMyStudentAidCheckbox().click();
     applicationObject.citizenStatusRadioButton().click();
@@ -553,6 +558,7 @@ describe("Application Page", () => {
   });
 
   it("Verify that all mandatory fields in the Financial information page have error messages displayed if they are not filled out.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
@@ -564,7 +570,7 @@ describe("Application Page", () => {
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
+    cy.wait("@programYear");
     applicationObject.financialInformationButton().click();
     applicationObject.totalIncomeInputText().type("4500");
 
@@ -595,14 +601,14 @@ describe("Application Page", () => {
   });
 
   it("Verify that without filling declaration form click on Submit application button & page have error messages displayed.", () => {
+    cy.intercept("GET", "**/program-year").as("programYear");
     applicationObject.applicationButton().should("be.visible").click();
     applicationObject.draftApplication().eq(0).click();
     applicationObject.draftApplicationVerifyText().should("be.visible");
     applicationObject.nextSectionButton().click();
-    cy.wait(2000);
-    applicationObject.confirmSubmissionButton().click();
-    applicationObject.submitApplicationButton().click();
-    applicationObject.declarationErrorMessage().should("be.visible");
+    cy.wait("@programYear");
+    applicationObject.buttonNextSection().click();
+    applicationObject.schoolAttendingErrorMessage().should("be.visible");
   });
 
   it(
@@ -615,12 +621,12 @@ describe("Application Page", () => {
     },
     () => {
       cy.fixture("draftApplicationData").then((testData) => {
+        cy.intercept("GET", "**/program-year").as("programYear");
         applicationObject.applicationButton().should("be.visible").click();
         applicationObject.draftApplication().eq(0).click();
         applicationObject.draftApplicationVerifyText().should("be.visible");
         applicationObject.nextSectionButton().click();
-        cy.wait(2000);
-
+        cy.wait("@programYear");
         applicationObject.schoolIWillBeAttendingDropdown2();
         applicationObject.howWillYouAttendProgramDropdown2();
         applicationObject.myProgramNotListedCheckbox().click({ force: true });

@@ -7,14 +7,14 @@ describe("Manage Designations", () => {
   const manageDesignationObject = new ManageDesignationsObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
-  const url = Cypress.env("instituteURL");
+  const url = Cypress.env("institutionURL");
 
   beforeEach(() => {
     cy.visit(url);
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institute manage designation page", () => {
+  it("Verify that user redirect to institution manage designation page", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
@@ -22,7 +22,7 @@ describe("Manage Designations", () => {
     manageDesignationObject.designationAgreementsText().should("be.visible");
   });
 
-  it("Verify that user redirect to correct url of institute manage designation", () => {
+  it("Verify that user redirect to correct url of institution manage designation", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");

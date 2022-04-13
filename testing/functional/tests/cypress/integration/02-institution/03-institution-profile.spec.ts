@@ -7,7 +7,7 @@ describe("Institution Profile", () => {
   const institutionObject = new InstitutionProfileObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
-  const url = Cypress.env("instituteURL");
+  const url = Cypress.env("institutionURL");
 
   beforeEach(() => {
     cy.visit(url);
@@ -31,12 +31,13 @@ describe("Institution Profile", () => {
   });
 
   it("Clicking on the save button without filling out the required fields", () => {
+    cy.intercept("GET", "**/institution").as("institution");
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
     institutionObject.institutionDetailsButton().click();
     institutionObject.primaryEmailInputText().clear();
-    cy.wait(2000);
+    cy.wait("@institution");
     institutionObject.submitButton().click();
   });
 
@@ -44,6 +45,7 @@ describe("Institution Profile", () => {
     "Check that when user enter data only in non mandatory field and click on next section.",
     { retries: 4 },
     () => {
+      cy.intercept("GET", "**/institution").as("institution");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
       dashboardInstitutionObject.locationVerifyText().should("be.visible");
@@ -51,7 +53,7 @@ describe("Institution Profile", () => {
       cy.reload();
       institutionObject.primaryEmailInputText().clear();
       institutionObject.primaryEmailInputText().clear();
-      cy.wait(2000);
+      cy.wait("@institution");
       institutionObject.submitButton().click();
       institutionObject.unexpectedErrorMessage().should("be.visible");
     }
@@ -59,16 +61,17 @@ describe("Institution Profile", () => {
 
   it("Check when user enter data only in mandatory field then able to save the details or not.", () => {
     cy.fixture("institutionProfileData").then((data) => {
+      cy.intercept("GET", "**/institution").as("institution");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
       dashboardInstitutionObject.locationVerifyText().should("be.visible");
       institutionObject.institutionDetailsButton().click();
-      cy.wait(1000);
+      cy.wait("@institution");
       institutionObject
         .primaryPhoneNumberInputText()
         .clear()
         .type(data.primaryPhoneNumber);
-      cy.wait(1000);
+
       institutionObject.primaryEmailInputText().clear().type(data.primaryEmail);
       institutionObject
         .institutionWebsiteInputText()

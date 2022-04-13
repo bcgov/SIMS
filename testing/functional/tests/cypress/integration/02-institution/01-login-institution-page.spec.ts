@@ -5,7 +5,7 @@ describe("Login Page", () => {
   const dashboardInstitutionObject = new DashboardInstitutionObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
-  const url = Cypress.env("instituteURL");
+  const url = Cypress.env("institutionURL");
 
   before(() => {
     cy.visit(url);

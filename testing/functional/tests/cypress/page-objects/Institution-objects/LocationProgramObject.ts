@@ -142,27 +142,27 @@ export default class LocationProgramObject {
   }
 
   percentageOfProgramRadioButton() {
-    return cy.get("#esmuskn-20OrMore");
+    return cy.xpath("//input[@id='esmuskn-lessThan20']");
   }
 
   programOfferedJointlyRadioButton() {
-    return cy.get("#e1rl8gr-yes");
+    return cy.xpath("//input[@id='e1rl8gr-yes']");
   }
 
   institutionPartner() {
-    return cy.get("#eaa8y48-yes");
+    return cy.xpath("//input[@id='eaa8y48-yes']");
   }
 
   wilComponentRadioButton() {
-    return cy.get("#exfol75-yes");
+    return cy.xpath("//input[@id='exfol75-yes']");
   }
 
   wilApprovedByRegulatorRadioButton() {
-    return cy.get("#etm9ggd-yes");
+    return cy.xpath("//input[@id='etm9ggd-yes']");
   }
 
   wilMeetProgramRadioButton() {
-    return cy.get("#ecvd00d-yes");
+    return cy.xpath("//input[@id='ecvd00d-yes']");
   }
 
   fieldPlacementRadioButton() {

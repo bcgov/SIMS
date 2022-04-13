@@ -7,14 +7,14 @@ describe("Manage Users", () => {
   const manageUsersObject = new ManageUsersObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
-  const url = Cypress.env("instituteURL");
+  const url = Cypress.env("institutionURL");
 
   beforeEach(() => {
     cy.visit(url);
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institute manage user summary page", () => {
+  it("Verify that user redirect to institution manage user summary page", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
@@ -22,7 +22,7 @@ describe("Manage Users", () => {
     manageUsersObject.userSummaryMessage().should("be.visible");
   });
 
-  it("Verify that user redirect to correct url of institute manage user", () => {
+  it("Verify that user redirect to correct url of institution manage user", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");

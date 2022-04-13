@@ -7,7 +7,7 @@ describe("Manage Locations", () => {
   const instituteManageLocationObject = new ManageLocationObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
-  const url = Cypress.env("instituteURL");
+  const url = Cypress.env("institutionURL");
 
   beforeEach(() => {
     cy.visit(url);
@@ -61,12 +61,13 @@ describe("Manage Locations", () => {
   });
 
   it("Verify that after filling all details, submit button must be enabled", () => {
-    cy.fixture("instituteManageLocationData").then((data) => {
+    cy.fixture("institutionManageLocationData").then((data) => {
+      cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
       instituteManageLocationObject.manageLocationButton().click();
       instituteManageLocationObject.editLocationButton().click();
-      cy.wait(2000);
+      cy.wait("@location");
       instituteManageLocationObject
         .institutionCode()
         .clear()
@@ -97,18 +98,18 @@ describe("Manage Locations", () => {
         .phoneInputText()
         .clear()
         .type(data.phoneNumber);
-      cy.wait(2000);
       instituteManageLocationObject.submitButton().should("be.enabled");
     });
   });
 
   it("Verify that user have proper error messages when mandatory fields are not filled out", () => {
-    cy.fixture("instituteManageLocationData").then((data) => {
+    cy.fixture("institutionManageLocationData").then((data) => {
+      cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
       instituteManageLocationObject.manageLocationButton().click();
       instituteManageLocationObject.editLocationButton().click();
-      cy.wait(2000);
+      cy.wait("@location");
       instituteManageLocationObject
         .institutionCode()
         .type(data.institutionCode)
@@ -162,12 +163,13 @@ describe("Manage Locations", () => {
   });
 
   it("Verify that submit button must be disabled if any input filled is erased", () => {
-    cy.fixture("instituteManageLocationData").then((data) => {
+    cy.fixture("institutionManageLocationData").then((data) => {
+      cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
       instituteManageLocationObject.manageLocationButton().click();
       instituteManageLocationObject.editLocationButton().click();
-      cy.wait(2000);
+      cy.wait("@location");
       instituteManageLocationObject
         .institutionCode()
         .clear()
@@ -198,10 +200,8 @@ describe("Manage Locations", () => {
         .phoneInputText()
         .clear()
         .type(data.phoneNumber);
-      cy.wait(2000);
       instituteManageLocationObject.submitButton().should("be.enabled");
       instituteManageLocationObject.phoneInputText().clear();
-      cy.wait(2000);
       instituteManageLocationObject.submitButton().should("be.disabled");
     });
   });

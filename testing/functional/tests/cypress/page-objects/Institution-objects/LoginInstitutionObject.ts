@@ -1,4 +1,4 @@
-export default class LoginInstituteObject {
+export default class LoginInstitutionObject {
   loginWithBCEID() {
     return cy.contains("Login with BCeID");
   }

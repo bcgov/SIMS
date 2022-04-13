@@ -1,10 +1,10 @@
 {
   "scripts": {
-    "cypress:runChrome": "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
-    "testStudent": "cypress run --browser chrome --spec cypress/integration/student/*.spec.ts",
-    "testInstitute": "cypress run --browser chrome --spec cypress/integration/institute/*.spec.ts",
+    "testStudent": "cypress run --browser chrome --spec cypress/integration/01-student/*.spec.ts",
+    "testInstitution": "cypress run --browser chrome --spec cypress/integration/02-institution/*.spec.ts",
     "Run cypress headless mode command in student": "npm run testStudent",
-    "Run cypress headless mode command in institute": "npm run testInstitute",
+    "Run cypress headless mode command in institution": "npm run testInstitution",
+    "Run cypress headless mode": "npx cypress run",
     "Run cypress headed mode": " npx cypress open "
   },
   "devDependencies": {

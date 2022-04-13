@@ -86,6 +86,10 @@ export default class ApplicationObject {
     return cy.get(":nth-child(3) > .ml-auto > .v-btn");
   }
 
+  buttonNextSection() {
+    return cy.contains("Next section");
+  }
+
   previousSectionButton() {
     return cy.contains("Previous section");
   }
@@ -735,6 +739,10 @@ export default class ApplicationObject {
 
   declarationErrorMessage() {
     return cy.contains("I give StudentAid BC consent to verify the data");
+  }
+
+  schoolAttendingErrorMessage() {
+    return cy.contains("The school I will be attending is required");
   }
 
   declarationFormCheckbox() {
