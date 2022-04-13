@@ -1,11 +1,13 @@
 import {
-  DATE_FORMAT,
   MSFAARequestFileLine,
   MSFAA_SENT_TITLE,
-  SPACE_FILLER,
-  TIME_FORMAT,
   RecordTypeCodes,
 } from "../models/msfaa-integration.model";
+import {
+  SPACE_FILLER,
+  DATE_FORMAT,
+  TIME_FORMAT,
+} from "../../models/esdc-integration.model";
 import { StringBuilder, getDateOnlyFromFormat } from "../../../utilities";
 
 const ORIGINATOR_CODE = "BC";

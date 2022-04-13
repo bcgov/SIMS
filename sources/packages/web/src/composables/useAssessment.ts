@@ -10,6 +10,9 @@ export function useAssessment() {
     status: StudentAppealStatus | ScholasticStandingStatus,
   ): StatusChipTypes => {
     switch (status) {
+      case StudentAppealStatus.Approved:
+      case ScholasticStandingStatus.Approved:
+        return StatusChipTypes.Success;
       case StudentAppealStatus.Pending:
       case ScholasticStandingStatus.Pending:
         return StatusChipTypes.Warning;

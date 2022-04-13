@@ -1,17 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectLogger } from "../../common";
-import { OfferingIntensity } from "../../database/entities";
 import { LoggerService } from "../../logger/logger.service";
 import {
-  DATE_FORMAT,
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
 } from "../msfaa-integration/models/msfaa-integration.model";
-import {
-  ConfigService,
-  SequenceControlService,
-  SshService,
-} from "../../services";
+import { ConfigService, SshService } from "../../services";
 import { SFTPConfig, ESDCIntegrationConfig } from "../../types";
 import {
   getGenderCode,
@@ -28,8 +22,6 @@ import {
 import { MSFAAFileDetail } from "./msfaa-files/msfaa-file-detail";
 import { MSFAAFileFooter } from "./msfaa-files/msfaa-file-footer";
 import { MSFAAFileHeader } from "./msfaa-files/msfaa-file-header";
-import { StringBuilder } from "../../utilities/string-builder";
-import { EntityManager } from "typeorm";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseRecordIdentification } from "./msfaa-files/msfaa-response-record-identification";
@@ -45,11 +37,7 @@ export class MSFAAIntegrationService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   private readonly ftpConfig: SFTPConfig;
 
-  constructor(
-    config: ConfigService,
-    private readonly sequenceService: SequenceControlService,
-    private readonly sshService: SshService,
-  ) {
+  constructor(config: ConfigService, private readonly sshService: SshService) {
     this.esdcConfig = config.getConfig().ESDCIntegration;
     this.ftpConfig = config.getConfig().zoneBSFTP;
   }
@@ -147,50 +135,6 @@ export class MSFAAIntegrationService {
       await SshService.closeQuietly(client);
       this.logger.log("SFTP client finalized.");
     }
-  }
-
-  /**
-   * Expected file name of the MSFAA request file.
-   * for Part time the format is PPxx.EDU.MSFA.SENT.PT.YYYYMMDD.sss
-   * for full time the format is PPxx.EDU.MSFA.SENT.YYYYMMDD.sss
-   * xx is the province code currently its BC
-   * sss is a sequence that should be resetted every day
-   * @param OfferingIntensity offering intensity of the application
-   *  where MSFAA is requested.
-   * @returns Full file path of the file to be saved on the SFTP.
-   */
-  async createRequestFileName(
-    offeringIntensity: string,
-    entityManager?: EntityManager,
-  ): Promise<{
-    fileName: string;
-    filePath: string;
-  }> {
-    const fileNameArray = new StringBuilder();
-    fileNameArray.append(
-      `${this.esdcConfig.environmentCode}PBC.EDU.MSFA.SENT.`,
-    );
-    let fileNameSequence: number;
-    if (OfferingIntensity.partTime === offeringIntensity) {
-      fileNameArray.append("PT.");
-    }
-    fileNameArray.appendDate(new Date(), DATE_FORMAT);
-    await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
-      fileNameArray.toString(),
-      entityManager,
-      async (nextSequenceNumber: number) => {
-        fileNameSequence = nextSequenceNumber;
-      },
-    );
-    fileNameArray.append(".");
-    fileNameArray.appendWithStartFiller(fileNameSequence.toString(), 3, "0");
-    fileNameArray.append(".DAT");
-    const fileName = fileNameArray.toString();
-    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
-    return {
-      fileName,
-      filePath,
-    };
   }
 
   /**

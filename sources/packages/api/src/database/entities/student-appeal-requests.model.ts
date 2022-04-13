@@ -92,7 +92,7 @@ export class StudentAppealRequest extends RecordDataModel {
   /**
    * Note added by the Ministry while approving or denying the appeal.
    */
-  @OneToOne(() => Note, { eager: true, cascade: false, nullable: true })
+  @OneToOne(() => Note, { eager: false, cascade: ["insert"], nullable: true })
   @JoinColumn({
     name: "note_id",
     referencedColumnName: ColumnNames.ID,

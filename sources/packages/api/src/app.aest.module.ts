@@ -35,6 +35,9 @@ import {
   InstitutionControllerService,
   AssessmentAESTController,
   StudentAESTController,
+  StudentAppealAESTController,
+  InstitutionLocationAESTController,
+  InstitutionLocationControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { LoggerModule } from "./logger/logger.module";
@@ -49,6 +52,8 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     InstitutionAESTController,
     AssessmentAESTController,
     StudentAESTController,
+    StudentAppealAESTController,
+    InstitutionLocationAESTController,
   ],
   providers: [
     SupportingUserService,
@@ -78,6 +83,7 @@ import { ApplicationControllerService } from "./route-controllers/application/ap
     StudentAssessmentService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
+    InstitutionLocationControllerService,
   ],
 })
 export class AppAESTModule {}

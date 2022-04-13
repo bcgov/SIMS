@@ -27,8 +27,20 @@
               ><template #body="slotProps">{{
                 dateOnlyLongString(slotProps.data.submittedDate)
               }}</template></Column
-            ><Column field="triggerType" header="Type" sortable="true"></Column
-            ><Column header="Request form"></Column
+            ><Column field="triggerType" header="Type" sortable="true"></Column>
+            <Column header="Request form" sortable="false"
+              ><template #body="{ data }"
+                ><v-btn
+                  @click="$emit('viewStudentAppeal', data.id)"
+                  color="primary"
+                  variant="text"
+                  class="text-decoration-underline"
+                >
+                  <font-awesome-icon :icon="['far', 'file-alt']" class="mr-2" />
+                  View request</v-btn
+                ></template
+              ></Column
+            >
             ><Column field="status" header="Status" sortable="true">
               <template #body="slotProps"
                 ><status-chip-requested-assessment
@@ -41,17 +53,15 @@
   </v-container>
 </template>
 <script lang="ts">
-import {
-  DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  RequestAssessmentSummaryDTO,
-} from "@/types";
+import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
 import { ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import { RequestAssessmentSummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 
 export default {
+  emits: ["viewStudentAppeal"],
   components: {
     StatusChipRequestedAssessment,
   },
@@ -64,13 +74,14 @@ export default {
   setup(props: any) {
     const { dateOnlyLongString } = useFormatters();
 
-    const requestedAssessment = ref([] as RequestAssessmentSummaryDTO[]);
+    const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
     onMounted(async () => {
       requestedAssessment.value =
         await StudentAssessmentsService.shared.getAssessmentRequest(
           props.applicationId,
         );
     });
+
     return {
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,

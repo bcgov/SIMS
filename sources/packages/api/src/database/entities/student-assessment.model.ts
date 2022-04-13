@@ -146,11 +146,15 @@ export class StudentAssessment extends RecordDataModel {
    * When the reassessment happen due to a student appeal, this will provide to
    * the workflow the data that need to be changed.
    */
-  @ManyToOne(() => StudentAppeal, {
-    eager: false,
-    cascade: true,
-    nullable: true,
-  })
+  @ManyToOne(
+    () => StudentAppeal,
+    (studentAppeal) => studentAppeal.studentAssessment,
+    {
+      eager: false,
+      cascade: true,
+      nullable: true,
+    },
+  )
   @JoinColumn({
     name: "student_appeal_id",
     referencedColumnName: ColumnNames.ID,

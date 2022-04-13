@@ -51,6 +51,8 @@ export enum AppRoutes {
   AESTInstitutionProfileEdit = "institution-profile/:institutionId/edit",
   PendingDesignations = "institution/designation/pending",
   DesignationAESTView = "institution/designation/:designationId/institution/:institutionId?",
+  AssessmentSummary = "assessment-summary",
+  StudentAppealRequestsApproval = "request-changes/:appealId",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",
@@ -64,7 +66,6 @@ export enum AppRoutes {
   Applications = "applications",
   ApplicationDetail = "student/:studentId/application/:applicationId",
   SupportingUserDetail = "supporting-user/:supportingUserId",
-  AssessmentSummary = "assessment-summary",
   // Supporting Users
   SupportingUsersRoot = "/supporting-users",
   SupportingUsersDashboard = "dashboard",

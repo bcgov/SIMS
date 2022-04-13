@@ -38,6 +38,7 @@ import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
 import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
 import AssessmentsSummary from "@/views/aest/AssessmentsSummary.vue";
+import StudentAppealRequestsApproval from "@/views/aest/StudentAppealRequestsApproval.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -170,6 +171,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
             props: true,
             component: AssessmentsSummary,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.StudentAppealRequestsApproval,
+            name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+            props: true,
+            component: StudentAppealRequestsApproval,
             meta: {
               clientType: ClientIdType.AEST,
             },

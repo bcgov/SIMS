@@ -1,6 +1,7 @@
 export interface DryRunSubmissionResult {
   valid: boolean;
   data?: any;
+  formName: string;
 }
 
 export interface SubmissionResult {

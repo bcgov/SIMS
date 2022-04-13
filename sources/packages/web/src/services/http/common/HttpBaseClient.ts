@@ -1,8 +1,8 @@
 import { AuthService } from "@/services/AuthService";
-import { AxiosRequestConfig } from "axios";
+import { AxiosError, AxiosRequestConfig } from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
-import { ClientIdType, ClientTypeBaseRoute } from "@/types";
+import { ApiProcessError, ClientIdType, ClientTypeBaseRoute } from "@/types";
 
 export default abstract class HttpBaseClient {
   protected apiClient = HttpClient;
@@ -77,6 +77,23 @@ export default abstract class HttpBaseClient {
       throw error.response.data?.message;
     }
     this.handleRequestError(error);
+    throw error;
+  }
+
+  /**
+   * Inspects the error to check if there is an ApiProcessError
+   * to be handled, if yes, throw the ApiProcessError instead
+   * of the AxiosError.
+   * @param error error to be inspect.
+   */
+  protected handleAPICustomError(error: unknown) {
+    const axiosError = error as AxiosError;
+    if (axiosError.isAxiosError && axiosError.response?.data) {
+      throw new ApiProcessError(
+        axiosError.response.data.message,
+        axiosError.response.data.errorType,
+      );
+    }
     throw error;
   }
 

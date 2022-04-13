@@ -7,20 +7,14 @@ export interface InstitutionPrimaryContact {
   primaryContactLastName: string;
   primaryContactPhone: string;
 }
-/**
- * DTO for institution location form.io
- */
-export interface InstitutionLocation
-  extends Address,
-    InstitutionPrimaryContact {
-  locationName: string;
-}
+
 export interface InstitutionLocationData {
   id?: number;
   name: string;
   data: Address;
 }
 /**
+ * TODO: This DTO has to be deleted when institution user APIs are refactored.
  * DTO for institution location Vue
  */
 export interface InstitutionLocationsDetails {

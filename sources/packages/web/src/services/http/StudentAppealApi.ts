@@ -1,17 +1,44 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { StudentAppealDTO } from "@/types/contracts/student/StudentRequestChange";
+import {
+  StudentAppealAPIInDTO,
+  StudentAppealAPIOutDTO,
+  StudentAppealApprovalAPIInDTO,
+  StudentAppealRequestApprovalAPIInDTO,
+} from "./dto/StudentAppeal.dto";
 
 /**
  * Http API client for Student Appeal.
  */
 export class StudentAppealApi extends HttpBaseClient {
-  public async submitStudentAppeal(
+  async submitStudentAppeal(
     applicationId: number,
-    studentAppeal: StudentAppealDTO,
+    studentAppeal: StudentAppealAPIInDTO,
   ): Promise<void> {
-    await this.postCall<StudentAppealDTO>(
+    await this.postCall<StudentAppealAPIInDTO>(
       this.addClientRoot(`appeal/application/${applicationId}`),
       studentAppeal,
     );
+  }
+
+  async getStudentAppealWithRequests(
+    appealId: number,
+  ): Promise<StudentAppealAPIOutDTO> {
+    return this.getCallTyped<StudentAppealAPIOutDTO>(
+      this.addClientRoot(`appeal/${appealId}/requests`),
+    );
+  }
+
+  async approveStudentAppealRequests(
+    appealId: number,
+    approvals: StudentAppealRequestApprovalAPIInDTO[],
+  ): Promise<void> {
+    try {
+      await this.patchCall<StudentAppealApprovalAPIInDTO>(
+        this.addClientRoot(`appeal/${appealId}/requests`),
+        { requests: approvals },
+      );
+    } catch (error: unknown) {
+      this.handleAPICustomError(error);
+    }
   }
 }

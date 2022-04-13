@@ -11,7 +11,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useToast } from "primevue/usetoast";
 import formio from "../../components/generic/formio.vue";
-import { InstitutionLocation } from "../../types";
+import { InstitutionLocationFormAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "../../services/InstitutionService";
 import { InstitutionRoutesConst } from "../../constants/routes/RouteConstants";
 
@@ -29,7 +29,7 @@ export default {
     const store = useStore();
     const toast = useToast();
     const router = useRouter();
-    const submitted = async (data: InstitutionLocation) => {
+    const submitted = async (data: InstitutionLocationFormAPIInDTO) => {
       if (props.createMode) {
         try {
           await InstitutionService.shared.createInstitutionLocation(data);

@@ -25,6 +25,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     return this.repo
       .createQueryBuilder("scholasticStanding")
       .select([
+        "scholasticStanding.id",
         "scholasticStanding.scholasticStandingStatus",
         "scholasticStanding.submittedDate",
       ])

@@ -11,3 +11,21 @@ export interface LocationWithDesignationStatus {
   institutionCode?: string;
   primaryContact?: PrimaryContact;
 }
+
+/**
+ * Service model for institution location.
+ */
+export interface InstitutionLocationModel {
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  country: string;
+  locationName: string;
+  postalCode: string;
+  provinceState: string;
+  institutionCode: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactEmail: string;
+  primaryContactPhone: string;
+}

@@ -3,6 +3,9 @@
     <span class="category-header-large color-blue">
       {{ fullTitleMessage }}
     </span>
+    <span class="ml-2">
+      <slot name="status-chip"></slot>
+    </span>
     <div class="float-right">
       <slot name="actions"></slot>
     </div>

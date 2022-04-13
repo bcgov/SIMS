@@ -1,77 +1,54 @@
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
-  InstitutionLocation,
-  InstitutionLocationsDetails,
   InstitutionUserDto,
   InstitutionLocationUserAuthDto,
   LocationStateForStore,
-  OptionItemDto,
-  ApplicationDetails,
 } from "../../types";
+import {
+  InstitutionLocationFormAPIInDTO,
+  InstitutionLocationFormAPIOutDTO,
+  InstitutionLocationAPIOutDTO,
+  ActiveApplicationDataAPIOutDTO,
+  OptionItemAPIOutDTO,
+} from "@/services/http/dto";
+
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
-    createInstitutionLocationDto: InstitutionLocation,
+    createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.post(
-        "institution/location",
-        createInstitutionLocationDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.postCall<InstitutionLocationFormAPIInDTO>(
+      this.addClientRoot("institution/location"),
+      createInstitutionLocationDto,
+    );
   }
 
   public async updateInstitutionLocation(
     locationId: number,
-    updateInstitutionLocationDto: InstitutionLocation,
+    updateInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
   ): Promise<void> {
-    try {
-      await this.apiClient.patch(
-        `institution/location/${locationId}`,
-        updateInstitutionLocationDto,
-        this.addAuthHeader(),
-      );
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+    return this.patchCall<InstitutionLocationFormAPIInDTO>(
+      this.addClientRoot(`institution/location/${locationId}`),
+      updateInstitutionLocationDto,
+    );
   }
 
   public async getInstitutionLocation(
     locationId: number,
-  ): Promise<InstitutionLocationsDetails> {
-    let data: InstitutionLocationsDetails;
-    try {
-      const res = await this.apiClient.get(
-        `institution/location/${locationId}`,
-        this.addAuthHeader(),
-      );
-      data = res?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-    return data;
+  ): Promise<InstitutionLocationFormAPIOutDTO> {
+    return this.getCallTyped<InstitutionLocationFormAPIOutDTO>(
+      this.addClientRoot(`institution/location/${locationId}`),
+    );
   }
 
-  public async allInstitutionLocationsApi(): Promise<
-    InstitutionLocationsDetails[]
-  > {
-    let data: InstitutionLocationsDetails[] = [];
-    try {
-      const res = await this.apiClient.get(
-        "institution/location",
-        this.addAuthHeader(),
-      );
-      data = res?.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-    return data;
+  public async allInstitutionLocations(
+    institutionId?: number,
+  ): Promise<InstitutionLocationAPIOutDTO[]> {
+    const url = institutionId
+      ? `institution/location/${institutionId}`
+      : "institution/location";
+    return this.getCallTyped<InstitutionLocationAPIOutDTO[]>(
+      this.addClientRoot(url),
+    );
   }
   /**
    * This client expects custom error message in one or more
@@ -156,47 +133,20 @@ export class InstitutionLocationApi extends HttpBaseClient {
     }
   }
 
-  public async getOptionsList(): Promise<OptionItemDto[]> {
-    try {
-      const response = await this.apiClient.get(
-        "institution/location/options-list",
-        this.addAuthHeader(),
-      );
-      return response.data;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
+  public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
+    return this.getCallTyped<OptionItemAPIOutDTO[]>(
+      this.addClientRoot("institution/location/options-list"),
+    );
   }
 
   public async getActiveApplication(
     applicationId: number,
     locationId: number,
-  ): Promise<ApplicationDetails> {
-    try {
-      const response = await this.apiClient.get(
+  ): Promise<ActiveApplicationDataAPIOutDTO> {
+    return this.getCallTyped<ActiveApplicationDataAPIOutDTO>(
+      this.addClientRoot(
         `institution/location/${locationId}/active-application/${applicationId}`,
-        this.addAuthHeader(),
-      );
-      return response.data as ApplicationDetails;
-    } catch (error) {
-      this.handleRequestError(error);
-      throw error;
-    }
-  }
-
-  /**
-   * Controller method to get institution locations for the given
-   * institutionId for  ministry user.
-   * @param institutionId institution id
-   * @returns All the institution locations for the given institution.
-   */
-  public async getAllInstitutionLocationSummary(
-    institutionId: number,
-  ): Promise<InstitutionLocationsDetails[]> {
-    const response = await this.getCall(
-      `institution/${institutionId}/location-summary`,
+      ),
     );
-    return (response.data as InstitutionLocationsDetails[]) ?? [];
   }
 }

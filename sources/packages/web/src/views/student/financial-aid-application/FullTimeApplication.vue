@@ -29,7 +29,7 @@
             &nbsp;&nbsp;
             <ProgressSpinner
               style="width: 30px; height: 25px"
-              strokeWidth="10" /></span
+              strokeWidth="10"/></span
         ></v-btn>
       </v-col>
     </v-row>
@@ -66,11 +66,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import RestrictionBanner from "@/views/student/RestrictionBanner.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
-import {
-  OFFERING_START_DATE_ERROR,
-  INVALID_STUDY_DATES,
-  PIR_OR_DATE_OVERLAP_ERROR,
-} from "@/constants";
+import { PIR_OR_DATE_OVERLAP_ERROR } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 
 export default {
@@ -116,8 +112,10 @@ export default {
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a toast
-      const programYearDetails =
-        await ApplicationService.shared.getApplicationWithPY(props.id, true);
+      const programYearDetails = await ApplicationService.shared.getApplicationWithPY(
+        props.id,
+        true,
+      );
       if (!programYearDetails.active) {
         isReadOnly.value = true;
         toast.error(
@@ -130,12 +128,15 @@ export default {
     onMounted(async () => {
       await checkProgramYear();
       //Get the student information, application information and student restriction.
-      const [studentInfo, applicationData, studentRestriction] =
-        await Promise.all([
-          StudentService.shared.getStudentInfo(),
-          ApplicationService.shared.getApplicationData(props.id),
-          StudentService.shared.getStudentRestriction(),
-        ]);
+      const [
+        studentInfo,
+        applicationData,
+        studentRestriction,
+      ] = await Promise.all([
+        StudentService.shared.getStudentInfo(),
+        ApplicationService.shared.getApplicationData(props.id),
+        StudentService.shared.getStudentRestriction(),
+      ]);
       hasRestriction.value = studentRestriction.hasRestriction;
       restrictionMessage.value = studentRestriction.restrictionMessage;
       // Adjust the spaces when optional fields are not present.
@@ -180,8 +181,9 @@ export default {
     const saveDraft = async () => {
       savingDraft.value = true;
       try {
-        const associatedFiles =
-          formioUtils.getAssociatedFiles(applicationWizard);
+        const associatedFiles = formioUtils.getAssociatedFiles(
+          applicationWizard,
+        );
         await ApplicationService.shared.saveApplicationDraft(props.id, {
           programYearId: props.programYearId,
           data: applicationWizard.submission.data,
@@ -213,17 +215,13 @@ export default {
           "Thank you, your application has been submitted.",
         );
       } catch (error) {
-        const errorLabel = "Unexpected error!";
+        let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error happen.";
-        [
-          INVALID_STUDY_DATES,
-          OFFERING_START_DATE_ERROR,
-          PIR_OR_DATE_OVERLAP_ERROR,
-        ].forEach((customError) => {
-          if (error.includes(customError)) {
-            errorMsg = error.replace(customError, "").trim();
-          }
-        });
+        if (error.response.data?.errorType === PIR_OR_DATE_OVERLAP_ERROR) {
+          errorLabel = "Invalid submission";
+          errorMsg = error.response.data?.message;
+        }
+
         toast.error(errorLabel, errorMsg);
       } finally {
         submittingApplication.value = false;

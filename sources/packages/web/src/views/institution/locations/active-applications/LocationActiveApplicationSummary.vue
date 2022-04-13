@@ -63,7 +63,8 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
-import { ApplicationSummaryDTO, ApplicationStatus } from "@/types";
+import { ApplicationStatus } from "@/types";
+import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 
@@ -78,7 +79,7 @@ export default {
   setup(props: any) {
     const router = useRouter();
     const { dateString } = useFormatters();
-    const applications = ref([] as ApplicationSummaryDTO[]);
+    const applications = ref([] as ActiveApplicationSummaryAPIOutDTO[]);
     const locationDetails = ref();
 
     const goToApplicationView = (applicationId: number) => {
