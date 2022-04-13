@@ -34,6 +34,21 @@ export class ECertIntegrationController extends BaseController {
   }
 
   /**
+   * Download all files from FullTime E-Cert Response folder on SFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  @Post("process-full-time-responses")
+  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    const results = await this.eCertFileHandler.processFullTimeResponses();
+    return results.map((result) => {
+      return {
+        processSummary: result.processSummary,
+        errorsSummary: result.errorsSummary,
+      };
+    });
+  }
+
+  /**
    * Process Part-Time disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @returns result of the file upload with the file generated and the
@@ -49,21 +64,6 @@ export class ECertIntegrationController extends BaseController {
       generatedFile: uploadPartTimeResult.generatedFile,
       uploadedRecords: uploadPartTimeResult.uploadedRecords,
     };
-  }
-
-  /**
-   * Download all files from FullTime E-Cert Response folder on SFTP and process them all.
-   * @returns Summary with what was processed and the list of all errors, if any.
-   */
-  @Post("process-full-time-responses")
-  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertFileHandler.processFullTimeResponses();
-    return results.map((result) => {
-      return {
-        processSummary: result.processSummary,
-        errorsSummary: result.errorsSummary,
-      };
-    });
   }
 
   /**

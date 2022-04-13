@@ -1,11 +1,10 @@
 import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../../models/e-cert-integration-model";
+import { RecordTypeCodes, Award } from "../../models/e-cert-integration-model";
 import {
   DATE_FORMAT,
   SPACE_FILLER,
   NUMBER_FILLER,
 } from "../../../models/esdc-integration.model";
-import { Award } from "../../models/e-cert-integration-model";
 import { ECertFileRecord } from "../../e-cert-files/e-cert-file-record";
 
 /**

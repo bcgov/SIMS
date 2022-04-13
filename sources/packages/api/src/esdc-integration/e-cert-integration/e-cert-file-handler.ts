@@ -20,9 +20,12 @@ import {
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
-import { ECertUploadResult } from "./models/e-cert-integration-model";
+import {
+  Award,
+  ECertRecord,
+  ECertUploadResult,
+} from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
-import { Award, ECertRecord } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert-integration.service";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";

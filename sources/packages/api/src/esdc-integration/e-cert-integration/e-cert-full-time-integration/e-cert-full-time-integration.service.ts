@@ -9,13 +9,16 @@ import {
   getTotalYearsOfStudy,
   round,
 } from "../../../utilities";
-import { RecordTypeCodes } from "../models/e-cert-integration-model";
+import {
+  RecordTypeCodes,
+  Award,
+  ECertRecord,
+} from "../models/e-cert-integration-model";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../../database/entities";
-import { Award, ECertRecord } from "../models/e-cert-integration-model";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 

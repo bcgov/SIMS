@@ -12,13 +12,14 @@ import {
   CSGD,
   CSGP,
   CSGPT,
+  Award,
+  ECertRecord,
 } from "../models/e-cert-integration-model";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertPartTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertPartTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileRecord } from "./e-cert-files/e-cert-file-record";
 import { DisbursementValueType } from "../../../database/entities";
-import { Award, ECertRecord } from "../models/e-cert-integration-model";
 import { ECertIntegrationService } from "../e-cert-integration.service";
 import { ECertResponseRecord } from "../e-cert-files/e-cert-response-record";
 
