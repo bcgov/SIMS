@@ -1,17 +1,17 @@
-import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../../e-cert-integration-model";
+import { RecordTypeCodes } from "../../models/e-cert-integration-model";
 import {
   SPACE_FILLER,
   NUMBER_FILLER,
 } from "../../../models/esdc-integration.model";
+import { ECertFileFooter } from "../../e-cert-files/e-cert-file-footer";
 
 /**
  * Footer of an E-Cert file.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertPartTimeFileFooter implements FixedFormatFileLine {
+export class ECertPartTimeFileFooter implements ECertFileFooter {
   recordTypeCode: RecordTypeCodes;
   totalAmountDisbursed: number;
   totalSINHash: number;
@@ -26,7 +26,7 @@ export class ECertPartTimeFileFooter implements FixedFormatFileLine {
     return footer.toString();
   }
 
-  public static createFromLine(line: string): ECertPartTimeFileFooter {
+  public createFromLine(line: string): ECertPartTimeFileFooter {
     const footer = new ECertPartTimeFileFooter();
     footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     // Here total record count is the total records.

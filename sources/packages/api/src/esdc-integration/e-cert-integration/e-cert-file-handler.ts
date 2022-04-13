@@ -20,16 +20,22 @@ import {
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
-import { ECertUploadResult } from "./e-cert-integration-model";
+import { ECertUploadResult } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
-import { Award, ECertRecord } from "./e-cert-integration-model";
+import { Award, ECertRecord } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert-integration.service";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
-import { ECertResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
+import { ECertFullTimeResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
 import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ESDCIntegrationConfig } from "../../types";
 import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
+import { ECertPartTimeFileHeader } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-header";
+import { ECertPartTimeFileFooter } from "./e-cert-part-time-integration/e-cert-files/e-cert-file-footer";
+import { ECertFullTimeFileHeader } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-header";
+import { ECertFullTimeFileFooter } from "./e-cert-full-time-integration/e-cert-files/e-cert-file-footer";
+import { ECertFileHeader } from "./e-cert-files/e-cert-file-header";
+import { ECertFileFooter } from "./e-cert-files/e-cert-file-footer";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
@@ -43,6 +49,10 @@ export class ECertFileHandler extends ESDCFileHandler {
     private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
+    private readonly eCertPartTimeFileHeader: ECertPartTimeFileHeader,
+    private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter,
+    private readonly eCertFullTimeFileHeader: ECertFullTimeFileHeader,
+    private readonly eCertFullTimeFileFooter: ECertFullTimeFileFooter,
   ) {
     super(configService);
   }
@@ -84,6 +94,8 @@ export class ECertFileHandler extends ESDCFileHandler {
     return this.processResponses(
       this.eCertFullTimeIntegrationService,
       ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
+      this.eCertFullTimeFileHeader,
+      this.eCertFullTimeFileFooter,
     );
   }
 
@@ -96,6 +108,8 @@ export class ECertFileHandler extends ESDCFileHandler {
     return this.processResponses(
       this.eCertPartTimeIntegrationService,
       ECERT_PART_TIME_FEEDBACK_FILE_CODE,
+      this.eCertPartTimeFileHeader,
+      this.eCertPartTimeFileFooter,
     );
   }
 
@@ -110,9 +124,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * amount of records added to the file.
    */
   async generateECert(
-    eCertIntegrationService: ECertIntegrationService<
-      ECertResponseRecord[] | void
-    >,
+    eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
     sequenceGroup: string,
@@ -259,8 +271,10 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns Summary with what was processed and the list of all errors, if any.
    */
   async processResponses(
-    eCertIntegrationService: ECertIntegrationService<ECertResponseRecord[]>,
+    eCertIntegrationService: ECertIntegrationService,
     fileCode: string,
+    eCertFileHeader: ECertFileHeader,
+    eCertFileFooter: ECertFileFooter,
   ): Promise<ProcessSFTPResponseResult[]> {
     const filePaths = await eCertIntegrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
@@ -269,7 +283,12 @@ export class ECertFileHandler extends ESDCFileHandler {
     const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
       processFiles.push(
-        await this.processFile(eCertIntegrationService, filePath),
+        await this.processFile(
+          eCertIntegrationService,
+          filePath,
+          eCertFileHeader,
+          eCertFileFooter,
+        ),
       );
     }
     return processFiles;
@@ -281,17 +300,21 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @returns Process summary and errors summary.
    */
   private async processFile(
-    eCertIntegrationService: ECertIntegrationService<ECertResponseRecord[]>,
+    eCertIntegrationService: ECertIntegrationService,
     filePath: string,
+    eCertFileHeader: ECertFileHeader,
+    eCertFileFooter: ECertFileFooter,
   ): Promise<ProcessSFTPResponseResult> {
     const result = new ProcessSFTPResponseResult();
     result.processSummary.push(`Processing file ${filePath}.`);
 
-    let responseFile: ECertResponseRecord[];
+    let responseFile: ECertFullTimeResponseRecord[];
 
     try {
-      responseFile = await eCertIntegrationService.downloadResponseFile(
+      responseFile = await eCertIntegrationService.downloadECertResponseFile(
         filePath,
+        eCertFileHeader,
+        eCertFileFooter,
       );
     } catch (error) {
       this.logger.error(error);
@@ -341,7 +364,7 @@ export class ECertFileHandler extends ESDCFileHandler {
    * @param feedbackRecord E-Cert received record
    */
   private async processErrorCodeRecords(
-    feedbackRecord: ECertResponseRecord,
+    feedbackRecord: ECertFullTimeResponseRecord,
   ): Promise<void> {
     const disbursementSchedule =
       await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(

@@ -1,4 +1,7 @@
-import { DisbursementValue, RelationshipStatus } from "../../database/entities";
+import {
+  DisbursementValue,
+  RelationshipStatus,
+} from "../../../database/entities";
 
 export const ECERT_SENT_TITLE = "ENTITLEMENT";
 export const CSGD = "CSGD";

@@ -1,14 +1,14 @@
-import { ECertResponseRecordIdentification } from "./e-cert-response-record-identification";
+import { ECertResponseRecord } from "../../e-cert-files/e-cert-response-record";
 
 /**
  * Parsing E-Certs feedback records to get the document number and associated
  * error codes
- * Please note that the numbers below (e.g. line.substr(25, 2))
+ * Please note that the numbers below (e.g. line.substring(31, 39))
  * represents the position of the information in a fixed text file format.
  * The documentation about it is available on the document
  * 'CSLP-AppendixF2AsReviewed2016-FileLayouts BC Files V3(HAJ-CB EDITS) In ESDC Folder'.
  */
-export class ECertResponseRecord extends ECertResponseRecordIdentification {
+export class ECertFullTimeResponseRecord extends ECertResponseRecord {
   constructor(line: string, lineNumber: number) {
     super(line, lineNumber);
   }
