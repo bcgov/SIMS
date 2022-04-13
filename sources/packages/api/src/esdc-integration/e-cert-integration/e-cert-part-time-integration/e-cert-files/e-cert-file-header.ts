@@ -1,14 +1,14 @@
 import { StringBuilder, getDateOnlyFromFormat } from "../../../../utilities";
 import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import {
-  ECERT_SENT_TITLE,
-  RecordTypeCodes,
-} from "../models/e-cert-part-time-integration.model";
-import {
   SPACE_FILLER,
   TIME_FORMAT,
   DATE_FORMAT,
 } from "../../../models/esdc-integration.model";
+import {
+  ECERT_SENT_TITLE,
+  RecordTypeCodes,
+} from "../../e-cert-integration-model";
 
 const ORIGINATOR_CODE = "BC";
 

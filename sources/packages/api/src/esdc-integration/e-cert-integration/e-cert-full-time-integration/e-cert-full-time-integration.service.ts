@@ -9,7 +9,7 @@ import {
   getTotalYearsOfStudy,
   round,
 } from "../../../utilities";
-import { RecordTypeCodes } from "./models/e-cert-full-time-integration.model";
+import { RecordTypeCodes } from "../e-cert-integration-model";
 import { FixedFormatFileLine } from "../../../services/ssh/sftp-integration-base.models";
 import { ECertFullTimeFileHeader } from "./e-cert-files/e-cert-file-header";
 import { ECertFullTimeFileFooter } from "./e-cert-files/e-cert-file-footer";
@@ -45,7 +45,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService<
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
     const header = new ECertFullTimeFileHeader();
-    header.recordTypeCode = RecordTypeCodes.ECertHeader;
+    header.recordTypeCode = RecordTypeCodes.ECertFullTimeHeader;
     header.processDate = new Date();
     header.sequence = fileSequence;
     fileLines.push(header);
@@ -90,7 +90,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService<
       ]);
 
       const record = new ECertFullTimeFileRecord();
-      record.recordType = RecordTypeCodes.ECertRecord;
+      record.recordType = RecordTypeCodes.ECertFullTimeRecord;
       record.sin = ecertRecord.sin;
       record.applicationNumber = ecertRecord.applicationNumber;
       record.documentNumber = ecertRecord.documentNumber;
@@ -142,7 +142,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService<
       0,
     );
     const footer = new ECertFullTimeFileFooter();
-    footer.recordTypeCode = RecordTypeCodes.ECertFooter;
+    footer.recordTypeCode = RecordTypeCodes.ECertFullTimeFooter;
     footer.totalSINHash = totalSINHash;
     footer.recordCount = fileRecords.length;
     fileLines.push(footer);
@@ -166,7 +166,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService<
      * and remove header.
      */
     const header = ECertFullTimeFileHeader.createFromLine(fileLines.shift());
-    if (header.recordTypeCode !== RecordTypeCodes.ECertHeader) {
+    if (header.recordTypeCode !== RecordTypeCodes.ECertFullTimeHeader) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on header: ${header.recordTypeCode}`,
       );
@@ -181,7 +181,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService<
      * and remove trailer line.
      */
     const trailer = ECertFullTimeFileFooter.createFromLine(fileLines.pop());
-    if (trailer.recordTypeCode !== RecordTypeCodes.ECertFooter) {
+    if (trailer.recordTypeCode !== RecordTypeCodes.ECertFullTimeFooter) {
       this.logger.error(
         `The E-Cert file ${remoteFilePath} has an invalid record type code on trailer: ${trailer.recordTypeCode}`,
       );

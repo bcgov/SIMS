@@ -1,6 +1,6 @@
 import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-base.models";
 import { StringBuilder } from "../../../../utilities/string-builder";
-import { RecordTypeCodes } from "../models/e-cert-part-time-integration.model";
+import { RecordTypeCodes } from "../../e-cert-integration-model";
 import {
   SPACE_FILLER,
   NUMBER_FILLER,
@@ -14,6 +14,7 @@ import {
 export class ECertPartTimeFileFooter implements FixedFormatFileLine {
   recordTypeCode: RecordTypeCodes;
   totalAmountDisbursed: number;
+  totalSINHash: number;
   recordCount: number;
 
   public getFixedFormat(): string {
@@ -30,7 +31,7 @@ export class ECertPartTimeFileFooter implements FixedFormatFileLine {
     footer.recordTypeCode = line.substring(0, 2) as RecordTypeCodes;
     // Here total record count is the total records.
     footer.recordCount = parseInt(line.substring(2, 11));
-    footer.totalAmountDisbursed = parseInt(line.substring(11, 26));
+    footer.totalSINHash = parseInt(line.substring(11, 26));
     return footer;
   }
 }

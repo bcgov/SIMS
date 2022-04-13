@@ -7,16 +7,11 @@ import { ECertFileHandler } from "../../esdc-integration/e-cert-integration/e-ce
 import { ESDCFileResponseDTO, ESDCFileResultDTO } from "./models/esdc-model";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ECertFullTimeResponseService } from "../../esdc-integration/e-cert-integration/e-cert-full-time-integration/e-cert-full-time-response.service";
-
 @AllowAuthorizedParty(AuthorizedParties.formsFlowBPM)
 @Controller("system-access/e-cert")
 @ApiTags("system-access")
 export class ECertIntegrationController extends BaseController {
-  constructor(
-    private readonly eCertFileHandler: ECertFileHandler,
-    private readonly eCertFullTimeResponseService: ECertFullTimeResponseService,
-  ) {
+  constructor(private readonly eCertFileHandler: ECertFileHandler) {
     super();
   }
 
@@ -57,12 +52,27 @@ export class ECertIntegrationController extends BaseController {
   }
 
   /**
-   * Download all files from E-Cert Response folder on SFTP and process them all.
+   * Download all files from FullTime E-Cert Response folder on SFTP and process them all.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  @Post("process-responses")
-  async processResponses(): Promise<ESDCFileResponseDTO[]> {
-    const results = await this.eCertFullTimeResponseService.processResponses();
+  @Post("process-full-time-responses")
+  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    const results = await this.eCertFileHandler.processFullTimeResponses();
+    return results.map((result) => {
+      return {
+        processSummary: result.processSummary,
+        errorsSummary: result.errorsSummary,
+      };
+    });
+  }
+
+  /**
+   * Download all files from Part Time E-Cert Response folder on SFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  @Post("process-part-time-responses")
+  async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    const results = await this.eCertFileHandler.processPartTimeResponses();
     return results.map((result) => {
       return {
         processSummary: result.processSummary,

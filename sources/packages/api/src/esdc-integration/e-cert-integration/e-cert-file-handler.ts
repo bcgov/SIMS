@@ -6,33 +6,41 @@ import {
 import { LoggerService } from "../../logger/logger.service";
 import {
   ConfigService,
+  DisbursementScheduleErrorsService,
   DisbursementScheduleService,
   SequenceControlService,
 } from "../../services";
 import {
   ECERT_FULL_TIME_FILE_CODE,
   ECERT_PART_TIME_FILE_CODE,
+  ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
+  ECERT_PART_TIME_FEEDBACK_FILE_CODE,
   getDayOfTheYear,
   getFieldOfStudyFromCIPCode,
 } from "../../utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
-import { ECertUploadResult } from "./e-cert-full-time-integration/models/e-cert-full-time-integration.model";
+import { ECertUploadResult } from "./e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
 import { Award, ECertRecord } from "./e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert-integration.service";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time-integration.service";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time-integration.service";
 import { ECertResponseRecord } from "./e-cert-full-time-integration/e-cert-files/e-cert-response-record";
+import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
+import { ESDCIntegrationConfig } from "../../types";
+import { ESDCFileResponseDTO } from "../../route-controllers/esdc-integration/models/esdc-model";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 @Injectable()
 export class ECertFileHandler extends ESDCFileHandler {
+  esdcConfig: ESDCIntegrationConfig;
   constructor(
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly disbursementScheduleErrorsService: DisbursementScheduleErrorsService,
     private readonly eCertFullTimeIntegrationService: ECertFullTimeIntegrationService,
     private readonly eCertPartTimeIntegrationService: ECertPartTimeIntegrationService,
   ) {
@@ -64,6 +72,30 @@ export class ECertFileHandler extends ESDCFileHandler {
       OfferingIntensity.partTime,
       ECERT_PART_TIME_FILE_CODE,
       ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
+    );
+  }
+
+  /**
+   * Method to call the Full-time feedback file processing and the list of all errors, if any.
+   * @returns result of the file upload with the file generated and the
+   * amount of records added to the file.
+   */
+  async processFullTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    return this.processResponses(
+      this.eCertFullTimeIntegrationService,
+      ECERT_FULL_TIME_FEEDBACK_FILE_CODE,
+    );
+  }
+
+  /**
+   * Method to call the Part-time feedback file processing and the list of all errors, if any.
+   * @returns result of the file upload with the file generated and the
+   * amount of records added to the file.
+   */
+  async processPartTimeResponses(): Promise<ESDCFileResponseDTO[]> {
+    return this.processResponses(
+      this.eCertPartTimeIntegrationService,
+      ECERT_PART_TIME_FEEDBACK_FILE_CODE,
     );
   }
 
@@ -220,6 +252,118 @@ export class ECertFileHandler extends ESDCFileHandler {
       studentNumber: application.studentNumber,
       awards,
     } as ECertRecord;
+  }
+
+  /**
+   * Download all files from E-Cert Response folder on SFTP and process them all.
+   * @returns Summary with what was processed and the list of all errors, if any.
+   */
+  async processResponses(
+    eCertIntegrationService: ECertIntegrationService<ECertResponseRecord[]>,
+    fileCode: string,
+  ): Promise<ProcessSFTPResponseResult[]> {
+    const filePaths = await eCertIntegrationService.getResponseFilesFullPath(
+      this.esdcConfig.ftpResponseFolder,
+      new RegExp(`^${this.esdcConfig.environmentCode}${fileCode}`, "i"),
+    );
+    const processFiles: ProcessSFTPResponseResult[] = [];
+    for (const filePath of filePaths) {
+      processFiles.push(
+        await this.processFile(eCertIntegrationService, filePath),
+      );
+    }
+    return processFiles;
+  }
+
+  /**
+   * Process each individual E-Cert response file from the SFTP.
+   * @param filePath E-Cert response file to be processed.
+   * @returns Process summary and errors summary.
+   */
+  private async processFile(
+    eCertIntegrationService: ECertIntegrationService<ECertResponseRecord[]>,
+    filePath: string,
+  ): Promise<ProcessSFTPResponseResult> {
+    const result = new ProcessSFTPResponseResult();
+    result.processSummary.push(`Processing file ${filePath}.`);
+
+    let responseFile: ECertResponseRecord[];
+
+    try {
+      responseFile = await eCertIntegrationService.downloadResponseFile(
+        filePath,
+      );
+    } catch (error) {
+      this.logger.error(error);
+      result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
+      // Abort the process nicely not throwing an exception and
+      // allowing other response files to be processed.
+      return result;
+    }
+
+    result.processSummary.push(`File contains ${responseFile.length} records.`);
+
+    for (const feedbackRecord of responseFile) {
+      try {
+        await this.processErrorCodeRecords(feedbackRecord);
+        this.logger.error(
+          `Successfully processed line ${feedbackRecord.lineNumber}.`,
+        );
+      } catch (error) {
+        // Log the error but allow the process to continue.
+        const errorDescription = `Error processing record line number ${feedbackRecord.lineNumber} from file ${filePath}, error: ${error}`;
+        result.errorsSummary.push(errorDescription);
+        this.logger.error(`${errorDescription}. Error: ${error}`);
+      }
+    }
+
+    try {
+      if (result.errorsSummary.length === 0) {
+        // if there is an error in the file do not delete the file
+        await eCertIntegrationService.deleteFile(filePath);
+      }
+    } catch (error) {
+      // Log the error but allow the process to continue.
+      // If there was an issue only during the file removal, it will be
+      // processed again and could be deleted in the second attempt.
+      const logMessage = `Error while deleting E-Cert response file: ${filePath}`;
+      this.logger.error(logMessage);
+      result.errorsSummary.push(logMessage);
+    }
+
+    return result;
+  }
+
+  /**
+   * Process the feedback record from the E-Cert response file
+   * and save the error code and disbursementSchedule_id respective to
+   * the document number in DisbursementFeedbackErrors.
+   * @param feedbackRecord E-Cert received record
+   */
+  private async processErrorCodeRecords(
+    feedbackRecord: ECertResponseRecord,
+  ): Promise<void> {
+    const disbursementSchedule =
+      await this.disbursementScheduleService.getDisbursementScheduleByDocumentNumber(
+        feedbackRecord.documentNumber,
+      );
+    if (disbursementSchedule) {
+      await this.disbursementScheduleErrorsService.createECertErrorRecord(
+        disbursementSchedule,
+        [
+          feedbackRecord.errorCode1,
+          feedbackRecord.errorCode2,
+          feedbackRecord.errorCode3,
+          feedbackRecord.errorCode4,
+          feedbackRecord.errorCode5,
+        ].filter((error) => error),
+        new Date(),
+      );
+    } else {
+      throw new Error(
+        `${feedbackRecord.documentNumber} document number not found in disbursement_schedule table.`,
+      );
+    }
   }
 
   @InjectLogger()

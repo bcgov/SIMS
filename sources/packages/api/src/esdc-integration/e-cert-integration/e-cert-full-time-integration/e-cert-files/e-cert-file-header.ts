@@ -3,7 +3,7 @@ import { FixedFormatFileLine } from "../../../../services/ssh/sftp-integration-b
 import {
   ECERT_SENT_TITLE,
   RecordTypeCodes,
-} from "../models/e-cert-full-time-integration.model";
+} from "../../e-cert-integration-model";
 import {
   DATE_FORMAT,
   SPACE_FILLER,
