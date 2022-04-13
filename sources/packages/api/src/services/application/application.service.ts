@@ -497,7 +497,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getApplicationById(applicationId: number): Promise<Application> {
     return this.repo
       .createQueryBuilder("application")
-      .select(["student.sin", "student.birthDate", "user.id", "user.lastName"])
+      .select([
+        "application.data",
+        "student.sin",
+        "student.birthDate",
+        "user.id",
+        "user.lastName",
+      ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .andWhere("application.id = :applicationId", {
