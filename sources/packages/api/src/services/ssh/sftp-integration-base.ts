@@ -5,6 +5,8 @@ import { SFTPConfig } from "../../types";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
+import { ECertFileHeader } from "../../esdc-integration/e-cert-integration/e-cert-files/e-cert-file-header";
+import { ECertFileFooter } from "../../esdc-integration/e-cert-integration/e-cert-files/e-cert-file-footer";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -100,7 +102,11 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * in parsed objects specific to the integration process.
    * @param remoteFilePath full remote file path with file name.
    */
-  abstract downloadResponseFile(remoteFilePath: string): Promise<DownloadType>;
+  abstract downloadResponseFile(
+    remoteFilePath: string,
+    eCertFileHeader?: ECertFileHeader,
+    eCertFileFooter?: ECertFileFooter,
+  ): Promise<DownloadType>;
 
   /**
    * Delete a file from SFTP.

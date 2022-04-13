@@ -40,10 +40,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
    * @param fileSequence unique file sequence.
    * @returns complete ECert content to be sent.
    */
-  createRequestContent(
-    ecertRecords: ECertRecord[],
-    fileSequence: number,
-  ): FixedFormatFileLine[] {
+  createRequestContent(ecertRecords: ECertRecord[]): FixedFormatFileLine[] {
     const fileLines: FixedFormatFileLine[] = [];
     // Header record
     const header = new ECertPartTimeFileHeader();
@@ -92,7 +89,7 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
       record.recordType = RecordTypeCodes.ECertPartTimeRecord;
       record.sin = ecertRecord.sin;
       record.courseLoad = ecertRecord.courseLoad;
-      record.certNumber = fileSequence;
+      record.certNumber = ecertRecord.documentNumber;
       record.disbursementDate = ecertRecord.disbursementDate;
       record.documentProducedDate = ecertRecord.documentProducedDate;
       record.disbursementAmount = disbursementAmount;
@@ -139,11 +136,5 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     fileLines.push(footer);
 
     return fileLines;
-  }
-
-  async downloadResponseFile(
-    remoteFilePath: string,
-  ): Promise<ECertResponseRecord[]> {
-    throw new Error(`Method not implemented, ${remoteFilePath} not declared.`);
   }
 }

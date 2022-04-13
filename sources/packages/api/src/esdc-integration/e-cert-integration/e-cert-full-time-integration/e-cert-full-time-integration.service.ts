@@ -150,10 +150,4 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
 
     return fileLines;
   }
-
-  async downloadResponseFile(
-    remoteFilePath: string,
-  ): Promise<ECertResponseRecord[]> {
-    throw new Error(`Method not implemented, ${remoteFilePath} not declared.`);
-  }
 }

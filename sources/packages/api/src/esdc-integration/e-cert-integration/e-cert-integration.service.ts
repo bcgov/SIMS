@@ -20,7 +20,7 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
    */
   createRequestContent(
     ecertRecords: ECertRecord[],
-    fileSequence: number,
+    fileSequence?: number,
   ): FixedFormatFileLine[] {
     throw new Error(
       `Method not implemented , ${ecertRecords} && ${fileSequence} not declared.`,
@@ -32,7 +32,7 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
    * @param remoteFilePath full remote file path with file name.
    * @returns Parsed records from the file.
    */
-  async downloadECertResponseFile(
+  async downloadResponseFile(
     remoteFilePath: string,
     eCertFileHeader: ECertFileHeader,
     eCertFileFooter: ECertFileFooter,

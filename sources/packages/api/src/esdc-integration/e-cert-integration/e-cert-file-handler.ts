@@ -314,7 +314,7 @@ export class ECertFileHandler extends ESDCFileHandler {
     let responseFile: ECertFullTimeResponseRecord[];
 
     try {
-      responseFile = await eCertIntegrationService.downloadECertResponseFile(
+      responseFile = await eCertIntegrationService.downloadResponseFile(
         filePath,
         eCertFileHeader,
         eCertFileFooter,
