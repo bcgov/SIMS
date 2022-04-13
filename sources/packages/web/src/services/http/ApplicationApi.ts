@@ -117,10 +117,9 @@ export class ApplicationApi extends HttpBaseClient {
     payload: SaveStudentApplicationDto,
   ): Promise<void> {
     try {
-      await this.apiClient.patch(
+      await this.patchCall(
         this.addClientRoot(`application/${applicationId}/submit`),
         payload,
-        this.addAuthHeader(),
       );
     } catch (error: unknown) {
       this.handleAPICustomError(error);

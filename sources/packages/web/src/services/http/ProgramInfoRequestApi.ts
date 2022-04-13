@@ -25,10 +25,9 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     data: CompleteProgramInfoRequestDto,
   ): Promise<void> {
     try {
-      await this.apiClient.patch(
+      await this.patchCall(
         `institution/location/${locationId}/program-info-request/application/${applicationId}/complete`,
         { ...data },
-        this.addAuthHeader(),
       );
     } catch (error: unknown) {
       this.handleAPICustomError(error);
