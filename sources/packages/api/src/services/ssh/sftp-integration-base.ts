@@ -5,8 +5,6 @@ import { SFTPConfig } from "../../types";
 import { FixedFormatFileLine } from "./sftp-integration-base.models";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
-import { ECertFileHeader } from "../../esdc-integration/e-cert-integration/e-cert-files/e-cert-file-header";
-import { ECertFileFooter } from "../../esdc-integration/e-cert-integration/e-cert-files/e-cert-file-footer";
 
 /**
  * Provides the basic features to enable the SFTP integration.
