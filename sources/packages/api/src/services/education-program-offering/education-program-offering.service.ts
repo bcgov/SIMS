@@ -305,15 +305,19 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param offeringId offering id.
    * @returns offering location id.
    */
-  async getOfferingLocationId(offeringId: number): Promise<number> {
-    const locationIdQuery = await this.repo
+  async getOfferingLocationId(
+    offeringId: number,
+  ): Promise<EducationProgramOffering> {
+    return this.repo
       .createQueryBuilder("offerings")
+      .select([
+        "location.id",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+      ])
       .innerJoin("offerings.institutionLocation", "location")
-      .select("location.id", "locationId")
       .where("offerings.id = :offeringId", { offeringId })
-      .getRawOne();
-
-    return locationIdQuery.locationId;
+      .getOne();
   }
 
   /**

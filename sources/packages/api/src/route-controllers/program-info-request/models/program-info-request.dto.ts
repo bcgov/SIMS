@@ -7,8 +7,6 @@ export interface CompleteProgramInfoRequestDto
   extends SaveEducationProgramOfferingDto {
   selectedProgram?: number;
   selectedOffering?: number;
-  studentStudyStartDate: string;
-  studentStudyEndDate: string;
 }
 
 export interface GetProgramInfoRequestDto
@@ -16,6 +14,8 @@ export interface GetProgramInfoRequestDto
   institutionLocationName: string;
   applicationNumber: string;
   studentFullName: string;
+  studentStudyStartDate: string;
+  studentStudyEndDate: string;
   studentSelectedProgram: string;
   studentCustomProgram: string;
   studentCustomProgramDescription: string;
