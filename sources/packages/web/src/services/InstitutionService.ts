@@ -37,6 +37,7 @@ import {
   ActiveApplicationDataAPIOutDTO,
   ActiveApplicationSummaryAPIOutDTO,
 } from "@/services/http/dto";
+import { ScholasticStandingAPIInDTO } from "./http/dto/ScholasticStanding.dto";
 
 export class InstitutionService {
   // Share Instance
@@ -436,5 +437,23 @@ export class InstitutionService {
 
   public async getGetAdminRoleOptions(): Promise<UserAuth[]> {
     return ApiClient.Institution.getGetAdminRoleOptions();
+  }
+
+  /**
+   * Save scholastic standing and create new assessment.
+   * @param locationId location id
+   * @param applicationId application id
+   * @param payload scholasticStanding payload
+   */
+  async saveScholasticStanding(
+    applicationId: number,
+    locationId: number,
+    payload: ScholasticStandingAPIInDTO,
+  ) {
+    return ApiClient.InstitutionLocation.saveScholasticStanding(
+      applicationId,
+      locationId,
+      payload,
+    );
   }
 }

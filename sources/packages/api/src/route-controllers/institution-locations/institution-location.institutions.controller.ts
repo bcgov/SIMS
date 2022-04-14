@@ -14,17 +14,19 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import {
   AllowAuthorizedParty,
   HasLocationAccess,
   IsInstitutionAdmin,
   UserToken,
 } from "../../auth/decorators";
-import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import {
   ApplicationService,
   FormService,
   InstitutionLocationService,
+  StudentAssessmentService,
+  StudentScholasticStandingsService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import {
@@ -45,6 +47,7 @@ import {
   InstitutionLocationAPIOutDTO,
   InstitutionLocationFormAPIInDTO,
   InstitutionLocationFormAPIOutDTO,
+  ScholasticStandingAPIInDTO,
 } from "./models/institution-location.dto";
 
 /**
@@ -59,6 +62,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly locationService: InstitutionLocationService,
     private readonly formService: FormService,
+    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -216,8 +221,8 @@ export class InstitutionLocationInstitutionsController extends BaseController {
 
   /**
    * Get active application details.
-   * @param applicationId active application of the location.
-   * @param locationId
+   * @param locationId location id.
+   * @param applicationId application id.
    * @returns active application Details
    */
   @ApiNotFoundResponse({ description: "Application not found." })
@@ -265,5 +270,34 @@ export class InstitutionLocationInstitutionsController extends BaseController {
       applicationOfferingMandatoryFess: offering.mandatoryFees,
       applicationOfferingExceptionalExpenses: offering.exceptionalExpenses,
     };
+  }
+
+  /**
+   * Save scholastic standing and create new assessment.
+   * @param locationId location id.
+   * @param applicationId application id.
+   * @param payload Scholastic Standing payload.
+   */
+  @AllowAuthorizedParty(AuthorizedParties.institution)
+  @HasLocationAccess("locationId")
+  @Post(":locationId/application/:applicationId/scholastic-standing")
+  async saveScholasticStanding(
+    @Param("locationId") locationId: number,
+    @Param("applicationId") applicationId: number,
+    @Body() payload: ScholasticStandingAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<void> {
+    const scholasticStanding =
+      await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
+        applicationId,
+        userToken.userId,
+        payload,
+      );
+    // start assessment.
+    if (scholasticStanding.studentAssessment) {
+      await this.studentAssessmentService.startAssessment(
+        scholasticStanding.studentAssessment.id,
+      );
+    }
   }
 }

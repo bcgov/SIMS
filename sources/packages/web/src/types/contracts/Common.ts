@@ -25,7 +25,13 @@ export interface AddressInfo {
   city: string;
   postalCode: string;
 }
+
 export interface ContactInformation {
   addresses: Array<AddressInfo>;
   phone: string;
+}
+
+export enum checkboxFormType {
+  yes = "yes",
+  no = "no",
 }

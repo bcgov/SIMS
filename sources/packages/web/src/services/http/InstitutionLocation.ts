@@ -12,6 +12,7 @@ import {
   OptionItemAPIOutDTO,
 } from "@/services/http/dto";
 
+import { ScholasticStandingAPIInDTO } from "./dto/ScholasticStanding.dto";
 export class InstitutionLocationApi extends HttpBaseClient {
   public async createInstitutionLocation(
     createInstitutionLocationDto: InstitutionLocationFormAPIInDTO,
@@ -148,5 +149,30 @@ export class InstitutionLocationApi extends HttpBaseClient {
         `institution/location/${locationId}/active-application/${applicationId}`,
       ),
     );
+  }
+
+  /**
+   * Save scholastic standing and create new assessment.
+   * @param locationId location id
+   * @param applicationId application id
+   * @param payload scholasticStanding payload
+   */
+  public async saveScholasticStanding(
+    applicationId: number,
+    locationId: number,
+    payload: ScholasticStandingAPIInDTO,
+  ): Promise<void> {
+    try {
+      await this.apiClient.post(
+        this.addClientRoot(
+          `institution/location/${locationId}/application/${applicationId}/scholastic-standing`,
+        ),
+        payload,
+        this.addAuthHeader(),
+      );
+    } catch (error) {
+      this.handleRequestError(error);
+      throw error;
+    }
   }
 }

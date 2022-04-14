@@ -13,6 +13,7 @@
     <formio
       formName="reportscholasticstandingchange"
       :data="initialData"
+      @submitted="submit"
       @customEvent="customEventCallback"
     ></formio>
   </full-page-container>
@@ -27,6 +28,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import HeaderNavigator from "@/components/generic/HeaderNavigator.vue";
 import FullPageContainer from "@/components/layouts/FullPageContainer.vue";
 import { ActiveApplicationDataAPIOutDTO } from "@/services/http/dto";
+import { ScholasticStandingAPIInDTO } from "@/services/http/dto/ScholasticStanding.dto";
 
 export default {
   components: {
@@ -53,6 +55,7 @@ export default {
         props.locationId,
       );
     };
+
     const customEventCallback = async (form: any, event: FormIOCustomEvent) => {
       if (
         FormIOCustomEventTypes.RouteToInstitutionActiveSummaryPage ===
@@ -66,13 +69,24 @@ export default {
         });
       }
     };
+
     onMounted(async () => {
       await loadInitialData();
     });
+
+    const submit = async (data: ScholasticStandingAPIInDTO) => {
+      await InstitutionService.shared.saveScholasticStanding(
+        props.applicationId,
+        props.locationId,
+        data,
+      );
+    };
+
     return {
       initialData,
       customEventCallback,
       InstitutionRoutesConst,
+      submit,
     };
   },
 };
