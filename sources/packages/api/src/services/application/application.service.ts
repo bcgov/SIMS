@@ -499,26 +499,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.data",
-        "programYear.programYear",
-        "programYear.startDate",
-        "programYear.endDate",
-        "offering",
-        "offering.educationProgram",
-        "educationProgram.credentialType",
-        "educationProgram.completionYears",
-        "location.data",
-        "institution",
-        "institutionType",
-        "student",
+        "student.sin",
+        "student.birthDate",
+        "user.id",
+        "user.lastName",
       ])
-      .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .leftJoin("currentAssessment.offering", "offering")
-      .leftJoin("offering.educationProgram", "educationProgram")
-      .leftJoin("application.location", "location")
-      .leftJoin("location.institution", "institution")
-      .leftJoin("institution.institutionType", "institutionType")
       .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
       .andWhere("application.id = :applicationId", {
         applicationId,
       })
