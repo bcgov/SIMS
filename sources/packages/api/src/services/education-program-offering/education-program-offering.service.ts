@@ -314,6 +314,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "location.id",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
+        "offerings.offeringIntensity",
       ])
       .innerJoin("offerings.institutionLocation", "location")
       .where("offerings.id = :offeringId", { offeringId })

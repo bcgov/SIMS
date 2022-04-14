@@ -248,13 +248,9 @@ export class ProgramInfoRequestController extends BaseController {
         throw new BadRequestException("Application not found.");
       }
 
-      this.applicationService.checkOfferingIntensityMismatch(
-        application.data.howWillYouBeAttendingTheProgram,
-        payload.offeringIntensity,
-      );
-
       let studyStartDate = payload.studyStartDate;
       let studyEndDate = payload.studyEndDate;
+      let selectedOfferingIntensity = payload.offeringIntensity;
 
       let offeringToCompletePIR: EducationProgramOffering;
       if (payload.selectedOffering) {
@@ -271,6 +267,7 @@ export class ProgramInfoRequestController extends BaseController {
         }
         studyStartDate = offeringLocation.studyStartDate;
         studyEndDate = offeringLocation.studyEndDate;
+        selectedOfferingIntensity = offeringLocation.offeringIntensity;
         // Offering exists, is valid and just need to be associated
         // with the application to complete the PIR.
         offeringToCompletePIR = {
@@ -278,7 +275,10 @@ export class ProgramInfoRequestController extends BaseController {
         } as EducationProgramOffering;
       }
 
-      console.log("payload", payload);
+      this.applicationService.checkOfferingIntensityMismatch(
+        application.data.howWillYouBeAttendingTheProgram,
+        selectedOfferingIntensity,
+      );
 
       await this.applicationService.validateOverlappingDatesAndPIR(
         applicationId,
@@ -305,7 +305,6 @@ export class ProgramInfoRequestController extends BaseController {
         );
       }
     } catch (error) {
-      console.log("error PIR", error);
       if (
         [
           PIR_OR_DATE_OVERLAP_ERROR,
