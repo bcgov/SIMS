@@ -35,6 +35,7 @@ export abstract class ECertIntegrationService extends SFTPIntegrationBase<
    * @param remoteFilePath full remote file path with file name.
    * @param eCertFileHeader
    * @param eCertFileFooter
+   * @param offeringIntensity Offering Intensity of the ECert file processed.
    * @returns Parsed records from the file.
    */
   async downloadECertResponseFile(
