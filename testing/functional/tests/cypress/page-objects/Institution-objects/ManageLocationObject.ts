@@ -9,7 +9,7 @@ export default class ManageLocationObject {
     );
   }
 
-  additionalInstituteLocationMessage() {
+  additionalInstitutionLocationMessage() {
     return cy.contains("Let’s add an additional institution location");
   }
 
@@ -25,7 +25,7 @@ export default class ManageLocationObject {
     return cy.xpath("//input[@id='eajd6ld-institutionCode']");
   }
 
-  instituteCodeErrorMessage() {
+  institutionCodeErrorMessage() {
     return cy.contains("Institution code is required");
   }
 

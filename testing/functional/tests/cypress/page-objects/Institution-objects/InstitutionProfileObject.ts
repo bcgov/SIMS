@@ -49,19 +49,19 @@ export default class InstitutionProfileObject {
     return cy.get(".input").type(date);
   }
 
-  firstNameInstituteInputText() {
+  firstNameInstitutionInputText() {
     return cy.get("#eytixvp-primaryContactFirstName");
   }
 
-  lastNameInstituteInputText() {
+  lastNameInstitutionInputText() {
     return cy.get("#e2q6a1-primaryContactLastName");
   }
 
-  emailInstituteInputText() {
+  emailInstitutionInputText() {
     return cy.get("#efjjde8-primaryContactEmail");
   }
 
-  phoneNumberInstituteInputText() {
+  phoneNumberInstitutionInputText() {
     return cy.get("#e46djjn-primaryContactPhone");
   }
 
@@ -81,7 +81,7 @@ export default class InstitutionProfileObject {
     return cy.get("#ep2tska-legalAuthorityPhone");
   }
 
-  addressInstituteInputText() {
+  addressInstitutionInputText() {
     return cy.get("#etidnj-addressLine1");
   }
 

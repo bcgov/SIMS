@@ -14,7 +14,7 @@ describe("Institution Profile", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institute profile page", () => {
+  it("Verify that user redirect to institution profile page", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
@@ -85,21 +85,21 @@ describe("Institution Profile", () => {
         .type("{enter}");
       institutionObject.establishedDate("2022-08-01");
       institutionObject
-        .firstNameInstituteInputText()
+        .firstNameInstitutionInputText()
         .clear()
-        .type(data.firstNameInstitute);
+        .type(data.firstNameinstitution);
       institutionObject
-        .lastNameInstituteInputText()
+        .lastNameInstitutionInputText()
         .clear()
-        .type(data.lastNameInstitute);
+        .type(data.lastNameInstitution);
       institutionObject
-        .emailInstituteInputText()
+        .emailInstitutionInputText()
         .clear()
-        .type(data.emailInstitute);
+        .type(data.emailInstitution);
       institutionObject
-        .phoneNumberInstituteInputText()
+        .phoneNumberInstitutionInputText()
         .clear()
-        .type(data.phoneNumberInstitute);
+        .type(data.phoneNumberInstitution);
       institutionObject
         .firstNameAuthorizedInputText()
         .clear()
@@ -117,7 +117,7 @@ describe("Institution Profile", () => {
         .clear()
         .type(data.phoneNumberAuthorized);
       institutionObject
-        .addressInstituteInputText()
+        .addressInstitutionInputText()
         .clear()
         .type(data.addressInput);
       institutionObject.cityInputText().clear().type(data.cityInput);

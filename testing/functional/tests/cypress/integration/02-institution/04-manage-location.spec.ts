@@ -4,7 +4,7 @@ import InstitutionCustomCommand from "../../custom-command/institution/Instituti
 
 describe("Manage Locations", () => {
   const dashboardInstitutionObject = new DashboardInstitutionObject();
-  const instituteManageLocationObject = new ManageLocationObject();
+  const institutionManageLocationObject = new ManageLocationObject();
   const institutionCustomCommand = new InstitutionCustomCommand();
 
   const url = Cypress.env("institutionURL");
@@ -14,50 +14,50 @@ describe("Manage Locations", () => {
     institutionCustomCommand.loginInstitution();
   });
 
-  it("Verify that user redirect to institute manage location page", () => {
+  it("Verify that user redirect to institution manage location page", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    instituteManageLocationObject.manageLocationButton().click();
+    institutionManageLocationObject.manageLocationButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
   });
 
-  it("Verify that user redirect to edit page of institute manage location", () => {
+  it("Verify that user redirect to edit page of institution manage location", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    instituteManageLocationObject.manageLocationButton().click();
+    institutionManageLocationObject.manageLocationButton().click();
     dashboardInstitutionObject.locationVerifyText().should("be.visible");
-    instituteManageLocationObject.editLocationButton().click();
+    institutionManageLocationObject.editLocationButton().click();
     cy.url().should("contain", "/edit-institution-location");
   });
 
   it("Verify that edit button is working or not", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    instituteManageLocationObject.manageLocationButton().click();
-    instituteManageLocationObject.editLocationButton().click();
-    instituteManageLocationObject
-      .additionalInstituteLocationMessage()
+    institutionManageLocationObject.manageLocationButton().click();
+    institutionManageLocationObject.editLocationButton().click();
+    institutionManageLocationObject
+      .additionalInstitutionLocationMessage()
       .should("be.visible");
   });
 
   it("Verify that by clicking on Start New Application button redirects to appropriate page or not", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    instituteManageLocationObject.manageLocationButton().click();
-    instituteManageLocationObject.addNewLocationButton().click();
-    instituteManageLocationObject
-      .additionalInstituteLocationMessage()
+    institutionManageLocationObject.manageLocationButton().click();
+    institutionManageLocationObject.addNewLocationButton().click();
+    institutionManageLocationObject
+      .additionalInstitutionLocationMessage()
       .should("be.visible");
   });
 
   it("Verify that without filling mandatory fields, submit button must be disabled", () => {
     dashboardInstitutionObject.dashboardButton().click();
     dashboardInstitutionObject.manageInstitutionButton().click();
-    instituteManageLocationObject.manageLocationButton().click();
-    instituteManageLocationObject.editLocationButton().click();
-    instituteManageLocationObject.submitButton().should("be.disabled");
+    institutionManageLocationObject.manageLocationButton().click();
+    institutionManageLocationObject.editLocationButton().click();
+    institutionManageLocationObject.submitButton().should("be.disabled");
   });
 
   it("Verify that after filling all details, submit button must be enabled", () => {
@@ -65,40 +65,43 @@ describe("Manage Locations", () => {
       cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
-      instituteManageLocationObject.manageLocationButton().click();
-      instituteManageLocationObject.editLocationButton().click();
+      institutionManageLocationObject.manageLocationButton().click();
+      institutionManageLocationObject.editLocationButton().click();
       cy.wait("@location");
-      instituteManageLocationObject
+      institutionManageLocationObject
         .institutionCode()
         .clear()
         .type(data.institutionCode);
-      instituteManageLocationObject
+      institutionManageLocationObject
         .locationName()
         .click()
         .clear()
         .type(data.locationName);
-      instituteManageLocationObject.addressFirst().clear().type(data.address);
-      instituteManageLocationObject.cityInputText().clear().type(data.city);
-      instituteManageLocationObject.postalCode().clear().type(data.postalCode);
-      instituteManageLocationObject.stateInputText().clear().type(data.state);
-      instituteManageLocationObject
+      institutionManageLocationObject.addressFirst().clear().type(data.address);
+      institutionManageLocationObject.cityInputText().clear().type(data.city);
+      institutionManageLocationObject
+        .postalCode()
+        .clear()
+        .type(data.postalCode);
+      institutionManageLocationObject.stateInputText().clear().type(data.state);
+      institutionManageLocationObject
         .countryInputText()
         .clear()
         .type(data.country);
-      instituteManageLocationObject
+      institutionManageLocationObject
         .firstNameInputText()
         .clear()
         .type(data.firstName);
-      instituteManageLocationObject
+      institutionManageLocationObject
         .lastNameINputText()
         .clear()
         .type(data.lastName);
-      instituteManageLocationObject.emailInputText().clear().type(data.email);
-      instituteManageLocationObject
+      institutionManageLocationObject.emailInputText().clear().type(data.email);
+      institutionManageLocationObject
         .phoneInputText()
         .clear()
         .type(data.phoneNumber);
-      instituteManageLocationObject.submitButton().should("be.enabled");
+      institutionManageLocationObject.submitButton().should("be.enabled");
     });
   });
 
@@ -107,56 +110,65 @@ describe("Manage Locations", () => {
       cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
-      instituteManageLocationObject.manageLocationButton().click();
-      instituteManageLocationObject.editLocationButton().click();
+      institutionManageLocationObject.manageLocationButton().click();
+      institutionManageLocationObject.editLocationButton().click();
       cy.wait("@location");
-      instituteManageLocationObject
+      institutionManageLocationObject
         .institutionCode()
         .type(data.institutionCode)
         .clear();
-      instituteManageLocationObject
+      institutionManageLocationObject
         .locationName()
         .click()
         .type(data.locationName)
         .clear();
-      instituteManageLocationObject.addressFirst().type(data.address).clear();
-      instituteManageLocationObject.cityInputText().type(data.city).clear();
-      instituteManageLocationObject.postalCode().type(data.postalCode).clear();
-      instituteManageLocationObject.stateInputText().type(data.state).clear();
-      instituteManageLocationObject
+      institutionManageLocationObject.addressFirst().type(data.address).clear();
+      institutionManageLocationObject.cityInputText().type(data.city).clear();
+      institutionManageLocationObject
+        .postalCode()
+        .type(data.postalCode)
+        .clear();
+      institutionManageLocationObject.stateInputText().type(data.state).clear();
+      institutionManageLocationObject
         .countryInputText()
         .type(data.country)
         .clear();
-      instituteManageLocationObject
+      institutionManageLocationObject
         .firstNameInputText()
         .type(data.firstName)
         .clear();
-      instituteManageLocationObject
+      institutionManageLocationObject
         .lastNameINputText()
         .type(data.lastName)
         .clear();
-      instituteManageLocationObject.emailInputText().type(data.email).clear();
-      instituteManageLocationObject
+      institutionManageLocationObject.emailInputText().type(data.email).clear();
+      institutionManageLocationObject
         .phoneInputText()
         .type(data.phoneNumber)
         .clear();
-      instituteManageLocationObject
-        .instituteCodeErrorMessage()
+      institutionManageLocationObject
+        .institutionCodeErrorMessage()
         .should("be.visible");
-      instituteManageLocationObject
+      institutionManageLocationObject
         .locationNameErrorMessage()
         .should("be.visible");
-      instituteManageLocationObject.addressErrorMessage().should("be.visible");
-      instituteManageLocationObject.cityErrorMessage().should("be.visible");
-      instituteManageLocationObject.postalErrorMessage().should("be.visible");
-      instituteManageLocationObject.stateErrorMessage().should("be.visible");
-      instituteManageLocationObject.countryErrorMessage().should("be.visible");
-      instituteManageLocationObject
+      institutionManageLocationObject
+        .addressErrorMessage()
+        .should("be.visible");
+      institutionManageLocationObject.cityErrorMessage().should("be.visible");
+      institutionManageLocationObject.postalErrorMessage().should("be.visible");
+      institutionManageLocationObject.stateErrorMessage().should("be.visible");
+      institutionManageLocationObject
+        .countryErrorMessage()
+        .should("be.visible");
+      institutionManageLocationObject
         .firstNameErrorMessage()
         .should("be.visible");
-      instituteManageLocationObject.lastNameErrorMessage().should("be.visible");
-      instituteManageLocationObject.emailErrorMessage().should("be.visible");
-      instituteManageLocationObject
+      institutionManageLocationObject
+        .lastNameErrorMessage()
+        .should("be.visible");
+      institutionManageLocationObject.emailErrorMessage().should("be.visible");
+      institutionManageLocationObject
         .phoneNumberErrorMessage()
         .should("be.visible");
     });
@@ -167,42 +179,45 @@ describe("Manage Locations", () => {
       cy.intercept("GET", "**/location/**").as("location");
       dashboardInstitutionObject.dashboardButton().click();
       dashboardInstitutionObject.manageInstitutionButton().click();
-      instituteManageLocationObject.manageLocationButton().click();
-      instituteManageLocationObject.editLocationButton().click();
+      institutionManageLocationObject.manageLocationButton().click();
+      institutionManageLocationObject.editLocationButton().click();
       cy.wait("@location");
-      instituteManageLocationObject
+      institutionManageLocationObject
         .institutionCode()
         .clear()
         .type(data.institutionCode);
-      instituteManageLocationObject
+      institutionManageLocationObject
         .locationName()
         .click()
         .clear()
         .type(data.locationName);
-      instituteManageLocationObject.addressFirst().clear().type(data.address);
-      instituteManageLocationObject.cityInputText().clear().type(data.city);
-      instituteManageLocationObject.postalCode().clear().type(data.postalCode);
-      instituteManageLocationObject.stateInputText().clear().type(data.state);
-      instituteManageLocationObject
+      institutionManageLocationObject.addressFirst().clear().type(data.address);
+      institutionManageLocationObject.cityInputText().clear().type(data.city);
+      institutionManageLocationObject
+        .postalCode()
+        .clear()
+        .type(data.postalCode);
+      institutionManageLocationObject.stateInputText().clear().type(data.state);
+      institutionManageLocationObject
         .countryInputText()
         .clear()
         .type(data.country);
-      instituteManageLocationObject
+      institutionManageLocationObject
         .firstNameInputText()
         .clear()
         .type(data.firstName);
-      instituteManageLocationObject
+      institutionManageLocationObject
         .lastNameINputText()
         .clear()
         .type(data.lastName);
-      instituteManageLocationObject.emailInputText().clear().type(data.email);
-      instituteManageLocationObject
+      institutionManageLocationObject.emailInputText().clear().type(data.email);
+      institutionManageLocationObject
         .phoneInputText()
         .clear()
         .type(data.phoneNumber);
-      instituteManageLocationObject.submitButton().should("be.enabled");
-      instituteManageLocationObject.phoneInputText().clear();
-      instituteManageLocationObject.submitButton().should("be.disabled");
+      institutionManageLocationObject.submitButton().should("be.enabled");
+      institutionManageLocationObject.phoneInputText().clear();
+      institutionManageLocationObject.submitButton().should("be.disabled");
     });
   });
 });
